@@ -1,7 +1,7 @@
-//#include "FXConstantDefs.cfi"
-//#include "hlsl_common.fx"
+#include "FXConstantDefs.cfi"
+#include "hlsl_common.fx"
 
-//#define TM_UNREAL
+#define TM_UNREAL
 // Unreal 3, Documentation: "Color Grading"
 // Adapted to be close to Tonemap_ACES, with similar range
 // Gamma 2.2 correction is baked in, don't use with sRGB conversion!

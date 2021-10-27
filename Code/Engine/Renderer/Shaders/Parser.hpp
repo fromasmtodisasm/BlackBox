@@ -820,15 +820,17 @@ namespace yy {
         S_tech = 140,                            // tech
         S_141_5 = 141,                           // $@5
         S_142_6 = 142,                           // $@6
-        S_scalar_type = 143,                     // scalar_type
-        S_annotation_list = 144,                 // annotation_list
-        S_annotation_value = 145,                // annotation_value
-        S_annotation_header = 146,               // annotation_header
-        S_annotation = 147,                      // annotation
-        S_annotations = 148,                     // annotations
-        S_hlsl_header = 149,                     // hlsl_header
-        S_hlsl = 150,                            // hlsl
-        S_shader_header = 151                    // shader_header
+        S_STRING_LIST = 143,                     // STRING_LIST
+        S_scalar_type = 144,                     // scalar_type
+        S_annotation_list = 145,                 // annotation_list
+        S_annotation_value = 146,                // annotation_value
+        S_annotation_header = 147,               // annotation_header
+        S_annotation_base = 148,                 // annotation_base
+        S_annotation = 149,                      // annotation
+        S_annotations = 150,                     // annotations
+        S_hlsl_header = 151,                     // hlsl_header
+        S_hlsl = 152,                            // hlsl
+        S_shader_header = 153                    // shader_header
       };
     };
 
@@ -2862,7 +2864,7 @@ switch (yykind)
     enum
     {
       yylast_ = 318,     ///< Last index in yytable_.
-      yynnts_ = 57,  ///< Number of nonterminal symbols.
+      yynnts_ = 59,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -3113,7 +3115,7 @@ switch (yykind)
 
 
 } // yy
-#line 3117 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 3119 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 

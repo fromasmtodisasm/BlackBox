@@ -432,9 +432,13 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
 }
 
-#define BEGIN(skiptoendofline);
+#define yy_push_state(skiptoendofline);
+#if yy_push_state(skiptoendofline);
+#endif yy_push_state(skiptoendofline);
+#elif yy_push_state(skiptoendofline);
+
 <skiptoendofline>[^\n]*
-<skiptoendofline>\n     BEGIN(INITIAL);
+<skiptoendofline>\n     loc.lines (yyleng); loc.step (); yy_pop_state();
 
 <<EOF>> {
 	if(include_stack.empty())//(  --include_stack_ptr  <  0  )

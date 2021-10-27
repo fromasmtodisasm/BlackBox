@@ -1,5 +1,7 @@
-//#include "FXConstantDefs.cfi"
+#include "FXConstantDefs.cfi"
 #include "AuxGeom.cfx"
+#include "NoDraw.cfx"
+#include "Common.cfx"
 
 #define PERFRAME_SLOT b0
 #define PERVIEW_SLOT b1

@@ -48,14 +48,14 @@ Terminals unused in grammar
 
 Rules useless in grammar
 
-  140 value_list: value
-  141           | value_list ',' value
+  144 value_list: value
+  145           | value_list ',' value
 
 
 State 56 conflicts: 1 shift/reduce
 State 80 conflicts: 1 reduce/reduce
-State 193 conflicts: 3 shift/reduce
-State 224 conflicts: 1 reduce/reduce
+State 196 conflicts: 3 shift/reduce
+State 227 conflicts: 1 reduce/reduce
 
 
 Grammar
@@ -231,34 +231,40 @@ Grammar
 
   119 tech: TECHNIQUE IDENTIFIER $@6 annotations '{' passes '}'
 
-  120 scalar_type: INT_TYPE
-  121            | FLOAT_TYPE
-  122            | UNSIGNED
-  123            | STRING_TYPE
+  120 STRING_LIST: STR
+  121            | STRING_LIST STR
 
-  124 annotation_list: annotation_list annotation
-  125                | annotation
+  122 scalar_type: INT_TYPE
+  123            | FLOAT_TYPE
+  124            | UNSIGNED
+  125            | STRING_TYPE
 
-  126 annotation_value: FLOAT
-  127                 | INT
-  128                 | STR
-  129                 | UNSIGNED
-  130                 | IDENTIFIER
+  126 annotation_list: annotation_list annotation
+  127                | annotation
 
-  131 annotation_header: scalar_type IDENTIFIER
-  132                  | REGISTER
+  128 annotation_value: FLOAT
+  129                 | INT
+  130                 | STRING_LIST
+  131                 | UNSIGNED
+  132                 | IDENTIFIER
 
-  133 annotation: annotation_header '=' annotation_value ';'
+  133 annotation_header: scalar_type IDENTIFIER
+  134                  | REGISTER
 
-  134 annotations: ε
-  135            | '<' annotation_list '>'
+  135 annotation_base: annotation_header '=' annotation_value
 
-  136 hlsl_header: HLSL11SHADER IDENTIFIER
-  137            | HLSL11SHADER
+  136 annotation: annotation_base
+  137           | annotation_base ';'
 
-  138 hlsl: shader_header '{' CODEBODY
+  138 annotations: ε
+  139            | '<' annotation_list '>'
 
-  139 shader_header: hlsl_header annotations
+  140 hlsl_header: HLSL11SHADER IDENTIFIER
+  141            | HLSL11SHADER
+
+  142 hlsl: shader_header '{' CODEBODY
+
+  143 shader_header: hlsl_header annotations
 
 
 Terminals, with rules where they appear
@@ -269,37 +275,37 @@ Terminals, with rules where they appear
     ',' (44) 16 87 101 102 103
     '.' (46) 82
     ':' (58) 27 95
-    ';' (59) 2 38 39 40 53 108 133
-    '<' (60) 30 135
-    '=' (61) 45 53 106 107 133
-    '>' (62) 30 135
+    ';' (59) 2 38 39 40 53 108 137
+    '<' (60) 30 139
+    '=' (61) 45 53 106 107 135
+    '>' (62) 30 139
     '[' (91) 80 90 91
     ']' (93) 80 90 91
-    '{' (123) 19 29 35 57 117 119 138
+    '{' (123) 19 29 35 57 117 119 142
     '}' (125) 29 35 57 117 119
     error (256) 11 115
     TYPE_NAME <std::string> (258) 20
-    IDENTIFIER <std::string> (259) 23 26 29 31 33 36 45 46 47 52 75 82 86 87 88 95 112 119 130 131 136
+    IDENTIFIER <std::string> (259) 23 26 29 31 33 36 45 46 47 52 75 82 86 87 88 95 112 119 132 133 140
     TRUE <bool> (260)
     FALSE <bool> (261)
-    FLOAT <float> (262) 77 98 126
-    INT <int> (263) 25 76 97 127
+    FLOAT <float> (262) 77 98 128
+    INT <int> (263) 25 76 97 129
     BOOL <bool> (264)
-    STR <std::string> (265) 128
-    HLSL11SHADER (266) 136 137
+    STR <std::string> (265) 120 121
+    HLSL11SHADER (266) 140 141
     TECHNIQUE (267) 117 119
     PASS (268) 110 112
-    CODEBODY <std::string> (269) 19 138
-    STRING_TYPE (270) 123
+    CODEBODY <std::string> (269) 19 142
+    STRING_TYPE (270) 125
     VOID_TYPE (271)
-    UNSIGNED (272) 122 129
+    UNSIGNED (272) 124 131
     HIGHP (273)
     MEDIUMP (274)
     LOWP (275)
     UNIFORM (276)
     CSTBUFFER (277) 29
     CONSTANTBUFFER (278) 31
-    FLOAT_TYPE (279) 58 99 121
+    FLOAT_TYPE (279) 58 99 123
     FLOAT2_TYPE (280) 59 101
     FLOAT3_TYPE (281) 60 102
     FLOAT4_TYPE (282) 61 103
@@ -312,7 +318,7 @@ Terminals, with rules where they appear
     BOOL2_TYPE (289) 67
     BOOL3_TYPE (290) 68
     BOOL4_TYPE (291) 69
-    INT_TYPE (292) 62 100 120
+    INT_TYPE (292) 62 100 122
     INT2_TYPE (293) 63
     INT3_TYPE (294) 64
     INT4_TYPE (295) 65
@@ -352,7 +358,7 @@ Terminals, with rules where they appear
     READ_ONLY (329)
     READ_WRITE (330)
     VERTEXFORMAT (331)
-    REGISTER (332) 27 132
+    REGISTER (332) 27 134
     FATALERROR (333) 24
     STRUCT (334) 32
     INSPECYFIER (335) 12
@@ -504,33 +510,39 @@ Nonterminals, with rules where they appear
     $@6 (142)
         on left: 118
         on right: 119
-    scalar_type (143)
-        on left: 120 121 122 123
-        on right: 131
-    annotation_list (144)
-        on left: 124 125
-        on right: 124 135
-    annotation_value (145)
-        on left: 126 127 128 129 130
+    STRING_LIST (143)
+        on left: 120 121
+        on right: 121 130
+    scalar_type (144)
+        on left: 122 123 124 125
         on right: 133
-    annotation_header (146)
-        on left: 131 132
-        on right: 133
-    annotation (147)
-        on left: 133
-        on right: 124 125
-    annotations (148)
-        on left: 134 135
-        on right: 106 107 108 110 112 119 139
-    hlsl_header <std::string> (149)
+    annotation_list (145)
+        on left: 126 127
+        on right: 126 139
+    annotation_value (146)
+        on left: 128 129 130 131 132
+        on right: 135
+    annotation_header (147)
+        on left: 133 134
+        on right: 135
+    annotation_base (148)
+        on left: 135
+        on right: 136 137
+    annotation (149)
         on left: 136 137
-        on right: 139
-    hlsl (150)
-        on left: 138
+        on right: 126 127
+    annotations (150)
+        on left: 138 139
+        on right: 106 107 108 110 112 119 143
+    hlsl_header <std::string> (151)
+        on left: 140 141
+        on right: 143
+    hlsl (152)
+        on left: 142
         on right: 4
-    shader_header <std::string> (151)
-        on left: 139
-        on right: 138
+    shader_header <std::string> (153)
+        on left: 143
+        on right: 142
 
 
 State 0
@@ -626,12 +638,12 @@ State 4
 
 State 5
 
-  136 hlsl_header: HLSL11SHADER • IDENTIFIER
-  137            | HLSL11SHADER •
+  140 hlsl_header: HLSL11SHADER • IDENTIFIER
+  141            | HLSL11SHADER •
 
     IDENTIFIER  shift, and go to state 46
 
-    $default  reduce using rule 137 (hlsl_header)
+    $default  reduce using rule 141 (hlsl_header)
 
 
 State 6
@@ -919,11 +931,11 @@ State 42
 
 State 43
 
-  139 shader_header: hlsl_header • annotations
+  143 shader_header: hlsl_header • annotations
 
     '<'  shift, and go to state 61
 
-    $default  reduce using rule 134 (annotations)
+    $default  reduce using rule 138 (annotations)
 
     annotations  go to state 62
 
@@ -937,16 +949,16 @@ State 44
 
 State 45
 
-  138 hlsl: shader_header • '{' CODEBODY
+  142 hlsl: shader_header • '{' CODEBODY
 
     '{'  shift, and go to state 63
 
 
 State 46
 
-  136 hlsl_header: HLSL11SHADER IDENTIFIER •
+  140 hlsl_header: HLSL11SHADER IDENTIFIER •
 
-    $default  reduce using rule 136 (hlsl_header)
+    $default  reduce using rule 140 (hlsl_header)
 
 
 State 47
@@ -1124,7 +1136,7 @@ State 60
 
 State 61
 
-  135 annotations: '<' • annotation_list '>'
+  139 annotations: '<' • annotation_list '>'
 
     STRING_TYPE  shift, and go to state 83
     UNSIGNED     shift, and go to state 84
@@ -1135,21 +1147,22 @@ State 61
     scalar_type        go to state 88
     annotation_list    go to state 89
     annotation_header  go to state 90
-    annotation         go to state 91
+    annotation_base    go to state 91
+    annotation         go to state 92
 
 
 State 62
 
-  139 shader_header: hlsl_header annotations •
+  143 shader_header: hlsl_header annotations •
 
-    $default  reduce using rule 139 (shader_header)
+    $default  reduce using rule 143 (shader_header)
 
 
 State 63
 
-  138 hlsl: shader_header '{' • CODEBODY
+  142 hlsl: shader_header '{' • CODEBODY
 
-    CODEBODY  shift, and go to state 92
+    CODEBODY  shift, and go to state 93
 
 
 State 64
@@ -1158,40 +1171,40 @@ State 64
 
     '<'  shift, and go to state 61
 
-    $default  reduce using rule 134 (annotations)
+    $default  reduce using rule 138 (annotations)
 
-    annotations  go to state 93
+    annotations  go to state 94
 
 
 State 65
 
   117 tech: TECHNIQUE $@5 '{' • passes '}'
 
-    PASS  shift, and go to state 94
+    PASS  shift, and go to state 95
 
-    pass    go to state 95
-    passes  go to state 96
+    pass    go to state 96
+    passes  go to state 97
 
 
 State 66
 
    27 register_declaration: ':' • REGISTER '(' register_value ')'
 
-    REGISTER  shift, and go to state 97
+    REGISTER  shift, and go to state 98
 
 
 State 67
 
    29 cbuffer: CSTBUFFER IDENTIFIER register_declaration • '{' var_decls '}'
 
-    '{'  shift, and go to state 98
+    '{'  shift, and go to state 99
 
 
 State 68
 
    30 template_parameter: '<' object_type • '>'
 
-    '>'  shift, and go to state 99
+    '>'  shift, and go to state 100
 
 
 State 69
@@ -1202,29 +1215,29 @@ State 69
 
     $default  reduce using rule 28 (register_declaration)
 
-    register_declaration  go to state 100
+    register_declaration  go to state 101
 
 
 State 70
 
    46 texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration • resource_initializer
 
-    '='  shift, and go to state 101
+    '='  shift, and go to state 102
 
     $default  reduce using rule 44 (resource_initializer)
 
-    resource_initializer  go to state 102
+    resource_initializer  go to state 103
 
 
 State 71
 
    47 sampler_state: SAMPLERSTATE IDENTIFIER register_declaration • resource_initializer
 
-    '='  shift, and go to state 101
+    '='  shift, and go to state 102
 
     $default  reduce using rule 44 (resource_initializer)
 
-    resource_initializer  go to state 103
+    resource_initializer  go to state 104
 
 
 State 72
@@ -1251,22 +1264,22 @@ State 72
     INT4_TYPE    shift, and go to state 25
     STRUCT       shift, and go to state 29
 
-    object_type  go to state 104
-    struct       go to state 105
-    var_decls    go to state 106
+    object_type  go to state 105
+    struct       go to state 106
+    var_decls    go to state 107
     base_type    go to state 40
-    var_decl     go to state 107
+    var_decl     go to state 108
 
 
 State 73
 
    32 struct: STRUCT struct_header struct_body • struct_footer
 
-    IDENTIFIER  shift, and go to state 108
+    IDENTIFIER  shift, and go to state 109
 
     $default  reduce using rule 37 (struct_footer)
 
-    struct_footer  go to state 109
+    struct_footer  go to state 110
 
 
 State 74
@@ -1275,7 +1288,7 @@ State 74
 
     $default  reduce using rule 22 ($@2)
 
-    $@2  go to state 110
+    $@2  go to state 111
 
 
 State 75
@@ -1289,7 +1302,7 @@ State 76
 
    89 direct_declarator: '(' declarator • ')'
 
-    ')'  shift, and go to state 111
+    ')'  shift, and go to state 112
 
 
 State 77
@@ -1314,7 +1327,7 @@ State 78
    94                  | direct_declarator '(' • ')'
 
     TYPE_NAME    shift, and go to state 4
-    IDENTIFIER   shift, and go to state 112
+    IDENTIFIER   shift, and go to state 113
     FLOAT_TYPE   shift, and go to state 9
     FLOAT2_TYPE  shift, and go to state 10
     FLOAT3_TYPE  shift, and go to state 11
@@ -1333,15 +1346,15 @@ State 78
     INT3_TYPE    shift, and go to state 24
     INT4_TYPE    shift, and go to state 25
     STRUCT       shift, and go to state 29
-    ')'          shift, and go to state 113
+    ')'          shift, and go to state 114
 
-    object_type          go to state 104
-    struct               go to state 105
-    var_decls            go to state 114
+    object_type          go to state 105
+    struct               go to state 106
+    var_decls            go to state 115
     base_type            go to state 40
-    parameter_type_list  go to state 115
-    identifier_list      go to state 116
-    var_decl             go to state 107
+    parameter_type_list  go to state 116
+    identifier_list      go to state 117
+    var_decl             go to state 108
 
 
 State 79
@@ -1349,15 +1362,15 @@ State 79
    90 direct_declarator: direct_declarator '[' • constant_expression ']'
    91                  | direct_declarator '[' • ']'
 
-    IDENTIFIER  shift, and go to state 117
-    FLOAT       shift, and go to state 118
-    INT         shift, and go to state 119
-    '('         shift, and go to state 120
-    ']'         shift, and go to state 121
+    IDENTIFIER  shift, and go to state 118
+    FLOAT       shift, and go to state 119
+    INT         shift, and go to state 120
+    '('         shift, and go to state 121
+    ']'         shift, and go to state 122
 
-    primary_expression   go to state 122
-    postfix_expression   go to state 123
-    constant_expression  go to state 124
+    primary_expression   go to state 123
+    postfix_expression   go to state 124
+    constant_expression  go to state 125
 
 
 State 80
@@ -1370,15 +1383,15 @@ State 80
     '<'  shift, and go to state 61
 
     ';'       reduce using rule 105 (var_decl)
-    ';'       [reduce using rule 134 (annotations)]
-    '='       reduce using rule 134 (annotations)
+    ';'       [reduce using rule 138 (annotations)]
+    '='       reduce using rule 138 (annotations)
     $default  reduce using rule 105 (var_decl)
 
-    annotations  go to state 125
+    annotations  go to state 126
 
     reduce/reduce conflict on token ';':
       105 var_decl: object_type direct_declarator semantic •
-      134 annotations: ε •
+      138 annotations: ε •
       Example: input object_type direct_declarator semantic • ';'
       First reduce derivation
         input
@@ -1389,7 +1402,7 @@ State 80
         input
         ↳ 5: input var_decl
                    ↳ 108: object_type direct_declarator semantic annotations ';'
-                                                                 ↳ 134: ε •
+                                                                 ↳ 138: ε •
 
 
 
@@ -1406,136 +1419,147 @@ State 82
 
     $default  reduce using rule 18 ($@1)
 
-    $@1  go to state 126
+    $@1  go to state 127
 
 
 State 83
 
-  123 scalar_type: STRING_TYPE •
+  125 scalar_type: STRING_TYPE •
 
-    $default  reduce using rule 123 (scalar_type)
+    $default  reduce using rule 125 (scalar_type)
 
 
 State 84
 
-  122 scalar_type: UNSIGNED •
+  124 scalar_type: UNSIGNED •
 
-    $default  reduce using rule 122 (scalar_type)
+    $default  reduce using rule 124 (scalar_type)
 
 
 State 85
 
-  121 scalar_type: FLOAT_TYPE •
+  123 scalar_type: FLOAT_TYPE •
 
-    $default  reduce using rule 121 (scalar_type)
+    $default  reduce using rule 123 (scalar_type)
 
 
 State 86
 
-  120 scalar_type: INT_TYPE •
+  122 scalar_type: INT_TYPE •
 
-    $default  reduce using rule 120 (scalar_type)
+    $default  reduce using rule 122 (scalar_type)
 
 
 State 87
 
-  132 annotation_header: REGISTER •
+  134 annotation_header: REGISTER •
 
-    $default  reduce using rule 132 (annotation_header)
+    $default  reduce using rule 134 (annotation_header)
 
 
 State 88
 
-  131 annotation_header: scalar_type • IDENTIFIER
+  133 annotation_header: scalar_type • IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 127
+    IDENTIFIER  shift, and go to state 128
 
 
 State 89
 
-  124 annotation_list: annotation_list • annotation
-  135 annotations: '<' annotation_list • '>'
+  126 annotation_list: annotation_list • annotation
+  139 annotations: '<' annotation_list • '>'
 
     STRING_TYPE  shift, and go to state 83
     UNSIGNED     shift, and go to state 84
     FLOAT_TYPE   shift, and go to state 85
     INT_TYPE     shift, and go to state 86
     REGISTER     shift, and go to state 87
-    '>'          shift, and go to state 128
+    '>'          shift, and go to state 129
 
     scalar_type        go to state 88
     annotation_header  go to state 90
-    annotation         go to state 129
+    annotation_base    go to state 91
+    annotation         go to state 130
 
 
 State 90
 
-  133 annotation: annotation_header • '=' annotation_value ';'
+  135 annotation_base: annotation_header • '=' annotation_value
 
-    '='  shift, and go to state 130
+    '='  shift, and go to state 131
 
 
 State 91
 
-  125 annotation_list: annotation •
+  136 annotation: annotation_base •
+  137           | annotation_base • ';'
 
-    $default  reduce using rule 125 (annotation_list)
+    ';'  shift, and go to state 132
+
+    $default  reduce using rule 136 (annotation)
 
 
 State 92
 
-  138 hlsl: shader_header '{' CODEBODY •
+  127 annotation_list: annotation •
 
-    $default  reduce using rule 138 (hlsl)
+    $default  reduce using rule 127 (annotation_list)
 
 
 State 93
 
-  119 tech: TECHNIQUE IDENTIFIER $@6 annotations • '{' passes '}'
+  142 hlsl: shader_header '{' CODEBODY •
 
-    '{'  shift, and go to state 131
+    $default  reduce using rule 142 (hlsl)
 
 
 State 94
 
-  110 pass: PASS • $@3 annotations passstates
-  112     | PASS • IDENTIFIER $@4 annotations passstates
+  119 tech: TECHNIQUE IDENTIFIER $@6 annotations • '{' passes '}'
 
-    IDENTIFIER  shift, and go to state 132
-
-    $default  reduce using rule 109 ($@3)
-
-    $@3  go to state 133
+    '{'  shift, and go to state 133
 
 
 State 95
+
+  110 pass: PASS • $@3 annotations passstates
+  112     | PASS • IDENTIFIER $@4 annotations passstates
+
+    IDENTIFIER  shift, and go to state 134
+
+    $default  reduce using rule 109 ($@3)
+
+    $@3  go to state 135
+
+
+State 96
 
   113 passes: pass •
 
     $default  reduce using rule 113 (passes)
 
 
-State 96
+State 97
 
   114 passes: passes • pass
   115       | passes • error
   117 tech: TECHNIQUE $@5 '{' passes • '}'
 
-    error  shift, and go to state 134
-    PASS   shift, and go to state 94
-    '}'    shift, and go to state 135
+    error  shift, and go to state 136
+    PASS   shift, and go to state 95
+    '}'    shift, and go to state 137
 
-    pass  go to state 136
-
-
-State 97
-
-   27 register_declaration: ':' REGISTER • '(' register_value ')'
-
-    '('  shift, and go to state 137
+    pass  go to state 138
 
 
 State 98
+
+   27 register_declaration: ':' REGISTER • '(' register_value ')'
+
+    '('  shift, and go to state 139
+
+
+State 99
 
    29 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' • var_decls '}'
 
@@ -1559,49 +1583,49 @@ State 98
     INT4_TYPE    shift, and go to state 25
     STRUCT       shift, and go to state 29
 
-    object_type  go to state 104
-    struct       go to state 105
-    var_decls    go to state 138
+    object_type  go to state 105
+    struct       go to state 106
+    var_decls    go to state 140
     base_type    go to state 40
-    var_decl     go to state 107
+    var_decl     go to state 108
 
 
-State 99
+State 100
 
    30 template_parameter: '<' object_type '>' •
 
     $default  reduce using rule 30 (template_parameter)
 
 
-State 100
+State 101
 
    31 cbuffer: CONSTANTBUFFER template_parameter IDENTIFIER register_declaration •
 
     $default  reduce using rule 31 (cbuffer)
 
 
-State 101
+State 102
 
    45 resource_initializer: '=' • IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 139
+    IDENTIFIER  shift, and go to state 141
 
 
-State 102
+State 103
 
    46 texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration resource_initializer •
 
     $default  reduce using rule 46 (texture2d)
 
 
-State 103
+State 104
 
    47 sampler_state: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer •
 
     $default  reduce using rule 47 (sampler_state)
 
 
-State 104
+State 105
 
   105 var_decl: object_type • direct_declarator semantic
   106         | object_type • direct_declarator semantic annotations '=' type_constructor
@@ -1614,14 +1638,14 @@ State 104
     direct_declarator  go to state 58
 
 
-State 105
+State 106
 
    40 var_decls: struct • ';'
 
-    ';'  shift, and go to state 140
+    ';'  shift, and go to state 142
 
 
-State 106
+State 107
 
    35 struct_body: '{' var_decls • '}'
    38 var_decls: var_decls • var_decl ';'
@@ -1644,70 +1668,70 @@ State 106
     INT2_TYPE    shift, and go to state 23
     INT3_TYPE    shift, and go to state 24
     INT4_TYPE    shift, and go to state 25
-    '}'          shift, and go to state 141
+    '}'          shift, and go to state 143
 
-    object_type  go to state 104
+    object_type  go to state 105
     base_type    go to state 40
-    var_decl     go to state 142
-
-
-State 107
-
-   39 var_decls: var_decl • ';'
-
-    ';'  shift, and go to state 143
+    var_decl     go to state 144
 
 
 State 108
+
+   39 var_decls: var_decl • ';'
+
+    ';'  shift, and go to state 145
+
+
+State 109
 
    36 struct_footer: IDENTIFIER •
 
     $default  reduce using rule 36 (struct_footer)
 
 
-State 109
+State 110
 
    32 struct: STRUCT struct_header struct_body struct_footer •
 
     $default  reduce using rule 32 (struct)
 
 
-State 110
+State 111
 
    23 function_declaration: object_type IDENTIFIER '(' $@2 • arguments ')'
 
-    INSPECYFIER   shift, and go to state 144
-    OUTSPECYFIER  shift, and go to state 145
+    INSPECYFIER   shift, and go to state 146
+    OUTSPECYFIER  shift, and go to state 147
 
     ')'       reduce using rule 17 (arguments)
     $default  reduce using rule 14 (var_spec)
 
-    var_spec   go to state 146
-    arguments  go to state 147
+    var_spec   go to state 148
+    arguments  go to state 149
 
 
-State 111
+State 112
 
    89 direct_declarator: '(' declarator ')' •
 
     $default  reduce using rule 89 (direct_declarator)
 
 
-State 112
+State 113
 
    86 identifier_list: IDENTIFIER •
 
     $default  reduce using rule 86 (identifier_list)
 
 
-State 113
+State 114
 
    94 direct_declarator: direct_declarator '(' ')' •
 
     $default  reduce using rule 94 (direct_declarator)
 
 
-State 114
+State 115
 
    38 var_decls: var_decls • var_decl ';'
    85 parameter_type_list: var_decls •
@@ -1733,209 +1757,217 @@ State 114
 
     $default  reduce using rule 85 (parameter_type_list)
 
-    object_type  go to state 104
+    object_type  go to state 105
     base_type    go to state 40
-    var_decl     go to state 142
-
-
-State 115
-
-   92 direct_declarator: direct_declarator '(' parameter_type_list • ')'
-
-    ')'  shift, and go to state 148
+    var_decl     go to state 144
 
 
 State 116
 
-   87 identifier_list: identifier_list • ',' IDENTIFIER
-   93 direct_declarator: direct_declarator '(' identifier_list • ')'
+   92 direct_declarator: direct_declarator '(' parameter_type_list • ')'
 
-    ','  shift, and go to state 149
     ')'  shift, and go to state 150
 
 
 State 117
+
+   87 identifier_list: identifier_list • ',' IDENTIFIER
+   93 direct_declarator: direct_declarator '(' identifier_list • ')'
+
+    ','  shift, and go to state 151
+    ')'  shift, and go to state 152
+
+
+State 118
 
    75 primary_expression: IDENTIFIER •
 
     $default  reduce using rule 75 (primary_expression)
 
 
-State 118
+State 119
 
    77 primary_expression: FLOAT •
 
     $default  reduce using rule 77 (primary_expression)
 
 
-State 119
+State 120
 
    76 primary_expression: INT •
 
     $default  reduce using rule 76 (primary_expression)
 
 
-State 120
+State 121
 
    78 primary_expression: '(' • postfix_expression ')'
 
-    IDENTIFIER  shift, and go to state 117
-    FLOAT       shift, and go to state 118
-    INT         shift, and go to state 119
-    '('         shift, and go to state 120
+    IDENTIFIER  shift, and go to state 118
+    FLOAT       shift, and go to state 119
+    INT         shift, and go to state 120
+    '('         shift, and go to state 121
 
-    primary_expression  go to state 122
-    postfix_expression  go to state 151
+    primary_expression  go to state 123
+    postfix_expression  go to state 153
 
 
-State 121
+State 122
 
    91 direct_declarator: direct_declarator '[' ']' •
 
     $default  reduce using rule 91 (direct_declarator)
 
 
-State 122
+State 123
 
    79 postfix_expression: primary_expression •
 
     $default  reduce using rule 79 (postfix_expression)
 
 
-State 123
+State 124
 
    80 postfix_expression: postfix_expression • '[' postfix_expression ']'
    81                   | postfix_expression • '(' ')'
    82                   | postfix_expression • '.' IDENTIFIER
    84 constant_expression: postfix_expression •
 
-    '('  shift, and go to state 152
-    '['  shift, and go to state 153
-    '.'  shift, and go to state 154
+    '('  shift, and go to state 154
+    '['  shift, and go to state 155
+    '.'  shift, and go to state 156
 
     $default  reduce using rule 84 (constant_expression)
 
 
-State 124
+State 125
 
    90 direct_declarator: direct_declarator '[' constant_expression • ']'
 
-    ']'  shift, and go to state 155
+    ']'  shift, and go to state 157
 
 
-State 125
+State 126
 
   106 var_decl: object_type direct_declarator semantic annotations • '=' type_constructor
   107         | object_type direct_declarator semantic annotations • '=' value
   108         | object_type direct_declarator semantic annotations • ';'
 
-    ';'  shift, and go to state 156
-    '='  shift, and go to state 157
-
-
-State 126
-
-   19 function_definition: function_declaration semantic '{' $@1 • CODEBODY
-
-    CODEBODY  shift, and go to state 158
+    ';'  shift, and go to state 158
+    '='  shift, and go to state 159
 
 
 State 127
 
-  131 annotation_header: scalar_type IDENTIFIER •
+   19 function_definition: function_declaration semantic '{' $@1 • CODEBODY
 
-    $default  reduce using rule 131 (annotation_header)
+    CODEBODY  shift, and go to state 160
 
 
 State 128
 
-  135 annotations: '<' annotation_list '>' •
+  133 annotation_header: scalar_type IDENTIFIER •
 
-    $default  reduce using rule 135 (annotations)
+    $default  reduce using rule 133 (annotation_header)
 
 
 State 129
 
-  124 annotation_list: annotation_list annotation •
+  139 annotations: '<' annotation_list '>' •
 
-    $default  reduce using rule 124 (annotation_list)
+    $default  reduce using rule 139 (annotations)
 
 
 State 130
 
-  133 annotation: annotation_header '=' • annotation_value ';'
+  126 annotation_list: annotation_list annotation •
 
-    IDENTIFIER  shift, and go to state 159
-    FLOAT       shift, and go to state 160
-    INT         shift, and go to state 161
-    STR         shift, and go to state 162
-    UNSIGNED    shift, and go to state 163
-
-    annotation_value  go to state 164
+    $default  reduce using rule 126 (annotation_list)
 
 
 State 131
 
-  119 tech: TECHNIQUE IDENTIFIER $@6 annotations '{' • passes '}'
+  135 annotation_base: annotation_header '=' • annotation_value
 
-    PASS  shift, and go to state 94
+    IDENTIFIER  shift, and go to state 161
+    FLOAT       shift, and go to state 162
+    INT         shift, and go to state 163
+    STR         shift, and go to state 164
+    UNSIGNED    shift, and go to state 165
 
-    pass    go to state 95
-    passes  go to state 165
+    STRING_LIST       go to state 166
+    annotation_value  go to state 167
 
 
 State 132
+
+  137 annotation: annotation_base ';' •
+
+    $default  reduce using rule 137 (annotation)
+
+
+State 133
+
+  119 tech: TECHNIQUE IDENTIFIER $@6 annotations '{' • passes '}'
+
+    PASS  shift, and go to state 95
+
+    pass    go to state 96
+    passes  go to state 168
+
+
+State 134
 
   112 pass: PASS IDENTIFIER • $@4 annotations passstates
 
     $default  reduce using rule 111 ($@4)
 
-    $@4  go to state 166
+    $@4  go to state 169
 
 
-State 133
+State 135
 
   110 pass: PASS $@3 • annotations passstates
 
     '<'  shift, and go to state 61
 
-    $default  reduce using rule 134 (annotations)
+    $default  reduce using rule 138 (annotations)
 
-    annotations  go to state 167
+    annotations  go to state 170
 
 
-State 134
+State 136
 
   115 passes: passes error •
 
     $default  reduce using rule 115 (passes)
 
 
-State 135
+State 137
 
   117 tech: TECHNIQUE $@5 '{' passes '}' •
 
     $default  reduce using rule 117 (tech)
 
 
-State 136
+State 138
 
   114 passes: passes pass •
 
     $default  reduce using rule 114 (passes)
 
 
-State 137
+State 139
 
    27 register_declaration: ':' REGISTER '(' • register_value ')'
 
-    IDENTIFIER  shift, and go to state 168
-    INT         shift, and go to state 169
+    IDENTIFIER  shift, and go to state 171
+    INT         shift, and go to state 172
 
-    register_value  go to state 170
+    register_value  go to state 173
 
 
-State 138
+State 140
 
    29 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls • '}'
    38 var_decls: var_decls • var_decl ';'
@@ -1958,63 +1990,63 @@ State 138
     INT2_TYPE    shift, and go to state 23
     INT3_TYPE    shift, and go to state 24
     INT4_TYPE    shift, and go to state 25
-    '}'          shift, and go to state 171
+    '}'          shift, and go to state 174
 
-    object_type  go to state 104
+    object_type  go to state 105
     base_type    go to state 40
-    var_decl     go to state 142
+    var_decl     go to state 144
 
 
-State 139
+State 141
 
    45 resource_initializer: '=' IDENTIFIER •
 
     $default  reduce using rule 45 (resource_initializer)
 
 
-State 140
+State 142
 
    40 var_decls: struct ';' •
 
     $default  reduce using rule 40 (var_decls)
 
 
-State 141
+State 143
 
    35 struct_body: '{' var_decls '}' •
 
     $default  reduce using rule 35 (struct_body)
 
 
-State 142
+State 144
 
    38 var_decls: var_decls var_decl • ';'
 
-    ';'  shift, and go to state 172
+    ';'  shift, and go to state 175
 
 
-State 143
+State 145
 
    39 var_decls: var_decl ';' •
 
     $default  reduce using rule 39 (var_decls)
 
 
-State 144
+State 146
 
    12 var_spec: INSPECYFIER •
 
     $default  reduce using rule 12 (var_spec)
 
 
-State 145
+State 147
 
    13 var_spec: OUTSPECYFIER •
 
     $default  reduce using rule 13 (var_spec)
 
 
-State 146
+State 148
 
    15 arguments: var_spec • var_decl
    16          | var_spec • var_decl ',' arguments
@@ -2038,395 +2070,405 @@ State 146
     INT3_TYPE    shift, and go to state 24
     INT4_TYPE    shift, and go to state 25
 
-    object_type  go to state 104
+    object_type  go to state 105
     base_type    go to state 40
-    var_decl     go to state 173
+    var_decl     go to state 176
 
 
-State 147
+State 149
 
    23 function_declaration: object_type IDENTIFIER '(' $@2 arguments • ')'
 
-    ')'  shift, and go to state 174
+    ')'  shift, and go to state 177
 
 
-State 148
+State 150
 
    92 direct_declarator: direct_declarator '(' parameter_type_list ')' •
 
     $default  reduce using rule 92 (direct_declarator)
 
 
-State 149
+State 151
 
    87 identifier_list: identifier_list ',' • IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 175
+    IDENTIFIER  shift, and go to state 178
 
 
-State 150
+State 152
 
    93 direct_declarator: direct_declarator '(' identifier_list ')' •
 
     $default  reduce using rule 93 (direct_declarator)
 
 
-State 151
+State 153
 
    78 primary_expression: '(' postfix_expression • ')'
    80 postfix_expression: postfix_expression • '[' postfix_expression ']'
    81                   | postfix_expression • '(' ')'
    82                   | postfix_expression • '.' IDENTIFIER
 
-    '('  shift, and go to state 152
-    ')'  shift, and go to state 176
-    '['  shift, and go to state 153
-    '.'  shift, and go to state 154
-
-
-State 152
-
-   81 postfix_expression: postfix_expression '(' • ')'
-
-    ')'  shift, and go to state 177
-
-
-State 153
-
-   80 postfix_expression: postfix_expression '[' • postfix_expression ']'
-
-    IDENTIFIER  shift, and go to state 117
-    FLOAT       shift, and go to state 118
-    INT         shift, and go to state 119
-    '('         shift, and go to state 120
-
-    primary_expression  go to state 122
-    postfix_expression  go to state 178
+    '('  shift, and go to state 154
+    ')'  shift, and go to state 179
+    '['  shift, and go to state 155
+    '.'  shift, and go to state 156
 
 
 State 154
 
-   82 postfix_expression: postfix_expression '.' • IDENTIFIER
+   81 postfix_expression: postfix_expression '(' • ')'
 
-    IDENTIFIER  shift, and go to state 179
+    ')'  shift, and go to state 180
 
 
 State 155
+
+   80 postfix_expression: postfix_expression '[' • postfix_expression ']'
+
+    IDENTIFIER  shift, and go to state 118
+    FLOAT       shift, and go to state 119
+    INT         shift, and go to state 120
+    '('         shift, and go to state 121
+
+    primary_expression  go to state 123
+    postfix_expression  go to state 181
+
+
+State 156
+
+   82 postfix_expression: postfix_expression '.' • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 182
+
+
+State 157
 
    90 direct_declarator: direct_declarator '[' constant_expression ']' •
 
     $default  reduce using rule 90 (direct_declarator)
 
 
-State 156
+State 158
 
   108 var_decl: object_type direct_declarator semantic annotations ';' •
 
     $default  reduce using rule 108 (var_decl)
 
 
-State 157
+State 159
 
   106 var_decl: object_type direct_declarator semantic annotations '=' • type_constructor
   107         | object_type direct_declarator semantic annotations '=' • value
 
-    FLOAT        shift, and go to state 180
-    INT          shift, and go to state 181
-    FLOAT_TYPE   shift, and go to state 182
-    FLOAT2_TYPE  shift, and go to state 183
-    FLOAT3_TYPE  shift, and go to state 184
-    FLOAT4_TYPE  shift, and go to state 185
-    INT_TYPE     shift, and go to state 186
+    FLOAT        shift, and go to state 183
+    INT          shift, and go to state 184
+    FLOAT_TYPE   shift, and go to state 185
+    FLOAT2_TYPE  shift, and go to state 186
+    FLOAT3_TYPE  shift, and go to state 187
+    FLOAT4_TYPE  shift, and go to state 188
+    INT_TYPE     shift, and go to state 189
 
-    value                   go to state 187
-    basic_type_constructor  go to state 188
-    type_constructor        go to state 189
+    value                   go to state 190
+    basic_type_constructor  go to state 191
+    type_constructor        go to state 192
 
 
-State 158
+State 160
 
    19 function_definition: function_declaration semantic '{' $@1 CODEBODY •
 
     $default  reduce using rule 19 (function_definition)
 
 
-State 159
-
-  130 annotation_value: IDENTIFIER •
-
-    $default  reduce using rule 130 (annotation_value)
-
-
-State 160
-
-  126 annotation_value: FLOAT •
-
-    $default  reduce using rule 126 (annotation_value)
-
-
 State 161
 
-  127 annotation_value: INT •
+  132 annotation_value: IDENTIFIER •
 
-    $default  reduce using rule 127 (annotation_value)
+    $default  reduce using rule 132 (annotation_value)
 
 
 State 162
 
-  128 annotation_value: STR •
+  128 annotation_value: FLOAT •
 
     $default  reduce using rule 128 (annotation_value)
 
 
 State 163
 
-  129 annotation_value: UNSIGNED •
+  129 annotation_value: INT •
 
     $default  reduce using rule 129 (annotation_value)
 
 
 State 164
 
-  133 annotation: annotation_header '=' annotation_value • ';'
+  120 STRING_LIST: STR •
 
-    ';'  shift, and go to state 190
+    $default  reduce using rule 120 (STRING_LIST)
 
 
 State 165
+
+  131 annotation_value: UNSIGNED •
+
+    $default  reduce using rule 131 (annotation_value)
+
+
+State 166
+
+  121 STRING_LIST: STRING_LIST • STR
+  130 annotation_value: STRING_LIST •
+
+    STR  shift, and go to state 193
+
+    $default  reduce using rule 130 (annotation_value)
+
+
+State 167
+
+  135 annotation_base: annotation_header '=' annotation_value •
+
+    $default  reduce using rule 135 (annotation_base)
+
+
+State 168
 
   114 passes: passes • pass
   115       | passes • error
   119 tech: TECHNIQUE IDENTIFIER $@6 annotations '{' passes • '}'
 
-    error  shift, and go to state 134
-    PASS   shift, and go to state 94
-    '}'    shift, and go to state 191
+    error  shift, and go to state 136
+    PASS   shift, and go to state 95
+    '}'    shift, and go to state 194
 
-    pass  go to state 136
+    pass  go to state 138
 
 
-State 166
+State 169
 
   112 pass: PASS IDENTIFIER $@4 • annotations passstates
 
     '<'  shift, and go to state 61
 
-    $default  reduce using rule 134 (annotations)
+    $default  reduce using rule 138 (annotations)
 
-    annotations  go to state 192
+    annotations  go to state 195
 
 
-State 167
+State 170
 
   110 pass: PASS $@3 annotations • passstates
 
-    '{'  shift, and go to state 193
+    '{'  shift, and go to state 196
 
-    passstates  go to state 194
+    passstates  go to state 197
 
 
-State 168
+State 171
 
    26 register_value: IDENTIFIER •
 
     $default  reduce using rule 26 (register_value)
 
 
-State 169
+State 172
 
    25 register_value: INT •
 
     $default  reduce using rule 25 (register_value)
 
 
-State 170
+State 173
 
    27 register_declaration: ':' REGISTER '(' register_value • ')'
 
-    ')'  shift, and go to state 195
+    ')'  shift, and go to state 198
 
 
-State 171
+State 174
 
    29 cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}' •
 
     $default  reduce using rule 29 (cbuffer)
 
 
-State 172
+State 175
 
    38 var_decls: var_decls var_decl ';' •
 
     $default  reduce using rule 38 (var_decls)
 
 
-State 173
+State 176
 
    15 arguments: var_spec var_decl •
    16          | var_spec var_decl • ',' arguments
 
-    ','  shift, and go to state 196
+    ','  shift, and go to state 199
 
     $default  reduce using rule 15 (arguments)
 
 
-State 174
+State 177
 
    23 function_declaration: object_type IDENTIFIER '(' $@2 arguments ')' •
 
     $default  reduce using rule 23 (function_declaration)
 
 
-State 175
+State 178
 
    87 identifier_list: identifier_list ',' IDENTIFIER •
 
     $default  reduce using rule 87 (identifier_list)
 
 
-State 176
+State 179
 
    78 primary_expression: '(' postfix_expression ')' •
 
     $default  reduce using rule 78 (primary_expression)
 
 
-State 177
+State 180
 
    81 postfix_expression: postfix_expression '(' ')' •
 
     $default  reduce using rule 81 (postfix_expression)
 
 
-State 178
+State 181
 
    80 postfix_expression: postfix_expression • '[' postfix_expression ']'
    80                   | postfix_expression '[' postfix_expression • ']'
    81                   | postfix_expression • '(' ')'
    82                   | postfix_expression • '.' IDENTIFIER
 
-    '('  shift, and go to state 152
-    '['  shift, and go to state 153
-    ']'  shift, and go to state 197
-    '.'  shift, and go to state 154
+    '('  shift, and go to state 154
+    '['  shift, and go to state 155
+    ']'  shift, and go to state 200
+    '.'  shift, and go to state 156
 
 
-State 179
+State 182
 
    82 postfix_expression: postfix_expression '.' IDENTIFIER •
 
     $default  reduce using rule 82 (postfix_expression)
 
 
-State 180
+State 183
 
    98 value: FLOAT •
 
     $default  reduce using rule 98 (value)
 
 
-State 181
+State 184
 
    97 value: INT •
 
     $default  reduce using rule 97 (value)
 
 
-State 182
-
-   99 basic_type_constructor: FLOAT_TYPE • '(' value ')'
-
-    '('  shift, and go to state 198
-
-
-State 183
-
-  101 basic_type_constructor: FLOAT2_TYPE • '(' value ',' value ')'
-
-    '('  shift, and go to state 199
-
-
-State 184
-
-  102 basic_type_constructor: FLOAT3_TYPE • '(' value ',' value ',' value ')'
-
-    '('  shift, and go to state 200
-
-
 State 185
 
-  103 basic_type_constructor: FLOAT4_TYPE • '(' value ',' value ',' value ',' value ')'
+   99 basic_type_constructor: FLOAT_TYPE • '(' value ')'
 
     '('  shift, and go to state 201
 
 
 State 186
 
-  100 basic_type_constructor: INT_TYPE • '(' value ')'
+  101 basic_type_constructor: FLOAT2_TYPE • '(' value ',' value ')'
 
     '('  shift, and go to state 202
 
 
 State 187
 
+  102 basic_type_constructor: FLOAT3_TYPE • '(' value ',' value ',' value ')'
+
+    '('  shift, and go to state 203
+
+
+State 188
+
+  103 basic_type_constructor: FLOAT4_TYPE • '(' value ',' value ',' value ',' value ')'
+
+    '('  shift, and go to state 204
+
+
+State 189
+
+  100 basic_type_constructor: INT_TYPE • '(' value ')'
+
+    '('  shift, and go to state 205
+
+
+State 190
+
   107 var_decl: object_type direct_declarator semantic annotations '=' value •
 
     $default  reduce using rule 107 (var_decl)
 
 
-State 188
+State 191
 
   104 type_constructor: basic_type_constructor •
 
     $default  reduce using rule 104 (type_constructor)
 
 
-State 189
+State 192
 
   106 var_decl: object_type direct_declarator semantic annotations '=' type_constructor •
 
     $default  reduce using rule 106 (var_decl)
 
 
-State 190
+State 193
 
-  133 annotation: annotation_header '=' annotation_value ';' •
+  121 STRING_LIST: STRING_LIST STR •
 
-    $default  reduce using rule 133 (annotation)
+    $default  reduce using rule 121 (STRING_LIST)
 
 
-State 191
+State 194
 
   119 tech: TECHNIQUE IDENTIFIER $@6 annotations '{' passes '}' •
 
     $default  reduce using rule 119 (tech)
 
 
-State 192
+State 195
 
   112 pass: PASS IDENTIFIER $@4 annotations • passstates
 
-    '{'  shift, and go to state 193
+    '{'  shift, and go to state 196
 
-    passstates  go to state 203
+    passstates  go to state 206
 
 
-State 193
+State 196
 
    57 passstates: '{' • shader_assignments '}'
 
-    VERTEXPROGRAM    shift, and go to state 204
-    FRAGMENTPROGRAM  shift, and go to state 205
-    GEOMETRYPROGRAM  shift, and go to state 206
+    VERTEXPROGRAM    shift, and go to state 207
+    FRAGMENTPROGRAM  shift, and go to state 208
+    GEOMETRYPROGRAM  shift, and go to state 209
 
     VERTEXPROGRAM    [reduce using rule 56 (shader_assignments)]
     FRAGMENTPROGRAM  [reduce using rule 56 (shader_assignments)]
     GEOMETRYPROGRAM  [reduce using rule 56 (shader_assignments)]
     $default         reduce using rule 56 (shader_assignments)
 
-    shader_type         go to state 207
-    shader_assignment   go to state 208
-    shader_assignments  go to state 209
+    shader_type         go to state 210
+    shader_assignment   go to state 211
+    shader_assignments  go to state 212
 
     shift/reduce conflict on token VERTEXPROGRAM:
        56 shader_assignments: ε •
@@ -2514,259 +2556,259 @@ State 193
 
 
 
-State 194
+State 197
 
   110 pass: PASS $@3 annotations passstates •
 
     $default  reduce using rule 110 (pass)
 
 
-State 195
+State 198
 
    27 register_declaration: ':' REGISTER '(' register_value ')' •
 
     $default  reduce using rule 27 (register_declaration)
 
 
-State 196
+State 199
 
    16 arguments: var_spec var_decl ',' • arguments
 
-    INSPECYFIER   shift, and go to state 144
-    OUTSPECYFIER  shift, and go to state 145
+    INSPECYFIER   shift, and go to state 146
+    OUTSPECYFIER  shift, and go to state 147
 
     ')'       reduce using rule 17 (arguments)
     $default  reduce using rule 14 (var_spec)
 
-    var_spec   go to state 146
-    arguments  go to state 210
+    var_spec   go to state 148
+    arguments  go to state 213
 
 
-State 197
+State 200
 
    80 postfix_expression: postfix_expression '[' postfix_expression ']' •
 
     $default  reduce using rule 80 (postfix_expression)
 
 
-State 198
+State 201
 
    99 basic_type_constructor: FLOAT_TYPE '(' • value ')'
 
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
-
-    value  go to state 211
-
-
-State 199
-
-  101 basic_type_constructor: FLOAT2_TYPE '(' • value ',' value ')'
-
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
-
-    value  go to state 212
-
-
-State 200
-
-  102 basic_type_constructor: FLOAT3_TYPE '(' • value ',' value ',' value ')'
-
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
-
-    value  go to state 213
-
-
-State 201
-
-  103 basic_type_constructor: FLOAT4_TYPE '(' • value ',' value ',' value ',' value ')'
-
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
 
     value  go to state 214
 
 
 State 202
 
-  100 basic_type_constructor: INT_TYPE '(' • value ')'
+  101 basic_type_constructor: FLOAT2_TYPE '(' • value ',' value ')'
 
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
 
     value  go to state 215
 
 
 State 203
 
+  102 basic_type_constructor: FLOAT3_TYPE '(' • value ',' value ',' value ')'
+
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
+
+    value  go to state 216
+
+
+State 204
+
+  103 basic_type_constructor: FLOAT4_TYPE '(' • value ',' value ',' value ',' value ')'
+
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
+
+    value  go to state 217
+
+
+State 205
+
+  100 basic_type_constructor: INT_TYPE '(' • value ')'
+
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
+
+    value  go to state 218
+
+
+State 206
+
   112 pass: PASS IDENTIFIER $@4 annotations passstates •
 
     $default  reduce using rule 112 (pass)
 
 
-State 204
+State 207
 
    48 shader_type: VERTEXPROGRAM •
 
     $default  reduce using rule 48 (shader_type)
 
 
-State 205
+State 208
 
    50 shader_type: FRAGMENTPROGRAM •
 
     $default  reduce using rule 50 (shader_type)
 
 
-State 206
+State 209
 
    49 shader_type: GEOMETRYPROGRAM •
 
     $default  reduce using rule 49 (shader_type)
 
 
-State 207
+State 210
 
    53 shader_assignment: shader_type • '=' shader_assignment_shader ';'
 
-    '='  shift, and go to state 216
+    '='  shift, and go to state 219
 
 
-State 208
+State 211
 
    54 shader_assignments: shader_assignment •
 
     $default  reduce using rule 54 (shader_assignments)
 
 
-State 209
+State 212
 
    55 shader_assignments: shader_assignments • shader_assignment
    57 passstates: '{' shader_assignments • '}'
 
-    VERTEXPROGRAM    shift, and go to state 204
-    FRAGMENTPROGRAM  shift, and go to state 205
-    GEOMETRYPROGRAM  shift, and go to state 206
-    '}'              shift, and go to state 217
+    VERTEXPROGRAM    shift, and go to state 207
+    FRAGMENTPROGRAM  shift, and go to state 208
+    GEOMETRYPROGRAM  shift, and go to state 209
+    '}'              shift, and go to state 220
 
-    shader_type        go to state 207
-    shader_assignment  go to state 218
+    shader_type        go to state 210
+    shader_assignment  go to state 221
 
 
-State 210
+State 213
 
    16 arguments: var_spec var_decl ',' arguments •
 
     $default  reduce using rule 16 (arguments)
 
 
-State 211
+State 214
 
    99 basic_type_constructor: FLOAT_TYPE '(' value • ')'
 
-    ')'  shift, and go to state 219
-
-
-State 212
-
-  101 basic_type_constructor: FLOAT2_TYPE '(' value • ',' value ')'
-
-    ','  shift, and go to state 220
-
-
-State 213
-
-  102 basic_type_constructor: FLOAT3_TYPE '(' value • ',' value ',' value ')'
-
-    ','  shift, and go to state 221
-
-
-State 214
-
-  103 basic_type_constructor: FLOAT4_TYPE '(' value • ',' value ',' value ',' value ')'
-
-    ','  shift, and go to state 222
+    ')'  shift, and go to state 222
 
 
 State 215
 
-  100 basic_type_constructor: INT_TYPE '(' value • ')'
+  101 basic_type_constructor: FLOAT2_TYPE '(' value • ',' value ')'
 
-    ')'  shift, and go to state 223
+    ','  shift, and go to state 223
 
 
 State 216
 
-   53 shader_assignment: shader_type '=' • shader_assignment_shader ';'
+  102 basic_type_constructor: FLOAT3_TYPE '(' value • ',' value ',' value ')'
 
-    IDENTIFIER  shift, and go to state 224
-    '('         shift, and go to state 57
-
-    shader_assignment_shader  go to state 225
-    direct_declarator         go to state 226
+    ','  shift, and go to state 224
 
 
 State 217
+
+  103 basic_type_constructor: FLOAT4_TYPE '(' value • ',' value ',' value ',' value ')'
+
+    ','  shift, and go to state 225
+
+
+State 218
+
+  100 basic_type_constructor: INT_TYPE '(' value • ')'
+
+    ')'  shift, and go to state 226
+
+
+State 219
+
+   53 shader_assignment: shader_type '=' • shader_assignment_shader ';'
+
+    IDENTIFIER  shift, and go to state 227
+    '('         shift, and go to state 57
+
+    shader_assignment_shader  go to state 228
+    direct_declarator         go to state 229
+
+
+State 220
 
    57 passstates: '{' shader_assignments '}' •
 
     $default  reduce using rule 57 (passstates)
 
 
-State 218
+State 221
 
    55 shader_assignments: shader_assignments shader_assignment •
 
     $default  reduce using rule 55 (shader_assignments)
 
 
-State 219
+State 222
 
    99 basic_type_constructor: FLOAT_TYPE '(' value ')' •
 
     $default  reduce using rule 99 (basic_type_constructor)
 
 
-State 220
+State 223
 
   101 basic_type_constructor: FLOAT2_TYPE '(' value ',' • value ')'
 
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
 
-    value  go to state 227
+    value  go to state 230
 
 
-State 221
+State 224
 
   102 basic_type_constructor: FLOAT3_TYPE '(' value ',' • value ',' value ')'
 
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
 
-    value  go to state 228
+    value  go to state 231
 
 
-State 222
+State 225
 
   103 basic_type_constructor: FLOAT4_TYPE '(' value ',' • value ',' value ',' value ')'
 
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
 
-    value  go to state 229
+    value  go to state 232
 
 
-State 223
+State 226
 
   100 basic_type_constructor: INT_TYPE '(' value ')' •
 
     $default  reduce using rule 100 (basic_type_constructor)
 
 
-State 224
+State 227
 
    52 shader_assignment_shader: IDENTIFIER •
    88 direct_declarator: IDENTIFIER •
@@ -2789,14 +2831,14 @@ State 224
 
 
 
-State 225
+State 228
 
    53 shader_assignment: shader_type '=' shader_assignment_shader • ';'
 
-    ';'  shift, and go to state 230
+    ';'  shift, and go to state 233
 
 
-State 226
+State 229
 
    51 shader_assignment_shader: direct_declarator •
    90 direct_declarator: direct_declarator • '[' constant_expression ']'
@@ -2811,100 +2853,100 @@ State 226
     $default  reduce using rule 51 (shader_assignment_shader)
 
 
-State 227
+State 230
 
   101 basic_type_constructor: FLOAT2_TYPE '(' value ',' value • ')'
 
-    ')'  shift, and go to state 231
+    ')'  shift, and go to state 234
 
 
-State 228
+State 231
 
   102 basic_type_constructor: FLOAT3_TYPE '(' value ',' value • ',' value ')'
 
-    ','  shift, and go to state 232
+    ','  shift, and go to state 235
 
 
-State 229
+State 232
 
   103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value • ',' value ',' value ')'
 
-    ','  shift, and go to state 233
+    ','  shift, and go to state 236
 
 
-State 230
+State 233
 
    53 shader_assignment: shader_type '=' shader_assignment_shader ';' •
 
     $default  reduce using rule 53 (shader_assignment)
 
 
-State 231
+State 234
 
   101 basic_type_constructor: FLOAT2_TYPE '(' value ',' value ')' •
 
     $default  reduce using rule 101 (basic_type_constructor)
 
 
-State 232
+State 235
 
   102 basic_type_constructor: FLOAT3_TYPE '(' value ',' value ',' • value ')'
 
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
 
-    value  go to state 234
-
-
-State 233
-
-  103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value ',' • value ',' value ')'
-
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
-
-    value  go to state 235
-
-
-State 234
-
-  102 basic_type_constructor: FLOAT3_TYPE '(' value ',' value ',' value • ')'
-
-    ')'  shift, and go to state 236
-
-
-State 235
-
-  103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value ',' value • ',' value ')'
-
-    ','  shift, and go to state 237
+    value  go to state 237
 
 
 State 236
+
+  103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value ',' • value ',' value ')'
+
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
+
+    value  go to state 238
+
+
+State 237
+
+  102 basic_type_constructor: FLOAT3_TYPE '(' value ',' value ',' value • ')'
+
+    ')'  shift, and go to state 239
+
+
+State 238
+
+  103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value ',' value • ',' value ')'
+
+    ','  shift, and go to state 240
+
+
+State 239
 
   102 basic_type_constructor: FLOAT3_TYPE '(' value ',' value ',' value ')' •
 
     $default  reduce using rule 102 (basic_type_constructor)
 
 
-State 237
+State 240
 
   103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value ',' value ',' • value ')'
 
-    FLOAT  shift, and go to state 180
-    INT    shift, and go to state 181
+    FLOAT  shift, and go to state 183
+    INT    shift, and go to state 184
 
-    value  go to state 238
+    value  go to state 241
 
 
-State 238
+State 241
 
   103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value ',' value ',' value • ')'
 
-    ')'  shift, and go to state 239
+    ')'  shift, and go to state 242
 
 
-State 239
+State 242
 
   103 basic_type_constructor: FLOAT4_TYPE '(' value ',' value ',' value ',' value ')' •
 

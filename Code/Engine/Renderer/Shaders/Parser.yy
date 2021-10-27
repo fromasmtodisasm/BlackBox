@@ -551,16 +551,19 @@ TECHNIQUE {
 /*
    ANNOTATIONS - TODO: more types of annotations
  */
+
+STRING_LIST: STR | STRING_LIST STR;
 scalar_type: INT_TYPE | FLOAT_TYPE | UNSIGNED | STRING_TYPE;
 // TODO: research for rule[word] (what is it previous?) 
 // most likely it is: https://www.gnu.org/software/bison/manual/html_node/Named-References.html
 annotation_list: annotation_list[previous] annotation
 | annotation;
 
-annotation_value: FLOAT | INT | STR | UNSIGNED | IDENTIFIER{CryLog("annotation IDENTIFIER");};
+annotation_value: FLOAT | INT | STRING_LIST | UNSIGNED | IDENTIFIER{CryLog("annotation IDENTIFIER");};
 
 annotation_header: scalar_type IDENTIFIER | REGISTER;
-annotation: annotation_header '=' annotation_value ';' {
+annotation_base: annotation_header '=' annotation_value 
+annotation:  annotation_base | annotation_base ';' {
     //CryLog("annotation: %s = ", $IDENTIFIER.c_str());
 /*
     if(!curAnnotations)
