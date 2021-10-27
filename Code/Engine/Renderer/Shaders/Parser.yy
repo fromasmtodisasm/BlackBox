@@ -27,6 +27,7 @@
 
     //extern void lex_pop_state();
     #define lex_pop_state() scanner.pop_state()
+    #define lex_print_state() scanner.print_state()
 
 
     namespace nvFX {
@@ -274,7 +275,7 @@ input: %empty { CryLog("Empty effect"); }
 | input var_decl
 | input shader_resource
 | input function_definition
-| input function_declaration
+| input function_declaration {CryLog("Pop lex state from declaration"); lex_pop_state();}
 | input fatal_error
 | input struct
 | input error
@@ -287,16 +288,18 @@ arguments:  var_spec var_decl |
             %empty;
         
 function_definition: function_declaration semantic '{' { 
-    CryLog("Open function scope"); scanner.goto_codebody(); 
+    CryLog("Open function scope");
     } CODEBODY {
     CryLog("Close function scope"); 
-    CryLog("Funcbody: \n%s", $CODEBODY.data());
+    auto body = $CODEBODY;
+    CryLog("FuncBody: %s", body.data());
 }
 
 object_type: TYPE_NAME | base_type;
 
 function_declaration: object_type IDENTIFIER[name] '(' {CryLog("TryParseFunc");}arguments ')'{
     CryLog("Parsed function declaration for: [%s]", $name.data());
+    lex_print_state();
 }; 
 
 fatal_error: FATALERROR { CryFatalError("Stopping paring!!!"); }
@@ -534,6 +537,6 @@ yy::parser::error(const location_type& l, const std::string& m)
 {
   std::stringstream ss;
   ss << l << ": " << m;
-  gEnv->pLog->LogError(ss.str().c_str());    
+  CryError(ss.str().c_str());    
 }
 #pragma warning(pop)

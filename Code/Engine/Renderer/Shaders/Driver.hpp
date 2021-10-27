@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include <fstream>
+#define YYDEBUG 1
+#define YYFPRINTF(stderr, format, ...) CryError(format, __VA_ARGS__)
 #pragma warning(push, 0)
 #include "Parser.hpp"
 #pragma warning(pop)

@@ -64,6 +64,7 @@
 
     //extern void lex_pop_state();
     #define lex_pop_state() scanner.pop_state()
+    #define lex_print_state() scanner.print_state()
 
 
     namespace nvFX {
@@ -136,7 +137,7 @@
     }
 
 
-#line 140 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 141 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -276,7 +277,7 @@
 #endif
 
 namespace yy {
-#line 280 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 281 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 
@@ -3041,7 +3042,7 @@ switch (yykind)
 
 
 } // yy
-#line 3045 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 3046 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 

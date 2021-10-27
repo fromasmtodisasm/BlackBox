@@ -34,6 +34,14 @@
     }
     #endif
     bool return_from_func = true;
+    void print_state(int state);
+    void print_current_state();
+  const char* state_to_string(int state);
+
+    void Scanner::print_state()
+    {
+      ::print_state(YY_START);
+    }
 
 
 %}
@@ -69,7 +77,10 @@ float_number [+-]?([0-9]*[.])?[0-9]+
 
 %{
   // Code run each time a pattern is matched.
-  # define YY_USER_ACTION  loc.columns (yyleng);
+  # define YY_USER_ACTION  \
+  loc.columns (yyleng);\
+  //::print_state(YY_START);\
+  //CryLog("Current token text: %s", YYText());
 %}
 %%
 %{
@@ -79,6 +90,7 @@ float_number [+-]?([0-9]*[.])?[0-9]+
   loc.step();
   int  comment_caller;
   char  string_buf[MAX_STR_CONST];
+  //string_buf.clear();
   //CryLog("Begin yylex");
 
 %}
@@ -87,11 +99,6 @@ FatalError {
 	return yy::parser::make_FATALERROR(loc);
 }
 
-Shader {
-    bracket_level = 0;
-    yy_push_state(function);
-	return yy::parser::make_HLSL11SHADER(loc);
-}
 [Tt]echnique {
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
@@ -100,9 +107,13 @@ Shader {
 <INITIAL,cstbuffer>register {
 	return yy::parser::make_REGISTER(loc);
 }
-
+<INITIAL>"[[fn]]" {
+  CryLog("[[fn]]");
+  yy_push_state(function);
+  print_state();
+}
 <INITIAL>cbuffer {
-    yy_push_state(cstbuffer);
+  yy_push_state(cstbuffer);
 	return yy::parser::make_CSTBUFFER(loc);
 }
 <INITIAL>Texture2D {
@@ -117,11 +128,11 @@ Shader {
 	return yy::parser::make_STRUCT(loc);
 }
 
-in {
+<INITIAL,function,functionbody>in {
 	return yy::parser::make_INSPECYFIER(loc);
 }
 
-out {
+<INITIAL,function,functionbody>out {
 	return yy::parser::make_OUTSPECYFIER(loc);
 }
 
@@ -135,7 +146,7 @@ out {
         return CURRENT_SYMBOL;
     }
 }
-<INITIAL,cstbuffer,function,input_layout,pass,technique>{
+<INITIAL,cstbuffer,function,functionbody,input_layout,pass,technique>{
     void   return yy::parser::make_VOID_TYPE(loc);
     unsigned return yy::parser::make_UNSIGNED(loc);
     float  return yy::parser::make_FLOAT_TYPE(loc);
@@ -171,14 +182,16 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     /*==================================================================
       Comment starting points
     */
-<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout>"/*" {
+<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout,function,functionbody>"/*" {
     comment_caller  =  INITIAL;
     yy_push_state(comment);
 }
 
-<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout>"//" {
-    comment_caller  =  INITIAL;
+<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout,function,functionbody>"//" {
+    comment_caller  =  YY_START;
+    CryLog("Comments!!!");
     yy_push_state(comment2);
+    ::print_state(YY_START);
 }
 
 <comment>{
@@ -190,7 +203,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 }
 
 <comment2>{
-    .*
+    .* CryLog("_____");
     \n loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 }
  /*==================================================================
@@ -246,39 +259,14 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     */
 <function>{
     \{  {
-        CryLog("In shader state");
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
         *string_buf_ptr = '\0';
         yy_push_state(functionbody);
-        if (return_from_func)
-            return CURRENT_SYMBOL;
-        else{
-            CryLog("no return");
-        }
-    }
-    {id} {
-        // TODO create and REGISTER the variable in a table
-        CryLog("function id");
-		return check_type(yytext, loc);
+        return CURRENT_SYMBOL;
     }
 }
 
-<functionbody>"/"+"*" {
-        comment_caller  =  functionbody;
-        yy_push_state(comment);
-        CryFatalError("comments in function body");
-    }
-<functionbody>"/"+"/" {
-        comment_caller  =  functionbody;
-        yy_push_state(comment2);
-        CryFatalError("comments in function body");
-    }
-<functionbody>"\{" {
-        CryLog("bracket level: %d", bracket_level);
-        bracket_level++;
-        *string_buf_ptr++  =  yytext[0];
-    }
 <functionbody>"\}" {
         CryLog("bracket level: %d", bracket_level);
         bracket_level--;
@@ -289,7 +277,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
             yy_pop_state(); // back to shader
             yy_pop_state();// back to INITIAL
             return_from_func = true;
-			return yy::parser::make_CODEBODY(this->string_buf, loc);
+            return yy::parser::make_CODEBODY(string_buf, loc);
         } else {
             *string_buf_ptr++  =  yytext[0];
         }
@@ -301,7 +289,8 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
         //TODO:
 		loc.lines (yyleng); loc.step ();
     }
-<functionbody>[^\n^\{^\}]+ {  /*copy the GLSL data*/
+<functionbody>[^\\/\n^\{^\}]+ {  /*copy the GLSL data*/
+        CryLog("Copy function data");
         char  *yptr  =  yytext;
         while  (  *yptr  )
         *string_buf_ptr++  =  *yptr++;
@@ -348,10 +337,10 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
 }
 
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,function,resource,resource1,fbo,fbo1,input_layout>\n+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>\n+ {
     loc.lines (yyleng); loc.step ();
 }
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,function,resource,resource1,fbo,fbo1,input_layout>{blank}+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>{blank}+ {
     loc.step ();
 }
 
@@ -374,8 +363,8 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 
 {int}      return make_INT(yytext, loc);
 {float_number}      return make_FLOAT(yytext, loc);
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>{id}   return check_type(yytext, loc);
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout>. {   
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout,function>{id}   return check_type(yytext, loc);
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout,function>. {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
         return CURRENT_SYMBOL;
     else {
@@ -455,51 +444,6 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
 }
 
-#define {
-    CryLog("BeginDefine"); BEGIN(define);
-    yy::location& loc = driver.location;
-    loc.step();
-}
-
-<define>[ \t\n]+ {
-    BEGIN(defname);
-    yy::location& loc = driver.location;
-    loc.step();
-}
-<defname>[^ \t\n]+ {
-    CryLog("defined name: %s", YYText());
-    yy::location& loc = driver.location;
-    loc.step();
-}
-<defname>[ \t]+ {
-    BEGIN(defval);
-}
-<defval>[^\n]+ {
-    CryLog("defined value: %s", YYText());
-}
-<defval>[\n] {
-    BEGIN(INITIAL);
-    yy::location& loc = driver.location;
-    loc.step();
-}
-
-#ifdef {
-    CryLog("BeginDef"); BEGIN(ifdef);
-}
-<ifdef>[ \t\n]+ {
-    BEGIN(getname);
-    yy::location& loc = driver.location;
-    loc.step();
-}
-<getname>[^ \t\n]+ {
-    CryLog("ifdef name: %s", YYText());
-    BEGIN(endif);
-}
-
-<endif>#endif {
-    BEGIN(INITIAL);
-}
-
 %%
 
 yy::parser::symbol_type make_INT(
@@ -572,14 +516,6 @@ void Scanner::eof()
 	//include_stack.pop();
 }
 
-void Scanner::goto_codebody()
-{
-    bracket_level = 1;
-    string_buf_ptr  =  string_buf;
-    *string_buf_ptr = '\0';
-    yy_push_state(function);return_from_func = false;
-    //yy_push_state(functionbody);
-}
   yy::parser::symbol_type Scanner::check_type(
     const std::string &s,
     const yy::parser::location_type& loc
@@ -596,6 +532,58 @@ void Scanner::goto_codebody()
       }
   }
 
+
+const char* state_to_string(int state)
+{
+    static char buffer[256];
+    char* cState{};
+    switch(state)
+    {
+        case ifdef: cState = "ifdef"; break; 
+        case endif: cState = "endif"; break;
+        case getname: cState = "getname"; break;
+        case define: cState = "define"; break;
+        case defname: cState = "defname"; break;
+        case defval: cState = "defval"; break;
+        case fbo: cState = "fbo"; break;
+        case fbo1: cState = "fbo1"; break;
+        case clearmode: cState = "clearmode"; break;
+        case rendermode: cState = "rendermode"; break;
+        case incl: cState = "incl"; break;
+        case comment: cState = "comment"; break;
+        case comment2: cState = "comment2"; break;
+        case str: cState = "str"; break;
+        case function: cState = "function"; break;
+        case functionbody: cState = "functionbody"; break;
+        case cstbuffer: cState = "cstbuffer"; break;
+        case technique: cState = "technique"; break;
+        case pass: cState = "pass"; break;
+        case sampler_state: cState = "sampler_state"; break;
+        case dst_state: cState = "dst_state"; break;
+        case pr_state: cState = "pr_state"; break;
+        case color_sample_state: cState = "color_sample_state"; break;
+        case rasterization_state: cState = "rasterization_state"; break;
+        case resource: cState = "resource"; break;
+        case resource1: cState = "resource1"; break;
+        case input_layout: cState = "input_layout"; break;
+        case INITIAL: cState = "INITIAL"; break;
+        default: cState = "unknown";
+    }
+
+    sprintf(buffer, "%s(%d)", cState, state);
+    return buffer;
+}
+
+void print_state(int state){
+  CryLog("$1Current state: %s", state_to_string(state));
+}
+
+#if 0
+void print_current_state()
+{
+  print_state(YY_START);
+}
+#endif
 
 
 #pragma warning(pop)

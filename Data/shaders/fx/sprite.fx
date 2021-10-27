@@ -62,9 +62,13 @@ float  UIMax	= 2.0;
 float  UIStep	= 0.1;
 >				= 0.1;
 
+[[fn]]
 float3 main(in float4 f1, out int i2);
 
+[[fn]]
 float3 main(in float4 f1, out int i2);
+
+[[fn]]
 float3 main2(float4 f1, out int i2) {
     return float3(0);
 }
@@ -86,6 +90,7 @@ struct VsInput
     float2 TC : TEXCOORD0;
 };
 
+[[fn]]
 VsOutput VSMain(VsInput IN)
 {
     VsOutput Output;
@@ -95,12 +100,14 @@ VsOutput VSMain(VsInput IN)
     return Output;
 }  
 
+[[fn]]
 float4 Font(VsOutput IN) : SV_Target0
 {    
     // {{{{{{{{{{{{{{{{{
     return IN.Color * float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
 }
 
+[[fn]]
 float4 TexturedQuad(VsOutput IN) : SV_Target0
 {    
     return text.Sample(textSampler, IN.TexCoords);
