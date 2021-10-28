@@ -41,7 +41,9 @@ CClient::CClient(CXGame* pGame)
 
 CClient::~CClient()
 {
+#if 0
 	SAFE_RELEASE(m_CrossHair);
+#endif
 	SAFE_RELEASE(m_pClient);
 }
 
@@ -178,10 +180,6 @@ bool CClient::Init()
 	//m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
-	#if 0
-	if (gEnv->pRenderer)
-		m_CrossHair = gEnv->pRenderer->LoadTexture("crosshair.png", 0, false);
-	#endif
 
 	return Script::CallMethod(m_PlayerScript, "OnInit");
 }
@@ -426,13 +424,12 @@ void CClient::DrawAux()
 		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
 	DrawAxis(render, Legacy::Vec3(40));
-	//m_pRender->DrawFullScreenImage(m_CrossHair->getId());
 	size_t ch_w = 20;
 	size_t ch_h = 20;
-	#if 0
+#if 0
 	if (gEnv->pRenderer)
-		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair->getId(), 0, 0, 1, 1, 0, 1, 0, 0.5);
-	#endif
+		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair, 0, 0, 1, 1, 0, 1, 0, 0.5);
+#endif
 }
 
 void CClient::DrawAxis(IRenderAuxGeom* render, Legacy::Vec3 axis)

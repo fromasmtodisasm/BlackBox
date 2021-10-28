@@ -412,9 +412,11 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 	#endif
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
 
+#if 0
 	Image2D img = m_DrawImages.back();
 	Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
 	m_DrawImages.pop_back();
+#endif
 }
 
 ITexPic* CD3DRenderer::EF_GetTextureByID(int Id)
@@ -451,6 +453,28 @@ ID3D10ShaderResourceView* CD3DRenderer::CreateTextureFromFile(CCryFile file)
 
 }
 
+ID3D10ShaderResourceView* CD3DRenderer::CreateTextureFromFile(const char* name)
+{
+	#if 0
+	int					   texture_index = -1;
+	D3DX10_IMAGE_LOAD_INFO loadInfo;
+	ZeroMemory(&loadInfo, sizeof(D3DX10_IMAGE_LOAD_INFO));
+	loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
+	#endif
+	ID3D10Resource*			  pTexture{};
+	ID3D10ShaderResourceView* pSRView = NULL;
+	HRESULT					  HResult{};
+
+	HResult = D3DX10CreateShaderResourceViewFromFile(
+		m_pd3dDevice,
+		name,
+		nullptr,
+		nullptr,
+		&pSRView,
+		&HResult);
+	return pSRView;
+}
+
 string CD3DRenderer::AdjustTexturePath(const char* filename)
 {
 	string path(filename), fn, ext;
@@ -474,13 +498,13 @@ string CD3DRenderer::AdjustTexturePath(const char* filename)
 	return path;
 }
 
-bool CD3DRenderer::FindTexture(const char* filename, CCryFile& file)
+bool CD3DRenderer::FindTexture(const char* filename, CCryFile& file, string& adjustet_name)
 {
 	bool	 result		   = false;
-	auto	 path		   = AdjustTexturePath(filename);
+	adjustet_name = AdjustTexturePath(filename);
 	bool	 loaded		   = true;
 
-	if (file.Open(path.data(), "r"))
+	if (file.Open(adjustet_name.data(), "r"))
 	{
 		result = true;
 	}
@@ -488,9 +512,9 @@ bool CD3DRenderer::FindTexture(const char* filename, CCryFile& file)
 	{
 		loaded = false;
 		string _file;
-		PathUtil::Split(filename, path, _file);
-		path = path + _file + ".jpg";
-		result = file.Open(path.data(), "r");
+		PathUtil::Split(filename, adjustet_name, _file);
+		adjustet_name = adjustet_name + _file + ".jpg";
+		result = file.Open(adjustet_name.data(), "r");
 	}
 	return result;
 }
@@ -531,13 +555,15 @@ unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsi
 	int		 texture_index = -1;
 	CCryFile file;
 
-	if (!FindTexture(filename, file))
+	string adjustet_name;
+	if (!FindTexture(filename, file, adjustet_name))
 	{
 		CryError("Failed open texture: %s", filename);
 	}
 	else
 	{
-		auto srv = CreateTextureFromFile(file);
+		//auto srv = CreateTextureFromFile(file);
+		auto srv = CreateTextureFromFile(adjustet_name.data());
 		if (srv)
 		{
 			CryLog("$3Loaded texture %s", filename);

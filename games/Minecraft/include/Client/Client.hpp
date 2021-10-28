@@ -147,7 +147,6 @@ class CClient :
 	std::vector<Legacy::Vec3> m_LineList;
 	bool m_InsertLines = false;
 
-	ITexture* m_CrossHair = nullptr;
 
 	size_t m_FireCount;
 
