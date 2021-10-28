@@ -719,7 +719,8 @@ protected:
 	void OnCollectUserData(INT_PTR nValue, int nCookie);		//AMD Port
 
 public:
-  	class Minecraft* minecraft;
+  	class MinePlayer* minePlayer;
+	class Minecraft* minecraft;
 
 	void ClearTagPoints();
 	void SetCurrentUI(CUIHud* pUI);

@@ -1,88 +1,59 @@
 #include <glm/gtx/hash.hpp>
 
-struct Block
+class MineWorld
 {
+  public:
 	enum Type
 	{
 		Grass,
 	};
 
-	IStatObj* obj = nullptr;
-	int		  texture = -1;
-	bool	  is_hard = false;
-	float	  light	  = 0;
+	void init();
+
+	void set(glm::ivec3 pos, Type type);
+
+	void destroy(glm::ivec3 pos);
+
+	bool blockOnCursor(glm::ivec3& outPos, float pickDistance);
+
+  private:
+	bool tryDestroy(glm::ivec3 pos);
+
+	std::unordered_map<glm::ivec3, IEntity*> entities;
+	std::vector<IStatObj*>						types;
+	unsigned entityCnt = 0;
 };
 
-struct BlockEntity
+class MinePlayer
 {
-	Block::Type type;
-	IEntity* entity = nullptr;
-	glm::mat4 transformMatrix{};
+  public:
+	void init(MineWorld* mineWorld);
+
+	void destroyBlockOnCursor();
+
+  private:
+	MineWorld* world = nullptr;
+	float prevTime = 0.0;
 };
 
-using BlockData = std::vector<Block>;
-
-using EntityData = std::unordered_map<glm::ivec3, BlockEntity>;
-
-struct Data
+class MineUI
 {
-	BlockData						blocks;
-	EntityData entities;
+  public:
+	void init();
+
+	void draw() const;
+
+  private:
+	unsigned crossHairTexture = 0;
 };
-
-struct Picking
-{
-	bool blockOnCursor(glm::ivec3& outPos);
-
-	glm::ivec3 facePosition(glm::ivec3 block);
-
-	void buildBlock(glm::ivec3 pos);
-
-	EntityData* entities;
-	BlockData* blocks;
-};
-
-struct Building
-{
-	void set(glm::ivec3 pos, Block::Type type);
-
-	void remove(glm::ivec3 pos);
-
-	void destroyBlock();
-
-	EntityData* entities;
-	BlockData* blocks;
-	Picking picking;
-
-	float m_removeTime = 0;
-};
-
-struct Assets
-{
-	void load();
-
-	BlockData* blocks;
-};
-
-struct Generation
-{
-	void generateTestScene();
-
-	Building building;
-};
-
 
 struct Minecraft
 {
 	void init();
 
-	void update();
+	void update() const;
 
-	Data data;
-	Building building{};
-	Assets assets{};
-	Generation generation{};
-	Picking picking{};
-
-	int m_CrossHair = -1;
+	MineWorld	  world;
+	MineUI ui;
+	MinePlayer player;
 };
