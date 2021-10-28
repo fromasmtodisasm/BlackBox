@@ -179,7 +179,7 @@ bool Picking::blockOnCursor(glm::ivec3& outPos)
 		auto distance = glm::distance(pos, camPos);
 		//if (distance <= pickDistance)
 		{
-			auto inverseTransformMatrix = glm::inverse(entity.transformMatrix);
+			// auto inverseTransformMatrix = glm::inverse(entity.transformMatrix);
 			//eyeRay.origin =
 			//	glm::vec4(eyeRay.origin, 1.0) * inverseTransformMatrix;
 			//eyeRay.direction =
@@ -198,6 +198,7 @@ bool Picking::blockOnCursor(glm::ivec3& outPos)
 			{
 				tMin = tMinMax.x;
 				glm::vec3 pickedPos = eyeRay.origin + eyeRay.direction * tMin;
+
 				float blockDistance = glm::distance(eyeRay.origin, pickedPos);
 				if(blockDistance < minDistance)
 				{
