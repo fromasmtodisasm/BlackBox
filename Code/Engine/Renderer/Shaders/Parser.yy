@@ -424,8 +424,8 @@ TECHNIQUE {
     //curAnnotations = curTechnique->annotations()->getExInterface();
 } '{' passes '}' 
 | TECHNIQUE IDENTIFIER {
-    CTechnique tech;
-    tech.Name =  $2.c_str();
+	auto techs = driver.currentEffect->m_Techniques;
+    CTechnique tech(techs.size(), $2.c_str());
     driver.currentEffect->m_Techniques.push_back(tech);
     CryLog("creation of Technique %s...\n", tech.Name.data());
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();

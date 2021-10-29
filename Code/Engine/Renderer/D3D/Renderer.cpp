@@ -721,7 +721,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 
 	if (!GlobalResources::TexturedQuadShader)
 	{
-		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite", 1, 0);
+		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite.TexturedQuad", 0, 0);
 	}
 
 	auto vertex_cnt = 6;
