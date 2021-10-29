@@ -283,6 +283,8 @@ void  CGame::ResetInputMap()
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
   pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
+  pMap->BindAction(ACTION_AIM_TOGGLE, eKI_Mouse2);
+  pMap->BindAction(ACTION_AIM_TOGGLE, eKI_XI_ShoulderR);
   //jump (outside common key bindings because space is reserved for hold the breath
   //in zoom mode)
   pMap->BindAction(ACTION_JUMP, eKI_Space);

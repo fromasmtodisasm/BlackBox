@@ -1161,6 +1161,8 @@ void  CXGame::ResetInputMap()
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
   pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
+
+
   pMap->BindAction(ACTION_MOVE_LEFT, eKI_Left);
   pMap->BindAction(ACTION_MOVE_RIGHT, eKI_Right);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);

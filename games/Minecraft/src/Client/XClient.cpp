@@ -1996,10 +1996,10 @@ void CXClient::TriggerItem3(float fValue,XActivationEvent ae)
 //////////////////////////////////////////////////////////////////////
 void CXClient::TriggerZoomToggle(float fValue,XActivationEvent ae)
 {
+	m_PlayerProcessingCmd.AddAction(ACTION_ZOOM_TOGGLE);
 	IEntity *pEntity=m_pEntitySystem->GetEntity(m_wPlayerID);
 	if(pEntity)
 	{
-		
 		pEntity->SendScriptEvent(ScriptEvent_ZoomToggle, (ae==etPressing?1:0));
 	}
 }

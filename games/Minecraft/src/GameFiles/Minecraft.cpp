@@ -117,12 +117,19 @@ void MineWorld::set(glm::ivec3 pos, Type type)
 	entities.emplace(pos, entity);
 }
 
-bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance)
+CCamera* getCamera()
+{
+	auto game	= dynamic_cast<CXGame*>(gEnv->pSystem->GetIGame());
+	auto client = &game->GetClient()->m_DummyClient;
+	return client->m_CameraController.RenderCamera();
+}
+
+bool MineWorld::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float pickDistance)
 {
 	auto game			   = dynamic_cast<CXGame*>(gEnv->pSystem->GetIGame());
-	auto client			   = &game->GetClient()->m_DummyClient;
-	auto intersectionState = client->m_IntersectionState;
+	auto intersectionState = game->GetClient()->m_DummyClient.m_IntersectionState;
 
+	// начальная и конечная точки запуска луча
 	auto& start = intersectionState.ray.start;
 	gEnv->pRenderer->UnProjectFromScreen(
 		intersectionState.mx, intersectionState.my, 0, &start.x, &start.y, &start.z);
@@ -131,7 +138,7 @@ bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance)
 		intersectionState.mx, intersectionState.my, 1, &end.x, &end.y, &end.z);
 
 	Ray eyeRay{};
-	eyeRay.origin	 = client->m_CameraController.RenderCamera()->GetPos();
+	eyeRay.origin	 = getCamera()->GetPos();
 	eyeRay.direction = glm::normalize(end - start);
 
 	float tMin		  = HUGE_VALF;
@@ -140,25 +147,28 @@ bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance)
 	for (auto it : entities)
 	{
 		auto const pos		= glm::vec3(it.first);
-		auto const camPos	= client->m_CameraController.RenderCamera()->GetPos();
+		auto const camPos	= getCamera()->GetPos();
 		auto const distance = glm::distance(pos, camPos);
 		if (distance <= pickDistance)
 		{
 			auto const obj = it.second->GetIStatObj(0);
 
+			// задаем размер ограничивающей рамки на основе размера модели
 			AABB aabb = {obj->GetBoxMin(), obj->GetBoxMax()};
 			aabb.min *= it.second->GetScale();
 			aabb.max *= it.second->GetScale();
 
-			auto tPos = pos;
-			tPos.y += 0.5;
-			aabb.Translate(tPos);
+			// перемещаем ограничивающую рамку куба в соответствии с его расположением
+			aabb.Translate(glm::vec3(pos.x, pos.y + 0.5, pos.z));
 
+			// расстояния до ближайшей и дальнейшей точек пересечения
 			glm::vec2 const tMinMax = aabb.IntersectBox(eyeRay);
 
+			// если объект был за спиной
 			if (tMinMax.x < 0 || tMinMax.y < 0)
 				continue;
 
+			// если мы не внутри коробки и пересечение ближайшее
 			if (tMinMax.x < tMinMax.y && tMinMax.x < tMin)
 			{
 				tMin					  = tMinMax.x;
@@ -167,7 +177,8 @@ bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance)
 				if (blockDistance < minDistance)
 				{
 					minDistance = blockDistance;
-					outPos		= it.first;
+					outBlockPos = it.first;
+					outPickPos = pickedPos;
 				}
 			}
 		}
@@ -175,26 +186,110 @@ bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance)
 
 	return minDistance != HUGE_VALF;
 }
+
+bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance)
+{
+	glm::vec3 pickPos;
+	return selectedPos(outPos, pickPos, pickDistance);
+}
+
+int signDirection(float val)
+{
+	if (val > 0)
+	{
+		return 1;
+	}
+	else if (val == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+float roundFloat(float d)
+{
+	return floorf(d + 0.5f);
+}
+
+bool isFloatInteger(float a)
+{
+	// если число округлилось и осталось равно себе с определенным допуском мы счиатем его целочисленным
+	float ceiled = roundFloat(a);
+	CryLog("%f", ceiled);
+	return abs(ceiled - a) <= 0.00003;
+}
+
+bool MineWorld::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance)
+{
+	glm::vec3 pickPos;
+	if (selectedPos(outBlockPos, pickPos, pickDistance))
+	{
+		auto const origin = getCamera()->GetPos();
+		outSidePos		  = outBlockPos;
+
+		pickPos.x -= 0.5;
+		pickPos.z -= 0.5;
+		CryLog("%f, %f, %f", pickPos.x, pickPos.y, pickPos.z);
+
+		if (isFloatInteger(pickPos.x))
+		{
+			outSidePos.x -= signDirection(outSidePos.x - origin.x);
+		}
+		else if (isFloatInteger(pickPos.y))
+		{
+			outSidePos.y -= signDirection(outSidePos.y - origin.y);
+		}
+		else if (isFloatInteger(pickPos.z))
+		{
+			outSidePos.z -= signDirection(outSidePos.z - origin.z);
+		}
+		return true;
+	}
+	return false;
+}
+
 void MinePlayer::init(MineWorld* mineWorld)
 {
 	world = mineWorld;
 }
 
+bool timingAction(float& prevTime, float interval)
+{
+	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+	auto const delta   = curTime - prevTime;
+	if (delta > interval)
+	{
+		prevTime = curTime;
+		return true;
+	}
+	return false;
+}
+
 void MinePlayer::destroyBlockOnCursor()
 {
-	const float pickDistance = 7.0f;
-	const float removeTime	 = 300;
+	const float pickDistance = 14.0f;
+	const float interval	 = 300;
 
 	glm::ivec3 pos;
-	if (world->blockOnCursor(pos, pickDistance))
+	if (timingAction(destroyTime, interval) &&
+		world->blockOnCursor(pos, pickDistance))
 	{
-		auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
-		auto const delta   = curTime - prevTime;
-		if (delta > removeTime)
-		{
-			CryLog("remove delta time: %f", delta);
-			world->destroy(pos);
-			prevTime = curTime;
-		}
+		world->destroy(pos);
+	}
+}
+
+void MinePlayer::placeBlockOnCursor()
+{
+	const float pickDistance = 14.0f;
+	const float interval	 = 300;
+
+	glm::ivec3 pos, side;
+	if (timingAction(placeTime, interval) &&
+		world->blockSideOnCursor(pos, side, pickDistance))
+	{
+		world->set(side, MineWorld::Grass);
 	}
 }
