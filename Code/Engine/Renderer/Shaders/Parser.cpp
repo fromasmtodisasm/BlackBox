@@ -1088,8 +1088,8 @@ namespace yy {
   case 119: // $@6: %empty
 #line 537 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
                        {
-    CTechnique tech;
-    tech.Name =  yystack_[0].value.as < std::string > ().c_str();
+	auto techs = driver.currentEffect->m_Techniques;
+    CTechnique tech(techs.size(), yystack_[0].value.as < std::string > ().c_str());
     driver.currentEffect->m_Techniques.push_back(tech);
     CryLog("creation of Technique %s...\n", tech.Name.data());
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();

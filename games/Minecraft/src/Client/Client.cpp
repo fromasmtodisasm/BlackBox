@@ -117,7 +117,7 @@ void CClient::Update()
 	{
 		auto& lpp = m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
-		m_pGame->minecraft->building.destroyBlock();
+		m_pGame->minePlayer->destroyBlockOnCursor();
 
 		gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 		//if (m_Mode != MENU)

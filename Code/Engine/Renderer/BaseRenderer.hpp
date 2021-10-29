@@ -206,7 +206,16 @@ class ShaderMan
 	{
 		PEffect			  pEffect = nullptr;
 		std::stringstream path;
-		path << "Data/shaders/fx/" << name << ".fx";
+		auto pos = name.find_last_of('.');
+		std::string_view  real_name = name;
+		std::string_view  technique;
+		int				  pass = 0;
+		if (pos != name.npos)
+		{
+			real_name = name.substr(0, pos);	
+			technique = name.substr(pos + 1);	
+		}
+		path << "Data/shaders/fx/" << real_name << ".fx";
 		if (g_FxParser->Parse(path.str().data(), &pEffect))
 		{
 			#if 0
@@ -217,8 +226,11 @@ class ShaderMan
 				CryLog("[%s]", str.c_str());
 			}
 			#endif
-			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, flags, (int)nMaskGen);
-			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, flags, (int)nMaskGen);
+			auto nTech = 0;
+			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
+				nTech = tech->GetId();
+			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, nTech, pass);
+			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, flags, pass);
 			if (!vs || !fs)
 			{
 				SAFE_DELETE(vs);

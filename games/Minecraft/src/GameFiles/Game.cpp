@@ -850,6 +850,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 
 	minecraft = new Minecraft;
 	minecraft->init();
+	minePlayer = &minecraft->player;
 	return (true);
 }
 
