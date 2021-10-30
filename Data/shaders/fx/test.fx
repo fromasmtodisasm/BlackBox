@@ -10,15 +10,11 @@
 //--------------------------------------------------------------------------------------
 cbuffer cbChangesEveryFrame : register(b2)
 {
-    #if 0
-    float4x4 World;
-    float4x4 View;
-    float4x4 Projection;
-    #endif
     float4x4 MVP;
 };
 
-StructuredBuffer<float4x4> Transform;
+//FIXME: shader parser
+//StructuredBuffer<float4x4> Transform;
 
 
 //--------------------------------------------------------------------------------------
@@ -42,6 +38,7 @@ SamplerState g_LinearSampler : register(s0);
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+[[fn]]
 VS_OUTPUT VS(
     VS_INPUT IN
 )
@@ -60,15 +57,17 @@ VS_OUTPUT VS(
     return output;
 }
 
-static float  ambientStrength = 0.3;
-static float3 lightColor	  = float3(1, 1, 1);
-
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
+[[fn]]
 float4 PS(VS_OUTPUT input)
 	: SV_Target
 {
+    //FIXME: need recognize storage class in shader parser to place this declaration on top level
+	static float  ambientStrength = 0.3;
+	static float3 lightColor	  = float3(1, 1, 1);
+
 	float3 diffuseColor = float3(1, 1, 1);
 
 	float4 textureColor;
@@ -95,12 +94,20 @@ float4 PS(VS_OUTPUT input)
 }
 
 //--------------------------------------------------------------------------------------
-technique10 Render
+//technique10 Render
+//{
+//    pass P0
+//    {
+//        SetVertexShader(CompileShader(vs_4_0, VS()));
+//        SetGeometryShader(NULL);
+//        SetPixelShader(CompileShader(ps_4_0, PS()));
+//    }
+//}
+technique Render
 {
     pass P0
     {
-        SetVertexShader(CompileShader(vs_4_0, VS()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_4_0, PS()));
+		VertexShader = VS;
+        PixelShader = PS;
     }
 }

@@ -1,8 +1,8 @@
-#include <BlackBox/System/System.hpp>
+#include "ProjectManager/ProjectManager.hpp"
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <BlackBox/System/NullLog.hpp>
-#include "ProjectManager/ProjectManager.hpp"
+#include <BlackBox/System/System.hpp>
 #include <WindowsConsole.h>
 
 #include "Profiling\ProfilingSystem.hpp"
@@ -11,7 +11,7 @@
 
 //#undef USE_DEDICATED_SERVER_CONSOLE
 //////////////////////////////////////////////////////////////////////////
-#define DEFAULT_LOG_FILENAME    "Log.txt"
+#define DEFAULT_LOG_FILENAME "Log.txt"
 
 //////////////////////////////////////////////////////////////////////////
 static inline void InlineInitializationProcessing(const char* sDescription)
@@ -34,11 +34,11 @@ void CSystem::UnloadSubsystems()
 	// CVars should be unregistered earlier than owning objects/modules are destroyed.
 }
 #
-class CNULLConsole : public IOutputPrintSink,
-	                   public ISystemUserCallback,
-	                   public ITextModeConsole
+class CNULLConsole : public IOutputPrintSink
+	, public ISystemUserCallback
+	, public ITextModeConsole
 {
-public:
+  public:
 	CNULLConsole(bool isDaemonMode);
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ public:
 	/** this method is called at the earliest point the ISystem pointer can be used
 	   the log might not be yet there
 	 */
-	virtual void OnSystemConnect(ISystem* pSystem) {};
+	virtual void OnSystemConnect(ISystem* pSystem){};
 
 	/** If working in Editor environment notify user that engine want to Save current document.
 	   This happens if critical error have occured and engine gives a user way to save data and not lose it
@@ -63,32 +63,32 @@ public:
 	/** Notify user that system wants to switch out of current process.
 	   (For ex. Called when pressing ESC in game mode to go to Menu).
 	 */
-	virtual void OnProcessSwitch() {};
+	virtual void OnProcessSwitch(){};
 
 	// Notify user, usually editor about initialization progress in system.
-	virtual void OnInitProgress(const char* sProgressMsg) {};
+	virtual void OnInitProgress(const char* sProgressMsg){};
 
 	// Initialization callback.  This is called early in CSystem::Init(), before
 	// any of the other callback methods is called.
 	virtual void OnInit(ISystem*);
 
 	// Shutdown callback.
-	virtual void OnShutdown() {};
+	virtual void OnShutdown(){};
 
 	// Notify user of an update iteration.  Called in the update loop.
 	virtual void OnUpdate();
 
 	// to collect the memory information in the user program/application
-	virtual void GetMemoryUsage(ICrySizer* pSizer) {};
+	virtual void GetMemoryUsage(ICrySizer* pSizer){};
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	// ITextModeConsole
 	///////////////////////////////////////////////////////////////////////////////////////
-	virtual glm::ivec2	  BeginDraw() { return glm::ivec2(0, 0); };
-	virtual void          PutText(int x, int y, const char* msg);
-	virtual void          EndDraw()   {};
+	virtual glm::ivec2 BeginDraw() { return glm::ivec2(0, 0); };
+	virtual void	   PutText(int x, int y, const char* msg);
+	virtual void	   EndDraw(){};
 
-	void                  SetRequireDedicatedServer(bool)
+	void SetRequireDedicatedServer(bool)
 	{
 		// Does nothing
 	}
@@ -96,10 +96,11 @@ public:
 	{
 		//Does nothing
 	}
-private:
-		#if CRY_PLATFORM_WINDOWS
+
+  private:
+#if CRY_PLATFORM_WINDOWS
 	HANDLE m_hOut;
-		#endif
+#endif
 	bool m_isDaemon;
 	//CSyslogStats m_syslogStats;
 };
@@ -109,7 +110,8 @@ private:
 // simple light-weight console implementation
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-CNULLConsole::CNULLConsole(bool isDaemonMode) : m_isDaemon(isDaemonMode)
+CNULLConsole::CNULLConsole(bool isDaemonMode)
+	: m_isDaemon(isDaemonMode)
 {
 }
 
@@ -118,14 +120,14 @@ void CNULLConsole::Print(const char* inszText)
 	if (m_isDaemon)
 		return;
 
-	#if CRY_PLATFORM_WINDOWS
+#if CRY_PLATFORM_WINDOWS
 	DWORD written;
-	char buf[1024];
+	char  buf[1024];
 	cry_sprintf(buf, "%s\n", inszText);
 	WriteConsole(m_hOut, buf, strlen(buf), &written, NULL);
-	#elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_MAC
+#elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_MAC
 	printf("%s\n", inszText);
-	#endif
+#endif
 }
 
 void CNULLConsole::OnInit(ISystem* pSystem)
@@ -138,16 +140,16 @@ void CNULLConsole::OnInit(ISystem* pSystem)
 	IConsole* pConsole = pSystem->GetIConsole();
 	pConsole->AddOutputPrintSink(this);
 
-	#if CRY_PLATFORM_WINDOWS
+#if CRY_PLATFORM_WINDOWS
 	AllocConsole();
 	m_hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	#endif
+#endif
 }
 
 void CNULLConsole::OnUpdate()
 {
-	int numPlayers = 0;
-	float srvRate = 0;
+	int	  numPlayers = 0;
+	float srvRate	 = 0;
 
 	if (ITimer* pTimer = gEnv->pSystem->GetITimer())
 		srvRate = pTimer->GetFrameRate();
@@ -163,13 +165,12 @@ namespace
 {
 } // namespace
 
-
 void CSystem::PreprocessCommandLine()
 {
 	if (const auto ca = m_pCmdLine->FindArg(eCLAT_Pre, "myproto"); ca)
 	{
 		std::string output;
-		const auto input = ca->GetValue();
+		const auto	input = ca->GetValue();
 		output.resize(strlen(input) + 1);
 		urldecode2(output.data(), input);
 		printf("Decoded string: %s\n", output.data());
@@ -178,7 +179,7 @@ void CSystem::PreprocessCommandLine()
 		/////////////////////////////////////////////////////////////////
 		output			 = output.substr(strlen("myproto://"));
 		std::string left = std::string(m_startupParams.szSystemCmdLine);
-		auto p			 = left.find("-myproto");
+		auto		p	 = left.find("-myproto");
 		left.resize(p);
 		output = left + " " + output;
 		std::cout << "output:::: " << output << std::endl;
@@ -214,37 +215,37 @@ bool CSystem::Init()
 #endif
 	//====================================================
 #if BB_PLATFORM_DESKTOP
-	#if !defined(_RELEASE)
+#	if !defined(_RELEASE)
 	bool isDaemonMode = (m_pCmdLine->FindArg(eCLAT_Pre, "daemon") != 0);
-	#else
+#	else
 	bool isDaemonMode = false;
-	#endif // !defined(_RELEASE)
+#	endif // !defined(_RELEASE)
 
 	m_env.pFrameProfileSystem = new ProfilingSystem;
 
-	#if defined(USE_DEDICATED_SERVER_CONSOLE)
+#	if defined(USE_DEDICATED_SERVER_CONSOLE)
 
-		#if !defined(_RELEASE)
+#		if !defined(_RELEASE)
 	bool isSimpleConsole = (m_pCmdLine->FindArg(eCLAT_Pre, "simple_console") != 0);
 	if (!(isDaemonMode || isSimpleConsole))
-		#endif // !defined(_RELEASE)
+#		endif // !defined(_RELEASE)
 	{
 		string headerName;
-		#if defined(USE_UNIXCONSOLE)
+#		if defined(USE_UNIXCONSOLE)
 		//CUNIXConsole* pConsole = pUnixConsole = new CUNIXConsole();
 		CNULLConsole* pConsole = new CNULLConsole(false);
-		headerName = "Unix ";
-		#elif defined(USE_IOSCONSOLE)
+		headerName			   = "Unix ";
+#		elif defined(USE_IOSCONSOLE)
 		CIOSConsole* pConsole = new CIOSConsole();
-		headerName = "iOS ";
-		#elif defined(USE_WINDOWSCONSOLE)
+		headerName			  = "iOS ";
+#		elif defined(USE_WINDOWSCONSOLE)
 		CWindowsConsole* pConsole = new CWindowsConsole();
-		#elif defined(USE_ANDROIDCONSOLE)
+#		elif defined(USE_ANDROIDCONSOLE)
 		CAndroidConsole* pConsole = new CAndroidConsole();
-		headerName = "Android "
-		#else
-		CNULLConsole * pConsole = new CNULLConsole(false);
-		#endif
+		headerName				  = "Android "
+#		else
+		CNULLConsole* pConsole = new CNULLConsole(false);
+#		endif
 		m_pTextModeConsole = static_cast<ITextModeConsole*>(pConsole);
 
 		if (m_pUserCallback == NULL)
@@ -269,7 +270,7 @@ bool CSystem::Init()
 				headerName.append(getProductVersion());
 				pConsole->SetHeader(headerName.c_str());
 			}
-#if !defined(RELEASE) || defined(ENABLE_DEVELOPER_CONSOLE_IN_RELEASE)
+#		if !defined(RELEASE) || defined(ENABLE_DEVELOPER_CONSOLE_IN_RELEASE)
 			else if (m_pCmdLine->FindArg(eCLAT_Pre, "console"))
 			{
 				m_pUserCallback = pConsole;
@@ -278,23 +279,23 @@ bool CSystem::Init()
 				headerName.append(getProductVersion());
 				pConsole->SetHeader(headerName.c_str());
 			}
-#endif
+#		endif
 		}
 	}
-		#if !defined(_RELEASE)
+#		if !defined(_RELEASE)
 	else
-		#endif
-	#endif
+#		endif
+#	endif
 
-	#if !(defined(USE_DEDICATED_SERVER_CONSOLE) && defined(_RELEASE))
+#	if !(defined(USE_DEDICATED_SERVER_CONSOLE) && defined(_RELEASE))
 	{
 		CNULLConsole* pConsole = new CNULLConsole(isDaemonMode);
-		m_pTextModeConsole = pConsole;
+		m_pTextModeConsole	   = pConsole;
 
 		if (m_pUserCallback == NULL && m_env.IsDedicated())
 			m_pUserCallback = pConsole;
 	}
-	#endif
+#	endif
 	//////////////////////////////////////////////////////////////////////////
 	// LOAD GAME PROJECT CONFIGURATION
 	//////////////////////////////////////////////////////////////////////////
@@ -313,7 +314,7 @@ bool CSystem::Init()
 		//here we should be good to ask Crypak to do something
 
 		//#define GEN_PAK_CDR_CRC
-#ifdef GEN_PAK_CDR_CRC
+#	ifdef GEN_PAK_CDR_CRC
 
 		const char* filename = m_pCmdLine->GetArg(1)->GetName();
 		gEnv->pCryPak->OpenPack(filename);
@@ -321,13 +322,12 @@ bool CSystem::Init()
 		int crc = gEnv->pCryPak->ComputeCachedPakCDR_CRC(filename, false);
 
 		exit(crc);
-#endif
+#	endif
 		GetIRemoteConsole()->RegisterConsoleVariables();
 		GetIRemoteConsole()->Update();
 		CreateSystemVars();
 	}
 	LogCommandLine();
-
 
 #endif // CRY_PLATFORM_DESKTOP
 	if (m_pUserCallback)
@@ -361,30 +361,41 @@ bool CSystem::Init()
 	//====================================================
 	Log("Initialize Render");
 	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_PRE_RENDERER_INIT, 0, 0);
+
 	if (!m_env.IsDedicated())
 	{
 		if (!InitRender())
 			return false;
+		auto font_size = vector2f(14, 14);
+		m_pFont		   = m_env.pRenderer->GetIFont();
+		m_pFont->Init("VeraMono.ttf", (uint)font_size.x, (uint)font_size.y);
+
+		m_pBlackBoxFont = m_env.pRenderer->GetIFont();
+		m_pBlackBoxFont->Init("VeraMono.ttf", 24, 24);
+
+		m_Font.ms_nullFont.m_pFont = m_pFont;
+		m_Font.ms_nullFont.m_Size  = font_size;
+
 		auto splash = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
 		for (int i = 0; i < 3; i++)
 		{
 			RenderBegin();
 			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
 			gEnv->pRenderer->DrawImage(
-				#if 0
+#if 0
 				gEnv->pRenderer->GetWidth() / 2.f - splash->getWidth() / 2,
 				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
 				(float)splash->getWidth(),
 				(float)splash->getHeight(),
 				splash->getBindlesId(),
-				#else
-				 0,
-				 0,
+#else
+				0,
+				0,
 				(float)gEnv->pRenderer->GetWidth(),
 				(float)gEnv->pRenderer->GetHeight(),
 				splash,
 				0, 0, 1, 1, 1, 1, 1, 1);
-				#endif
+#endif
 			RenderEnd();
 		}
 	}
@@ -475,7 +486,6 @@ bool CSystem::Init()
 #endif
 	}
 
-
 	if (CreateGame(nullptr) == nullptr)
 		return false;
 	//====================================================
@@ -484,17 +494,6 @@ bool CSystem::Init()
 	if (!InitNetwork())
 		return false;
 	//LoadCrynetwork();
-	auto font_size = vector2f(14,14);
-	m_pFont = m_env.pRenderer->GetIFont();
-	m_pFont->Init("VeraMono.ttf", (uint)font_size.x, (uint)font_size.y);
-
-	m_pBlackBoxFont = m_env.pRenderer->GetIFont();
-	m_pBlackBoxFont->Init("VeraMono.ttf", 24,24);
-
-	m_Font.ms_nullFont.m_pFont = m_pFont;
-	m_Font.ms_nullFont.m_Size = font_size;
-
-
 	//====================================================
 	Log("Initialize Game");
 	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "FunCry"))
@@ -521,7 +520,7 @@ bool CSystem::InitLog()
 {
 	if (m_startupParams.pLog == nullptr)
 	{
-		m_env.pLog = new CLog(this);
+		m_env.pLog			= new CLog(this);
 		string sLogFileName = m_startupParams.sLogFileName != nullptr ? m_startupParams.sLogFileName : DEFAULT_LOG_FILENAME;
 
 		const ICmdLineArg* logfile = m_pCmdLine->FindArg(eCLAT_Pre, "logfile");
@@ -580,61 +579,66 @@ bool CSystem::InitRender()
 bool CSystem::InitInput()
 {
 	Log("Creating Input");
-	return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p) {
-		if (!m_env.IsDedicated())
-		{
-			m_env.pInput = p(this, m_pWindow->getHandle());
-			return m_env.pInput->Init();
-		}
-		else
-		{
-			if (m_env.IsDedicated())
-				return true;
-			return false;
-		}
-	});
+	return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p)
+											 {
+												 if (!m_env.IsDedicated())
+												 {
+													 m_env.pInput = p(this, m_pWindow->getHandle());
+													 return m_env.pInput->Init();
+												 }
+												 else
+												 {
+													 if (m_env.IsDedicated())
+														 return true;
+													 return false;
+												 }
+											 });
 }
 
 bool CSystem::InitScriptSystem()
 {
 	Log("Creating ScriptSystem");
-	return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p) {
-		m_env.pScriptSystem = p(this, true);
-		return m_env.pScriptSystem != nullptr;
-	});
+	return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p)
+													{
+														m_env.pScriptSystem = p(this, true);
+														return m_env.pScriptSystem != nullptr;
+													});
 }
 
 bool CSystem::InitEntitySystem()
 {
 	Log("Creating EntitySystem");
-	return LoadSubsystem<PFNCREATEENTITYSYSTEM>("EntitySystem", "CreateEntitySystem", [&](PFNCREATEENTITYSYSTEM p) {
-		m_env.pEntitySystem = p(this);
-		return m_env.pEntitySystem != nullptr;
-	});
+	return LoadSubsystem<PFNCREATEENTITYSYSTEM>("EntitySystem", "CreateEntitySystem", [&](PFNCREATEENTITYSYSTEM p)
+												{
+													m_env.pEntitySystem = p(this);
+													return m_env.pEntitySystem != nullptr;
+												});
 }
 
 bool CSystem::InitNetwork()
 {
 	Log("Creating Network");
-	return LoadSubsystem<PFNCREATENETWORK>("Network", "CreateNetwork", [&](PFNCREATENETWORK p) {
-		m_env.pLog->Log("Creating Network");
-		m_pNetwork = p(this);
-		if (m_pNetwork == nullptr)
-			return false;
-		return true;
-	});
+	return LoadSubsystem<PFNCREATENETWORK>("Network", "CreateNetwork", [&](PFNCREATENETWORK p)
+										   {
+											   m_env.pLog->Log("Creating Network");
+											   m_pNetwork = p(this);
+											   if (m_pNetwork == nullptr)
+												   return false;
+											   return true;
+										   });
 }
 
 #if ENABLE_DEBUG_GUI
 bool CSystem::InitGUI()
 {
 	Log("Creating GUI");
-	if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p) {
-			m_GuiManager = p(this);
-			if (m_GuiManager == nullptr)
-				return false;
-			return true;
-		}))
+	if (LoadSubsystem<PFNCREATEGUI>("GUI", "CreateGUI", [&](PFNCREATEGUI p)
+									{
+										m_GuiManager = p(this);
+										if (m_GuiManager == nullptr)
+											return false;
+										return true;
+									}))
 	{
 		return m_GuiManager->Init();
 	}
@@ -645,29 +649,31 @@ bool CSystem::InitGUI()
 bool CSystem::Init3DEngine()
 {
 	Log("Creating 3DEngine");
-	return LoadSubsystem<PFNCREATE3DENGINE>("3DEngine", "Create3DEngine", [&](PFNCREATE3DENGINE p) {
-		m_env.p3DEngine = p(this, "0.0.0");
-		if (m_env.p3DEngine == nullptr)
-			return false;
-		if (!m_env.p3DEngine->Init())
-		{
-			return false;
-		}
-		m_pProcess = m_env.p3DEngine;
-		m_pProcess->SetFlags(PROC_3DENGINE);
-		return true;
-	});
+	return LoadSubsystem<PFNCREATE3DENGINE>("3DEngine", "Create3DEngine", [&](PFNCREATE3DENGINE p)
+											{
+												m_env.p3DEngine = p(this, "0.0.0");
+												if (m_env.p3DEngine == nullptr)
+													return false;
+												if (!m_env.p3DEngine->Init())
+												{
+													return false;
+												}
+												m_pProcess = m_env.p3DEngine;
+												m_pProcess->SetFlags(PROC_3DENGINE);
+												return true;
+											});
 }
 
 bool CSystem::InitSoundSystem()
 {
 	Log("Creating SoundSystem");
-	return LoadSubsystem<PFNCREATESOUNDSYSTEM>("Sound", "CreateSoundSystem", [&](PFNCREATESOUNDSYSTEM p) {
-		m_env.pSoundSystem = p(this, "0.0.0");
-		if (m_env.pSoundSystem == nullptr)
-			return false;
-		return true;
-	});
+	return LoadSubsystem<PFNCREATESOUNDSYSTEM>("Sound", "CreateSoundSystem", [&](PFNCREATESOUNDSYSTEM p)
+											   {
+												   m_env.pSoundSystem = p(this, "0.0.0");
+												   if (m_env.pSoundSystem == nullptr)
+													   return false;
+												   return true;
+											   });
 }
 
 bool CSystem::InitSubSystem()
@@ -681,13 +687,14 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	if (m_env.IsDedicated())
 		return true;
 	//====================================================
-	if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p) {
-			Log("Load Window Library");
-			m_pWindow = p();
-			if (m_pWindow == nullptr)
-				return false;
-			return true;
-		}))
+	if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p)
+										{
+											Log("Load Window Library");
+											m_pWindow = p();
+											if (m_pWindow == nullptr)
+												return false;
+											return true;
+										}))
 	{
 		return false;
 	}
@@ -702,14 +709,15 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	{
 		RenderLibrary = "RendererVK";
 	}
-	return LoadSubsystem<PFNCREATERENDERERINTERFACE>(RenderLibrary, "CreateIRender", [&](PFNCREATERENDERERINTERFACE p) {
-		Log("Load Render Library");
-		m_env.pRenderer = m_env.pRenderer = p(this);
-		if (m_env.pRenderer == nullptr)
-			return false;
-		else
-			return true;
-	});
+	return LoadSubsystem<PFNCREATERENDERERINTERFACE>(RenderLibrary, "CreateIRender", [&](PFNCREATERENDERERINTERFACE p)
+													 {
+														 Log("Load Render Library");
+														 m_env.pRenderer = m_env.pRenderer = p(this);
+														 if (m_env.pRenderer == nullptr)
+															 return false;
+														 else
+															 return true;
+													 });
 
 #if 0
 	CryFatalError("Unknown renderer type: %s", t_rend);
@@ -722,14 +730,14 @@ bool CSystem::InitFileSystem()
 {
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing File System...");
-	#if 0
+#if 0
 	m_RootFolder = string(fs::current_path().u8string().c_str());
-	#endif
+#endif
 
-	bool bLvlRes = false;               // true: all assets since executable start are recorded, false otherwise
+	bool bLvlRes = false; // true: all assets since executable start are recorded, false otherwise
 
 #if !defined(_RELEASE)
-	const ICmdLineArg* pArg = m_pCmdLine->FindArg(eCLAT_Pre, "LvlRes");      // -LvlRes command line option
+	const ICmdLineArg* pArg = m_pCmdLine->FindArg(eCLAT_Pre, "LvlRes"); // -LvlRes command line option
 
 	if (pArg)
 		bLvlRes = true;
@@ -737,10 +745,10 @@ bool CSystem::InitFileSystem()
 
 	CCryPak* pCryPak;
 	pCryPak = new CCryPak(m_env.pLog, &g_cvars.pakVars, bLvlRes);
-	//TODO:
-	#if 0
+//TODO:
+#if 0
 	pCryPak->SetGameFolderWritable(m_bGameFolderWritable);
-	#endif
+#endif
 	m_env.pCryPak = pCryPak;
 
 	// Check if root folder is overridden by command-line
@@ -748,12 +756,12 @@ bool CSystem::InitFileSystem()
 	if (root)
 	{
 		string temp = PathUtil::ToUnixPath(PathUtil::AddSlash(root->GetValue()));
-		#if 0
+#if 0
 		if (pCryPak->MakeDir(temp.c_str()))
 			m_root = temp;
-		#else
+#else
 		fs::current_path(fs::path(temp.c_str()));
-		#endif
+#endif
 	}
 #if 0
 	if (m_bEditor || bLvlRes)
@@ -846,15 +854,14 @@ bool CSystem::LoadCrynetwork()
 	typedef INetwork* (*PFNCREATENETWORK)(legacy::ISystem * pSystem);
 
 	Log("Creating CryNetwork");
-	return LoadSubsystem<PFNCREATENETWORK>("Legacy/CryNetwork.dll", "CreateNetwork", [&](PFNCREATENETWORK p) {
-		m_pNetworkLegacy = p(m_pSystemLegacy);
-		if (m_pNetworkLegacy == nullptr)
-			return false;
-		//m_pNetworkLegacy->Init();
-		return true;
-	});
-
-
+	return LoadSubsystem<PFNCREATENETWORK>("Legacy/CryNetwork.dll", "CreateNetwork", [&](PFNCREATENETWORK p)
+										   {
+											   m_pNetworkLegacy = p(m_pSystemLegacy);
+											   if (m_pNetworkLegacy == nullptr)
+												   return false;
+											   //m_pNetworkLegacy->Init();
+											   return true;
+										   });
 }
 
 IGame* CSystem::CreateGame(IGame* game)
@@ -864,10 +871,11 @@ IGame* CSystem::CreateGame(IGame* game)
 	{
 		gameDLLName = pCVarGameDir->GetString();
 	}
-	LoadSubsystem<PFNCREATEGAMEINSTANCE>(gameDLLName.c_str(), "CreateGameInstance", [&](PFNCREATEGAMEINSTANCE P) {
-		m_pGame = P();
-		return true;
-	});
+	LoadSubsystem<PFNCREATEGAMEINSTANCE>(gameDLLName.c_str(), "CreateGameInstance", [&](PFNCREATEGAMEINSTANCE P)
+										 {
+											 m_pGame = P();
+											 return true;
+										 });
 	return m_pGame;
 }
 
@@ -875,13 +883,12 @@ typedef IPhysicalWorld* (*PFNCREATEPHYSICS)(ISystem* pSystem);
 bool CSystem::InitPhysics()
 {
 	Log("Creating Physics");
-	return LoadSubsystem<PFNCREATEPHYSICS>("Physics", "CreatePhysicalWorld", [&](PFNCREATEPHYSICS p) {
-		m_env.pPhysicalWorld = p(this);
-		if (m_env.pPhysicalWorld == nullptr)
-			return false;
-		m_env.pPhysicalWorld->Init();
-		return true;
-	});
-
+	return LoadSubsystem<PFNCREATEPHYSICS>("Physics", "CreatePhysicalWorld", [&](PFNCREATEPHYSICS p)
+										   {
+											   m_env.pPhysicalWorld = p(this);
+											   if (m_env.pPhysicalWorld == nullptr)
+												   return false;
+											   m_env.pPhysicalWorld->Init();
+											   return true;
+										   });
 }
-

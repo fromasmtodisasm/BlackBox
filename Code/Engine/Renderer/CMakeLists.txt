@@ -23,6 +23,8 @@ add_sources(
 	"Shaders/FxParser.cpp"
 	SOURCE_GROUP "Minecraft"
 	"MineRenderer/renderer.h"
+	SOURCE_GROUP "Common"
+	"Common/CommonRender.h"
 )
 
 add_sources(
@@ -31,11 +33,13 @@ add_sources(
 	RendererDX
 	SOURCE_GROUP
 	"D3D"
-	"D3D/Renderer.cpp"
 	"D3D/BufferManager.cpp"
-	"D3D/Shader.cpp"
-	"D3D/DDSTextureLoader.h"
 	"D3D/DDSTextureLoader.cpp"
+	"D3D/DDSTextureLoader.h"
+	"D3D/RenderThread.cpp"
+	"D3D/RenderThread.h"
+	"D3D/Renderer.cpp"
+	"D3D/Shader.cpp"
 	)
 
 add_sources(
@@ -84,9 +88,9 @@ if(OPTION_DX_RENDERER)
 	add_common_libs()
 	add_common_includes()
 
-	find_package(D3D10 REQUIRED)
+	find_package(D3D11 REQUIRED)
 	target_compile_definitions(RendererDX PUBLIC "DX_RENDERER")
-	target_link_libraries(${THIS_PROJECT} PRIVATE D3D10 d3dcompiler dxguid)
+	target_link_libraries(${THIS_PROJECT} PRIVATE D3D11 d3dcompiler dxguid)
 else()
 	cryfilecontainer(RendererDX SOLUTION_FOLDER "Engine")
 endif()

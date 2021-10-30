@@ -17,6 +17,11 @@
 #pragma warning(push)
 #pragma warning(disable : 4244)
 
+//////////////////////////////////////////////////////////////////////////
+// Globals.
+//////////////////////////////////////////////////////////////////////////
+CRenderer* gRenDev = NULL;
+
 int		   RenderCVars::CV_r_GetScreenShot;
 static int dump_shaders_on_load = false;
 FxParser*  g_FxParser;
@@ -155,6 +160,8 @@ CRenderer::~CRenderer()
 
 IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
+	if (!gRenDev)
+		gRenDev = this;
 	InitCVars();
 	IWindow* result = m_Window = window;
 	bInFullScreen			   = fullscreen;
@@ -689,6 +696,8 @@ void CRenderer::ShutDown()
 	SAFE_DELETE(g_FxParser);
 
 	SAFE_DELETE(gShMan);
+
+	m_RenderThread->Quit();
 }
 
 #pragma warning(pop)

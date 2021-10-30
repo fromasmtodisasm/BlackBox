@@ -34,26 +34,26 @@ cbuffer PerViewCB : register(PERVIEW_SLOT)
         float4x4 View;
         float4x4 ViewProjection;
         float3 Eye;
-    }PerViewCB;
+    }perViewCB;
 }
 
 [[fn]]
 float4x4 GetOrthoProjMat()
 {
     
-    return PerViewCB.OrthoProjection;
+    return perViewCB.OrthoProjection;
 }
 
 [[fn]]
 float4x4 GetProjMat()
 {
-    return PerViewCB.Projection;
+    return perViewCB.Projection;
 }
 
 [[fn]]
 float4x4 GetViewProjMat()
 {
-    return PerViewCB.ViewProjection;
+    return perViewCB.ViewProjection;
 }
 
 

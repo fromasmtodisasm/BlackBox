@@ -1,3 +1,4 @@
+#include "D3D/Renderer.h"
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
@@ -7,27 +8,26 @@
 #define V_RETURN(cond) \
 	if (!(cond)) return;
 
-ID3D10Device*			 GetDevice();
-ID3D10DepthStencilState* CRenderAuxGeom::m_pDSState;
-ID3D10RasterizerState*	 g_pRasterizerState{};
-ID3D10BlendState*		 m_pBlendState;
+ID3D11DepthStencilState* CRenderAuxGeom::m_pDSState;
+ID3D11RasterizerState*	 g_pRasterizerState{};
+ID3D11BlendState*		 m_pBlendState;
 
 // auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_N_T2F;
 
 void CreateBlendState()
 {
-	D3D10_BLEND_DESC BlendState;
-	ZeroMemory(&BlendState, sizeof(D3D10_BLEND_DESC));
+	D3D11_BLEND_DESC BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
 
-	BlendState.BlendEnable[0]			= TRUE;
-	BlendState.SrcBlend					= D3D10_BLEND_SRC_ALPHA;
-	BlendState.DestBlend				= D3D10_BLEND_INV_SRC_ALPHA;
-	BlendState.BlendOp					= D3D10_BLEND_OP_ADD;
-	BlendState.SrcBlendAlpha			= D3D10_BLEND_ONE;
-	BlendState.DestBlendAlpha			= D3D10_BLEND_ZERO;
-	BlendState.BlendOpAlpha				= D3D10_BLEND_OP_ADD;
-	BlendState.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
+	BlendState.RenderTarget[0].BlendEnable			 = TRUE;
+	BlendState.RenderTarget[0].SrcBlend				 = D3D11_BLEND_SRC_ALPHA;
+	BlendState.RenderTarget[0].DestBlend			 = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendState.RenderTarget[0].BlendOp				 = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlendAlpha		 = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlendAlpha		 = D3D11_BLEND_ZERO;
+	BlendState.RenderTarget[0].BlendOpAlpha			 = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	GetDevice()->CreateBlendState(&BlendState, &m_pBlendState);
 }
@@ -43,23 +43,25 @@ struct SimpleVertex
 
 struct CBChangesEveryFrame
 {
-	#if 0
+#if 0
 	D3DXMATRIX World;
 	D3DXMATRIX View;
 	D3DXMATRIX Projection;
-	#endif
+#endif
 	D3DXMATRIX MVP;
 };
 
-ID3D10Effect*				g_pEffect			  = nullptr;
-ID3D10InputLayout*			g_pVertexLayout		  = nullptr;
-D3DXMATRIX					g_MVP;
-D3DXMATRIX					g_World;
-D3DXMATRIX					g_View;
-D3DXMATRIX					g_Projection;
-D3DXMATRIX					g_ViewProjection;
+ID3D10Effect*	   g_pEffect	   = nullptr;
+ID3D11InputLayout* g_pVertexLayout = nullptr;
+D3DXMATRIX		   g_MVP;
+D3DXMATRIX		   g_World;
+D3DXMATRIX		   g_View;
+D3DXMATRIX		   g_Projection;
+D3DXMATRIX		   g_ViewProjection;
 
-ID3D10EffectConstantBuffer* g_pConstantBuffer;
+ID3DBuffer* g_pConstantBuffer;
+
+CShader* g_pShader{};
 
 namespace
 {
@@ -85,50 +87,48 @@ HRESULT InitCube()
 #endif
 
 #ifndef VK_RENDERER
-	ID3D10Blob* pErrors;
-	auto		hr = D3DX10CreateEffectFromFile("Data/shaders/fx/test.fx", nullptr, NULL, "fx_4_0", dwShaderFlags, 0, GetDevice(), NULL, NULL, &g_pEffect, &pErrors, NULL);
+	HRESULT hr{};
+
+	g_pShader = (CShader*)gRenDev->Sh_Load("test.Render", 0, 0);
+    D3D11_BUFFER_DESC bd;
+	ZeroMemory( &bd, sizeof(bd) );
+	// Create the constant buffer
+	bd.Usage		  = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth	  = sizeof(CBChangesEveryFrame);
+	bd.BindFlags	  = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = 0;
+	hr				  = GetDevice()->CreateBuffer(&bd, NULL, &g_pConstantBuffer);
 	if (FAILED(hr))
-	{
-		CryFatalError("D3DFX: %s", pErrors->GetBufferPointer());
-		MessageBox(NULL,
-				   "The FX file cannot be located.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK);
 		return hr;
-	}
-
-	// Obtain the technique
-	GlobalResources::BoxTechnique = g_pEffect->GetTechniqueByName("Render");
-	g_pConstantBuffer			  = g_pEffect->GetConstantBufferByName("cbChangesEveryFrame");
-
-#	if 0
-	// Define the input layout
-	D3D10_INPUT_ELEMENT_DESC layout[] =
-		{
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-			{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		};
-#	endif
 
 	// VERTEX_FORMAT_P3F_C4B_T2F
-	D3D10_INPUT_ELEMENT_DESC layout[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0}
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
 	// Create the input layout
-	D3D10_PASS_DESC PassDesc;
-	GlobalResources::BoxTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
-	hr = GetDevice()->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
-										PassDesc.IAInputSignatureSize, &g_pVertexLayout);
+	//D3D10_PASS_DESC PassDesc;
+	//GlobalResources::BoxTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
+	hr = GetDevice()->CreateInputLayout(
+		layout,
+		numElements,
+		g_pShader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferPointer(),
+		g_pShader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferSize(),
+		&g_pVertexLayout);
+
 	if (FAILED(hr))
 		return hr;
+
 #endif
 	// Set up rasterizer
-	D3D10_RASTERIZER_DESC rasterizerDesc;
-	rasterizerDesc.CullMode				 = D3D10_CULL_FRONT;
-	rasterizerDesc.FillMode				 = D3D10_FILL_SOLID;
-	rasterizerDesc.FrontCounterClockwise = true;
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroStruct(rasterizerDesc);
+	rasterizerDesc.CullMode				 = D3D11_CULL_BACK;
+	rasterizerDesc.FillMode				 = D3D11_FILL_SOLID;
+	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthBias			 = false;
 	rasterizerDesc.DepthBiasClamp		 = 0;
 	rasterizerDesc.SlopeScaledDepthBias	 = 0;
@@ -154,11 +154,12 @@ void DrawCube(const SDrawElement& DrawElement)
 	//D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
 	// g_MVP = g_World * g_View * g_Projection;
 	//g_MVP = g_Projection * g_View * g_World;
-	g_World		  = DrawElement.transform;
-	g_MVP = g_ViewProjection * g_World;
+	g_World = DrawElement.transform;
+	g_MVP	= g_ViewProjection * g_World;
 	//g_MVP		  = g_ViewProjection * DrawElement.transform;
-	ID3D10Buffer* pEveryFrameBuffer;
-	g_pConstantBuffer->GetConstantBuffer(&pEveryFrameBuffer);
+	ID3DBuffer* pEveryFrameBuffer{};
+	//assert(0);
+	//g_pConstantBuffer->GetConstantBuffer(&pEveryFrameBuffer);
 	CBChangesEveryFrame cb;
 #	if 0
 	cb.World	  = g_World;
@@ -181,14 +182,17 @@ void DrawCube(const SDrawElement& DrawElement)
 	//
 	// Renders a triangle
 	//
-	D3D10_TECHNIQUE_DESC techDesc;
-	GlobalResources::BoxTechnique->GetDesc(&techDesc);
-	for (UINT p = 0; p < techDesc.Passes; ++p)
+	//D3D10_TECHNIQUE_DESC techDesc;
+	//GlobalResources::BoxTechnique->GetDesc(&techDesc);
+	//for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		GlobalResources::BoxTechnique->GetPassByIndex(p)->Apply(0);
+		//GlobalResources::BoxTechnique->GetPassByIndex(p)->Apply(0);
+		//return;
 
-		::GetDevice()->UpdateSubresource(pEveryFrameBuffer, 0, NULL, &cb, sizeof(cb), 0);
-		::GetDevice()->IASetInputLayout(g_pVertexLayout);
+		g_pShader->Bind();
+		::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
+		::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
+		::GetDeviceContext()->IASetInputLayout(g_pVertexLayout);
 		gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
 		auto ib			= DrawElement.m_Inices;
 		auto numindices = 0;
@@ -339,11 +343,13 @@ CRenderAuxGeom::CRenderAuxGeom()
 	// Initialize the projection matrix
 	D3DXMatrixPerspectiveFovLH(&g_Projection, (float)D3DX_PI * 0.5f, gEnv->pRenderer->GetWidth() / (FLOAT)gEnv->pRenderer->GetHeight(), 0.1f, 100.0f);
 
-	D3D10_DEPTH_STENCIL_DESC desc;
+	D3D11_DEPTH_STENCIL_DESC desc;
+	ZeroStruct(desc);
 	// desc.BackFace
 	desc.DepthEnable	= true;
 	desc.StencilEnable	= false;
-	desc.DepthWriteMask = D3D10_DEPTH_WRITE_MASK_ZERO;
+	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	desc.DepthFunc		= D3D11_COMPARISON_LESS;
 
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
 }
@@ -470,17 +476,17 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 }
 void CRenderAuxGeom::DrawAABBs()
 {
-	auto m_Camera = gEnv->pSystem->GetViewCamera();
-	g_View		  = m_Camera.GetViewMatrix();
-	g_Projection  = m_Camera.getProjectionMatrix();
+	auto m_Camera	 = gEnv->pSystem->GetViewCamera();
+	g_View			 = m_Camera.GetViewMatrix();
+	g_Projection	 = m_Camera.getProjectionMatrix();
 	g_ViewProjection = g_Projection * g_View;
 	// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
 	// m_BoundingBoxShader->Bind();
 
-	::GetDevice()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-	::GetDevice()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
-	GetDevice()->RSSetState(g_pRasterizerState);
-	GetDevice()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
+	::GetDeviceContext()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
+	::GetDeviceContext()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
+	::GetDeviceContext()->RSSetState(g_pRasterizerState);
+	::GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 	if (!m_BBVerts.empty())
 	{
 		gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);

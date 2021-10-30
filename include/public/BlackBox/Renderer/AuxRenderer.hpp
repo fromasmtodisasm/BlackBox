@@ -88,5 +88,5 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	int stop			 = 0;
 
   public:
-	static ID3D10DepthStencilState* m_pDSState;
+	static ID3D11DepthStencilState* m_pDSState;
 };

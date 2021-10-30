@@ -322,14 +322,14 @@ cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
     CryLog("New CBuffer %s", $2.data());
     lex_pop_state();
 }
-
-template_parameter: '<' object_type '>';
-
-cbuffer: CONSTANTBUFFER template_parameter IDENTIFIER register_declaration
+| CONSTANTBUFFER template_parameter IDENTIFIER register_declaration
 {
     CryLog("New CBuffer %s", $3.data());
     lex_pop_state();
-}
+};
+
+template_parameter: '<' object_type '>';
+
 
 struct: STRUCT struct_header struct_body struct_footer
 {

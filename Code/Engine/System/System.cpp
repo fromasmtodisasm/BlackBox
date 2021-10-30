@@ -590,8 +590,6 @@ void CSystem::ShutDown()
 	GetIRemoteConsole()->Stop();
 	GetIRemoteConsole()->UnregisterConsoleVariables();
 
-	ShutDownThreadSystem();
-
 	SAFE_DELETE(m_pTextModeConsole);
 
 	SAFE_RELEASE(m_pGame);
@@ -599,6 +597,8 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_env.p3DEngine);
 	SAFE_RELEASE(m_env.pRenderer);
+
+	ShutDownThreadSystem();
 
 	SAFE_DELETE(m_ScriptObjectConsole);
 	SAFE_DELETE(m_ScriptObjectSound);

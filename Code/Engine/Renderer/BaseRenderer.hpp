@@ -19,6 +19,7 @@
 #	include "TypedConstantBuffer.hpp"
 #endif
 #include <Cry_Color4.h>
+#include <D3D\RenderThread.h>
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
@@ -168,105 +169,6 @@ class RenderCVars
 
 	static int CV_r_GetScreenShot;
 };
-class ShaderMan
-{
-  public:
-	IShader* Sh_Load(const char* vertex, const char* fragment)
-	{
-#if 0
-		using ShaderInfo = IShaderProgram::ShaderInfo;
-		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
-		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
-		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
-		p->Create((std::string(vertex) + std::string(fragment)).data());
-		m_Shaders.emplace_back(p);
-		return p;
-#else
-		return nullptr;
-#endif
-	}
-	IShader* Sh_Load(const char* name, int flags, uint64 nMaskGen)
-	{
-		CShader* p = nullptr;
-		if (!(p = Sh_LoadBinary(name, flags, nMaskGen)))
-		{
-			if (p = Compile(name, flags, nMaskGen))
-			{
-				p->SaveBinaryShader(name, flags, nMaskGen);
-			}
-		}
-		return p;
-	}
-	CShader* Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen) const
-	{
-		return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
-	}
-
-	CShader* Compile(std::string_view name, int flags, uint64 nMaskGen)
-	{
-		PEffect			  pEffect = nullptr;
-		std::stringstream path;
-		auto pos = name.find_last_of('.');
-		std::string_view  real_name = name;
-		std::string_view  technique;
-		int				  pass = 0;
-		if (pos != name.npos)
-		{
-			real_name = name.substr(0, pos);	
-			technique = name.substr(pos + 1);	
-		}
-		path << "Data/shaders/fx/" << real_name << ".fx";
-		if (g_FxParser->Parse(path.str().data(), &pEffect))
-		{
-			auto nTech = 0;
-			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
-				nTech = tech->GetId();
-			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, nTech, pass);
-			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, flags, pass);
-			if (!vs || !fs)
-			{
-				SAFE_DELETE(vs);
-				SAFE_DELETE(fs);
-				return nullptr;
-			}
-			auto p							  = _smart_ptr<CShader>(new CShader);
-			p->m_Shaders[IShader::E_VERTEX]	  = vs;
-			p->m_Shaders[IShader::E_FRAGMENT] = fs;
-			p->AddRef();
-			//m_Shaders.push_back(p);
-			p->Bind();
-
-			delete pEffect;
-			return p;
-		}
-		return nullptr;
-	}
-	void ReloadAll()
-	{
-		for (auto& s : m_Shaders)
-		{
-			s->Reload(0);
-		}
-	}
-
-	std::vector<_smart_ptr<CShader>> m_Shaders;
-};
-#undef NOT_IMPLEMENTED_V
-#ifndef NOT_IMPLEMENTED_V
-#if defined(ASSERT_NOT_IMPLEMENTED)
-#define NOT_IMPLEMENTED_V    \
-	assert(0 && __FUNCTION__); \
-	return {};
-#else
-#define NOT_IMPLEMENTED_V    \
-	gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
-	return {};
-#endif
-#endif
-#ifndef NOT_IMPLEMENTED
-#define NOT_IMPLEMENTED\
-	assert(0 && __FUNCTION__);
-#endif
 
 class CRenderer : public RenderCVars
 	, public IRenderer
@@ -274,7 +176,6 @@ class CRenderer : public RenderCVars
 	, public ISystemEventListener
 {
   public:
-
 	virtual float ScaleCoordX(float value) override
 	{
 #if 0
@@ -285,13 +186,12 @@ class CRenderer : public RenderCVars
 	}
 	virtual float ScaleCoordY(float value) override
 	{
-		#if 0
+#if 0
 		NOT_IMPLEMENTED_V;
-		#else
+#else
 		return 1.f;
-		#endif
+#endif
 	}
-
 
 	// Inherited via IRendererCallbackServer
 	void RegisterCallbackClient(IRendererCallbackClient* pClient) override;
@@ -384,7 +284,7 @@ class CRenderer : public RenderCVars
 	virtual int GetHeight() final;
 
 	//! Memory status information
-	virtual void GetMemoryUsage(ICrySizer* Sizer) const =  0;
+	virtual void GetMemoryUsage(ICrySizer* Sizer) const = 0;
 
 	//! Get a screenshot and save to a file
 	virtual void ScreenShot(const char* filename = nullptr) = 0;
@@ -395,7 +295,7 @@ class CRenderer : public RenderCVars
 
 	virtual int EnumDisplayFormats(SDispFormat* formats);
 
-	virtual void SetState(State state, bool enable)			 = 0;
+	virtual void SetState(State state, bool enable) = 0;
 	//virtual void SetState(int State)						 = 0;
 	virtual void SetCullMode(CullMode mode = CullMode::BACK) = 0;
 
@@ -419,24 +319,24 @@ class CRenderer : public RenderCVars
 	// 3d engine set this color to fog color
 	void SetClearColor(const Legacy::Vec3& vColor)
 	{
-		m_ClearColor = Legacy::Vec4(vColor, 1.f);	
+		m_ClearColor = Legacy::Vec4(vColor, 1.f);
 	}
-	virtual void ClearDepthBuffer()					 = 0;
+	virtual void ClearDepthBuffer()							 = 0;
 	virtual void ClearColorBuffer(const Legacy::Vec3 vColor) = 0;
 
 	virtual void SetRenderTarget(int nHandle) = 0;
 
-	virtual void				   ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) final;
-	virtual int					   UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) final;
-	virtual int					   UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) final;
-	virtual void				   GetModelViewMatrix(float* mat) final;
-	virtual void				   GetModelViewMatrix(double* mat) final;
-	virtual void				   GetProjectionMatrix(double* mat) final;
-	virtual void				   GetProjectionMatrix(float* mat) final;
-	virtual Legacy::Vec3				   GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam) final;
-	virtual int					   GetFrameID(bool bIncludeRecursiveCalls = true) final;
-	virtual int					   GetPolyCount() { return INT_MIN; }
-	virtual void				   GetPolyCount(int& nPolygons, int& nShadowVolPolys)
+	virtual void		 ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) final;
+	virtual int			 UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) final;
+	virtual int			 UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) final;
+	virtual void		 GetModelViewMatrix(float* mat) final;
+	virtual void		 GetModelViewMatrix(double* mat) final;
+	virtual void		 GetProjectionMatrix(double* mat) final;
+	virtual void		 GetProjectionMatrix(float* mat) final;
+	virtual Legacy::Vec3 GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam) final;
+	virtual int			 GetFrameID(bool bIncludeRecursiveCalls = true) final;
+	virtual int			 GetPolyCount() { return INT_MIN; }
+	virtual void		 GetPolyCount(int& nPolygons, int& nShadowVolPolys)
 	{
 		nPolygons		= INT_MIN;
 		nShadowVolPolys = INT_MIN;
@@ -464,11 +364,15 @@ class CRenderer : public RenderCVars
 	virtual void			   RemoveTexture(ITexPic* pTexPic)																													   = 0;
 	virtual ITexPic*		   EF_GetTextureByID(int Id)																														   = 0;
 	virtual ITexPic*		   EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) = 0;
-	virtual void			   SetTexture(int tnum, ETexType Type = eTT_Base)																									   = 0;	
+	virtual void			   SetTexture(int tnum, ETexType Type = eTT_Base)																									   = 0;
 
 	void ShutDown();
+	template<typename RenderThreadCallback>
+	void ExecuteRenderThreadCommand(RenderThreadCallback&& callback)
+	{
+		m_RenderThread->ExecuteRenderThreadCommand(std::forward<RenderThreadCallback>(callback));
+	}
 
-  protected:
   protected:
 	struct alignas(16) SPerViewConstantBuffer
 	{
@@ -498,7 +402,7 @@ class CRenderer : public RenderCVars
 	ISystem* m_pSystem = nullptr;
 
 	bool		 is_fullscreen = false;
-	Legacy::Vec4		 m_viewPort;
+	Legacy::Vec4 m_viewPort;
 	unsigned int cbpp  = 0;
 	int			 zbpp  = 0;
 	int			 sbits = 0;
@@ -527,6 +431,7 @@ class CRenderer : public RenderCVars
 
 	int m_FrameID = 0;
 
+  public:
 	// Windows context
 	char	 m_WinTitle[80];
 	WIN_HWND m_hWnd;		// The main app window
@@ -541,10 +446,133 @@ class CRenderer : public RenderCVars
 
 	std::vector<IFont*> m_Fonts;
 	RenderBackend		m_Backend;
-	Legacy::Vec4				m_ClearColor{};
+	Legacy::Vec4		m_ClearColor{};
 
 	std::vector<IRendererCallbackClient*> m_RenderCallbackClients;
 
 	bool m_Is2DMode = false;
 	Vec2 ortho;
+
+	std::unique_ptr<SRenderThread> m_RenderThread;
 };
+
+class ShaderMan
+{
+  public:
+	IShader* Sh_Load(const char* vertex, const char* fragment)
+	{
+#if 0
+		using ShaderInfo = IShaderProgram::ShaderInfo;
+		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
+		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
+		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
+		p->Create((std::string(vertex) + std::string(fragment)).data());
+		m_Shaders.emplace_back(p);
+		return p;
+#else
+		return nullptr;
+#endif
+	}
+	void RT_ShaderLoad(const char* name, int flags, uint64 nMaskGen, CShader* p)
+	{
+		if (!Sh_LoadBinary(name, flags, nMaskGen, p))
+		{
+			if (Compile(name, flags, nMaskGen, p))
+			{
+				p->SaveBinaryShader(name, flags, nMaskGen);
+			}
+		}
+	}
+	CShader* NewShader()
+	{
+		return new CShader;
+	}
+	IShader* Sh_Load(const char* name, int flags, uint64 nMaskGen)
+	{
+		_smart_ptr<CShader> pShader = NewShader();
+		gRenDev->ExecuteRenderThreadCommand([=]
+											{
+												CryLog("load shader: %s", name);
+												RT_ShaderLoad(name, flags, nMaskGen, pShader);
+											});
+		return pShader;
+	}
+	bool Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen, CShader* p) const
+	{
+		//return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
+		return false;
+	}
+
+	bool Compile(std::string_view name, int flags, uint64 nMaskGen, CShader* p)
+	{
+		PEffect			  pEffect = nullptr;
+		std::stringstream path;
+		auto			  pos		= name.find_last_of('.');
+		std::string_view  real_name = name;
+		std::string_view  technique;
+		int				  pass = 0;
+		if (pos != name.npos)
+		{
+			real_name = name.substr(0, pos);
+			technique = name.substr(pos + 1);
+		}
+		path << "Data/shaders/fx/" << real_name << ".fx";
+		if (g_FxParser->Parse(path.str().data(), &pEffect))
+		{
+			auto nTech = 0;
+			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
+				nTech = tech->GetId();
+			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, nTech, pass);
+			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, flags, pass);
+			if (!vs || !fs)
+			{
+				SAFE_DELETE(vs);
+				SAFE_DELETE(fs);
+				return false;
+			}
+			p->m_Shaders[IShader::E_VERTEX]	  = vs;
+			p->m_Shaders[IShader::E_FRAGMENT] = fs;
+			p->AddRef();
+			//m_Shaders.push_back(p);
+			//p->ReflectShader();
+			//D3D11_SHADER_DESC		m_Desc;
+			//ID3D11ShaderReflection* m_pReflection = NULL;
+			//p->CreateInputLayout();
+			p->m_Flags2 |= EF2_LOADED;
+			//p->Bind();
+
+			delete pEffect;
+			return true;
+		}
+		else
+		{
+			p->m_Flags2 |= EF2_FAILED;
+		}
+		return false;
+	}
+	void ReloadAll()
+	{
+		for (auto& s : m_Shaders)
+		{
+			s->Reload(0);
+		}
+	}
+
+	std::vector<_smart_ptr<CShader>> m_Shaders;
+};
+#undef NOT_IMPLEMENTED_V
+#ifndef NOT_IMPLEMENTED_V
+#	if defined(ASSERT_NOT_IMPLEMENTED)
+#		define NOT_IMPLEMENTED_V      \
+			assert(0 && __FUNCTION__); \
+			return {};
+#	else
+#		define NOT_IMPLEMENTED_V                                                          \
+			gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
+			return {};
+#	endif
+#endif
+#ifndef NOT_IMPLEMENTED
+#	define NOT_IMPLEMENTED \
+		assert(0 && __FUNCTION__);
+#endif

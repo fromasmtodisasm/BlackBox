@@ -12,22 +12,33 @@
 
 #include <BlackBox/System/File/ICryPak.hpp>
 
+#define DX_11
 #ifdef DX_RENDERER
 #	include <BlackBox/Core/Platform/Windows.hpp>
 #	define __IFont_INTERFACE_DEFINED__
 
 #	include <d3d11.h>
-//#	include <d3dx11.h>
+#	include <d3dx11.h>
 #	include <d3dx10.h>
+//#	include <D3dx11effect.h>
 #	include "D3D/DDSTextureLoader.h"
 
 #ifdef DX_11
 #	define ID3DDevice ID3D11Device
+#	define ID3DDeviceContext ID3D11DeviceContext
+#	define ID3DBuffer ID3D11Buffer
+#	define ID3DResource ID3D11Resource
 #	define ID3DRenderTargetView ID3D11RenderTargetView
 #	define ID3DTexture2D ID3D11Texture2D
 #	define ID3DDepthStencilView ID3D11DepthStencilView
 #	define ID3DRasterizerState ID3D11RasterizerState
 #	define ID3DDepthStencilState ID3D11DepthStencilState
+#	define ID3DShaderResourceView ID3D11ShaderResourceView
+#	define ID3DInputLayout ID3D11InputLayout
+#	define ID3DSamplerState ID3D11SamplerState
+
+using D3D_VIEWPORT = D3D11_VIEWPORT;
+using D3D_RASTERIZER_DESC = D3D11_RASTERIZER_DESC;
 #else
 #	define ID3DDevice ID3D10Device
 #	define ID3DBuffer ID3D10Buffer
@@ -89,4 +100,4 @@ inline D3DXMATRIX* D3DXMatrixTranspose(D3DXMATRIX* pOut, CONST D3DXMATRIX* pM)
 #include <array>
 #include <sstream>
 
-#include "RendererCommon.hpp"
+#include "Common\CommonRender.h"

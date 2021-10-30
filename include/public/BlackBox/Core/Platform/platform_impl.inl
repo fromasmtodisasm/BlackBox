@@ -68,6 +68,7 @@ void CryInvalidParameterHandler(
 	unsigned int   line,
 	uintptr_t	   pReserved)
 {
+	return;
 	size_t i;
 	char   sFunc[128];
 	char   sExpression[128];

@@ -1930,6 +1930,8 @@ enum EF_Sort
 #define EF2_USELIGHTMATERIAL  0x2000
 #define EF2_REDEPEND       0x4000
 #define EF2_DEFAULTVERTEXFORMAT 0x8000
+#define EF2_LOADED		   0x100000
+#define EF2_FAILED         0x200000
 
 // SShader::Flags3
 // Additional Different useful flags

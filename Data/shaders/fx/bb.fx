@@ -105,7 +105,7 @@ float4 PSMain(VS_OUT IN)
 
 	outColor.ambient  = ambient() * _color;
 	outColor.diffuse  = (float3)diffuse(lightPos, IN.fragPos, IN.normal); //*_color;
-	outColor.specular = 0.8 * _color * specular(lightPos, IN.fragPos, PerViewCB.Eye, IN.normal);
+	outColor.specular = 0.8 * _color * specular(lightPos, IN.fragPos, perViewCB.Eye, IN.normal);
 
 	float3 result = outColor.ambient + outColor.diffuse + outColor.specular;
 

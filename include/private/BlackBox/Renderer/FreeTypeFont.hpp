@@ -71,20 +71,20 @@ private:
 
 	CVertexBuffer* m_VB = nullptr;
 	SVertexStream* m_IB = nullptr;
-	ID3D10Texture2D *m_pTexture = NULL;
+	ID3DTexture2D *m_pTexture = NULL;
 
-	ID3D10Texture2D *m_pWightTexture = NULL;
-	ID3D10Texture2D *m_pGreyTexture = NULL;
+	ID3DTexture2D *m_pWightTexture = NULL;
+	ID3DTexture2D *m_pGreyTexture = NULL;
 
-	ID3D10ShaderResourceView* m_pTextureRV = NULL;
+	ID3DShaderResourceView* m_pTextureRV = NULL;
 
-	ID3D10Buffer* m_pConstantBuffer;
+	ID3DBuffer* m_pConstantBuffer;
 	
-	static ID3D10SamplerState* m_Sampler;
-	static ID3D10InputLayout* m_pFontLayout;
-	static ID3D10RasterizerState* m_pRasterizerState;
-	static ID3D10DepthStencilState* m_pDSState;
-	static ID3D10BlendState* m_pBlendState;
+	static ID3D11SamplerState* m_Sampler;
+	static ID3D11InputLayout* m_pFontLayout;
+	static ID3D11RasterizerState* m_pRasterizerState;
+	static ID3D11DepthStencilState* m_pDSState;
+	static ID3D11BlendState* m_pBlendState;
 	static bool first_init;
 
 	#if 1
