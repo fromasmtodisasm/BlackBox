@@ -38,7 +38,8 @@
 
       },
       "environment": {
-        "solutionDir": "${sourceDir}/Solutions"
+        "solutionDir": "${sourceDir}/Solutions",
+        "DXSDK_DIR": "${sourceDir}/lib/DirectX-SDK-June2010"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {

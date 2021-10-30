@@ -76,18 +76,9 @@ CShader* CShader::LoadBinaryShader(std::string_view name, int flags, uint64 nMas
 
 CHWShader* CShader::LoadFromEffect(PEffect pEffect, IShader::Type type, int nTechnique, int nPass)
 {
-	//assert(nTechnique <= (pEffect->GetNumTechniques() - 1));
 	auto tech = pEffect->GetTechnique(nTechnique);
-	//assert(nPass <= (tech->GetNumPasses() - 1));
-	//nTechnique = nPass = 0;
 	auto pass = tech->GetPass(nPass);
-	auto code = pass->Code;
-
-	if (type == IShader::E_VERTEX)
-	{
-		for (auto& in : pass->InputLayout)
-			code.push_back(in);
-	}
+	std::vector<string> code{pEffect->GetCode()};
 
 	auto entry = pass->EntryPoints[type].data();
 	//SaveHlslToDisk(code, type);

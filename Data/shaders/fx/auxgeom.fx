@@ -1,45 +1,44 @@
 #include "hlsl_common.fx"
 
-Shader
+struct VsOutput
 {
-	struct VsOutput
-	{
-		float4 pos : SV_POSITION;
-		float4 color: COLOR;
-	};
+    float4 pos : SV_POSITION;
+    float4 color : COLOR;
+};
 
-	struct VsInput
-	{
-		float3 Pos : POSITION;
-		float4 Color : COLOR0;
-		float2 TC : TEXCOORD0;
-	};
+struct VsInput
+{
+    float3 Pos : POSITION;
+    float4 Color : COLOR0;
+    float2 TC : TEXCOORD0;
+};
 
-	VsOutput VSMain(VsInput IN)
-	{
-		VsOutput OUT;
-		OUT.pos = mul(GetViewProjMat(), float4(IN.Pos, 1.0));
-		OUT.color = float4(IN.Color);
-		return OUT;
-	}
+[[fn]]
+VsOutput VSMain(VsInput IN)
+{
+    VsOutput OUT;
+    OUT.pos = mul(GetViewProjMat(), float4(IN.Pos, 1.0));
+    OUT.color = float4(IN.Color);
+    return OUT;
+}
  
-	float4 PSMain(VsOutput IN) : SV_Target0
-	{ 
-		return float4(IN.color);
-	}
+[[fn]]
+float4 PSMain(VsOutput IN) : SV_Target0
+{
+    return float4(IN.color);
 }
 
 // Default technique for auxiliary geometry rendering
 technique AuxGeometry
 {
-  pass p0
-  {
-    VertexShader = VSMain
-    PixelShader = PSMain
-  }
-  pass p1
-  {
-    VertexShader = vert
-    PixelShader = frag
-  }
+    pass p0
+    {
+        VertexShader = VSMain;
+        PixelShader = PSMain;
+    }
+    pass p1
+    {
+        VertexShader = vert;
+        PixelShader = frag;
+    }
 }

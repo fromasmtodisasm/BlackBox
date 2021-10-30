@@ -18,6 +18,7 @@ add_sources(
 end_sources()
 
 enginemodule(FxParser FORCE_SHARED_WIN PCH "./pch.hpp" SOLUTION_FOLDER "Engine")
+target_compile_definitions(FxParser PUBLIC "-DYYDEBUG=1")
 
 # ===============> bison
 find_package(BISON)

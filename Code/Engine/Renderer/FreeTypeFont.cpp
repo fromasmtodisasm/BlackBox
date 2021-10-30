@@ -258,7 +258,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	_smart_ptr<CShader> shader;
 	if (!shader)
 	{
-		shader = GlobalResources::SpriteShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite", 0, 0);
+		shader = GlobalResources::SpriteShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite.Font", 0, 0);
 	}
 
 	if (FT_Init_FreeType(&ft))
@@ -273,7 +273,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		return false;
 	}
 	FT_Set_Pixel_Sizes(face, 0, h);
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
 	glm::uvec2 t_size(atlas_size);
 	glm::uvec2 cur_pos(0, 0);

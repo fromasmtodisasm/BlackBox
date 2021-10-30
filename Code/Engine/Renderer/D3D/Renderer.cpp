@@ -721,7 +721,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 
 	if (!GlobalResources::TexturedQuadShader)
 	{
-		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite", 1, 0);
+		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite.TexturedQuad", 0, 0);
 	}
 
 	auto vertex_cnt = 6;
@@ -757,4 +757,40 @@ IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
 	pSystem->Log("Loading...");
 	return new CD3DRenderer(pSystem);
+
+	//  // Initializations:  //  // Here is a set of vertex definitions to support two streams.  // Vertex format:  //     stream 0 -> position + normal + color 0 + color 1  //     stream 1 -> 4 texture coordinate pairs    
+	struct VTXSTREAM_0
+	{
+		float fPosX, fPosY, fPosZ;
+		float fNormX, fNormY, fNormZ;
+		DWORD dwColor0, dwColor1;
+	};
+	struct VTXSTREAM_1
+	{
+		float fTexU0, fTexV0;
+		float fTexU1, fTexV1;
+		float fTexU2, fTexV2;
+		float fTexU3, fTexV3;
+	}; // Vertex declaration  
+	#if 0
+	D3DVERTEXELEMENT9 m_VtxDcl[] = { {0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+									 // stream 0, position
+									 {0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
+									 // stream 0, normal
+									 {0, 24, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
+									 // stream 0, color 0
+									 {0, 28, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 1},
+									 // stream 0, color 1
+									 {1, 0, D3DDECLUSAGE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+									 // stream 1, tex coord set 0
+									 {1, 8, D3DDECLUSAGE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+									 // stream 1, tex coord set 1
+									 {1, 16, D3DDECLUSAGE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
+									 // stream 1, tex coord set 2
+									 {1, 24, D3DDECLUSAGE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3}
+									 // stream 1, tex coord set 3    }
+									 // Create a vertex declaration object
+									 LPDIRECT3DVERTEXDECLARATION9 m_pVtxDeclObject;
+	m_pd3dDevice->CreateVertexDeclaration(m_VtxDcl, &m_pVtxDclObj);
+	#endif
 }

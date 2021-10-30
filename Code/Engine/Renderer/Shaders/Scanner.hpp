@@ -14,36 +14,68 @@ class Driver;
 
 class Scanner : public yyFlexLexer
 {
-public:
-
+  public:
 	Scanner(Driver& driver)
-	  : driver(driver)
-  {
-	symboltype_map.insert({"float"});
-	symboltype_map.insert({"float2"});
-	symboltype_map.insert({"float3"});
-	symboltype_map.insert({"float4"});
+		: driver(driver)
+	{
+		symboltype_map.insert({"float"});
+		symboltype_map.insert({"float2"});
+		symboltype_map.insert({"float3"});
+		symboltype_map.insert({"float4"});
 
-	symboltype_map.insert({"float4x4"});
+		symboltype_map.insert({"float4x4"});
 
-	symboltype_map.insert({"int"});
-  }
-  virtual ~Scanner() {}
-  virtual yy::parser::symbol_type ScanToken();
-  void							  pop_state() { yy_pop_state(); }
-  void							  goto_codebody();
-  bool							  MakeInclude(const char* file_name);
-  void							  eof();
-  yy::parser::symbol_type		  CurrentSymbol()
-  {
-	  //return yy::parser::symbol_type(yy::parser::token::yytokentype(*YYText()), loc);
-	  return {};
-  }
+		symboltype_map.insert({"int"});
+		string_buf.reserve(1024 * 16);
+	}
+	virtual ~Scanner() {}
+	virtual yy::parser::symbol_type ScanToken();
+	void							pop_state() { yy_pop_state(); }
+	void							goto_codebody();
+	bool							MakeInclude(const char* file_name);
+	void							eof();
 
-  yy::parser::symbol_type check_type(const std::string &s,
-  const yy::parser::location_type& loc);
+	bool register_type(const string& str)
+	{
+		symboltype_map.insert(str);
+		return false;
+	}
+	void add_shader_fragment(const char* f)
+	{
+		defered_fragment = f + (" " + defered_fragment);		
+	}
+	void add_shader_fragment()
+	{
+		if (previewsCanAddFragment && canNowAddFragment)
+		{
+			shader += defered_fragment;
+			defered_fragment = YYText();
+		}
+		else if (canNowAddFragment)
+		{
+			defered_fragment = YYText();
+		}
+		previewsCanAddFragment = canNowAddFragment;
+	}
+	yy::parser::symbol_type CurrentSymbol()
+	{
+		//return yy::parser::symbol_type(yy::parser::token::yytokentype(*YYText()), loc);
+		return {};
+	}
 
-Driver& driver;
+	yy::parser::symbol_type check_type(const std::string&				s,
+									   const yy::parser::location_type& loc);
+	void					print_state();
+
+	Driver& driver;
 
 	std::set<std::string> symboltype_map;
+	string				  string_buf;
+	string				  shader;
+
+	bool   canNowAddFragment	  = true;
+	bool   previewsCanAddFragment = false;
+	string defered_fragment;
+
+	size_t pos = 0, len = 0;
 };

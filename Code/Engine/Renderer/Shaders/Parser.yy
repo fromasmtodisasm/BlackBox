@@ -27,6 +27,7 @@
 
     //extern void lex_pop_state();
     #define lex_pop_state() scanner.pop_state()
+    #define lex_print_state() scanner.print_state()
 
 
     namespace nvFX {
@@ -45,7 +46,7 @@
             //UInt,
             TBool, TBool2, TBool3, TBool4,
             TFloat, TVec2, TVec3, TVec4,
-            TMat2, TMat3, TMat4, 
+            TMat2, TMat2x4, TMat3, TMat34,TMat4, 
             TUBO, // Uniform Buffer Object
             TCB,  // Constant Buffer (D3D)
             TUniform,
@@ -98,12 +99,17 @@
     }
     }
 
+    struct DirectDeclarator
+    {
+        string Name;
+    };
+
+
 }
 
 %initial-action
 {
     is_common = false;
-    Code.clear();
 }
 
 // %param { Driver &drv }
@@ -125,7 +131,6 @@
     #undef S_FALSE
     #endif
 
-    std::vector<std::string> Code;
     bool is_common;
     std::vector<string> annotations;
 
@@ -157,6 +162,10 @@
 %type  <std::string>    shader_assignment
 %type  <IShader::Type>  shader_type
 %type  <std::string>    struct_footer
+%type  <std::string>    struct_header
+%type  <DirectDeclarator> direct_declarator
+%type  <DirectDeclarator> shader_assignment_shader
+
 
 %token <std::string> TYPE_NAME
 
@@ -187,12 +196,15 @@
 %token              LOWP
 %token              UNIFORM
 %token              CSTBUFFER
+%token              CONSTANTBUFFER
 %token              FLOAT_TYPE
 %token              FLOAT2_TYPE
 %token              FLOAT3_TYPE
 %token              FLOAT4_TYPE
 %token              MAT2_TYPE
+%token              MAT2x4_TYPE
 %token              MAT3_TYPE
+%token              MAT34_TYPE
 %token              MAT4_TYPE
 %token              BOOL_TYPE
 %token              BOOL2_TYPE
@@ -214,6 +226,8 @@
 %token              SAMPLER2DRECT_TYPE
 %token              SAMPLER3D_TYPE
 %token              SAMPLERCUBE_TYPE
+
+%token              SAMPLERSTATE
 
 /*------------------------------------------------------------------
   token for extensions
@@ -258,33 +272,43 @@
 
 %token STRUCT
 
+%token INSPECYFIER
+%token OUTSPECYFIER
+
 %%
 %start input;
 
 input: %empty { CryLog("Empty effect"); }
 | input ';'
 | input tech
-| input hlsl
 | input var_decl
 | input shader_resource
 | input function_definition
-| input function_declaration
+| input function_declaration {CryLog("Pop lex state from declaration"); lex_pop_state();}
 | input fatal_error
 | input struct
 | input error
 ;
 
-arguments:  var_decl | 
-            var_decl ',' arguments
+var_spec: INSPECYFIER | OUTSPECYFIER | %empty;
+
+arguments:  var_spec var_decl | 
+            var_spec var_decl ',' arguments  |
+            %empty;
         
-function_definition: function_declaration '{' { 
-    CryLog("Open function scope"); scanner.goto_codebody(); 
+function_definition: function_declaration semantic '{' { 
+    //CryLog("Open function scope");
     } CODEBODY {
-    CryLog("Close function scope"); 
+    //CryLog("Close function scope"); 
+    auto body = $CODEBODY;
+    //CryLog("FuncBody: %s", body.data());
 }
 
-function_declaration: TYPE_NAME IDENTIFIER[name] '(' arguments ')'{
+object_type: TYPE_NAME | base_type;
+
+function_declaration: object_type IDENTIFIER[name] '(' {}arguments ')'{
     CryLog("Parsed function declaration for: [%s]", $name.data());
+    lex_print_state();
 }; 
 
 fatal_error: FATALERROR { CryFatalError("Stopping paring!!!"); }
@@ -293,18 +317,44 @@ register_value: INT | IDENTIFIER;
 
 register_declaration: ':' REGISTER '(' register_value ')' | %empty;
 
-cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}';
+cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
+{
+    CryLog("New CBuffer %s", $2.data());
+    lex_pop_state();
+}
 
-struct: STRUCT struct_header struct_body struct_footer;
+template_parameter: '<' object_type '>';
 
-struct_header: IDENTIFIER | %empty;
+cbuffer: CONSTANTBUFFER template_parameter IDENTIFIER register_declaration
+{
+    CryLog("New CBuffer %s", $3.data());
+    lex_pop_state();
+}
+
+struct: STRUCT struct_header struct_body struct_footer
+{
+    //CryLog("New Struct");
+}
+
+struct_header: IDENTIFIER{CryLog("StructName: %s", $1.data()); scanner.register_type($1.data());} | %empty {$$="";};
 struct_body: '{' var_decls '}';
 struct_footer: IDENTIFIER {CryLog("Declared and defined struct with name: %s", $1.data());} 
 | %empty {$$="";} ;
 
 var_decls: var_decls  var_decl ';' | var_decl ';' | struct';';
 
-shader_resource: cbuffer;
+shader_resource: cbuffer | texture2d | sampler_state;
+
+resource_initializer: %empty | '=' IDENTIFIER;
+texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration resource_initializer
+{
+    CryLog("texture2d");
+}
+
+sampler_state: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer
+{
+    CryLog("sampler");
+}
 
 shader_type 
 : VERTEXPROGRAM {$$ = $1;}
@@ -312,15 +362,22 @@ shader_type
 | FRAGMENTPROGRAM {$$ = $1;}
 ;
 
-shader_assignment: shader_type '=' IDENTIFIER {
+shader_assignment_shader: direct_declarator {
+    $$ = $1;
+}
+| IDENTIFIER {
+    $$ = DirectDeclarator{$1};
+};
+
+shader_assignment: shader_type '=' shader_assignment_shader ';' {
     //$$ = std::make_pair($1, $3);
-	driver.currentEffect->shader_assignment($1,$3);
+	driver.currentEffect->shader_assignment($1,$3.Name);
 }
 ;
 shader_assignments:
 shader_assignment
 | shader_assignments shader_assignment
-//| shader_assignments error { error(@1, "Error in shader_assignment list\n");}
+| %empty
 ;
 
 /*------------------------------------------------------------------
@@ -344,17 +401,83 @@ base_type:
 |  BOOL3_TYPE { $$ = nvFX::IUniform::TBool3; }
 |  BOOL4_TYPE { $$ = nvFX::IUniform::TBool4; }
 |  MAT2_TYPE { $$ = nvFX::IUniform::TMat2; }
+|  MAT2x4_TYPE { $$ = nvFX::IUniform::TMat2x4; }
 |  MAT3_TYPE { $$ = nvFX::IUniform::TMat3; }
+|  MAT34_TYPE { $$ = nvFX::IUniform::TMat3; }
 |  MAT4_TYPE { $$ = nvFX::IUniform::TMat4; }
 
 ;
 
+//expression: 
+
+primary_expression
+	: IDENTIFIER
+	//| CONSTANT
+  | INT
+  | FLOAT
+	//| STRING_LITERAL
+	| '(' postfix_expression ')'
+	;
+
+postfix_expression
+	: primary_expression
+	| postfix_expression '[' postfix_expression ']'
+	| postfix_expression '(' ')'
+//	| postfix_expression '(' argument_expression_list ')'
+	| postfix_expression '.' IDENTIFIER
+//	| postfix_expression PTR_OP IDENTIFIER
+//	| postfix_expression INC_OP
+//	| postfix_expression DEC_OP
+	;
+declarator: direct_declarator
+	;
+constant_expression: postfix_expression;
+
+parameter_type_list: var_decls;
+
+identifier_list
+	: IDENTIFIER
+	| identifier_list ',' IDENTIFIER
+	;
+
+direct_declarator
+	: IDENTIFIER {
+        $$ = DirectDeclarator{$1};
+    }
+	| '(' declarator ')'
+	| direct_declarator '[' constant_expression ']'
+	| direct_declarator '[' ']'
+	| direct_declarator '(' parameter_type_list ')'
+	| direct_declarator '(' identifier_list ')'
+	| direct_declarator '(' ')'{
+        $$ = $1;
+    }
+	;
+
 semantic: ':' IDENTIFIER | %empty ;
 
+
+value: INT | FLOAT;
+
+value_list: value | value_list ',' value;
+
+basic_type_constructor:
+                      FLOAT_TYPE '('value')'
+                      | INT_TYPE '('value')'
+                      | FLOAT2_TYPE '('value ',' value ')'
+                      | FLOAT3_TYPE '('value ',' value  ',' value ')'
+                      | FLOAT4_TYPE '('value ',' value  ',' value  ',' value ')'
+type_constructor: basic_type_constructor;
+
+
 var_decl: 
-base_type IDENTIFIER semantic
-| base_type IDENTIFIER semantic annotations '=' INT
-| base_type IDENTIFIER semantic annotations '=' FLOAT
+object_type direct_declarator semantic
+{
+    //CryLog("TryParseVarDecl");
+}
+| object_type direct_declarator semantic annotations '=' type_constructor
+| object_type direct_declarator semantic annotations '=' value
+| object_type direct_declarator semantic annotations ';'
 ;
 
 
@@ -385,7 +508,6 @@ PASS {
 | PASS IDENTIFIER {
     SPass pass;
     pass.Name = $2.c_str();
-    pass.Code = Code;
     driver.currentEffect->m_Techniques.back().Passes.push_back(pass);
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
@@ -424,8 +546,8 @@ TECHNIQUE {
     //curAnnotations = curTechnique->annotations()->getExInterface();
 } '{' passes '}' 
 | TECHNIQUE IDENTIFIER {
-    CTechnique tech;
-    tech.Name =  $2.c_str();
+	auto techs = driver.currentEffect->m_Techniques;
+    CTechnique tech(techs.size(), $2.c_str());
     driver.currentEffect->m_Techniques.push_back(tech);
     CryLog("creation of Technique %s...\n", tech.Name.data());
     //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
@@ -433,6 +555,7 @@ TECHNIQUE {
     //delete $2;
 } annotations '{' passes '}' { 
     lex_pop_state();
+    scanner.canNowAddFragment = true;
     //curAnnotations = NULL;
 }
 ;
@@ -440,16 +563,20 @@ TECHNIQUE {
 /*
    ANNOTATIONS - TODO: more types of annotations
  */
+
+STRING_LIST: STR | STRING_LIST STR;
 scalar_type: INT_TYPE | FLOAT_TYPE | UNSIGNED | STRING_TYPE;
 // TODO: research for rule[word] (what is it previous?) 
 // most likely it is: https://www.gnu.org/software/bison/manual/html_node/Named-References.html
 annotation_list: annotation_list[previous] annotation
 | annotation;
 
-annotation_value: FLOAT | INT | STR | UNSIGNED;
+annotation_value: FLOAT | INT | STRING_LIST | UNSIGNED | IDENTIFIER{CryLog("annotation IDENTIFIER");};
 
-annotation: scalar_type IDENTIFIER '=' annotation_value ';' {
-    CryLog("annotation: %s = ", $IDENTIFIER.c_str());
+annotation_header: scalar_type IDENTIFIER | REGISTER;
+annotation_base: annotation_header '=' annotation_value 
+annotation:  annotation_base | annotation_base ';' {
+    //CryLog("annotation: %s = ", $IDENTIFIER.c_str());
 /*
     if(!curAnnotations)
         curAnnotations = IAnnotationEx::getAnnotationSingleton(2); // need a temporary place since nothing was initialized
@@ -465,33 +592,6 @@ annotations:
 | '<' annotation_list '>'
 ;
 
-
-hlsl_header: 
-	HLSL11SHADER IDENTIFIER {
-        $$ = $2; 
-    } 
-	| HLSL11SHADER {
-        $$ = "Common";
-        is_common = true;
-    }
-;
-
-hlsl: shader_header '{' CODEBODY { 
-		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
-        driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
-        if ($1 == "Common")
-        {
-            Code.push_back(driver.currentEffect->m_shaders.back().data);
-            is_common = false;
-        }
-        if (gEnv->pConsole->GetCVar("dump_shaders_on_load")->GetIVal())
-            CryLog("Current shader[%s] code in file %s:\n%s", $1.data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
-
-	}
-;
-
-shader_header: hlsl_header annotations  { $$ = $1; }
-
 %%
 
 #include <sstream>
@@ -500,6 +600,6 @@ yy::parser::error(const location_type& l, const std::string& m)
 {
   std::stringstream ss;
   ss << l << ": " << m;
-  gEnv->pLog->LogError(ss.str().c_str());    
+  CryError(ss.str().c_str());    
 }
 #pragma warning(pop)

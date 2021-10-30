@@ -1,42 +1,59 @@
-//#ifndef BB_PARSER
+//#include "FXConstantDefs.cfi"
+//#include "AuxGeom.cfx"
+//#include "NoDraw.cfx"
+//#include "Common.cfx"
 
-
-Shader
-{
 #define PERFRAME_SLOT b0
 #define PERVIEW_SLOT b1
 #define PERINSTANCE_SLOT c2
-//#endif
-	cbuffer PerFrameCB : register(PERFRAME_SLOT)
-	{
-		float deltaTime;
-	}
-	cbuffer PerViewCB : register(PERVIEW_SLOT)
-	{
-		struct _PerViewCB
-		{
-            float4x4 Projection;
-            float4x4 OrthoProjection;
-            float4x4 View;
-            float4x4 ViewProjection;
-            float3 Eye;
-		}PerViewCB;
-	}
 
-	float4x4 GetOrthoProjMat()
-	{
-		return PerViewCB.OrthoProjection;
-	}
+float global_float <string desc="Test global variable";> = 0.5;
 
-	float4x4 GetProjMat()
-	{
-		return PerViewCB.Projection;
-	}
+float global_float2 <string desc="Test global variable";> = float(0);
+float2 global_float3 <string desc="Test global variable";> = float2(0,0);
 
-	float4x4 GetViewProjMat()
-	{
-		return PerViewCB.ViewProjection;
-	}
-//#ifndef BB_PARSER
+//struct struct_definition
+//{
+//    float4x4 Projection;
+//    float data[3];
+//    float data2[3][4];
+//};
+//
+//ConstantBuffer<struct_definition> cbTest;
+
+cbuffer PerFrameCB : register(PERFRAME_SLOT)
+{
+    float deltaTime;
 }
-//#endif
+cbuffer PerViewCB : register(PERVIEW_SLOT)
+{
+    struct PERVIEWCB
+    {
+        float4x4 Projection;
+        float4x4 OrthoProjection;
+        float4x4 View;
+        float4x4 ViewProjection;
+        float3 Eye;
+    }PerViewCB;
+}
+
+[[fn]]
+float4x4 GetOrthoProjMat()
+{
+    
+    return PerViewCB.OrthoProjection;
+}
+
+[[fn]]
+float4x4 GetProjMat()
+{
+    return PerViewCB.Projection;
+}
+
+[[fn]]
+float4x4 GetViewProjMat()
+{
+    return PerViewCB.ViewProjection;
+}
+
+
