@@ -32,6 +32,7 @@ IEffect* Driver::parse(const char* f)
 	if (res == 0)
 	{
 		gEnv->pLog->Log("$3[FX] File %s passed", file.c_str());	
+		pEffect->m_Code = std::move(scanner->shader);
 	}
 	else
 	{

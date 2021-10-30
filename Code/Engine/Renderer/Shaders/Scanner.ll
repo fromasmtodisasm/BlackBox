@@ -79,6 +79,7 @@ float_number [+-]?([0-9]*[.])?[0-9]+
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  \
   loc.columns (yyleng);\
+  add_shader_fragment();
   //::print_state(YY_START);\
   //CryLog("Current token text: %s", YYText());
 %}
@@ -100,6 +101,7 @@ FatalError {
 }
 
 [Tt]echnique {
+    this->canNowAddFragment = false;
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
 }
@@ -110,6 +112,7 @@ FatalError {
 }
 <INITIAL>"[[fn]]" {
   CryLog("[[fn]]");
+  add_shader_fragment("//");
   yy_push_state(function);
   print_state();
 }
@@ -387,7 +390,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
       ==================================================================
       ==================================================================
     */
-#include BEGIN(incl);
+#include BEGIN(incl); add_shader_fragment("//");
 <incl>[<" \t]* /*  eat  the  whitespace and " or < as often in #include */
 <incl>[^ \t\n]+     {  /*  got  the  include  file  name  */
     char * s = (char*)strchr(YYText(), '\"'); // get rid of the quote or >

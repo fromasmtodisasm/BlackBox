@@ -2,14 +2,6 @@
 //#include <BlackBox/Renderer/IRender.hpp>
 //#include <BlackBox/Renderer/BaseShader.hpp>
 
-int CEffect::GetNumShaders()
-{
-	return m_shaders.size();
-}
-IEffect::ShaderInfo CEffect::GetShader(int i)
-{
-	return m_shaders[i];
-}
 IShader* CEffect::GetShader(const char* name)
 {
 	return nullptr;
@@ -46,6 +38,11 @@ const char* CEffect::GetName()
 ShaderLangId CEffect::GetLangId()
 {
 	return m_LangId;
+}
+
+const char* CEffect::GetCode()
+{
+	return m_Code.data();
 }
 
 int CTechnique::GetNumPasses()

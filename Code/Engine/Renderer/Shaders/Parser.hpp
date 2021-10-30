@@ -32,7 +32,7 @@
 
 
 /**
- ** \file /cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp
+ ** \file /cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp
  ** Define the yy::parser class.
  */
 
@@ -42,10 +42,10 @@
 // especially those whose name start with YY_ or yy_.  They are
 // private implementation details that can be changed or removed.
 
-#ifndef YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
-# define YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#ifndef YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+# define YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
 // "%code requires" blocks.
-#line 12 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
+#line 12 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.yy"
 
 	#undef new
     #include <string>
@@ -136,8 +136,14 @@
     }
     }
 
+    struct DirectDeclarator
+    {
+        string Name;
+    };
 
-#line 141 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+
+
+#line 147 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -277,7 +283,7 @@
 #endif
 
 namespace yy {
-#line 281 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 287 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 
@@ -496,27 +502,31 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // shader_assignment_shader
+      // direct_declarator
+      char dummy1[sizeof (DirectDeclarator)];
+
       // VERTEXPROGRAM
       // FRAGMENTPROGRAM
       // GEOMETRYPROGRAM
       // HULLPROGRAM
       // EVALPROGRAM
       // shader_type
-      char dummy1[sizeof (IShader::Type)];
+      char dummy2[sizeof (IShader::Type)];
 
       // TRUE
       // FALSE
       // BOOL
-      char dummy2[sizeof (bool)];
+      char dummy3[sizeof (bool)];
 
       // FLOAT
-      char dummy3[sizeof (float)];
+      char dummy4[sizeof (float)];
 
       // INT
-      char dummy4[sizeof (int)];
+      char dummy5[sizeof (int)];
 
       // base_type
-      char dummy5[sizeof (nvFX::IUniform::Type)];
+      char dummy6[sizeof (nvFX::IUniform::Type)];
 
       // TYPE_NAME
       // IDENTIFIER
@@ -525,9 +535,7 @@ namespace yy {
       // struct_header
       // struct_footer
       // shader_assignment
-      // hlsl_header
-      // shader_header
-      char dummy6[sizeof (std::string)];
+      char dummy7[sizeof (std::string)];
     };
 
     /// The size of the largest semantic type.
@@ -827,10 +835,7 @@ namespace yy {
         S_annotation_header = 147,               // annotation_header
         S_annotation_base = 148,                 // annotation_base
         S_annotation = 149,                      // annotation
-        S_annotations = 150,                     // annotations
-        S_hlsl_header = 151,                     // hlsl_header
-        S_hlsl = 152,                            // hlsl
-        S_shader_header = 153                    // shader_header
+        S_annotations = 150                      // annotations
       };
     };
 
@@ -867,6 +872,11 @@ namespace yy {
       {
         switch (this->kind ())
     {
+      case symbol_kind::S_shader_assignment_shader: // shader_assignment_shader
+      case symbol_kind::S_direct_declarator: // direct_declarator
+        value.move< DirectDeclarator > (std::move (that.value));
+        break;
+
       case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
       case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
       case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
@@ -901,8 +911,6 @@ namespace yy {
       case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_hlsl_header: // hlsl_header
-      case symbol_kind::S_shader_header: // shader_header
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -925,6 +933,20 @@ namespace yy {
 #else
       basic_symbol (typename Base::kind_type t, const location_type& l)
         : Base (t)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, DirectDeclarator&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const DirectDeclarator& v, const location_type& l)
+        : Base (t)
+        , value (v)
         , location (l)
       {}
 #endif
@@ -1037,6 +1059,11 @@ namespace yy {
         // Value type destructor.
 switch (yykind)
     {
+      case symbol_kind::S_shader_assignment_shader: // shader_assignment_shader
+      case symbol_kind::S_direct_declarator: // direct_declarator
+        value.template destroy< DirectDeclarator > ();
+        break;
+
       case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
       case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
       case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
@@ -1071,8 +1098,6 @@ switch (yykind)
       case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_hlsl_header: // hlsl_header
-      case symbol_kind::S_shader_header: // shader_header
         value.template destroy< std::string > ();
         break;
 
@@ -2863,8 +2888,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 318,     ///< Last index in yytable_.
-      yynnts_ = 59,  ///< Number of nonterminal symbols.
+      yylast_ = 315,     ///< Last index in yytable_.
+      yynnts_ = 56,  ///< Number of nonterminal symbols.
       yyfinal_ = 2 ///< Termination state number.
     };
 
@@ -2940,6 +2965,11 @@ switch (yykind)
   {
     switch (this->kind ())
     {
+      case symbol_kind::S_shader_assignment_shader: // shader_assignment_shader
+      case symbol_kind::S_direct_declarator: // direct_declarator
+        value.copy< DirectDeclarator > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
       case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
       case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
@@ -2974,8 +3004,6 @@ switch (yykind)
       case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_hlsl_header: // hlsl_header
-      case symbol_kind::S_shader_header: // shader_header
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
@@ -3010,6 +3038,11 @@ switch (yykind)
     super_type::move (s);
     switch (this->kind ())
     {
+      case symbol_kind::S_shader_assignment_shader: // shader_assignment_shader
+      case symbol_kind::S_direct_declarator: // direct_declarator
+        value.move< DirectDeclarator > (YY_MOVE (s.value));
+        break;
+
       case symbol_kind::S_VERTEXPROGRAM: // VERTEXPROGRAM
       case symbol_kind::S_FRAGMENTPROGRAM: // FRAGMENTPROGRAM
       case symbol_kind::S_GEOMETRYPROGRAM: // GEOMETRYPROGRAM
@@ -3044,8 +3077,6 @@ switch (yykind)
       case symbol_kind::S_struct_header: // struct_header
       case symbol_kind::S_struct_footer: // struct_footer
       case symbol_kind::S_shader_assignment: // shader_assignment
-      case symbol_kind::S_hlsl_header: // hlsl_header
-      case symbol_kind::S_shader_header: // shader_header
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
@@ -3115,9 +3146,9 @@ switch (yykind)
 
 
 } // yy
-#line 3119 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
+#line 3150 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Parser.hpp"
 
 
 
 
-#endif // !YY_YY_CYGDRIVE_C_USERS_CHIAP_SOURCE_REPOS_FROMASMTODISASM_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED
+#endif // !YY_YY_CYGDRIVE_C_USERS_HACKMAN_CODE_TESTENGINE_CODE_ENGINE_RENDERER_SHADERS_PARSER_HPP_INCLUDED

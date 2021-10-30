@@ -37,10 +37,27 @@ class Scanner : public yyFlexLexer
 
 	bool register_type(const string& str)
 	{
-		symboltype_map.insert(str);	
+		symboltype_map.insert(str);
 		return false;
 	}
-	yy::parser::symbol_type			CurrentSymbol()
+	void add_shader_fragment(const char* f)
+	{
+		defered_fragment = f + (" " + defered_fragment);		
+	}
+	void add_shader_fragment()
+	{
+		if (previewsCanAddFragment && canNowAddFragment)
+		{
+			shader += defered_fragment;
+			defered_fragment = YYText();
+		}
+		else if (canNowAddFragment)
+		{
+			defered_fragment = YYText();
+		}
+		previewsCanAddFragment = canNowAddFragment;
+	}
+	yy::parser::symbol_type CurrentSymbol()
 	{
 		//return yy::parser::symbol_type(yy::parser::token::yytokentype(*YYText()), loc);
 		return {};
@@ -54,4 +71,11 @@ class Scanner : public yyFlexLexer
 
 	std::set<std::string> symboltype_map;
 	string				  string_buf;
+	string				  shader;
+
+	bool   canNowAddFragment	  = true;
+	bool   previewsCanAddFragment = false;
+	string defered_fragment;
+
+	size_t pos = 0, len = 0;
 };

@@ -1,6 +1,6 @@
-#line 1 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 3 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 3 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -793,16 +793,16 @@ static const flex_int16_t yy_chk[795] =
 
 static const flex_int16_t yy_rule_linenum[94] =
     {   0,
-       99,  103,  108,  112,  117,  121,  125,  128,  133,  137,
-      141,  147,  150,  156,  157,  158,  159,  160,  161,  162,
-      163,  164,  165,  166,  167,  168,  169,  170,  171,  172,
-      173,  174,  175,  176,  177,  178,  179,  180,  181,  182,
-      183,  184,  185,  188,  193,  198,  205,  206,  207,  209,
-      213,  214,  220,  227,  232,  239,  247,  252,  253,  254,
-      255,  256,  257,  258,  268,  277,  292,  299,  309,  314,
-      317,  323,  326,  331,  332,  333,  337,  341,  347,  350,
-      371,  372,  373,  374,  391,  392,  393,  436,  437,  438,
-      439,  441,  442
+      100,  104,  110,  114,  120,  124,  128,  131,  136,  140,
+      144,  150,  153,  159,  160,  161,  162,  163,  164,  165,
+      166,  167,  168,  169,  170,  171,  172,  173,  174,  175,
+      176,  177,  178,  179,  180,  181,  182,  183,  184,  185,
+      186,  187,  188,  191,  196,  201,  208,  209,  210,  212,
+      216,  217,  223,  230,  235,  242,  250,  255,  256,  257,
+      258,  259,  260,  261,  271,  280,  295,  302,  312,  317,
+      320,  326,  329,  334,  335,  336,  340,  344,  350,  353,
+      374,  375,  376,  377,  394,  395,  396,  439,  440,  441,
+      442,  444,  445
 
     } ;
 
@@ -813,8 +813,8 @@ static const flex_int16_t yy_rule_linenum[94] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
-#line 2 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 1 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 2 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
     #include <cerrno>
     #include <climits>
     #include <cstdlib>
@@ -860,9 +860,9 @@ static const flex_int16_t yy_rule_linenum[94] =
     }
 
 
-#line 863 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 863 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 #define YY_NO_INPUT 1
-#line 57 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 57 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
   // A number symbol corresponding to the value in S.
   yy::parser::symbol_type make_INT(
     const std::string &s,
@@ -873,16 +873,17 @@ static const flex_int16_t yy_rule_linenum[94] =
     const std::string &s,
     const yy::parser::location_type& loc
     );
-#line 876 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 876 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
-#line 79 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 79 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  \
   loc.columns (yyleng);\
+  add_shader_fragment();
   //::print_state(YY_START);\
   //CryLog("Current token text: %s", YYText());
-#line 884 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
-#line 885 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 885 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 886 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
 #define INITIAL 0
 #define skiptoendofline 1
@@ -1102,10 +1103,10 @@ YY_DECL
 
 	{
 /* %% [7.0] user's declarations go here */
-#line 85 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 86 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 
 
-#line 88 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 89 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
   // A handy shortcut to the location held by the driver.
   yy::location& loc = driver.location;
   // Code run each time yylex is called.
@@ -1117,7 +1118,7 @@ YY_DECL
 
 
 
-#line 1120 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1121 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1194,22 +1195,23 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 99 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 100 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_FATALERROR(loc);
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 103 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 104 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
+    this->canNowAddFragment = false;
     yy_push_state(technique);
 	return yy::parser::make_TECHNIQUE(loc);
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 108 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 110 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
   CryError("REGISTER");
 	return yy::parser::make_REGISTER(loc);
@@ -1217,16 +1219,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 112 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 114 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
   CryLog("[[fn]]");
+  add_shader_fragment("//");
   yy_push_state(function);
   print_state();
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 117 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 120 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
   yy_push_state(cstbuffer);
 	return yy::parser::make_CSTBUFFER(loc);
@@ -1234,7 +1237,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 121 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 124 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
   yy_push_state(cstbuffer);
 	return yy::parser::make_CONSTANTBUFFER(loc);
@@ -1242,35 +1245,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 125 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 128 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_TEXTURE2D_TYPE(loc);
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 128 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 131 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_SAMPLERSTATE(loc);
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 133 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 136 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_STRUCT(loc);
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 137 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 140 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_INSPECYFIER(loc);
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 141 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 144 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	return yy::parser::make_OUTSPECYFIER(loc);
 }
@@ -1278,14 +1281,14 @@ YY_RULE_SETUP
 
 case 12:
 YY_RULE_SETUP
-#line 147 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 150 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 150 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 153 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();
         return CURRENT_SYMBOL;
@@ -1295,158 +1298,158 @@ YY_RULE_SETUP
 
 case 14:
 YY_RULE_SETUP
-#line 156 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 159 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VOID_TYPE(loc);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 157 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 160 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_UNSIGNED(loc);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 158 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 161 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT_TYPE(loc);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 159 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 162 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT2_TYPE(loc);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 160 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 163 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT3_TYPE(loc);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 161 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 164 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT4_TYPE(loc);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 162 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 165 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT2_TYPE(loc);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 163 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 166 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT3_TYPE(loc);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 164 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 167 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FLOAT4_TYPE(loc);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 165 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 168 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT2_TYPE(loc);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 166 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 169 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT3_TYPE(loc);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 167 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 170 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT4_TYPE(loc);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 168 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 171 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT2_TYPE(loc);
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 169 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 172 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT2x4_TYPE(loc);
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 170 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 173 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT3_TYPE(loc);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 171 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 174 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT34_TYPE(loc);
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 172 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 175 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_MAT4_TYPE(loc);
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 173 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 176 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL_TYPE(loc);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 174 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 177 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL2_TYPE(loc);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 175 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 178 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL3_TYPE(loc);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 176 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 179 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_BOOL4_TYPE(loc);
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 177 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 180 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT_TYPE(loc);
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 178 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 181 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT2_TYPE(loc);
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 179 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 182 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT3_TYPE(loc);
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 180 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 183 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT4_TYPE(loc);
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 181 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 184 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT2_TYPE(loc);
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 182 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 185 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT3_TYPE(loc);
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 183 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 186 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_INT4_TYPE(loc);
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 184 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 187 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_UNIFORM(loc);
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 185 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 188 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_STRING_TYPE(loc);
 	YY_BREAK
 
 case 44:
 YY_RULE_SETUP
-#line 188 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 191 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXFORMAT(loc);
 	YY_BREAK
 /*==================================================================
@@ -1454,7 +1457,7 @@ return yy::parser::make_VERTEXFORMAT(loc);
     */
 case 45:
 YY_RULE_SETUP
-#line 193 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 196 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  INITIAL;
     yy_push_state(comment);
@@ -1462,7 +1465,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 198 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 201 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     comment_caller  =  YY_START;
     yy_push_state(comment2);
@@ -1472,36 +1475,36 @@ YY_RULE_SETUP
 
 case 47:
 YY_RULE_SETUP
-#line 205 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 208 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  anything  that's  not  a  '*'  */
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 206 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 209 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  up  '*'s  not  followed  by  '/'s  */
 	YY_BREAK
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
-#line 207 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 210 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step ();
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 209 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 212 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
 
 case 51:
 YY_RULE_SETUP
-#line 213 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 216 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 214 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 217 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 	YY_BREAK
 
@@ -1511,7 +1514,7 @@ loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 
 case 53:
 YY_RULE_SETUP
-#line 220 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 223 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 string_buf_ptr  =  string_buf;  yy_push_state(str);
 	YY_BREAK
 
@@ -1521,7 +1524,7 @@ string_buf_ptr  =  string_buf;  yy_push_state(str);
 
 case 54:
 YY_RULE_SETUP
-#line 227 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 230 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  saw  closing  quote  -  all  done  */
         yy_pop_state();//BEGIN(INITIAL);
         *string_buf_ptr  =  '\0';
@@ -1531,7 +1534,7 @@ YY_RULE_SETUP
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 232 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 235 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //FIXME:
         //fprintf(stderr,"\nunterminated  string  constant at line %d\n", line_num);
@@ -1542,7 +1545,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 239 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 242 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  octal  escape  sequence  */
         int  result;
@@ -1554,7 +1557,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 247 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 250 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         /*  generate  error  -  bad  escape  sequence;  something
         *  like  '\48'  or  '\0777777'
@@ -1563,38 +1566,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 252 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 255 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\n';
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 253 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 256 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\t';
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 254 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 257 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\r';
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 255 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 258 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\b';
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 256 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 259 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  '\f';
 	YY_BREAK
 case 63:
 /* rule 63 can match eol */
 YY_RULE_SETUP
-#line 257 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 260 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 *string_buf_ptr++  =  yytext[1];
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 258 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 261 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1608,7 +1611,7 @@ YY_RULE_SETUP
 
 case 65:
 YY_RULE_SETUP
-#line 268 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 271 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         bracket_level = 1; // must be one...
         string_buf_ptr  =  string_buf;
@@ -1620,7 +1623,7 @@ YY_RULE_SETUP
 
 case 66:
 YY_RULE_SETUP
-#line 277 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 280 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //CryLog("bracket level: %d", bracket_level);
         bracket_level--;
@@ -1640,7 +1643,7 @@ YY_RULE_SETUP
 case 67:
 /* rule 67 can match eol */
 YY_RULE_SETUP
-#line 292 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 295 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
@@ -1651,7 +1654,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 299 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 302 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*copy the GLSL data*/
         //CryLog("Copy function data");
         char  *yptr  =  yytext;
@@ -1665,7 +1668,7 @@ YY_RULE_SETUP
 
 case 69:
 YY_RULE_SETUP
-#line 309 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 312 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         comment_caller  =  INITIAL;
         yy_push_state(pass);
@@ -1674,14 +1677,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 314 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 317 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 		return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 317 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 320 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();//BEGIN(INITIAL);
 		return CURRENT_SYMBOL;
@@ -1691,14 +1694,14 @@ YY_RULE_SETUP
 
 case 72:
 YY_RULE_SETUP
-#line 323 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 326 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         return CURRENT_SYMBOL;
     }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 326 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 329 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         //yy_pop_state();
         return CURRENT_SYMBOL;
@@ -1706,24 +1709,24 @@ YY_RULE_SETUP
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 331 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 334 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_VERTEXPROGRAM(IShader::Type::E_VERTEX, loc);
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 332 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 335 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_FRAGMENTPROGRAM(IShader::Type::E_FRAGMENT, loc);
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 333 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 336 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return yy::parser::make_GEOMETRYPROGRAM(IShader::Type::E_GEOMETRY, loc);
 	YY_BREAK
 
 
 case 77:
 YY_RULE_SETUP
-#line 337 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 340 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         CryLog("{pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
@@ -1731,7 +1734,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 341 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 344 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
         CryLog("}pass,pr_state,input_layout");
 		return CURRENT_SYMBOL;
@@ -1741,14 +1744,14 @@ YY_RULE_SETUP
 case 79:
 /* rule 79 can match eol */
 YY_RULE_SETUP
-#line 347 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 350 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.lines (yyleng); loc.step ();
 }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 350 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 353 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
     loc.step ();
 }
@@ -1771,22 +1774,22 @@ YY_RULE_SETUP
     */
 case 81:
 YY_RULE_SETUP
-#line 371 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 374 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return make_INT(yytext, loc);
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 372 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 375 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return make_FLOAT(yytext, loc);
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 373 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 376 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 return check_type(yytext, loc);
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 374 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 377 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {   
     if((yytext[0] >= 33) && (yytext[0] <= 126))
         return CURRENT_SYMBOL;
@@ -1807,17 +1810,17 @@ YY_RULE_SETUP
     */
 case 85:
 YY_RULE_SETUP
-#line 391 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
-BEGIN(incl);
+#line 394 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+BEGIN(incl); add_shader_fragment("//");
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 392 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 395 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 /*  eat  the  whitespace and " or < as often in #include */
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 393 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 396 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {  /*  got  the  include  file  name  */
     char * s = (char*)strchr(YYText(), '\"'); // get rid of the quote or >
     if(!s) s = (char*)strchr(YYText(), '>');
@@ -1863,33 +1866,33 @@ YY_RULE_SETUP
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 436 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 439 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 yy_push_state(skiptoendofline);
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 437 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 440 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 yy_push_state(skiptoendofline);
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 438 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 441 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 yy_push_state(skiptoendofline);
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 439 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 442 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 yy_push_state(skiptoendofline);
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 441 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 444 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 
 	YY_BREAK
 case 93:
 /* rule 93 can match eol */
 YY_RULE_SETUP
-#line 442 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 445 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 loc.lines (yyleng); loc.step (); yy_pop_state();
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1921,7 +1924,7 @@ case YY_STATE_EOF(rasterization_state):
 case YY_STATE_EOF(resource):
 case YY_STATE_EOF(resource1):
 case YY_STATE_EOF(input_layout):
-#line 444 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 447 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 {
 	if(include_stack.empty())//(  --include_stack_ptr  <  0  )
     {
@@ -1943,10 +1946,10 @@ case YY_STATE_EOF(input_layout):
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 463 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 466 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 ECHO;
 	YY_BREAK
-#line 1949 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
+#line 1952 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -3063,7 +3066,7 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 463 "/cygdrive/c/Users/chiap/source/repos/fromasmtodisasm/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
+#line 466 "/cygdrive/c/Users/HackMan/code/TestEngine/Code/Engine/Renderer/Shaders/Scanner.ll"
 
 
 yy::parser::symbol_type make_INT(

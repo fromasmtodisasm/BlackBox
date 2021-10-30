@@ -32,8 +32,6 @@ class CEffect : public IEffect
 		: m_name(name)
 	{
 	}
-	virtual int		   GetNumShaders() override;
-	virtual ShaderInfo GetShader(int i) override;
 	virtual IShader*   GetShader(const char* name) override;
 
 	virtual int			GetNumTechniques() override;
@@ -56,13 +54,17 @@ class CEffect : public IEffect
 
   public:
 	std::string				m_name;
-	std::vector<ShaderInfo> m_shaders;
+	//std::vector<ShaderInfo> m_shaders;
 	std::vector<CTechnique> m_Techniques;
 	ShaderLangId			m_LangId = ShaderLangId::None;
+	std::string				m_Code;
 
 	// Inherited via IEffect
 	virtual const char* GetName() override;
 
 	// Inherited via IEffect
 	virtual ShaderLangId GetLangId() override;
+
+	// Inherited via IEffect
+	virtual const char* GetCode() override;
 };

@@ -1,4 +1,3 @@
-#include "FXConstantDefs.cfi"
 #include "hlsl_common.fx"
 
 #define TM_UNREAL
@@ -75,53 +74,45 @@ struct VsInput
     /*[[vk::location(5)]]*/ float4 color : COLOR;
 };
 
-[[fn]]
+[[fn]] 
 VS_OUT VSMain(VsInput IN)
 {
-    VS_OUT OUT;
-#if 0
-    OUT.pos = mul(mul(GetViewProjMat(), model), float4(IN.pos, 1.0));
-    OUT.fragPos = (float3)(model * float4(IN.pos, 1.0));
-    OUT.normal = mul(((float3x3)model), IN.normal);
-    OUT.color = IN.color;
-#endif
-    return OUT;
+	VS_OUT OUT;
+	OUT.pos		= mul(mul(GetViewProjMat(), model), float4(IN.pos, 1.0));
+	OUT.fragPos = (float3)(mul(model, float4(IN.pos, 1.0)));
+	OUT.normal	= mul(((float3x3)model), IN.normal);
+	OUT.color	= IN.color;
+	return OUT;
 }
 
 struct OutColor
 {
-    float3 ambient;
-    float3 diffuse;
-    float3 specular;
-    float3 normal;
+	float3 ambient;
+	float3 diffuse;
+	float3 specular;
+	float3 normal;
 };
 
 [[fn]]
-float4 PSMain(VS_OUT IN) : SV_Target0
+float4 PSMain(VS_OUT IN)
+	: SV_Target0
 {
-//#if 0
-//        OutColor outColor;
-//        outColor.ambient = float3(0);
-//        outColor.diffuse = float3(0);
-//        outColor.specular = float3(0);
-//
-//        float3 _color = IN.color.xyz;
-//
-//
-//        outColor.ambient = ambient()*_color;
-//        outColor.diffuse = (float3)diffuse(lightPos, IN.fragPos, IN.normal);//*_color;
-//        outColor.specular = 0.8*_color*specular(lightPos, IN.fragPos, perViewCB.eye, IN.normal);
-//
-//        float3 result = outColor.ambient + outColor.diffuse + outColor.specular;
-//
-//        //result = outColor.diffuse + ambient();	
-//
-//        //return float4(tonemap(result), 1);
-//        return float4(result, 1);
-//#else
-//		return float4(1,1,1,1);
-//#endif
+	OutColor outColor = (OutColor)0;
+	outColor.ambient  = float3(0, 0, 0);
+	outColor.diffuse  = float3(0, 0, 0);
+	outColor.specular = float3(0, 0, 0);
+	float3 _color	  = IN.color.xyz;
 
+	outColor.ambient  = ambient() * _color;
+	outColor.diffuse  = (float3)diffuse(lightPos, IN.fragPos, IN.normal); //*_color;
+	outColor.specular = 0.8 * _color * specular(lightPos, IN.fragPos, PerViewCB.Eye, IN.normal);
+
+	float3 result = outColor.ambient + outColor.diffuse + outColor.specular;
+
+	//result = outColor.diffuse + ambient();
+
+	//return float4(tonemap(result), 1);
+	return float4(result, 1);
 }
 
 

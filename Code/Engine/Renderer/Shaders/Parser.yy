@@ -99,12 +99,17 @@
     }
     }
 
+    struct DirectDeclarator
+    {
+        string Name;
+    };
+
+
 }
 
 %initial-action
 {
     is_common = false;
-    Code.clear();
 }
 
 // %param { Driver &drv }
@@ -126,7 +131,6 @@
     #undef S_FALSE
     #endif
 
-    std::vector<std::string> Code;
     bool is_common;
     std::vector<string> annotations;
 
@@ -159,6 +163,9 @@
 %type  <IShader::Type>  shader_type
 %type  <std::string>    struct_footer
 %type  <std::string>    struct_header
+%type  <DirectDeclarator> direct_declarator
+%type  <DirectDeclarator> shader_assignment_shader
+
 
 %token <std::string> TYPE_NAME
 
@@ -274,7 +281,6 @@
 input: %empty { CryLog("Empty effect"); }
 | input ';'
 | input tech
-| input hlsl
 | input var_decl
 | input shader_resource
 | input function_definition
@@ -356,14 +362,16 @@ shader_type
 | FRAGMENTPROGRAM {$$ = $1;}
 ;
 
-shader_assignment_shader: direct_declarator | IDENTIFIER;
+shader_assignment_shader: direct_declarator {
+    $$ = $1;
+}
+| IDENTIFIER {
+    $$ = DirectDeclarator{$1};
+};
 
 shader_assignment: shader_type '=' shader_assignment_shader ';' {
     //$$ = std::make_pair($1, $3);
-  //FIXME:
-  #if 0
-	//driver.currentEffect->shader_assignment($1,$3);
-  #endif
+	driver.currentEffect->shader_assignment($1,$3.Name);
 }
 ;
 shader_assignments:
@@ -433,13 +441,17 @@ identifier_list
 	;
 
 direct_declarator
-	: IDENTIFIER
+	: IDENTIFIER {
+        $$ = DirectDeclarator{$1};
+    }
 	| '(' declarator ')'
 	| direct_declarator '[' constant_expression ']'
 	| direct_declarator '[' ']'
 	| direct_declarator '(' parameter_type_list ')'
 	| direct_declarator '(' identifier_list ')'
-	| direct_declarator '(' ')'
+	| direct_declarator '(' ')'{
+        $$ = $1;
+    }
 	;
 
 semantic: ':' IDENTIFIER | %empty ;
@@ -496,7 +508,6 @@ PASS {
 | PASS IDENTIFIER {
     SPass pass;
     pass.Name = $2.c_str();
-    pass.Code = Code;
     driver.currentEffect->m_Techniques.back().Passes.push_back(pass);
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
     //driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
@@ -544,6 +555,7 @@ TECHNIQUE {
     //delete $2;
 } annotations '{' passes '}' { 
     lex_pop_state();
+    scanner.canNowAddFragment = true;
     //curAnnotations = NULL;
 }
 ;
@@ -579,35 +591,6 @@ annotations:
  %empty {annotations = std::vector<string>();}
 | '<' annotation_list '>'
 ;
-
-
-hlsl_header: 
-	HLSL11SHADER IDENTIFIER {
-        $$ = $2; 
-    } 
-	| HLSL11SHADER {
-        $$ = "Common";
-        is_common = true;
-    }
-;
-
-hlsl: shader_header '{' CODEBODY { 
-		//gEnv->pLog->Log("$3 Shader $1%s $3parsed", $1.data()); 
-        driver.currentEffect->m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
-        if ($1 == "Common")
-        {
-            Code.push_back(driver.currentEffect->m_shaders.back().data);
-            is_common = false;
-        }
-        #if 0
-        if (gEnv->pConsole->GetCVar("dump_shaders_on_load")->GetIVal())
-            CryLog("Current shader[%s] code in file %s:\n%s", $1.data(), driver.file.data(), driver.currentEffect->m_shaders.back().data.data());
-        #endif
-
-	}
-;
-
-shader_header: hlsl_header annotations  { $$ = $1; }
 
 %%
 

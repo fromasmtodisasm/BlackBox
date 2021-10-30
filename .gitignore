@@ -37,3 +37,4 @@ out/*
 /Data/Textures
 /Data/Sounds
 /Data/Music
+/Code/Engine/Renderer/Shaders/Parser.output

@@ -218,14 +218,6 @@ class ShaderMan
 		path << "Data/shaders/fx/" << real_name << ".fx";
 		if (g_FxParser->Parse(path.str().data(), &pEffect))
 		{
-			#if 0
-			CryLog("Dumping shaders of effect: %s", name.data());
-			for (auto i = 0; i < pEffect->GetNumShaders(); i++)
-			{
-				auto& str = pEffect->GetShader(i).name;
-				CryLog("[%s]", str.c_str());
-			}
-			#endif
 			auto nTech = 0;
 			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
 				nTech = tech->GetId();
