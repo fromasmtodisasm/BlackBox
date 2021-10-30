@@ -299,7 +299,7 @@ struct AABB
 	Legacy::Vec3 min;
 	Legacy::Vec3 max;
 
-	AABB(Legacy::Vec3 min, Legacy::Vec3 max)
+	AABB(Legacy::Vec3 min = {}, Legacy::Vec3 max = {})
 		: min(min), max(max)
 	{
 	}

@@ -154,8 +154,8 @@ void DrawCube(const SDrawElement& DrawElement)
 	//D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
 	// g_MVP = g_World * g_View * g_Projection;
 	//g_MVP = g_Projection * g_View * g_World;
-	g_MVP = g_ViewProjection * g_World;
 	g_World		  = DrawElement.transform;
+	g_MVP = g_ViewProjection * g_World;
 	//g_MVP		  = g_ViewProjection * DrawElement.transform;
 	ID3D10Buffer* pEveryFrameBuffer;
 	g_pConstantBuffer->GetConstantBuffer(&pEveryFrameBuffer);

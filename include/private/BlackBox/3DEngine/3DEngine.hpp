@@ -58,7 +58,7 @@ class C3DEngine :
 	virtual void ActivateLight(const char* szName, bool bActivate) override;
 	virtual void GetMemoryUsage(ICrySizer * pSizer) const override;
 	virtual IStatObj* MakeObject(const char* szFileName, const char* szGeomName = 0, EVertsSharing eVertsSharing = evs_ShareAndSortForCache, bool bLoadAdditinalInfo = true, bool bKeepInLocalSpace = false) override;
-	virtual IEntity* MakeEntity(unsigned id, unsigned classId) override;
+	virtual IEntity* MakeEntity() override;
 	virtual bool ReleaseObject(IStatObj* pObject) override;
 	virtual IStatObj* MakeObject() override;
 	virtual void RegisterEntity(IEntityRender* pEntity) override;

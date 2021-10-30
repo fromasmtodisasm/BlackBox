@@ -730,7 +730,9 @@ public:
 	@return Pointer to an IStatObj object interface
 	@see IStatObj
 */
-	virtual struct IStatObj *GetIStatObj(unsigned int pos) = 0;
+	virtual struct IStatObj *GetIStatObj(unsigned int pos = 0) = 0;
+
+	virtual void	SetIStatObj(IStatObj* obj, unsigned int pos = 0) = 0;
 
 /*! Play sound from entity position
 	@param pSound Sound-handle

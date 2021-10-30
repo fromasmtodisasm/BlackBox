@@ -102,7 +102,7 @@ void C3DEngine::Draw()
 
 	for (IEntity* obj : m_Entities)
 	{
-		if ( obj->IsGarbage() )
+		if (obj->IsGarbage() || obj->GetIStatObj() == nullptr)
 			continue;
 		SRendParams rp;
 		glm::vec3 pos = obj->GetPos();
@@ -149,9 +149,9 @@ IStatObj* C3DEngine::MakeObject(const char* szFileName, const char* szGeomName, 
 	return static_cast<IStatObj*>(obj);
 }
 
-IEntity* C3DEngine::MakeEntity(unsigned id, unsigned classId)
+IEntity* C3DEngine::MakeEntity()
 {
-	CEntityDesc desc(id, classId);
+	CEntityDesc desc(0, 0);
 	auto entity = gEnv->pEntitySystem->SpawnEntity(desc);
 	m_Entities.push_back(entity);
 	return entity;

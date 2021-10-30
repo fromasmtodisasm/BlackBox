@@ -1,5 +1,6 @@
 #include "Entity.hpp"
 #include "EntitySystem.hpp"
+#include "IStatObj.h"
 
 CEntity::CEntity()
 {
@@ -278,9 +279,17 @@ int CEntity::GetNumObjects()
 	return 0;
 }
 
+
+
 IStatObj* CEntity::GetIStatObj(unsigned int pos)
 {
 	return m_EntityObject.object;
+}
+
+void CEntity::SetIStatObj(IStatObj* obj, unsigned int pos)
+{
+	m_EntityObject.object = obj;
+	SetBBox(obj->GetBoxMin(), obj->GetBoxMax());
 }
 
 void CEntity::PlaySound(ISound* pSound, float fSoundScale, Legacy::Vec3& Offset)
@@ -305,10 +314,14 @@ void CEntity::NeedsUpdateCharacter(int pos, bool updt)
 
 void CEntity::SetBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs)
 {
+	m_BoxMin = mins;
+	m_BoxMax = maxs;
 }
 
 void CEntity::GetBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs)
 {
+	mins = m_BoxMin * m_Scale;
+	maxs = m_BoxMax * m_Scale;
 }
 
 void CEntity::GetLocalBBox(Legacy::Vec3& min, Legacy::Vec3& max)

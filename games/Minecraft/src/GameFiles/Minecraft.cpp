@@ -5,6 +5,8 @@ void MineWorld::init()
 	auto loadAssets = [this]()
 	{
 		auto grass = gEnv->p3DEngine->MakeObject("Data/minecraft/Grass_Block.obj");
+		glm::vec3 min, max;
+		grass->GetBBox(min, max);
 		types.push_back(grass);
 	};
 
@@ -78,17 +80,18 @@ void Minecraft::init()
 	player.init(&world);
 }
 
-void Minecraft::update() const
+void Minecraft::update()
 {
 	ui.draw();
+	player.update();
 }
 
 bool MineWorld::tryDestroy(glm::ivec3 pos)
 {
-	if (auto e = entities.find(pos); e != entities.end())
+	if (auto e = blocks.find(pos); e != blocks.end())
 	{
 		e->second->Remove();
-		entities.erase(pos);
+		blocks.erase(pos);
 		return true;
 	}
 	return false;
@@ -106,15 +109,13 @@ void MineWorld::set(glm::ivec3 pos, Type type)
 {
 	tryDestroy(pos);
 
-	auto entity = gEnv->p3DEngine->MakeEntity(entityCnt++, 0);
-	entity->SetPos(pos);
-	CEntityObject obj;
-	obj.scale  = glm::vec3(0.5f);
-	obj.object = types[type];
-	entity->SetScale(0.5f);
-	entity->SetEntityObject(0, obj);
+	auto entity = gEnv->p3DEngine->MakeEntity();
 
-	entities.emplace(pos, entity);
+	entity->SetIStatObj(types[type]);
+	entity->SetPos(pos);
+	entity->SetScale(0.5f);
+
+	blocks.emplace(pos, entity);
 }
 
 CCamera* getCamera()
@@ -124,7 +125,18 @@ CCamera* getCamera()
 	return client->m_CameraController.RenderCamera();
 }
 
-bool MineWorld::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float pickDistance)
+AABB entityWorldAABB(IEntity* entity, glm::vec3 pos)
+{
+	AABB aabb = {};
+	entity->GetBBox(aabb.min, aabb.max);
+
+	// перемещаем ограничивающую рамку в соответствии с его расположением
+	aabb.Translate(glm::vec3(pos.x, pos.y + 0.5, pos.z));
+
+	return aabb;
+}
+
+bool MineWorld::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float pickDistance) const
 {
 	auto game			   = dynamic_cast<CXGame*>(gEnv->pSystem->GetIGame());
 	auto intersectionState = game->GetClient()->m_DummyClient.m_IntersectionState;
@@ -144,22 +156,18 @@ bool MineWorld::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, floa
 	float tMin		  = HUGE_VALF;
 	float minDistance = HUGE_VALF;
 
-	for (auto it : entities)
+	for (auto it : blocks)
 	{
 		auto const pos		= glm::vec3(it.first);
 		auto const camPos	= getCamera()->GetPos();
 		auto const distance = glm::distance(pos, camPos);
+		auto	   entity	= it.second;
+
 		if (distance <= pickDistance)
 		{
-			auto const obj = it.second->GetIStatObj(0);
+			auto const obj = entity->GetIStatObj(0);
 
-			// задаем размер ограничивающей рамки на основе размера модели
-			AABB aabb = {obj->GetBoxMin(), obj->GetBoxMax()};
-			aabb.min *= it.second->GetScale();
-			aabb.max *= it.second->GetScale();
-
-			// перемещаем ограничивающую рамку куба в соответствии с его расположением
-			aabb.Translate(glm::vec3(pos.x, pos.y + 0.5, pos.z));
+			auto const aabb = entityWorldAABB(entity, pos);
 
 			// расстояния до ближайшей и дальнейшей точек пересечения
 			glm::vec2 const tMinMax = aabb.IntersectBox(eyeRay);
@@ -178,7 +186,7 @@ bool MineWorld::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, floa
 				{
 					minDistance = blockDistance;
 					outBlockPos = it.first;
-					outPickPos = pickedPos;
+					outPickPos	= pickedPos;
 				}
 			}
 		}
@@ -187,7 +195,7 @@ bool MineWorld::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, floa
 	return minDistance != HUGE_VALF;
 }
 
-bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance)
+bool MineWorld::blockOnCursor(glm::ivec3& outPos, float pickDistance) const
 {
 	glm::vec3 pickPos;
 	return selectedPos(outPos, pickPos, pickDistance);
@@ -218,11 +226,10 @@ bool isFloatInteger(float a)
 {
 	// если число округлилось и осталось равно себе с определенным допуском мы счиатем его целочисленным
 	float ceiled = roundFloat(a);
-	CryLog("%f", ceiled);
 	return abs(ceiled - a) <= 0.00003;
 }
 
-bool MineWorld::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance)
+bool MineWorld::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance) const
 {
 	glm::vec3 pickPos;
 	if (selectedPos(outBlockPos, pickPos, pickDistance))
@@ -230,11 +237,7 @@ bool MineWorld::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePo
 		auto const origin = getCamera()->GetPos();
 		outSidePos		  = outBlockPos;
 
-		pickPos.x -= 0.5;
-		pickPos.z -= 0.5;
-		CryLog("%f, %f, %f", pickPos.x, pickPos.y, pickPos.z);
-
-		if (isFloatInteger(pickPos.x))
+		if (isFloatInteger(pickPos.x + 0.5f))
 		{
 			outSidePos.x -= signDirection(outSidePos.x - origin.x);
 		}
@@ -242,7 +245,7 @@ bool MineWorld::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePo
 		{
 			outSidePos.y -= signDirection(outSidePos.y - origin.y);
 		}
-		else if (isFloatInteger(pickPos.z))
+		else if (isFloatInteger(pickPos.z + 0.5f))
 		{
 			outSidePos.z -= signDirection(outSidePos.z - origin.z);
 		}
@@ -251,9 +254,62 @@ bool MineWorld::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePo
 	return false;
 }
 
+bool MineWorld::isIntersect(glm::ivec3 pos, AABB otherAABB) const
+{
+	auto block = blocks.find(pos);
+	if (block != blocks.end())
+	{
+		auto const aabb = entityWorldAABB(block->second, pos);
+		return aabb.IsIntersectBox(otherAABB);
+	}
+	return false;
+}
+
 void MinePlayer::init(MineWorld* mineWorld)
 {
 	world = mineWorld;
+
+	// auto steve = gEnv->p3DEngine->MakeObject("Data/minecraft/minecraft_steve.obj");
+	// auto steveTexture = gEnv->pRenderer->LoadTexture("Data/minecraft/Minecraft_steve_skin.jpg");
+	// steve->SetTexture(steveTexture);
+
+	entity = gEnv->p3DEngine->MakeEntity();
+
+	//entity->SetPos(glm::vec3(0, 1, 0));
+	glm::vec3 min{-1, 0, -1}, max{1, 2, 1};
+  entity->SetBBox(min, max);
+}
+
+void MinePlayer::update()
+{
+	auto cameraPos  = getCamera()->GetPos();
+	auto const playerAABB = entityWorldAABB(entity, cameraPos);
+
+	glm::ivec3 const cameraBlockPos = {cameraPos.x, cameraPos.y, cameraPos.z};
+
+	glm::vec3 newEntityPos = entity->GetPos();
+
+	auto checkIntersect = [=, &newEntityPos](
+							  int checkAxis, int checkPos1, int checkPos2)
+	{
+		auto p1 = cameraBlockPos;
+		p1[checkAxis] += checkPos1;
+
+		auto p2 = cameraBlockPos;
+		p2[checkAxis] += checkPos2;
+
+		if (!world->isIntersect(p1, playerAABB) && !world->isIntersect(p2, playerAABB))
+		{
+			newEntityPos[checkAxis] = cameraPos[checkAxis];
+		}
+	};
+
+	checkIntersect(0, -1, 1);
+	checkIntersect(1, -2, 1);
+	checkIntersect(2, -1, 1);
+
+	entity->SetPos(newEntityPos);
+	getCamera()->SetPos(newEntityPos);
 }
 
 bool timingAction(float& prevTime, float interval)

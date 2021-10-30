@@ -64,7 +64,8 @@ class CEntity : public IEntity
 	virtual bool				  SetEntityObject(unsigned int slot, const CEntityObject& object) override;
 	virtual bool				  GetEntityObject(unsigned int slot, CEntityObject& object) override;
 	virtual int					  GetNumObjects() override;
-	virtual IStatObj*			  GetIStatObj(unsigned int pos) override;
+	virtual IStatObj*			GetIStatObj(unsigned int pos) override;
+	virtual void					SetIStatObj(IStatObj* obj, unsigned int pos) override;
 	virtual void				  PlaySound(ISound* pSound, float fSoundScale, Legacy::Vec3& Offset) override;
 	virtual void				  DrawObject(unsigned int pos, int mode) override;
 	virtual void				  DrawObject(int mode) override;
@@ -198,6 +199,8 @@ class CEntity : public IEntity
 	Legacy::Vec3 m_Angles{0};
 	Legacy::Vec3 m_Pos	 = Legacy::Vec3(0);
 	float		 m_Scale = 1.f;
+	glm::vec3		 m_BoxMin	 = {};
+	glm::vec3		 m_BoxMax	 = {};
 
 	CEntityDesc m_Desc;
 
