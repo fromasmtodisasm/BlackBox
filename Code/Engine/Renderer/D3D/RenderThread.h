@@ -31,6 +31,7 @@ struct SRenderThread
 	template<typename RenderThreadCallback>
 	void ExecuteRenderThreadCommand(RenderThreadCallback&& callback)
 	{
+		#define MULTITHREADED_RENDER
 		#ifdef MULTITHREADED_RENDER
 		std::lock_guard<std::mutex> lock(m_QueueMutex);
 		Commands.push_back(callback);

@@ -20,7 +20,7 @@ cbuffer cbChangesEveryFrame : register(b2)
 //--------------------------------------------------------------------------------------
 struct VS_INPUT
 {
-    float4 Pos : POSITION;
+    float3 Pos : POSITION;
     float3 Normal : NORMAL;
     float2 TC : TEXCOORD0;
 };
@@ -49,7 +49,7 @@ VS_OUTPUT VS(
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
     #else
-    output.Pos = mul( IN.Pos, MVP );
+    output.Pos = mul( float4(IN.Pos,1), MVP );
     #endif
     output.Normal = IN.Normal;
     output.TC = IN.TC;

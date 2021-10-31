@@ -69,7 +69,7 @@ void CShader::Bind()
 	//if (auto s = m_Shaders[E_GEOMETRY]->m_D3DShader; s) { d->VSSetShader((PVertexShader)s); }
 	if (auto s = m_Shaders[E_FRAGMENT]->m_D3DShader; s) { d->PSSetShader((PPixelShader)s, nullptr, 0); }
 
-	//d->IASetInputLayout(m_pInputLayout);
+	d->IASetInputLayout(m_pInputLayout);
 }
 
 int CShader::GetFlags()
@@ -114,7 +114,6 @@ void CShader::CreateInputLayout()
 	int i = 0;
 	D3D11_SIGNATURE_PARAMETER_DESC SP_DESC;
 	m_pReflection->GetInputParameterDesc(i, &SP_DESC);
-	return;
 	for (; i < m_Desc.InputParameters; ++i)
 	{
 		D3D11_SIGNATURE_PARAMETER_DESC SP_DESC;
@@ -179,6 +178,14 @@ void CShader::CreateInputLayout()
 		}
 		else if (SP_DESC.Mask <= 15)
 		{
+			bool isColor = false;
+			uint offset	 = 16;
+			
+			if (!strcmp(SP_DESC.SemanticName, "COLOR"))
+			{
+				offset = 4;
+				isColor = true;
+			}
 			if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 			{
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
@@ -189,9 +196,9 @@ void CShader::CreateInputLayout()
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 			{
-				t_InputElementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				t_InputElementDesc.Format = isColor? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R32G32B32A32_FLOAT;
 			}
-			t_ByteOffset += 16;
+			t_ByteOffset += offset;
 		}
 
 		t_InputElementDescVec[i] = (t_InputElementDesc);
@@ -207,7 +214,7 @@ void CShader::CreateInputLayout()
 		CryError("Error create input layout for font");
 		//return false;
 	}
-	SAFE_RELEASE(m_pReflection);
+	//SAFE_RELEASE(m_pReflection);
 }
 
 void CShader::ReflectShader()
@@ -221,6 +228,7 @@ void CShader::ReflectShader()
 	{
 		m_pReflection->GetDesc(&m_Desc);
 	}
+
 }
 
 CHWShader* CShader::LoadFromEffect(PEffect pEffect, IShader::Type type, int nTechnique, int nPass)

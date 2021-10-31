@@ -109,6 +109,7 @@ HRESULT InitCube()
 	};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
+	#if 0
 	// Create the input layout
 	//D3D10_PASS_DESC PassDesc;
 	//GlobalResources::BoxTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
@@ -121,6 +122,7 @@ HRESULT InitCube()
 
 	if (FAILED(hr))
 		return hr;
+	#endif
 
 #endif
 	// Set up rasterizer
@@ -192,7 +194,9 @@ void DrawCube(const SDrawElement& DrawElement)
 		g_pShader->Bind();
 		::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
 		::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
+		#if 0
 		::GetDeviceContext()->IASetInputLayout(g_pVertexLayout);
+		#endif
 		gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
 		auto ib			= DrawElement.m_Inices;
 		auto numindices = 0;

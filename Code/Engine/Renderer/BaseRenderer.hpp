@@ -534,10 +534,10 @@ class ShaderMan
 			p->m_Shaders[IShader::E_FRAGMENT] = fs;
 			p->AddRef();
 			//m_Shaders.push_back(p);
-			//p->ReflectShader();
+			p->ReflectShader();
 			//D3D11_SHADER_DESC		m_Desc;
 			//ID3D11ShaderReflection* m_pReflection = NULL;
-			//p->CreateInputLayout();
+			p->CreateInputLayout();
 			p->m_Flags2 |= EF2_LOADED;
 			//p->Bind();
 

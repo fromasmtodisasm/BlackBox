@@ -260,7 +260,7 @@ void Command_DumpVars(IConsoleCmdArgs* Cmd)
 
 //////////////////////////////////////////////////////////////////////////
 int CXConsole::con_display_last_messages = 0;
-int CXConsole::con_line_buffer_size = 500;
+int CXConsole::con_line_buffer_size = 5000;
 float CXConsole::con_font_size = 28;
 int CXConsole::con_showonload = 0;
 int CXConsole::con_debug = 0;

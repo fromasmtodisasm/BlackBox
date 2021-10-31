@@ -287,7 +287,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 			return false;
 		}
 		{
-#	if 1
+#	if 0
 			//VERTEX_FORMAT_P3F_C4B_T2F
 			D3D11_INPUT_ELEMENT_DESC layout[] = {
 				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -570,7 +570,7 @@ void FreeTypeFont::Submit()
 	GlobalResources::SpriteShader->Bind();
 	GetDeviceContext()->PSSetSamplers(0, 1, &m_Sampler);
 	GetDeviceContext()->PSSetShaderResources(0, 1, &m_pTextureRV);
-	#if 1
+	#if 0
 	GetDeviceContext()->IASetInputLayout(m_pFontLayout);
 	#endif
 	GetDeviceContext()->RSSetState(m_pRasterizerState);
