@@ -62,7 +62,8 @@ struct STexPic : _reference_target_t
 
 	virtual void		AddRef() override { _reference_target_t::AddRef(); }
 	virtual void		Release(int bForce) override { _reference_target_t::Release(); }
-	virtual const char* GetName() override { return m_Name.data(); }
+	void				Release() { _reference_target_t::Release(); }
+	virtual const char* GetName() override { return m_Name.c_str(); }
 	virtual int			GetWidth() override { return Width; }
 	virtual int			GetHeight() override { return Height; }
 	virtual int			GetOriginalWidth() override { return Width; }
@@ -157,8 +158,8 @@ class CD3DRenderer : public CRenderer
 	ID3DShaderResourceView* CreateTextureFromFile(CCryFile file);
 	ID3DShaderResourceView* CreateTextureFromFile(const char* name);
 
-	string AdjustTexturePath(const char* name);
-	bool   FindTexture(const char* filename, CCryFile& result, string& adjustet_name);
+	string AdjustTexturePath(string name);
+	bool   FindTexture(string filename, CCryFile& result, string& adjustet_name);
 
 	void Draw2DQuad(float x, float y, float w, float h, int, color4f color, float s0, float t0, float s1, float t1) final;
 
@@ -166,8 +167,8 @@ class CD3DRenderer : public CRenderer
 
   private:
 	int			 NextTextureIndex();
-	int			 AddTextureResource(const char* name, ID3DShaderResourceView* pSRView);
-	unsigned int LoadTextureInternal(STexPic* pix, const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true);
+	int			 AddTextureResource(string name, ID3DShaderResourceView* pSRView, STexPic* pic);
+	unsigned int LoadTextureInternal(STexPic* pix, string filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true);
 
   private:
 	ID3DDevice*			  m_pd3dDevice		  = NULL;
@@ -185,7 +186,7 @@ class CD3DRenderer : public CRenderer
 
 	std::vector<Image2D> m_DrawImages;
 
-	std::map<string, int>											  m_LoadedTextureNames;
+	std::map<string, int>										  m_LoadedTextureNames;
 	std::map<int, std::pair<ID3DTexture2D*, ID3DShaderResourceView*>> m_TexturesMap;
 	std::map<int, STexPic>											  m_TexPics;
 	int																  m_NumLoadedTextures{};
