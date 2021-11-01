@@ -25,6 +25,8 @@ add_sources(
 	"MineRenderer/renderer.h"
 	SOURCE_GROUP "Common"
 	"Common/CommonRender.h"
+	"Common/CommonRender.cpp"
+	"Common/CryNameR.h"
 )
 
 add_sources(

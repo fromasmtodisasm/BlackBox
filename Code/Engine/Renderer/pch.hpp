@@ -101,3 +101,4 @@ inline D3DXMATRIX* D3DXMatrixTranspose(D3DXMATRIX* pOut, CONST D3DXMATRIX* pM)
 #include <sstream>
 
 #include "Common\CommonRender.h"
+#include "Common\CryNameR.h"
