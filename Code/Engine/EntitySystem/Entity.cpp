@@ -370,12 +370,12 @@ const Legacy::Vec3& CEntity::GetAngles(int realA) const
 	return m_Angles;
 }
 
-void CEntity::SetScale(float scale)
+void CEntity::SetScale(glm::vec3 scale)
 {
 	m_Scale = scale;
 }
 
-float CEntity::GetScale() const
+glm::vec3 CEntity::GetScale() const
 {
 	return m_Scale;
 }

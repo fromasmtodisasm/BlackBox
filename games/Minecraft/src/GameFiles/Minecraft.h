@@ -14,25 +14,39 @@ class MineWorld
 
 	void destroy(glm::ivec3 pos);
 
-	bool blockOnCursor(glm::ivec3& outBlockPos, float pickDistance) const;
-
-	bool blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance) const;
+	void highliteCubeTmp(glm::ivec3 pos);
 
 	bool isIntersect(glm::ivec3 pos, AABB aabb) const;
 
-  private:
-	bool selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float pickDistance) const;
+	bool pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float pickDistance) const;
 
+  private:
 	bool tryDestroy(glm::ivec3 pos);
 
 	std::unordered_map<glm::ivec3, IEntity*> blocks;
 	std::vector<IStatObj*>					 types;
 };
 
+class MineDebug
+{
+  public:
+	void init();
+
+	void update();
+
+	void drawBox(glm::vec3 pos1, glm::vec3 pos2);
+
+	void drawTmpBox(glm::vec3 pos1, glm::vec3 pos2);
+
+  private:
+	IStatObj*			  model = nullptr;
+	std::vector<IEntity*> tmpBoxes;
+};
+
 class MinePlayer
 {
   public:
-	void init(MineWorld* mineWorld);
+	void init();
 
 	void update();
 
@@ -40,11 +54,21 @@ class MinePlayer
 
 	void placeBlockOnCursor();
 
+	void move(glm::vec3 direction, float value);
+
   private:
-	MineWorld* world	   = nullptr;
-	IEntity*   entity		   = nullptr;
-	float	   destroyTime = 0.0;
-	float	   placeTime   = 0.0;
+	bool selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float pickDistance) const;
+
+	bool blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance) const;
+
+	void applyMovement();
+
+	IEntity* entity			= nullptr;
+	glm::vec3 movement{};
+
+	float	 cameraDistance = -4.0;
+	float	 destroyTime	= 0.0;
+	float	 placeTime		= 0.0;
 };
 
 class MineUI
@@ -67,4 +91,7 @@ struct Minecraft
 	MineWorld  world;
 	MineUI	   ui;
 	MinePlayer player;
+	MineDebug  debug;
 };
+
+extern Minecraft* minecraft;

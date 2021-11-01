@@ -56,19 +56,19 @@ void CClient::Update()
 	}
 
 	const float FloorLevel = (float)g_World.height + 3;
-	auto		CamPos	   = Legacy::Vec3(m_CameraController.CurrentCamera()->GetPos());
-
-	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
-	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
-	if ((CamPos.x <= -(float)g_World.size_x / 2) || (CamPos.x >= (float)g_World.size_x / 2))
-	{
-		if ((CamPos.z <= -(float)g_World.size_z / 2) || (CamPos.z >= (float)g_World.size_z / 2))
-		{
-		}
-	}
-	CamPos.y = max(CamPos.y, FloorLevel);
-
-	m_CameraController.CurrentCamera()->SetPos(CamPos);
+//	auto		CamPos	   = Legacy::Vec3(m_CameraController.CurrentCamera()->GetPos());
+//
+//	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
+//	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
+//	if ((CamPos.x <= -(float)g_World.size_x / 2) || (CamPos.x >= (float)g_World.size_x / 2))
+//	{
+//		if ((CamPos.z <= -(float)g_World.size_z / 2) || (CamPos.z >= (float)g_World.size_z / 2))
+//		{
+//		}
+//	}
+//	CamPos.y = max(CamPos.y, FloorLevel);
+//
+//	m_CameraController.CurrentCamera()->SetPos(CamPos);
 
 	auto frame_time	 = gEnv->pTimer->GetRealFrameTime();
 	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
@@ -107,7 +107,7 @@ void CClient::Update()
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_JUMP))
 	{
 		auto pos = m_CameraController.CurrentCamera()->GetPos();
-		if (CamPos.y <= FloorLevel) m_CamSpeed = 5.f;
+		//if (CamPos.y <= FloorLevel) m_CamSpeed = 5.f;
 		m_JumpPressed = true;
 		//m_CameraController.CurrentCamera()->SetPos(pos + Legacy::Vec3(0, 0.01,0));
 	}

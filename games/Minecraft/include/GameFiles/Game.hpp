@@ -333,8 +333,9 @@ struct AABB
 
 	inline void Translate(Legacy::Vec3 Position)
 	{
-			auto cur_pos = (max - min) * 0.5f + min;	
-			auto diff	 = Position - cur_pos;
+			//auto cur_pos = (max - min) * 0.5f + min;	
+			//auto diff	 = Position - cur_pos;
+		auto diff = Position;
 			max += diff;
 			min += diff;
 	}

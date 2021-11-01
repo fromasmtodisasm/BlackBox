@@ -107,11 +107,11 @@ void C3DEngine::Draw()
 		SRendParams rp;
 		glm::vec3 pos = obj->GetPos();
 		glm::vec3 rotation = obj->GetAngles();
-		float scale = obj->GetScale();
+		glm::vec3 scale = obj->GetScale();
 		auto		transform = glm::mat4(1);
 		//glm::mat4 transform = glm::rotate(glm::mat4(1), );
 		transform = glm::translate(transform, pos);
-		transform = glm::scale(transform, glm::vec3(scale));
+		transform = glm::scale(transform, scale);
 		IStatObj* stat = obj->GetIStatObj(0);
 		rp.pMatrix = &transform;
 		rp.texture = stat->GetTexture();

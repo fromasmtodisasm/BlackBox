@@ -24,14 +24,15 @@ class CCameraController : public IInputEventListener
 		}
 	}
 	CCameraController() = default;
-	CCameraController(CCamera* pCamera) : m_Camera{pCamera}
+	CCameraController(CCamera* pCamera)
+		: m_Camera{pCamera}
 	{
 		gEnv->pSystem->GetIHardwareMouse()->AddListener(this);
 	}
 
 	std::vector<CCamera*> m_Camera;
-	size_t m_CurrentCamera = 0;
-	size_t m_RenderCamera  = 0;
+	size_t				  m_CurrentCamera = 0;
+	size_t				  m_RenderCamera  = 0;
 	//CCamera::Mode mode = CCamera::Mode::FPS;
 
 	// Inherited via IInputEventListener
@@ -93,19 +94,7 @@ class CCameraController : public IInputEventListener
 	}
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-	void ProcessKeyboard(Movement direction, float deltaTime, float value = 1.0f)
-	{
-		float velocity = CurrentCamera()->MovementSpeed * deltaTime * value;
-		if (direction == Movement::FORWARD)
-			CurrentCamera()->transform.position += glm::vec3(CurrentCamera()->Front.x, CurrentCamera()->mode == CCamera::Mode::FPS ? 0 : CurrentCamera()->Front.y, CurrentCamera()->Front.z) * velocity;
-		if (direction == Movement::BACKWARD)
-			CurrentCamera()->transform.position -= glm::vec3(CurrentCamera()->Front.x, CurrentCamera()->mode == CCamera::Mode::FPS ? 0 : CurrentCamera()->Front.y, CurrentCamera()->Front.z) * velocity;
-		if (direction == Movement::LEFT)
-			CurrentCamera()->transform.position += CurrentCamera()->Right * velocity;
-		if (direction == Movement::RIGHT)
-			CurrentCamera()->transform.position -= CurrentCamera()->Right * velocity;
-	}
-
+	void ProcessKeyboard(Movement direction, float deltaTime, float value = 1.0f);
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
@@ -212,13 +201,13 @@ class CCameraController : public IInputEventListener
 	}
 
   public:
-	Legacy::Vec3 velocity = Legacy::Vec3(10);
+	Legacy::Vec3	 velocity = Legacy::Vec3(10);
 	std::set<EKeyId> m_keys;
-	Legacy::Vec2 delta;
-	float MovementSpeed;
-	const float SCROLL_SPEED	= 2.0f;
-	const float MOUSE_SPEED		= 1.5f;
-	const float MOUSE_SENSIVITY = 0.05f;
+	Legacy::Vec2	 delta;
+	float			 MovementSpeed;
+	const float		 SCROLL_SPEED	 = 2.0f;
+	const float		 MOUSE_SPEED	 = 1.5f;
+	const float		 MOUSE_SENSIVITY = 0.05f;
 
 	// Inherited via IHardwareMouseEventListener
 
