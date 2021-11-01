@@ -6,6 +6,33 @@
 
 #include "RenderThread.h"
 
+class CD3D_FEATURE_LEVEL
+{
+  public:
+	CD3D_FEATURE_LEVEL(D3D_FEATURE_LEVEL Type) : m_Type(Type) {}
+	operator const char*()
+	{
+#define CONVERT(t) case t: return #t;
+		switch (m_Type)
+		{
+		CONVERT(D3D_FEATURE_LEVEL_9_1)
+		CONVERT(D3D_FEATURE_LEVEL_9_2)
+		CONVERT(D3D_FEATURE_LEVEL_9_3)
+		CONVERT(D3D_FEATURE_LEVEL_10_0)
+		CONVERT(D3D_FEATURE_LEVEL_10_1)
+		CONVERT(D3D_FEATURE_LEVEL_11_0)
+		default:
+			return "Unknown";
+		}
+#undef CONVERT
+	}
+	operator D3D_FEATURE_LEVEL() { return m_Type; }
+	operator D3D_FEATURE_LEVEL*() { return &m_Type; }
+	D3D_FEATURE_LEVEL* operator&() { return &m_Type; }
+	D3D_FEATURE_LEVEL m_Type;
+};
+
+
 // Globals
 ID3DShaderResourceView* GlobalResources::FontAtlasRV{};
 ID3D11SamplerState*		  GlobalResources::LinearSampler{};
@@ -38,7 +65,7 @@ ID3DDeviceContext* GetDeviceContext()
 // Global Variables
 //--------------------------------------------------------------------------------------
 D3D_DRIVER_TYPE g_driverType = D3D_DRIVER_TYPE_NULL;
-D3D_FEATURE_LEVEL g_featureLevel = D3D_FEATURE_LEVEL_11_0;
+CD3D_FEATURE_LEVEL g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 CD3DRenderer* gD3DRender;
 
 CD3DRenderer::CD3DRenderer(ISystem* pSystem) : CRenderer(pSystem)
@@ -272,13 +299,13 @@ bool CD3DRenderer::InitOverride()
 
     D3D_DRIVER_TYPE driverTypes[] =
     {
-        D3D_DRIVER_TYPE_HARDWARE,
-        D3D_DRIVER_TYPE_WARP,
-        D3D_DRIVER_TYPE_REFERENCE,
+        D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_HARDWARE),
+        D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_WARP),
+        D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_REFERENCE),
     };
     UINT numDriverTypes = ARRAYSIZE( driverTypes );
 
-    D3D_FEATURE_LEVEL featureLevels[] =
+    CD3D_FEATURE_LEVEL featureLevels[] =
     {
         D3D_FEATURE_LEVEL_11_0,
         D3D_FEATURE_LEVEL_10_1,
@@ -300,10 +327,12 @@ bool CD3DRenderer::InitOverride()
     sd.SampleDesc.Quality = 0;
     sd.Windowed = TRUE;
 
+	D3D_FEATURE_LEVEL l = featureLevels[0];
+
     for( UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++ )
     {
         g_driverType = driverTypes[driverTypeIndex];
-        hr = D3D11CreateDeviceAndSwapChain( NULL, g_driverType, NULL, createDeviceFlags, featureLevels, numFeatureLevels,
+        hr = D3D11CreateDeviceAndSwapChain( NULL, g_driverType, NULL, createDeviceFlags, featureLevels[0], numFeatureLevels,
                                             D3D11_SDK_VERSION, &sd, &m_pSwapChain, &m_pd3dDevice, &g_featureLevel, &m_pImmediateContext );
         if( SUCCEEDED( hr ) )
             break;
@@ -313,6 +342,8 @@ bool CD3DRenderer::InitOverride()
 		CryLog("Failed create D3D10 device");
         return false;
 	}
+
+	CryLog("Created D3D device with feature level: %s", (const char*)g_featureLevel);
 
 
     // Create a render target view
@@ -467,6 +498,10 @@ ITexPic* CD3DRenderer::EF_GetTextureByID(int Id)
 
 ITexPic* CD3DRenderer::EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1, float fAmount2, int Id, int BindId)
 {
+	//_smart_ptr<STexPic> TexPic = new STexPic;
+	//m_RenderThread->ExecuteRenderThreadCommand([=]
+	//										   { LoadTextureInternal(TexPic, nameTex); });
+	//return TexPic;
 	return EF_GetTextureByID(LoadTexture(nameTex));
 }
 void CD3DRenderer::SetTexture(int tnum, ETexType Type)
@@ -578,6 +613,10 @@ ID3DShaderResourceView* CD3DRenderer::CreateTexture(std::vector<uint8_t> &blob)
 	return pSRView;
 
 }
+unsigned int LoadTextureInternal(STexPic* pix, const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
+{
+	return -1;
+}
 
 unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
 {
@@ -620,12 +659,12 @@ int CD3DRenderer::AddTextureResource(const char* name, ID3DShaderResourceView* p
 		ID3DTexture2D* pTexture2D;
 		pSRView->GetResource((ID3DResource**)&pTexture2D);
 		//pTexture2D->GetDesc(&desc);
-		m_TexturesMap[texture_index] = std::make_pair(pTexture2D, pSRView);
-		m_LoadedTextureNames[name]	 = texture_index;
+	m_TexturesMap[texture_index] = std::make_pair(pTexture2D, pSRView);
+	m_LoadedTextureNames[name]	 = texture_index;
 
-		D3D11_TEXTURE2D_DESC desc;
-		pTexture2D->GetDesc(&desc);
-		m_TexPics[texture_index] = STexPic(CD3D11_TEXTURE2D_DESC(desc), texture_index, name);
+	D3D11_TEXTURE2D_DESC desc;
+	pTexture2D->GetDesc(&desc);
+	m_TexPics[texture_index] = STexPic(CD3D11_TEXTURE2D_DESC(desc), texture_index, name);
 
 	}
 	return texture_index;

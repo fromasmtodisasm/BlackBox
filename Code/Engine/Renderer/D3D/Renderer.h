@@ -46,7 +46,8 @@ struct Image2D
 	}
 };
 
-struct STexPic : public ITexPic
+struct STexPic : _reference_target_t
+	, public ITexPic
 	, public CD3D11_TEXTURE2D_DESC
 {
 	STexPic() {}
@@ -54,10 +55,13 @@ struct STexPic : public ITexPic
 		: CD3D11_TEXTURE2D_DESC(desc)
 		, m_Id(id)
 		, m_Name(name)
+		, m_Loaded(true)
+
 	{
 	}
-	virtual void		AddRef() override {}
-	virtual void		Release(int bForce) override {}
+
+	virtual void		AddRef() override { _reference_target_t::AddRef(); }
+	virtual void		Release(int bForce) override { _reference_target_t::Release(); }
 	virtual const char* GetName() override { return m_Name.data(); }
 	virtual int			GetWidth() override { return Width; }
 	virtual int			GetHeight() override { return Height; }
@@ -67,14 +71,15 @@ struct STexPic : public ITexPic
 	virtual int			GetFlags() override { return 0; }
 	virtual int			GetFlags2() override { return 0; }
 	virtual void		SetClamp(bool bEnable) override {}
-	virtual bool		IsTextureLoaded() override { return true; }
+	virtual bool		IsTextureLoaded() override { return m_Loaded; }
 	virtual void		PrecacheAsynchronously(float fDist, int Flags) override {}
 	virtual void		Preload(int Flags) override {}
 	virtual byte*		GetData32() override { return nullptr; }
 	virtual bool		SetFilter(int nFilter) override { return false; }
 
-	int	   m_Id;
+	int	   m_Id{-1};
 	string m_Name;
+	bool   m_Loaded = false;
 };
 
 struct SPerFrameConstants
@@ -160,8 +165,9 @@ class CD3DRenderer : public CRenderer
 	int CreateEmptyTexture(vector2di size, color4f color);
 
   private:
-	int NextTextureIndex();
-	int AddTextureResource(const char* name, ID3DShaderResourceView* pSRView);
+	int			 NextTextureIndex();
+	int			 AddTextureResource(const char* name, ID3DShaderResourceView* pSRView);
+	unsigned int LoadTextureInternal(STexPic* pix, const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true);
 
   private:
 	ID3DDevice*			  m_pd3dDevice		  = NULL;
