@@ -625,7 +625,7 @@ unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex
 	string adjustet_name;
 	if (!FindTexture(filename, file, adjustet_name))
 	{
-		CryError("Failed open texture: %s", filename);
+		CryError("Failed open texture: %s", filename.c_str());
 	}
 	else
 	{
@@ -633,12 +633,12 @@ unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex
 		auto srv = CreateTextureFromFile(adjustet_name.data());
 		if (srv)
 		{
-			CryLog("$3Loaded texture %s", filename);
+			CryLog("$3Loaded texture %s", filename.c_str());
 			texture_index = AddTextureResource(filename, srv, pix);
 		}
 		else
 		{
-			CryError("Failed load texture: %s", filename);
+			CryError("Failed load texture: %s", filename.c_str());
 		}
 	}
 
