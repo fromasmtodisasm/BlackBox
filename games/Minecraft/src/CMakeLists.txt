@@ -55,6 +55,7 @@ add_sources(
 	GameFiles/XArea.cpp
 	GameFiles/XArea.h
 	GameFiles/XVehicleSystem.cpp
+	GameFiles/CameraController.cpp
 	SOURCE_GROUP
 	"Network"
 	Network/NetEntityInfo.cpp

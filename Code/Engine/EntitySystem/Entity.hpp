@@ -83,8 +83,8 @@ class CEntity : public IEntity
 	virtual void				  SetPhysAngles(const Legacy::Vec3& angl) override;
 	virtual void				  SetAngles(const Legacy::Vec3& pos, bool bNotifyContainer = true, bool bUpdatePhysics = true, bool forceInWorld = false) override;
 	virtual const Legacy::Vec3&	  GetAngles(int realA = 0) const override;
-	virtual void				  SetScale(float scale) override;
-	virtual float				  GetScale() const override;
+	virtual void				  SetScale(glm::vec3 scale) override;
+	virtual glm::vec3				  GetScale() const override;
 	virtual void				  SetRadius(float r) override;
 	virtual float				  GetRadius() const override;
 	virtual float				  GetRadiusPhys() const override;
@@ -198,7 +198,7 @@ class CEntity : public IEntity
 	bool		 m_bIsStatic;
 	Legacy::Vec3 m_Angles{0};
 	Legacy::Vec3 m_Pos	 = Legacy::Vec3(0);
-	float		 m_Scale = 1.f;
+	glm::vec3		 m_Scale = glm::vec3(1.f);
 	glm::vec3		 m_BoxMin	 = {};
 	glm::vec3		 m_BoxMax	 = {};
 

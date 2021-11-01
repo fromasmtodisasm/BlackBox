@@ -136,7 +136,7 @@ struct IEntityRender
 	virtual const char*				 GetEntityClassName() const							   = 0;
 	virtual const Legacy::Vec3&		 GetPos(bool bWorldOnly = true) const				   = 0;
 	virtual const Legacy::Vec3&		 GetAngles(int realA = 0) const						   = 0;
-	virtual float					 GetScale() const									   = 0;
+	virtual glm::vec3					 GetScale() const									   = 0;
 	virtual const char*				 GetName() const									   = 0;
 	virtual void					 GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) = 0;
 	virtual void					 GetBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) { GetRenderBBox(mins, maxs); }

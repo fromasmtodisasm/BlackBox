@@ -817,8 +817,8 @@ public:
 	virtual void SetAngles(const Legacy::Vec3 &pos,bool bNotifyContainer=true,bool bUpdatePhysics=true,bool forceInWorld=false) = 0;
 	virtual const Legacy::Vec3 & GetAngles(int realA=0) const = 0;
 
-	virtual void SetScale( float scale ) = 0;
-	virtual float GetScale() const = 0;
+	virtual void SetScale( glm::vec3 scale ) = 0;
+	virtual glm::vec3 GetScale() const = 0;
 
 	virtual void SetRadius( float r ) = 0;
 	virtual float GetRadius() const = 0;
