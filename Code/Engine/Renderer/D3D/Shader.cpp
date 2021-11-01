@@ -103,6 +103,13 @@ CShader* CShader::LoadBinaryShader(std::string_view name, int flags, uint64 nMas
 	return nullptr;
 }
 
+template<class T, size_t size>
+struct PaddedStruct : public T
+{
+	std::array<uint8_t, size> Array;
+};
+
+
 void CShader::CreateInputLayout()
 {
 	HRESULT hr{};
@@ -112,13 +119,18 @@ void CShader::CreateInputLayout()
 	unsigned int							 t_ByteOffset = 0;
 
 	int i = 0;
-	D3D11_SIGNATURE_PARAMETER_DESC SP_DESC;
-	m_pReflection->GetInputParameterDesc(i, &SP_DESC);
 	for (; i < m_Desc.InputParameters; ++i)
 	{
-		D3D11_SIGNATURE_PARAMETER_DESC SP_DESC;
+		PaddedStruct<D3D11_SIGNATURE_PARAMETER_DESC, 100> SP_DESC;
 		ZeroStruct(SP_DESC);
 		m_pReflection->GetInputParameterDesc(i, &SP_DESC);
+
+		// FIXME: temporary hack to workaround stack couruption around SP_DESC, because D3D11_INPUT_ELEMENT_DESC 
+		// struct has new field in last version of d3d11
+		//
+		// During call D3DReflect we get pointer to newer interface of relfection (d3dcompiler_47.dll)
+		// but in dxsdk 2010 june version d3dcompiler_43.dll, but if linked with 43 version, d3dreflect
+		// not found coresponding interface for IID_ID3D11ShaderReflection!!! it is worked, but...
 
 		D3D11_INPUT_ELEMENT_DESC t_InputElementDesc;
 		t_InputElementDesc.SemanticName			= SP_DESC.SemanticName;
