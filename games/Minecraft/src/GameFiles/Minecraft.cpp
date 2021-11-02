@@ -128,7 +128,7 @@ void MineWorld::highliteCubeTmp(glm::ivec3 pos)
 	if (auto const e = blocks.find(pos); e != blocks.end())
 	{
 		auto const aabb = entityWorldAABB(e->second);
-		minecraft->debug.drawBox(aabb.min - 0.1f, aabb.max + 0.1f);
+		minecraft->debug.drawTmpBox(aabb.min - 0.1f, aabb.max + 0.1f);
 	}
 }
 
@@ -279,16 +279,27 @@ bool MinePlayer::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSideP
 	return false;
 }
 
-void MinePlayer::applyMovement()
+bool isBoundigPointCoDirectedWithMovement(IEntity* entity, glm::vec3 point, glm::vec3 movement)
 {
-	auto& world	 = minecraft->world;
-	auto  newPos = entity->GetPos() + movement;
-
 	glm::vec3 min, max;
 	entity->GetBBox(min, max);
+
 	auto const center = min + (max - min) * 0.5f;
 
-	std::vector<glm::vec3> const boundingPoints = {
+	auto const pointDir = point - center;
+	auto const v		= pointDir * movement;
+
+	// если вектор движения не совпал с направлением от центра игрока до рассматриваемой точки,
+	// то смысла проверять пересечение в этой точке нет
+	return !(v.x <= 0 && v.y <= 0 && v.z <= 0);
+}
+
+std::array<glm::vec3, 8> getBoundingPoints(IEntity* entity)
+{
+	glm::vec3 min, max;
+	entity->GetBBox(min, max);
+
+	return {
 		min,
 		{min.x, max.y, max.z},
 		{min.x, max.y, min.z},
@@ -297,30 +308,60 @@ void MinePlayer::applyMovement()
 		{max.x, min.y, min.z},
 		{max.x, min.y, max.z},
 		{max.x, max.y, min.z}};
+}
 
-	for (auto const point : boundingPoints)
+void MinePlayer::applyMovement()
+{
+	auto&	   world  = minecraft->world;
+
+	auto const pos	  = entity->GetPos() + movement;
+	auto	   newPos = pos;
+
+	bool isMoved = true;
+	while (isMoved)
 	{
-		auto const pointDir = point - center;
-		auto const v		= pointDir * movement;
-		// если вектор движения не совпал с направлением от центра игрока до рассматриваемой точки,
-		// то смысла проверять пересечение в этой точке нет
-		if (!(v.x <= 0 && v.y <= 0 && v.z <= 0))
+		isMoved = false;
+		for (auto const point : getBoundingPoints(entity))
 		{
-			auto const checkCube = floorVec(newPos + point);
+			if (!isBoundigPointCoDirectedWithMovement(entity, point, movement))
+			{
+				continue;
+			}
+
+			auto checkCube = floorVec(newPos + point);
+			world.highliteCubeTmp(checkCube);
+
 			if (world.isIntersect(checkCube, entityWorldAABB(entity)))
 			{
 				glm::ivec3 const intersectSide = floorVec(newPos + point + 0.5f);
 				auto const		 dif		   = newPos + point - glm::vec3(intersectSide);
 
+				float minDif = HUGE_VALF;
+				int	  minI	 = -1;
+
 				for (int i = 0; i != 3; ++i)
 				{
+					// добавляем небольшое смещение, чтобы избежать попадания на грань куба
+					auto const dif_ = dif + dif * 0.000001f;
+
 					glm::vec3 newBlockPos = newPos + point;
-					newBlockPos[i] -= dif[i];
-					if (!world.has(newBlockPos))
+					newBlockPos[i] -= dif_[i];
+
+					if (abs(dif_[i]) < minDif && !world.has(floorVec(newBlockPos)))
 					{
-						newPos[i] -= dif[i];
-						break;
+						if (i == 0)
+						{
+							i = 0;
+						}
+
+						minDif = abs(dif_[i]);
+						minI   = i;
 					}
+				}
+				if (minI != -1)
+				{
+					isMoved = true;
+					newPos[minI] -= dif[minI];
 				}
 			}
 		}
@@ -351,7 +392,7 @@ void MinePlayer::init()
 	entity = gEnv->p3DEngine->MakeEntity();
 
 	entity->SetPos(glm::vec3(5, 20, 5));
-	glm::vec3 min{-0.5, -2.5, -0.5}, max{0.5, 0.5, 0.5};
+	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 }
 
@@ -361,7 +402,7 @@ void MinePlayer::update()
 
 	minecraft->debug.drawTmpBox(aabb.min, aabb.max);
 
-	auto const gravity = 2.f;
+	auto const gravity = 4.f;
 	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * gEnv->pTimer->GetRealFrameTime());
 
 	applyMovement();
