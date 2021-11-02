@@ -108,16 +108,12 @@ void CShader::CreateInputLayout()
 	HRESULT hr{};
 
 	auto									 pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode;
-	std::array<D3D11_INPUT_ELEMENT_DESC, 16> t_InputElementDescVec; // actually does not matter what store
+	std::vector<D3D11_INPUT_ELEMENT_DESC> t_InputElementDescVec; // actually does not matter what store
 	unsigned int							 t_ByteOffset = 0;
 
-	int i = 0;
-	D3D11_SIGNATURE_PARAMETER_DESC SP_DESC;
-	m_pReflection->GetInputParameterDesc(i, &SP_DESC);
-	for (; i < m_Desc.InputParameters; ++i)
+	for (int i = 0; i < m_Desc.InputParameters; ++i)
 	{
 		D3D11_SIGNATURE_PARAMETER_DESC SP_DESC;
-		ZeroStruct(SP_DESC);
 		m_pReflection->GetInputParameterDesc(i, &SP_DESC);
 
 		D3D11_INPUT_ELEMENT_DESC t_InputElementDesc;
@@ -201,11 +197,11 @@ void CShader::CreateInputLayout()
 			t_ByteOffset += offset;
 		}
 
-		t_InputElementDescVec[i] = (t_InputElementDesc);
+		t_InputElementDescVec.push_back(t_InputElementDesc);
 	}
 	hr = GetDevice()->CreateInputLayout(
 		t_InputElementDescVec.data(),
-		i,
+		t_InputElementDescVec.size(),
 		pVSBuf->GetBufferPointer(),
 		pVSBuf->GetBufferSize(),
 		&m_pInputLayout);

@@ -132,6 +132,11 @@ void MineWorld::highliteCubeTmp(glm::ivec3 pos)
 	}
 }
 
+bool MineWorld::has(glm::ivec3 pos)
+{
+	return blocks.count(pos);
+}
+
 void MineWorld::set(glm::ivec3 pos, Type type)
 {
 	tryDestroy(pos);
@@ -237,6 +242,11 @@ float roundFloat(float d)
 	return floorf(d + 0.5f);
 }
 
+glm::ivec3 floorVec(glm::vec3 v)
+{
+	return {floorf(v.x), floorf(v.y), floorf(v.z)};
+}
+
 bool isFloatInteger(float a)
 {
 	// если число округлилось и осталось равно себе с определенным допуском мы счиатем его целочисленным
@@ -271,17 +281,22 @@ bool MinePlayer::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSideP
 
 void MinePlayer::applyMovement()
 {
-	auto newPos = entity->GetPos() + movement;
+	auto& world	 = minecraft->world;
+	auto  newPos = entity->GetPos() + movement;
 
 	glm::vec3 min, max;
 	entity->GetBBox(min, max);
-	auto const center	 = (max - min) * 0.5f;
-	auto const entityPos = entity->GetPos();
+	auto const center = min + (max - min) * 0.5f;
 
-	std::vector const boundingPoints = {
-		min, min + max.x, min + max.y, min + max.z,
-		min + max.x + max.y, min + max.x + max.z,
-		min + min.y + min.z, min + min.x + min.y + min.z};
+	std::vector<glm::vec3> const boundingPoints = {
+		min,
+		{min.x, max.y, max.z},
+		{min.x, max.y, min.z},
+		{min.x, min.y, max.z},
+		max,
+		{max.x, min.y, min.z},
+		{max.x, min.y, max.z},
+		{max.x, max.y, min.z}};
 
 	for (auto const point : boundingPoints)
 	{
@@ -289,14 +304,24 @@ void MinePlayer::applyMovement()
 		auto const v		= pointDir * movement;
 		// если вектор движения не совпал с направлением от центра игрока до рассматриваемой точки,
 		// то смысла проверять пересечение в этой точке нет
-		if (!(v.x < 0 && v.y < 0 && v.z < 0))
+		if (!(v.x <= 0 && v.y <= 0 && v.z <= 0))
 		{
-			auto const checkCube = glm::ivec3(entityPos + point);
-			if (minecraft->world.isIntersect(checkCube, entityWorldAABB(entity)))
+			auto const checkCube = floorVec(newPos + point);
+			if (world.isIntersect(checkCube, entityWorldAABB(entity)))
 			{
-				glm::ivec3 const intersectSide = point + 0.5f;
-				glm::vec3 const	 dif		   = point - glm::vec3(intersectSide);
-				newPos -= dif;
+				glm::ivec3 const intersectSide = floorVec(newPos + point + 0.5f);
+				auto const		 dif		   = newPos + point - glm::vec3(intersectSide);
+
+				for (int i = 0; i != 3; ++i)
+				{
+					glm::vec3 newBlockPos = newPos + point;
+					newBlockPos[i] -= dif[i];
+					if (!world.has(newBlockPos))
+					{
+						newPos[i] -= dif[i];
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -325,14 +350,14 @@ void MinePlayer::init()
 
 	entity = gEnv->p3DEngine->MakeEntity();
 
-	entity->SetPos(glm::vec3(5, 10, 5));
+	entity->SetPos(glm::vec3(5, 20, 5));
 	glm::vec3 min{-0.5, -2.5, -0.5}, max{0.5, 0.5, 0.5};
 	entity->SetBBox(min, max);
 }
 
 void MinePlayer::update()
 {
-	auto const aabb	   = entityWorldAABB(entity);
+	auto const aabb = entityWorldAABB(entity);
 
 	minecraft->debug.drawTmpBox(aabb.min, aabb.max);
 

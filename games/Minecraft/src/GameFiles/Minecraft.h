@@ -16,6 +16,8 @@ class MineWorld
 
 	void highliteCubeTmp(glm::ivec3 pos);
 
+	bool has(glm::ivec3 pos);
+
 	bool isIntersect(glm::ivec3 pos, AABB aabb) const;
 
 	bool pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float pickDistance) const;
