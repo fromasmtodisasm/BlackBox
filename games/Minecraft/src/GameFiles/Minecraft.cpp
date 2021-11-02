@@ -1,6 +1,8 @@
-#include "Minecraft.h"
 #undef min
 #undef max
+
+#include "Minecraft.h"
+#include <glm/gtc/noise.hpp>
 
 Minecraft* minecraft;
 
@@ -30,12 +32,14 @@ void MineWorld::init()
 		g_World.size_z = 40;
 		g_World.height = -1;
 
-		for (int y = g_World.height; y < 0; y++)
+		for (int y = g_World.height; y < 5; y++)
 		{
 			for (int z = -g_World.size_x / 2; z < g_World.size_x / 2; z++)
 			{
 				for (int x = -g_World.size_x / 2; x < g_World.size_x / 2; x++)
 				{
+					//if (-10 * glm::perlin(glm::vec3(float(z) * .05f, float(z) * 0.005f, 0.f)) <= 2)
+					//	continue;
 					set(glm::ivec3(x, y, z), Grass);
 				}
 			}
@@ -272,6 +276,18 @@ bool MinePlayer::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSideP
 void MinePlayer::applyMovement()
 {
 	auto newPos = entity->GetPos() + movement;
+	auto p		= glm::ivec3(glm::floor(newPos));
+	for (; p.y > 0; p.y--)
+	{
+		auto it = minecraft->world.blocks.find(p);	
+		if (it != minecraft->world.blocks.end())
+		{
+			newPos.y = it->second->GetPos().y;	
+			break;
+		}
+	}
+	entity->SetPos(newPos);
+	return;
 
 	glm::vec3 min, max;
 	entity->GetBBox(min, max);
@@ -336,7 +352,7 @@ void MinePlayer::update()
 
 	minecraft->debug.drawTmpBox(aabb.min, aabb.max);
 
-	auto const gravity = 2.f;
+	auto const gravity = 0.f; //2.f;
 	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * gEnv->pTimer->GetRealFrameTime());
 
 	applyMovement();

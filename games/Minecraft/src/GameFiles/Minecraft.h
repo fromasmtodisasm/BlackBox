@@ -20,7 +20,7 @@ class MineWorld
 
 	bool pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float pickDistance) const;
 
-  private:
+  //private:
 	bool tryDestroy(glm::ivec3 pos);
 
 	std::unordered_map<glm::ivec3, IEntity*> blocks;
