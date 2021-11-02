@@ -190,7 +190,6 @@ class CEntity : public IEntity
 
 	IMatInfo*		  m_pMatInfo;
 	IEntityCamera*	  m_pEntityCamera;
-	IStatObj*		  m_pStatObj;
 	CEntityObject	  m_EntityObject;
 	IScriptObject*	  m_pScriptOject;
 	IEntityCharacter* m_pCharacter;

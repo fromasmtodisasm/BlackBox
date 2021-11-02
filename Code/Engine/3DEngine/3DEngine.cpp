@@ -102,20 +102,8 @@ void C3DEngine::Draw()
 
 	for (IEntity* obj : m_Entities)
 	{
-		if (obj->IsGarbage() || obj->GetIStatObj() == nullptr)
-			continue;
 		SRendParams rp;
-		glm::vec3 pos = obj->GetPos();
-		glm::vec3 rotation = obj->GetAngles();
-		glm::vec3 scale = obj->GetScale();
-		auto		transform = glm::mat4(1);
-		//glm::mat4 transform = glm::rotate(glm::mat4(1), );
-		transform = glm::translate(transform, pos);
-		transform = glm::scale(transform, scale);
-		IStatObj* stat = obj->GetIStatObj(0);
-		rp.pMatrix = &transform;
-		rp.texture = stat->GetTexture();
-		stat->Render(rp, {});
+		obj->DrawEntity(rp);
 	}
 
 	#if 0

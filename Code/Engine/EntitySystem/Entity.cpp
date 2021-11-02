@@ -4,7 +4,6 @@
 
 CEntity::CEntity()
 {
-
 }
 
 void CEntity::GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs)
@@ -279,8 +278,6 @@ int CEntity::GetNumObjects()
 	return 0;
 }
 
-
-
 IStatObj* CEntity::GetIStatObj(unsigned int pos)
 {
 	return m_EntityObject.object;
@@ -338,7 +335,22 @@ void CEntity::TrackColliders(bool bEnable)
 
 bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 {
-	return false;
+	auto object = m_EntityObject.object;
+	if (IsGarbage() || object == nullptr)
+		return false;
+	glm::vec3 pos		= GetPos();
+	glm::vec3 rotation	= GetAngles();
+	glm::vec3 scale		= GetScale();
+	auto	  transform = glm::mat4(1);
+	//glm::mat4 transform = glm::rotate(glm::mat4(1), );
+	transform	   = glm::translate(transform, pos);
+	transform	   = glm::scale(transform, scale);
+	SRendParams rp(EntDrawParams);
+	rp.pMatrix = &transform;
+	rp.texture = object->GetTexture();
+
+	object->Render(rp, {});
+	return true;
 }
 
 bool CEntity::CreateParticleEntity(float size, float mass, Legacy::Vec3 heading, float acc_thrust, float k_air_resistance, float acc_lift, float gravity, int surface_idx, bool bSingleContact)
@@ -752,7 +764,7 @@ void CEntity::SetCommonCallbacks(IScriptSystem* pScriptSystem)
 {
 }
 
-void CEntity::GetMemoryUsage(ICrySizer* pSizer) const 
+void CEntity::GetMemoryUsage(ICrySizer* pSizer) const
 {
 	pSizer->AddObject(this, sizeof(this));
 	pSizer->AddObject(m_Desc);
