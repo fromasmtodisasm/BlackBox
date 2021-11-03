@@ -109,23 +109,21 @@ struct PaddedStruct : public T
 	std::array<uint8_t, size> Array;
 };
 
-
 void CShader::CreateInputLayout()
 {
 	HRESULT hr{};
 
-	auto									 pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode;
-	std::array<D3D11_INPUT_ELEMENT_DESC, 16> t_InputElementDescVec; // actually does not matter what store
-	unsigned int							 t_ByteOffset = 0;
+	auto								  pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode;
+	std::vector<D3D11_INPUT_ELEMENT_DESC> t_InputElementDescVec; // actually does not matter what store
+	unsigned int						  t_ByteOffset = 0;
 
-	int i = 0;
-	for (; i < m_Desc.InputParameters; ++i)
+	for (int i = 0; i < m_Desc.InputParameters; ++i)
 	{
 		PaddedStruct<D3D11_SIGNATURE_PARAMETER_DESC, 100> SP_DESC;
 		ZeroStruct(SP_DESC);
 		m_pReflection->GetInputParameterDesc(i, &SP_DESC);
 
-		// FIXME: temporary hack to workaround stack couruption around SP_DESC, because D3D11_INPUT_ELEMENT_DESC 
+		// FIXME: temporary hack to workaround stack couruption around SP_DESC, because D3D11_INPUT_ELEMENT_DESC
 		// struct has new field in last version of d3d11
 		//
 		// During call D3DReflect we get pointer to newer interface of relfection (d3dcompiler_47.dll)
@@ -192,10 +190,10 @@ void CShader::CreateInputLayout()
 		{
 			bool isColor = false;
 			uint offset	 = 16;
-			
+
 			if (!strcmp(SP_DESC.SemanticName, "COLOR"))
 			{
-				offset = 4;
+				offset	= 4;
 				isColor = true;
 			}
 			if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
@@ -208,16 +206,16 @@ void CShader::CreateInputLayout()
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 			{
-				t_InputElementDesc.Format = isColor? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R32G32B32A32_FLOAT;
+				t_InputElementDesc.Format = isColor ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R32G32B32A32_FLOAT;
 			}
 			t_ByteOffset += offset;
 		}
 
-		t_InputElementDescVec[i] = (t_InputElementDesc);
+		t_InputElementDescVec.push_back(t_InputElementDesc);
 	}
 	hr = GetDevice()->CreateInputLayout(
 		t_InputElementDescVec.data(),
-		i,
+		t_InputElementDescVec.size(),
 		pVSBuf->GetBufferPointer(),
 		pVSBuf->GetBufferSize(),
 		&m_pInputLayout);
@@ -240,7 +238,6 @@ void CShader::ReflectShader()
 	{
 		m_pReflection->GetDesc(&m_Desc);
 	}
-
 }
 
 CHWShader* CShader::LoadFromEffect(PEffect pEffect, IShader::Type type, int nTechnique, int nPass)
