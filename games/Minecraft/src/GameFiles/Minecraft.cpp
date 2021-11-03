@@ -310,62 +310,69 @@ std::array<glm::vec3, 8> getBoundingPoints(IEntity* entity)
 		{max.x, max.y, min.z}};
 }
 
-void MinePlayer::applyMovement()
+bool MinePlayer::moveOutsideCollisionByPoint(glm::vec3& newPos, glm::vec3 point)
 {
-	auto&	   world  = minecraft->world;
+	auto checkCube = floorVec(newPos + point);
 
-	auto const pos	  = entity->GetPos() + movement;
-	auto	   newPos = pos;
-
-	bool isMoved = true;
-	while (isMoved)
+	if (!minecraft->world.isIntersect(checkCube, entityWorldAABB(entity)))
 	{
-		isMoved = false;
-		for (auto const point : getBoundingPoints(entity))
+		return false;
+	}
+
+	glm::ivec3 const intersectSide = floorVec(newPos + point + 0.5f);
+	auto const		 dif		   = newPos + point - glm::vec3(intersectSide);
+
+	float minDif = HUGE_VALF;
+	int	  minI	 = -1;
+
+	for (int i = 0; i != 3; ++i)
+	{
+		// добавляем небольшое смещение, чтобы избежать попадания на грань куба
+		auto const dif_ = dif + dif * 0.000001f;
+
+		glm::vec3 newBlockPos = newPos + point;
+		newBlockPos[i] -= dif_[i];
+
+		if (abs(dif_[i]) < minDif && !minecraft->world.has(floorVec(newBlockPos)))
 		{
-			if (!isBoundigPointCoDirectedWithMovement(entity, point, movement))
+			minDif = abs(dif_[i]);
+			minI   = i;
+		}
+	}
+
+	if (minI != -1)
+	{
+		newPos[minI] -= dif[minI];
+		return true;
+	}
+
+	return false;
+}
+
+bool MinePlayer::moveOutsideCollision(glm::vec3& newPos)
+{
+	for (auto const point : getBoundingPoints(entity))
+	{
+		if (isBoundigPointCoDirectedWithMovement(entity, point, movement))
+		{
+			if (moveOutsideCollisionByPoint(newPos, point))
 			{
-				continue;
-			}
-
-			auto checkCube = floorVec(newPos + point);
-			world.highliteCubeTmp(checkCube);
-
-			if (world.isIntersect(checkCube, entityWorldAABB(entity)))
-			{
-				glm::ivec3 const intersectSide = floorVec(newPos + point + 0.5f);
-				auto const		 dif		   = newPos + point - glm::vec3(intersectSide);
-
-				float minDif = HUGE_VALF;
-				int	  minI	 = -1;
-
-				for (int i = 0; i != 3; ++i)
-				{
-					// добавляем небольшое смещение, чтобы избежать попадания на грань куба
-					auto const dif_ = dif + dif * 0.000001f;
-
-					glm::vec3 newBlockPos = newPos + point;
-					newBlockPos[i] -= dif_[i];
-
-					if (abs(dif_[i]) < minDif && !world.has(floorVec(newBlockPos)))
-					{
-						if (i == 0)
-						{
-							i = 0;
-						}
-
-						minDif = abs(dif_[i]);
-						minI   = i;
-					}
-				}
-				if (minI != -1)
-				{
-					isMoved = true;
-					newPos[minI] -= dif[minI];
-				}
+				return true;
 			}
 		}
 	}
+	return false;
+}
+
+void MinePlayer::applyMovement()
+{
+	auto&	   world  = minecraft->world;
+	auto const pos	  = entity->GetPos() + movement;
+	auto	   newPos = pos;
+
+	// если мы передвинулись, то запускаем проверку пересечений опять
+	while (moveOutsideCollision(newPos));
+
 
 	entity->SetPos(newPos);
 }
