@@ -337,17 +337,7 @@ bool MinePlayer::moveOutsideCollisionByPoint(glm::vec3& newPos, glm::vec3 point)
 		newBlockPos[i] -= dif[i];
 
 		if (dif[i] != 0.0f && abs(dif[i]) < minDif && !minecraft->world.has(floorVec(newBlockPos)))
-		{
-			if (i == 0)
-			{
-				i = 0;
-			}
-
-			if (i == 2)
-			{
-				i = 2;
-			}
-
+		{	
 			minDif = abs(dif[i]);
 			minI   = i;
 		}

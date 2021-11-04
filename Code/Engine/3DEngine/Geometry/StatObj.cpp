@@ -1,23 +1,24 @@
 #include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 //#include <BlackBox/Geometry/ObjLoader.hpp>
-#include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/Renderer/Material.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
+//#include <BlackBox/Renderer/Material.hpp>
+//#include <BlackBox/Renderer/Pipeline.hpp>
+#include <BlackBox/Renderer/Shader.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include <BlackBox\Core\Path.hpp>
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
-
-#include <fstream>
-#include <iostream>
 #include <cctype>
 #include <cstdio>
-#include <sstream>
+#include <fstream>
+#include <iostream>
 #include <memory>
+#include <sstream>
 
 #define NOT_IMPLEMENTED                                         \
 	CryFatalError("Method [%s] not implemented", __FUNCTION__); \
@@ -26,7 +27,6 @@
 CStatObj::CStatObj(CIndexedMesh IndexedMesh)
 	: m_IndexedMesh(IndexedMesh)
 {
-
 }
 
 CIndexedMesh* CStatObj::GetTriData()
@@ -95,23 +95,20 @@ void CStatObj::Render(const struct SRendParams& rParams, const Legacy::Vec3& t, 
 {
 	if (!m_VertexBuffer)
 	{
-		m_VertexBuffer = gEnv->pRenderer->CreateBuffer(m_IndexedMesh.m_nVertCount, m_IndexedMesh.m_VertexFormat, "stat_obj", false);	
+		m_VertexBuffer = gEnv->pRenderer->CreateBuffer(m_IndexedMesh.m_nVertCount, m_IndexedMesh.m_VertexFormat, "stat_obj", false);
 		gEnv->pRenderer->UpdateBuffer(m_VertexBuffer, m_IndexedMesh.m_VertexBuffer, m_IndexedMesh.m_nVertCount, false);
 
 		m_IndexBuffer = SVertexStream();
 		gEnv->pRenderer->CreateIndexBuffer(&m_IndexBuffer, m_IndexedMesh.m_Indices.data(), m_IndexedMesh.m_Indices.size());
 	}
 
-
 	int texId = rParams.texture;
-	if(texId == -1)
+	if (texId == -1)
 	{
 		texId = m_IndexedMesh.m_DiffuseMap;
 	}
 	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer, &m_IndexBuffer, *rParams.pMatrix, texId);
 	//GlobalResources::Bo
-
-
 }
 IStatObj* CStatObj::GetLodObject(int nLodLevel)
 {
@@ -200,7 +197,7 @@ void CStatObj::FreeTriData()
 }
 void CStatObj::GetMemoryUsage(struct ICrySizer* pSizer) const
 {
-	pSizer->AddObject(this, sizeof(*this),1);
+	pSizer->AddObject(this, sizeof(*this), 1);
 }
 bool CStatObj::CheckValidVegetation()
 {
@@ -240,7 +237,9 @@ CStatObj* CStatObj::Load(const char* szFileName, const char* szGeomName)
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
 	Assimp::Importer import;
-	const aiScene*	 scene = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+	const aiScene*	 scene		  = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+	auto			 shader		  = (CShader*)gEnv->pRenderer->Sh_Load("test.Render", 0, 0);
+	auto			 vertexFormat = shader->GetDynVertexFormat();
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -253,48 +252,65 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 	{
 		for (size_t i = 0; i < scene->mNumMeshes; i++)
 		{
-			auto mesh		  = scene->mMeshes[i];
-			m_vBoxMin = glm::vec3(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y,mesh->mAABB.mMin.z);
-			m_vBoxMax = glm::vec3(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y,mesh->mAABB.mMax.z);
+			auto mesh = scene->mMeshes[i];
+			m_vBoxMin = glm::vec3(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z);
+			m_vBoxMax = glm::vec3(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z);
 
 			bool bNeedCol	  = mesh->HasVertexColors(i);
 			bool bNeedNormals = mesh->HasNormals();
 			bool bHasTC		  = mesh->HasTextureCoords(i);
 
-			m_VertexFormat = 9;
+			m_VertexFormat	= 9;
 			auto RealFormat = VertFormatForComponents(bNeedCol, false, bNeedNormals, bHasTC);
-			if (RealFormat != 9) 
+			if (RealFormat != 9)
 			{
 				CryError("[ASSIMP] VertexFormat not eq 9");
 			}
 
 			char* vb = (char*)(m_VertexBuffer = CreateVertexBuffer(m_VertexFormat, mesh->mNumVertices));
-			
 
-			auto stride = gVertexSize[m_VertexFormat];
+			/* auto stride = gVertexSize[m_VertexFormat];
 
-			auto TCOffset = g_VertFormatUVOffsets[RealFormat];
+			auto TCOffset	   = g_VertFormatUVOffsets[RealFormat];
 			auto NormalsOffset = g_VertFormatNormalOffsets[RealFormat];
 			auto vertexSize	   = gVertexSize[RealFormat];
+			*/
 
-			auto UVs = mesh->mTextureCoords[0];
+			auto UVs	 = mesh->mTextureCoords[0];
 			m_nVertCount = mesh->mNumVertices;
-			for (size_t i = 0; i < m_nVertCount; i++)
+
+			vertexFormat->apply("Pos", vb, [&mesh](glm::vec3* pos, size_t i)
+								{ *pos = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z); });
+
+			if (bNeedNormals)
+			{
+				vertexFormat->apply("Normal", vb, [&mesh](glm::vec3* pos, size_t i)
+									{ *pos = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z); });
+			}
+
+			if (bHasTC)
+			{
+				vertexFormat->apply("TC", vb, [&mesh](glm::vec2* pos, size_t i)
+									{ *pos = glm::vec2(mesh->mVertices[i].x, mesh->mVertices[i].y); });
+			}
+
+			/*	for (size_t i = 0; i < m_nVertCount; i++)
 			{
 				memcpy(&vb[i * stride], &mesh->mVertices[i], sizeof(Legacy::Vec3));
-				if (TCOffset != -1) {
-					auto _uv = UVs[i];
+				if (TCOffset != -1)
+				{
+					auto		 _uv = UVs[i];
 					Legacy::Vec2 uv	 = Legacy::Vec2(_uv.x, _uv.y);
 					memcpy(&vb[i * stride + g_VertFormatUVOffsets[m_VertexFormat]], &uv, sizeof(Legacy::Vec2));
-
 				}
-				if (NormalsOffset != -1) {
-					auto _N = mesh->mNormals[i];
-					Legacy::Vec3 N	 = Legacy::Vec3(_N.x, _N.y, _N.z);
+				if (NormalsOffset != -1)
+				{
+					auto		 _N = mesh->mNormals[i];
+					Legacy::Vec3 N	= Legacy::Vec3(_N.x, _N.y, _N.z);
 					memcpy(&vb[i * stride + g_VertFormatNormalOffsets[m_VertexFormat]], &N, sizeof(Legacy::Vec3));
-
 				}
-			}
+		}	*/
+
 			for (int i = 0; i < mesh->mNumFaces; i++)
 			{
 				const aiFace& Face = mesh->mFaces[i];
@@ -322,7 +338,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 						if (m_DiffuseMap == -1)
 						{
 							auto new_path = PathUtil::GetParentDirectory(m_Name);
-							m_DiffuseMap = gEnv->pRenderer->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
+							m_DiffuseMap  = gEnv->pRenderer->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
 						}
 					}
 				}
@@ -330,10 +346,8 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 		}
 	}
 	return true;
-
 }
 
 CIndexedMesh::CIndexedMesh()
 {
-
 }
