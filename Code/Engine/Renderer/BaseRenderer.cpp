@@ -8,7 +8,6 @@
 
 #include "AuxRendererNull.hpp"
 
-#include <BlackBox/Renderer/TextureManager.hpp>
 #include <SDL2/SDL.h>
 
 #include <BlackBox/Core/Platform/platform_impl.inl>

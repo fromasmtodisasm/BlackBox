@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Scene/Scene.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/3DEngine/StatObject.hpp>
@@ -16,7 +17,6 @@
 
 using namespace tinyxml2;
 
-#if 0
 Scene::Serializator::Serializator(Scene* scene)
   :
   m_Scene(scene)

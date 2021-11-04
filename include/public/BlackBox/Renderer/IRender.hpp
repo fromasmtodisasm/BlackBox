@@ -143,6 +143,7 @@ struct Transform
 // DOC-IGNORE-BEGIN
 #include "ColorDefs.h"
 #include "TArray.h"
+#include "..\Core\Platform\Platform.hpp"
 
 //#include <IFont.h>
 // DOC-IGNORE-END
@@ -409,7 +410,7 @@ enum EStreamIDs
 };
 
 //! Stream Masks (Used during updating).
-enum EStreamMasks : uint16
+enum EStreamMasks : uint16_t
 {
 	VSM_GENERAL         = BIT(VSF_GENERAL),
 	VSM_TANGENTS        = BIT(VSF_TANGENTS) | BIT(VSF_QTANGENTS), // either or

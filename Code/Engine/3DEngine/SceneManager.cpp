@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/3DEngine/SceneManager.hpp>
 #include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/Renderer/ObjectManager.hpp>
@@ -10,7 +11,6 @@
 
 Scene* defaultScene = nullptr;
 ICVar* SceneManager::scene_path = nullptr;
-#if 0
 #if 0
 SceneManager* SceneManager::instance()
 {

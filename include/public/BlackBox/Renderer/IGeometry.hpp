@@ -116,18 +116,6 @@ struct BoundingBox
 	}
 };
 
-class Mesh
-{
-  public:
-	Mesh(CVertexBuffer* vertexBuffer);
-	Mesh() = default;
-	CVertexBuffer* getVertexBuffer();
-
-	CVertexBuffer* m_Verts;
-	BoundingBox bb;
-	std::shared_ptr<std::string> m_Path;
-};
-
 class SubdivisionShpereTessellatorSimple
 {
   public:

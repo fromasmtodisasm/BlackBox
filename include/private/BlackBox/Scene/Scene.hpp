@@ -3,7 +3,6 @@
 
 #include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/Renderer/Light.hpp>
-#include <BlackBox/Renderer/Terrain.hpp>
 //#include <BlackBox/Renderer/BaseShader.hpp>
 
 #include <tinyxml2.h>

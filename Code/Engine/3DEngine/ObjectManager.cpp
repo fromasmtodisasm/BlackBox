@@ -1,3 +1,4 @@
+#if 0
 #include <BlackBox/Renderer/ObjectManager.hpp>
 #include <BlackBox/3DEngine/StatObject.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -6,7 +7,6 @@
 
 #include <iostream>
 using	namespace std;
-#if 0
 ObjectManager* ObjectManager::manager = nullptr;
 
 ObjectManager* ObjectManager::instance()

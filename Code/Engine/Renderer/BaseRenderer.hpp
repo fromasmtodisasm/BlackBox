@@ -4,9 +4,7 @@
 #include <BlackBox/Renderer/AuxRenderer.hpp>
 //#include "BufferManager.hpp"
 #include <BlackBox/Renderer/IRender.hpp>
-//#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/Quad.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
 #include "Shaders/FxParser.h"

@@ -4,7 +4,6 @@
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 //#include <BlackBox/Renderer/Material.hpp>
 //#include <BlackBox/Renderer/Pipeline.hpp>
-#include <BlackBox/Renderer/Shader.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include <BlackBox\Core\Path.hpp>
@@ -238,7 +237,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
 	Assimp::Importer import;
 	const aiScene*	 scene		  = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
-	auto			 shader		  = (CShader*)gEnv->pRenderer->Sh_Load("test.Render", 0, 0);
+	auto			 shader		  = gEnv->pRenderer->Sh_Load("test.Render", 0, 0);
 	auto			 vertexFormat = shader->GetDynVertexFormat();
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)

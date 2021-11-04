@@ -6,7 +6,6 @@
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Texture.hpp>
-#include <BlackBox/Renderer/TextureManager.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/System/Console.hpp>
