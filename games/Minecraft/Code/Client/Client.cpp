@@ -367,7 +367,7 @@ void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 
 void CClient::OnLoadScene()
 {
-	auto cam  = new CCamera(/*Legacy::Vec3(0,0,0)*/);
+	auto cam  = new CCamera(Legacy::Vec3(0,40,0));
 	cam->mode = CCamera::Mode::FLY;
 	m_CameraController.AddCamera(cam);
 	//m_CameraController.AddCamera(new CCamera(/*Legacy::Vec3(10,10,10)*/));

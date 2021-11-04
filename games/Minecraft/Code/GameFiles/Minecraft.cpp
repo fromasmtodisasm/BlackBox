@@ -416,7 +416,7 @@ void MinePlayer::init()
 
 	entity = gEnv->p3DEngine->MakeEntity();
 
-	entity->SetPos(glm::vec3(5, 20, 5));
+	entity->SetPos(glm::vec3(5, 40, 5));
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 }
