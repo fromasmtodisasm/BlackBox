@@ -142,14 +142,17 @@ void CShader::CreateInputLayout()
 		{
 			if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::UInt);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32_UINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::SInt);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32_SINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::Float);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32_FLOAT;
 			}
 			t_ByteOffset += 4;
@@ -158,14 +161,17 @@ void CShader::CreateInputLayout()
 		{
 			if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::UVec2);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32_UINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::SVec2);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32_SINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::FVec2);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
 			}
 			t_ByteOffset += 8;
@@ -174,14 +180,17 @@ void CShader::CreateInputLayout()
 		{
 			if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::UVec3);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32B32_UINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::SVec3);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32B32_SINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::FVec3);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
 			}
 			t_ByteOffset += 12;
@@ -198,14 +207,17 @@ void CShader::CreateInputLayout()
 			}
 			if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::UVec4);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_SINT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::SVec4);
 				t_InputElementDesc.Format = DXGI_FORMAT_R32G32B32A32_SINT;
 			}
 			else if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
 			{
+				format.add(SP_DESC.SemanticName, DynVertexFormat::FVec4);
 				t_InputElementDesc.Format = isColor ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R32G32B32A32_FLOAT;
 			}
 			t_ByteOffset += offset;

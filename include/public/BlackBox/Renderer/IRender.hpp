@@ -18,6 +18,7 @@ typedef unsigned short ushort;
 #include <BlackBox/Renderer/Light.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 
+#include <string_view>
 #include <vector>
 
 #ifndef NOT_IMPLEMENTED_V
@@ -491,6 +492,7 @@ class CVertexBuffer
 		m_bFenceSet				  = 0;
 		m_NumVerts				  = nVertCount;
 	}
+
 	void* GetStream(int nStream, int* nOffs);
 
 	SVertexStream m_VS[VSF_NUM]; // 1 vertex streams and one index stream
@@ -505,6 +507,8 @@ class CVertexBuffer
 
 	int Size(int Flags, int nVerts);
 };
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // DOC-IGNORE-BEGIN

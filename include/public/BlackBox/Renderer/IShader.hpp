@@ -14,6 +14,7 @@
 #include <Cry_Math.h>
 #include "Cry_XOptimise.h"
 #include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 struct IShader;
 struct SShader;
@@ -2017,7 +2018,7 @@ struct IShader
 	virtual int					   Size(int Flags)																													{ return {}; }
 	virtual uint64				   GetGenerationMask()																												{ return {}; }
 	virtual SShaderGen*			   GetGenerationParams()																											{ return {}; }
-
+	virtual DynVertexFormat*	   GetDynVertexFormat() = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////

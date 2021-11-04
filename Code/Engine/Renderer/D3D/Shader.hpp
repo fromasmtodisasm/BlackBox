@@ -3,6 +3,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include "../Shaders/Effect.hpp"
 #include <d3dcompiler.h>
@@ -61,6 +62,11 @@ class CShader : public IShader
 	virtual int			  GetFlags() override;
 	virtual int			  GetFlags2() override;
 
+	virtual DynVertexFormat*	   GetDynVertexFormat()
+	{
+		return &format;
+	}
+
 	bool WaitUntilLoaded();
 
 	void			SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen);
@@ -83,6 +89,7 @@ class CShader : public IShader
 	ID3D11InputLayout*		m_pInputLayout;
 	D3D11_SHADER_DESC		m_Desc;
 	ID3D11ShaderReflection* m_pReflection;
+	DynVertexFormat		format;
 };
 
 CShader::Type str2typ(string type);
