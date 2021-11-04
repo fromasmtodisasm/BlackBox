@@ -166,16 +166,17 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 
 void CBufferManager::Release(CVertexBuffer* pVertexBuffer)
 {
+	assert(pVertexBuffer);
 	if (pVertexBuffer)
 	{
-		auto VB = reinterpret_cast<ID3D11Buffer*>(pVertexBuffer->m_VS[0].m_VertBuf.m_pPtr);
-		SAFE_RELEASE(VB);
-		//glDeleteVertexArrays(1, &pVertexBuffer->m_Container);
+		auto ptr = reinterpret_cast<ID3D11Buffer*>(pVertexBuffer->m_VS[0].m_VertBuf.m_pPtr);
+		SAFE_RELEASE(ptr);
 		for (int i = 0; i < VSF_NUM; i++)
 		{
 			SAFE_DELETE(pVertexBuffer->m_VS[i].m_VData);
 		}
 	}
+	SAFE_DELETE(pVertexBuffer);
 }
 
 void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount)
@@ -208,10 +209,9 @@ void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount
 
 void CBufferManager::Release(SVertexStream* pVertexStream)
 {
-	if (pVertexStream != nullptr)
-	{
-		reinterpret_cast<ID3D11Buffer*>(pVertexStream->m_VertBuf.m_pPtr)->Release();
-	}
+	assert(pVertexStream);
+	reinterpret_cast<ID3D11Buffer*>(pVertexStream->m_VertBuf.m_pPtr)->Release();
+	delete pVertexStream;
 }
 
 void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start, int vert_stop, CMatInfo* mi)

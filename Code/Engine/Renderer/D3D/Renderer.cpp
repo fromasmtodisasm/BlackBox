@@ -833,6 +833,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 	//m_pd3dDevice->OMSetDepthStencilState(m_pDSState, 0);
 
 	gEnv->pRenderer->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
+	ReleaseBuffer(VB);
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)

@@ -9,15 +9,21 @@ public:
 	virtual void ThreadEntry();
 };
 
+struct SRT
+{
+	CRenderThread* rt;
+	std::thread	  std;
+};
 
 struct SRenderThread
 {
 	std::deque<std::function<void()>> Commands;
-	CRenderThread*					  m_pThread;
+	//CRenderThread*					  m_pThread;
+	SRT						  m_pThread;
 	std::mutex						  m_QueueMutex;
 
 	SRenderThread() {
-		m_pThread = new CRenderThread();
+		//m_pThread = new CRenderThread();
 	}
 
 	void Start();

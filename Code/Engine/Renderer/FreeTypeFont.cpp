@@ -555,7 +555,6 @@ void FreeTypeFont::Submit()
 	// Activate corresponding render state
 	auto render = GetISystem()->GetIRenderer();
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
-	SAFE_DELETE(m_VB);
 
 #	if 1
 	m_VB = gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
@@ -570,32 +569,14 @@ void FreeTypeFont::Submit()
 	GlobalResources::SpriteShader->Bind();
 	GetDeviceContext()->PSSetSamplers(0, 1, &m_Sampler);
 	GetDeviceContext()->PSSetShaderResources(0, 1, &m_pTextureRV);
-	#if 0
+#	if 0
 	GetDeviceContext()->IASetInputLayout(m_pFontLayout);
-	#endif
+#	endif
 	GetDeviceContext()->RSSetState(m_pRasterizerState);
 	GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 	GetDeviceContext()->OMSetDepthStencilState(m_pDSState, 0);
 
-	static int	font_method = 1;
-	static bool registered	= false;
-	if (!registered)
-	{
-		REGISTER_CVAR(font_method, font_method, 0, "font_method");
-		registered = true;
-	}
-	switch (font_method)
-	{
-	case 1:
-		gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
-		break;
-	default:
-		for (int i = 0; i < vertex_cnt; i++)
-		{
-			gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), i, i + 1);
-		}
-		break;
-	}
+	gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 
 	m_CharBuffer.resize(0);
 }

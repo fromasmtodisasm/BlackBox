@@ -13,7 +13,12 @@ void CRenderThread::ThreadEntry()
 
 void SRenderThread::Start()
 {
+	#if 0
 	gEnv->pThreadManager->SpawnThread(m_pThread, "RenderThread");
+	#else
+	m_pThread.rt  = new CRenderThread;
+	m_pThread.std = std::thread(&CRenderThread::ThreadEntry, m_pThread.rt);
+	#endif
 
 	auto lock = std::unique_lock<std::mutex>(m_StartedMutex);
 	//m_pThread->m_started.wait(lock);
@@ -22,7 +27,8 @@ void SRenderThread::Start()
 void SRenderThread::Quit()
 {
 	m_bQuit.store(true);
-	gEnv->pThreadManager->JoinThread(m_pThread, EJoinMode::eJM_Join);
+	//gEnv->pThreadManager->JoinThread(m_pThread, EJoinMode::eJM_Join);
+	m_pThread.std.join();
 }
 
 void SRenderThread::Process()

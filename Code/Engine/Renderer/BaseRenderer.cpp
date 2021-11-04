@@ -206,7 +206,9 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #ifndef VK_RENDERER
 	m_BufferManager = new CBufferManager();
 #endif
+	#if 0
 	CreateQuad();
+	#endif
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
@@ -687,12 +689,14 @@ void CRenderer::ShutDown()
 	{
 		m_Fonts[i]->Release();
 	}
+	//FIXME:
+	#if 0
 	ReleaseBuffer(m_VertexBuffer);
+	#endif
 	SAFE_DELETE(m_RenderAuxGeom);
 #ifndef VK_RENDERER
 	SAFE_DELETE(m_BufferManager);
 #endif
-	SAFE_DELETE(m_VertexBuffer);
 	SAFE_DELETE(g_FxParser);
 
 	SAFE_DELETE(gShMan);
