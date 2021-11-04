@@ -166,13 +166,15 @@ end
 -- C like printf
 -------------------------------------------------------
 function printf(...)
-  System:LogToConsole(call(format,arg))
+  System:LogToConsole(string:format(arg))
 end
 -------------------------------------------------------
 -- C like sprintf
 -------------------------------------------------------
+-- FIXME: call function not worked in lua 5.3. WTF???
 function sprintf(...)
-  return call(format,arg)
+  --return call(string:format,arg)
+  return string.format(arg)
 end
 
 -------------------------------------------------------
@@ -216,7 +218,7 @@ end
 function new(_obj)
 	if(type(_obj)=="table") then
 		local newInstance={};
-		for i,field in _obj do
+		for i,field in pairs(_obj) do
 			if(type(field)=="table") then
 				newInstance[i]=new(field);
 			else

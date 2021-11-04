@@ -6,6 +6,10 @@ DebugTagPointsMgr={
 };
 
 function DebugTagPointsMgr:Init(mapname)
+	-- FIXME:
+	if (true) then
+		return
+	end
 	self.path=sprintf("LEVELS/%s/tags.txt",mapname);
 	printf("DebugTagPointsMgr INITIALIZED [%s]",self.path);
 	self:Load();

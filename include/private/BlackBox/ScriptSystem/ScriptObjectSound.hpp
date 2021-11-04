@@ -46,6 +46,7 @@ public:
 	int StopSound(IFunctionHandler *pH);
 	int IsPlaying(IFunctionHandler *pH);
 	int LoadStreamSound(IFunctionHandler *pH);
+	int RemoveFromScaleGroup(IFunctionHandler *pH);
 	static void InitializeTemplate(IScriptSystem *pSS);
 public:
 };

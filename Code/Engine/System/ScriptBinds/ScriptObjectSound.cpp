@@ -1,15 +1,15 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-// 
+//
 //	File: ScriptObjectSound.cpp
 //
-//  Description: 
+//  Description:
 //		Implementation of the CScriptObjectSound class.
 //
-//	History: 
+//	History:
 //	- File Created by Alberto Demichelis, Martin Mittring
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
@@ -49,15 +49,22 @@ void CScriptObjectSound::InitializeTemplate(IScriptSystem* pSS)
 	REG_FUNC(CScriptObjectSound, PlaySound);
 	REG_FUNC(CScriptObjectSound, StopSound);
 	REG_FUNC(CScriptObjectSound, LoadStreamSound);
+	REG_FUNC(CScriptObjectSound, RemoveFromScaleGroup);
 }
 
 int CScriptObjectSound::Init(IScriptSystem* pScriptSystem)
 {
-	InitGlobal(pScriptSystem,"Sound",this);
+	InitGlobal(pScriptSystem, "Sound", this);
 
-	m_pScriptSystem->SetGlobalValue("SOUND_LOOP", SOUND_LOOP );
-	m_pScriptSystem->SetGlobalValue("SOUND_MUSIC", SOUND_MUSIC );
-	m_pScriptSystem->SetGlobalValue("SOUND_UNSCALABLE", SOUND_UNSCALABLE );
+	m_pScriptSystem->SetGlobalValue("SOUND_LOOP", SOUND_LOOP);
+	m_pScriptSystem->SetGlobalValue("SOUND_MUSIC", SOUND_MUSIC);
+	m_pScriptSystem->SetGlobalValue("SOUND_UNSCALABLE", SOUND_UNSCALABLE);
+
+	m_pScriptSystem->SetGlobalValue("SOUNDSCALE_MASTER", SOUNDSCALE_MASTER);
+	m_pScriptSystem->SetGlobalValue("SOUNDSCALE_SCALEABLE", SOUNDSCALE_SCALEABLE);
+	m_pScriptSystem->SetGlobalValue("SOUNDSCALE_DEAFNESS", SOUNDSCALE_DEAFNESS);
+	m_pScriptSystem->SetGlobalValue("SOUNDSCALE_UNDERWATER", SOUNDSCALE_UNDERWATER);
+	m_pScriptSystem->SetGlobalValue("SOUNDSCALE_MISSIONHINT", SOUNDSCALE_MISSIONHINT);
 
 	return 0;
 }
@@ -102,7 +109,6 @@ int CScriptObjectSound::Load3DSound(IFunctionHandler* pH)
 	}
 
 	return pH->EndFunctionNull();
-
 }
 
 int CScriptObjectSound::SetSoundVolume(IFunctionHandler* pH)
@@ -174,3 +180,7 @@ int CScriptObjectSound::IsPlaying(IFunctionHandler* pH)
 	return pH->EndFunction(true);
 }
 
+int CScriptObjectSound::RemoveFromScaleGroup(IFunctionHandler* pH)
+{
+	return pH->EndFunction();
+}

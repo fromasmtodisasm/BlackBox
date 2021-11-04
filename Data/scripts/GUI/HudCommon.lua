@@ -352,17 +352,18 @@ end
 -- Initialize sp hud texture, texture coordinates offsets
 -----------------------------------------------------------------------------
 
+-- FIXME: tt is nil
 function Hud:InitTexTable(tt)
 	local tw,th=511,255;
-	for i,val in paris(tt) do
-		val.size={}
-		val.size.w=val[3];
-		val.size.h=val[4];
-		val[1]=val[1]/tw;
-		val[2]=val[2]/th;
-		val[3]=val[1]+(val[3]/tw);
-		val[4]=val[2]+(val[4]/th);
-	end
+	-- for i,val in paris(tt) do
+	-- 	val.size={}
+	-- 	val.size.w=val[3];
+	-- 	val.size.h=val[4];
+	-- 	val[1]=val[1]/tw;
+	-- 	val[2]=val[2]/th;
+	-- 	val[3]=val[1]+(val[3]/tw);
+	-- 	val[4]=val[2]+(val[4]/th);
+	-- end
 end
 
 -----------------------------------------------------------------------------
@@ -1018,7 +1019,7 @@ function Hud:CommonInit()
 	
 	self.labeltime = nil;
 	
-	self.sGameType=strupper(getglobal("g_GameType"));	
+	self.sGameType=string.upper(getglobal("g_GameType"));	
 end
 
 -------------------------------------------------------------------------
@@ -1056,7 +1057,7 @@ function Hud:InitTexTableMP(tt)
 	local tw,th=256,128;
 	local offsetU, offsetV=2/256.0, 2/128.0;
 	
-	for i,val in tt do
+	for i,val in pairs(tt) do
 		val.size={}
 		val.size.w=val[3];
 		val.size.h=val[4];
