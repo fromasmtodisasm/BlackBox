@@ -49,6 +49,9 @@ class CShader : public IShader
   public:
 	// Inherited via IShader
 	~CShader();
+
+	CShader& operator=(const CShader& src);
+
 	virtual int			  GetID() override;
 	virtual void		  AddRef() override;
 	virtual void		  Release(bool bForce = false);
@@ -77,8 +80,8 @@ class CShader : public IShader
 	int m_Flags	  = 0;
 	int m_Flags2  = 0;
 
-	ID3D11InputLayout* m_pInputLayout;
-	D3D11_SHADER_DESC  m_Desc;
+	ID3D11InputLayout*		m_pInputLayout;
+	D3D11_SHADER_DESC		m_Desc;
 	ID3D11ShaderReflection* m_pReflection;
 };
 

@@ -207,7 +207,7 @@ class CRenderer : public RenderCVars
 	virtual void OnVarUnregister(ICVar* pVar) final;
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) final;
-	CRenderer(ISystem* engine);
+	CRenderer();
 	virtual ~CRenderer();
 	//! Init the renderer, params are self-explanatory
 	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) /* final*/;
@@ -470,22 +470,15 @@ class CRenderer : public RenderCVars
 class ShaderMan
 {
   public:
-	IShader* Sh_Load(const char* vertex, const char* fragment)
-	{
-#if 0
-		using ShaderInfo = IShaderProgram::ShaderInfo;
-		auto* vs		 = CShader::Load(ShaderDesc(vertex, IShader::E_VERTEX));
-		auto* fs		 = CShader::Load(ShaderDesc(fragment, IShader::E_FRAGMENT));
-		auto* p			 = new CShaderProgram(ShaderInfo(vs, std::string(vertex)), ShaderInfo(fs, std::string(fragment)));
-		p->Create((std::string(vertex) + std::string(fragment)).data());
-		m_Shaders.emplace_back(p);
-		return p;
-#else
-		return nullptr;
-#endif
-	}
 	void RT_ShaderLoad(const char* name, int flags, uint64 nMaskGen, CShader* p)
 	{
+		if (auto it = m_Shaders.find((name)); it != m_Shaders.end())
+		{
+			//it->second->AddRef();		
+			//*p = *it->second;
+			//return;
+			CryLog("Shader <%s> already cached", name);
+		}
 		if (!Sh_LoadBinary(name, flags, nMaskGen, p))
 		{
 			if (Compile(name, flags, nMaskGen, p))
@@ -553,6 +546,7 @@ class ShaderMan
 			//p->Bind();
 
 			delete pEffect;
+			m_Shaders[string(name)] = p;
 			return true;
 		}
 		else
@@ -565,11 +559,11 @@ class ShaderMan
 	{
 		for (auto& s : m_Shaders)
 		{
-			s->Reload(0);
+			s.second->Reload(0);
 		}
 	}
 
-	std::vector<_smart_ptr<CShader>> m_Shaders;
+	std::map<string,_smart_ptr<CShader>> m_Shaders;
 };
 #undef NOT_IMPLEMENTED_V
 #ifndef NOT_IMPLEMENTED_V

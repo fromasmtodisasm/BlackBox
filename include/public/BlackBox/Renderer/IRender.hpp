@@ -388,19 +388,43 @@ struct SDispFormat
 	int m_BPP	 = 0;
 };
 
-//////////////////////////////////////////////////////////////////////////
-// Stream ID's
-enum EStreamID
+//! Stream IDs.
+enum EStreamIDs
 {
-	VSF_GENERAL = 0, // General vertex buffer
-					 //#define VSF_TANGENTS 1  // Tangents buffer
+	VSF_GENERAL,                 //!< General vertex buffer.
+	VSF_TANGENTS,                //!< Tangents buffer.
+	VSF_QTANGENTS,               //!< Tangents buffer.
+	VSF_HWSKIN_INFO,             //!< HW skinning buffer.
+	VSF_VERTEX_VELOCITY,         //!< Velocity buffer.
+#if ENABLE_NORMALSTREAM_SUPPORT
+	VSF_NORMALS,                 //!< Normals, used for skinning.
+#endif
+	//   <- Insert new stream IDs here.
+	VSF_NUM,                     //!< Number of vertex streams.
 
-	VSF_NUM // Number of vertex streams
+	VSF_MORPHBUDDY         = 8,  //!< Morphing (from m_pMorphBuddy).
+	VSF_INSTANCED          = 9,  //!< Data is for instance stream.
+	VSF_MORPHBUDDY_WEIGHTS = 15, //!< Morphing weights.
 };
 
-// Stream Masks (Used during updating)
-#define VSM_GENERAL (1 << VSM_GENERAL)
-#define VSM_TANGENTS (1 << VSF_TANGENTS)
+//! Stream Masks (Used during updating).
+enum EStreamMasks : uint16
+{
+	VSM_GENERAL         = BIT(VSF_GENERAL),
+	VSM_TANGENTS        = BIT(VSF_TANGENTS) | BIT(VSF_QTANGENTS), // either or
+	VSM_QTANGENTS       = BIT(VSF_QTANGENTS),
+	VSM_HWSKIN          = BIT(VSF_HWSKIN_INFO),
+	VSM_VERTEX_VELOCITY = BIT(VSF_VERTEX_VELOCITY),
+#if ENABLE_NORMALSTREAM_SUPPORT
+	VSM_NORMALS         = BIT(VSF_NORMALS),
+#endif
+
+	VSM_MORPHBUDDY      = BIT(VSF_MORPHBUDDY),
+	VSM_INSTANCED       = BIT(VSF_INSTANCED),
+
+	VSM_MASK            = MASK(VSF_NUM),
+	VSM_NONE            = 0,
+};
 
 //////////////////////////////////////////////////////////////////////////
 union UHWBuf

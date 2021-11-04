@@ -37,6 +37,9 @@
 #	define ID3DInputLayout ID3D11InputLayout
 #	define ID3DSamplerState ID3D11SamplerState
 
+#	define D3DDevice ID3DDevice
+#	define D3DBuffer ID3DBuffer
+
 using D3D_VIEWPORT = D3D11_VIEWPORT;
 using D3D_RASTERIZER_DESC = D3D11_RASTERIZER_DESC;
 #else
@@ -48,6 +51,17 @@ using D3D_RASTERIZER_DESC = D3D11_RASTERIZER_DESC;
 #	define ID3DRasterizerState ID3D10RasterizerState
 #	define ID3DDepthStencilState ID3D10DepthStencilState
 #endif
+
+#	define D3D11_MAP_WRITE_DISCARD_VB (D3D11_MAP_WRITE_DISCARD)
+#	define D3D11_MAP_WRITE_DISCARD_IB (D3D11_MAP_WRITE_DISCARD)
+#	define D3D11_MAP_WRITE_DISCARD_CB (D3D11_MAP_WRITE_DISCARD)
+#	define D3D11_MAP_WRITE_DISCARD_SR (D3D11_MAP_WRITE_DISCARD)
+#	define D3D11_MAP_WRITE_DISCARD_UA (D3D11_MAP_WRITE_DISCARD)
+
+typedef ID3D11SamplerState CDeviceSamplerState;
+typedef ID3D11InputLayout	CDeviceInputLayout;
+//typedef ID3D11BaseView		CDeviceResourceView;
+
 
 using D3DXMATRIX_  = glm::mat4;
 using D3DXVECTOR3_ = glm::vec3;

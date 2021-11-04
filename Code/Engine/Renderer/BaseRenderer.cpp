@@ -65,9 +65,8 @@ void TestFx(IConsoleCmdArgs* args)
 #endif
 }
 
-CRenderer::CRenderer(ISystem* engine)
-	: m_pSystem(engine)
-	, m_viewPort(0, 0, 0, 0)
+CRenderer::CRenderer()
+	: m_viewPort(0, 0, 0, 0)
 {
 }
 
@@ -162,6 +161,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 {
 	if (!gRenDev)
 		gRenDev = this;
+	m_pSystem = gEnv->pSystem;
 	InitCVars();
 	IWindow* result = m_Window = window;
 	bInFullScreen			   = fullscreen;

@@ -47,6 +47,12 @@ add_sources(
 	"D3D/RenderThread.h"
 	"D3D/Renderer.cpp"
 	"D3D/Shader.cpp"
+	SOURCE_GROUP "DeviceManager"
+	"DeviceManager/Deviceobjects.cpp"
+	"DeviceManager/DeviceObjects.h"
+	"DeviceManager/DeviceResources.cpp"
+	"DeviceManager/DeviceResources.hpp"
+	
 	)
 
 add_sources(

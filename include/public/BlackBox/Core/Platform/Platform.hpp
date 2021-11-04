@@ -35,6 +35,60 @@ enum class EPlatform
 #endif
 };
 
+#if BB_PLATFORM_WINAPI
+#	include <inttypes.h>
+#	define PLATFORM_I64(x) x##i64
+#else
+#	define __STDC_FORMAT_MACROS
+#	include <inttypes.h>
+#	if BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID
+#		undef PRIX64
+#		undef PRIx64
+#		undef PRId64
+#		undef PRIu64
+#		undef PRIi64
+
+#		define PRIX64 "llX"
+#		define PRIx64 "llx"
+#		define PRId64 "lld"
+#		define PRIu64 "llu"
+#		define PRIi64 "lli"
+#	endif
+#	define PLATFORM_I64(x) x##ll
+#endif
+
+#if !defined(PRISIZE_T)
+#	if BB_PLATFORM_WINDOWS || BB_PLATFORM_DURANGO
+#		define PRISIZE_T "I64u" //size_t defined as unsigned __int64
+#	elif BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID
+#		define PRISIZE_T "lu"
+#	else
+#		error "Please define PRISIZE_T for this platform"
+#	endif
+#endif
+
+#if !defined(PRI_PTRDIFF_T)
+#	if BB_PLATFORM_WINDOWS
+#		define PRI_PTRDIFF_T "I64d"
+#	elif BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID || BB_PLATFORM_DURANGO
+#		define PRI_PTRDIFF_T "ld"
+#	else
+#		error "Please defined PRI_PTRDIFF_T for this platform"
+#	endif
+#endif
+
+#if !defined(PRI_THREADID)
+#	if (BB_PLATFORM_APPLE && defined(__LP64__)) || BB_PLATFORM_ORBIS
+#		define PRI_THREADID "llu"
+#	elif BB_PLATFORM_WINDOWS || BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_DURANGO
+#		define PRI_THREADID "lu"
+#	else
+#		error "Please defined PRI_THREADID for this platform"
+#	endif
+#endif
+
+
+
 #if defined(WIN32) || defined(WIN64)
 #define DEBUG_BREAK _asm { int 3 }
 #else
@@ -279,6 +333,20 @@ ILINE bool IsAligned(T nData, size_t nAlign)
 #elif BB_PLATFORM_ORBIS
   #include <BlackBox/Core/Platform/Orbis_Win32Wrapper.h>
 #endif
+
+// Provide special cast function which mirrors C++ style casts to support aliasing correct type punning casts in gcc with strict-aliasing enabled
+template<typename DestinationType, typename SourceType>
+inline DestinationType alias_cast(SourceType pPtr)
+{
+	union
+	{
+		SourceType		pSrc;
+		DestinationType pDst;
+	} conv_union;
+	conv_union.pSrc = pPtr;
+	return conv_union.pDst;
+}
+
 
 // CryModule memory manager routines must always be included.
 // They are used by any module which doesn't define NOT_USE_CRY_MEMORY_MANAGER

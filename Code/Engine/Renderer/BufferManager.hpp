@@ -12,6 +12,9 @@
 
 #include <BlackBox/Renderer/IRender.hpp>
 #include "DeviceManager/DeviceResources.hpp"
+#include <BlackBox\Core\Math\Cry_Math.h>
+
+#include "DeviceManager\DeviceObjects.h"
 
 enum AttributeLocation : uint {
 	position = 0,
@@ -29,6 +32,9 @@ struct SVertexPoolEntry
   int free = 0;
 };
 
+typedef uintptr_t buffer_handle_t;
+typedef uint32    item_handle_t;
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // Constant buffer wrapper class
 class CConstantBuffer
@@ -39,10 +45,10 @@ public:
 	void*          m_allocator;
 #endif
 	void*          m_base_ptr;
-	//item_handle_t  m_handle;
+	item_handle_t  m_handle;
 	buffer_size_t  m_offset;
 	buffer_size_t  m_size;
-	std::atomic<int32>  m_nRefCount;
+	int32          m_nRefCount;
 	int8           m_nUpdCount;
 	union
 	{
@@ -106,8 +112,67 @@ public:
 #endif
 	}
 
-	void* BeginWrite();
-	void  EndWrite(bool requires_flush = false);
+	void* BeginWrite()
+	{
+		//CConditonalDevManLock lock(&gcpRendD3D->m_DevBufMan, m_lock);
+		if (!m_used)
+		{
+			const SBufferLayout Layout =
+				{
+					DXGI_FORMAT_UNKNOWN, m_size, 1,
+					(m_dynamic ? CDeviceObjectFactory::USAGE_CPU_WRITE : 0) |
+						CDeviceObjectFactory::BIND_CONSTANT_BUFFER};
+
+			if (!(m_buffer = CDeviceBuffer::Create(Layout, nullptr)))
+			{
+				CryLogAlways("CConstantBuffer::BeginWrite: could not allocate buffer of size %" PRISIZE_T, m_size);
+				return nullptr;
+			}
+
+			m_used = 1;
+		}
+		if (m_dynamic)
+		{
+			return CDeviceObjectFactory::Map(m_buffer->GetBuffer(), 0, m_offset, 0, D3D11_MAP_WRITE_DISCARD_CB);
+		}
+		else
+		{
+			return m_base_ptr = new char[m_size];
+		}
+		return NULL;
+	}
+
+	void  EndWrite(bool requires_flush = false)
+	{
+#if CONSTANT_BUFFER_ENABLE_DIRECT_ACCESS
+		if (m_used)
+		{
+			// Transfer sub-set of GPU resource to CPU, also allows graphics debugger and multi-gpu broadcaster to do the right thing
+			CDeviceObjectFactory::MarkWriteRange(m_buffer->GetBuffer(), m_offset, m_size, D3D11_MAP_WRITE);
+
+#	if CONSTANT_BUFFER_ENABLE_ALLOCATOR_MAPPING
+			auto pAllocator = static_cast<CPartitionAllocator*>(m_allocator);
+			pAllocator->unmap();
+#	endif
+		}
+#else
+		//if (m_dynamic)
+		{
+			CDeviceObjectFactory::Unmap(m_buffer->GetBuffer(), 0, m_offset, m_size, D3D11_MAP_WRITE_DISCARD_CB);
+		}
+		//else
+		//{
+		//	const SResourceMemoryAlignment& layout = {sizeof(char), m_size, 0, 0};
+		//	GetDeviceObjectFactory().GetCoreCommandList().GetCopyInterface()->Copy(m_base_ptr, this, layout);
+		//	delete[] alias_cast<char*>(m_base_ptr);
+		//	m_base_ptr = nullptr;
+		//}
+#endif
+		m_nUpdCount++;
+	}
+
+
+
 	bool  UpdateBuffer(const void* src, buffer_size_t size, buffer_size_t offset = 0, int numDataBlocks = 1); // See CDeviceManager::UploadContents for details on numDataBlocks
 
 	bool  IsNullBuffer() const { return m_size == 0; }
@@ -150,6 +215,32 @@ public:
   CBufferManager();
   ~CBufferManager();
   bool Preallocate();
+
+  	////////////////////////////////////////////////////////////////////////////////////////
+  // ConstantBuffer creation
+  inline CConstantBufferPtr CreateConstantBuffer(buffer_size_t size, bool dynamic = true, bool needslock = false)
+  {
+	  CConstantBufferPtr result;
+	  result = CreateConstantBufferRaw(size, dynamic, needslock);
+	  return result;
+  }
+  CConstantBuffer* CreateConstantBufferRaw(buffer_size_t size, bool dynamic, bool ts)
+  {
+	  size = (std::max(size, buffer_size_t(1u)) + (255)) & ~(255);
+	  //CConditonalDevManLock lock(this, ts);
+#if DEVBUFFERMAN_CCONSTANTBUFFER_POOL
+	  CConstantBuffer* buffer = &s_PoolManager.m_constant_buffers[ts][s_PoolManager.m_constant_buffers[ts].Allocate()];
+#else
+	  CConstantBuffer* buffer = new CConstantBuffer(0xCACACACA);
+#endif
+	  buffer->m_size	= size;
+	  buffer->m_dynamic = dynamic;
+	  buffer->m_lock	= ts;
+	  return buffer;
+  }
+
+
+
   static CVertexBuffer* Create(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false);
   static void Release(CVertexBuffer* pVertexBuffer);
   static void Create(SVertexStream* dest, const void* src, int indexcount);

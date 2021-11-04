@@ -44,6 +44,8 @@ ID3D11SamplerState*		GlobalResources::LinearSampler{};
 ID3DShaderResourceView* GlobalResources::WiteTextureRV;
 ID3DShaderResourceView* GlobalResources::GreyTextureRV;
 
+static CD3DRenderer gcpRendD3D;
+
 //ID3D10EffectTechnique* GlobalResources::BoxTechnique;
 //ID3D10EffectTechnique* GlobalResources::MeshTechnique;
 
@@ -57,12 +59,12 @@ _smart_ptr<CShader> GlobalResources::SpriteShader;
 struct ITechniqueManager;
 ID3D11Device* GetDevice()
 {
-	return CD3DRenderer::GetDevice(gEnv->pRenderer);
+	return gcpRendD3D->GetDevice();
 }
 
 ID3DDeviceContext* GetDeviceContext()
 {
-	return CD3DRenderer::GetDeviceContext(gEnv->pRenderer);
+	return gcpRendD3D->GetDeviceContext();
 }
 
 //--------------------------------------------------------------------------------------
@@ -72,8 +74,8 @@ D3D_DRIVER_TYPE	   g_driverType	  = D3D_DRIVER_TYPE_NULL;
 CD3D_FEATURE_LEVEL g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 CD3DRenderer*	   gD3DRender;
 
-CD3DRenderer::CD3DRenderer(ISystem* pSystem)
-	: CRenderer(pSystem)
+CD3DRenderer::CD3DRenderer()
+	: CRenderer()
 {
 	gD3DRender			 = this;
 	CRenderer::m_Backend = RenderBackend::DX;
@@ -383,8 +385,8 @@ bool CD3DRenderer::InitOverride()
 		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		desc.DepthFunc		= D3D11_COMPARISON_LESS;
 
-		::GetDevice()->CreateDepthStencilState(&desc, &m_pDepthStencilState);
-		::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+		GetDevice()->CreateDepthStencilState(&desc, &m_pDepthStencilState);
+		GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
 	}
 
 	/*if (!OnResizeSwapchain(GetWidth(), GetHeight()))
@@ -839,7 +841,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
 	pSystem->Log("Loading...");
-	return new CD3DRenderer(pSystem);
+	return gcpRendD3D;
 
 	//  // Initializations:  //  // Here is a set of vertex definitions to support two streams.  // Vertex format:  //     stream 0 -> position + normal + color 0 + color 1  //     stream 1 -> 4 texture coordinate pairs
 	struct VTXSTREAM_0

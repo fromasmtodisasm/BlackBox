@@ -97,9 +97,19 @@ D3D_PRIMITIVE_TOPOLOGY  ToDxPrimitive(RenderPrimitive rp)
 	return D3D_PRIMITIVE_TOPOLOGY(-1);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
 CConstantBuffer::CConstantBuffer(uint32 handle)
+	: m_buffer()
+	, m_base_ptr()
+	, m_handle(handle)
+	, m_offset(0)
+	, m_size(0)
+	, m_nRefCount(1u)
+	, m_nUpdCount(0u)
+	, m_clearFlags(0)
 {
 }
+
 
 CConstantBuffer::~CConstantBuffer()
 {

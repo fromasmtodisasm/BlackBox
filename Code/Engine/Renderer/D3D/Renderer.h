@@ -94,8 +94,16 @@ class CD3DRenderer : public CRenderer
 {
   public:
 	//HRESULT InitCube();
-	CD3DRenderer(ISystem* pSystem);
+	CD3DRenderer();
 	~CD3DRenderer() override;
+	//////////////////////////////////////////////////////////////////////////
+	// Remove pointer indirection.
+	ILINE CD3DRenderer* operator->() { return this; }
+	ILINE const bool	 operator!() const { return false; }
+	ILINE				 operator bool() const { return true; }
+	ILINE				 operator CD3DRenderer*() { return this; }
+	//////////////////////////////////////////////////////////////////////////
+
 	// Inherited via CRenderer
 	virtual void	 ShareResources(IRenderer* renderer) override;
 	virtual void	 SetRenderCallback(IRenderCallback* pCallback) override;
@@ -133,9 +141,9 @@ class CD3DRenderer : public CRenderer
 	virtual void	 ClearColorBuffer(const Legacy::Vec3 vColor) override;
 	virtual void	 SetRenderTarget(int nHandle) override;
 	// Inherited via CRenderer
-	virtual bool InitOverride() override;
-	static auto	 GetDevice(IRenderer* pThis) { return static_cast<CD3DRenderer*>(pThis)->m_pd3dDevice; }
-	static auto	 GetDeviceContext(IRenderer* pThis) { return static_cast<CD3DRenderer*>(pThis)->m_pImmediateContext; }
+	virtual bool	  InitOverride() override;
+	ID3DDevice*		  GetDevice() { return m_pd3dDevice; }
+	ID3DDeviceContext* GetDeviceContext() { return m_pImmediateContext; }
 
 	bool OnResizeSwapchain(int newWidth, int newHeight);
 
@@ -194,3 +202,9 @@ class CD3DRenderer : public CRenderer
 
 ID3DDevice*		   GetDevice();
 ID3DDeviceContext* GetDeviceContext();
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+extern CD3DRenderer gcpRendD3D;
+
+//=========================================================================================

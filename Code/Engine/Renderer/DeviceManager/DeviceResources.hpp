@@ -36,7 +36,6 @@ public:
 class CDeviceBuffer : public CDeviceResource
 {
 	friend class CDeviceObjectFactory;
-
 	// for native hand-made buffers
 	size_t m_nBaseAllocatedSize;
 
@@ -116,6 +115,8 @@ private:
 
 	CDeviceBuffer(const CDeviceBuffer&);
 	CDeviceBuffer& operator=(const CDeviceBuffer&);
+
+
 
 private:
 	int32 Cleanup();

@@ -109,21 +109,6 @@ HRESULT InitCube()
 	};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
-	#if 0
-	// Create the input layout
-	//D3D10_PASS_DESC PassDesc;
-	//GlobalResources::BoxTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
-	hr = GetDevice()->CreateInputLayout(
-		layout,
-		numElements,
-		g_pShader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferPointer(),
-		g_pShader->m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode->GetBufferSize(),
-		&g_pVertexLayout);
-
-	if (FAILED(hr))
-		return hr;
-	#endif
-
 #endif
 	// Set up rasterizer
 	D3D11_RASTERIZER_DESC rasterizerDesc;
