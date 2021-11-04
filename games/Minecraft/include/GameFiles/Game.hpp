@@ -304,20 +304,9 @@ struct AABB
 	{
 	}
 	// Check two bounding boxes for intersection.
-	bool IsIntersectBox(const AABB& b) const
-	{
-		// Check for intersection on X axis.
-		if ((min.x > b.max.x) || (b.min.x > max.x))
-			return false;
-		// Check for intersection on Y axis.
-		if ((min.y > b.max.y) || (b.min.y > max.y))
-			return false;
-		// Check for intersection on Z axis.
-		if ((min.z > b.max.z) || (b.min.z > max.z))
-			return false;
-		// Boxes overlap in all 3 axises.
-		return true;
-	}
+	bool IsIntersectBox(const AABB& b) const;
+
+	bool IsCollideBox(const AABB& b) const;
 
 	glm::vec2 IntersectBox(const Ray& ray) const
 	{

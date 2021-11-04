@@ -144,6 +144,36 @@ int g_bRenderGame = true;
 
 World g_World;
 
+bool AABB::IsIntersectBox(const AABB& b) const
+{
+		// Check for intersection on X axis.
+		if ((min.x > b.max.x) || (b.min.x > max.x))
+			return false;
+		// Check for intersection on Y axis.
+		if ((min.y > b.max.y) || (b.min.y > max.y))
+			return false;
+		// Check for intersection on Z axis.
+		if ((min.z > b.max.z) || (b.min.z > max.z))
+			return false;
+		// Boxes overlap in all 3 axises.
+		return true;
+}
+
+
+bool AABB::IsCollideBox(const AABB& b) const
+{
+		// Check for intersection on X axis.
+		if ((min.x >= b.max.x) || (b.min.x >= max.x))
+			return false;
+		// Check for intersection on Y axis.
+		if ((min.y >= b.max.y) || (b.min.y >= max.y))
+			return false;
+		// Check for intersection on Z axis.
+		if ((min.z >= b.max.z) || (b.min.z >= max.z))
+			return false;
+		// Boxes overlap in all 3 axises.
+		return true;
+}
 
 void LoadHistory()
 {

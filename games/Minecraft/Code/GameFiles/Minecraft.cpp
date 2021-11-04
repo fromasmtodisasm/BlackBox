@@ -251,11 +251,11 @@ glm::ivec3 floorVec(glm::vec3 v)
 	return {floorf(v.x), floorf(v.y), floorf(v.z)};
 }
 
-bool isFloatInteger(float a)
+bool isFloatInteger(float a, float s = 0.00003)
 {
 	// если число округлилось и осталось равно себе с определенным допуском мы счиатем его целочисленным
 	float ceiled = roundFloat(a);
-	return abs(ceiled - a) <= 0.00003;
+	return abs(ceiled - a) <= s;
 }
 
 bool MinePlayer::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance) const
@@ -324,22 +324,31 @@ bool MinePlayer::moveOutsideCollisionByPoint(glm::vec3& newPos, glm::vec3 point)
 	}
 
 	glm::ivec3 const intersectSide = floorVec(newPos + point + 0.5f);
-	auto const		 dif		   = newPos + point - glm::vec3(intersectSide);
+
+	// добавляем небольшое смещение, чтобы избежать попадания на грань куба
+	auto const dif = newPos + point - glm::vec3(intersectSide) + point * 0.00001f;
 
 	float minDif = HUGE_VALF;
 	int	  minI	 = -1;
 
 	for (int i = 0; i != 3; ++i)
 	{
-		// добавляем небольшое смещение, чтобы избежать попадания на грань куба
-		auto const dif_ = dif + dif * 0.000001f;
-
 		glm::vec3 newBlockPos = newPos + point;
-		newBlockPos[i] -= dif_[i];
+		newBlockPos[i] -= dif[i];
 
-		if (abs(dif_[i]) < minDif && !minecraft->world.has(floorVec(newBlockPos)))
+		if (dif[i] != 0.0f && abs(dif[i]) < minDif && !minecraft->world.has(floorVec(newBlockPos)))
 		{
-			minDif = abs(dif_[i]);
+			if (i == 0)
+			{
+				i = 0;
+			}
+
+			if (i == 2)
+			{
+				i = 2;
+			}
+
+			minDif = abs(dif[i]);
 			minI   = i;
 		}
 	}
@@ -370,13 +379,18 @@ bool MinePlayer::moveOutsideCollision(glm::vec3& newPos)
 
 void MinePlayer::applyMovement()
 {
-	auto&	   world  = minecraft->world;
-	auto const pos	  = entity->GetPos() + movement;
-	auto	   newPos = pos;
+	auto& world	 = minecraft->world;
+	auto  newPos = entity->GetPos() + movement;
 
 	// если мы передвинулись, то запускаем проверку пересечений опять
-	while (moveOutsideCollision(newPos));
+	while (moveOutsideCollision(newPos))
+	{
+	}
 
+	for (int i = 0; i < 3; ++i)
+	{
+		newPos[i] = round(newPos[i] * 10000) / 10000;
+	}
 
 	entity->SetPos(newPos);
 }
