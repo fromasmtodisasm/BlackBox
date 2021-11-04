@@ -14,19 +14,24 @@ add_sources(
 	RendererDX
 	RendererGL
 	RendererVK
-	SOURCE_GROUP
-	"Source Files"
+	SOURCE_GROUP "Source Files"
 	"AuxRenderer.cpp"
 	"AuxRendererNull.cpp"
 	"BaseRenderer.cpp"
 	"FreeTypeFont.cpp"
 	"Shaders/FxParser.cpp"
-	SOURCE_GROUP "Minecraft"
-	"MineRenderer/renderer.h"
 	SOURCE_GROUP "Common"
 	"Common/CommonRender.h"
 	"Common/CommonRender.cpp"
 	"Common/CryNameR.h"
+	SOURCE_GROUP "GraphicsPipeline"
+	"GraphicsPipeline/StandardGraphicsPipeline.cpp"
+	"GraphicsPipeline/StandardGraphicsPipeline.h"
+	SOURCE_GROUP "GraphicsPipeline\\\\Common"
+	"GraphicsPipeline/Common/GraphicsPipeline.cpp"
+	"GraphicsPipeline/Common/GraphicsPipeline.h"
+	"GraphicsPipeline/Common/GraphicsPipelineStage.cpp"
+	"GraphicsPipeline/Common/GraphicsPipelineStage.h"
 )
 
 add_sources(

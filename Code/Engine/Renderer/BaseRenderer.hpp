@@ -25,6 +25,10 @@
 extern FxParser* g_FxParser;
 class Texture;
 struct IFont;
+class CStandardGraphicsPipeline;
+class CGraphicsPipeline;
+
+using SGraphicsPipelineKey = uint32_t;
 
 class CBufferManager;
 
@@ -452,6 +456,13 @@ class CRenderer : public RenderCVars
 
 	bool m_Is2DMode = false;
 	Vec2 ortho;
+	/////////////////////////////////////////////////////////////////////////////////
+	// Render-pipeline management
+	/////////////////////////////////////////////////////////////////////////////////
+	std::shared_ptr<CGraphicsPipeline>								   m_pBaseGraphicsPipeline;
+	std::shared_ptr<CGraphicsPipeline>								   m_pActiveGraphicsPipeline;
+	std::map<SGraphicsPipelineKey, std::shared_ptr<CGraphicsPipeline>> m_graphicsPipelines;
+
 
 	std::unique_ptr<SRenderThread> m_RenderThread;
 };

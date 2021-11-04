@@ -795,8 +795,8 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 		py += dy;
 	};
 
-	auto p = m_Camera.transform.position;
-	auto r = m_Camera.transform.rotation;
+	auto p = m_Camera.GetPos();
+	auto r = m_Camera.GetAngles();
 	PRINT(py, "CamPos = %.2f %.2f %.2f Angl = %3.2f %3.2f", p.x, p.y, p.z, r.x, r.y);
 	PRINT(py, "Ver = 1.0.0.0");
 	PRINT(py, "Polygons 0,000");
