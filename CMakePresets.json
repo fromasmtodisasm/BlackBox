@@ -7,7 +7,8 @@
   },
   "configurePresets": [
     {
-      "name": "windows-default",
+      "name": "base",
+      "hidden": true,
       "displayName": "Windows x64 Debug",
       "description": "Sets Ninja generator, compilers, x64 architecture, build and install directory, debug build type",
       "generator": "Ninja",
@@ -48,8 +49,24 @@
       }
     },
     {
+      "name": "x64-debug",
+      "inherits": "base",
+      "displayName": "x64 Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x64-release",
+      "inherits": "base",
+      "displayName": "x64 Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "vs2019",
-      "inherits": "windows-default",
+      "inherits": "base",
       "displayName": "VS2019 Config",
       "description": "Visual Studio 2019 Config generator",
       "generator": "Visual Studio 16 2019"
@@ -57,8 +74,12 @@
   ],
   "buildPresets": [
     {
-      "name": "Windows default",
-      "configurePreset": "windows-default"
+      "name": "default-debug",
+      "configurePreset": "x64-debug"
+    },
+    {
+      "name": "default-release",
+      "configurePreset": "x64-release"
     },
     {
       "name": "vs2019",
