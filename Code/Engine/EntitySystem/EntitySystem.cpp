@@ -110,6 +110,7 @@ EntityId CEntitySystem::FindEntity(const char* name) const
 void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 {
 	LOG_FUNCTION();
+	CryLog("Try remove entity with id: %d", entity);
 	gEnv->p3DEngine->UnRegisterEntity(&m_Entities[entity]);
 }
 

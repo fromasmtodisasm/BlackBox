@@ -77,10 +77,8 @@ void		 C3DEngine::Draw()
 		er->DrawEntity(rp);
 	}
 
-#if 0
 	if (m_pRenderCallback)
 		m_pRenderCallback(m_RenderCallbackParams);
-#endif
 }
 
 void C3DEngine::ShutDown(bool bEditorMode)
