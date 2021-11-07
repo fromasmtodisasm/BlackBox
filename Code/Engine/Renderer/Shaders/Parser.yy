@@ -157,13 +157,12 @@
     END 0 "end of file"
 ;
 
-%type  <std::string>    hlsl_header
-%type  <std::string>    shader_header
 %type  <std::string>    shader_assignment
 %type  <IShader::Type>  shader_type
 %type  <std::string>    struct_footer
 %type  <std::string>    struct_header
 %type  <DirectDeclarator> direct_declarator
+%type  <DirectDeclarator> declarator
 %type  <DirectDeclarator> shader_assignment_shader
 
 
@@ -444,7 +443,7 @@ direct_declarator
 	: IDENTIFIER {
         $$ = DirectDeclarator{$1};
     }
-	| '(' declarator ')'
+	| '(' declarator ')' {$$ = $declarator;}
 	| direct_declarator '[' constant_expression ']'
 	| direct_declarator '[' ']'
 	| direct_declarator '(' parameter_type_list ')'
@@ -458,8 +457,6 @@ semantic: ':' IDENTIFIER | %empty ;
 
 
 value: INT | FLOAT;
-
-value_list: value | value_list ',' value;
 
 basic_type_constructor:
                       FLOAT_TYPE '('value')'

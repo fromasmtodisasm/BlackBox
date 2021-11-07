@@ -336,15 +336,17 @@ void CEntity::TrackColliders(bool bEnable)
 bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 {
 	auto object = m_EntityObject.object;
-	if (IsGarbage() || object == nullptr)
+	if (object == nullptr)
 		return false;
 	glm::vec3 pos		= GetPos();
 	glm::vec3 rotation	= GetAngles();
 	glm::vec3 scale		= GetScale();
 	auto	  transform = glm::mat4(1);
 	//glm::mat4 transform = glm::rotate(glm::mat4(1), );
+	#if 1
 	transform	   = glm::translate(transform, pos);
 	transform	   = glm::scale(transform, scale);
+	#endif
 	SRendParams rp(EntDrawParams);
 	rp.pMatrix = &transform;
 	rp.texture = object->GetTexture();
@@ -795,6 +797,7 @@ void CEntity::SetHandsIKTarget(const Legacy::Vec3* target)
 void CEntity::Remove()
 {
 	m_IsGarbage = true;
+	delete this;
 }
 
 void CEntity::SetShaderFloat(const char* Name, float Val)

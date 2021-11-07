@@ -1,5 +1,6 @@
 #include "EntitySystem.hpp"
-#include <BlackBox\ScriptSystem\IScriptSystem.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+#include <BlackBox/3DEngine/I3DEngine.hpp>
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
@@ -108,8 +109,8 @@ EntityId CEntitySystem::FindEntity(const char* name) const
 
 void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 {
-	assert(0 && "AAAAAAAAA");
 	LOG_FUNCTION();
+	gEnv->p3DEngine->UnRegisterEntity(&m_Entities[entity]);
 }
 
 int CEntitySystem::GetNumEntities() const

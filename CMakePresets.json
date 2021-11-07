@@ -53,7 +53,8 @@
       "inherits": "base",
       "displayName": "x64 Debug",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "OUTPUT_DIRECTORY_SUFFIX": "debug"
       }
     },
     {
@@ -61,7 +62,8 @@
       "inherits": "base",
       "displayName": "x64 Release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "OUTPUT_DIRECTORY_SUFFIX": "relase"
       }
     },
     {

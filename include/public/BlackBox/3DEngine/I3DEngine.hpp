@@ -844,8 +844,6 @@ struct I3DEngine : public IProcess
 		bool bLoadAdditinalInfo = true,    
 		bool bKeepInLocalSpace = false) = 0;
 
-	virtual IEntity* MakeEntity() = 0;
-
 	// Description:
 	//     Will reduce the reference count of the static object. If this count 
 	//     result in zero, the object will be deleted from memory.

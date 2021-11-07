@@ -108,23 +108,16 @@ else()
 	set(BUILD_SHARED_LIBS TRUE)
 endif()
 
-if (OPTION_USE_GUI)
-	add_compile_definitions(ENABLE_DEBUG_GUI)
-endif()
-if (CMAKE_COMPILER_ID STREQUAL "MSVC")
-	add_definitions("/ZI")
-endif()
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND global_includes "${CMAKE_SOURCE_DIR}/include/public/BlackBox/Legacy")
 
 # Apply global defines
-set_property(DIRECTORY "${CRYENGINE_DIR}" PROPERTY COMPILE_DEFINITIONS ${global_defines})
-set_property(DIRECTORY "${CRYENGINE_DIR}" PROPERTY INCLUDE_DIRECTORIES ${global_includes})
-set_property(DIRECTORY "${CRYENGINE_DIR}" PROPERTY LINK_DIRECTORIES ${global_links})
+set_property(DIRECTORY "${BLACKBOX_DIR}" PROPERTY COMPILE_DEFINITIONS ${global_defines})
+set_property(DIRECTORY "${BLACKBOX_DIR}" PROPERTY INCLUDE_DIRECTORIES ${global_includes})
+set_property(DIRECTORY "${BLACKBOX_DIR}" PROPERTY LINK_DIRECTORIES ${global_links})
 # Used by game project when they share the solution with the engine.
-set_property(DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY COMPILE_DEFINITIONS ${global_defines})
+set_property(DIRECTORY "${BLACKBOX_DIR}" PROPERTY COMPILE_DEFINITIONS ${global_defines})
 set_property(DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY INCLUDE_DIRECTORIES ${global_includes})
 set_property(DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY LINK_DIRECTORIES ${global_links})
 

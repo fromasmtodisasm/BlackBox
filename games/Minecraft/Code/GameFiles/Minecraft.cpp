@@ -28,11 +28,11 @@ void MineWorld::init()
 
 	auto generateLevel = [this]()
 	{
-		g_World.size_x = 40;
-		g_World.size_z = 40;
+		g_World.size_x = 20;
+		g_World.size_z = 20;
 		g_World.height = -1;
 
-		for (int y = g_World.height; y < 5; y++)
+		for (int y = g_World.height; y < 0; y++)
 		{
 			for (int z = -g_World.size_x / 2; z < g_World.size_x / 2; z++)
 			{
@@ -112,7 +112,7 @@ bool MineWorld::tryDestroy(glm::ivec3 pos)
 {
 	if (auto e = blocks.find(pos); e != blocks.end())
 	{
-		e->second->Remove();
+		gEnv->pEntitySystem->RemoveEntity(e->second->GetId(), true);
 		blocks.erase(pos);
 		return true;
 	}
@@ -145,7 +145,9 @@ void MineWorld::set(glm::ivec3 pos, Type type)
 {
 	tryDestroy(pos);
 
-	auto entity = gEnv->p3DEngine->MakeEntity();
+	CEntityDesc desc(0, 0);
+	auto		entity = gEnv->pEntitySystem->SpawnEntity(desc);
+	gEnv->p3DEngine->RegisterEntity(entity);
 
 	entity->SetIStatObj(types[type]);
 	entity->SetPos(pos);
@@ -337,7 +339,7 @@ bool MinePlayer::moveOutsideCollisionByPoint(glm::vec3& newPos, glm::vec3 point)
 		newBlockPos[i] -= dif[i];
 
 		if (dif[i] != 0.0f && abs(dif[i]) < minDif && !minecraft->world.has(floorVec(newBlockPos)))
-		{	
+		{
 			minDif = abs(dif[i]);
 			minI   = i;
 		}
@@ -401,10 +403,10 @@ void MinePlayer::init()
 	getCamera()->mode = CCamera::Mode::FPS;
 
 	auto steve = gEnv->p3DEngine->MakeObject("Data/minecraft/minecraft_steve.obj");
-	// auto steveTexture = gEnv->pRenderer->LoadTexture("Data/minecraft/Minecraft_steve_skin.jpg");
-	// steve->SetTexture(steveTexture);
 
-	entity = gEnv->p3DEngine->MakeEntity();
+	CEntityDesc desc(0, 0);
+	entity = gEnv->pEntitySystem->SpawnEntity(desc);
+	gEnv->p3DEngine->RegisterEntity(entity);
 
 	entity->SetPos(glm::vec3(5, 40, 5));
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
@@ -480,19 +482,20 @@ void MineDebug::update()
 {
 	for (auto box : tmpBoxes)
 	{
-		box->Remove();
+		gEnv->p3DEngine->UnRegisterEntity(box);
 	}
 	tmpBoxes.clear();
 }
 
 IEntity* makeBox(IStatObj* model, glm::vec3 pos1, glm::vec3 pos2)
 {
-	auto bbox = gEnv->p3DEngine->MakeEntity();
-	bbox->SetIStatObj(model);
+	CEntityDesc desc(0, 0);
+	auto		bbox = gEnv->pEntitySystem->SpawnEntity(desc);
+	gEnv->p3DEngine->RegisterEntity(bbox);
 
+	bbox->SetIStatObj(model);
 	bbox->SetPos(pos1);
 	auto dif = pos2 - pos1;
-
 	bbox->SetScale(dif);
 	return bbox;
 }
