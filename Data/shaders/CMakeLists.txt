@@ -15,6 +15,7 @@ add_sources("NoUberFile"
 		"fx/screen.fx"
 		"fx/screen_glsl.fx"
 		"fx/sprite.fx"
+		"fx/PostProcess.fx"
 		"fx/test.fx"
 )
 

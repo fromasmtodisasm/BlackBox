@@ -89,6 +89,7 @@ struct SPerFrameConstants
 	D3DXMATRIX Projection;
 	//D3DXVECTOR4 SunDirection;
 };
+struct RenderTarget;
 
 class CD3DRenderer : public CRenderer
 {
@@ -99,9 +100,9 @@ class CD3DRenderer : public CRenderer
 	//////////////////////////////////////////////////////////////////////////
 	// Remove pointer indirection.
 	ILINE CD3DRenderer* operator->() { return this; }
-	ILINE const bool	 operator!() const { return false; }
-	ILINE				 operator bool() const { return true; }
-	ILINE				 operator CD3DRenderer*() { return this; }
+	ILINE const bool	operator!() const { return false; }
+	ILINE				operator bool() const { return true; }
+	ILINE				operator CD3DRenderer*() { return this; }
 	//////////////////////////////////////////////////////////////////////////
 
 	// Inherited via CRenderer
@@ -141,8 +142,8 @@ class CD3DRenderer : public CRenderer
 	virtual void	 ClearColorBuffer(const Legacy::Vec3 vColor) override;
 	virtual void	 SetRenderTarget(int nHandle) override;
 	// Inherited via CRenderer
-	virtual bool	  InitOverride() override;
-	ID3DDevice*		  GetDevice() { return m_pd3dDevice; }
+	virtual bool	   InitOverride() override;
+	ID3DDevice*		   GetDevice() { return m_pd3dDevice; }
 	ID3DDeviceContext* GetDeviceContext() { return m_pImmediateContext; }
 
 	bool OnResizeSwapchain(int newWidth, int newHeight);
@@ -171,7 +172,9 @@ class CD3DRenderer : public CRenderer
 
 	void Draw2DQuad(float x, float y, float w, float h, int, color4f color, float s0, float t0, float s1, float t1) final;
 
-	int CreateEmptyTexture(vector2di size, color4f color);
+	int CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT format, UINT bindFlags);
+
+	bool CreateRenderTargets();
 
   private:
 	int			 NextTextureIndex();
@@ -194,10 +197,13 @@ class CD3DRenderer : public CRenderer
 
 	std::vector<Image2D> m_DrawImages;
 
-	std::map<string, int>										  m_LoadedTextureNames;
+	std::map<string, int>											  m_LoadedTextureNames;
 	std::map<int, std::pair<ID3DTexture2D*, ID3DShaderResourceView*>> m_TexturesMap;
 	std::map<int, STexPic>											  m_TexPics;
 	int																  m_NumLoadedTextures{};
+
+	RenderTarget* m_RenderTargetScene;
+	RenderTarget* m_SceneRenderTargetFinal;
 };
 
 ID3DDevice*		   GetDevice();
@@ -208,3 +214,59 @@ ID3DDeviceContext* GetDeviceContext();
 extern CD3DRenderer gcpRendD3D;
 
 //=========================================================================================
+
+// NOTE: ...
+struct RenderTarget : _reference_target_t
+{
+	ID3DTexture2D*			m_renderTargetTexture{};
+	ID3DRenderTargetView*	m_renderTargetView{};
+	ID3DShaderResourceView* m_shaderResourceView{};
+
+	static std::pair<bool, _smart_ptr<RenderTarget>> Create(int textureWidth, int textureHeight)
+	{
+		auto  renderTarget			= std::make_pair(false, new RenderTarget{});
+		auto& m_renderTargetTexture = renderTarget.second->m_renderTargetTexture;
+		auto& m_renderTargetView	= renderTarget.second->m_renderTargetView;
+		auto& m_shaderResourceView	= renderTarget.second->m_shaderResourceView;
+
+		D3D11_TEXTURE2D_DESC textureDesc;
+		ZeroMemory(&textureDesc, sizeof(textureDesc));
+
+		textureDesc.Width			 = textureWidth;
+		textureDesc.Height			 = textureHeight;
+		textureDesc.MipLevels		 = 1;
+		textureDesc.ArraySize		 = 1;
+		textureDesc.Format			 = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.Usage			 = D3D11_USAGE_DEFAULT;
+		textureDesc.BindFlags		 = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags	 = 0;
+		textureDesc.MiscFlags		 = 0;
+
+		HRESULT result = GetDevice()->CreateTexture2D(&textureDesc, NULL, &m_renderTargetTexture);
+		if (FAILED(result))
+			return renderTarget;
+
+		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+		renderTargetViewDesc.Format				= textureDesc.Format;
+		renderTargetViewDesc.ViewDimension		= D3D11_RTV_DIMENSION_TEXTURE2D;
+		renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+		result = GetDevice()->CreateRenderTargetView(m_renderTargetTexture, &renderTargetViewDesc, &m_renderTargetView);
+		if (FAILED(result))
+			return renderTarget;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+		shaderResourceViewDesc.Format					 = textureDesc.Format;
+		shaderResourceViewDesc.ViewDimension			 = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+		shaderResourceViewDesc.Texture2D.MipLevels		 = 1;
+
+		result = GetDevice()->CreateShaderResourceView(m_renderTargetTexture, &shaderResourceViewDesc, &m_shaderResourceView);
+		if (FAILED(result))
+			return renderTarget;
+
+		renderTarget.first = true;
+		return renderTarget;
+	}
+};

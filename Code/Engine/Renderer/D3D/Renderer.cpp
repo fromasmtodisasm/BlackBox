@@ -136,6 +136,7 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 
 void CD3DRenderer::BeginFrame(void)
 {
+	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, &m_ClearColor[0]);
 	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 }
@@ -394,7 +395,6 @@ bool CD3DRenderer::InitOverride()
 	ChangeViewport(0, 0, GetWidth(), GetHeight());
 
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-	//m_pd3dDevice->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 
 	Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
 	//Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
@@ -410,6 +410,11 @@ bool CD3DRenderer::InitOverride()
 	if (FAILED(hr))
 	{
 		return hr;
+	}
+
+	if (!CreateRenderTargets())
+	{
+		CryFatalError("Cannot create render target");
 	}
 
 	m_RenderThread = std::make_unique<SRenderThread>();
@@ -691,7 +696,7 @@ void CD3DRenderer::RemoveTexture(ITexPic* pTexPic)
 	NOT_IMPLEMENTED;
 }
 
-int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color)
+int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT format, UINT bindFlags)
 {
 	// Create the render target texture
 	D3D11_TEXTURE2D_DESC desc;
@@ -700,10 +705,10 @@ int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color)
 	desc.Height			  = size.y;
 	desc.MipLevels		  = 1;
 	desc.ArraySize		  = 1;
-	desc.Format			  = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	desc.Format			  = format;
 	desc.SampleDesc.Count = 1;
 	desc.Usage			  = D3D11_USAGE_DEFAULT;
-	desc.BindFlags		  = /* D3D10_BIND_RENDER_TARGET |*/ D3D10_BIND_SHADER_RESOURCE;
+	desc.BindFlags		  = bindFlags;
 
 	ID3DTexture2D* pTexture = NULL;
 	m_pd3dDevice->CreateTexture2D(&desc, NULL, &pTexture);
@@ -718,8 +723,8 @@ int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color)
 	ID3DShaderResourceView* pShaderResView = NULL;
 	m_pd3dDevice->CreateShaderResourceView(pTexture, &srDesc, &pShaderResView);
 
+	#if 0
 	D3D11_MAPPED_SUBRESOURCE mappedTex;
-	//pTexture->Map();
 	::GetDeviceContext()->Map(pTexture, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
 
 	UCHAR* pTexels = (UCHAR*)mappedTex.pData;
@@ -737,6 +742,7 @@ int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color)
 	}
 
 	::GetDeviceContext()->Unmap(pTexture, D3D11CalcSubresource(0, 0, 1));
+	#endif
 
 	return 0;
 }
@@ -808,6 +814,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 	if (!GlobalResources::TexturedQuadShader)
 	{
 		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite.TexturedQuad", 0, 0);
+		auto GrayScaleShader = (CShader*)gEnv->pRenderer->Sh_Load("PostProcess.GrayScale", 0, 0);
 	}
 
 	auto vertex_cnt = 6;
@@ -836,6 +843,11 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 
 	gEnv->pRenderer->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 	ReleaseBuffer(VB);
+}
+
+bool CD3DRenderer::CreateRenderTargets() {
+	auto[ok,rt] = RenderTarget::Create(GetWidth(), GetHeight());
+	return ok;
 }
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)

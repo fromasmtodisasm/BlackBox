@@ -23,6 +23,8 @@ struct GlobalResources
 	static _smart_ptr<CShader> SpriteShader;
 	static _smart_ptr<CShader> TexturedQuadShader;
 
+	//static _smart_ptr<CShader> GrayScale
+
 
 
 
