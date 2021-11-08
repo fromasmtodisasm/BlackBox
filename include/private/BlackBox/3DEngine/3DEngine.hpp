@@ -140,7 +140,7 @@ class C3DEngine : public I3DEngine
 	CVertexBuffer*				m_TestScene;
 	CVertexBuffer*				m_Quad;
 	std::vector<IEntityRender*> m_EntityRenders;
-	RenderCallback*				m_pRenderCallback;
+	RenderCallback				m_pRenderCallback{};
 	void*						m_RenderCallbackParams;
 	int							m_iFlags;
 
