@@ -1,5 +1,7 @@
 #include <BlackBox/System/NullLog.hpp>
 
+#define CryGetCurrentThreadId() std::this_thread::get_id()
+
 void CLog::Log(const char* szFormat, ...)
 {
 	va_list arg;
@@ -533,7 +535,7 @@ void CLog::UpdateLoadingScreen(const char* szFormat, ...)
 	}
 #endif
 
-	#if 0
+	#if 1
 	if (CryGetCurrentThreadId() == m_nMainThreadId)
 	#endif
 	{
@@ -794,7 +796,7 @@ void CLog::LogStringToConsole(const char* szString, bool bAdd)
 	return;
 	#endif
 
-	#if 0
+	//#if 0
 	//////////////////////////////////////////////////////////////////////////
 	if (CryGetCurrentThreadId() != m_nMainThreadId)
 	{
@@ -807,13 +809,15 @@ void CLog::LogStringToConsole(const char* szString, bool bAdd)
 		// don't try to store the log message for later in case of out of memory, since then its very likely that this allocation
 		// also fails and results in a stack overflow. This way we should at least get a out of memory on-screen message instead of
 		// a not obvious crash
+		#if 0
 		if (gEnv->bIsOutOfMemory == false)
+		#endif
 		{
 			m_threadSafeMsgQueue.push(msg);
 		}
 		return;
 	}
-	#endif
+	//#endif
 	//////////////////////////////////////////////////////////////////////////
 
 	if (!m_pSystem || !szString)
