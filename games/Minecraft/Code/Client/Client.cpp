@@ -129,7 +129,6 @@ void CClient::Update()
 		auto& lpp							= m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
 		m_pGame->minePlayer->placeBlockOnCursor();
-
 		gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 		//if (m_Mode != MENU)
 		{
@@ -137,6 +136,28 @@ void CClient::Update()
 			m_IntersectionState.my = (float)gEnv->pRenderer->GetHeight() / 2;
 		}
 	}
+
+	{
+		float pickDistance = 1000;
+		const float interval	 = 300;
+
+		glm::ivec3 pos, side;
+		if (m_pGame->minePlayer->blockSideOnCursor(pos,side, pickDistance))
+		{
+			static IFont* font{};
+			if (!font)
+			{
+				font = gEnv->pRenderer->GetIFont();
+				font->Init("arial.ttf", 14, 14);
+			}
+			m_pGame->minecraft->world.highliteCubeTmp(pos);
+			char buffer[256];
+			sprintf(buffer, "Selected block pos: (%d,%d,%d); pickDistance: %f", pos.x, pos.y, pos.z, pickDistance);
+			float color[] = {1.f, 1.f, 1.f, 1.f};
+			font->RenderText(buffer, 0, 0, 1.f, color);
+		}
+	}
+
 	auto pos = m_CameraController.CurrentCamera()->GetPos();
 	auto cam = m_CameraController.CurrentCamera();
 	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Legacy::Vec3(2, -0.5, -1), pos + cam->Front*Legacy::Vec3(3, 0, 1), UCol(0,0,1,1));

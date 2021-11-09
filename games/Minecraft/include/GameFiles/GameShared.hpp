@@ -51,8 +51,10 @@ typedef unsigned char ACTIONTYPE;
 #define ACTION_LEANLEFT					19
 #define ACTION_FIRE_GRENADE			20
 
+#if 0
 #define ACTION_QUICKLOAD				16
 #define ACTION_QUICKSAVE				20
+#endif
 
 #define ACTION_WEAPON_0					21
 #define ACTION_WEAPON_1					(ACTION_WEAPON_0+1)

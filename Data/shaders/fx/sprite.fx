@@ -1,6 +1,20 @@
 #include "hlsl_common.fx"
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
+// Shader global descriptions
+float Script : STANDARDSGLOBAL
+<
+    string Script =
+        // Determines if the shader will be made visible to UI elements
+        // For example, if set the shader will be available in the Material Editor
+        "Public;"
+        // If set when SupportsFullDeferredShading is not set, we go through the tiled forward pass
+        // In the tiled forward case, we will execute the pass defined in this file - and not Common*Pass
+        "SupportsDeferredShading;"
+        // Determines that the shader supports fully deferred shading, so will not go through the forward pass
+        "SupportsFullDeferredShading;";
+>;
+
 Texture2D text : register(t0);
 SamplerState textSampler : register(s0);
 
@@ -36,9 +50,24 @@ float4 Font(VsOutput IN) : SV_Target0
 }
 
 [[fn]]
+// same function declaration style as vertex shaders
+// pixel shaders return the colour value of the pixel (hence the float4)
+float4 GrayScalePS(float3 color) : SV_Target0
+{
+  // greyscale the pixel colour values
+  // - perform a dot product between the pixel colour and the specified vector
+  // - 0.222, 0.707, 0.071 is found throughout image processing for gray scale effects.
+    float4 grey = dot(float3(0.222, 0.707, 0.071), color);
+  
+  // return the pixel colour in the form of a float4.          
+    return grey;
+}
+
+[[fn]]
 float4 TexturedQuad(VsOutput IN) : SV_Target0
 {    
-    return text.Sample(textSampler, IN.TexCoords);
+    float4 color = text.Sample(textSampler, IN.TexCoords);
+    return GrayScalePS(color.rgb);
 }
 
 Technique Font

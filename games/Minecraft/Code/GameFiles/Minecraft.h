@@ -20,7 +20,7 @@ class MineWorld
 
 	bool isIntersect(glm::ivec3 pos, AABB aabb) const;
 
-	bool pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float pickDistance) const;
+	bool pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float& pickDistance) const;
 
   //private:
 	bool tryDestroy(glm::ivec3 pos);
@@ -58,10 +58,9 @@ class MinePlayer
 
 	void move(glm::vec3 direction, float value);
 
-  private:
-	bool selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float pickDistance) const;
+	bool selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float& pickDistance) const;
 
-	bool blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance) const;
+	bool blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float& pickDistance) const;
 
 	void applyMovement();
 

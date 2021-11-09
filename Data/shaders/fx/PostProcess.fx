@@ -30,16 +30,8 @@ VsOutput VSMain(VsInput IN)
 // pixel shaders return the colour value of the pixel (hence the float4)
 float4 GrayScalePS(float2 texCoord : TEXCOORD0) : SV_Target0
 {
-  // sample the texture at the specified texture coordinates
-    float4 tex = RenderedScene.Sample(SceneSampler, texCoord);
-     
-  // greyscale the pixel colour values
-  // - perform a dot product between the pixel colour and the specified vector
-  // - 0.222, 0.707, 0.071 is found throughout image processing for gray scale effects.
-    float4 grey = dot(float3(0.222, 0.707, 0.071), tex);
-  
-  // return the pixel colour in the form of a float4.          
-    return grey;
+    // sample the texture at the specified texture coordinates
+    return GrayScale(RenderedScene.Sample(SceneSampler, texCoord));
 }
 
 Technique GrayScale

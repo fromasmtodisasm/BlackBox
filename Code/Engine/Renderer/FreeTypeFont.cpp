@@ -103,11 +103,8 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 	Legacy::Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4	 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
 
-	color[0] = cur_c.g;
-	color[1] = cur_c.b;
-	color[2] = 1.f;
-	color[3] = cur_c.r;
-	cur_c	 = Legacy::Vec4(color[0], color[1], color[2], color[3]);
+	float Color[] = {cur_c.g,cur_c.b,1.f,cur_c.r};
+	cur_c	 = Legacy::Vec4(Color[0], Color[1], Color[2], Color[3]);
 	// Iterate through all characters
 	const char* c;
 	const char* end = text.data() + text.size();
@@ -128,19 +125,19 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 			{
 				if (isdigit(*(++c)))
 				{
-					int	   colorIndex = *c - '0';
-					ColorB newColor	  = ColorTable[colorIndex].color;
-					color[0]		  = newColor.g / 255.f;
-					color[1]		  = newColor.b / 255.f;
-					color[2]		  = 1.f;
-					color[3]		  = newColor.r / 255.f;
-					//sb->textColor = Legacy::Vec3(Legacy::Vec3(color[0], color[1], color[2]));
+					int	   ColorIndex = *c - '0';
+					ColorB newColor	  = ColorTable[ColorIndex].color;
+					Color[0]		  = newColor.g / 255.f;
+					Color[1]		  = newColor.b / 255.f;
+					Color[2]		  = 1.f;
+					Color[3]		  = newColor.r / 255.f;
+					//sb->textColor = Legacy::Vec3(Legacy::Vec3(Color[0], Color[1], Color[2]));
 					cur_c = Legacy::Vec4(
 #	if 1
-						color[0], // green
-						color[1], // blue
-						color[2], //alpha
-						color[3]  // red
+						Color[0], // green
+						Color[1], // blue
+						Color[2], //alpha
+						Color[3]  // red
 #	else
 //1.f,0.f,255.f,0.f
 #	endif

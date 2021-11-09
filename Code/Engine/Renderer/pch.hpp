@@ -116,3 +116,26 @@ inline D3DXMATRIX* D3DXMatrixTranspose(D3DXMATRIX* pOut, CONST D3DXMATRIX* pM)
 
 #include "Common\CommonRender.h"
 #include "Common\CryNameR.h"
+
+namespace Memory
+{
+	constexpr auto RoundUp(int numToRound, int multiple)
+	{
+		if (multiple == 0)
+			return numToRound;
+
+		auto remainder = numToRound % multiple;
+		if (remainder == 0)
+			return numToRound;
+
+		return numToRound + multiple - remainder;
+	}
+	template<class T, size_t align>
+	struct AlignedSize
+	{
+		static constexpr auto value = RoundUp(sizeof(T), align);
+	};
+
+	template<class T>
+	using AlignedSizeCB = AlignedSize<T, sizeof(Legacy::Vec4)>;
+}

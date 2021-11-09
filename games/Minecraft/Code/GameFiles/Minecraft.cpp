@@ -127,12 +127,13 @@ void MineWorld::destroy(glm::ivec3 pos)
 	}
 }
 
+// FIXME: work incorrect(aabb has wrong position in world before first place block)
 void MineWorld::highliteCubeTmp(glm::ivec3 pos)
 {
 	if (auto const e = blocks.find(pos); e != blocks.end())
 	{
 		auto const aabb = entityWorldAABB(e->second);
-		minecraft->debug.drawTmpBox(aabb.min - 0.1f, aabb.max + 0.1f);
+		gEnv->pAuxGeomRenderer->DrawAABB(aabb.min - 0.1f, aabb.max + 0.1f, {1, 1, 1, 1});
 	}
 }
 
@@ -163,7 +164,7 @@ CCamera* getCamera()
 	return client->m_CameraController.RenderCamera();
 }
 
-bool MineWorld::pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float pickDistance) const
+bool MineWorld::pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float& pickDistance) const
 {
 	float tMin		  = HUGE_VALF;
 	float minDistance = HUGE_VALF;
@@ -203,11 +204,11 @@ bool MineWorld::pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeR
 			}
 		}
 	}
-
+	pickDistance = minDistance;
 	return minDistance != HUGE_VALF;
 }
 
-bool MinePlayer::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float pickDistance) const
+bool MinePlayer::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float& pickDistance) const
 {
 	auto game			   = dynamic_cast<CXGame*>(gEnv->pSystem->GetIGame());
 	auto intersectionState = game->GetClient()->m_DummyClient.m_IntersectionState;
@@ -260,7 +261,7 @@ bool isFloatInteger(float a, float s = 0.00003)
 	return abs(ceiled - a) <= s;
 }
 
-bool MinePlayer::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float pickDistance) const
+bool MinePlayer::blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float& pickDistance) const
 {
 	glm::vec3 pickPos;
 	if (selectedPos(outBlockPos, pickPos, pickDistance))
@@ -417,7 +418,7 @@ void MinePlayer::update()
 {
 	auto const aabb = entityWorldAABB(entity);
 
-	minecraft->debug.drawTmpBox(aabb.min, aabb.max);
+	gEnv->pAuxGeomRenderer->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
 
 	auto const gravity = 4.f;
 	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * gEnv->pTimer->GetRealFrameTime());
@@ -441,7 +442,7 @@ bool timingAction(float& prevTime, float interval)
 
 void MinePlayer::destroyBlockOnCursor()
 {
-	const float pickDistance = 14.0f;
+	float pickDistance = 1000.0f;
 	const float interval	 = 300;
 
 	glm::ivec3 pos;
@@ -456,7 +457,7 @@ void MinePlayer::destroyBlockOnCursor()
 
 void MinePlayer::placeBlockOnCursor()
 {
-	const float pickDistance = 14.0f;
+	float pickDistance = 1000.0f;
 	const float interval	 = 300;
 
 	glm::ivec3 pos, side;
@@ -475,31 +476,20 @@ void MinePlayer::move(glm::vec3 direction, float value)
 void MineDebug::init()
 {
 	model = gEnv->p3DEngine->MakeObject("Data/minecraft/bbox.obj");
-	drawBox({0, 0, 0}, {5, 5, 5});
+	//drawBox({0, 0, 0}, {5, 5, 5});
 }
 
 void MineDebug::update()
 {
 	for (auto box : tmpBoxes)
 	{
-		gEnv->p3DEngine->UnRegisterEntity(box);
+		//gEnv->p3DEngine->UnRegisterEntity(box);
+		gEnv->pEntitySystem->RemoveEntity(box->GetId());
 	}
 	tmpBoxes.clear();
 }
 
-IEntity* makeBox(IStatObj* model, glm::vec3 pos1, glm::vec3 pos2)
-{
-	CEntityDesc desc(0, 0);
-	auto		bbox = gEnv->pEntitySystem->SpawnEntity(desc);
-	gEnv->p3DEngine->RegisterEntity(bbox);
-
-	bbox->SetIStatObj(model);
-	bbox->SetPos(pos1);
-	auto dif = pos2 - pos1;
-	bbox->SetScale(dif);
-	return bbox;
-}
-
+#if 0
 void MineDebug::drawBox(glm::vec3 pos1, glm::vec3 pos2)
 {
 	makeBox(model, pos1, pos2);
@@ -509,3 +499,4 @@ void MineDebug::drawTmpBox(glm::vec3 pos1, glm::vec3 pos2)
 {
 	tmpBoxes.push_back(makeBox(model, pos1, pos2));
 }
+#endif

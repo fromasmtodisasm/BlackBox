@@ -949,8 +949,10 @@ void  CXGame::ResetInputMap()
   ADD_ACTION(ZOOM_OUT, aamOnPress, "@ZoomOut", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("ZOOM_OUT", "zoom", "binozoom", "");
   ADD_ACTION(HOLDBREATH, aamOnHold, "@HoldBreath", ACTIONTYPE_GAME, true) SetConfigToActionMap("HOLDBREATH", "zoom", "");
   ADD_ACTION(FIREMODE, aamOnPress, "@ToggleFiremode", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIREMODE", ACTIONMAPS_NODEAD);
+  #if 0
   ADD_ACTION(QUICKLOAD,aamOnPress,"@Quickload",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKLOAD", ACTIONMAPS_ALL);
   ADD_ACTION(QUICKSAVE,aamOnPress,"@Quicksave",ACTIONTYPE_GAME,true) SetConfigToActionMap("QUICKSAVE", ACTIONMAPS_ALL);
+  #endif
   //ADD_ACTION(FULLSCRN_TOOGLE,aamOnPress,"@ToogleFullScreen",ACTIONTYPE_GAME,true) SetConfigToActionMap("FULLSCRN_TOOGLE", ACTIONMAPS_ALL);
   //ADD_ACTION(FIRE_GRENADE, aamOnHold, "@ThrowGrenade", ACTIONTYPE_COMBAT, true) SetConfigToActionMap("FIRE_GRENADE", ACTIONMAPS_NODEAD);
   //ADD_ACTION(CONCENTRATION,aamOnHold,"@Concentration",ACTIONTYPE_GAME,true) SetConfigToActionMap("CONCENTRATION", "default", "");
@@ -1229,9 +1231,8 @@ void CXGame::SetCommonKeyBindings(IActionMap* pMap)
   pMap->BindAction(ACTION_FIREMODE, eKI_NumLock);
 
   //throw grenade
-  //pMap->BindAction(ACTION_FIRE_GRENADE, eKI_G);
-  //pMap->BindAction(ACTION_FIRE_GRENADE, eKI_DIVIDE);
-  //pMap->BindAction(ACTION_FIRE_GRENADE, eKI_NP_8);
+  pMap->BindAction(ACTION_FIRE_GRENADE, eKI_G);
+  pMap->BindAction(ACTION_FIRE_GRENADE, eKI_NP_8);
 
   //use
   pMap->BindAction(ACTION_USE,eKI_Enter);
@@ -1275,8 +1276,8 @@ void CXGame::SetCommonKeyBindings(IActionMap* pMap)
 
   // save/load bindings
   // disable this conflicts with cutscene
-  pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
-  pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
+  //pMap->BindAction(ACTION_QUICKLOAD,eKI_F6);
+  //pMap->BindAction(ACTION_QUICKSAVE,eKI_F5);
   pMap->BindAction(ACTION_TAKESCREENSHOT, eKI_F12);
 
   //pMap->BindAction(ACTION_FULLSCRN_TOOGLE, eKI_Enter, eMM_LAlt);

@@ -155,7 +155,7 @@ void CD3DRenderer::Update(void)
 
 	ID3DBuffer* pBuffers[1];
 	pBuffers[0] = m_PerViewConstants;
-	::GetDeviceContext()->VSSetConstantBuffers(0, 1, pBuffers);
+	::GetDeviceContext()->VSSetConstantBuffers(1, 1, pBuffers);
 
 	::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
 	Flush();
@@ -401,7 +401,7 @@ bool CD3DRenderer::InitOverride()
 	SetClearColor(c);
 
 	D3D11_BUFFER_DESC cbDesc;
-	cbDesc.ByteWidth	  = sizeof(SPerViewConstantBuffer);
+	cbDesc.ByteWidth	  = Memory::AlignedSizeCB<SPerViewConstantBuffer>::value;
 	cbDesc.Usage		  = D3D11_USAGE_DYNAMIC;
 	cbDesc.BindFlags	  = D3D11_BIND_CONSTANT_BUFFER;
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -814,7 +814,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 	if (!GlobalResources::TexturedQuadShader)
 	{
 		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite.TexturedQuad", 0, 0);
-		auto GrayScaleShader = (CShader*)gEnv->pRenderer->Sh_Load("PostProcess.GrayScale", 0, 0);
+		//auto GrayScaleShader = (CShader*)gEnv->pRenderer->Sh_Load("PostProcess.GrayScale", 0, 0);
 	}
 
 	auto vertex_cnt = 6;

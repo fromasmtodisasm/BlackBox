@@ -3,14 +3,30 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
+#include "hlsl_common.fx"
 
+// Shader global descriptions
+float Script : STANDARDSGLOBAL
+<
+    string Script =
+        // Determines if the shader will be made visible to UI elements
+        // For example, if set the shader will be available in the Material Editor
+        "Public;"
+        // If set when SupportsFullDeferredShading is not set, we go through the tiled forward pass
+        // In the tiled forward case, we will execute the pass defined in this file - and not Common*Pass
+        "SupportsDeferredShading;"
+        // Determines that the shader supports fully deferred shading, so will not go through the forward pass
+        "SupportsFullDeferredShading;";
+>;
 
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 cbuffer cbChangesEveryFrame : register(b2)
 {
-    float4x4 MVP;
+	float4x4 World;
+	float4x4 MVP;
+	bool     ApplyGrayScale;
 };
 
 //FIXME: shader parser
@@ -44,13 +60,12 @@ VS_OUTPUT VS(
 )
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
-    #if 0
-    output.Pos = mul(IN.Pos, World );
-    output.Pos = mul(output.Pos, View);
-    output.Pos = mul(output.Pos, Projection);
-    #else
-    output.Pos = mul( float4(IN.Pos,1), MVP );
-    #endif
+#if 0
+    matrix mvp = transpose(mul(GetViewProjMat(), World));
+    output.Pos = mul(float4(IN.Pos, 1), mvp);
+#else
+    output.Pos = mul(float4(IN.Pos, 1), MVP);
+#endif
     output.Normal = IN.Normal;
     output.TC = IN.TC;
 
@@ -65,32 +80,32 @@ float4 PS(VS_OUTPUT input)
 	: SV_Target
 {
     //FIXME: need recognize storage class in shader parser to place this declaration on top level
-	static float  ambientStrength = 0.3;
-	static float3 lightColor	  = float3(1, 1, 1);
+    static float ambientStrength = 0.3;
+    static float3 lightColor = float3(1, 1, 1);
 
-	float3 diffuseColor = float3(1, 1, 1);
+    float3 diffuseColor = float3(1, 1, 1);
 
-	float4 textureColor;
-	float3 lightDir;
-	float  lightIntensity;
-	float4 color;
+    float4 textureColor;
+    float3 lightDir;
+    float lightIntensity;
+    float4 color;
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-	textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
+    textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
 
 	// Invert the light direction for calculations.
-	lightDir = normalize(float3(2,3,4));
+    lightDir = normalize(float3(2, 3, 4));
 
 	// Calculate the amount of light on this pixel.
-	lightIntensity = saturate(dot(input.Normal, lightDir));
+    lightIntensity = saturate(dot(input.Normal, lightDir));
 
 	// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
-	color = float4(saturate(diffuseColor * lightIntensity),1);
+    color = float4(saturate(diffuseColor * lightIntensity), 1);
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-	color = (color + 0.2) * textureColor;
+    color = (color + 0.2) * textureColor;
 
-	return color;
+    return GrayScale(color);
 }
 
 //--------------------------------------------------------------------------------------
@@ -107,7 +122,7 @@ technique Render
 {
     pass P0
     {
-		VertexShader = VS;
+        VertexShader = VS;
         PixelShader = PS;
     }
 }

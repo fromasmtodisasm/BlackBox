@@ -56,4 +56,17 @@ float4x4 GetViewProjMat()
     return perViewCB.ViewProjection;
 }
 
+[[fn]]
+// same function declaration style as vertex shaders
+// pixel shaders return the colour value of the pixel (hence the float4)
+float4 GrayScale(float4 color) : SV_Target0
+{
+  // greyscale the pixel colour values
+  // - perform a dot product between the pixel colour and the specified vector
+  // - 0.222, 0.707, 0.071 is found throughout image processing for gray scale effects.
+    float3 grey = dot(float3(0.222, 0.707, 0.071), color.rgb);
+  
+  // return the pixel colour in the form of a float4.          
+    return float4(grey.rgb, color.a);
+}
 

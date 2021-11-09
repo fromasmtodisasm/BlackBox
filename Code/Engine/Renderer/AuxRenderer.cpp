@@ -9,7 +9,8 @@
 	if (!(cond)) return;
 
 ID3D11DepthStencilState* CRenderAuxGeom::m_pDSState;
-ID3D11RasterizerState*	 g_pRasterizerState{};
+ID3D11RasterizerState*	 g_pRasterizerStateSolid{};
+ID3D11RasterizerState*	 g_pRasterizerStateWire{};
 ID3D11BlendState*		 m_pBlendState;
 
 // auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
@@ -43,12 +44,9 @@ struct SimpleVertex
 
 struct CBChangesEveryFrame
 {
-#if 0
 	D3DXMATRIX World;
-	D3DXMATRIX View;
-	D3DXMATRIX Projection;
-#endif
 	D3DXMATRIX MVP;
+	bool	   ApplyGrayScale;
 };
 
 ID3D10Effect*	   g_pEffect	   = nullptr;
@@ -90,11 +88,11 @@ HRESULT InitCube()
 	HRESULT hr{};
 
 	g_pShader = (CShader*)gRenDev->Sh_Load("test.Render", 0, 0);
-    D3D11_BUFFER_DESC bd;
-	ZeroMemory( &bd, sizeof(bd) );
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
 	// Create the constant buffer
 	bd.Usage		  = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth	  = sizeof(CBChangesEveryFrame);
+	bd.ByteWidth	  = Memory::AlignedSizeCB<CBChangesEveryFrame>::value;
 	bd.BindFlags	  = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
 	hr				  = GetDevice()->CreateBuffer(&bd, NULL, &g_pConstantBuffer);
@@ -105,8 +103,7 @@ HRESULT InitCube()
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
 #endif
@@ -124,7 +121,10 @@ HRESULT InitCube()
 	rasterizerDesc.MultisampleEnable	 = false;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, &g_pRasterizerState);
+	GetDevice()->CreateRasterizerState(&rasterizerDesc, &g_pRasterizerStateSolid);
+	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	GetDevice()->CreateRasterizerState(&rasterizerDesc, &g_pRasterizerStateWire);
 	return S_OK;
 }
 
@@ -144,20 +144,13 @@ void DrawCube(const SDrawElement& DrawElement)
 	g_World = DrawElement.transform;
 	g_MVP	= g_ViewProjection * g_World;
 	//g_MVP		  = g_ViewProjection * DrawElement.transform;
-	ID3DBuffer* pEveryFrameBuffer{};
-	//assert(0);
-	//g_pConstantBuffer->GetConstantBuffer(&pEveryFrameBuffer);
 	CBChangesEveryFrame cb;
-#	if 0
-	cb.World	  = g_World;
-	cb.View		  = g_View;
-	cb.Projection = g_Projection;
+#	if 1
+	cb.World		  = g_World;
 #	else
-	#if 0
 	D3DXMatrixTranspose(&cb.World, &g_World);
 	D3DXMatrixTranspose(&cb.View, &g_View);
 	D3DXMatrixTranspose(&cb.Projection, &g_Projection);
-	#endif
 #	endif
 	// cb.MVP		  = g_MVP;
 	D3DXMatrixTranspose(&cb.MVP, &g_MVP);
@@ -179,9 +172,9 @@ void DrawCube(const SDrawElement& DrawElement)
 		g_pShader->Bind();
 		::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
 		::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
-		#if 0
+#	if 0
 		::GetDeviceContext()->IASetInputLayout(g_pVertexLayout);
-		#endif
+#	endif
 		gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
 		auto ib			= DrawElement.m_Inices;
 		auto numindices = 0;
@@ -474,7 +467,7 @@ void CRenderAuxGeom::DrawAABBs()
 
 	::GetDeviceContext()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
 	::GetDeviceContext()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
-	::GetDeviceContext()->RSSetState(g_pRasterizerState);
+	::GetDeviceContext()->RSSetState(g_pRasterizerStateWire);
 	::GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 	if (!m_BBVerts.empty())
 	{
@@ -485,6 +478,7 @@ void CRenderAuxGeom::DrawAABBs()
 		DrawCube({m_BoundingBox, nullptr, glm::mat4(1), -1});
 	}
 
+	::GetDeviceContext()->RSSetState(g_pRasterizerStateSolid);
 	for (auto const& mesh : m_Meshes)
 	{
 		DrawCube(mesh);
