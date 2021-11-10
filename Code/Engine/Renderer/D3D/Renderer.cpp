@@ -149,7 +149,7 @@ void CD3DRenderer::Update(void)
 	D3D11_MAPPED_SUBRESOURCE mappedTex;
 	::GetDeviceContext()->Map(m_PerViewConstants, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, NULL, &mappedTex);
 	SPerViewConstantBuffer* pConstData = (SPerViewConstantBuffer*)mappedTex.pData;
-	pConstData->Projection			   = m_Camera.getProjectionMatrix();
+	pConstData->Projection			   = m_Camera.GetProjectionMatrix();
 	pConstData->ViewProjection		   = pConstData->Projection * m_Camera.GetViewMatrix();
 	::GetDeviceContext()->Unmap(this->m_PerViewConstants, D3D11CalcSubresource(0, 0, 1));
 

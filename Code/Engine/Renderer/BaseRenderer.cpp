@@ -450,7 +450,7 @@ IGraphicsDeviceConstantBuffer* CRenderer::CreateConstantBuffer(int size)
 
 void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz)
 {
-	auto s = glm::project(Legacy::Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), Legacy::Vec4(0, 0, GetWidth(), GetHeight()));
+	auto s = glm::project(Legacy::Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), Legacy::Vec4(0, 0, GetWidth(), GetHeight()));
 
 	*sx = s.x;
 	*sy = s.y;
@@ -469,7 +469,7 @@ int CRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, floa
 	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
 #endif
 	auto p = glm::unProject(
-		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 	*px = p.x;
 	*py = p.y;
 	*pz = p.z;
@@ -491,14 +491,14 @@ void CRenderer::GetProjectionMatrix(double* mat)
 
 void CRenderer::GetProjectionMatrix(float* mat)
 {
-	mat = &m_Camera.getProjectionMatrix()[0][0];
+	mat = &m_Camera.GetProjectionMatrix()[0][0];
 }
 
 Legacy::Vec3 CRenderer::GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam)
 {
 	auto& c = WindowCoords;
 	return glm::unProject(
-		glm::vec3(c.x, GetHeight() - c.y, 0), cam.GetViewMatrix(), cam.getProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+		glm::vec3(c.x, GetHeight() - c.y, 0), cam.GetViewMatrix(), cam.GetProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 }
 
 int CRenderer::GetFrameID(bool bIncludeRecursiveCalls /* = true*/)
@@ -661,7 +661,7 @@ void CRenderer::Flush()
 
 #ifndef VK_RENDERER
 	auto pvb			 = perViewBuffer;
-	pvb->Projection		 = m_Camera.getProjectionMatrix();
+	pvb->Projection		 = m_Camera.GetProjectionMatrix();
 	pvb->View			 = m_Camera.GetViewMatrix();
 	pvb->OrthoProjection = glm::ortho(0.f, float(GetWidth()), float(GetHeight()), 0.f);
 	pvb->ViewProjection	 = pvb->Projection * pvb->View;

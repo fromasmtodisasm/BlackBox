@@ -130,62 +130,32 @@ HRESULT InitCube()
 
 void DrawCube(const SDrawElement& DrawElement)
 {
-#ifndef VK_RENDERER
 	// Update our time
 	static DWORD dwTimeStart = 0;
 	DWORD		 dwTimeCur	 = GetTickCount();
 
-	//
-	// Update variables
-	//
-	//D3DXMatrixMultiply(&g_MVP, D3DXMatrixMultiply(&g_MVP, &g_World, &g_View), &g_Projection);
-	// g_MVP = g_World * g_View * g_Projection;
-	//g_MVP = g_Projection * g_View * g_World;
-	g_World = DrawElement.transform;
-	g_MVP	= g_ViewProjection * g_World;
-	//g_MVP		  = g_ViewProjection * DrawElement.transform;
+	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
 	CBChangesEveryFrame cb;
-#	if 1
-	cb.World		  = g_World;
-#	else
-	D3DXMatrixTranspose(&cb.World, &g_World);
-	D3DXMatrixTranspose(&cb.View, &g_View);
-	D3DXMatrixTranspose(&cb.Projection, &g_Projection);
-#	endif
-	// cb.MVP		  = g_MVP;
-	D3DXMatrixTranspose(&cb.MVP, &g_MVP);
+	cb.World		  = DrawElement.transform;
+	cb.MVP		  = g_ViewProjection * cb.World;
 
 	// Set vertex buffer
 	UINT stride = sizeof(SimpleVertex);
 	UINT offset = 0;
 
-	//
-	// Renders a triangle
-	//
-	//D3D10_TECHNIQUE_DESC techDesc;
-	//GlobalResources::BoxTechnique->GetDesc(&techDesc);
-	//for (UINT p = 0; p < techDesc.Passes; ++p)
+
+	g_pShader->Bind();
+	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
+	::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
+	gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
+	auto ib			= DrawElement.m_Inices;
+	auto numindices = 0;
+	if (ib)
 	{
-		//GlobalResources::BoxTechnique->GetPassByIndex(p)->Apply(0);
-		//return;
-
-		g_pShader->Bind();
-		::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
-		::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
-#	if 0
-		::GetDeviceContext()->IASetInputLayout(g_pVertexLayout);
-#	endif
-		gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
-		auto ib			= DrawElement.m_Inices;
-		auto numindices = 0;
-		if (ib)
-		{
-			numindices = ib->m_nItems;
-		}
-
-		gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
+		numindices = ib->m_nItems;
 	}
-#endif
+
+	gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
 }
 
 CRenderAuxGeom::CRenderAuxGeom()
@@ -460,7 +430,7 @@ void CRenderAuxGeom::DrawAABBs()
 {
 	auto m_Camera	 = gEnv->pSystem->GetViewCamera();
 	g_View			 = m_Camera.GetViewMatrix();
-	g_Projection	 = m_Camera.getProjectionMatrix();
+	g_Projection	 = m_Camera.GetProjectionMatrix();
 	g_ViewProjection = g_Projection * g_View;
 	// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
 	// m_BoundingBoxShader->Bind();

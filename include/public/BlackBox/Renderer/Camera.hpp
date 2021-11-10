@@ -87,7 +87,7 @@ class CCamera
 		//return glm::lookAt(this->transform.position, this->transform.position + this->Front, this->Up);
 		return glm::lookAtLH(this->transform.position, this->transform.position + this->Front, this->Up);
 	}
-	Legacy::Mat4 getProjectionMatrix() const
+	Legacy::Mat4 GetProjectionMatrix() const
 	{
 		Legacy::Vec4d v;
 		gEnv->pRenderer->GetViewport(&v.x, &v.y, &v.z, &v.w);

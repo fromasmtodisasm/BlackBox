@@ -1,8 +1,3 @@
-//--------------------------------------------------------------------------------------
-// File: Tutorial04.fx
-//
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//--------------------------------------------------------------------------------------
 #include "hlsl_common.fx"
 
 // Shader global descriptions
@@ -61,10 +56,13 @@ VS_OUTPUT VS(
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
 #if 0
-    matrix mvp = transpose(mul(GetViewProjMat(), World));
-    output.Pos = mul(float4(IN.Pos, 1), mvp);
+    // NOTE: ok, its worked
+    matrix mvp = mul(GetViewProjMat(), World);
+    output.Pos = mul(mvp, float4(IN.Pos, 1));
 #else
-    output.Pos = mul(float4(IN.Pos, 1), MVP);
+    // NOTE: with first matrix in mul no need transpose matrix on cpu side
+    //output.Pos = mul(float4(IN.Pos, 1), MVP);
+    output.Pos = mul(MVP, float4(IN.Pos, 1));
 #endif
     output.Normal = IN.Normal;
     output.TC = IN.TC;
@@ -105,7 +103,7 @@ float4 PS(VS_OUTPUT input)
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
     color = (color + 0.2) * textureColor;
 
-    return GrayScale(color);
+    return color;
 }
 
 //--------------------------------------------------------------------------------------
@@ -124,5 +122,14 @@ technique Render
     {
         VertexShader = VS;
         PixelShader = PS;
+    }
+}
+
+technique GrayScaleT
+{
+    pass P0
+    {
+        VertexShader = VS();
+        PixelShader = GrayScale();
     }
 }
