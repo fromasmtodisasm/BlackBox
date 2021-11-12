@@ -11,7 +11,10 @@
 ID3D11DepthStencilState* CRenderAuxGeom::m_pDSState;
 ID3D11RasterizerState*	 g_pRasterizerStateSolid{};
 ID3D11RasterizerState*	 g_pRasterizerStateWire{};
+ID3D11RasterizerState*	 g_pRasterizerStateForMeshCurrent{};
 ID3D11BlendState*		 m_pBlendState;
+
+int CV_r_DrawWirefame;
 
 // auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_N_T2F;
@@ -304,6 +307,8 @@ CRenderAuxGeom::CRenderAuxGeom()
 	desc.DepthFunc		= D3D11_COMPARISON_LESS;
 
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
+
+	REGISTER_CVAR2("r_DrawWirefame", &CV_r_DrawWirefame, 0, 0, "[0/1] Draw in wireframe mode");
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -448,7 +453,7 @@ void CRenderAuxGeom::DrawAABBs()
 		DrawCube({m_BoundingBox, nullptr, glm::mat4(1), -1});
 	}
 
-	::GetDeviceContext()->RSSetState(g_pRasterizerStateSolid);
+	::GetDeviceContext()->RSSetState(g_pRasterizerStateForMeshCurrent);
 	for (auto const& mesh : m_Meshes)
 	{
 		DrawCube(mesh);
@@ -551,6 +556,10 @@ void CRenderAuxGeom::DrawMesh(CVertexBuffer* pVertexBuffer, SVertexStream* pIndi
 
 void CRenderAuxGeom::Flush()
 {
+	if (CV_r_DrawWirefame)
+		g_pRasterizerStateForMeshCurrent = g_pRasterizerStateWire;
+	else
+		g_pRasterizerStateForMeshCurrent = g_pRasterizerStateSolid;
 	DrawAABBs();
 	DrawLines();
 }

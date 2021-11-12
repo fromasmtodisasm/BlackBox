@@ -6,7 +6,6 @@
 #	include <BlackBox/Renderer/MaterialManager.hpp>
 
 #	include "BaseRenderer.hpp"
-//#include <BlackBox/Renderer/OpenGL/Core.hpp>
 
 #	include <memory>
 #	include <stb_image_write.h>

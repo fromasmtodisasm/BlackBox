@@ -181,6 +181,16 @@ class CD3DRenderer : public CRenderer
 	int			 AddTextureResource(string name, ID3DShaderResourceView* pSRView, STexPic* pic);
 	unsigned int LoadTextureInternal(STexPic* pix, string filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true);
 
+	void UpdateConstants();
+	template<class T>
+	auto ScopedMap(ID3DBuffer* CB, std::function<void(T* data)> Updater) {
+		D3D11_MAPPED_SUBRESOURCE Buffer;
+		::GetDeviceContext()->Map(CB, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, NULL, &Buffer);
+		Updater((T*)Buffer.pData);
+		::GetDeviceContext()->Unmap(CB, D3D11CalcSubresource(0, 0, 1));
+	};
+
+
   private:
 	ID3DDevice*			  m_pd3dDevice		  = NULL;
 	ID3DDeviceContext*	  m_pImmediateContext = NULL;
@@ -193,6 +203,7 @@ class CD3DRenderer : public CRenderer
 	ID3DRasterizerState*   m_pRasterizerState{};
 	ID3DDepthStencilState* m_pDepthStencilState{};
 
+	ID3DBuffer* m_PerFrameConstants;
 	ID3DBuffer* m_PerViewConstants;
 
 	std::vector<Image2D> m_DrawImages;

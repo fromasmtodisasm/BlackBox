@@ -5,7 +5,7 @@
 
 #define PERFRAME_SLOT b0
 #define PERVIEW_SLOT b1
-#define PERINSTANCE_SLOT c2
+#define PERDRAW_SLOT b2
 
 float global_float <string desc="Test global variable";> = 0.5;
 
@@ -23,7 +23,10 @@ float2 global_float3 <string desc="Test global variable";> = float2(0,0);
 
 cbuffer PerFrameCB : register(PERFRAME_SLOT)
 {
-    float deltaTime;
+    float4 SunDirection;
+    float4 SunColor;
+    float4 AmbientStrength;
+    float4 LightIntensity;
 }
 cbuffer PerViewCB : register(PERVIEW_SLOT)
 {
@@ -40,7 +43,6 @@ cbuffer PerViewCB : register(PERVIEW_SLOT)
 [[fn]]
 float4x4 GetOrthoProjMat()
 {
-    
     return perViewCB.OrthoProjection;
 }
 

@@ -19,9 +19,9 @@ float Script : STANDARDSGLOBAL
 //--------------------------------------------------------------------------------------
 cbuffer cbChangesEveryFrame : register(b2)
 {
-	float4x4 World;
-	float4x4 MVP;
-	bool     ApplyGrayScale;
+    float4x4 World;
+    float4x4 MVP;
+    bool ApplyGrayScale;
 };
 
 //FIXME: shader parser
@@ -78,9 +78,6 @@ float4 PS(VS_OUTPUT input)
 	: SV_Target
 {
     //FIXME: need recognize storage class in shader parser to place this declaration on top level
-    static float ambientStrength = 0.3;
-    static float3 lightColor = float3(1, 1, 1);
-
     float3 diffuseColor = float3(1, 1, 1);
 
     float4 textureColor;
@@ -92,16 +89,16 @@ float4 PS(VS_OUTPUT input)
     textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
 
 	// Invert the light direction for calculations.
-    lightDir = normalize(float3(2, 3, 4));
+    lightDir = SunDirection.xyz;
 
 	// Calculate the amount of light on this pixel.
     lightIntensity = saturate(dot(input.Normal, lightDir));
 
 	// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
-    color = float4(saturate(diffuseColor * lightIntensity), 1);
+    color = float4(saturate(SunColor.rgb * diffuseColor * lightIntensity), 1);
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-    color = (color + 0.2) * textureColor;
+    color = (color + AmbientStrength) * textureColor;
 
     return color;
 }

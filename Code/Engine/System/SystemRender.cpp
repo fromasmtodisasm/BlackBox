@@ -27,16 +27,7 @@ void CSystem::RenderBegin()
 		return;
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
-	m_env.pRenderer->SetState(IRenderer::State::DEPTH_TEST, true);
 	m_env.pRenderer->BeginFrame();
-#if ENABLE_DEBUG_GUI
-	if (m_GuiManager)
-	{
-		m_GuiManager->NewFrame();
-		m_GuiManager->ShowDemoWindow();
-	}
-	//m_GuiManager.ShowNodeEditor();
-#endif
 }
 void CSystem::OnRenderer_BeforeEndFrame()
 {

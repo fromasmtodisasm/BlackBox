@@ -1,8 +1,7 @@
 ﻿#include "Renderer.h"
 #include "DDSTextureLoader.h"
-#include "Renderer.h"
 #include <BlackBox/Core/Path.hpp>
-#include <BlackBox\System\File\CryFile.h>
+#include <BlackBox/System/File/CryFile.h>
 
 #include "RenderThread.h"
 
@@ -141,21 +140,35 @@ void CD3DRenderer::BeginFrame(void)
 	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 }
 
+void CD3DRenderer::UpdateConstants()
+{
+	ScopedMap<SPerFrameConstantBuffer>(m_PerFrameConstants, [&](auto pConstData) {
+		pConstData->SunDirection = 	Legacy::Vec4(glm::normalize(Legacy::Vec3(2, 3, 4)),1.f);
+		pConstData->SunColor	 = {1, 1, 1, 1};
+		pConstData->AmbientStrength	 = Legacy::Vec4(1, 1, 1, 1) * 0.3f;
+		pConstData->LightIntensity	 = Legacy::Vec4(1, 1, 1, 1);
+	});
+
+	ScopedMap<SPerViewConstantBuffer>(m_PerViewConstants, [&](auto pConstData) {
+		auto Projection			   = m_Camera.GetProjectionMatrix();
+		auto View				   = m_Camera.GetViewMatrix();
+		pConstData->Projection	   = Projection;
+		pConstData->ViewProjection = Projection * View;
+	});
+
+	ID3DBuffer* pBuffers[] = {
+		m_PerFrameConstants,
+		m_PerViewConstants
+	};
+	::GetDeviceContext()->VSSetConstantBuffers(0, 2, pBuffers);
+	::GetDeviceContext()->PSSetConstantBuffers(0, 1, pBuffers);
+}
+
 void CD3DRenderer::Update(void)
 {
 	m_FrameID++;
 
-	float					 colorValue[4] = {1, 0, 0, 1};
-	D3D11_MAPPED_SUBRESOURCE mappedTex;
-	::GetDeviceContext()->Map(m_PerViewConstants, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, NULL, &mappedTex);
-	SPerViewConstantBuffer* pConstData = (SPerViewConstantBuffer*)mappedTex.pData;
-	pConstData->Projection			   = m_Camera.GetProjectionMatrix();
-	pConstData->ViewProjection		   = pConstData->Projection * m_Camera.GetViewMatrix();
-	::GetDeviceContext()->Unmap(this->m_PerViewConstants, D3D11CalcSubresource(0, 0, 1));
-
-	ID3DBuffer* pBuffers[1];
-	pBuffers[0] = m_PerViewConstants;
-	::GetDeviceContext()->VSSetConstantBuffers(1, 1, pBuffers);
+	UpdateConstants();
 
 	::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
 	Flush();
@@ -197,6 +210,7 @@ void CD3DRenderer::SetScissor(int x, int y, int width, int height)
 
 void CD3DRenderer::Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs)
 {
+	gEnv->pAuxGeomRenderer->DrawAABB(mins, maxs, UCol{});
 }
 
 bool CD3DRenderer::ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)
@@ -300,7 +314,7 @@ bool CD3DRenderer::InitOverride()
 
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
-	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 	D3D_DRIVER_TYPE driverTypes[] =
@@ -406,7 +420,14 @@ bool CD3DRenderer::InitOverride()
 	cbDesc.BindFlags	  = D3D11_BIND_CONSTANT_BUFFER;
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbDesc.MiscFlags	  = 0;
-	hr					  = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerViewConstants);
+
+	hr = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerViewConstants);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	cbDesc.ByteWidth	  = Memory::AlignedSizeCB<SPerFrameConstantBuffer>::value;
+	hr = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerFrameConstants);
 	if (FAILED(hr))
 	{
 		return hr;

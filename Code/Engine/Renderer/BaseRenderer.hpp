@@ -1,8 +1,5 @@
 #pragma once
-#include <BlackBox/Core/Platform/Windows.hpp>
-//#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/AuxRenderer.hpp>
-//#include "BufferManager.hpp"
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/IConsole.hpp>
@@ -376,6 +373,14 @@ class CRenderer : public RenderCVars
 	}
 
   protected:
+	struct alignas(16) SPerFrameConstantBuffer
+	{
+		Legacy::Vec4 SunDirection;
+		Legacy::Vec4 SunColor;
+		Legacy::Vec4 AmbientStrength;
+		Legacy::Vec4 LightIntensity;
+
+	};
 	struct alignas(16) SPerViewConstantBuffer
 	{
 		Legacy::Mat4 Projection;
