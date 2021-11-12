@@ -4,6 +4,7 @@ start_sources()
 sources_platform(ALL)
 add_sources("NoUberFile"
 	SOURCE_GROUP "FX"
+		"fx/PostProcess.fx"
 		"fx/auxgeom.fx"
 		"fx/bb.fx"
 		"fx/common.fx"
@@ -11,12 +12,13 @@ add_sources("NoUberFile"
 		"fx/framebuffer.fx"
 		"fx/gui.fx"
 		"fx/hlsl_common.fx"
+		"fx/illum.fx"
 		"fx/primitive.fx"
 		"fx/screen.fx"
 		"fx/screen_glsl.fx"
+		"fx/shadow.fx"
 		"fx/sprite.fx"
-		"fx/PostProcess.fx"
-		"fx/test.fx"
+		"fx/z.fx"
 )
 
 end_sources()

@@ -658,6 +658,7 @@ float CRenderer::GetDepthValue(int x, int y)
 void CRenderer::Flush()
 {
 	DEBUG_GROUP("AUX");
+	D3DPERF_BeginEvent(D3DC_Blue, L"Flush");
 
 #ifndef VK_RENDERER
 	auto pvb			 = perViewBuffer;
@@ -671,10 +672,13 @@ void CRenderer::Flush()
 #endif
 	m_RenderAuxGeom->Flush();
 
-	for (auto font : m_Fonts)
 	{
-		font->Submit();
+		for (auto font : m_Fonts)
+		{
+			font->Submit();
+		}
 	}
+	D3DPERF_EndEvent();
 }
 
 void CRenderer::Sh_Reload()

@@ -22,6 +22,8 @@
 #	include <d3dx10.h>
 //#	include <D3dx11effect.h>
 #	include "D3D/DDSTextureLoader.h"
+#	include <d3d9.h> // debug markers
+const D3DCOLOR D3DC_Blue = D3DCOLOR_RGBA(0, 0, 1, 1); 
 
 #ifdef DX_11
 #	define ID3DDevice ID3D11Device
@@ -139,3 +141,17 @@ namespace Memory
 	template<class T>
 	using AlignedSizeCB = AlignedSize<T, sizeof(Legacy::Vec4)>;
 }
+
+struct ScopedMarker
+{
+	ScopedMarker(const wchar_t* m)
+	{
+		D3DPERF_BeginEvent(D3DC_Blue, m);
+	}
+	~ScopedMarker()
+	{
+		D3DPERF_EndEvent();
+	}
+};
+
+#define D3DMarker(m) ScopedMarker _m(L#m);

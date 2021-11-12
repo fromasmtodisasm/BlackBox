@@ -135,6 +135,7 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 
 void CD3DRenderer::BeginFrame(void)
 {
+	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, &m_ClearColor[0]);
 	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
@@ -142,6 +143,7 @@ void CD3DRenderer::BeginFrame(void)
 
 void CD3DRenderer::UpdateConstants()
 {
+	//D3DPERF_BeginEvent(D3DC_Blue, L"UpdateConstants");
 	ScopedMap<SPerFrameConstantBuffer>(m_PerFrameConstants, [&](auto pConstData) {
 		pConstData->SunDirection = 	Legacy::Vec4(glm::normalize(Legacy::Vec3(2, 3, 4)),1.f);
 		pConstData->SunColor	 = {1, 1, 1, 1};
@@ -162,28 +164,46 @@ void CD3DRenderer::UpdateConstants()
 	};
 	::GetDeviceContext()->VSSetConstantBuffers(0, 2, pBuffers);
 	::GetDeviceContext()->PSSetConstantBuffers(0, 1, pBuffers);
+	//D3DPERF_EndEvent();
 }
 
 void CD3DRenderer::Update(void)
 {
-	m_FrameID++;
-
-	UpdateConstants();
-
-	::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
-	Flush();
-	for (auto img : m_DrawImages)
 	{
-		Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
-	}
-	for (const auto& rcl : m_RenderCallbackClients)
-	{
-		rcl->OnRenderer_BeforeEndFrame();
-	}
-	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
-		pConsole->Draw();
+		D3DPERF_BeginEvent(D3DC_Blue, L"BeginScene");
+		{
+			m_FrameID++;
+			UpdateConstants();
 
-	m_DrawImages.clear();
+			::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+			Flush();
+			{
+				D3DPERF_BeginEvent(D3DC_Blue, L"DrawImages");
+				for (auto img : m_DrawImages)
+				{
+					Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
+				}
+				D3DPERF_EndEvent();
+			}
+			{
+				D3DPERF_BeginEvent(D3DC_Blue, L"OnRenderer_BeforeEndFrame");
+				for (const auto& rcl : m_RenderCallbackClients)
+				{
+					rcl->OnRenderer_BeforeEndFrame();
+				}
+				D3DPERF_EndEvent();
+			}
+			{
+				D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
+				if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+					pConsole->Draw();
+				D3DPERF_EndEvent();
+			}
+		}
+		D3DPERF_EndEvent();
+		D3DPERF_EndEvent(); //begin frame
+		m_DrawImages.clear();
+	}
 
 	m_pSwapChain->Present(0, 0);
 }

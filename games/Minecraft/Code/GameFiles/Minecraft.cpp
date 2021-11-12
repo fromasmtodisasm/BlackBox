@@ -32,7 +32,7 @@ void MineWorld::init()
 		g_World.size_z = 20;
 		g_World.height = -1;
 
-		for (int y = g_World.height; y < 0; y++)
+		for (int y = g_World.height; y < 5; y++)
 		{
 			for (int z = -g_World.size_x / 2; z < g_World.size_x / 2; z++)
 			{

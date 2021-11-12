@@ -14,16 +14,6 @@ float Script : STANDARDSGLOBAL
         "SupportsFullDeferredShading;";
 >;
 
-//--------------------------------------------------------------------------------------
-// Constant Buffer Variables
-//--------------------------------------------------------------------------------------
-cbuffer cbChangesEveryFrame : register(b2)
-{
-    float4x4 World;
-    float4x4 MVP;
-    bool ApplyGrayScale;
-};
-
 //FIXME: shader parser
 //StructuredBuffer<float4x4> Transform;
 
@@ -46,33 +36,19 @@ struct VS_OUTPUT
 Texture2D g_FontAtlas : register(t0);
 SamplerState g_LinearSampler : register(s0);
 
-//--------------------------------------------------------------------------------------
-// Vertex Shader
-//--------------------------------------------------------------------------------------
 [[fn]]
 VS_OUTPUT VS(
     VS_INPUT IN
 )
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
-#if 0
-    // NOTE: ok, its worked
-    matrix mvp = mul(GetViewProjMat(), World);
-    output.Pos = mul(mvp, float4(IN.Pos, 1));
-#else
-    // NOTE: with first matrix in mul no need transpose matrix on cpu side
-    //output.Pos = mul(float4(IN.Pos, 1), MVP);
-    output.Pos = mul(MVP, float4(IN.Pos, 1));
-#endif
+    output.Pos = Transform(IN.Pos);
     output.Normal = IN.Normal;
     output.TC = IN.TC;
 
     return output;
 }
 
-//--------------------------------------------------------------------------------------
-// Pixel Shader
-//--------------------------------------------------------------------------------------
 [[fn]]
 float4 PS(VS_OUTPUT input)
 	: SV_Target

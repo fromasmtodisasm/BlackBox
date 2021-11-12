@@ -10,6 +10,7 @@ using BB_VERTEX = SVF_P3F_N_T2F;
 
 #endif
 
+class CShader;
 struct SAuxPushBufferEntry
 {
 	SAuxPushBufferEntry() = default;
@@ -35,10 +36,11 @@ using SAABBBufferPtr = std::shared_ptr<SAABBBuffer>;
 
 struct SDrawElement
 {
-	CVertexBuffer* m_pBuffer;
-	SVertexStream* m_Inices;
-	glm::mat4	   transform;
-	int			   m_DiffuseMap;
+	CVertexBuffer*		m_pBuffer;
+	SVertexStream*		m_Inices;
+	glm::mat4			transform;
+	int					m_DiffuseMap;
+	_smart_ptr<CShader> m_Shader;
 };
 
 using AuxPushBuffer	  = std::vector<SAuxPushBufferEntry>;
@@ -65,6 +67,9 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	void AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, RenderPrimitive primitive);
 	void DrawAABBs();
 	void DrawLines();
+	HRESULT InitCube();
+	void	DrawElement(const SDrawElement& DrawElement);
+	void	DrawElementToZBuffer(const SDrawElement& DrawElement);
 
 
   private:
@@ -87,6 +92,10 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	int dbg_mode		 = 0;
 	int stop			 = 0;
 
+	CShader* m_IllumShader{};
+	CShader* m_ZPShader{};
+
   public:
-	static ID3D11DepthStencilState* m_pDSState;
+	static ID3D11DepthStencilState* m_pDSStateZPrePass;
+	static ID3D11DepthStencilState* m_pDSStateMesh;
 };

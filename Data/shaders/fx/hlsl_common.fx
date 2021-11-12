@@ -40,6 +40,14 @@ cbuffer PerViewCB : register(PERVIEW_SLOT)
     }perViewCB;
 }
 
+cbuffer PerDrawCB : register(PERDRAW_SLOT)
+{
+    float4x4 World;
+    float4x4 MVP;
+    bool ApplyGrayScale;
+};
+
+
 [[fn]]
 float4x4 GetOrthoProjMat()
 {
@@ -56,6 +64,20 @@ float4x4 GetProjMat()
 float4x4 GetViewProjMat()
 {
     return perViewCB.ViewProjection;
+}
+
+[[fn]]
+float4 Transform(in float3 Pos)
+{
+#if 0
+    // NOTE: ok, its worked
+    matrix mvp = mul(GetViewProjMat(), World);
+    output.Pos = mul(mvp, float4(IN.Pos, 1));
+#else
+    // NOTE: with first matrix in mul no need transpose matrix on cpu side
+    //output.Pos = mul(float4(IN.Pos, 1), MVP);
+#endif
+    return mul(MVP, float4(Pos, 1));
 }
 
 [[fn]]

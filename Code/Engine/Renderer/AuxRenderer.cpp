@@ -8,13 +8,18 @@
 #define V_RETURN(cond) \
 	if (!(cond)) return;
 
-ID3D11DepthStencilState* CRenderAuxGeom::m_pDSState;
+ID3D11DepthStencilState* CRenderAuxGeom::m_pDSStateZPrePass;
+ID3D11DepthStencilState* CRenderAuxGeom::m_pDSStateMesh;
+ID3D11DepthStencilState* m_pDSStateMeshCurrent;
+
 ID3D11RasterizerState*	 g_pRasterizerStateSolid{};
 ID3D11RasterizerState*	 g_pRasterizerStateWire{};
 ID3D11RasterizerState*	 g_pRasterizerStateForMeshCurrent{};
+ID3D11RasterizerState*	 g_pRasterizerStateForZPrePass{};
 ID3D11BlendState*		 m_pBlendState;
 
-int CV_r_DrawWirefame;
+int CV_r_DrawWirefame = 0;
+int CV_r_DisableZP = 0;
 
 // auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_N_T2F;
@@ -62,7 +67,6 @@ D3DXMATRIX		   g_ViewProjection;
 
 ID3DBuffer* g_pConstantBuffer;
 
-CShader* g_pShader{};
 
 namespace
 {
@@ -75,22 +79,11 @@ namespace
 	}
 } // namespace
 
-HRESULT InitCube()
+HRESULT CRenderAuxGeom::InitCube()
 {
-	// Create the effect
-	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
-#if defined(DEBUG) || defined(_DEBUG)
-	// Set the D3D10_SHADER_DEBUG flag to embed debug information in the shaders.
-	// Setting this flag improves the shader debugging experience, but still allows
-	// the shaders to be optimized and to run exactly the way they will run in
-	// the release configuration of this program.
-	dwShaderFlags |= D3D10_SHADER_DEBUG;
-#endif
-
-#ifndef VK_RENDERER
 	HRESULT hr{};
 
-	g_pShader = (CShader*)gRenDev->Sh_Load("test.Render", 0, 0);
+	m_IllumShader = (CShader*)gRenDev->Sh_Load("illum.Render", 0, 0);
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	// Create the constant buffer
@@ -109,7 +102,6 @@ HRESULT InitCube()
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}};
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
-#endif
 	// Set up rasterizer
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroStruct(rasterizerDesc);
@@ -131,7 +123,27 @@ HRESULT InitCube()
 	return S_OK;
 }
 
-void DrawCube(const SDrawElement& DrawElement)
+void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
+{
+	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
+	CBChangesEveryFrame cb;
+	cb.World		  = DrawElement.transform;
+	cb.MVP		  = g_ViewProjection * cb.World;
+
+	m_ZPShader->Bind();
+	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
+	::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
+	auto ib			= DrawElement.m_Inices;
+	auto numindices = 0;
+	if (ib)
+	{
+		numindices = ib->m_nItems;
+	}
+
+	gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
+}
+
+void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 {
 	// Update our time
 	static DWORD dwTimeStart = 0;
@@ -142,12 +154,7 @@ void DrawCube(const SDrawElement& DrawElement)
 	cb.World		  = DrawElement.transform;
 	cb.MVP		  = g_ViewProjection * cb.World;
 
-	// Set vertex buffer
-	UINT stride = sizeof(SimpleVertex);
-	UINT offset = 0;
-
-
-	g_pShader->Bind();
+	m_IllumShader->Bind();
 	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
 	::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
 	gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
@@ -306,9 +313,16 @@ CRenderAuxGeom::CRenderAuxGeom()
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	desc.DepthFunc		= D3D11_COMPARISON_LESS;
 
-	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
+	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateZPrePass);
 
+	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	desc.DepthFunc		= D3D11_COMPARISON_EQUAL;
+	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateMesh);
+
+	m_ZPShader = (CShader*)gRenDev->Sh_Load("z.Main", 0, 0);
 	REGISTER_CVAR2("r_DrawWirefame", &CV_r_DrawWirefame, 0, 0, "[0/1] Draw in wireframe mode");
+	REGISTER_CVAR2("r_DisableZP", &CV_r_DisableZP, 0, 0, "[0/1] off/on zprepass");
+
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -433,32 +447,54 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 }
 void CRenderAuxGeom::DrawAABBs()
 {
-	auto m_Camera	 = gEnv->pSystem->GetViewCamera();
-	g_View			 = m_Camera.GetViewMatrix();
-	g_Projection	 = m_Camera.GetProjectionMatrix();
-	g_ViewProjection = g_Projection * g_View;
-	// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
-	// m_BoundingBoxShader->Bind();
-
-	::GetDeviceContext()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-	::GetDeviceContext()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSState, 0);
-	::GetDeviceContext()->RSSetState(g_pRasterizerStateWire);
-	::GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
-	if (!m_BBVerts.empty())
+	D3DPERF_BeginEvent(D3DC_Blue, L"DrawAABB");
 	{
-		gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
-		auto size	  = m_BBVerts.size() * 36;
-		m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
-		gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
-		DrawCube({m_BoundingBox, nullptr, glm::mat4(1), -1});
-	}
+		auto m_Camera	 = gEnv->pSystem->GetViewCamera();
+		g_View			 = m_Camera.GetViewMatrix();
+		g_Projection	 = m_Camera.GetProjectionMatrix();
+		g_ViewProjection = g_Projection * g_View;
+		// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
+		// m_BoundingBoxShader->Bind();
 
-	::GetDeviceContext()->RSSetState(g_pRasterizerStateForMeshCurrent);
-	for (auto const& mesh : m_Meshes)
-	{
-		DrawCube(mesh);
-	}
+		::GetDeviceContext()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
+		::GetDeviceContext()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSStateZPrePass, 0);
+		::GetDeviceContext()->RSSetState(g_pRasterizerStateWire);
+		::GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
+		if (!m_BBVerts.empty())
+		{
+			gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
+			auto size	  = m_BBVerts.size() * 36;
+			m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
+			gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
+			DrawElement({m_BoundingBox, nullptr, glm::mat4(1), -1});
+		}
 
+		::GetDeviceContext()->RSSetState(g_pRasterizerStateForMeshCurrent);
+		if (!CV_r_DisableZP)
+		{
+			D3DPERF_BeginEvent(D3DC_Blue, L"ZPrePass");
+			for (auto const& mesh : m_Meshes)
+			{
+				DrawElementToZBuffer(mesh);
+			}
+			D3DPERF_EndEvent();
+			m_pDSStateMeshCurrent = CRenderAuxGeom::m_pDSStateMesh;
+		}
+		else
+		{
+			m_pDSStateMeshCurrent = CRenderAuxGeom::m_pDSStateZPrePass;
+		}
+		::GetDeviceContext()->OMSetDepthStencilState(m_pDSStateMeshCurrent, 0);
+		{
+			D3DPERF_BeginEvent(D3DC_Blue, L"DrawMeshes");
+			for (auto const& mesh : m_Meshes)
+			{
+				DrawElement(mesh);
+			}
+			D3DPERF_EndEvent();
+		}
+	}
+	D3DPERF_EndEvent();
 	m_Meshes.resize(0);
 	m_BBVerts.resize(0);
 }
