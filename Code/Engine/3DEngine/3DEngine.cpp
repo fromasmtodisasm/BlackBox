@@ -13,6 +13,8 @@
 #include <BlackBox\System\ITimer.hpp>
 #include <BlackBox\Utils\Text.hpp>
 
+#include "ObjectManager.hpp"
+
 void loadModel(string path);
 C3DEngine::C3DEngine(ISystem* pSystem, const char* szInterfaceVersion)
 	: m_pSystem(pSystem)
@@ -96,14 +98,16 @@ void C3DEngine::ActivateLight(const char* szName, bool bActivate)
 
 IStatObj* C3DEngine::MakeObject(const char* szFileName, const char* szGeomName, EVertsSharing eVertsSharing, bool bLoadAdditinalInfo, bool bKeepInLocalSpace)
 {
-	CStatObj* obj{};
-	if (obj = CStatObj::Load(szFileName, szGeomName); obj)
+	if (!szFileName || !szFileName[0])
 	{
-		obj->SetBBoxMin(obj->m_IndexedMesh.m_vBoxMin);
-		obj->SetBBoxMax(obj->m_IndexedMesh.m_vBoxMax);
-		//m_Objects.push_back(obj);
+		m_pSystem->Warning(VALIDATOR_MODULE_3DENGINE, VALIDATOR_ERROR, 0, 0, "I3DEngine::LoadStatObj: filename is not specified");
+		return 0;
 	}
-	return static_cast<IStatObj*>(obj);
+
+	if (!m_pObjManager)
+		m_pObjManager = CryAlignedNew<CObjectManager>();
+
+	return m_pObjManager->LoadStatObj(szFileName, szGeomName);
 }
 
 bool C3DEngine::ReleaseObject(IStatObj* pObject)

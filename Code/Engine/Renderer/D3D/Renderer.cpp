@@ -1,5 +1,5 @@
 ﻿#include "Renderer.h"
-#include "DDSTextureLoader.h"
+#include "DDSTextureLoader11.h"
 #include <BlackBox/Core/Path.hpp>
 #include <BlackBox/System/File/CryFile.h>
 
@@ -144,24 +144,25 @@ void CD3DRenderer::BeginFrame(void)
 void CD3DRenderer::UpdateConstants()
 {
 	//D3DPERF_BeginEvent(D3DC_Blue, L"UpdateConstants");
-	ScopedMap<SPerFrameConstantBuffer>(m_PerFrameConstants, [&](auto pConstData) {
-		pConstData->SunDirection = 	Legacy::Vec4(glm::normalize(Legacy::Vec3(2, 3, 4)),1.f);
-		pConstData->SunColor	 = {1, 1, 1, 1};
-		pConstData->AmbientStrength	 = Legacy::Vec4(1, 1, 1, 1) * 0.3f;
-		pConstData->LightIntensity	 = Legacy::Vec4(1, 1, 1, 1);
-	});
+	ScopedMap<SPerFrameConstantBuffer>(m_PerFrameConstants, [&](auto pConstData)
+									   {
+										   pConstData->SunDirection	   = Legacy::Vec4(glm::normalize(Legacy::Vec3(2, 3, 4)), 1.f);
+										   pConstData->SunColor		   = {1, 1, 1, 1};
+										   pConstData->AmbientStrength = Legacy::Vec4(1, 1, 1, 1) * 0.3f;
+										   pConstData->LightIntensity  = Legacy::Vec4(1, 1, 1, 1);
+									   });
 
-	ScopedMap<SPerViewConstantBuffer>(m_PerViewConstants, [&](auto pConstData) {
-		auto Projection			   = m_Camera.GetProjectionMatrix();
-		auto View				   = m_Camera.GetViewMatrix();
-		pConstData->Projection	   = Projection;
-		pConstData->ViewProjection = Projection * View;
-	});
+	ScopedMap<SPerViewConstantBuffer>(m_PerViewConstants, [&](auto pConstData)
+									  {
+										  auto Projection			 = m_Camera.GetProjectionMatrix();
+										  auto View					 = m_Camera.GetViewMatrix();
+										  pConstData->Projection	 = Projection;
+										  pConstData->ViewProjection = Projection * View;
+									  });
 
 	ID3DBuffer* pBuffers[] = {
 		m_PerFrameConstants,
-		m_PerViewConstants
-	};
+		m_PerViewConstants};
 	::GetDeviceContext()->VSSetConstantBuffers(0, 2, pBuffers);
 	::GetDeviceContext()->PSSetConstantBuffers(0, 1, pBuffers);
 	//D3DPERF_EndEvent();
@@ -446,8 +447,8 @@ bool CD3DRenderer::InitOverride()
 	{
 		return hr;
 	}
-	cbDesc.ByteWidth	  = Memory::AlignedSizeCB<SPerFrameConstantBuffer>::value;
-	hr = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerFrameConstants);
+	cbDesc.ByteWidth = Memory::AlignedSizeCB<SPerFrameConstantBuffer>::value;
+	hr				 = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerFrameConstants);
 	if (FAILED(hr))
 	{
 		return hr;
@@ -574,23 +575,21 @@ ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(CCryFile file)
 
 ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(const char* name)
 {
-#if 0
-	int					   texture_index = -1;
-	D3DX10_IMAGE_LOAD_INFO loadInfo;
-	ZeroMemory(&loadInfo, sizeof(D3DX10_IMAGE_LOAD_INFO));
-	loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
-#endif
 	ID3D11Resource*			pTexture{};
 	ID3DShaderResourceView* pSRView = NULL;
 	HRESULT					HResult{};
 
-	HResult = D3DX11CreateShaderResourceViewFromFile(
+	std::string_view str(name);
+	std::wstring	 wstr(str.begin(), str.end());
+	//HResult = D3DX11CreateShaderResourceViewFromFile(
+	HResult = DirectX::CreateDDSTextureFromFile(
 		m_pd3dDevice,
-		name,
-		nullptr,
-		nullptr,
-		&pSRView,
-		&HResult);
+		wstr.data(),
+		&pTexture,
+		&pSRView);
+	//if (FAILED(HResult))
+	//{
+	//}
 	return pSRView;
 }
 
@@ -640,28 +639,22 @@ bool CD3DRenderer::FindTexture(string filename, CCryFile& file, string& adjustet
 
 ID3DShaderResourceView* CD3DRenderer::CreateTexture(std::vector<uint8_t>& blob)
 {
-	int					   texture_index = -1;
-	D3DX10_IMAGE_LOAD_INFO loadInfo;
-	ZeroMemory(&loadInfo, sizeof(D3DX10_IMAGE_LOAD_INFO));
-	loadInfo.BindFlags = D3D10_BIND_SHADER_RESOURCE;
-	ID3D10Resource*			pTexture{};
+	int						texture_index = -1;
+	ID3D11Resource*			pTexture{};
 	ID3DShaderResourceView* pSRView = NULL;
 	HRESULT					HResult{};
 
-	//HResult = D3DX10CreateShaderResourceViewFromFile(
-	HResult = D3DX11CreateShaderResourceViewFromMemory(
+	HResult = DirectX::CreateDDSTextureFromMemory(
 		m_pd3dDevice,
 		&blob[0],
 		blob.size(),
-		nullptr,
-		nullptr,
-		&pSRView,
-		&HResult);
+		&pTexture,
+		&pSRView);
 	return pSRView;
 }
 unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
 {
-	auto& filename = pix->m_Name; 
+	auto& filename = pix->m_Name;
 	if (auto it = m_LoadedTextureNames.find(filename); it != m_LoadedTextureNames.end())
 	{
 		return it->second;
@@ -716,7 +709,7 @@ int CD3DRenderer::AddTextureResource(string name, ID3DShaderResourceView* pSRVie
 
 		D3D11_TEXTURE2D_DESC desc;
 		pTexture2D->GetDesc(&desc);
-		pic					 = new STexPic(CD3D11_TEXTURE2D_DESC(desc), texture_index, name.c_str());
+		pic = new STexPic(CD3D11_TEXTURE2D_DESC(desc), texture_index, name.c_str());
 		//pic->m_Desc	  = CD3D11_TEXTURE2D_DESC(desc);
 		//pic->m_Id	  = (texture_index);
 		//pic->m_Name	  = (name);
@@ -764,7 +757,7 @@ int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT 
 	ID3DShaderResourceView* pShaderResView = NULL;
 	m_pd3dDevice->CreateShaderResourceView(pTexture, &srDesc, &pShaderResView);
 
-	#if 0
+#if 0
 	D3D11_MAPPED_SUBRESOURCE mappedTex;
 	::GetDeviceContext()->Map(pTexture, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
 
@@ -783,7 +776,7 @@ int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT 
 	}
 
 	::GetDeviceContext()->Unmap(pTexture, D3D11CalcSubresource(0, 0, 1));
-	#endif
+#endif
 
 	return 0;
 }
@@ -886,8 +879,9 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 	ReleaseBuffer(VB);
 }
 
-bool CD3DRenderer::CreateRenderTargets() {
-	auto[ok,rt] = RenderTarget::Create(GetWidth(), GetHeight());
+bool CD3DRenderer::CreateRenderTargets()
+{
+	auto [ok, rt] = RenderTarget::Create(GetWidth(), GetHeight());
 	return ok;
 }
 

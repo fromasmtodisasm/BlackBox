@@ -2,10 +2,6 @@
 #include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
 #include <Cry_Color4.h>
-#pragma warning(push)
-#pragma warning(disable : 4005)
-#include <d3dx10.h>
-#pragma warning(pop)
 #include <BlackBox\System\File\CryFile.h>
 
 #include <memory>

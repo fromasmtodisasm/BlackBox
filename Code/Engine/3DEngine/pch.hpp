@@ -6,3 +6,9 @@
 #include <BlackBox/Renderer/IShader.hpp>
 
 #define BB_3DENGINE_EXPORTS
+
+template<class T>
+T* CryAlignedNew()
+{
+	return new T;
+}

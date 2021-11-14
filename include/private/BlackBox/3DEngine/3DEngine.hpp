@@ -7,6 +7,7 @@
 #include <BlackBox/World/World.hpp>
 
 #include <BlackBox/3DEngine/StatObject.hpp>
+class CObjectManager;
 
 class C3DEngine : public I3DEngine
 	, public ISystemUserCallback
@@ -143,6 +144,7 @@ class C3DEngine : public I3DEngine
 	RenderCallback				m_pRenderCallback{};
 	void*						m_RenderCallbackParams;
 	int							m_iFlags;
+	CObjectManager*				m_pObjManager{};
 
 	struct AABB
 	{

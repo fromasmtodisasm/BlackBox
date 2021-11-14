@@ -348,6 +348,75 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 	return true;
 }
 #else
+
+int GetMatInfo(aiMaterial* mat, const char* objName)
+{
+	CMatInfo	  matInfo;
+	for (auto tt = int(aiTextureType_NONE); tt < aiTextureType::aiTextureType_UNKNOWN; tt++)
+	{
+		switch (tt)
+		{
+		case aiTextureType_NONE:
+			break;
+		case aiTextureType_DIFFUSE:
+			if (mat->GetTextureCount(aiTextureType(tt)) > 0)
+			{
+				aiString path;
+				mat->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
+				auto map = gEnv->pRenderer->LoadTexture(path.C_Str());
+				if (map == -1)
+				{
+					auto new_path = PathUtil::GetParentDirectory(objName);
+					map			  = gEnv->pRenderer->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
+				}
+				return map;
+				//matInfo.AddRef
+			}
+			return -1;
+			break;
+		case aiTextureType_SPECULAR:
+			break;
+		case aiTextureType_AMBIENT:
+			break;
+		case aiTextureType_EMISSIVE:
+			break;
+		case aiTextureType_HEIGHT:
+			break;
+		case aiTextureType_NORMALS:
+			break;
+		case aiTextureType_SHININESS:
+			break;
+		case aiTextureType_OPACITY:
+			break;
+		case aiTextureType_DISPLACEMENT:
+			break;
+		case aiTextureType_LIGHTMAP:
+			break;
+		case aiTextureType_REFLECTION:
+			break;
+		case aiTextureType_BASE_COLOR:
+			break;
+		case aiTextureType_NORMAL_CAMERA:
+			break;
+		case aiTextureType_EMISSION_COLOR:
+			break;
+		case aiTextureType_METALNESS:
+			break;
+		case aiTextureType_DIFFUSE_ROUGHNESS:
+			break;
+		case aiTextureType_AMBIENT_OCCLUSION:
+			break;
+		case aiTextureType_UNKNOWN:
+			break;
+		case _aiTextureType_Force32Bit:
+			break;
+		default:
+			break;
+		}
+	}
+	return -1;
+}
+
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
 	Assimp::Importer import;
@@ -364,46 +433,45 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 	{
 		for (size_t i = 0; i < scene->mNumMeshes; i++)
 		{
-			auto mesh		  = scene->mMeshes[i];
-			m_vBoxMin = glm::vec3(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y,mesh->mAABB.mMin.z);
-			m_vBoxMax = glm::vec3(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y,mesh->mAABB.mMax.z);
+			auto mesh = scene->mMeshes[i];
+			m_vBoxMin = glm::vec3(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z);
+			m_vBoxMax = glm::vec3(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z);
 
 			bool bNeedCol	  = mesh->HasVertexColors(i);
 			bool bNeedNormals = mesh->HasNormals();
 			bool bHasTC		  = mesh->HasTextureCoords(i);
 
-			m_VertexFormat = 9;
+			m_VertexFormat	= 9;
 			auto RealFormat = VertFormatForComponents(bNeedCol, false, bNeedNormals, bHasTC);
-			if (RealFormat != 9) 
+			if (RealFormat != 9)
 			{
 				CryError("[ASSIMP] VertexFormat not eq 9");
 			}
 
 			char* vb = (char*)(m_VertexBuffer = CreateVertexBuffer(m_VertexFormat, mesh->mNumVertices));
-			
 
 			auto stride = gVertexSize[m_VertexFormat];
 
-			auto TCOffset = g_VertFormatUVOffsets[RealFormat];
+			auto TCOffset	   = g_VertFormatUVOffsets[RealFormat];
 			auto NormalsOffset = g_VertFormatNormalOffsets[RealFormat];
 			auto vertexSize	   = gVertexSize[RealFormat];
 
-			auto UVs = mesh->mTextureCoords[0];
+			auto UVs	 = mesh->mTextureCoords[0];
 			m_nVertCount = mesh->mNumVertices;
 			for (size_t i = 0; i < m_nVertCount; i++)
 			{
 				memcpy(&vb[i * stride], &mesh->mVertices[i], sizeof(Legacy::Vec3));
-				if (TCOffset != -1) {
-					auto _uv = UVs[i];
+				if (TCOffset != -1)
+				{
+					auto		 _uv = UVs[i];
 					Legacy::Vec2 uv	 = Legacy::Vec2(_uv.x, _uv.y);
 					memcpy(&vb[i * stride + g_VertFormatUVOffsets[m_VertexFormat]], &uv, sizeof(Legacy::Vec2));
-
 				}
-				if (NormalsOffset != -1) {
-					auto _N = mesh->mNormals[i];
-					Legacy::Vec3 N	 = Legacy::Vec3(_N.x, _N.y, _N.z);
+				if (NormalsOffset != -1)
+				{
+					auto		 _N = mesh->mNormals[i];
+					Legacy::Vec3 N	= Legacy::Vec3(_N.x, _N.y, _N.z);
 					memcpy(&vb[i * stride + g_VertFormatNormalOffsets[m_VertexFormat]], &N, sizeof(Legacy::Vec3));
-
 				}
 			}
 			for (int i = 0; i < mesh->mNumFaces; i++)
@@ -419,24 +487,10 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 			std::vector<string> Textures;
 			if (scene->HasMaterials())
 			{
-				auto mat = scene->mMaterials[mesh->mMaterialIndex];
-				//m_lstMatTable.Add(mat);
-				//aiTextureType textureTypes[aiTextureType::aiTextureType_UNKNOWN];
-				//for (auto tt : textureTypes)
-				{
-					if (mat->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) > 0)
-					{
-						aiString path;
-						m_DiffuseMap = mat->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
-						//path.C_Str()
-						m_DiffuseMap = gEnv->pRenderer->LoadTexture(path.C_Str());
-						if (m_DiffuseMap == -1)
-						{
-							auto new_path = PathUtil::GetParentDirectory(m_Name);
-							m_DiffuseMap = gEnv->pRenderer->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
-						}
-					}
-				}
+				auto	 mat	 = scene->mMaterials[mesh->mMaterialIndex];
+				//CMatInfo matInfo = GetMatInfo(mat, szFileName);
+				m_DiffuseMap = GetMatInfo(mat, szFileName);
+				//m_lstMatTable.Add(matInfo);
 			}
 		}
 	}

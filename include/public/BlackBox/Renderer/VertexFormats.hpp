@@ -20,6 +20,32 @@
 #	pragma once
 #endif
 
+//////////////////////////////////////////////////////////////////////
+struct InputLayoutHandle
+{
+	typedef uint8_t ValueType;
+	ValueType value;
+
+	constexpr InputLayoutHandle() : value(Unspecified) { }
+	constexpr InputLayoutHandle(ValueType v) : value(v) { }
+
+	// Test operators
+	template<typename T> bool operator ==(const T other) const { return value == other; }
+	template<typename T> bool operator !=(const T other) const { return value != other; }
+	// Range operators
+	template<typename T> bool operator <=(const T other) const { return value <= other; }
+	template<typename T> bool operator >=(const T other) const { return value >= other; }
+	// Sorting operators
+	template<typename T> bool operator < (const T other) const { return value <  other; }
+	template<typename T> bool operator > (const T other) const { return value >  other; }
+
+	// Auto cast for array access operator []
+	operator ValueType() const { return value; }
+
+	// Not an enum, because of SWIG
+	static constexpr ValueType Unspecified = ValueType(~0);
+};
+
 //////////////////////////////////////////////////////////////////////////
 // If you change this you also have to change gBufOffsTable in CRendElement.cpp
 enum eVertexFormat

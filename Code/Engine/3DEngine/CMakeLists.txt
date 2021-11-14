@@ -5,24 +5,20 @@ add_sources(
 	"NoUberFile"
 	PROJECTS
 	3DEngine
-	SOURCE_GROUP
-	"Source Files"
-	# Render folder
+	SOURCE_GROUP "Source Files"
 	"3DEngine.cpp"
 	"MaterialManager.cpp"
 	"ObjectManager.cpp"
 	"SceneManager.cpp"
 	"Main.cpp"
-	SOURCE_GROUP
-	"Source Files\\\\Geometry"
+	SOURCE_GROUP "Source Files\\\\Geometry"
 	"Geometry/Geometry.cpp"
 	"Geometry/ObjLoader.cpp"
 	"Geometry/StatObj.cpp"
 	"Geometry/Plane.cpp"
 	"Geometry/Primitives.cpp"
 	"Geometry/Quad.cpp"
-	SOURCE_GROUP
-	"Source Files\\\\Scene"
+	SOURCE_GROUP "Source Files\\\\Scene"
 	"Scene/Scene.cpp"
 	"Scene/SceneSerialization.cpp"
 	"Scene/XmlSerialization.cpp"

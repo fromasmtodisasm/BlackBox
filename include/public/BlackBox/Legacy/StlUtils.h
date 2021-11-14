@@ -21,7 +21,7 @@
 // searches the given entry in the map by key, and if there is none, returns the default value
 #ifdef WIN32
 #include <map>
-#define hash_map map
+#define hash_map unordered_map
 template <typename Map, typename key_type, typename mapped_type>
 inline mapped_type find_in_map(const Map& mapKeyToValue, key_type key, mapped_type valueDefault)
 #else

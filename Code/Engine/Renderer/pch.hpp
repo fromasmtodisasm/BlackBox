@@ -18,10 +18,10 @@
 #	define __IFont_INTERFACE_DEFINED__
 
 #	include <d3d11.h>
-#	include <d3dx11.h>
-#	include <d3dx10.h>
+//#	include <d3dx11.h>
+//#	include <d3dx10.h>
 //#	include <D3dx11effect.h>
-#	include "D3D/DDSTextureLoader.h"
+#	include "D3D/DDSTextureLoader11.h"
 #	include <d3d9.h> // debug markers
 const D3DCOLOR D3DC_Blue = D3DCOLOR_RGBA(0, 0, 1, 1); 
 

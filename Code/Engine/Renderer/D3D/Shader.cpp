@@ -5,7 +5,6 @@
 #include <fstream>
 #include <string_view>
 
-#include <D3DX10Core.h>
 #include <d3dcompiler.h>
 
 namespace fs = std::filesystem;

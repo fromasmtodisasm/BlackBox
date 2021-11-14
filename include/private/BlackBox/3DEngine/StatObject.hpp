@@ -40,7 +40,7 @@ public:
 	Legacy::Vec3d m_vBoxMin, m_vBoxMax;
 
 	// materials table
-	#if 0
+	#if 1
 	list2<CMatInfo> m_lstMatTable;
 	#else
 	list2<aiMaterial> m_lstMatTable;
@@ -65,9 +65,41 @@ public:
 
 };
 
+//! Type of static sub object.
+enum EStaticSubObjectType
+{
+	STATIC_SUB_OBJECT_MESH,         //!< This simple geometry part of the multi-sub object geometry.
+	STATIC_SUB_OBJECT_HELPER_MESH,  //!< Special helper mesh, not rendered usually, used for broken pieces.
+	STATIC_SUB_OBJECT_POINT,
+	STATIC_SUB_OBJECT_DUMMY,
+	STATIC_SUB_OBJECT_XREF,
+	STATIC_SUB_OBJECT_CAMERA,
+	STATIC_SUB_OBJECT_LIGHT,
+};
+
 class CStatObj : public IStatObj
 {
   public:
+	struct SSubObject
+	{
+		SSubObject() {  }
+
+		EStaticSubObjectType nType;
+		string				 name;
+		string				 properties;
+		int					 nParent;			  //!< Index of the parent sub object, if there`s hierarchy between them.
+		Matrix34			 tm;				  //!< Transformation matrix.
+		Matrix34			 localTM;			  //!< Local transformation matrix, relative to parent.
+		IStatObj*			 pStatObj;			  //!< Static object for sub part of CGF.
+		Vec3				 helperSize;		  //!< Size of the helper (if helper).
+
+		void GetMemoryUsage(ICrySizer* pSizer) const
+		{
+			pSizer->AddObject(name);
+			pSizer->AddObject(properties);
+		}
+	};
+
 	CStatObj(CIndexedMesh IndexedMesh);
 
 	void GetBBox(Legacy::Vec3& Mins, Legacy::Vec3& Maxs) override
