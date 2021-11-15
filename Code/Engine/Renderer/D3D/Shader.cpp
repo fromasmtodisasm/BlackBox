@@ -21,6 +21,37 @@ CShader::~CShader()
 	}
 }
 
+CShader& CShader::operator=(const CShader& src)
+{
+	//uint32 i;
+
+	//mfFree();
+
+	int	  Offs = (int)(INT_PTR) & (((CShader*)0)->m_NumRefs);
+	byte* d	   = (byte*)this;
+	byte* s	   = (byte*)&src;
+	memcpy(&d[Offs], &s[Offs], sizeof(CShader) - Offs);
+
+	m_NameShader	 = src.m_NameShader;
+	m_NameFile		 = src.m_NameFile;
+	//m_NameShaderICRC = src.m_NameShaderICRC;
+
+	#if 0
+	if (src.m_HWTechniques.Num())
+	{
+		m_HWTechniques.Create(src.m_HWTechniques.Num());
+		for (i = 0; i < src.m_HWTechniques.Num(); i++)
+		{
+			m_HWTechniques[i]			= new SShaderTechnique(this);
+			*m_HWTechniques[i]			= *src.m_HWTechniques[i];
+			m_HWTechniques[i]->m_shader = this; // copy operator will override m_shader
+		}
+	}
+	#endif
+
+	return *this;
+}
+
 int CShader::GetID()
 {
 	return 0;
@@ -46,7 +77,7 @@ IShader::Type CShader::GetType()
 
 const char* CShader::GetName()
 {
-	return m_Name.c_str();
+	return m_NameShader.c_str();
 }
 
 #if 0

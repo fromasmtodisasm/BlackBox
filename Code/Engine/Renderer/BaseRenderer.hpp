@@ -479,10 +479,10 @@ class ShaderMan
 	{
 		if (auto it = m_Shaders.find((name)); it != m_Shaders.end())
 		{
-			//it->second->AddRef();		
-			//*p = *it->second;
-			//return;
 			CryLog("Shader <%s> already cached", name);
+			it->second->AddRef();		
+			*p = *it->second;
+			return;
 		}
 		if (!Sh_LoadBinary(name, flags, nMaskGen, p))
 		{
@@ -531,7 +531,8 @@ class ShaderMan
 			auto nTech = 0;
 			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
 				nTech = tech->GetId();
-			p->m_Name = real_name.data();
+			p->m_NameShader = real_name.data();
+			p->m_NameFile	= path.str();
 			if (CShader::LoadFromEffect(p, pEffect, nTech, pass))
 			{
 				p->AddRef();

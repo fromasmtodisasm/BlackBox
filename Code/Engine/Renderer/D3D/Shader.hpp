@@ -75,7 +75,11 @@ class CShader : public IShader
 
 	virtual DynVertexFormat*	   GetDynVertexFormat()
 	{
+		#if 0
 		return &format;
+		#else
+		return nullptr;
+		#endif
 	}
 
 	bool WaitUntilLoaded();
@@ -91,9 +95,9 @@ class CShader : public IShader
 	static CHWShader* LoadFromFile(const std::string_view text, IShader::Type type, const char* pEntry);
 	static std::pair<ID3DBlob*,ID3DBlob*> LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry);
 
-	std::array<CHWShader*, Type::E_NUM> m_Shaders{0};
 
-	CCryNameR m_Name;
+	string m_NameShader;
+	string m_NameFile;
 	int	   m_NumRefs = 0;
 	int	   m_Flags	 = 0;
 	int	   m_Flags2	 = 0;
@@ -102,6 +106,5 @@ class CShader : public IShader
 	D3D11_SHADER_DESC		m_Desc;
 	ID3D11ShaderReflection* m_pReflection;
 	DynVertexFormat		format;
+	std::array<CHWShader*, Type::E_NUM> m_Shaders{0};
 };
-
-CShader::Type str2typ(string type);
