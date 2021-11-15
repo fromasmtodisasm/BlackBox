@@ -462,11 +462,13 @@ class CRenderer : public RenderCVars
 	/////////////////////////////////////////////////////////////////////////////////
 	// Render-pipeline management
 	/////////////////////////////////////////////////////////////////////////////////
+	#if 0
 	std::shared_ptr<CGraphicsPipeline>								   m_pBaseGraphicsPipeline;
 	std::shared_ptr<CGraphicsPipeline>								   m_pActiveGraphicsPipeline;
 	std::map<SGraphicsPipelineKey, std::shared_ptr<CGraphicsPipeline>> m_graphicsPipelines;
 
 
+	#endif
 	std::unique_ptr<SRenderThread> m_RenderThread;
 };
 
@@ -529,28 +531,21 @@ class ShaderMan
 			auto nTech = 0;
 			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
 				nTech = tech->GetId();
-			auto vs = CShader::LoadFromEffect(pEffect, IShader::E_VERTEX, nTech, pass);
-			auto fs = CShader::LoadFromEffect(pEffect, IShader::E_FRAGMENT, flags, pass);
-			if (!vs || !fs)
+			p->m_Name = real_name.data();
+			if (CShader::LoadFromEffect(p, pEffect, nTech, pass))
 			{
-				SAFE_DELETE(vs);
-				SAFE_DELETE(fs);
-				return false;
-			}
-			p->m_Shaders[IShader::E_VERTEX]	  = vs;
-			p->m_Shaders[IShader::E_FRAGMENT] = fs;
-			p->AddRef();
-			//m_Shaders.push_back(p);
-			p->ReflectShader();
-			//D3D11_SHADER_DESC		m_Desc;
-			//ID3D11ShaderReflection* m_pReflection = NULL;
-			p->CreateInputLayout();
-			p->m_Flags2 |= EF2_LOADED;
-			//p->Bind();
+				p->AddRef();
+				p->ReflectShader();
+				p->CreateInputLayout();
+				p->m_Flags2 |= EF2_LOADED;
+				delete pEffect;
+				m_Shaders[string(name)] = p;
+				return true;
 
-			delete pEffect;
-			m_Shaders[string(name)] = p;
-			return true;
+			}
+			p->m_Flags2 |= EF2_FAILED;
+			return false;
+
 		}
 		else
 		{

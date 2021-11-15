@@ -512,6 +512,11 @@ bool CSystem::Init()
 
 	m_env.pRenderer->RegisterCallbackClient(this);
 
+	if (m_startupParams.bShaderCacheGen)
+	{
+		GetIConsole()->ExecuteString("r_PrecacheShaderList");
+	}
+
 	gEnv->pLog->Log("Main thread : %d", std::this_thread::get_id());
 	return true;
 }

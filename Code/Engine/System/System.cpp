@@ -611,6 +611,8 @@ void CSystem::ShutDown()
 	if (m_env.pInput)
 		m_env.pInput->ShutDown();
 	SAFE_RELEASE(m_env.pEntitySystem);
+	//FIXME: memory manager errors on free memory!!!
+	#if 0
 	SAFE_RELEASE(m_pNetwork);
 	SAFE_RELEASE(m_env.pConsole);
 	SAFE_DELETE(m_pSystemEventDispatcher);
@@ -620,6 +622,7 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pSoundSystem);
 	SAFE_RELEASE(m_env.pCryPak);
 	SAFE_RELEASE(m_pCryPak);
+	#endif
 	UnloadSubsystems();
     SDL_Quit();
 }

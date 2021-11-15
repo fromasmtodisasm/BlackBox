@@ -168,3 +168,5 @@ public:
 	static std::unordered_map<SInputLayoutCompositionDescriptor, SInputLayoutPair, SInputLayoutCompositionDescriptor::hasher> s_InputLayoutCompositions;
 
 };
+
+static ILINE CDeviceObjectFactory& GetDeviceObjectFactory() { return CDeviceObjectFactory::GetInstance(); }

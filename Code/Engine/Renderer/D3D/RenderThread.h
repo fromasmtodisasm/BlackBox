@@ -20,7 +20,9 @@ struct SRenderThread
 	std::deque<std::function<void()>> Commands;
 	//CRenderThread*					  m_pThread;
 	SRT						  m_pThread;
+#ifdef MULTITHREADED_RENDER
 	std::mutex						  m_QueueMutex;
+#endif
 
 	SRenderThread() {
 		//m_pThread = new CRenderThread();
@@ -37,7 +39,7 @@ struct SRenderThread
 	template<typename RenderThreadCallback>
 	void ExecuteRenderThreadCommand(RenderThreadCallback&& callback)
 	{
-		#define MULTITHREADED_RENDER
+		//#define MULTITHREADED_RENDER
 		#ifdef MULTITHREADED_RENDER
 		std::lock_guard<std::mutex> lock(m_QueueMutex);
 		Commands.push_back(callback);

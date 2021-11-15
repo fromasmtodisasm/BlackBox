@@ -293,11 +293,13 @@ struct SSystemInitParams
 	IValidator* pValidator;				// You can specify different validator object to use by System.
 	IOutputPrintSink* pPrintSync;		//!< Print Sync which can be used to catch all output from engine.
 	const char* sLogFileName;			// File name to use for log.
-	bool bEditor;						// When runing in Editor mode.
-	bool bPreview;						// When runing in Preview mode (Minimal initialization).
-	bool bTestMode;						// When runing in Automated testing mode.
-	bool bDedicatedServer;				// When runing a dedicated server.
-	bool bMinimal;						//!< Don't load banks.
+
+	bool bEditor;		   // When runing in Editor mode.
+	bool bPreview;		   // When runing in Preview mode (Minimal initialization).
+	bool bTestMode;		   // When runing in Automated testing mode.
+	bool bDedicatedServer; // When runing a dedicated server.
+	bool bMinimal;		   //!< Don't load banks.
+	bool bShaderCacheGen;  //!< When running in shadercache gen mode.
 	bool bManualEngineLoop;
 
 	ISystem* pSystem; // Pointer to existing ISystem interface, it will be reused if not NULL.

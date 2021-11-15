@@ -43,7 +43,8 @@ ID3D11SamplerState*		GlobalResources::LinearSampler{};
 ID3DShaderResourceView* GlobalResources::WiteTextureRV;
 ID3DShaderResourceView* GlobalResources::GreyTextureRV;
 
-static CD3DRenderer gcpRendD3D;
+static CD3DRenderer _gcpRendD3D;
+static CD3DRenderer* gcpRendD3D = _gcpRendD3D;
 
 //ID3D10EffectTechnique* GlobalResources::BoxTechnique;
 //ID3D10EffectTechnique* GlobalResources::MeshTechnique;
@@ -459,9 +460,11 @@ bool CD3DRenderer::InitOverride()
 		CryFatalError("Cannot create render target");
 	}
 
+#ifdef MULTITHREADED_RENDER
 	m_RenderThread = std::make_unique<SRenderThread>();
 
 	m_RenderThread->Start();
+#endif
 
 	return true;
 }

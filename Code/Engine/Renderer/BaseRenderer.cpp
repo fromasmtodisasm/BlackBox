@@ -71,7 +71,12 @@ CRenderer::CRenderer()
 
 void CRenderer::Release()
 {
+	//FIXME:
+	#if 0
 	delete this;
+	#else
+	this->~CRenderer();
+	#endif
 }
 
 void CRenderer::RegisterCallbackClient(IRendererCallbackClient* pClient)

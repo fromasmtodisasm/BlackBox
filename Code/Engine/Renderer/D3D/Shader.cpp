@@ -46,7 +46,7 @@ IShader::Type CShader::GetType()
 
 const char* CShader::GetName()
 {
-	return nullptr;
+	return m_Name.c_str();
 }
 
 #if 0
@@ -112,7 +112,7 @@ void CShader::CreateInputLayout()
 {
 	HRESULT hr{};
 
-	auto								  pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode;
+	auto								  pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_ByteCode;
 	std::vector<D3D11_INPUT_ELEMENT_DESC> t_InputElementDescVec; // actually does not matter what store
 	unsigned int						  t_ByteOffset = 0;
 
@@ -242,7 +242,7 @@ void CShader::ReflectShader()
 {
 	HRESULT hr{};
 
-	auto pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_Bytecode;
+	auto pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_ByteCode;
 	//ID3D11ShaderReflection* pIShaderReflection1 = NULL;
 	hr = D3DReflect((void*)pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&m_pReflection);
 	if (m_pReflection)
@@ -251,18 +251,40 @@ void CShader::ReflectShader()
 	}
 }
 
-CHWShader* CShader::LoadFromEffect(PEffect pEffect, IShader::Type type, int nTechnique, int nPass)
+bool CShader::LoadFromEffect(CShader* pSH, PEffect pEffect, int nTechnique, int nPass)
 {
 	auto				tech = pEffect->GetTechnique(nTechnique);
 	auto				pass = tech->GetPass(nPass);
 	std::vector<string> code{pEffect->GetCode()};
 
-	auto entry = pass->EntryPoints[type].data();
+	IShader::Type Types[] = {
+		IShader::Type::E_VERTEX,
+		IShader::Type::E_GEOMETRY,
+		IShader::Type::E_FRAGMENT,
+	};
+	for (auto st : Types)
+	{
+		auto entry = pass->EntryPoints[st].data();
+		if (auto res = LoadFromMemory(code, st, entry); res.first)
+		{
+			auto  shader = new CHWShader(st, entry);
+			shader->m_ByteCode = res.first;
+			if (shader->Upload(shader->m_ByteCode, pSH))
+			{
+				pSH->m_Shaders[st]	  = shader;
+			}
+			else
+			{
+				res.second->Release();
+				delete shader;
+			}
+		}
+	}
 	//SaveHlslToDisk(code, type);
-	return LoadFromMemory(code, type, entry);
+	return true;
 }
 
-CHWShader* CShader::LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry)
+std::pair<ID3DBlob*,ID3DBlob*> CShader::LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry)
 {
 	std::string code;
 	for (const auto& piece : text)
@@ -270,10 +292,12 @@ CHWShader* CShader::LoadFromMemory(const std::vector<std::string>& text, IShader
 	return CShader::Load(code, type, pEntry, true);
 }
 
+#if 0
 CHWShader* CShader::LoadFromFile(const std::string_view file, IShader::Type type, const char* pEntry)
 {
 	return CShader::Load(file, type, pEntry, false);
 }
+#endif
 
 const char* GetGLSLANGTargetName(IShader::Type target)
 {
@@ -301,7 +325,7 @@ void SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type)
 	output_file.close();
 }
 
-CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory)
+std::pair<ID3DBlob*,ID3DBlob*> CShader::Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory)
 {
 	const char* profile = type == Type::E_VERTEX ? "vs_4_0" : type == Type::E_GEOMETRY ? "gs_4_0"
 																					   : "ps_4_0";
@@ -311,9 +335,8 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 	const char* file = bFromMemory ? nullptr : text.data();
 	auto		size = text.size();
 
-	auto flags1 = 0;
-	//D3D10_SHADER_DEBUG;
-	auto hr = D3DCompile(
+	auto nFlags = D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
+	auto hr		= D3DCompile(
 		code,
 		size,
 		file,
@@ -321,14 +344,15 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 		nullptr,
 		pEntry,
 		profile,
-		flags1,
+		nFlags,
 		0, //flags2
 		&pShaderBlob,
 		&pErrorBlob);
-	auto pBlob = _smart_ptr(pShaderBlob);
-	auto error = _smart_ptr(pErrorBlob);
 	if (FAILED(hr))
 	{
+		#if 0
+		auto pBlob = _smart_ptr(pShaderBlob);
+		auto error = _smart_ptr(pErrorBlob);
 		if (pErrorBlob && pErrorBlob->GetBufferPointer())
 		{
 			auto log	  = std::string_view((const char*)pErrorBlob->GetBufferPointer());
@@ -343,35 +367,75 @@ CHWShader* CShader::Load(const std::string_view text, IShader::Type type, const 
 			}
 			CryWarning(VALIDATOR_MODULE_RENDERER, severity, "Error and warning from compilation:\n%s", log.data());
 		}
-		//char tmp[256];
-		//sprintf(tmp, "The FX file <%s> cannot be located.  Please run this executable from the directory that contains the FX file.", file ? file : "MemoryStream");
-		//MessageBox(NULL, tmp, "Error", MB_OK);
-		return nullptr;
+		#endif
+		return std::make_pair(nullptr,pErrorBlob);
+	}
+	else
+	{
+		#if 0
+		void* pShaderReflBuf;
+		UINT* pData = (UINT*)pShaderBlob->GetBufferPointer();
+		UINT  nSize = (uint32)pShaderBlob->GetBufferSize();
+		hr			= D3DReflection(pData, nSize, IID_D3DShaderReflection, &pShaderReflBuf);
+		if (SUCCEEDED(hr))
+		{
+			D3DShaderReflection* pShaderReflection = (D3DShaderReflection*)pShaderReflBuf;
+			*ppConstantTable					   = (void*)pShaderReflection;
+		}
+		else
+		{
+			assert(0);
+		}
+		#endif
 	}
 
-#if 0
-	union
+	return std::make_pair(pShaderBlob,pErrorBlob);
+	//return new CHWShader(pShader, pBlob, type);
+}
+
+bool CHWShader::Upload(ID3DBlob* pBlob, CShader* pSH)
+{
+	HRESULT hr;
+	auto	pBuf = (DWORD*)pBlob->GetBufferPointer();
+	auto	nSize = pBlob->GetBufferSize();
+
+	IUnknown* handle{};
+
+	switch (m_Type)
 	{
-		ID3D10VertexShader* pVertexShader;
-		ID3D10GeometryShader* pGeometryShader;
-		ID3D10PixelShader* pPixelShader;
-	};
-#else
-	ID3D11Resource* pShader;
+	case IShader::E_VERTEX:
+		hr = (handle = GetDeviceObjectFactory().CreateVertexShader(pBuf, nSize)) ? S_OK : E_FAIL;
+		break;
+	case IShader::E_GEOMETRY:
+		hr = (handle = GetDeviceObjectFactory().CreateGeometryShader(pBuf, nSize)) ? S_OK : E_FAIL;
+		break;
+	case IShader::E_FRAGMENT:
+		hr = (handle = GetDeviceObjectFactory().CreatePixelShader(pBuf, nSize)) ? S_OK : E_FAIL;
+		break;
+	case IShader::E_NUM:
+		break;
+	default:
+		break;
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		m_D3DShader = (ID3D11Resource*)handle;
+	// Assign name to Shader for enhanced debugging
+#if !defined(RELEASE) && (BB_PLATFORM_WINDOWS)
+	char name[1024];
+	sprintf(name, "%s_%s", pSH->GetName(), m_EntryFunc.c_str());
+
+#	if BB_PLATFORM_WINDOWS
+#		if BB_RENDERER_DIRECT3D
+	auto pObject = (ID3D11DeviceChild*)m_D3DShader;
+	::SetDebugName(pObject, name);
+#		elif BB_RENDERER_VULKAN
+	auto pObject = reinterpret_cast<NCryVulkan::CShader*>(pInst->m_Handle.m_pShader->GetHandle());
+	SetDebugName(pObject, name);
+#		endif
+#	endif
 #endif
-
-	//pVertexShader = nullptr;
-
-	// Create the vertex shader
-	if (type == E_VERTEX)
-		hr = GetDevice()->CreateVertexShader((DWORD*)pBlob->GetBufferPointer(),
-											 pBlob->GetBufferSize(), nullptr, (ID3D11VertexShader**)&pShader);
-	else if (type == E_GEOMETRY)
-		hr = GetDevice()->CreateGeometryShader((DWORD*)pBlob->GetBufferPointer(),
-											   pBlob->GetBufferSize(), nullptr, (ID3D11GeometryShader**)&pShader);
-	else if (type == E_FRAGMENT)
-		hr = GetDevice()->CreatePixelShader((DWORD*)pBlob->GetBufferPointer(),
-											pBlob->GetBufferSize(), nullptr, (ID3D11PixelShader**)&pShader);
-
-	return new CHWShader(pShader, pBlob, type);
+	}
+	return (hr == S_OK);
 }

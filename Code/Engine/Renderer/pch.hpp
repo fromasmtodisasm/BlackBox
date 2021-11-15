@@ -13,6 +13,7 @@
 #include <BlackBox/System/File/ICryPak.hpp>
 
 #define DX_11
+#define BB_RENDERER_DIRECT3D 110
 #ifdef DX_RENDERER
 #	include <BlackBox/Core/Platform/Windows.hpp>
 #	define __IFont_INTERFACE_DEFINED__
@@ -169,3 +170,14 @@ struct ScopedMarker
 };
 
 #define D3DMarker(m) ScopedMarker _m(L#m);
+
+inline void SetDebugName(ID3D11DeviceChild* pNativeResource, const char* name)
+{
+#if !defined(RELEASE) && BB_PLATFORM_WINDOWS
+	if (!pNativeResource)
+		return;
+
+	pNativeResource->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
+	pNativeResource->SetPrivateData(WKPDID_D3DDebugObjectName, strlen(name) + 1, name);
+#endif
+}
