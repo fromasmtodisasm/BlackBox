@@ -54,14 +54,6 @@ void CSystem::RenderStats()
 			PrintMemoryUsage("3DEngine", &I3DEngine::GetMemoryUsage, m_env.p3DEngine);
 			PrintMemoryUsage("EntitySystem", &IEntitySystem::GetMemoryUsage, m_env.pEntitySystem) ;
 			#endif
-			#if 0
-			static char stats[256];
-			{
-				auto		len = sprintf(stats, "Frame rate: %f\n                        Frame time: %f", m_env.pTimer->GetFrameRate(), m_env.pTimer->GetRealFrameTime());
-				stats[len]		= 0;
-				m_env.pRenderer->Draw2dText(100, (float)py, stats, dti);
-			}
-			#endif
 		}
 		//PrintRightAlignedText(gEnv->pRenderer->GetHeight() - 64.f, "$1BLACKBOX $8ENGINE", m_pBlackBoxFont);
 

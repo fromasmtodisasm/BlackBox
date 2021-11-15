@@ -706,6 +706,7 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	//PRINT(py, "Render path = ...");
 	if (gEnv->pSystem->IsDevMode())
 		PRINT(py, gEnv->IsEditor() ? "DevMode (Editor)" : "DevMode");
+	//PRINT(py, "Frame rate: %f\n                        Frame time: %f", gEnv->pTimer->GetFrameRate(), gEnv->pTimer->GetRealFrameTime());
 
 #undef PRINT
 }
