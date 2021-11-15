@@ -48,8 +48,8 @@ add_sources(
 	"D3D/Renderer.cpp"
 	"D3D/Shader.cpp"
 	SOURCE_GROUP "DeviceManager"
-	"DeviceManager/Deviceobjects.cpp"
 	"DeviceManager/DeviceObjects.h"
+	"DeviceManager/Deviceobjects.cpp"
 	"DeviceManager/DeviceResources.cpp"
 	"DeviceManager/DeviceResources.hpp"
 	

@@ -18,6 +18,7 @@
 #	define __IFont_INTERFACE_DEFINED__
 
 #	include <d3d11.h>
+#	include <d3d11shader.h>
 //#	include <d3dx11.h>
 //#	include <d3dx10.h>
 //#	include <D3dx11effect.h>
@@ -41,6 +42,20 @@ const D3DCOLOR D3DC_Blue = D3DCOLOR_RGBA(0, 0, 1, 1);
 
 #	define D3DDevice ID3DDevice
 #	define D3DBuffer ID3DBuffer
+#   define D3DFormat DXGI_FORMAT
+
+	#define D3DReflection                     D3DReflect
+	#define IID_D3DShaderReflection           IID_ID3D11ShaderReflection
+	#define D3DShaderReflection               ID3D11ShaderReflection
+	#define D3DShaderReflectionConstantBuffer ID3D11ShaderReflectionConstantBuffer
+	#define D3DShaderReflectionVariable       ID3D11ShaderReflectionVariable
+	#define D3DShaderReflectionType           ID3D11ShaderReflectionType
+	#define D3D_SHADER_DESC                   D3D11_SHADER_DESC
+	#define D3D_SHADER_TYPE_DESC              D3D11_SHADER_TYPE_DESC
+	#define D3D_SHADER_BUFFER_DESC            D3D11_SHADER_BUFFER_DESC
+	#define D3D_SHADER_VARIABLE_DESC          D3D11_SHADER_VARIABLE_DESC
+	#define D3D_SHADER_INPUT_BIND_DESC        D3D11_SHADER_INPUT_BIND_DESC
+	#define D3D_SIGNATURE_PARAMETER_DESC      D3D11_SIGNATURE_PARAMETER_DESC
 
 using D3D_VIEWPORT = D3D11_VIEWPORT;
 using D3D_RASTERIZER_DESC = D3D11_RASTERIZER_DESC;
@@ -62,7 +77,6 @@ using D3D_RASTERIZER_DESC = D3D11_RASTERIZER_DESC;
 
 typedef ID3D11SamplerState CDeviceSamplerState;
 typedef ID3D11InputLayout	CDeviceInputLayout;
-//typedef ID3D11BaseView		CDeviceResourceView;
 
 
 using D3DXMATRIX_  = glm::mat4;
