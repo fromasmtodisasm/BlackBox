@@ -6,8 +6,6 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
-#include <BlackBox/Renderer/OpenGL/Core.hpp>
-
 #include "imgui.h"
 #define IMGUI_VANILA_MANAGER
 
@@ -41,6 +39,7 @@ static void ShowDockingDisabledMessage()
 // Note that you already dock windows into each others _without_ a DockSpace() by just moving windows
 // from their title bar (or by holding SHIFT if io.ConfigDockingWithShift is set).
 // DockSpace() is only useful to construct to a central location for your application.
+#if 1
 static void ShowExampleAppDockSpace(bool* p_open)
 {
 	static bool opt_fullscreen_persistant = true;
@@ -53,8 +52,8 @@ static void ShowExampleAppDockSpace(bool* p_open)
 	if (opt_fullscreen)
 	{
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->GetWorkPos());
-		ImGui::SetNextWindowSize(viewport->GetWorkSize());
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -126,6 +125,7 @@ static void ShowExampleAppDockSpace(bool* p_open)
 
 	ImGui::End();
 }
+#endif
 
 
 #ifdef IMGUI_VANILA_MANAGER

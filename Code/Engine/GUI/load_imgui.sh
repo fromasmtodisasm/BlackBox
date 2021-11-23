@@ -1,5 +1,6 @@
 #!/bin/bash
 curl -L https://raw.githubusercontent.com/ocornut/imgui/docking/imgui.cpp --output imgui.cpp
+curl -L https://raw.githubusercontent.com/ocornut/imgui/docking/imgui_tables.cpp --output imgui_tables.cpp
 curl -L https://raw.githubusercontent.com/ocornut/imgui/docking/imgui.h --output imgui.h
 curl -L https://raw.githubusercontent.com/ocornut/imgui/docking/imgui_demo.cpp --output imgui_demo.cpp
 curl -L https://raw.githubusercontent.com/ocornut/imgui/docking/imgui_draw.cpp --output imgui_draw.cpp

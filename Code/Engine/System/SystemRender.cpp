@@ -28,10 +28,20 @@ void CSystem::RenderBegin()
 	PROFILER_SYNC_FRAME();
 	PROFILER_PUSH_CPU_MARKER("Full frame", COLOR_GRAY);
 	m_env.pRenderer->BeginFrame();
+#if ENABLE_DEBUG_GUI
+	if (m_GuiManager)
+	{
+		m_GuiManager->NewFrame();
+		m_GuiManager->ShowDemoWindow();
+	}
+#endif
 }
 void CSystem::OnRenderer_BeforeEndFrame()
 {
 	RenderStats();
+	// FIXME: implement imgui rendering over internal rendering api
+	if (m_GuiManager)
+		m_GuiManager->Render();
 }
 
 void CSystem::RenderStats()
@@ -40,8 +50,7 @@ void CSystem::RenderStats()
 	{
 		if (sys_dump_memstats)
 		{
-
-			#if 0
+#if 0
 			auto PrintMemoryUsage = [&,this](const char* name, typename auto fn, auto This) {
 				py += dy;
 				PrintMemoryUsageForName(name, fn, This, px, py);
@@ -53,7 +62,7 @@ void CSystem::RenderStats()
 			PrintMemoryUsage("ScriptSsystem", &IScriptSystem::GetMemoryUsage, m_env.pScriptSystem);
 			PrintMemoryUsage("3DEngine", &I3DEngine::GetMemoryUsage, m_env.p3DEngine);
 			PrintMemoryUsage("EntitySystem", &IEntitySystem::GetMemoryUsage, m_env.pEntitySystem) ;
-			#endif
+#endif
 		}
 		//PrintRightAlignedText(gEnv->pRenderer->GetHeight() - 64.f, "$1BLACKBOX $8ENGINE", m_pBlackBoxFont);
 
@@ -75,7 +84,6 @@ void CSystem::RenderStats()
 #endif
 		}
 	}
-
 }
 
 void CSystem::RenderEnd()
@@ -89,7 +97,6 @@ void CSystem::RenderEnd()
 	}
 	if (m_env.pRenderer)
 	{
-		m_env.pRenderer->Update();	
+		m_env.pRenderer->Update();
 	}
 }
-

@@ -852,33 +852,36 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////////////
 // Query types for CryInd editor (used in EF_Query() function)
-#define EFQ_NUMEFS 0
-#define EFQ_LOADEDEFS 1
-#define EFQ_NUMTEXTURES 2
-#define EFQ_LOADEDTEXTURES 3
-#define EFQ_NUMEFFILES0 6
-#define EFQ_NUMEFFILES1 7
-#define EFQ_EFFILENAMES0 12
-#define EFQ_EFFILENAMES1 13
-#define EFQ_VProgramms 16
-#define EFQ_PShaders 17
-#define EFQ_LightSource 18
-#define EFQ_RecurseLevel 19
-#define EFQ_Pointer2FrameID 20
-#define EFQ_RegisteredTemplates 21
-#define EFQ_NumRenderItems 22
-#define EFQ_DeviceLost 23
-#define EFQ_CubeColor 24
-#define EFQ_D3DDevice 25
-#define EFQ_glReadPixels 26
+enum ERenderQueryTypes
+{
+	EFQ_NUMEFS=0,
+	EFQ_LOADEDEFS=1,
+	EFQ_NUMTEXTURES=2,
+	EFQ_LOADEDTEXTURES=3,
+	EFQ_NUMEFFILES0=6,
+	EFQ_NUMEFFILES1=7,
+	EFQ_EFFILENAMES0=12,
+	EFQ_EFFILENAMES1=13,
+	EFQ_VProgramms=16,
+	EFQ_PShaders=17,
+	EFQ_LightSource=18,
+	EFQ_RecurseLevel=19,
+	EFQ_Pointer2FrameID=20,
+	EFQ_RegisteredTemplates=21,
+	EFQ_NumRenderItems=22,
+	EFQ_DeviceLost=23,
+	EFQ_CubeColor=24,
+	EFQ_D3DDevice=25,
+	EFQ_glReadPixels=26,
 
-#define EFQ_Orients 33
-#define EFQ_NumOrients 34
-#define EFQ_SkyShader 35
-#define EFQ_SunFlares 36
-#define EFQ_CurSunFlare 37
-#define EFQ_Materials 38
-#define EFQ_LightMaterials 39
+	EFQ_Orients=33,
+	EFQ_NumOrients=34,
+	EFQ_SkyShader=35,
+	EFQ_SunFlares=36,
+	EFQ_CurSunFlare=37,
+	EFQ_Materials=38,
+	EFQ_LightMaterials=39,
+};
 
 //////////////////////////////////////////////////////////////////////
 

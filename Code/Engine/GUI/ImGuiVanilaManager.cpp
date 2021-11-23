@@ -2,13 +2,26 @@
 #include <SDL.h>
 #include <BlackBox/Input/Events.h>
 
-#define IMGUI_IMPL_OPENGL_LOADER_GLAD
-#include "ImGuiBackend/Vanila/imgui_impl_opengl3.cpp"
-#include "ImGuiBackend/Vanila/imgui_impl_sdl.cpp"
+#include "ImGuiBackend/Vanila/imgui_impl_dx11.cpp"
+#include "imgui_impl_sdl.cpp"
+#include <BlackBox/System/ConsoleRegistration.h>
+
+#include "Console.cpp"
 
 static uint KeyboardEvent = 0;
 
-class ImGuiManager : public IImGuiManager, public ISystemEventListener
+
+struct CVars
+{
+	int gui_docking{1};
+
+	void Init()
+	{
+		REGISTER_CVAR(gui_docking, gui_docking, 0, "");
+	}
+};
+
+class ImGuiManager : public IImGuiManager, public ISystemEventListener, public CVars
 {
   public:
 	
@@ -25,11 +38,14 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	// Enable Docking
 		// FIXME: rewrite platform window handling
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-		//io.ConfigViewportsNoAutoMerge = true;
-		//io.ConfigViewportsNoTaskBarIcon = true;}
+		io.ConfigViewportsNoAutoMerge = true;
+		//io.ConfigViewportsNoTaskBarIcon = true;
 
 		KeyboardEvent = gEnv->pSystem->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);
 		gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "ImGuiManager");
+
+		CVars::Init();
+        gEnv->pConsole->AddOutputPrintSink(&console);
 	}
 
 
@@ -49,53 +65,41 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener
 
 	bool Init() override
 	{
-		// Initialize OpenGL loader
-		#if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
-			bool err = gl3wInit() != 0;
-		#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
-			bool err = glewInit() != GLEW_OK;
-		#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-			bool err = gladLoadGL() == 0;
-		#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD2)
-			bool err = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress) == 0; // glad2 recommend using the windowing library loader instead of the (optionally) bundled one.
-		#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
-			bool err = false;
-			glbinding::Binding::initialize();
-		#elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING3)
-			bool err = false;
-			glbinding::initialize([](const char* name) { return (glbinding::ProcAddress)SDL_GL_GetProcAddress(name); });
-		#else
-			bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
-		#endif
-		if (err)
-		{
-			fprintf(stderr, "Failed to initialize OpenGL loader!\n");
-			return 1;
-		}
-	   // Setup Platform/Renderer bindings
-		ImGui_ImplSDL2_InitForOpenGL((SDL_Window*)gEnv->pRenderer->GetCurrentContextHWND(), SDL_GL_GetCurrentContext());
-		ImGui_ImplOpenGL3_Init("#version 130");
-		return true;
+		auto pDevice = (ID3D11Device*)gEnv->pRenderer->EF_Query(ERenderQueryTypes::EFQ_D3DDevice);
+		ID3D11DeviceContext* pImmediateContext{};
+		pDevice->GetImmediateContext(&pImmediateContext);
+		auto result = ImGui_ImplDX11_Init(pDevice,pImmediateContext);
+		if (result)
+			result &= ImGui_ImplSDL2_InitForD3D((SDL_Window*)gEnv->pRenderer->GetCurrentContextHWND());
+		return result;
 	}
 	void NewFrame() override
 	{
 		// Start the Dear ImGui frame
-		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplSDL2_NewFrame((SDL_Window*)gEnv->pRenderer->GetCurrentContextHWND());
 		ImGui::NewFrame();
+		bool p_open{};
+		#if 1
 		if (auto v = gEnv->pConsole->GetCVar("gui_docking"); v)
 		{
 			if (v->GetIVal())
 				ShowExampleAppDockSpace(&show_demo_window);
 		}
+		bool open_console = true;
+        console.Draw("Console", &open_console);
+		#endif
 	}
 	void Render() override
 	{
 		auto io = ImGui::GetIO();
 		// Rendering
         ImGui::Render();
+		#if 0
         glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		#endif
+		gEnv->pRenderer->SetViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
         // Update and Render additional Platform Windows
         // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
@@ -124,6 +128,7 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener
 
   private:
 	bool show_demo_window = true;
+    ImGuiConsole console;
 
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override

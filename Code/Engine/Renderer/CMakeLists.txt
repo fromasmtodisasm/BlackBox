@@ -103,6 +103,7 @@ if(OPTION_DX_RENDERER)
 
 	target_compile_definitions(RendererDX PUBLIC "DX_RENDERER")
 	target_link_libraries(${THIS_PROJECT} PRIVATE dxguid d3d11 d3d10 d3d9 d3dcompiler)
+	add_library(Renderer ALIAS RendererDX)
 else()
 	cryfilecontainer(RendererDX SOLUTION_FOLDER "Engine")
 endif()

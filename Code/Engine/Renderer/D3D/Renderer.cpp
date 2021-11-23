@@ -791,6 +791,65 @@ int CD3DRenderer::NextTextureIndex()
 
 void* CD3DRenderer::EF_Query(int Query, int Param)
 {
+	auto query = ERenderQueryTypes(Query);
+	switch (query)
+	{
+	case EFQ_NUMEFS:
+		break;
+	case EFQ_LOADEDEFS:
+		break;
+	case EFQ_NUMTEXTURES:
+		break;
+	case EFQ_LOADEDTEXTURES:
+		break;
+	case EFQ_NUMEFFILES0:
+		break;
+	case EFQ_NUMEFFILES1:
+		break;
+	case EFQ_EFFILENAMES0:
+		break;
+	case EFQ_EFFILENAMES1:
+		break;
+	case EFQ_VProgramms:
+		break;
+	case EFQ_PShaders:
+		break;
+	case EFQ_LightSource:
+		break;
+	case EFQ_RecurseLevel:
+		break;
+	case EFQ_Pointer2FrameID:
+		break;
+	case EFQ_RegisteredTemplates:
+		break;
+	case EFQ_NumRenderItems:
+		break;
+	case EFQ_DeviceLost:
+		break;
+	case EFQ_CubeColor:
+		break;
+	case EFQ_D3DDevice:
+		return GetDevice();
+		break;
+	case EFQ_glReadPixels:
+		break;
+	case EFQ_Orients:
+		break;
+	case EFQ_NumOrients:
+		break;
+	case EFQ_SkyShader:
+		break;
+	case EFQ_SunFlares:
+		break;
+	case EFQ_CurSunFlare:
+		break;
+	case EFQ_Materials:
+		break;
+	case EFQ_LightMaterials:
+		break;
+	default:
+		break;
+	}
 	return nullptr;
 }
 

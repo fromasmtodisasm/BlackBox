@@ -23,18 +23,19 @@ target_sources(${PROJECT_NAME}
   PRIVATE ${ENGINE_DIR}/GUI/imgui_demo.cpp
 
   PRIVATE ${ENGINE_DIR}/GUI/imgui.cpp
+  PRIVATE ${ENGINE_DIR}/GUI/imgui.h
+  PRIVATE ${ENGINE_DIR}/GUI/imgui_tables.cpp
   PRIVATE ${ENGINE_DIR}/GUI/imgui_draw.cpp
   PRIVATE ${ENGINE_DIR}/GUI/imgui_widgets.cpp
 )
 
 #add_package(imgui CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
-target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
 # FIXME: work around input system
-add_sdl()
+add_sdl(GUI)
 
-add_subdirectory(GuiTools)
+#add_subdirectory(GuiTools)
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
 add_private_headers()
 target_precompile_headers(${PROJECT_NAME}
