@@ -35,7 +35,7 @@ target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
 # FIXME: work around input system
 add_sdl(GUI)
 
-#add_subdirectory(GuiTools)
+add_subdirectory(GuiTools)
 #target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
 add_private_headers()
 target_precompile_headers(${PROJECT_NAME}

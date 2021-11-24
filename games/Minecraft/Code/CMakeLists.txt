@@ -8,172 +8,158 @@ add_sources(
 	"NoUberFile"
 	PROJECTS
 	MineCRY
-	SOURCE_GROUP
-	"Source Files"
-	Main.cpp
-	Commands.cpp
-	GUI/TextEditorDemo.cpp
-	# GameFiles/GameGUI.cpp
-	SOURCE_GROUP
-	"GameClient"
-	Client/Client.cpp
-	Client/XClient.cpp
-	Client/XClientSnapshot.cpp
-	SOURCE_GROUP
-	"GameSystem"
-	GameSystem/XSystemBase.cpp
-	GameSystem/XSystemBase.h
-	GameSystem/XSystemClient.cpp
-	GameSystem/XSystemClient.h
-	GameSystem/XSystemDummy.cpp
-	GameSystem/XSystemDummy.h
-	GameSystem/XSystemEntities.cpp
-	GameSystem/XSystemEntities.h
-	GameSystem/XSystemServer.cpp
-	GameSystem/XSystemServer.h
+	SOURCE_GROUP "Source Files"
+		Main.cpp
+		Commands.cpp
+	SOURCE_GROUP "GameClient"
+		Client/Client.cpp
+		Client/XClient.cpp
+		Client/XClientSnapshot.cpp
+	SOURCE_GROUP "GameSystem"
+		GameSystem/XSystemBase.cpp
+		GameSystem/XSystemBase.h
+		GameSystem/XSystemClient.cpp
+		GameSystem/XSystemClient.h
+		GameSystem/XSystemDummy.cpp
+		GameSystem/XSystemDummy.h
+		GameSystem/XSystemEntities.cpp
+		GameSystem/XSystemEntities.h
+		GameSystem/XSystemServer.cpp
+		GameSystem/XSystemServer.h
 
 
-	SOURCE_GROUP
-	"GameFiles"
-	#GameFiles/GameObject.h
-	GameFiles/DevMode.cpp
-	GameFiles/EntityClassRegistry.cpp
-	GameFiles/Game.cpp
-	GameFiles/Minecraft.cpp
-	GameFiles/GameActionInput.cpp
-	GameFiles/GameCallbacks.cpp
-	GameFiles/GameClientServer.cpp
-	GameFiles/GameDevMode.cpp
-	GameFiles/GameEvents.cpp
-	GameFiles/GameLoading.cpp
-	GameFiles/GameMemStats.cpp
-	GameFiles/GameMisc.cpp
-	GameFiles/GameMods.cpp
-	GameFiles/GameMovieUser.cpp
-	GameFiles/GameTagPoints.cpp
-	GameFiles/SteamHelper.cpp
-	GameFiles/XArea.cpp
-	GameFiles/XArea.h
-	GameFiles/XVehicleSystem.cpp
-	GameFiles/CameraController.cpp
-	SOURCE_GROUP
-	"Network"
-	Network/NetEntityInfo.cpp
-	Network/SynchedRandomSeed.cpp
-	Network/XEntityProcessingCmd.cpp
-	Network/XNetwork.cpp
-	Network/XNetworkStats.cpp
-	SOURCE_GROUP
-	"Player"
-	Player/XPlayer.cpp
-	Player/XPlayerCamera.cpp
-	SOURCE_GROUP
-	"ScriptObjects"
-	ScriptObjects/ScriptObjectClient.cpp
-	ScriptObjects/ScriptObjectGame.cpp
-	ScriptObjects/ScriptObjectInput.cpp
-	ScriptObjects/ScriptObjectServer.cpp
-	ScriptObjects/ScriptObjectServerSlot.cpp
-	ScriptObjects/ScriptObjectStream.cpp
-	ScriptObjects/ScriptObjectTest.cpp
-	ScriptObjects/ScriptTimerMgr.cpp
-	SOURCE_GROUP
-	"Server"
-	Server/Server.cpp
-	Server/XServer.cpp
-	Server/XServerRules.cpp
-	Server/XServerSlot.cpp
-	Server/XSnapShot.h
-	Server/XSnapShot.cpp
-	SOURCE_GROUP
-	"Localization"
-	Localization/StringTableMgr.cpp
-	Localization/StringTableMgr.h
-	Localization/ScriptObjectLanguage.cpp
-	Localization/ScriptObjectLanguage.h
-	SOURCE_GROUP
-	"Materials"
-	Materials/XSurfaceMgr.cpp
-	Materials/XSurfaceMgr.h
-	SOURCE_GROUP
-	"TimeDemoRecorder"
-	TimeDemoRecorder/TimeDemoRecorder.cpp
-	TimeDemoRecorder/TimeDemoRecorder.h
+	SOURCE_GROUP "GameFiles"
+		#GameFiles/GameObject.h
+		# GameFiles/GameGUI.cpp
+		GameFiles/DevMode.cpp
+		GameFiles/EntityClassRegistry.cpp
+		GameFiles/Game.cpp
+		GameFiles/Minecraft.cpp
+		GameFiles/GameActionInput.cpp
+		GameFiles/GameCallbacks.cpp
+		GameFiles/GameClientServer.cpp
+		GameFiles/GameDevMode.cpp
+		GameFiles/GameEvents.cpp
+		GameFiles/GameLoading.cpp
+		GameFiles/GameMemStats.cpp
+		GameFiles/GameMisc.cpp
+		GameFiles/GameMods.cpp
+		GameFiles/GameMovieUser.cpp
+		GameFiles/GameTagPoints.cpp
+		GameFiles/SteamHelper.cpp
+		GameFiles/XArea.cpp
+		GameFiles/XArea.h
+		GameFiles/XVehicleSystem.cpp
+		GameFiles/CameraController.cpp
+	SOURCE_GROUP "Network"
+		Network/NetEntityInfo.cpp
+		Network/SynchedRandomSeed.cpp
+		Network/XEntityProcessingCmd.cpp
+		Network/XNetwork.cpp
+		Network/XNetworkStats.cpp
+	SOURCE_GROUP "Player"
+		Player/XPlayer.cpp
+		Player/XPlayerCamera.cpp
+	SOURCE_GROUP "ScriptObjects"
+		ScriptObjects/ScriptObjectClient.cpp
+		ScriptObjects/ScriptObjectGame.cpp
+		ScriptObjects/ScriptObjectInput.cpp
+		ScriptObjects/ScriptObjectServer.cpp
+		ScriptObjects/ScriptObjectServerSlot.cpp
+		ScriptObjects/ScriptObjectStream.cpp
+		ScriptObjects/ScriptObjectTest.cpp
+		ScriptObjects/ScriptTimerMgr.cpp
+	SOURCE_GROUP "Server"
+		Server/Server.cpp
+		Server/XServer.cpp
+		Server/XServerRules.cpp
+		Server/XServerSlot.cpp
+		Server/XSnapShot.h
+		Server/XSnapShot.cpp
+	SOURCE_GROUP "Localization"
+		Localization/StringTableMgr.cpp
+		Localization/StringTableMgr.h
+		Localization/ScriptObjectLanguage.cpp
+		Localization/ScriptObjectLanguage.h
+	SOURCE_GROUP "Materials"
+		Materials/XSurfaceMgr.cpp
+		Materials/XSurfaceMgr.h
+	SOURCE_GROUP "TimeDemoRecorder"
+		TimeDemoRecorder/TimeDemoRecorder.cpp
+		TimeDemoRecorder/TimeDemoRecorder.h
 
-	TimeDemoRecorder/XDemoMgr.cpp
-	TimeDemoRecorder/XDemoMgr.h
-	SOURCE_GROUP
-	"UI"
-	UI/IngameDialog.cpp
-	UI/IngameDialog.h
-	UI/ScriptObjectUI.cpp
-	UI/ScriptObjectUI.h
-	UI/UIButton.cpp
-	UI/UIButton.h
-	UI/UICVars.cpp
-	UI/UICVars.h
-	UI/UICheckBox.cpp
-	UI/UICheckBox.h
-	UI/UIComboBox.cpp
-	UI/UIComboBox.h
-	#UI/UIDivX_Video.cpp
-	#UI/UIDivX_Video.h
-	UI/UIEditBox.cpp
-	UI/UIEditBox.h
-	UI/UIHud.cpp
-	UI/UIHud.h
-	UI/UIListView.cpp
-	UI/UIListView.h
-	UI/UIMessages.h
-	UI/UIScreen.cpp
-	UI/UIScreen.h
-	UI/UIScrollBar.cpp
-	UI/UIScrollBar.h
-	UI/UIStatic.cpp
-	UI/UIStatic.h
-	UI/UISystem.cpp
-	UI/UISystem.h
-	UI/UIVideoPanel.cpp
-	UI/UIVideoPanel.h
-	UI/UIWidget.cpp
-	UI/UIWidget.h
+		TimeDemoRecorder/XDemoMgr.cpp
+		TimeDemoRecorder/XDemoMgr.h
+	SOURCE_GROUP "GUI"
+		GUI/TextEditorDemo.cpp
+	SOURCE_GROUP "UI"
+		UI/IngameDialog.cpp
+		UI/IngameDialog.h
+		UI/ScriptObjectUI.cpp
+		UI/ScriptObjectUI.h
+		UI/UIButton.cpp
+		UI/UIButton.h
+		UI/UICVars.cpp
+		UI/UICVars.h
+		UI/UICheckBox.cpp
+		UI/UICheckBox.h
+		UI/UIComboBox.cpp
+		UI/UIComboBox.h
+		#UI/UIDivX_Video.cpp
+		#UI/UIDivX_Video.h
+		UI/UIEditBox.cpp
+		UI/UIEditBox.h
+		UI/UIHud.cpp
+		UI/UIHud.h
+		UI/UIListView.cpp
+		UI/UIListView.h
+		UI/UIMessages.h
+		UI/UIScreen.cpp
+		UI/UIScreen.h
+		UI/UIScrollBar.cpp
+		UI/UIScrollBar.h
+		UI/UIStatic.cpp
+		UI/UIStatic.h
+		UI/UISystem.cpp
+		UI/UISystem.h
+		UI/UIVideoPanel.cpp
+		UI/UIVideoPanel.h
+		UI/UIWidget.cpp
+		UI/UIWidget.h
 
 	#UI/Proxy.cpp
-	SOURCE_GROUP
-	"Legacy"
-	Legacy/CryCharAnimationParams.h
-	Legacy/I3DEngine.h
-	Legacy/IBindable.h
-	Legacy/ICryPak.h
-	Legacy/IEntitySystem.h
-	Legacy/IInput.h
-	Legacy/IScriptSystem.h
-	Legacy/ITimer.h
-	Legacy/Input.cpp
-	Legacy/Input.hpp
-	Legacy/ScriptObjectStream.h
-	Legacy/ScriptObjectVector.h
-	Legacy/Stream.h
-	Legacy/TArray.h
-	Legacy/TimeValue.h
+	SOURCE_GROUP "Legacy"
+		Legacy/CryCharAnimationParams.h
+		Legacy/I3DEngine.h
+		Legacy/IBindable.h
+		Legacy/ICryPak.h
+		Legacy/IEntitySystem.h
+		Legacy/IInput.h
+		Legacy/IScriptSystem.h
+		Legacy/ITimer.h
+		Legacy/Input.cpp
+		Legacy/Input.hpp
+		Legacy/ScriptObjectStream.h
+		Legacy/ScriptObjectVector.h
+		Legacy/Stream.h
+		Legacy/TArray.h
+		Legacy/TimeValue.h
 
-	SOURCE_GROUP
-	"Weapons"
-	Weapons/FireType.h
-	Weapons/WeaponClass.cpp
-	Weapons/WeaponClass.h
-	Weapons/WeaponSystemEx.cpp
-	Weapons/WeaponSystemEx.h
+	SOURCE_GROUP "Weapons"
+		Weapons/FireType.h
+		Weapons/WeaponClass.cpp
+		Weapons/WeaponClass.h
+		Weapons/WeaponSystemEx.cpp
+		Weapons/WeaponSystemEx.h
 
-	SOURCE_GROUP
-	"Vehicle"
-	#Vehicle/XVehicle.cpp
-	Vehicle/XVehicle.h
-	#Vehicle/XVehicleProxy.cpp
-	Vehicle/XVehicleProxy.h
-	#Vehicle/XVehicleProxyHeli.cpp
-	#Vehicle/XVehicleSystem.cpp
-	Vehicle/XVehicleSystem.h
+	SOURCE_GROUP "Vehicle"
+		#Vehicle/XVehicle.cpp
+		Vehicle/XVehicle.h
+		#Vehicle/XVehicleProxy.cpp
+		Vehicle/XVehicleProxy.h
+		#Vehicle/XVehicleProxyHeli.cpp
+		#Vehicle/XVehicleSystem.cpp
+		Vehicle/XVehicleSystem.h
 
 )
 end_sources()
@@ -183,12 +169,10 @@ add_subdirectory(../thirdparty 3rdparty)
 
 target_link_libraries(${THIS_PROJECT} PRIVATE BlackBox)
 if(OPTION_USE_GUI)
+	add_compile_definitions("USE_GUI")
 	target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
-	# FIXME:
-	if (0)
-		target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiColorTextEdit)
-		target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiFileBrowser)
-	endif()
+	target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiFileBrowser)
+	target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiColorTextEdit)
 endif()
 if(WINDOWS)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Ws2_32)

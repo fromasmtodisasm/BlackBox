@@ -48,7 +48,6 @@ static int g_FontSize = 32;
 
 static CXGame* gGame;
 
-#include "TextEditorDemo.hpp"
 
 #include <BlackBox/GUI/ControlPanel.hpp>
 #ifdef WIN32

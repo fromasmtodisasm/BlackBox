@@ -16,12 +16,23 @@ add_sources(
 	${INC}/3DEngine/IStatObj.hpp
 
 	SOURCE_GROUP "Core"
+	#${INC}/Core/StlUtils.hpp
+	${INC}/Core/MathHelper.hpp
+	${INC}/Core/Path.hpp
+	${INC}/Core/Primitives.hpp
+	${INC}/Core/Stream.hpp
+	${INC}/Core/StringUtils.h
+	${INC}/Core/TArrays.h
+	${INC}/Core/Tarray.h
+	${INC}/Core/Utils.hpp
+	${INC}/Core/Version.hpp
 	${INC}/Core/BaseTypes.hpp
 	${INC}/Core/Compiler/MSVCspecific.h
 	${INC}/Core/IApp.hpp
 	${INC}/Core/ICompressionHelper.hpp
 	${INC}/Core/IGame.hpp
 	${INC}/Core/IMarkers.hpp
+	SOURCE_GROUP "Core\\\\Math"
 	${INC}/Core/Math/Cry_Camera.h
 	${INC}/Core/Math/Cry_Color4.h
 	${INC}/Core/Math/Cry_Geo.h
@@ -36,8 +47,7 @@ add_sources(
 	${INC}/Core/Math/Cry_XOptimise.h
 	${INC}/Core/Math/Geo.hpp
 	${INC}/Core/Math/platform.h
-	${INC}/Core/MathHelper.hpp
-	${INC}/Core/Path.hpp
+	SOURCE_GROUP "Core\\\\Platform"
 	${INC}/Core/Platform/CryLibrary.h
 	${INC}/Core/Platform/Linux32Specific.h
 	${INC}/Core/Platform/Linux64Specific.h
@@ -45,21 +55,13 @@ add_sources(
 	${INC}/Core/Platform/Linux_Win32Wrapper.h
 	${INC}/Core/Platform/Platform.hpp
 	${INC}/Core/Platform/PlatformDefines.hpp
-	${INC}/Core/Platform/platform_impl.inl
-	${INC}/Core/Platform/platform_impl_winapi.inl
 	${INC}/Core/Platform/Project/ProjectDefines.hpp
 	${INC}/Core/Platform/StlConfig.h
 	${INC}/Core/Platform/Windows.hpp
 	${INC}/Core/Platform/WindowsSpecific.hpp
 	${INC}/Core/Platform/_CryLibrary.h
-	${INC}/Core/Primitives.hpp
-	#${INC}/Core/StlUtils.hpp
-	${INC}/Core/Stream.hpp
-	${INC}/Core/StringUtils.h
-	${INC}/Core/Tarray.h
-	${INC}/Core/TArrays.h
-	${INC}/Core/Utils.hpp
-	${INC}/Core/Version.hpp
+	${INC}/Core/Platform/platform_impl.inl
+	${INC}/Core/Platform/platform_impl_winapi.inl
 
 	SOURCE_GROUP "EntitySystem"
 	${INC}/EntitySystem/EntityDesc.hpp

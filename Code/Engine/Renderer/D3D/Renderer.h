@@ -1,8 +1,8 @@
 #pragma once
 #include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
-#include <Cry_Color4.h>
 #include <BlackBox\System\File\CryFile.h>
+#include <Cry_Color4.h>
 
 #include <memory>
 
@@ -179,19 +179,36 @@ class CD3DRenderer : public CRenderer
 
 	void UpdateConstants();
 	template<class T>
-	auto ScopedMap(ID3DBuffer* CB, std::function<void(T* data)> Updater) {
+	auto ScopedMap(ID3DBuffer* CB, std::function<void(T* data)> Updater)
+	{
 		D3D11_MAPPED_SUBRESOURCE Buffer;
 		::GetDeviceContext()->Map(CB, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, NULL, &Buffer);
 		Updater((T*)Buffer.pData);
 		::GetDeviceContext()->Unmap(CB, D3D11CalcSubresource(0, 0, 1));
 	};
 
+	void CleanupRenderTarget()
+	{
+		if (m_pMainRenderTargetView)
+		{
+			assert(m_pMainRenderTargetView->Release() == 0);
+			m_pMainRenderTargetView = NULL;
+		}
+		if (m_pDepthStencilView)
+		{
+			assert(m_pDepthStencilView->Release() == 0);
+			m_pDepthStencilView = NULL;
+		}
+		if (m_DepthStencilBuffer)
+            assert(m_DepthStencilBuffer->Release() == 0);
+		GetDeviceContext()->ClearState();
+	}
 
   private:
-	ID3DDevice*			  m_pd3dDevice		  = NULL;
-	ID3DDeviceContext*	  m_pImmediateContext = NULL;
-	IDXGISwapChain*		  m_pSwapChain		  = NULL;
-	ID3DRenderTargetView* m_pRenderTargetView = NULL;
+	ID3DDevice*			  m_pd3dDevice			  = NULL;
+	ID3DDeviceContext*	  m_pImmediateContext	  = NULL;
+	IDXGISwapChain*		  m_pSwapChain			  = NULL;
+	ID3DRenderTargetView* m_pMainRenderTargetView = NULL;
 
 	ID3DTexture2D*		  m_DepthStencilBuffer{};
 	ID3DDepthStencilView* m_pDepthStencilView{};

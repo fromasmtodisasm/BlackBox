@@ -49,6 +49,9 @@ CClient::~CClient()
 
 void CClient::Update()
 {
+
+	glslEditor.Update();
+
 	m_testObjects;
 	for (auto& o : m_testObjects)
 	{

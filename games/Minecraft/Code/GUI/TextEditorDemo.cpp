@@ -3,12 +3,13 @@
 #endif
 #ifdef USE_GUI
 #include "TextEditorDemo.hpp"
+#include <BlackBox/System/ConsoleRegistration.h>
 
 GLSLEditor::GLSLEditor()
 {
     // Load Fonts
     // (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)
-    ImLegacy::Vec4 clear_col = ImColor(114, 144, 154);
+    ImVec4 clear_col = ImColor(114, 144, 154);
 
     ///////////////////////////////////////////////////////////////////////
     // TEXT EDITOR SAMPLE
@@ -139,7 +140,7 @@ void GLSLEditor::Update()
 		return;
 	ImGui::SetNextWindowBgAlpha(0.5);
     ImGui::Begin("Text Editor Demo", (bool*)(&opened), ImGuiWindowFlags_HorizontalScrollbar);
-    ImGui::SetWindowSize(ImLegacy::Vec2(800, 600), ImGuiCond_FirstUseEver);
+    ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
 	auto main_editor_window_focused = ImGui::IsWindowFocused();
 	if (
         //alt && 
@@ -202,7 +203,7 @@ void GLSLEditor::Update()
 		{
 			static bool enabled = true;
 			ImGui::MenuItem("Enabled", "", &enabled);
-			ImGui::BeginChild("child", ImLegacy::Vec2(0, 60), true);
+			ImGui::BeginChild("child", ImVec2(0, 60), true);
 			for (int i = 0; i < 10; i++)
 				ImGui::Text("Scrolling Text %d", i);
 			ImGui::EndChild();

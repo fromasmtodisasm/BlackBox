@@ -83,7 +83,7 @@ CD3DRenderer::CD3DRenderer()
 
 CD3DRenderer::~CD3DRenderer()
 {
-	SAFE_RELEASE(m_pRenderTargetView);
+	SAFE_RELEASE(m_pMainRenderTargetView);
 	SAFE_RELEASE(m_pSwapChain);
 	SAFE_RELEASE(m_pd3dDevice);
 
@@ -108,6 +108,10 @@ void CD3DRenderer::PopProfileMarker(char* label)
 
 int CD3DRenderer::CreateRenderTarget()
 {
+    ID3D11Texture2D* pBackBuffer;
+    m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
+    GetDevice()->CreateRenderTargetView(pBackBuffer, NULL, &m_pMainRenderTargetView);
+    pBackBuffer->Release();
 	return 0;
 }
 
@@ -137,8 +141,8 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 void CD3DRenderer::BeginFrame(void)
 {
 	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, &m_ClearColor[0]);
+	m_pImmediateContext->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
+	m_pImmediateContext->ClearRenderTargetView(m_pMainRenderTargetView, &m_ClearColor[0]);
 	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 }
 
@@ -224,6 +228,8 @@ void CD3DRenderer::GetViewport(int* x, int* y, int* width, int* height)
 
 void CD3DRenderer::SetViewport(int x, int y, int width, int height)
 {
+	CD3D11_VIEWPORT viewports(float(x), float(y), float(width), float(height),0.f,1.f);
+	m_pImmediateContext->RSSetViewports(1, &viewports);
 }
 
 void CD3DRenderer::SetScissor(int x, int y, int width, int height)
@@ -250,8 +256,8 @@ void CD3DRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int w
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = (float)x;
 	vp.TopLeftY = (float)y;
-	m_pImmediateContext->RSSetViewports(1, &vp);
 	OnResizeSwapchain(width - x, height - y);
+	m_pImmediateContext->RSSetViewports(1, &vp);
 }
 
 void CD3DRenderer::DrawFullScreenImage(int texture_id)
@@ -357,7 +363,7 @@ bool CD3DRenderer::InitOverride()
 
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount						  = 1;
+	sd.BufferCount						  = 2;
 	sd.BufferDesc.Width					  = GetWidth();
 	sd.BufferDesc.Height				  = GetHeight();
 	sd.BufferDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -368,6 +374,7 @@ bool CD3DRenderer::InitOverride()
 	sd.SampleDesc.Count					  = 1;
 	sd.SampleDesc.Quality				  = 0;
 	sd.Windowed							  = TRUE;
+	sd.SwapEffect						  = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 
 	D3D_FEATURE_LEVEL l = featureLevels[0];
 
@@ -387,16 +394,18 @@ bool CD3DRenderer::InitOverride()
 
 	CryLog("Created D3D device with feature level: %s", (const char*)g_featureLevel);
 
+	#if 0
 	// Create a render target view
 	ID3D11Texture2D* pBackBuffer = NULL;
 	hr							 = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 	if (FAILED(hr))
 		return hr;
 
-	hr = m_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pRenderTargetView);
+	hr = m_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pMainRenderTargetView);
 	pBackBuffer->Release();
 	if (FAILED(hr))
 		return hr;
+	#endif
 	// Set up rasterizer
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	rasterizerDesc.CullMode				 = D3D11_CULL_NONE;
@@ -430,7 +439,9 @@ bool CD3DRenderer::InitOverride()
 		return false;*/
 	ChangeViewport(0, 0, GetWidth(), GetHeight());
 
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	#if 0
+	m_pImmediateContext->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
+	#endif
 
 	Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
 	//Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
@@ -471,8 +482,11 @@ bool CD3DRenderer::InitOverride()
 
 bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
 {
+	#if 1
+	CleanupRenderTarget();
+	#endif
 	m_pSwapChain->ResizeBuffers(0, newWidth, newHeight, DXGI_FORMAT_UNKNOWN, 0);
-	SAFE_RELEASE(m_pRenderTargetView);
+	SAFE_RELEASE(m_pMainRenderTargetView);
 	SAFE_RELEASE(m_pDepthStencilView);
 
 	// Create a render target view
@@ -481,8 +495,8 @@ bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
 	if (FAILED(hr))
 		return false;
 
-	hr = m_pd3dDevice->CreateRenderTargetView(pBuffer, NULL, &m_pRenderTargetView);
-	pBuffer->Release();
+	hr = m_pd3dDevice->CreateRenderTargetView(pBuffer, NULL, &m_pMainRenderTargetView);
+	auto num_refs = pBuffer->Release();
 	if (FAILED(hr))
 		return false;
 
@@ -508,7 +522,7 @@ bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
 	if (FAILED(hr))
 		return false;
 
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	m_pImmediateContext->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
 
 	return true;
 }

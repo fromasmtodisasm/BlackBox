@@ -38,7 +38,7 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener, public C
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	// Enable Docking
 		// FIXME: rewrite platform window handling
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-		io.ConfigViewportsNoAutoMerge = true;
+		//io.ConfigViewportsNoAutoMerge = true;
 		//io.ConfigViewportsNoTaskBarIcon = true;
 
 		KeyboardEvent = gEnv->pSystem->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);

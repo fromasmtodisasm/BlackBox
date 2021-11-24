@@ -920,6 +920,13 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	{
 		return false;
 	}
+#if ENABLE_DEBUG_GUI
+	if (m_GuiManager)
+	{
+		m_GuiManager->NewFrame();
+		m_GuiManager->ShowDemoWindow();
+	}
+#endif
 
 	return !m_bQuit;
 }

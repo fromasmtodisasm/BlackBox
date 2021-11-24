@@ -14,6 +14,8 @@
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp> // CXNetworkStats
 #include <BlackBox/System/ITimer.hpp>
 
+#include "TextEditorDemo.hpp"
+
 namespace
 {
 	Legacy::Vec3 RandomVector(Legacy::Vec3 left, Legacy::Vec3 right, float floor = 5)
@@ -160,4 +162,5 @@ class CClient :
 	bool  m_OnGround	= true;
 	bool  m_JumpPressed = false;
 
+    GLSLEditor glslEditor;
 };
