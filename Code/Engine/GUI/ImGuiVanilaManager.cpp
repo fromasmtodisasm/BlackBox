@@ -45,13 +45,13 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener, public C
 		gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "ImGuiManager");
 
 		CVars::Init();
-        gEnv->pConsole->AddOutputPrintSink(&console);
 	}
 
+	virtual void Release() override { delete this; }
 
 	~ImGuiManager()
 	{
-	
+		ImGui_ImplDX11_InvalidateDeviceObjects();
 	}
 	// Inherited via IInputEventListener
 	virtual bool OnInputEvent(const SInputEvent& event) override
@@ -106,11 +106,8 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener, public C
         //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-            SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
-            SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
         }	
 	}
 	void ShowDemoWindow() override

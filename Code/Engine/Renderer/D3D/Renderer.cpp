@@ -1,4 +1,4 @@
-﻿#include "Renderer.h"
+#include "Renderer.h"
 #include "DDSTextureLoader11.h"
 #include <BlackBox/Core/Path.hpp>
 #include <BlackBox/System/File/CryFile.h>

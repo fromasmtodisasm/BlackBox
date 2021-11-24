@@ -217,6 +217,9 @@ void CXGame::InitConsoleCommands()
 	pConsole->AddCommand("dump_scripts","Script:DumpLoadedScripts()",VF_CHEAT,
 		"Outputs a list of currently loaded scripts.\n"
 		"Usage: dump_scripts\n");
+	pConsole->AddCommand("exit","Game:Quit()",0,
+		"Quits the game.\n"
+		"Usage: quit\n");
 	pConsole->AddCommand("quit","Game:Quit()",0,
 		"Quits the game.\n"
 		"Usage: quit\n");

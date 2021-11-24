@@ -596,6 +596,7 @@ void CSystem::ShutDown()
 	//SAFE_DELETE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_env.p3DEngine);
+	SAFE_RELEASE(m_GuiManager);
 	SAFE_RELEASE(m_env.pRenderer);
 
 	ShutDownThreadSystem();

@@ -47,6 +47,8 @@ public:
     if (p)
       p->Release();
   }
+
+  _I**		  GetAddressOf() { return &p; }
   operator _I* () const { return p; }
   operator const _I* () const { return p; }
   _I& operator*() const { return *p; }

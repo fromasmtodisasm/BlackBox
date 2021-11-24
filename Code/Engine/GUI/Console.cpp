@@ -56,9 +56,11 @@ struct ImGuiConsole : public IOutputPrintSink
         AutoScroll = true;
         ScrollToBottom = false;
         AddLog("Welcome to Dear ImGui!");
+        gEnv->pConsole->AddOutputPrintSink(this);
     }
     ~ImGuiConsole()
     {
+        gEnv->pConsole->RemoveOutputPrintSink(this);
         ClearLog();
         for (int i = 0; i < History.Size; i++)
             free(History[i]);

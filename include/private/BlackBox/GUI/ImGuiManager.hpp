@@ -17,6 +17,8 @@ struct IImGuiManager : public IInputEventListener
   virtual void ShowDemoWindow() = 0;
   virtual void ShowNodeEditor() = 0;
   virtual void HideDemoWindow() = 0;
+
+  virtual void Release() = 0;
 };
 
 extern "C" {

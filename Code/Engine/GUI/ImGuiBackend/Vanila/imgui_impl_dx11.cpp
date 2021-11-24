@@ -45,24 +45,28 @@
 // DirectX11 data
 struct ImGui_ImplDX11_Data
 {
-    ID3D11Device*               pd3dDevice;
-    ID3D11DeviceContext*        pd3dDeviceContext;
-    IDXGIFactory*               pFactory;
-    ID3D11Buffer*               pVB;
-    ID3D11Buffer*               pIB;
-    ID3D11VertexShader*         pVertexShader;
-    ID3D11InputLayout*          pInputLayout;
-    ID3D11Buffer*               pVertexConstantBuffer;
-    ID3D11PixelShader*          pPixelShader;
-    ID3D11SamplerState*         pFontSampler;
-    ID3D11ShaderResourceView*   pFontTextureView;
-    ID3D11RasterizerState*      pRasterizerState;
-    ID3D11BlendState*           pBlendState;
-    ID3D11DepthStencilState*    pDepthStencilState;
-    int                         VertexBufferSize;
-    int                         IndexBufferSize;
+	_smart_ptr<ID3D11Device>			 pd3dDevice;
+	_smart_ptr<ID3D11DeviceContext>		 pd3dDeviceContext;
+	_smart_ptr<IDXGIFactory>			 pFactory;
+	_smart_ptr<ID3D11Buffer>			 pVB;
+	_smart_ptr<ID3D11Buffer>			 pIB;
+	_smart_ptr<ID3D11VertexShader>		 pVertexShader;
+	_smart_ptr<ID3D11InputLayout>		 pInputLayout;
+	_smart_ptr<ID3D11Buffer>			 pVertexConstantBuffer;
+	_smart_ptr<ID3D11PixelShader>		 pPixelShader;
+	_smart_ptr<ID3D11SamplerState>		 pFontSampler;
+	_smart_ptr<ID3D11ShaderResourceView> pFontTextureView;
+	_smart_ptr<ID3D11RasterizerState>	 pRasterizerState;
+	_smart_ptr<ID3D11BlendState>		 pBlendState;
+	_smart_ptr<ID3D11DepthStencilState>	 pDepthStencilState;
+	int									 VertexBufferSize;
+	int									 IndexBufferSize;
 
     ImGui_ImplDX11_Data()       { memset(this, 0, sizeof(*this)); VertexBufferSize = 5000; IndexBufferSize = 10000; }
+
+    ~ImGui_ImplDX11_Data()
+	{
+	}
 };
 
 struct VERTEX_CONSTANT_BUFFER
@@ -100,13 +104,13 @@ static void ImGui_ImplDX11_SetupRenderState(ImDrawData* draw_data, ID3D11DeviceC
     unsigned int stride = sizeof(ImDrawVert);
     unsigned int offset = 0;
     ctx->IASetInputLayout(bd->pInputLayout);
-    ctx->IASetVertexBuffers(0, 1, &bd->pVB, &stride, &offset);
+    ctx->IASetVertexBuffers(0, 1, bd->pVB.GetAddressOf(), &stride, &offset);
     ctx->IASetIndexBuffer(bd->pIB, sizeof(ImDrawIdx) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
     ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     ctx->VSSetShader(bd->pVertexShader, NULL, 0);
-    ctx->VSSetConstantBuffers(0, 1, &bd->pVertexConstantBuffer);
+    ctx->VSSetConstantBuffers(0, 1, bd->pVertexConstantBuffer.GetAddressOf());
     ctx->PSSetShader(bd->pPixelShader, NULL, 0);
-    ctx->PSSetSamplers(0, 1, &bd->pFontSampler);
+    ctx->PSSetSamplers(0, 1, bd->pFontSampler.GetAddressOf());
     ctx->GSSetShader(NULL, NULL, 0);
     ctx->HSSetShader(NULL, NULL, 0); // In theory we should backup and restore this as well.. very infrequently used..
     ctx->DSSetShader(NULL, NULL, 0); // In theory we should backup and restore this as well.. very infrequently used..
@@ -141,7 +145,7 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
         desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         desc.MiscFlags = 0;
-        if (bd->pd3dDevice->CreateBuffer(&desc, NULL, &bd->pVB) < 0)
+        if (bd->pd3dDevice->CreateBuffer(&desc, NULL, bd->pVB.GetAddressOf()) < 0)
             return;
     }
     if (!bd->pIB || bd->IndexBufferSize < draw_data->TotalIdxCount)
@@ -154,7 +158,7 @@ void ImGui_ImplDX11_RenderDrawData(ImDrawData* draw_data)
         desc.ByteWidth = bd->IndexBufferSize * sizeof(ImDrawIdx);
         desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        if (bd->pd3dDevice->CreateBuffer(&desc, NULL, &bd->pIB) < 0)
+        if (bd->pd3dDevice->CreateBuffer(&desc, NULL, bd->pIB.GetAddressOf()) < 0)
             return;
     }
 
@@ -347,7 +351,7 @@ static void ImGui_ImplDX11_CreateFontsTexture()
         srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
         srvDesc.Texture2D.MipLevels = desc.MipLevels;
         srvDesc.Texture2D.MostDetailedMip = 0;
-        bd->pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, &bd->pFontTextureView);
+        bd->pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, bd->pFontTextureView.GetAddressOf());
         pTexture->Release();
     }
 
@@ -366,7 +370,7 @@ static void ImGui_ImplDX11_CreateFontsTexture()
         desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
         desc.MinLOD = 0.f;
         desc.MaxLOD = 0.f;
-        bd->pd3dDevice->CreateSamplerState(&desc, &bd->pFontSampler);
+        bd->pd3dDevice->CreateSamplerState(&desc, bd->pFontSampler.GetAddressOf());
     }
 }
 
@@ -417,7 +421,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
         ID3DBlob* vertexShaderBlob;
         if (FAILED(D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_4_0", 0, 0, &vertexShaderBlob, NULL)))
             return false; // NB: Pass ID3DBlob* pErrorBlob to D3DCompile() to get error showing in (const char*)pErrorBlob->GetBufferPointer(). Make sure to Release() the blob!
-        if (bd->pd3dDevice->CreateVertexShader(vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), NULL, &bd->pVertexShader) != S_OK)
+        if (bd->pd3dDevice->CreateVertexShader(vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), NULL, bd->pVertexShader.GetAddressOf()) != S_OK)
         {
             vertexShaderBlob->Release();
             return false;
@@ -430,7 +434,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
             { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (UINT)IM_OFFSETOF(ImDrawVert, uv),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (UINT)IM_OFFSETOF(ImDrawVert, col), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
-        if (bd->pd3dDevice->CreateInputLayout(local_layout, 3, vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), &bd->pInputLayout) != S_OK)
+        if (bd->pd3dDevice->CreateInputLayout(local_layout, 3, vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), bd->pInputLayout.GetAddressOf()) != S_OK)
         {
             vertexShaderBlob->Release();
             return false;
@@ -445,7 +449,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
             desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
             desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
             desc.MiscFlags = 0;
-            bd->pd3dDevice->CreateBuffer(&desc, NULL, &bd->pVertexConstantBuffer);
+            bd->pd3dDevice->CreateBuffer(&desc, NULL, bd->pVertexConstantBuffer.GetAddressOf());
         }
     }
 
@@ -470,7 +474,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
         ID3DBlob* pixelShaderBlob;
         if (FAILED(D3DCompile(pixelShader, strlen(pixelShader), NULL, NULL, NULL, "main", "ps_4_0", 0, 0, &pixelShaderBlob, NULL)))
             return false; // NB: Pass ID3DBlob* pErrorBlob to D3DCompile() to get error showing in (const char*)pErrorBlob->GetBufferPointer(). Make sure to Release() the blob!
-        if (bd->pd3dDevice->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), NULL, &bd->pPixelShader) != S_OK)
+        if (bd->pd3dDevice->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), NULL, bd->pPixelShader.GetAddressOf()) != S_OK)
         {
             pixelShaderBlob->Release();
             return false;
@@ -491,7 +495,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
         desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
         desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
         desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-        bd->pd3dDevice->CreateBlendState(&desc, &bd->pBlendState);
+        bd->pd3dDevice->CreateBlendState(&desc, bd->pBlendState.GetAddressOf());
     }
 
     // Create the rasterizer state
@@ -502,7 +506,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
         desc.CullMode = D3D11_CULL_NONE;
         desc.ScissorEnable = true;
         desc.DepthClipEnable = true;
-        bd->pd3dDevice->CreateRasterizerState(&desc, &bd->pRasterizerState);
+        bd->pd3dDevice->CreateRasterizerState(&desc, bd->pRasterizerState.GetAddressOf());
     }
 
     // Create depth-stencil State
@@ -516,7 +520,7 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
         desc.FrontFace.StencilFailOp = desc.FrontFace.StencilDepthFailOp = desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
         desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
         desc.BackFace = desc.FrontFace;
-        bd->pd3dDevice->CreateDepthStencilState(&desc, &bd->pDepthStencilState);
+        bd->pd3dDevice->CreateDepthStencilState(&desc, bd->pDepthStencilState.GetAddressOf());
     }
 
     ImGui_ImplDX11_CreateFontsTexture();
@@ -529,7 +533,9 @@ void    ImGui_ImplDX11_InvalidateDeviceObjects()
     ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
     if (!bd->pd3dDevice)
         return;
+	bd->~ImGui_ImplDX11_Data();
 
+    #if 0
     if (bd->pFontSampler)           { bd->pFontSampler->Release(); bd->pFontSampler = NULL; }
     if (bd->pFontTextureView)       { bd->pFontTextureView->Release(); bd->pFontTextureView = NULL; ImGui::GetIO().Fonts->SetTexID(NULL); } // We copied data->pFontTextureView to io.Fonts->TexID so let's clear that as well.
     if (bd->pIB)                    { bd->pIB->Release(); bd->pIB = NULL; }
@@ -541,6 +547,7 @@ void    ImGui_ImplDX11_InvalidateDeviceObjects()
     if (bd->pVertexConstantBuffer)  { bd->pVertexConstantBuffer->Release(); bd->pVertexConstantBuffer = NULL; }
     if (bd->pInputLayout)           { bd->pInputLayout->Release(); bd->pInputLayout = NULL; }
     if (bd->pVertexShader)          { bd->pVertexShader->Release(); bd->pVertexShader = NULL; }
+    #endif
 }
 
 bool    ImGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_context)
