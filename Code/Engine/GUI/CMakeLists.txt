@@ -1,47 +1,57 @@
-cmake_minimum_required(VERSION 3.10)
-project(GUI CXX)
-###################################################
-add_library(GUI SHARED)
-add_library(imgui::imgui ALIAS GUI)
+start_sources()
+sources_platform(ALL)
+add_sources(
+	"NoUberFile"
+	PROJECTS
+	GUI
+	SOURCE_GROUP "Source Files"
+	# already included in other file, skip it
+	# Console.cpp
+	GUI.cpp
+	ImGuiInput.cpp
+	ImGuiInput.hpp
+	ImGuiManager.cpp
+	ImGuiManager.hpp
+	ImGuiRenderer.cpp
+	ImGuiRenderer.hpp
+	ImGuiVanilaManager.cpp
+	MemoryEditor.h
+	imconfig.h
+	imgui.cpp
+	imgui.h
+	imgui_demo.cpp
+	imgui_draw.cpp
+	# already included in other file, skip it
+	# imgui_impl_sdl.cpp
+	imgui_impl_sdl.h
+	imgui_internal.h
+	imgui_tables.cpp
+	imgui_widgets.cpp
+	imstb_rectpack.h
+	imstb_textedit.h
+	imstb_true.h
+	imstb_truetype.h
+)
+end_sources()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Math)
-target_link_libraries(${PROJECT_NAME} PRIVATE Window)
+EngineModule(GUI FORCE_SHARED_WIN PCH "./pch.hpp" SOLUTION_FOLDER "Engine")
+
+target_link_libraries(${THIS_PROJECT} PRIVATE Math)
+target_link_libraries(${THIS_PROJECT} PRIVATE Window)
 
 target_include_directories(
-${PROJECT_NAME}
+${THIS_PROJECT}
 	PRIVATE	"${CMAKE_BINARY_DIR}"
 	PRIVATE	"${CMAKE_SOURCE_DIR}/"
 	PUBLIC	${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_sources(${PROJECT_NAME}
-  PRIVATE ${ENGINE_DIR}/GUI/GUI.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/ImGuiManager.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/ImGuiInput.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/ImGuiRenderer.cpp
-
-  PRIVATE ${ENGINE_DIR}/GUI/imgui_demo.cpp
-
-  PRIVATE ${ENGINE_DIR}/GUI/imgui.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/imgui.h
-  PRIVATE ${ENGINE_DIR}/GUI/imgui_tables.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/imgui_draw.cpp
-  PRIVATE ${ENGINE_DIR}/GUI/imgui_widgets.cpp
-)
-
-#add_package(imgui CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Renderer)
+target_link_libraries(${THIS_PROJECT} PRIVATE Renderer)
 target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
 # FIXME: work around input system
-add_sdl(GUI)
+add_sdl(${THIS_PROJECT})
 
 add_subdirectory(GuiTools)
-#target_compile_definitions(${PROJECT_NAME} PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_CUSTOM <BlackBox/Renderer/OpenGL/Core.hpp>)
-add_private_headers()
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-	<BlackBox/Core/Platform/Platform.hpp>
-	<BlackBox/Core/Platform/Platform.hpp>
-	<BlackBox/System/ISystem.hpp>
-	<BlackBox/System/IConsole.hpp>
-)
+#add_private_headers()
+
+add_library(imgui::imgui ALIAS GUI)
