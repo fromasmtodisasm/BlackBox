@@ -5,36 +5,7 @@
 
 #include "RenderThread.h"
 
-class CD3D_FEATURE_LEVEL
-{
-  public:
-	CD3D_FEATURE_LEVEL(D3D_FEATURE_LEVEL Type)
-		: m_Type(Type)
-	{
-	}
-	operator const char*()
-	{
-#define CONVERT(t) \
-	case t:        \
-		return #t;
-		switch (m_Type)
-		{
-			CONVERT(D3D_FEATURE_LEVEL_9_1)
-			CONVERT(D3D_FEATURE_LEVEL_9_2)
-			CONVERT(D3D_FEATURE_LEVEL_9_3)
-			CONVERT(D3D_FEATURE_LEVEL_10_0)
-			CONVERT(D3D_FEATURE_LEVEL_10_1)
-			CONVERT(D3D_FEATURE_LEVEL_11_0)
-		default:
-			return "Unknown";
-		}
-#undef CONVERT
-	}
-					   operator D3D_FEATURE_LEVEL() { return m_Type; }
-					   operator D3D_FEATURE_LEVEL*() { return &m_Type; }
-	D3D_FEATURE_LEVEL* operator&() { return &m_Type; }
-	D3D_FEATURE_LEVEL  m_Type;
-};
+#include <imgui.h>
 
 // Globals
 ID3DShaderResourceView* GlobalResources::FontAtlasRV{};
@@ -44,7 +15,7 @@ ID3DShaderResourceView* GlobalResources::WiteTextureRV;
 ID3DShaderResourceView* GlobalResources::GreyTextureRV;
 
 static CD3DRenderer _gcpRendD3D;
-static CD3DRenderer* gcpRendD3D = _gcpRendD3D;
+CD3DRenderer*		gcpRendD3D = _gcpRendD3D;
 
 //ID3D10EffectTechnique* GlobalResources::BoxTechnique;
 //ID3D10EffectTechnique* GlobalResources::MeshTechnique;
@@ -55,6 +26,15 @@ ID3D11BlendState* GlobalResources::FontBlendState;
 
 _smart_ptr<CShader> GlobalResources::TexturedQuadShader;
 _smart_ptr<CShader> GlobalResources::SpriteShader;
+
+namespace util
+{
+	template<class T>
+	_smart_ptr<T> make_smart_ptr()
+	{
+		return _smart_ptr<T>(new T);
+	}
+} // namespace util
 
 struct ITechniqueManager;
 ID3D11Device* GetDevice()
@@ -70,9 +50,11 @@ ID3DDeviceContext* GetDeviceContext()
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
-D3D_DRIVER_TYPE	   g_driverType	  = D3D_DRIVER_TYPE_NULL;
-CD3D_FEATURE_LEVEL g_featureLevel = D3D_FEATURE_LEVEL_11_0;
-CD3DRenderer*	   gD3DRender;
+CD3DRenderer* gD3DRender;
+
+namespace utils
+{
+} // namespace utils
 
 CD3DRenderer::CD3DRenderer()
 	: CRenderer()
@@ -84,8 +66,6 @@ CD3DRenderer::CD3DRenderer()
 CD3DRenderer::~CD3DRenderer()
 {
 	SAFE_RELEASE(m_pMainRenderTargetView);
-	SAFE_RELEASE(m_pSwapChain);
-	SAFE_RELEASE(m_pd3dDevice);
 
 	CRenderer::~CRenderer();
 }
@@ -108,10 +88,10 @@ void CD3DRenderer::PopProfileMarker(char* label)
 
 int CD3DRenderer::CreateRenderTarget()
 {
-    ID3D11Texture2D* pBackBuffer;
-    m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-    GetDevice()->CreateRenderTargetView(pBackBuffer, NULL, &m_pMainRenderTargetView);
-    pBackBuffer->Release();
+	ID3D11Texture2D* pBackBuffer;
+	m_pSwapChain->Get()->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
+	GetDevice()->CreateRenderTargetView(pBackBuffer, NULL, &m_pMainRenderTargetView);
+	pBackBuffer->Release();
 	return 0;
 }
 
@@ -141,9 +121,13 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 void CD3DRenderer::BeginFrame(void)
 {
 	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
-	m_pImmediateContext->ClearRenderTargetView(m_pMainRenderTargetView, &m_ClearColor[0]);
-	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
+	auto pDC = m_Device->Get<ID3D11DeviceContext>();
+	//pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+	pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+
+	pDC->ClearRenderTargetView(m_pMainRenderTargetView.Get(), &m_ClearColor[0]);
+	pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
+	pDC->ClearDepthStencilView(static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView), D3D11_CLEAR_DEPTH, 1.f, 0);
 }
 
 void CD3DRenderer::UpdateConstants()
@@ -166,8 +150,8 @@ void CD3DRenderer::UpdateConstants()
 									  });
 
 	ID3DBuffer* pBuffers[] = {
-		m_PerFrameConstants,
-		m_PerViewConstants};
+		m_PerFrameConstants.Get(),
+		m_PerViewConstants.Get()};
 	::GetDeviceContext()->VSSetConstantBuffers(0, 2, pBuffers);
 	::GetDeviceContext()->PSSetConstantBuffers(0, 1, pBuffers);
 	//D3DPERF_EndEvent();
@@ -181,7 +165,7 @@ void CD3DRenderer::Update(void)
 			m_FrameID++;
 			UpdateConstants();
 
-			::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+			::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0);
 			Flush();
 			{
 				D3DPERF_BeginEvent(D3DC_Blue, L"DrawImages");
@@ -192,6 +176,20 @@ void CD3DRenderer::Update(void)
 				D3DPERF_EndEvent();
 			}
 			{
+				{
+					m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
+					D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
+					if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+						pConsole->Draw();
+					D3DPERF_EndEvent();
+				}
+				GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+				if (m_FrameID > 20)
+				{
+					ImGui::Begin("View");
+					ImGui::Image(ImTextureID(m_RenderTargetScene->m_shaderResourceView.Get()), ImGui::GetContentRegionAvail());
+					ImGui::End();
+				}
 				D3DPERF_BeginEvent(D3DC_Blue, L"OnRenderer_BeforeEndFrame");
 				for (const auto& rcl : m_RenderCallbackClients)
 				{
@@ -199,12 +197,12 @@ void CD3DRenderer::Update(void)
 				}
 				D3DPERF_EndEvent();
 			}
-			{
-				D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
-				if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
-					pConsole->Draw();
-				D3DPERF_EndEvent();
-			}
+			//{
+			//	D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
+			//	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+			//		pConsole->Draw();
+			//	D3DPERF_EndEvent();
+			//}
 		}
 		D3DPERF_EndEvent();
 		D3DPERF_EndEvent(); //begin frame
@@ -219,7 +217,7 @@ void CD3DRenderer::GetViewport(int* x, int* y, int* width, int* height)
 	uint		   n = 1;
 	D3D11_VIEWPORT viewports;
 	ZeroStruct(viewports);
-	m_pImmediateContext->RSGetViewports(&n, &viewports);
+	m_Device->Get<ID3D11DeviceContext>()->RSGetViewports(&n, &viewports);
 	*x		= (int)viewports.TopLeftX;
 	*y		= (int)viewports.TopLeftY;
 	*width	= (int)viewports.Width;
@@ -228,8 +226,8 @@ void CD3DRenderer::GetViewport(int* x, int* y, int* width, int* height)
 
 void CD3DRenderer::SetViewport(int x, int y, int width, int height)
 {
-	CD3D11_VIEWPORT viewports(float(x), float(y), float(width), float(height),0.f,1.f);
-	m_pImmediateContext->RSSetViewports(1, &viewports);
+	CD3D11_VIEWPORT viewports(float(x), float(y), float(width), float(height), 0.f, 1.f);
+	m_Device->Get<ID3D11DeviceContext>()->RSSetViewports(1, &viewports);
 }
 
 void CD3DRenderer::SetScissor(int x, int y, int width, int height)
@@ -257,7 +255,7 @@ void CD3DRenderer::ChangeViewport(unsigned int x, unsigned int y, unsigned int w
 	vp.TopLeftX = (float)x;
 	vp.TopLeftY = (float)y;
 	OnResizeSwapchain(width - x, height - y);
-	m_pImmediateContext->RSSetViewports(1, &vp);
+	m_Device->Get<ID3D11DeviceContext>()->RSSetViewports(1, &vp);
 }
 
 void CD3DRenderer::DrawFullScreenImage(int texture_id)
@@ -340,72 +338,15 @@ bool CD3DRenderer::InitOverride()
 {
 	HRESULT hr = S_OK;
 
-	UINT createDeviceFlags = 0;
-#ifdef _DEBUG
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
-
-	D3D_DRIVER_TYPE driverTypes[] =
-		{
-			D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_HARDWARE),
-			D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_WARP),
-			D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_REFERENCE),
-		};
-	UINT numDriverTypes = ARRAYSIZE(driverTypes);
-
-	CD3D_FEATURE_LEVEL featureLevels[] =
-		{
-			D3D_FEATURE_LEVEL_11_0,
-			D3D_FEATURE_LEVEL_10_1,
-			D3D_FEATURE_LEVEL_10_0,
-		};
-	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
-
-	DXGI_SWAP_CHAIN_DESC sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount						  = 2;
-	sd.BufferDesc.Width					  = GetWidth();
-	sd.BufferDesc.Height				  = GetHeight();
-	sd.BufferDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator	  = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferUsage						  = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow						  = (HWND)m_Window->getNativeHandle();
-	sd.SampleDesc.Count					  = 1;
-	sd.SampleDesc.Quality				  = 0;
-	sd.Windowed							  = TRUE;
-	sd.SwapEffect						  = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-
-	D3D_FEATURE_LEVEL l = featureLevels[0];
-
-	for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
+	m_Device = std::make_shared<CDevice>((HWND)m_Window->getNativeHandle());
+	if (!m_Device->Create(nullptr))
 	{
-		g_driverType = driverTypes[driverTypeIndex];
-		hr			 = D3D11CreateDeviceAndSwapChain(NULL, g_driverType, NULL, createDeviceFlags, featureLevels[0], numFeatureLevels,
-											 D3D11_SDK_VERSION, &sd, &m_pSwapChain, &m_pd3dDevice, &g_featureLevel, &m_pImmediateContext);
-		if (SUCCEEDED(hr))
-			break;
-	}
-	if (FAILED(hr))
-	{
-		CryLog("Failed create D3D10 device");
 		return false;
 	}
 
-	CryLog("Created D3D device with feature level: %s", (const char*)g_featureLevel);
+	CryLog("Created D3D device with feature level: %s", (const char*)m_Device->m_FeatureLevel);
+	m_pSwapChain = CSwapChain::Create(m_Device, (HWND)m_Window->getNativeHandle());
 
-	#if 0
-	// Create a render target view
-	ID3D11Texture2D* pBackBuffer = NULL;
-	hr							 = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-	if (FAILED(hr))
-		return hr;
-
-	hr = m_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pMainRenderTargetView);
-	pBackBuffer->Release();
-	if (FAILED(hr))
-		return hr;
-	#endif
 	// Set up rasterizer
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	rasterizerDesc.CullMode				 = D3D11_CULL_NONE;
@@ -419,8 +360,8 @@ bool CD3DRenderer::InitOverride()
 	rasterizerDesc.MultisampleEnable	 = false;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
-	m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerState);
-	m_pImmediateContext->RSSetState(m_pRasterizerState);
+	m_Device->Get<ID3DDevice>()->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerState);
+	m_Device->Get<ID3D11DeviceContext>()->RSSetState(m_pRasterizerState.Get());
 
 	{
 		D3D11_DEPTH_STENCIL_DESC desc;
@@ -432,16 +373,15 @@ bool CD3DRenderer::InitOverride()
 		desc.DepthFunc		= D3D11_COMPARISON_LESS;
 
 		GetDevice()->CreateDepthStencilState(&desc, &m_pDepthStencilState);
-		GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState, 0);
+		GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0);
 	}
 
-	/*if (!OnResizeSwapchain(GetWidth(), GetHeight()))
-		return false;*/
+	m_DepthStencil = std::make_shared<CTexture>();
 	ChangeViewport(0, 0, GetWidth(), GetHeight());
 
-	#if 0
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
-	#endif
+#if 0
+	m_Device->Get<ID3D11DeviceContext>()->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
+#endif
 
 	Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
 	//Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
@@ -466,11 +406,6 @@ bool CD3DRenderer::InitOverride()
 		return hr;
 	}
 
-	if (!CreateRenderTargets())
-	{
-		CryFatalError("Cannot create render target");
-	}
-
 #ifdef MULTITHREADED_RENDER
 	m_RenderThread = std::make_unique<SRenderThread>();
 
@@ -482,49 +417,17 @@ bool CD3DRenderer::InitOverride()
 
 bool CD3DRenderer::OnResizeSwapchain(int newWidth, int newHeight)
 {
-	#if 1
-	CleanupRenderTarget();
-	#endif
-	m_pSwapChain->ResizeBuffers(0, newWidth, newHeight, DXGI_FORMAT_UNKNOWN, 0);
-	SAFE_RELEASE(m_pMainRenderTargetView);
-	SAFE_RELEASE(m_pDepthStencilView);
+	gcpRendD3D->CleanupRenderTarget();
 
-	// Create a render target view
-	ID3DTexture2D* pBuffer;
-	auto		   hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3DTexture2D), (LPVOID*)&pBuffer);
-	if (FAILED(hr))
-		return false;
-
-	hr = m_pd3dDevice->CreateRenderTargetView(pBuffer, NULL, &m_pMainRenderTargetView);
-	auto num_refs = pBuffer->Release();
-	if (FAILED(hr))
-		return false;
-
-	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	depthStencilDesc.Width				= newWidth;
-	depthStencilDesc.Height				= newHeight;
-	depthStencilDesc.MipLevels			= 1;
-	depthStencilDesc.ArraySize			= 1;
-	depthStencilDesc.Format				= DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.SampleDesc.Count	= 1; // multisampling must match
-	depthStencilDesc.SampleDesc.Quality = 0; // swap chain values.
-	depthStencilDesc.Usage				= D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags			= D3D11_BIND_DEPTH_STENCIL;
-	depthStencilDesc.CPUAccessFlags		= 0;
-	depthStencilDesc.MiscFlags			= 0;
-
-	hr = (m_pd3dDevice->CreateTexture2D(
-		&depthStencilDesc, 0, &m_DepthStencilBuffer));
-	if (FAILED(hr))
-		return false;
-	hr = (m_pd3dDevice->CreateDepthStencilView(
-		m_DepthStencilBuffer, 0, &m_pDepthStencilView));
-	if (FAILED(hr))
-		return false;
-
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
-
-	return true;
+	if (m_pSwapChain->OnResize(newWidth, newHeight, m_pMainRenderTargetView.GetAddressOf()))
+	{
+		if (!CreateRenderTargets())
+		{
+			CryFatalError("Cannot create render target");
+		}
+		return CreateDepthStencil(newWidth, newHeight);
+	}
+	return false;
 }
 
 void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
@@ -592,22 +495,14 @@ ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(CCryFile file)
 
 ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(const char* name)
 {
-	ID3D11Resource*			pTexture{};
-	ID3DShaderResourceView* pSRView = NULL;
-	HRESULT					HResult{};
-
 	std::string_view str(name);
 	std::wstring	 wstr(str.begin(), str.end());
-	//HResult = D3DX11CreateShaderResourceViewFromFile(
-	HResult = DirectX::CreateDDSTextureFromFile(
-		m_pd3dDevice,
-		wstr.data(),
-		&pTexture,
-		&pSRView);
+	auto			 result = m_Device->CreateDDSTextureFromFile(
+		wstr.data());
 	//if (FAILED(HResult))
 	//{
 	//}
-	return pSRView;
+	return std::get<ID3DShaderResourceView*>(result);
 }
 
 string CD3DRenderer::AdjustTexturePath(string filename)
@@ -661,8 +556,7 @@ ID3DShaderResourceView* CD3DRenderer::CreateTexture(std::vector<uint8_t>& blob)
 	ID3DShaderResourceView* pSRView = NULL;
 	HRESULT					HResult{};
 
-	HResult = DirectX::CreateDDSTextureFromMemory(
-		m_pd3dDevice,
+	HResult = m_Device->CreateDDSTextureFromMemory(
 		&blob[0],
 		blob.size(),
 		&pTexture,
@@ -749,52 +643,8 @@ void CD3DRenderer::RemoveTexture(ITexPic* pTexPic)
 
 int CD3DRenderer::CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT format, UINT bindFlags)
 {
-	// Create the render target texture
-	D3D11_TEXTURE2D_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.Width			  = size.x;
-	desc.Height			  = size.y;
-	desc.MipLevels		  = 1;
-	desc.ArraySize		  = 1;
-	desc.Format			  = format;
-	desc.SampleDesc.Count = 1;
-	desc.Usage			  = D3D11_USAGE_DEFAULT;
-	desc.BindFlags		  = bindFlags;
-
-	ID3DTexture2D* pTexture = NULL;
-	m_pd3dDevice->CreateTexture2D(&desc, NULL, &pTexture);
-
-	// Create the shader-resource view
-	D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
-	srDesc.Format					 = desc.Format;
-	srDesc.ViewDimension			 = D3D10_SRV_DIMENSION_TEXTURE2D;
-	srDesc.Texture2D.MostDetailedMip = 0;
-	srDesc.Texture2D.MipLevels		 = 1;
-
-	ID3DShaderResourceView* pShaderResView = NULL;
-	m_pd3dDevice->CreateShaderResourceView(pTexture, &srDesc, &pShaderResView);
-
-#if 0
-	D3D11_MAPPED_SUBRESOURCE mappedTex;
-	::GetDeviceContext()->Map(pTexture, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, 0, &mappedTex);
-
-	UCHAR* pTexels = (UCHAR*)mappedTex.pData;
-	for (UINT row = 0; row < desc.Height; row++)
-	{
-		UINT rowStart = row * mappedTex.RowPitch;
-		for (UINT col = 0; col < desc.Width; col++)
-		{
-			UINT colStart					 = col * 4;
-			pTexels[rowStart + colStart + 0] = 255; // Red
-			pTexels[rowStart + colStart + 1] = 128; // Green
-			pTexels[rowStart + colStart + 2] = 64;	// Blue
-			pTexels[rowStart + colStart + 3] = 32;	// Alpha
-		}
-	}
-
-	::GetDeviceContext()->Unmap(pTexture, D3D11CalcSubresource(0, 0, 1));
-#endif
-
+	if (auto result = m_Device->CreateEmptyTexture(size, color, format, bindFlags); result == nullptr)
+		return 0;
 	return 0;
 }
 
@@ -942,13 +792,13 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 	ID3DShaderResourceView* currentTexture = m_TexturesMap[texture].second;
 
 	GlobalResources::TexturedQuadShader->Bind();
-	m_pImmediateContext->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-	m_pImmediateContext->PSSetShaderResources(0, 1, &currentTexture);
+	m_Device->Get<ID3D11DeviceContext>()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
+	m_Device->Get<ID3D11DeviceContext>()->PSSetShaderResources(0, 1, &currentTexture);
 #if 0
-	m_pImmediateContext->IASetInputLayout(GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout);
+	m_Device->Get<ID3D11DeviceContext>()->IASetInputLayout(GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout);
 #endif
-	m_pImmediateContext->RSSetState(m_pRasterizerState);
-	m_pImmediateContext->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
+	m_Device->Get<ID3D11DeviceContext>()->RSSetState(m_pRasterizerState.Get());
+	m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
 	//m_pd3dDevice->OMSetDepthStencilState(m_pDSState, 0);
 
 	gEnv->pRenderer->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
@@ -958,6 +808,10 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 bool CD3DRenderer::CreateRenderTargets()
 {
 	auto [ok, rt] = RenderTarget::Create(GetWidth(), GetHeight());
+	if (ok)
+	{
+		m_RenderTargetScene = rt;
+	}
 	return ok;
 }
 
@@ -1001,4 +855,35 @@ IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 									 LPDIRECT3DVERTEXDECLARATION9 m_pVtxDeclObject;
 	m_pd3dDevice->CreateVertexDeclaration(m_VtxDcl, &m_pVtxDclObj);
 #endif
+}
+
+std::unique_ptr<CSwapChain> CSwapChain::Create(std::shared_ptr<CDevice> pDevice, HWND Hwnd)
+{
+	_smart_ptr<IDXGIFactory>   pFactory	  = NULL;
+	_smart_ptr<IDXGISwapChain> pSwapChain = NULL;
+	// Create a DXGIFactory object.
+	if (SUCCEEDED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)pFactory.GetAddressOf())))
+	{
+		auto as = CSwapChain::EnumerateAdapters(pFactory);
+		auto a	= CSwapChain::SelectAdapter(as);
+
+		DXGI_SWAP_CHAIN_DESC sd				  = {0};
+		sd.BufferCount						  = 2;
+		sd.BufferDesc.Width					  = gcpRendD3D->GetWidth();
+		sd.BufferDesc.Height				  = gcpRendD3D->GetHeight();
+		sd.BufferDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
+		sd.BufferDesc.RefreshRate.Numerator	  = 60;
+		sd.BufferDesc.RefreshRate.Denominator = 1;
+		sd.BufferUsage						  = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		sd.OutputWindow						  = Hwnd;
+		sd.SampleDesc.Count					  = 1;
+		sd.SampleDesc.Quality				  = 0;
+		sd.Windowed							  = TRUE;
+		sd.SwapEffect						  = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+
+		pFactory->CreateSwapChain(pDevice->Get<ID3D11Device>(), &sd, pSwapChain.GetAddressOf());
+		return std::make_unique<CSwapChain>(pDevice, pSwapChain);
+	}
+
+	return nullptr;
 }

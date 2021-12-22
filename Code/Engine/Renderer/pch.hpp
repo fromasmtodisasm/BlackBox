@@ -181,3 +181,32 @@ inline void SetDebugName(ID3D11DeviceChild* pNativeResource, const char* name)
 	pNativeResource->SetPrivateData(WKPDID_D3DDebugObjectName, strlen(name) + 1, name);
 #endif
 }
+
+#include <wrl.h>
+
+template<class T>
+using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+#define H(exp, fmt, ...) \
+[&] { \
+	auto hr = exp;        \
+	if (FAILED(hr)){     \
+		CryError("[Render] " fmt, __VA_ARGS__);\
+	} \
+	return hr; \
+}()
+
+
+
+// Types
+struct CTexture
+{
+	uint16			 m_nWidth;
+	uint16			 m_nHeight;
+	uint16			 m_nDepth;
+	ETEX_Format		 m_eDstFormat;
+	ID3D11View*		 m_pView;
+	ID3D11Texture2D* m_pResource;
+};
+
+

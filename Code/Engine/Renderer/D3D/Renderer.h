@@ -4,14 +4,30 @@
 #include <BlackBox\System\File\CryFile.h>
 #include <Cry_Color4.h>
 
+#include "Device.hpp"
+#include "SwapChain.hpp"
+
 #include <memory>
+#include <utility>
 
 class CD3DRenderer;
 extern CD3DRenderer* gD3DRender;
 
-#define DEVICE m_pd3dDevice
+#define DEVICE m_Device->Get<ID3DDevice>()
 
 struct SRenderThread;
+
+//template <class T, class... Types>
+//_smart_ptr<T> make_smart_ptr(Types&&... _Args)
+//{
+//    const auto _Rx = new T(std::forward<Types>(_Args)...);
+//    return _smart_ptr<T>(_Rx);
+//}
+template<class T, class Inst>
+_smart_ptr<T> make_smart_ptr(Inst* inst)
+{
+	return _smart_ptr<T>(inst);
+}
 
 struct Image2D
 {
@@ -85,10 +101,77 @@ struct SPerFrameConstants
 	D3DXMATRIX Projection;
 	//D3DXVECTOR4 SunDirection;
 };
-struct RenderTarget;
+
+ID3DDevice*		   GetDevice();
+ID3DDeviceContext* GetDeviceContext();
+
+//=========================================================================================
+
+// NOTE: ...
+struct RenderTarget : _reference_target_t
+{
+	~RenderTarget()
+	{
+	
+	}
+
+	static std::pair<bool, _smart_ptr<RenderTarget>> Create(int textureWidth, int textureHeight)
+	{
+		auto  renderTarget			= std::make_pair(false, _smart_ptr<RenderTarget>(new RenderTarget));
+		auto& m_renderTargetTexture = renderTarget.second->m_renderTargetTexture;
+		auto& m_renderTargetView	= renderTarget.second->m_renderTargetView;
+		auto& m_shaderResourceView	= renderTarget.second->m_shaderResourceView;
+
+		D3D11_TEXTURE2D_DESC textureDesc;
+		ZeroMemory(&textureDesc, sizeof(textureDesc));
+
+		textureDesc.Width			 = textureWidth;
+		textureDesc.Height			 = textureHeight;
+		textureDesc.MipLevels		 = 1;
+		textureDesc.ArraySize		 = 1;
+		textureDesc.Format			 = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.Usage			 = D3D11_USAGE_DEFAULT;
+		textureDesc.BindFlags		 = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags	 = 0;
+		textureDesc.MiscFlags		 = 0;
+
+		HRESULT result = GetDevice()->CreateTexture2D(&textureDesc, NULL, &m_renderTargetTexture);
+		if (FAILED(result))
+			return renderTarget;
+
+		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+		renderTargetViewDesc.Format				= textureDesc.Format;
+		renderTargetViewDesc.ViewDimension		= D3D11_RTV_DIMENSION_TEXTURE2D;
+		renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+		result = GetDevice()->CreateRenderTargetView(m_renderTargetTexture.Get(), &renderTargetViewDesc, &m_renderTargetView);
+		if (FAILED(result))
+			return renderTarget;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+		shaderResourceViewDesc.Format					 = textureDesc.Format;
+		shaderResourceViewDesc.ViewDimension			 = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+		shaderResourceViewDesc.Texture2D.MipLevels		 = 1;
+
+		result = GetDevice()->CreateShaderResourceView(m_renderTargetTexture.Get(), &shaderResourceViewDesc, &m_shaderResourceView);
+		if (FAILED(result))
+			return renderTarget;
+
+		renderTarget.first = true;
+		return renderTarget;
+	}
+
+	ComPtr<ID3DTexture2D>		   m_renderTargetTexture{};
+	ComPtr<ID3DRenderTargetView>   m_renderTargetView{};
+	ComPtr<ID3DShaderResourceView> m_shaderResourceView{};
+};
 
 class CD3DRenderer : public CRenderer
 {
+	friend class CSwapChain;
+
   public:
 	//HRESULT InitCube();
 	CD3DRenderer();
@@ -139,8 +222,8 @@ class CD3DRenderer : public CRenderer
 	virtual void	 SetRenderTarget(int nHandle) override;
 	// Inherited via CRenderer
 	virtual bool	   InitOverride() override;
-	ID3DDevice*		   GetDevice() { return m_pd3dDevice; }
-	ID3DDeviceContext* GetDeviceContext() { return m_pImmediateContext; }
+	ID3DDevice*		   GetDevice() { return m_Device->Get<ID3DDevice>(); }
+	ID3DDeviceContext* GetDeviceContext() { return m_Device->Get<ID3DDeviceContext>(); }
 
 	bool OnResizeSwapchain(int newWidth, int newHeight);
 
@@ -178,46 +261,76 @@ class CD3DRenderer : public CRenderer
 	unsigned int LoadTextureInternal(STexPic* pix, string filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true);
 
 	void UpdateConstants();
-	template<class T>
-	auto ScopedMap(ID3DBuffer* CB, std::function<void(T* data)> Updater)
+	template<class Data, class T, class B>
+	auto ScopedMap(B* CB, std::function<void(Data* data)> Updater);
+
+	template<class Data, template<class B> typename T, class B>
+	auto ScopedMap(T<B> CB, std::function<void(Data* data)> Updater)
+	{
+		ScopedMap(CB.Get(), Updater);
+	}
+
+	template<class Data, class B>
+	auto ScopedMap(B* CB, std::function<void(Data* data)> Updater)
 	{
 		D3D11_MAPPED_SUBRESOURCE Buffer;
 		::GetDeviceContext()->Map(CB, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, NULL, &Buffer);
-		Updater((T*)Buffer.pData);
+		Updater((Data*)Buffer.pData);
 		::GetDeviceContext()->Unmap(CB, D3D11CalcSubresource(0, 0, 1));
 	};
 
 	void CleanupRenderTarget()
 	{
-		if (m_pMainRenderTargetView)
+		m_pMainRenderTargetView		= nullptr;
+		m_DepthStencil->m_pView		= nullptr;
+		m_DepthStencil->m_pResource = nullptr;
+
+		GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
+	}
+
+	bool CreateDepthStencil(int w, int h)
+	{
+		auto&				 pDepthStencil = m_DepthStencil;
+		D3D11_TEXTURE2D_DESC depthStencilDesc;
+		depthStencilDesc.Width				= w;
+		depthStencilDesc.Height				= h;
+		depthStencilDesc.MipLevels			= 1;
+		depthStencilDesc.ArraySize			= 1;
+		depthStencilDesc.Format				= DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count	= 1; // multisampling must match
+		depthStencilDesc.SampleDesc.Quality = 0; // swap chain values.
+		depthStencilDesc.Usage				= D3D11_USAGE_DEFAULT;
+		depthStencilDesc.BindFlags			= D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDesc.CPUAccessFlags		= 0;
+		depthStencilDesc.MiscFlags			= 0;
+
+		if (FAILED(H(GetDevice()->CreateTexture2D(
+						 &depthStencilDesc, 0, &pDepthStencil->m_pResource),
+					 "Error Create DS Texture")))
+			return false;
+		ID3D11DepthStencilView* dsv{};
+
+		if (FAILED(H(GetDevice()->CreateDepthStencilView(pDepthStencil->m_pResource, 0, &dsv),
+					 "Error Create DS Texture")))
 		{
-			assert(m_pMainRenderTargetView->Release() == 0);
-			m_pMainRenderTargetView = NULL;
+			return false;
 		}
-		if (m_pDepthStencilView)
-		{
-			assert(m_pDepthStencilView->Release() == 0);
-			m_pDepthStencilView = NULL;
-		}
-		if (m_DepthStencilBuffer)
-            assert(m_DepthStencilBuffer->Release() == 0);
-		GetDeviceContext()->ClearState();
+		pDepthStencil->m_pView = dsv;
+		return true;
 	}
 
   private:
-	ID3DDevice*			  m_pd3dDevice			  = NULL;
-	ID3DDeviceContext*	  m_pImmediateContext	  = NULL;
-	IDXGISwapChain*		  m_pSwapChain			  = NULL;
-	ID3DRenderTargetView* m_pMainRenderTargetView = NULL;
+	std::shared_ptr<CDevice>	m_Device;
+	std::unique_ptr<CSwapChain> m_pSwapChain;
 
-	ID3DTexture2D*		  m_DepthStencilBuffer{};
-	ID3DDepthStencilView* m_pDepthStencilView{};
+	ComPtr<ID3DRenderTargetView>  m_pMainRenderTargetView;
+	ComPtr<ID3DRasterizerState>	  m_pRasterizerState{};
+	ComPtr<ID3DDepthStencilState> m_pDepthStencilState{};
 
-	ID3DRasterizerState*   m_pRasterizerState{};
-	ID3DDepthStencilState* m_pDepthStencilState{};
+	std::shared_ptr<CTexture> m_DepthStencil;
 
-	ID3DBuffer* m_PerFrameConstants;
-	ID3DBuffer* m_PerViewConstants;
+	ComPtr<ID3DBuffer> m_PerFrameConstants;
+	ComPtr<ID3DBuffer> m_PerViewConstants;
 
 	std::vector<Image2D> m_DrawImages;
 
@@ -226,12 +339,9 @@ class CD3DRenderer : public CRenderer
 	std::map<int, STexPic>											  m_TexPics;
 	int																  m_NumLoadedTextures{};
 
-	RenderTarget* m_RenderTargetScene;
-	RenderTarget* m_SceneRenderTargetFinal;
+	_smart_ptr<RenderTarget> m_RenderTargetScene;
+	_smart_ptr<RenderTarget> m_SceneRenderTargetFinal;
 };
-
-ID3DDevice*		   GetDevice();
-ID3DDeviceContext* GetDeviceContext();
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -240,61 +350,3 @@ extern CD3DRenderer gcpRendD3D;
 #else
 extern CD3DRenderer* gcpRendD3D;
 #endif
-
-//=========================================================================================
-
-// NOTE: ...
-struct RenderTarget : _reference_target_t
-{
-	ID3DTexture2D*			m_renderTargetTexture{};
-	ID3DRenderTargetView*	m_renderTargetView{};
-	ID3DShaderResourceView* m_shaderResourceView{};
-
-	static std::pair<bool, _smart_ptr<RenderTarget>> Create(int textureWidth, int textureHeight)
-	{
-		auto  renderTarget			= std::make_pair(false, new RenderTarget{});
-		auto& m_renderTargetTexture = renderTarget.second->m_renderTargetTexture;
-		auto& m_renderTargetView	= renderTarget.second->m_renderTargetView;
-		auto& m_shaderResourceView	= renderTarget.second->m_shaderResourceView;
-
-		D3D11_TEXTURE2D_DESC textureDesc;
-		ZeroMemory(&textureDesc, sizeof(textureDesc));
-
-		textureDesc.Width			 = textureWidth;
-		textureDesc.Height			 = textureHeight;
-		textureDesc.MipLevels		 = 1;
-		textureDesc.ArraySize		 = 1;
-		textureDesc.Format			 = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.Usage			 = D3D11_USAGE_DEFAULT;
-		textureDesc.BindFlags		 = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		textureDesc.CPUAccessFlags	 = 0;
-		textureDesc.MiscFlags		 = 0;
-
-		HRESULT result = GetDevice()->CreateTexture2D(&textureDesc, NULL, &m_renderTargetTexture);
-		if (FAILED(result))
-			return renderTarget;
-
-		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
-		renderTargetViewDesc.Format				= textureDesc.Format;
-		renderTargetViewDesc.ViewDimension		= D3D11_RTV_DIMENSION_TEXTURE2D;
-		renderTargetViewDesc.Texture2D.MipSlice = 0;
-
-		result = GetDevice()->CreateRenderTargetView(m_renderTargetTexture, &renderTargetViewDesc, &m_renderTargetView);
-		if (FAILED(result))
-			return renderTarget;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-		shaderResourceViewDesc.Format					 = textureDesc.Format;
-		shaderResourceViewDesc.ViewDimension			 = D3D11_SRV_DIMENSION_TEXTURE2D;
-		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-		shaderResourceViewDesc.Texture2D.MipLevels		 = 1;
-
-		result = GetDevice()->CreateShaderResourceView(m_renderTargetTexture, &shaderResourceViewDesc, &m_shaderResourceView);
-		if (FAILED(result))
-			return renderTarget;
-
-		renderTarget.first = true;
-		return renderTarget;
-	}
-};

@@ -2,7 +2,10 @@
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/System/System.hpp>
 
+#include <imgui.h>
+
 #include "CrySizerImpl.h"
+
 
 void CSystem::Render()
 {
@@ -32,6 +35,8 @@ void CSystem::RenderBegin()
 void CSystem::OnRenderer_BeforeEndFrame()
 {
 	RenderStats();
+	ImGui::Begin("System");
+	ImGui::End();
 	// FIXME: implement imgui rendering over internal rendering api
 	if (m_GuiManager)
 		m_GuiManager->Render();

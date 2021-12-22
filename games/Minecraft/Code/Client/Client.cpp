@@ -49,8 +49,12 @@ CClient::~CClient()
 
 void CClient::Update()
 {
-
-	glslEditor.Update();
+	ImGui::Begin("Game");
+		ImGui::Text("Game Window");
+		ImGui::Checkbox("Glsl Editor", &m_ShowEditor);
+	ImGui::End();
+    if (m_ShowEditor)
+        glslEditor.Update();
 
 	m_testObjects;
 	for (auto& o : m_testObjects)

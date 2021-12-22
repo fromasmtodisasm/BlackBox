@@ -231,7 +231,9 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #endif
 	gEnv->pAuxGeomRenderer = m_RenderAuxGeom;
 
+	#if 0
 	CreateRenderTarget();
+	#endif
 
 	auto* dm = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
 #if 0

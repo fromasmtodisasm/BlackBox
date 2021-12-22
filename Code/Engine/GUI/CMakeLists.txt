@@ -46,7 +46,7 @@ ${THIS_PROJECT}
 	PUBLIC	${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(${THIS_PROJECT} PRIVATE Renderer)
+#target_link_libraries(${THIS_PROJECT} PRIVATE Renderer)
 target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
 # FIXME: work around input system
 add_sdl(${THIS_PROJECT})

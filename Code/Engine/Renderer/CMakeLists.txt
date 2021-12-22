@@ -43,12 +43,16 @@ add_sources(
 		"D3D/CMakeLists.txt"
 		"D3D/DDSTextureLoader11.cpp"
 		"D3D/DDSTextureLoader11.h"
+		"D3D/Device.cpp"
+		"D3D/Device.hpp"
 		"D3D/RenderThread.cpp"
 		"D3D/RenderThread.h"
 		"D3D/Renderer.cpp"
 		"D3D/Renderer.h"
 		"D3D/Shader.cpp"
 		"D3D/Shader.hpp"
+		"D3D/SwapChain.cpp"
+		"D3D/SwapChain.hpp"
 
 	SOURCE_GROUP "DeviceManager"
 		"DeviceManager/DeviceObjects.h"
@@ -94,7 +98,7 @@ if(OPTION_DX_RENDERER)
 	add_common_includes()
 
 	target_compile_definitions(RendererDX PUBLIC "DX_RENDERER")
-	target_link_libraries(${THIS_PROJECT} PRIVATE dxguid d3d11 d3d10 d3d9 d3dcompiler)
+	target_link_libraries(${THIS_PROJECT} PRIVATE dxguid d3d11 d3d10 d3d9 d3dcompiler DXGI.lib GUI)
 	add_library(Renderer ALIAS RendererDX)
 else()
 	cryfilecontainer(RendererDX SOLUTION_FOLDER "Engine")

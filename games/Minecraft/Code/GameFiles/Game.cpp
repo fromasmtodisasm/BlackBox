@@ -1672,10 +1672,12 @@ void CXGame::ProcessPMessages(const char* szMsg)
 
 			if (pCvarNoMenu && pCvarNoMenu->GetIVal())
 			{
+				CryError("g_NoMenu enabled");
 				m_pSystem->Quit();
 
 				return;
 			}
+            CryError("g_NoMenu disabled");
 
 			MenuOn();
 		}
