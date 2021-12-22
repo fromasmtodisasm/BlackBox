@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "vs2019-editor",
+      "inherits": "base",
+      "displayName": "VS2019 Config",
+      "description": "Visual Studio 2019 Config generator",
+      "generator": "Visual Studio 16 2019",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_VERSION": "10",
+        "OPTION_EDITOR":  true
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vs2019-editor",
+      "configurePreset": "vs2019-editor"
+    }
+  ]
+}

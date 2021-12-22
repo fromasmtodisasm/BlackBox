@@ -5,13 +5,15 @@
 #include <BlackBox/System/ILog.hpp>
 
 #include "MainWindow.hpp"
-#include "imgui.h"
+
+#include <imgui.h>
 
 
 MainWindow::MainWindow()
 {
 	m_pGame = gEnv->pSystem->GetIGame();
-	gEnv->pRenderer->SetRenderCallback(this);
+	//gEnv->pRenderer->SetRenderCallback(this);
+	gEnv->pRenderer->RegisterCallbackClient(this);
 	m_ViewRenderTarget = gEnv->pRenderer->CreateRenderTarget();
 	gEnv->pRenderer->SetRenderTarget(m_ViewRenderTarget);
 }
@@ -44,7 +46,7 @@ void MainWindow::CallBack(Type type)
 		//auto size = ImGui::GetContentRegionAvail();
 		//ImGui::SetNextWindowSize(size, ImGuiCond_FirstUseEver);
 		static bool p_open = true;
-		ImGui::Begin("View",&p_open
+		ImGui::Begin("MainView",&p_open
 			#if 0
 			,ImGuiWindowFlags_NoNav
 			| ImGuiWindowFlags_NoInputs
@@ -62,7 +64,7 @@ void MainWindow::CallBack(Type type)
 				gEnv->pLog->Log("View clicked");
 			}
 			auto pos = ImGui::GetCursorPos();
-			m_NextFrameViewPortSize = Vec2(size.x, size.y);
+			m_NextFrameViewPortSize = Legacy::Vec2(size.x, size.y);
 #pragma warning(pop)
 			//ImGui::EndTabItem();
 		ImGui::End();
@@ -71,6 +73,11 @@ void MainWindow::CallBack(Type type)
 	default:
 		break;
 	}
+}
+
+void MainWindow::OnRenderer_BeforeEndFrame()
+{
+	CallBack(IRenderCallback::eBeforeSwapBuffers);
 }
 
 extern "C" int AppMain(int c, char** v)

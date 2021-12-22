@@ -784,6 +784,60 @@ function(Launcher target)
 	endif()
 endfunction()
 
+macro(set_editor_module_flags)
+	target_include_directories( ${THIS_PROJECT} PRIVATE
+		#"${ENGINE_DIR}/Code/Sandbox/Plugins/EditorCommon"
+		#"${ENGINE_DIR}/Code/Sandbox/EditorInterface"
+		"${BLACKBOX_DIR}/include/public"
+		#"${ENGINE_DIR}/Code/CryEngine/CryCommon/3rdParty"
+		#"${SDK_DIR}/boost"
+	)
+	target_compile_definitions( ${THIS_PROJECT} PRIVATE
+		-DWIN32
+		-DCRY_ENABLE_RC_HELPER
+		-DIS_EDITOR_BUILD
+		-DQT_FORCE_ASSERT
+		-DNO_WARN_MBCS_MFC_DEPRECATION
+	)
+	if(NOT MODULE_DISABLE_MFC AND NOT MODULE_FORCE_STATIC)
+		target_compile_definitions( ${THIS_PROJECT} PRIVATE -D_AFXDLL)
+	endif()
+	#target_link_libraries(${THIS_PROJECT} PRIVATE BoostPython Python)
+
+	#use_qt()
+	#target_compile_options(${THIS_PROJECT} PRIVATE /EHsc /GR /bigobj /wd4251 /wd4275)
+	#target_include_directories(${THIS_PROJECT} PRIVATE "${CRYENGINE_DIR}/Code/Sandbox/Libs/CryQt")
+	#target_link_libraries(${THIS_PROJECT} PRIVATE CryQt)
+	#target_link_libraries(${THIS_PROJECT} PRIVATE )
+	set_property(TARGET ${THIS_PROJECT} PROPERTY EXCLUDE_FROM_DEFAULT_BUILD_RELEASE TRUE)
+	set_property(TARGET ${THIS_PROJECT} PROPERTY EDITOR_MODULE_FLAGS TRUE)
+endmacro()
+function(Editor target)
+	prepare_project(${ARGN})
+	if(WINDOWS)
+		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES})
+	else()
+		add_executable(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
+	endif()
+	set_editor_module_flags()
+	add_metadata()
+	target_compile_options(${THIS_PROJECT} PRIVATE /Zm200)
+	target_compile_definitions(${THIS_PROJECT} PRIVATE -DSANDBOX_EXPORTS -DEDITOR_COMMON_IMPORTS)
+	if (0)
+		#target_link_libraries(${THIS_PROJECT} PRIVATE EditorCommon)
+	endif()
+	target_link_libraries(${THIS_PROJECT} PRIVATE Math)
+	set_property(TARGET ${THIS_PROJECT} PROPERTY ENABLE_EXPORTS TRUE)
+	set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:WINDOWS")
+	apply_compile_settings()
+endfunction()
+function(WindowsApplication target)
+	prepare_project(${ARGN})
+	add_executable(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
+	set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:WINDOWS")
+	apply_compile_settings()	
+endfunction()
+
 function(DedicatedServer target)
 	prepare_project(${ARGN})
 	if(WINDOWS)

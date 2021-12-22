@@ -1,29 +1,24 @@
-cmake_minimum_required(VERSION 3.10)
-project(Editor CXX)
-###################################################
-add_executable(${PROJECT_NAME} 
-	Main.cpp
-	MainWindow.cpp
-    #"Resource.rc"
-)
-target_link_libraries(Editor PRIVATE  BlackBox)
-#target_link_libraries(Editor PRIVATE  System)
-add_dependencies(Editor Game)
-if (OPTION_USE_GUI)
-	target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-target_sources(${PROJECT_NAME}
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.cpp
-)
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-add_private_headers()
-target_precompile_headers(${PROJECT_NAME}
-  PRIVATE 
-  "pch.hpp"
+start_sources()
+# -- launcher.waf_files --
+sources_platform(WINDOWS)
+add_sources(
+	"NoUberFile"
+	PROJECTS
+	SandBox
+	SOURCE_GROUP "Header Files"
+		"pch.hpp"
+	SOURCE_GROUP "Resource Files"
+		"resource.h"
+	SOURCE_GROUP "Source Files"
+		"Main.cpp"
+		"MainWindow.cpp"
+		"MainWindow.hpp"
 )
 
-set_property(TARGET Editor PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-set_target_properties(Editor PROPERTIES FOLDER "Engine/Editor")
+Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
+
+target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
+

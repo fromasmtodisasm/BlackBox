@@ -92,7 +92,7 @@ endmacro()
 
 if(OPTION_DX_RENDERER)
 	message(STATUS "Using D3D11 Renderer Backend")
-	enginemodule(RendererDX FORCE_SHARED_WIN PCH
+	EngineModule(RendererDX FORCE_SHARED_WIN PCH
 							 "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp" SOLUTION_FOLDER "Engine")
 	add_common_libs()
 	add_common_includes()
