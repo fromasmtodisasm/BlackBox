@@ -24,6 +24,8 @@ add_sources(
 		"Common/CommonRender.h"
 		"Common/CommonRender.cpp"
 		"Common/CryNameR.h"
+		"Common/ResourceManager.hpp"
+		"Common/ResourceManager.cpp"
 	SOURCE_GROUP "GraphicsPipeline"
 		"GraphicsPipeline/StandardGraphicsPipeline.cpp"
 		"GraphicsPipeline/StandardGraphicsPipeline.h"

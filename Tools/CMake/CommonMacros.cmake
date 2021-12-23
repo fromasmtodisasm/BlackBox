@@ -786,11 +786,10 @@ endfunction()
 
 macro(set_editor_module_flags)
 	target_include_directories( ${THIS_PROJECT} PRIVATE
-		#"${ENGINE_DIR}/Code/Sandbox/Plugins/EditorCommon"
-		#"${ENGINE_DIR}/Code/Sandbox/EditorInterface"
+		"${BLACKBOX_DIR}/Code/Sandbox/Plugins/EditorCommon"
+		"${BLACKBOX_DIR}/Code/Sandbox/EditorInterface"
+		#"${BLACKBOX_DIR}/Code/CryEngine/CryCommon" 
 		"${BLACKBOX_DIR}/include/public"
-		#"${ENGINE_DIR}/Code/CryEngine/CryCommon/3rdParty"
-		#"${SDK_DIR}/boost"
 	)
 	target_compile_definitions( ${THIS_PROJECT} PRIVATE
 		-DWIN32
@@ -808,7 +807,7 @@ macro(set_editor_module_flags)
 	#target_compile_options(${THIS_PROJECT} PRIVATE /EHsc /GR /bigobj /wd4251 /wd4275)
 	#target_include_directories(${THIS_PROJECT} PRIVATE "${CRYENGINE_DIR}/Code/Sandbox/Libs/CryQt")
 	#target_link_libraries(${THIS_PROJECT} PRIVATE CryQt)
-	#target_link_libraries(${THIS_PROJECT} PRIVATE )
+	target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
 	set_property(TARGET ${THIS_PROJECT} PROPERTY EXCLUDE_FROM_DEFAULT_BUILD_RELEASE TRUE)
 	set_property(TARGET ${THIS_PROJECT} PROPERTY EDITOR_MODULE_FLAGS TRUE)
 endmacro()
@@ -823,9 +822,7 @@ function(Editor target)
 	add_metadata()
 	target_compile_options(${THIS_PROJECT} PRIVATE /Zm200)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE -DSANDBOX_EXPORTS -DEDITOR_COMMON_IMPORTS)
-	if (0)
-		#target_link_libraries(${THIS_PROJECT} PRIVATE EditorCommon)
-	endif()
+	target_link_libraries(${THIS_PROJECT} PRIVATE EditorCommon)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 	set_property(TARGET ${THIS_PROJECT} PROPERTY ENABLE_EXPORTS TRUE)
 	set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:WINDOWS")

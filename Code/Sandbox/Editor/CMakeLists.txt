@@ -6,8 +6,6 @@ start_sources()
 sources_platform(WINDOWS)
 add_sources(
 	"NoUberFile"
-	PROJECTS
-	SandBox
 	SOURCE_GROUP "Header Files"
 		"pch.hpp"
 	SOURCE_GROUP "Resource Files"
@@ -17,8 +15,5 @@ add_sources(
 		"MainWindow.cpp"
 		"MainWindow.hpp"
 )
-
 Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
-
-target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
 
