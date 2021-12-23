@@ -8,12 +8,31 @@ add_sources(
 	"NoUberFile"
 	SOURCE_GROUP "Header Files"
 		"pch.hpp"
+	SOURCE_GROUP "Core"
+		"Include/SandboxAPI.h"
 	SOURCE_GROUP "Resource Files"
 		"resource.h"
 	SOURCE_GROUP "Source Files"
+		"EditorApp.cpp"
+		"EditorApp.h"
+		"EditorDefs.h"
+		"EditorImpl.cpp"
+		"EditorImpl.h"
 		"Main.cpp"
 		"MainWindow.cpp"
 		"MainWindow.hpp"
 )
 Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
+target_include_directories( ${THIS_PROJECT}
+PUBLIC
+	.
+	Include
+)
+target_compile_definitions( ${THIS_PROJECT}
+PRIVATE 
+	-DDONT_BAN_STD_STRING
+	-DFBXSDK_NEW_API=1
+	-DNOT_USE_CRY_MEMORY_MANAGER
+	-DSANDBOX_EDITOR_IMPL
+)
 
