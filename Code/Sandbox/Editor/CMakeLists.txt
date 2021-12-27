@@ -21,6 +21,11 @@ add_sources(
 		"Main.cpp"
 		"MainWindow.cpp"
 		"MainWindow.hpp"
+
+		"MainMenu.cpp"
+		"MainMenu.hpp"
+		"GameEngine.cpp"
+		"GameEngine.hpp"
 )
 Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
 target_include_directories( ${THIS_PROJECT}

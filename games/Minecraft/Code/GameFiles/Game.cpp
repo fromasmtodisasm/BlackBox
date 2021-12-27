@@ -35,7 +35,9 @@
 #include "UISystem.h"
 #include "UIHud.h"
 #include "IngameDialog.h"
+#if EDITOR_IMPLEMENT_LOAD_LEVEL
 #include "Minecraft.h"
+#endif
 
 static int g_FontSize = 32;
 #define MEASURETIME(str) \
@@ -877,9 +879,11 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_bOK				 = true;
 	e_deformable_terrain = NULL;
 
+	#if EDITOR_IMPLEMENT_LOAD_LEVEL
 	minecraft = new Minecraft;
 	minecraft->init();
 	minePlayer = &minecraft->player;
+	#endif
 	return (true);
 }
 
@@ -1207,7 +1211,9 @@ bool CXGame::Update()
 	m_pSystem->GetIProfileSystem()->EndFrame();
 	//////////////////////////////////////////////////////////////////////////
 
+	#if EDITOR_IMPLEMENT_LOAD_LEVEL
 	minecraft->update();
+	#endif
 	return (m_bUpdateRet);
 }
 

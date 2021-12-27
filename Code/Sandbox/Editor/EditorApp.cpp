@@ -1,5 +1,7 @@
 #include "EditorApp.h"
 #include "MainWindow.hpp"
+#include "GameEngine.hpp"
+#include "EditorImpl.h"
 
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
@@ -22,8 +24,9 @@ CEditApp* CEditApp::GetInstance()
 bool CEditApp::InitInstance()
 {
 	SSystemInitParams startupParams;
-	startupParams.sLogFileName		= "Game.log";
+	startupParams.sLogFileName		= "Editor.log";
 	startupParams.bManualEngineLoop = true;
+	startupParams.bEditor			= true;
 	// Enable run-time memory check for debug builds.
 
 	// Note: lpCmdLine does not contain the filename.
@@ -38,6 +41,8 @@ bool CEditApp::InitInstance()
 		pSystem->GetILog()->Log("ISystem created");
 		//pSystem->GetILog()->Log("Current working directory: %s", path.c_str());
 		gEnv = pSystem->GetGlobalEnvironment();
+
+		m_pEditor = new CEditorImpl(new CGameEngine(gEnv->pSystem->GetIGame()));
 
 		result = true;
 	}
@@ -57,9 +62,11 @@ int CEditApp::ExitInstance()
 
 void CEditApp::Run()
 {
-    MainWindow mainWindow;
-	while (mainWindow.Update())
-		;
+	while(true)
+	{
+		if (!m_pEditor->Update())
+			return;
+	}
 }
 
 CEditApp::CEditApp()
