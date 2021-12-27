@@ -44,13 +44,6 @@ extern "C" DLL_EXPORT void CleanupModuleCVars()
 }
 #endif
 
-#if /*!defined(IS_MONOLITHIC_BUILD)  || */defined(_LAUNCHER)
-extern "C" DLL_EXPORT SRegFactoryNode* GetHeadToRegFactories()
-{
-	return g_pHeadToRegFactories;
-}
-#endif
-
 #if !defined(_LIB) || defined(_LAUNCHER)
 //////////////////////////////////////////////////////////////////////////
 // If not in static library.

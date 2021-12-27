@@ -5,32 +5,33 @@ add_sources(
 	PROJECTS
 	GUI
 	SOURCE_GROUP "Source Files"
-	# already included in other file, skip it
-	# Console.cpp
-	GUI.cpp
-	ImGuiInput.cpp
-	ImGuiInput.hpp
-	ImGuiManager.cpp
-	ImGuiManager.hpp
-	ImGuiRenderer.cpp
-	ImGuiRenderer.hpp
-	ImGuiVanilaManager.cpp
-	MemoryEditor.h
-	imconfig.h
-	imgui.cpp
-	imgui.h
-	imgui_demo.cpp
-	imgui_draw.cpp
-	# already included in other file, skip it
-	# imgui_impl_sdl.cpp
-	imgui_impl_sdl.h
-	imgui_internal.h
-	imgui_tables.cpp
-	imgui_widgets.cpp
-	imstb_rectpack.h
-	imstb_textedit.h
-	imstb_true.h
-	imstb_truetype.h
+		Console.cpp
+		Console.h
+		GUI.cpp
+		ImGuiInput.cpp
+		ImGuiInput.hpp
+		ImGuiManager.cpp
+		ImGuiManager.hpp
+		ImGuiRenderer.cpp
+		ImGuiRenderer.hpp
+		ImGuiVanilaManager.cpp
+		ImGuiVanilaManager.h
+		MemoryEditor.h
+		imconfig.h
+		imgui.cpp
+		imgui.h
+		imgui_demo.cpp
+		imgui_draw.cpp
+		# already included in other file, skip it
+		# imgui_impl_sdl.cpp
+		imgui_impl_sdl.h
+		imgui_internal.h
+		imgui_tables.cpp
+		imgui_widgets.cpp
+		imstb_rectpack.h
+		imstb_textedit.h
+		imstb_true.h
+		imstb_truetype.h
 )
 end_sources()
 

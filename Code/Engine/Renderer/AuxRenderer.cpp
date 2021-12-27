@@ -12,11 +12,11 @@ ID3D11DepthStencilState* CRenderAuxGeom::m_pDSStateZPrePass;
 ID3D11DepthStencilState* CRenderAuxGeom::m_pDSStateMesh;
 ID3D11DepthStencilState* m_pDSStateMeshCurrent;
 
-ID3D11RasterizerState*	 g_pRasterizerStateSolid{};
-ID3D11RasterizerState*	 g_pRasterizerStateWire{};
-ID3D11RasterizerState*	 g_pRasterizerStateForMeshCurrent{};
-ID3D11RasterizerState*	 g_pRasterizerStateForZPrePass{};
-ID3D11BlendState*		 m_pBlendState;
+_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateSolid{};
+_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateWire{};
+_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateForMeshCurrent{};
+_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateForZPrePass{};
+_smart_ptr<ID3D11BlendState>		 m_pBlendState;
 
 int CV_r_DrawWirefame = 0;
 int CV_r_DisableZP = 0;
@@ -38,7 +38,7 @@ void CreateBlendState()
 	BlendState.RenderTarget[0].BlendOpAlpha			 = D3D11_BLEND_OP_ADD;
 	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	GetDevice()->CreateBlendState(&BlendState, &m_pBlendState);
+	GetDevice()->CreateBlendState(&BlendState, m_pBlendState.GetAddressOf());
 }
 
 //--------------------------------------------------------------------------------------
@@ -57,8 +57,6 @@ struct CBChangesEveryFrame
 	bool	   ApplyGrayScale;
 };
 
-ID3D10Effect*	   g_pEffect	   = nullptr;
-ID3D11InputLayout* g_pVertexLayout = nullptr;
 D3DXMATRIX		   g_MVP;
 D3DXMATRIX		   g_World;
 D3DXMATRIX		   g_View;
@@ -116,10 +114,10 @@ HRESULT CRenderAuxGeom::InitCube()
 	rasterizerDesc.MultisampleEnable	 = false;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, &g_pRasterizerStateSolid);
+	GetDevice()->CreateRasterizerState(&rasterizerDesc, g_pRasterizerStateSolid.GetAddressOf());
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, &g_pRasterizerStateWire);
+	GetDevice()->CreateRasterizerState(&rasterizerDesc, g_pRasterizerStateWire.GetAddressOf());
 	return S_OK;
 }
 

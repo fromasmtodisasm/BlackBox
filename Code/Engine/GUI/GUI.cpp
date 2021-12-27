@@ -6,8 +6,7 @@
 #include <BlackBox/System/IConsole.hpp>
 
 #include "imgui.h"
-#include <BlackBox/GUI/ImGuiManager.hpp>
-//#define IMGUI_VANILA_MANAGER
+#include "ImGuiVanilaManager.h"
 
 // Helper to display a little (?) mark which shows a tooltip when hovered.
 // In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.txt)
@@ -128,14 +127,7 @@ static void ShowExampleAppDockSpace(bool* p_open)
 #endif
 
 
-#define IMGUI_VANILA_MANAGER
-#ifdef IMGUI_VANILA_MANAGER
-#include "ImGuiVanilaManager.cpp"
-#else
-#include "ImGuiManager.cpp"
-#endif // VANILA_MANAGER
-
-DLL_EXPORT IImGuiManager * CreateGUI(ISystem * pSystem)
+IImGuiManager * CreateGUI(ISystem * pSystem)
 {
 	return new ImGuiManager(pSystem);
 }
