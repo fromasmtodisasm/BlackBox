@@ -629,7 +629,7 @@ function(GameModule target)
 
 	if(OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
 		target_compile_definitions(${THIS_PROJECT}
-															 PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
+															 PRIVATE _LIB -DIS_MONOLITHIC_BUILD)
 	elseif(ANDROID)
 		set(SHARED_MODULES
 				${SHARED_MODULES} ${THIS_PROJECT}
@@ -724,7 +724,7 @@ function(EngineStaticModule target)
 	set(MODULE_FORCE_STATIC TRUE)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE -D_LIB)
 	if (OPTION_STATIC_LINKING AND NOT MODULE_FORCE_SHARED)
-		target_compile_definitions(${THIS_PROJECT} PRIVATE -DCRY_IS_MONOLITHIC_BUILD)
+		target_compile_definitions(${THIS_PROJECT} PRIVATE -DIS_MONOLITHIC_BUILD)
 	endif()
 	if(OPTION_DEDICATED_SERVER)
 		target_compile_definitions( ${THIS_PROJECT} PRIVATE "-DDEDICATED_SERVER")
@@ -785,7 +785,7 @@ function(Launcher target)
 	if(OPTION_STATIC_LINKING)
 		use_scaleform()
 		target_compile_definitions(${THIS_PROJECT}
-															 PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
+															 PRIVATE _LIB -DIS_MONOLITHIC_BUILD)
 		if(WINDOWS)
 			set_property(
 				TARGET ${THIS_PROJECT}
@@ -883,7 +883,7 @@ function(DedicatedServer target)
 
 	if(OPTION_STATIC_LINKING)
 		use_scaleform()
-		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DCRY_IS_MONOLITHIC_BUILD)
+		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DIS_MONOLITHIC_BUILD)
 		if (WINDOWS)
 			set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS_PROFILE " /NODEFAULTLIB:libcpmt.lib")
 			set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /NODEFAULTLIB:libcpmt.lib")

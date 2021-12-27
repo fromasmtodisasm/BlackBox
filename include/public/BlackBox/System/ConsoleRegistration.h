@@ -5,7 +5,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
-#if (defined(_LAUNCHER) && defined(CRY_IS_MONOLITHIC_BUILD)) || !defined(_LIB)
+#if (defined(_LAUNCHER) && defined(IS_MONOLITHIC_BUILD)) || !defined(_LIB)
 extern std::vector<const char*> g_moduleCommands;
 extern std::vector<const char*> g_moduleCVars;
 	#define MODULE_REGISTER_COMMAND(name) g_moduleCommands.push_back(name)

@@ -17,7 +17,7 @@ extern SSystemGlobalEnvironment gEnv;
 struct SSystemGlobalEnvironment* gEnv = nullptr;
 #endif
 
-#if (defined(_LAUNCHER)/* && defined(CRY_IS_MONOLITHIC_BUILD)*/) || !defined(_LIB)
+#if (defined(_LAUNCHER)/* && defined(IS_MONOLITHIC_BUILD)*/) || !defined(_LIB)
 //The reg factory is used for registering the different modules along the whole project
 struct SRegFactoryNode* g_pHeadToRegFactories = nullptr;
 std::vector<const char*> g_moduleCommands;
@@ -44,7 +44,7 @@ extern "C" DLL_EXPORT void CleanupModuleCVars()
 }
 #endif
 
-#if /*!defined(CRY_IS_MONOLITHIC_BUILD)  || */defined(_LAUNCHER)
+#if /*!defined(IS_MONOLITHIC_BUILD)  || */defined(_LAUNCHER)
 extern "C" DLL_EXPORT SRegFactoryNode* GetHeadToRegFactories()
 {
 	return g_pHeadToRegFactories;
@@ -121,7 +121,7 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 {
 	//CryFindRootFolderAndSetAsCurrentWorkingDirectory();
 
-#if !defined(CRY_IS_MONOLITHIC_BUILD)
+#if !defined(IS_MONOLITHIC_BUILD)
 	CCryLibrary systemLibrary(CryLibraryDefName("System"));
 	if (!systemLibrary.IsLoaded())
 	{
