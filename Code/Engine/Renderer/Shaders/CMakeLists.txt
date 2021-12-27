@@ -17,7 +17,7 @@ add_sources(
 	"ScannerHelpers.cpp")
 end_sources()
 
-enginemodule(FxParser FORCE_SHARED_WIN PCH "./pch.hpp" SOLUTION_FOLDER "Engine")
+EngineModule(FxParser FORCE_SHARED_WIN PCH "./pch.hpp" SOLUTION_FOLDER "Engine")
 target_compile_definitions(FxParser PUBLIC "-DYYDEBUG=1")
 
 # ===============> bison
@@ -46,10 +46,12 @@ endmacro()
 macro(cygwin_bison_target TARGET INPUT OUTPUT)
 	cygwin_bison(${INPUT} ${OUTPUT})
 	add_custom_target(${TARGET} DEPENDS ${INTPUT})
+	set_solution_folder(FxParser ${TARGET})
 endmacro()
 macro(cygwin_flex_target TARGET INPUT OUTPUT)
 	cygwin_flex(${INPUT} ${OUTPUT})
 	add_custom_target(${TARGET} DEPENDS ${INTPUT})
+	set_solution_folder(FxParser ${TARGET})
 endmacro()
 macro(cygwin_add_flex_bison_dependency FLEX_TARGET BISON_TARGET)
 	add_dependencies(${THIS_PROJECT} ${FLEX_TARGET} ${BISON_TARGET})

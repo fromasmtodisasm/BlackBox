@@ -51,6 +51,7 @@ bool CEditApp::PostInit()
 
 int CEditApp::ExitInstance()
 {
+	gEnv->pSystem->Release();
 	return 0;
 }
 

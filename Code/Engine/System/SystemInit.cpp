@@ -8,10 +8,37 @@
 #include "Profiling\ProfilingSystem.hpp"
 
 #include <BlackBox/Core/Path.hpp>
+#include <BlackBox/Core/Platform/CryLibrary.h>
+
+using stack_string = string;
 
 //#undef USE_DEDICATED_SERVER_CONSOLE
 //////////////////////////////////////////////////////////////////////////
 #define DEFAULT_LOG_FILENAME "Log.txt"
+//////////////////////////////////////////////////////////////////////////
+// Where possible, these are defaults used to initialize cvars
+// System.cfg can then be used to override them
+// This includes the Game DLL, although it is loaded elsewhere
+#define DLL_AUDIOSYSTEM   "AudioSystem"
+#define DLL_NETWORK       "Network"
+#define DLL_ENTITYSYSTEM  "EntitySystem"
+#define DLL_SCRIPTSYSTEM  "ScriptSystem"
+#define DLL_INPUT         "Input"
+#define DLL_PHYSICS       "Physics"
+#define DLL_MOVIE         "Movie"
+#define DLL_AI            "AISystem"
+#define DLL_ANIMATION     "Animation"
+#define DLL_FONT          "Font"
+#define DLL_3DENGINE      "3DEngine"
+//#define DLL_RENDERER_DX11 "RenderD3D11"
+#define DLL_RENDERER_DX11 "RendererDX"
+#define DLL_RENDERER_DX12 "RenderD3D12"
+#define DLL_RENDERER_VK   "RenderVulkan"
+#define DLL_RENDERER_GNM  "RenderGNM"
+#define DLL_LIVECREATE    "LiveCreate"
+#define DLL_MONO_BRIDGE   "MonoBridge"
+#define DLL_UDR           "UDR"
+#define DLL_SCALEFORM     "ScaleformHelper"
 
 //////////////////////////////////////////////////////////////////////////
 static inline void InlineInitializationProcessing(const char* sDescription)
@@ -725,6 +752,82 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	CryFatalError("Unknown renderer type: %s", t_rend);
 	return false;
 #endif
+}
+//////////////////////////////////////////////////////////////////////////
+bool CSystem::CloseRenderLibrary(std::string_view render)
+{
+	const char* t_rend = render.data();
+	//CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
+
+	if (gEnv->IsDedicated())
+		return true;
+
+	if (stricmp(t_rend, STR_DX11_RENDERER) == 0)
+		return UnloadEngineModule(DLL_RENDERER_DX11);
+	#if 0
+	else if (stricmp(t_rend, STR_DX12_RENDERER) == 0)
+		return UnloadEngineModule(DLL_RENDERER_DX12);
+	else if (stricmp(t_rend, STR_VK_RENDERER) == 0)
+		return UnloadEngineModule(DLL_RENDERER_VK);
+	#endif
+
+	CryFatalError("Unknown renderer type: %s", t_rend);
+	return false;
+}
+bool CSystem::UnloadEngineModule(const char* dllName)
+{
+	return UnloadDynamicLibrary(dllName);
+}
+bool CSystem::UnloadDynamicLibrary(const char* szDllName)
+{
+	stack_string modulePath = szDllName;
+	modulePath				= CrySharedLibraryPrefix + PathUtil::ReplaceExtension(modulePath.c_str(), CrySharedLibraryExtension);
+
+	auto moduleIt = m_moduleDLLHandles.find(modulePath);
+	if (moduleIt != m_moduleDLLHandles.end())
+	{
+		#if 0
+		string msg = string().Format("Unloading %s...", modulePath.c_str());
+		#else
+		string msg(' ', 64);
+		msg[sprintf(msg.data(), "Unloading %s...", modulePath.c_str()) - 1] = 0;
+		//= string().Format("Unloading %s...", modulePath.c_str());
+		#endif
+
+		CryLog("%s", msg.c_str());
+
+#if BB_PLATFORM_WINDOWS || BB_PLATFORM_DURANGO || BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
+		WIN_HMODULE hModule = moduleIt->second;
+#endif
+
+		// CVars should be unregistered earlier than owning objects/modules are destroyed.
+		auto CleanupModuleCVars = (void (*)())CryGetProcAddress(hModule, "CleanupModuleCVars");
+		if (CleanupModuleCVars)
+		{
+			CleanupModuleCVars();
+		}
+
+		#if 0
+		auto			 GetHeadToRegFactories = (PtrFunc_GetHeadToRegFactories)CryGetProcAddress(hModule, "GetHeadToRegFactories");
+		SRegFactoryNode* pFactoryNode		   = GetHeadToRegFactories();
+
+		if (pFactoryNode)
+		{
+			ICryFactoryRegistryImpl* const pReg = static_cast<ICryFactoryRegistryImpl*>(GetCryFactoryRegistry());
+
+			pReg->UnregisterFactories(pFactoryNode);
+		}
+		#endif
+
+		CryFreeLibrary(hModule);
+		m_moduleDLLHandles.erase(moduleIt);
+
+		return true;
+	}
+
+	return false;
+
+	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

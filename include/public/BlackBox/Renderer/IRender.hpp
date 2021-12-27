@@ -278,6 +278,10 @@ struct Transform
 #define GS_DEPTHFUNC_GREAT 0x00200000
 #define GS_STENCIL 0x00400000
 
+#define STR_DX11_RENDERER "DX11"
+#define STR_DX12_RENDERER "DX12"
+#define STR_VK_RENDERER "VK"
+
 //////////////////////////////////////////////////////////////////////
 // Texture object interface
 struct ITexPic

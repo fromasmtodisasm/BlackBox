@@ -561,6 +561,9 @@ class ShaderMan
 			s.second->Reload(0);
 		}
 	}
+	~ShaderMan()
+	{
+	}
 
 	std::map<string,_smart_ptr<CShader>> m_Shaders;
 };

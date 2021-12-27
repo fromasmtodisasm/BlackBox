@@ -30,6 +30,7 @@ macro(setup_subsystems)
 	#add_subsystem(Profiler)
 	add_subsystem(Network)
 	add_subdirectory(AppMain)
+	add_subdirectory(Entry)
 	add_subdirectory(Common)
 
 	foreach(system IN LISTS ALL_PROJECT_SYSTEMS)

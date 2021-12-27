@@ -53,6 +53,8 @@ class CScriptObjectRenderer;
 	#define USE_DEDICATED_SERVER_CONSOLE
 #endif
 
+typedef void* WIN_HMODULE;
+
 struct SSystemCVars
 {
 	int    sys_no_crash_dialog = 0;
@@ -262,6 +264,11 @@ class CSystem final : public ISystem
 	void RunMainLoop();
 	void SleepIfNeeded();
 
+	//virtual ICryFactory* LoadModuleWithFactory(const char* dllName, const CryInterfaceID& moduleInterfaceId) override;
+	/*virtual */ bool UnloadEngineModule(const char* dllName);
+	WIN_HMODULE		  LoadDynamicLibrary(const char* dllName, bool bQuitIfNotFound = true, bool bLogLoadingInfo = false);
+	bool			  UnloadDynamicLibrary(const char* dllName);
+	void			  GetLoadedDynamicLibraries(std::vector<string>& moduleNames) const;
   private:
 	bool InitConsole();
 	bool InitRender();
@@ -276,6 +283,7 @@ class CSystem final : public ISystem
 	bool InitPhysics();
 	bool LoadCrynetwork();
 	bool OpenRenderLibrary(std::string_view render);
+	bool CloseRenderLibrary(std::string_view render);
 
 	void ParseCMD();
 	void LoadScreen();
@@ -315,12 +323,15 @@ class CSystem final : public ISystem
     }
 
     template<typename Proc>
-	inline bool LoadSubsystem(const char* lib_name, const char* proc_name, std::function<bool(Proc proc)> f)
+	inline bool LoadSubsystem(const char* szModulePath, const char* proc_name, std::function<bool(Proc proc)> f)
 	{
 		//gEnv->pSystem->Log("Loading...");
-		string msg;
+        stack_string modulePath = szModulePath;
+        modulePath = CrySharedLibraryPrefix + PathUtil::ReplaceExtension(modulePath.c_str(), CrySharedLibraryExtension);
+
+		stack_string msg;
 		msg = "Loading Module ";
-		msg += lib_name;
+		msg += modulePath;
 		msg += "...";
 
 		if (gEnv->pSystem->GetUserCallback())
@@ -328,7 +339,7 @@ class CSystem final : public ISystem
 			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
 		}
 
-		auto L = CryLoadLibrary(lib_name);
+		auto L = CryLoadLibrary(modulePath.c_str());
 		if (L)
 		{
 			auto P = GetProcedure<decltype(L), Proc>(L, proc_name);
@@ -338,10 +349,11 @@ class CSystem final : public ISystem
 				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
 				if (pfnModuleInitISystem)
 				{
-					pfnModuleInitISystem(gEnv->pSystem, lib_name);
+					pfnModuleInitISystem(gEnv->pSystem, modulePath.c_str());
 				}
-				auto subsystem = _smart_ptr(new SubsystemWrapper(L, lib_name));
+				auto subsystem = _smart_ptr(new SubsystemWrapper(L, modulePath.c_str()));
 				m_Subsystems.push_back(subsystem);
+				m_moduleDLLHandles[modulePath.c_str()] = L;
 				return f(P);
 			}
 			else
@@ -357,21 +369,21 @@ class CSystem final : public ISystem
 			#endif
 			{
 	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
-				CryFatalError("Error loading dynamic library: %s, error :  %s\n", lib_name, dlerror());
+				CryFatalError("Error loading dynamic library: %s, error :  %s\n", modulePath, dlerror());
                 fprintf(stderr, "dlopen failed: %s\n", dlerror());
 	#else
-				//CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
-				CryFatalError("Error loading dynamic library: %s, error code %d", lib_name, GetLastError());
+				CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
 	#endif
 
 				gEnv->pSystem->Quit();
 			}
 
-		return false;
+            return false;
 			gEnv->pSystem->Log("Library not found");
 		}
 		return false;
 	}
+
 
 	template<class T>
 	struct Sizer
@@ -440,6 +452,27 @@ class CSystem final : public ISystem
 	ITextModeConsole* m_pTextModeConsole = nullptr;
 	//! system event dispatcher
 	ISystemEventDispatcher* m_pSystemEventDispatcher = nullptr;
+
+		//! DLLs handles.
+	struct SDllHandles
+	{
+		WIN_HMODULE hRenderer;
+		WIN_HMODULE hInput;
+		WIN_HMODULE hSound;
+		WIN_HMODULE hEntitySystem;
+		WIN_HMODULE hNetwork;
+		WIN_HMODULE hPhysics;
+		WIN_HMODULE hFont;
+		WIN_HMODULE hScript;
+		WIN_HMODULE h3DEngine;
+		WIN_HMODULE hGame;
+		WIN_HMODULE hLiveCreate;
+		WIN_HMODULE hInterface;
+	};
+	SDllHandles m_dll = {0};
+
+	std::unordered_map<string, WIN_HMODULE/*, stl::hash_strcmp<string>*/> m_moduleDLLHandles;
+
 
 	CTimeValue m_lastTickTime;
 

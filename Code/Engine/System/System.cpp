@@ -597,7 +597,16 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_env.p3DEngine);
 	SAFE_RELEASE(m_GuiManager);
+	#if 1
+	if (ICVar* pDriverCVar = m_env.pConsole->GetCVar("r_Driver"))
+	{
+		const char* szRenderDriver = pDriverCVar->GetString();
+		CloseRenderLibrary(szRenderDriver);
+	}
+	#else
 	SAFE_RELEASE(m_env.pRenderer);
+	#endif
+
 
 	ShutDownThreadSystem();
 

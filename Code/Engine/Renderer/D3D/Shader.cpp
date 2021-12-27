@@ -66,7 +66,7 @@ void CShader::Release(bool bForce)
 {
 	m_NumRefs--;
 	auto refs = m_NumRefs;
-	if (m_NumRefs <= 0)
+	if (m_NumRefs <= 0 || bForce)
 		delete this;
 }
 

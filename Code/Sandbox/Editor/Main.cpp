@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 		theApp.Run();
 		result = EXIT_SUCCESS;
 	}
+	theApp.ExitInstance();
 
 #if defined(DEBUG) | defined(_DEBUG) && 0
 	_CrtMemCheckpoint(&s2);

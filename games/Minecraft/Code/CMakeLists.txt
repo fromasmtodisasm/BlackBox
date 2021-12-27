@@ -163,7 +163,7 @@ add_sources(
 
 )
 end_sources()
-gamemodule(MineCRY FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
+GameModule(MineCRY FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
 
 add_subdirectory(../thirdparty 3rdparty)
 

@@ -33,6 +33,7 @@ bool MainWindow::Update()
 
 void MainWindow::CallBack(Type type)
 {
+	return;
 	switch (type)
 	{
 	case IRenderCallback::eOnRender:

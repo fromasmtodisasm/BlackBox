@@ -65,8 +65,11 @@ CD3DRenderer::CD3DRenderer()
 
 CD3DRenderer::~CD3DRenderer()
 {
-	SAFE_RELEASE(m_pMainRenderTargetView);
-
+	for (auto t : m_TexturesMap)
+	{
+		SAFE_RELEASE(t.second.first);
+		SAFE_RELEASE(t.second.second);
+	}
 	CRenderer::~CRenderer();
 }
 
