@@ -63,6 +63,7 @@ void ImGuiManager::NewFrame()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplSDL2_NewFrame((SDL_Window*)gEnv->pRenderer->GetCurrentContextHWND());
 	ImGui::NewFrame();
+	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 	bool p_open{};
 	bool open_console = true;
 	console.Draw("Console", &open_console);

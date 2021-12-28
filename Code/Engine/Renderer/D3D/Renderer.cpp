@@ -125,11 +125,11 @@ void CD3DRenderer::BeginFrame(void)
 {
 	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
 	auto pDC = m_Device->Get<ID3D11DeviceContext>();
-	pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
-	//pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+	//pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+	pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 
-	pDC->ClearRenderTargetView(m_pMainRenderTargetView.Get(), &m_ClearColor[0]);
-	//pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
+	//pDC->ClearRenderTargetView(m_pMainRenderTargetView.Get(), &m_ClearColor[0]);
+	pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
 	pDC->ClearDepthStencilView(static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView), D3D11_CLEAR_DEPTH, 1.f, 0);
 }
 
@@ -186,7 +186,7 @@ void CD3DRenderer::Update(void)
 						pConsole->Draw();
 					D3DPERF_EndEvent();
 				}
-				//GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+				GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 				if (m_FrameID > 20)
 				{
 					#if 0
@@ -200,6 +200,13 @@ void CD3DRenderer::Update(void)
 				{
 					rcl->OnRenderer_BeforeEndFrame();
 				}
+				int x, y, z, w;
+				GetViewport(&x, &y, &z, &w);
+				auto c = color4f{1, 1, 1, 1};
+				ID3D11Resource* srv{};
+				//m_pMainRenderTargetView.Get()
+				//Draw2DQuad(float(x), float(y), float(z), float(w), srv, color4f{}, 1.f, 1.f, 1.f, 1.f);
+				//Draw2DQuad((float)x, (float)y, (float)z, (float)w, m_pMainRenderTargetView.Get(), c, 1.f, 1.f, 1.f, 1.f);
 				D3DPERF_EndEvent();
 			}
 			//{
@@ -722,11 +729,10 @@ void* CD3DRenderer::EF_Query(int Query, int Param)
 	return nullptr;
 }
 
-void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, color4f color, float s0, float t0, float s1, float t1)
+void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderResourceView* view, color4f color, float s0, float t0, float s1, float t1)
 {
 	glm::mat4	 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f);
-	Legacy::Vec4 cur_c		= Legacy::Vec4(texture != -1 ? Legacy::Vec4{1} : Legacy::Vec4{color.r, color.g, color.b, color.a});
-
+	auto	  cur_c		 = Legacy::Vec4(color.r,color.g,color.b,color.a);
 	auto screen_size(Legacy::Vec2(GetWidth(), GetHeight()));
 	auto xpos = x;
 	auto ypos = y;
@@ -794,11 +800,10 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 	// Update content of VBO memory
 	UpdateBuffer(VB, vertices.data(), vertex_cnt, false);
 
-	ID3DShaderResourceView* currentTexture = m_TexturesMap[texture].second;
 
 	GlobalResources::TexturedQuadShader->Bind();
 	m_Device->Get<ID3D11DeviceContext>()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-	m_Device->Get<ID3D11DeviceContext>()->PSSetShaderResources(0, 1, &currentTexture);
+	m_Device->Get<ID3D11DeviceContext>()->PSSetShaderResources(0, 1, &view);
 #if 0
 	m_Device->Get<ID3D11DeviceContext>()->IASetInputLayout(GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout);
 #endif
@@ -808,6 +813,14 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, c
 
 	gEnv->pRenderer->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 	ReleaseBuffer(VB);
+}
+
+void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, color4f color, float s0, float t0, float s1, float t1)
+{
+	auto	  cur_c		 = color4f(texture != -1 ? color4f{1,1,1,1} : color4f{color.r, color.g, color.b, color.a});
+
+	ID3D11ShaderResourceView* currentTexture = m_TexturesMap[texture].second;
+	Draw2DQuad(x, y, w, h, currentTexture, cur_c, s0, t0, s1, t1);
 }
 
 bool CD3DRenderer::CreateRenderTargets()

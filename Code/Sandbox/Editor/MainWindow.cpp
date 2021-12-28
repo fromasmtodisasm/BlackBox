@@ -29,7 +29,9 @@ void MainWindow::Draw()
 	//auto size = ImGui::GetContentRegionAvail();
 	//ImGui::SetNextWindowSize(size, ImGuiCond_FirstUseEver);
 	static bool p_open = true;
-	ImGui::Begin("MainView", &p_open, ImGuiWindowFlags_NoBackground
+	auto		flags  = ImGuiWindowFlags_NoBackground;
+	flags			   = ImGuiWindowFlags_None;
+	ImGui::Begin("MainView", &p_open, flags
 #if 0
 			,ImGuiWindowFlags_NoNav
 			| ImGuiWindowFlags_NoInputs
@@ -39,7 +41,7 @@ void MainWindow::Draw()
 #pragma warning(disable : 4312)
 	auto pos = ImGui::GetWindowPos();
 	pos.x += ImGui::GetCursorPosX();
-	pos.y -= ImGui::GetCursorPosY();
+	//pos.y += ImGui::GetCursorPosY();
 	auto size = ImGui::GetContentRegionAvail();
 	gEnv->pRenderer->SetViewport((int)m_NextFrameViewPortPos.x, (int)m_NextFrameViewPortPos.y, (int)size.x, (int)size.y);
 	auto r	  = gEnv->pRenderer;

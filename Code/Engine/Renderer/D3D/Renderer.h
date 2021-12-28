@@ -249,7 +249,8 @@ class CD3DRenderer : public CRenderer
 	string AdjustTexturePath(string name);
 	bool   FindTexture(string filename, CCryFile& result, string& adjustet_name);
 
-	void Draw2DQuad(float x, float y, float w, float h, int, color4f color, float s0, float t0, float s1, float t1) final;
+	void Draw2DQuad(float x, float y, float w, float h, int,                            color4f color, float s0, float t0, float s1, float t1) final;
+	void Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderResourceView* view, color4f color, float s0, float t0, float s1, float t1);
 
 	int CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT format, UINT bindFlags);
 
