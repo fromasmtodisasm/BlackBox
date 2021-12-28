@@ -10,7 +10,9 @@ class MainWindow :public IGuiElement
 	bool Update();
 
 	int			 m_ViewRenderTarget		 = -1;
-	Legacy::Vec2 m_NextFrameViewPortSize = Legacy::Vec2(1);
+	Legacy::Vec2 m_NextFrameViewPortSize = Legacy::Vec2(32);
+	Legacy::Vec2 m_NextFrameViewPortPos = Legacy::Vec2(0);
+
 
 
 	// Inherited via IGuiElement

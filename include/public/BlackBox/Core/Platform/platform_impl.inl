@@ -17,7 +17,7 @@ extern SSystemGlobalEnvironment gEnv;
 struct SSystemGlobalEnvironment* gEnv = nullptr;
 #endif
 
-#if (defined(_LAUNCHER)/* && defined(IS_MONOLITHIC_BUILD)*/) || !defined(_LIB)
+#if (defined(_LAUNCHER) && defined(IS_MONOLITHIC_BUILD)) || !defined(_LIB)
 //The reg factory is used for registering the different modules along the whole project
 struct SRegFactoryNode* g_pHeadToRegFactories = nullptr;
 std::vector<const char*> g_moduleCommands;
@@ -88,12 +88,17 @@ void							InitCRTHandlers()
 //////////////////////////////////////////////////////////////////////////
 extern "C" DLL_EXPORT void ModuleInitISystem(ISystem* pSystem, const char* moduleName)
 {
+	if (gEnv) // Already registered.
+		return;
+
 	#if defined(USE_CRY_ASSERT)
 	CryAssertSetGlobalFlagAddress(pSystem->GetAssertFlagAddress());
 	#endif
 
-	if (gEnv) // Already registered.
-		return;
+	#if !defined(SYS_ENV_AS_STRUCT)
+	if (pSystem) // DONT REMOVE THIS. ITS FOR RESOURCE COMPILER!!!!
+		gEnv = pSystem->GetGlobalEnvironment();
+	#endif
 
 	InitCRTHandlers();
 

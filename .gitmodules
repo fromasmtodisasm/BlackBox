@@ -4,6 +4,3 @@
 [submodule "Code/Sandbox/GUI/GuiTools/ImGuiColorTextEdit"]
 	path = Code/Sandbox/GUI/GuiTools/ImGuiColorTextEdit
 	url = https://github.com/fromasmtodisasm/ImGuiColorTextEdit
-[submodule "Code/Sandbox/ImGuiColorTextEdit"]
-	path = Code/Sandbox/ImGuiColorTextEdit
-	url = https://github.com/fromasmtodisasm/ImGuiColorTextEdit

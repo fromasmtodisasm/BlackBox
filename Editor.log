@@ -1,0 +1,514 @@
+<06:01:25> Running BlackBox without a project!
+<06:01:25> Using Engine Folder 
+<06:01:25> CMD: C:\Users\HackMan\code\TestEngine\bin\win_x64\Debug\Sandbox.exe
+<06:01:25> Initializing System
+<06:01:25> Initializing Console
+<06:01:25> Loading config
+<06:01:25> here r_DisplayIndex
+<06:01:25> Open Render Library
+<06:01:25> Load Window Library
+<06:01:25> Load Render Library
+<06:01:25> Loading...
+<06:01:25> Creating Input
+<06:01:25> Initializing LinuxInput/SDL
+<06:01:25> Initialize Render
+<06:01:25> Creating window called 'MineCRY' (2560x1372)
+<06:01:25> window inited
+<06:01:25> Init override before
+<06:01:25> Created D3D device with feature level: D3D_FEATURE_LEVEL_11_0
+<06:01:25> GPU Info
+<06:01:25>     VendorId: 0x10DE
+<06:01:25>     VendorId: 0x10DE
+<06:01:25>     DeviceId: 0x1B80
+<06:01:25>     SubSysId: 0x33621462
+<06:01:25>     Revision: 161
+<06:01:25>     DedicatedVideoMemory: 8079.000000 Mb
+<06:01:25>     DedicatedSystemMemory: 0.000000 Mb
+<06:01:25>     SharedSystemMemory: 8168.824219 Mb
+<06:01:25> GPU Info
+<06:01:25>     VendorId: 0x1414
+<06:01:25>     VendorId: 0x1414
+<06:01:25>     DeviceId: 0x8C
+<06:01:25>     SubSysId: 0x0
+<06:01:25>     Revision: 0
+<06:01:25>     DedicatedVideoMemory: 0.000000 Mb
+<06:01:25>     DedicatedSystemMemory: 0.000000 Mb
+<06:01:25>     SharedSystemMemory: 8168.824219 Mb
+<06:01:25> Init override after
+<06:01:25> load shader: bb
+<06:01:25> load shader: bb
+<06:01:25> [FX] File Data/shaders/fx/bb.fx opened
+<06:01:25> Data/shaders/fx/bb.fx
+<06:01:25> Empty effect
+<06:01:25> Including file hlsl_common.fx
+<06:01:25> [Error] REGISTER
+<06:01:25> New CBuffer PerFrameCB
+<06:01:25> [Error] REGISTER
+<06:01:25> StructName: PERVIEWCB
+<06:01:25> Declared and defined struct with name: perViewCB
+<06:01:25> New CBuffer PerViewCB
+<06:01:25> [Error] REGISTER
+<06:01:25> New CBuffer PerDrawCB
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GetOrthoProjMat]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GetProjMat]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GetViewProjMat]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [Transform]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GrayScale]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [unreal]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [unreal]
+<06:01:25> StructName: Light
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [diffuse]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [specular]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [ambient]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [wo_tonemap]
+<06:01:25> [Error] REGISTER
+<06:01:25> New CBuffer BoundingBoxParams
+<06:01:25> StructName: VS_OUT
+<06:01:25> StructName: VsInput
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [VSMain]
+<06:01:25> StructName: OutColor
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [PSMain]
+<06:01:25> creation of Technique main...
+<06:01:25> Creating PASS p0
+<06:01:25> [FX] File Data/shaders/fx/bb.fx passed
+<06:01:25> load shader: auxgeom
+<06:01:25> load shader: auxgeom
+<06:01:25> [FX] File Data/shaders/fx/auxgeom.fx opened
+<06:01:25> Data/shaders/fx/auxgeom.fx
+<06:01:25> Empty effect
+<06:01:25> Including file hlsl_common.fx
+<06:01:25> [Error] REGISTER
+<06:01:25> New CBuffer PerFrameCB
+<06:01:25> [Error] REGISTER
+<06:01:25> StructName: PERVIEWCB
+<06:01:25> Declared and defined struct with name: perViewCB
+<06:01:25> New CBuffer PerViewCB
+<06:01:25> [Error] REGISTER
+<06:01:25> New CBuffer PerDrawCB
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GetOrthoProjMat]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GetProjMat]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GetViewProjMat]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [Transform]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [GrayScale]
+<06:01:25> StructName: VsOutput
+<06:01:25> StructName: VsInput
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [VSMain]
+<06:01:25> [[fn]]
+<06:01:25> Parsed function declaration for: [PSMain]
+<06:01:25> creation of Technique AuxGeometry...
+<06:01:25> Creating PASS p0
+<06:01:25> Creating PASS p1
+<06:01:25> [FX] File Data/shaders/fx/auxgeom.fx passed
+<06:01:25> load shader: illum.Render
+<06:01:25> load shader: illum.Render
+<06:01:25> [FX] File Data/shaders/fx/illum.fx opened
+<06:01:25> Data/shaders/fx/illum.fx
+<06:01:25> Empty effect
+<06:01:25> Including file hlsl_common.fx
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerFrameCB
+<06:01:26> [Error] REGISTER
+<06:01:26> StructName: PERVIEWCB
+<06:01:26> Declared and defined struct with name: perViewCB
+<06:01:26> New CBuffer PerViewCB
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerDrawCB
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetOrthoProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetViewProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [Transform]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GrayScale]
+<06:01:26> StructName: VS_INPUT
+<06:01:26> StructName: VS_OUTPUT
+<06:01:26> [Error] REGISTER
+<06:01:26> texture2d
+<06:01:26> [Error] REGISTER
+<06:01:26> sampler
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [VS]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [PS]
+<06:01:26> creation of Technique Render...
+<06:01:26> Creating PASS P0
+<06:01:26> creation of Technique GrayScaleT...
+<06:01:26> Creating PASS P0
+<06:01:26> [FX] File Data/shaders/fx/illum.fx passed
+<06:01:26> load shader: z.Main
+<06:01:26> load shader: z.Main
+<06:01:26> [FX] File Data/shaders/fx/z.fx opened
+<06:01:26> Data/shaders/fx/z.fx
+<06:01:26> Empty effect
+<06:01:26> Including file hlsl_common.fx
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerFrameCB
+<06:01:26> [Error] REGISTER
+<06:01:26> StructName: PERVIEWCB
+<06:01:26> Declared and defined struct with name: perViewCB
+<06:01:26> New CBuffer PerViewCB
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerDrawCB
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetOrthoProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetViewProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [Transform]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GrayScale]
+<06:01:26> StructName: VS_INPUT
+<06:01:26> StructName: VS_OUTPUT
+<06:01:26> Parsed function declaration for: [VS]
+<06:01:26> [Error] Data/shaders/fx/z.fx:21.5-13: syntax error, unexpected TYPE_NAME, expecting CODEBODY
+<06:01:26> [Error] Data/shaders/fx/z.fx:22.5-10: syntax error, unexpected IDENTIFIER
+<06:01:26> creation of Technique Main...
+<06:01:26> Creating PASS p0
+<06:01:26> [FX] File Data/shaders/fx/z.fx passed
+<06:01:26> load shader: sprite.Font
+<06:01:26> load shader: sprite.Font
+<06:01:26> [FX] File Data/shaders/fx/sprite.fx opened
+<06:01:26> Data/shaders/fx/sprite.fx
+<06:01:26> Empty effect
+<06:01:26> Including file hlsl_common.fx
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerFrameCB
+<06:01:26> [Error] REGISTER
+<06:01:26> StructName: PERVIEWCB
+<06:01:26> Declared and defined struct with name: perViewCB
+<06:01:26> New CBuffer PerViewCB
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerDrawCB
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetOrthoProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetViewProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [Transform]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GrayScale]
+<06:01:26> [Error] REGISTER
+<06:01:26> texture2d
+<06:01:26> [Error] REGISTER
+<06:01:26> sampler
+<06:01:26> StructName: VsOutput
+<06:01:26> StructName: VsInput
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [VSMain]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [Font]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GrayScalePS]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [TexturedQuad]
+<06:01:26> creation of Technique Font...
+<06:01:26> Creating PASS p0
+<06:01:26> creation of Technique TexturedQuad...
+<06:01:26> Creating PASS p0
+<06:01:26> [FX] File Data/shaders/fx/sprite.fx passed
+<06:01:26> [Error] [CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [printcb] is already registered
+<06:01:26> load shader: sprite.Font
+<06:01:26> load shader: sprite.Font
+<06:01:26> Shader <sprite.Font> already cached
+<06:01:26> [Error] Failed load texture: fcsplash.bmp
+<06:01:26> load shader: sprite.TexturedQuad
+<06:01:26> load shader: sprite.TexturedQuad
+<06:01:26> [FX] File Data/shaders/fx/sprite.fx opened
+<06:01:26> Data/shaders/fx/sprite.fx
+<06:01:26> Empty effect
+<06:01:26> Including file hlsl_common.fx
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerFrameCB
+<06:01:26> [Error] REGISTER
+<06:01:26> StructName: PERVIEWCB
+<06:01:26> Declared and defined struct with name: perViewCB
+<06:01:26> New CBuffer PerViewCB
+<06:01:26> [Error] REGISTER
+<06:01:26> New CBuffer PerDrawCB
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetOrthoProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GetViewProjMat]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [Transform]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GrayScale]
+<06:01:26> [Error] REGISTER
+<06:01:26> texture2d
+<06:01:26> [Error] REGISTER
+<06:01:26> sampler
+<06:01:26> StructName: VsOutput
+<06:01:26> StructName: VsInput
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [VSMain]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [Font]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [GrayScalePS]
+<06:01:26> [[fn]]
+<06:01:26> Parsed function declaration for: [TexturedQuad]
+<06:01:26> creation of Technique Font...
+<06:01:26> Creating PASS p0
+<06:01:26> creation of Technique TexturedQuad...
+<06:01:26> Creating PASS p0
+<06:01:26> [FX] File Data/shaders/fx/sprite.fx passed
+<06:01:26> [Error] [CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [printcb] is already registered
+<06:01:26> load shader: sprite.Font
+<06:01:26> load shader: sprite.Font
+<06:01:26> Shader <sprite.Font> already cached
+<06:01:26> [Error] Failed load texture: textures/console/defaultconsole.dds
+<06:01:26> Creating SoundSystem
+<06:01:26> Creating 3DEngine
+<06:01:26> Creating Physics
+<06:01:26> Creating ScriptSystem
+<06:01:26> [Error] [CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [printcb] is already registered
+<06:01:26> load shader: sprite.Font
+<06:01:26> load shader: sprite.Font
+<06:01:26> Shader <sprite.Font> already cached
+<06:01:27> Initializing ScriptSystem
+<06:01:27> Executing file 'scripts/common.lua' (raiseErrors=1)
+<06:01:27> ###################################################################
+<06:01:27> Creating EntitySystem
+<06:01:28> [Error] Function: CXConsole::SetLoadingImage not implemented
+<06:01:28> Initializing Script Bindings
+<06:01:28> Executing file 'scripts/engine.lua' (raiseErrors=1)
+<06:01:28> [Warning] Unknown physical material mat_default
+<06:01:28> [Warning] Unknown physical material mat_water
+<06:01:28> Creating Network
+<06:01:28> Creating Network
+<06:01:28> Compiled with SDL_net version: 2.0.1
+<06:01:28> Running with SDL_net version: 2.0.1
+<06:01:28> Initialize Game
+<06:01:28> Found MOD game: FunCry
+<06:01:28> Game Initialization
+<06:01:28> Loading MOD FunCry
+<06:01:28> <EntityClassRegistry> Initializing
+<06:01:28> Executing file 'scripts/ClassRegistry.lua' (raiseErrors=1)
+<06:01:28> Executing file 'scripts/main.lua' (raiseErrors=1)
+<06:01:28> Executing file 'scripts/common.lua' (raiseErrors=1, force reload)
+<06:01:28> ###################################################################
+<06:01:28> Executing file 'scripts/Map.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/StateMachine.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'SCRIPTS/Default/Inventory.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/EntityGroupMgr.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/methoddispatcher.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/saveutils.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/sounds/PresetDB.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/sounds/EAXPresetDB.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/Multiplayer/AvailableMods.lua' (raiseErrors=1, force reload)
+<06:01:28> UBI.com not present
+<06:01:28> Executing file 'scripts/Multiplayer/Connecting.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/Multiplayer/MapCycle.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/Multiplayer/QueryHandler.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/Default/Entities/vehicles/VehicleCommon.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/AI/Anchor.lua' (raiseErrors=1)
+<06:01:28> Executing file 'scripts/Default/Entities/AI/HeliCommon.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'scripts/Default/Entities/Others/piece.lua' (raiseErrors=1)
+<06:01:28> [SoundSystem] sounds/player/water/watersplash.wav loaded
+<06:01:28> [Error] Failed open texture: textures\bubble.tga
+<06:01:28> [Error] Failed load texture: textures/clouda2.dds
+<06:01:28> Executing file 'Scripts/Default/Entities/Weapons/FTBSniping.lua' (raiseErrors=1, force reload)
+<06:01:28> [SoundSystem] sounds/player/breathin.wav loaded
+<06:01:28> [SoundSystem] sounds/player/breathout.wav loaded
+<06:01:28> [Error] Failed open texture: Textures/Hud/BreathBlur.tga
+<06:01:28> Executing file 'Scripts/Default/Entities/Weapons/BiPod.lua' (raiseErrors=1, force reload)
+<06:01:28> [SoundSystem] Sounds/Weapons/bipodopen.wav loaded
+<06:01:28> [SoundSystem] Sounds/Weapons/bipodclose.wav loaded
+<06:01:28> Executing file 'Scripts/Default/Entities/Player/BasicPlayer.lua' (raiseErrors=1, force reload)
+<06:01:28> [Error] Failed open texture: Languages/Textures/human_bullet_hit_d.DDS
+<06:01:28> [Error] Failed open texture: Languages/Textures/Decal/flesh_slash.dds
+<06:01:28> [Error] Failed open texture: Languages/Textures/blood_pool.DDS
+<06:01:28> [Error] Failed open texture: Languages/Textures/Decal/flesh_slash.dds
+<06:01:28> [SoundSystem] sounds/player/water/newswim2lp.wav loaded
+<06:01:28> [SoundSystem] sounds/player/water/underwaterswim2.wav loaded
+<06:01:28> [SoundSystem] sounds/player/water/underwaterloop.wav loaded
+<06:01:28> [SoundSystem] sounds/player/breathin.wav loaded
+<06:01:28> [SoundSystem] sounds/ai/pain/pain3.wav loaded
+<06:01:28> [Error] Failed load texture: textures\ripple.dds
+<06:01:28> [SoundSystem] SOUNDS/items/flight.wav loaded
+<06:01:28> Executing file 'SCRIPTS/Default/Entities/AI/BasicAI.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'Scripts/Default/Entities/AI/AISounds/sound_tables.lua' (raiseErrors=1, force reload)
+<06:01:28> Executing file 'Scripts/Default/Entities/AI/AISounds/keyframes.lua' (raiseErrors=1, force reload)
+<06:01:28> [SoundSystem] SOUNDS/items/ratchet.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/ab1/abidle3.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/ab1/abidle1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/ab1/abidle2.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee1swipeF4.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_6.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee2swipeF13.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee3swipeF10.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_2.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee4swipeF10.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_4.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_6.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_5.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_8.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/ab1/abidle3.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/ab1/abidle1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/ab1/abidle2.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire2.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_7.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/fast/exert1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/weapons/machete/fire1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/fast/exert2.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/fast/exert3.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee1swipeF4.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_6.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee2swipeF13.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_1.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee3swipeF10.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_2.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/cover_melee4swipeF10.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/exert_4.wav loaded
+<06:01:28> [SoundSystem] SOUNDS/mutants/cover/growl2.wav loaded
+<06:01:28> Executing file 'Scripts/Default/Entities/AI/AISounds/jumps.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'SCRIPTS/BALANCING.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/Default/Entities/Weapons/BasicWeapon.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/default/hud/DefaultZoomHUD.lua' (raiseErrors=1)
+<06:01:29> [SoundSystem] Sounds/items/scope.wav loaded
+<06:01:29> Executing file 'scripts/default/hud/AimModeZoomHUD.lua' (raiseErrors=1)
+<06:01:29> [Error] Failed open texture: textures\bubble.tga
+<06:01:29> [Error] Failed open texture: textures\bubble.tga
+<06:01:29> [Error] Mix_LoadWA: Couldn't open 'Data/SOUNDS/hit.wav'
+<06:01:29> [SoundSystem] SOUNDS/items/WEAPON_FIRE_MODE.wav loaded
+<06:01:29> [Error] Failed load texture: Textures/hud/crosshair/cantshoot.dds
+<06:01:29> Executing file 'scripts/Default/Entities/Weapons/MountedWeaponBase.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/defiant.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/DebugTagPointsMgr.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/Multiplayer/MultiplayerUtils.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/Multiplayer/CreateVariables.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/Multiplayer/MPStatistics.lua' (raiseErrors=1, force reload)
+<06:01:29> Executing file 'scripts/Multiplayer/ModelList.lua' (raiseErrors=1, force reload)
+<06:01:29> Initializing UI
+<06:01:29> here r_DisplayIndex
+<06:01:32> [Error] Invalid game cfg:Input:SetMouseSensitivity(0.2000);
+<06:01:32> [Error] Invalid game cfg:Input:SetInvertedMouse(nil);
+<06:01:32> [Error] Failed open texture: gui/map_player
+<06:01:32> [Error] Failed open texture: gui/map_vehicle
+<06:01:32> [Error] Failed open texture: gui/map_building
+<06:01:32> [Error] Failed open texture: gui/map_unknown
+<06:01:32> [EntitySystemLogging]: CEntitySystem::SetDynamicEntityIdMode
+<06:01:32> Loaded texture Data/minecraft/Grass_Block_TEX.dds
+<06:01:32> Object [Data/Data/minecraft/Grass_Block.obj] loaded
+<06:01:32> [EntitySystemLogging]: CEntitySystem::RemoveEntity
+<06:01:32> Try remove entity with id: 0
+<06:01:32> [CONSOLE] Executing console command 'load_level minecraft'
+<06:01:32> [Error] AutoSuspendTimeQuota::AutoSuspendTimeQuota
+<06:01:32> [Error] Function: CXConsole::SetLoadingImage not implemented
+<06:01:32> 
+<06:01:32> Creating the server
+<06:01:32> [EntitySystemLogging]: CEntitySystem::SetSink
+<06:01:32> [EntitySystemLogging]: CEntitySystem::EnableServer
+<06:01:32> NetworkServer Constructed
+<06:01:32> Conntection Opened
+<06:01:32> Loading banned IP list...
+<06:01:32> ERROR: failed to open bannedip.txt for reading!
+<06:01:32> MapCycle INIT
+<06:01:32> Server created
+<06:01:32> Creating the LocalClient
+<06:01:33> [EntitySystemLogging]: CEntitySystem::EnableClient
+<06:01:33> LocalClient created
+<06:01:33> [Error] AutoSuspendTimeQuota::AutoSuspendTimeQuota
+<06:01:33> [Error] Function: CXConsole::SetLoadingImage not implemented
+<06:01:33> 
+<06:01:33> [Warning] Level Packs Levels/minecraft/*.pak Not Found
+<06:01:33> [EntitySystemLogging]: CEntitySystem::Reset
+<06:01:33> [Warning] Unknown physical material mat_default
+<06:01:33> [Warning] Unknown physical material mat_water
+<06:01:33> Lua garbage collection 1416541 -> 1199475
+<06:01:33> [Error] Ffunction not implemented: C3DEngine::ClearRenderResources
+<06:01:33> Executing file 'Scripts/Default/Hud/hud.lua' (raiseErrors=0, force reload)
+<06:01:33> Executing file 'scripts/GUI/HudCommon.lua' (raiseErrors=1)
+<06:01:33> Executing file 'Scripts/Default/Hud/scoreboard.lua' (raiseErrors=0, force reload)
+<06:01:33> Hud:OnInit()
+<06:01:33> [Error] Failed load texture: Textures/hud/damage_gradL.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/damage_gradT.dds
+<06:01:33> [Error] Failed open texture: Textures/Hud/new/MissionBoxCheckbox.tga
+<06:01:33> [Error] Failed open texture: Textures/Hud/new/MissionCheckboxComp.tga
+<06:01:33> [Error] Failed open texture: Textures/Hud/new/RadiomessageIcon.tga
+<06:01:33> [Error] Failed open texture: Textures/hud/white_dot.tga
+<06:01:33> [Error] Failed open texture: Textures/hud/black_dot.tga
+<06:01:33> [Error] Failed load texture: Textures/hud/blue.dds
+<06:01:33> [Error] Failed open texture: Textures/fl
+<06:01:33> [Error] Failed load texture: Textures/hud/keyItem_red.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/keyItem_green.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/keyItem_blue.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/keyItem_yellow.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/ExpItem.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/PDAItem.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/BombfuseItem.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/scouttool_item.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/compass.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/compass_mask.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/RadarPlayer.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/RadarEnemyInRange.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/RadarEnemyOutRange.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/RadarSound.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/RadarPlayer.dds
+<06:01:33> [Error] Failed load texture: Textures/hud/hud.dds
+<06:01:33> [Error] Failed load texture: textures/hud/multiplayer/captureflag_all.dds
+<06:01:33> [Error] Failed load texture: textures/hud/multiplayer/scoreboard.dds
+<06:01:33> [SoundSystem] sounds/items/capture_siren.wav loaded
+<06:01:33> [SoundSystem] sounds/explosions/mp_flare.wav loaded
+<06:01:33> [SoundSystem] Sounds/Player/deafnessLP.wav loaded
+<06:01:33> [SoundSystem] Sounds/Multiplayer/hit.wav loaded
+<06:01:33> [SoundSystem] sounds/items/lock.wav loaded
+<06:01:33> [Error] Function: CXGame::Reset not implemented
+<06:01:33> missionInfo.sLevelFolder=Levels/minecraft
+<06:01:33> Executing file 'Scripts\Default\GameRules.lua' (raiseErrors=1, force reload)
+<06:01:33> Tell Clients about the mapchange ....
+<06:01:33> [EntitySystemLogging]: CEntitySystem::PauseTimers
+<06:01:33> [Error] AutoSuspendTimeQuota::~AutoSuspendTimeQuota
+<06:01:33> [EntitySystemLogging]: CEntitySystem::SetPrecacheResourcesMode
+<06:01:33> [EntitySystemLogging]: CEntitySystem::SetPrecacheResourcesMode
+<06:01:33> [Error] AutoSuspendTimeQuota::~AutoSuspendTimeQuota
+<06:01:33> [Error] Failed load texture: Data/images/crosshair.png
+<06:01:33> Object [Data/Data/minecraft/minecraft_steve.obj] loaded
+<06:01:33> Object [Data/Data/minecraft/bbox.obj] loaded
+<06:01:33> DEVMODE is Enabled
+<06:01:33> Executing file 'DevMode.lua' (raiseErrors=1)
+<06:01:33> Loading DevMode.lua: Ok!
+<06:01:33> [Warning] Unknown command: r_PrecacheShaderList
+<06:01:33> Main thread : 79612
+<06:01:33> ISystem created

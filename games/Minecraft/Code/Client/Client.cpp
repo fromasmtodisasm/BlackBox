@@ -49,10 +49,10 @@ CClient::~CClient()
 
 void CClient::Update()
 {
-	ImGui::Begin("Game");
-		ImGui::Text("Game Window");
-		ImGui::Checkbox("Glsl Editor", &m_ShowEditor);
-	ImGui::End();
+	//ImGui::Begin("Game");
+	//	ImGui::Text("Game Window");
+	//	ImGui::Checkbox("Glsl Editor", &m_ShowEditor);
+	//ImGui::End();
     if (m_ShowEditor)
         glslEditor.Update();
 

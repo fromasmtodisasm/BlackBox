@@ -26,7 +26,8 @@ bool CEditApp::InitInstance()
 	SSystemInitParams startupParams;
 	startupParams.sLogFileName		= "Editor.log";
 	startupParams.bManualEngineLoop = true;
-	startupParams.bEditor			= true;
+	//startupParams.bEditor			= true;
+	startupParams.bEditor			= false;
 	// Enable run-time memory check for debug builds.
 
 	// Note: lpCmdLine does not contain the filename.
@@ -44,7 +45,7 @@ bool CEditApp::InitInstance()
 
 		m_pEditor = new CEditorImpl(new CGameEngine(gEnv->pSystem->GetIGame()));
 
-		result = true;
+		result = m_pEditor->Init();
 	}
 	return result;
 }

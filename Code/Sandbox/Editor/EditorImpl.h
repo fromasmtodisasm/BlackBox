@@ -7,6 +7,8 @@
 #include "MainMenu.hpp"
 #include "MainWindow.hpp"
 
+#include "ImGuiManager.hpp"
+
 struct SInputEvent;
 
 enum EEditorPathName
@@ -40,6 +42,7 @@ class SANDBOX_API CEditorImpl : public IEditor
 	~CEditorImpl();
 
 	// Inherited via IEditor
+	virtual bool Init() override;
 	virtual void Draw() override;
 
 	bool Update();
@@ -50,9 +53,17 @@ class SANDBOX_API CEditorImpl : public IEditor
 	virtual void CallBack(Type type) override;
 	virtual void OnRenderer_BeforeEndFrame() override;
 
+	bool InitGUI()
+	{
+		m_GuiManager = CreateGUI(gEnv->pSystem);
+		m_GuiManager->Init();
+		return true;
+	}
+
 private:
 	MainMenu   m_MainMenu;
 	MainWindow m_MainWindow;
 	IGame*	   m_pGame = nullptr;
 	bool	   m_bQuit = false;
+	IImGuiManager* m_GuiManager = nullptr;
 };

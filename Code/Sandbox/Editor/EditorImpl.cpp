@@ -11,16 +11,22 @@ CEditorImpl::CEditorImpl(CGameEngine* ge)
 
 CEditorImpl::~CEditorImpl()
 {
+	SAFE_RELEASE(m_GuiManager);
 }
 
 void CEditorImpl::Draw()
 {
-	m_MainMenu.Draw();
+	//m_MainMenu.Draw();
 	m_MainWindow.Draw();
 }
 
 bool CEditorImpl::Update()
 {
+	gEnv->pSystem->GetIInput()->Update(true);
+	m_GuiManager->NewFrame();
+	m_GuiManager->ShowDemoWindow();
+	gEnv->pSystem->Update(ESYSUPDATE_EDITOR);
+
 	return m_pGame->Update();
 }
 
@@ -49,4 +55,15 @@ void CEditorImpl::CallBack(Type type)
 void CEditorImpl::OnRenderer_BeforeEndFrame()
 {
 	Draw();
+	m_GuiManager->Render();
+}
+
+bool CEditorImpl::Init()
+{
+    if (!InitGUI())
+	{
+		return false;	
+	}
+    gEnv->pInput->AddEventListener(m_GuiManager);
+	return true;
 }

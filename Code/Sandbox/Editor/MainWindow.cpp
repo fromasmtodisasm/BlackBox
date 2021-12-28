@@ -29,7 +29,7 @@ void MainWindow::Draw()
 	//auto size = ImGui::GetContentRegionAvail();
 	//ImGui::SetNextWindowSize(size, ImGuiCond_FirstUseEver);
 	static bool p_open = true;
-	ImGui::Begin("MainView", &p_open
+	ImGui::Begin("MainView", &p_open, ImGuiWindowFlags_NoBackground
 #if 0
 			,ImGuiWindowFlags_NoNav
 			| ImGuiWindowFlags_NoInputs
@@ -37,17 +37,22 @@ void MainWindow::Draw()
 	);
 #pragma warning(push)
 #pragma warning(disable : 4312)
+	auto pos = ImGui::GetWindowPos();
+	pos.x += ImGui::GetCursorPosX();
+	pos.y -= ImGui::GetCursorPosY();
 	auto size = ImGui::GetContentRegionAvail();
+	gEnv->pRenderer->SetViewport((int)m_NextFrameViewPortPos.x, (int)m_NextFrameViewPortPos.y, (int)size.x, (int)size.y);
 	auto r	  = gEnv->pRenderer;
 	auto x	  = (float)r->GetWidth() / m_ViewRenderTarget;
 	auto y	  = (float)r->GetHeight();
-	ImGui::Image(reinterpret_cast<ImTextureID>(m_ViewRenderTarget), size, ImVec2(0, 1), ImVec2(1, 0));
+	//ImGui::Image(reinterpret_cast<ImTextureID>(m_ViewRenderTarget), size, ImVec2(0, 1), ImVec2(1, 0));
 	if (ImGui::IsItemClicked())
 	{
 		gEnv->pLog->Log("View clicked");
 	}
-	auto pos				= ImGui::GetCursorPos();
+	//auto pos				= ImGui::GetCursorPos();
 	m_NextFrameViewPortSize = Legacy::Vec2(size.x, size.y);
+	m_NextFrameViewPortPos = Legacy::Vec2(pos.x, pos.y);
 #pragma warning(pop)
 	//ImGui::EndTabItem();
 	ImGui::End();

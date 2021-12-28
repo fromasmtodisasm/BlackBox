@@ -1,4 +1,5 @@
-#include <BlackBox/GUI/ImGuiManager.hpp>
+#include "ImGuiManager.hpp"
+
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>

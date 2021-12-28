@@ -35,7 +35,7 @@ add_sources(
 )
 end_sources()
 
-EngineModule(GUI FORCE_SHARED_WIN PCH "./pch.hpp" SOLUTION_FOLDER "Engine")
+EngineModule(GUI FORCE_STATIC EDITOR_COMPILE_SETTINGS PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
 
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Window)
@@ -48,7 +48,7 @@ ${THIS_PROJECT}
 )
 
 #target_link_libraries(${THIS_PROJECT} PRIVATE Renderer)
-target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
+#target_compile_definitions(GUI PRIVATE IMGUI_EXPORTS)
 # FIXME: work around input system
 add_sdl(${THIS_PROJECT})
 

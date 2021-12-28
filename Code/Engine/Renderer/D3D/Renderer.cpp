@@ -125,11 +125,11 @@ void CD3DRenderer::BeginFrame(void)
 {
 	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
 	auto pDC = m_Device->Get<ID3D11DeviceContext>();
-	//pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
-	pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+	pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+	//pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 
 	pDC->ClearRenderTargetView(m_pMainRenderTargetView.Get(), &m_ClearColor[0]);
-	pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
+	//pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
 	pDC->ClearDepthStencilView(static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView), D3D11_CLEAR_DEPTH, 1.f, 0);
 }
 
@@ -186,12 +186,14 @@ void CD3DRenderer::Update(void)
 						pConsole->Draw();
 					D3DPERF_EndEvent();
 				}
-				GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+				//GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 				if (m_FrameID > 20)
 				{
+					#if 0
 					ImGui::Begin("View");
 					ImGui::Image(ImTextureID(m_RenderTargetScene->m_shaderResourceView.Get()), ImGui::GetContentRegionAvail());
 					ImGui::End();
+					#endif
 				}
 				D3DPERF_BeginEvent(D3DC_Blue, L"OnRenderer_BeforeEndFrame");
 				for (const auto& rcl : m_RenderCallbackClients)

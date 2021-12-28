@@ -3,7 +3,6 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Input/IInput.hpp>
 
-#if ENABLE_DEBUG_GUI
 struct IImGuiManager : public IInputEventListener
 {
   ~IImGuiManager() {}
@@ -26,4 +25,3 @@ extern "C" {
   typedef IImGuiManager* (*PFNCREATEGUI)(ISystem* pSystem);
 }
 
-#endif

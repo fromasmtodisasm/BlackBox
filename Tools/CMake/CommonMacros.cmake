@@ -576,8 +576,7 @@ function(EngineModule target)
 
 	apply_compile_settings()
 	if((OPTION_STATIC_LINKING OR MODULE_FORCE_STATIC) AND NOT MODULE_FORCE_SHARED)
-		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB
-																											 -DIS_MONOLITHIC_BUILD)
+		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB	 -DIS_MONOLITHIC_BUILD)
 	endif()
 	add_metadata()
 	if(ANDROID
@@ -784,8 +783,7 @@ function(Launcher target)
 	endif()
 	if(OPTION_STATIC_LINKING)
 		use_scaleform()
-		target_compile_definitions(${THIS_PROJECT}
-															 PRIVATE _LIB -DIS_MONOLITHIC_BUILD)
+		target_compile_definitions(${THIS_PROJECT} PRIVATE _LIB -DIS_MONOLITHIC_BUILD)
 		if(WINDOWS)
 			set_property(
 				TARGET ${THIS_PROJECT}
@@ -840,9 +838,13 @@ macro(set_editor_module_flags)
 	#target_compile_options(${THIS_PROJECT} PRIVATE /EHsc /GR /bigobj /wd4251 /wd4275)
 	#target_include_directories(${THIS_PROJECT} PRIVATE "${CRYENGINE_DIR}/Code/Sandbox/Libs/CryQt")
 	#target_link_libraries(${THIS_PROJECT} PRIVATE CryQt)
-	target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
+	if (NOT (${THIS_PROJECT} STREQUAL "GUI"))
+		target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
+	endif()
+	add_compile_definitions("ENABLE_DEBUG_GUI")
 	set_property(TARGET ${THIS_PROJECT} PROPERTY EXCLUDE_FROM_DEFAULT_BUILD_RELEASE TRUE)
 	set_property(TARGET ${THIS_PROJECT} PROPERTY EDITOR_MODULE_FLAGS TRUE)
+	set_property(TARGET ${THIS_PROJECT} PROPERTY CXX_STANDARD 17)
 
 endmacro()
 function(Editor target)

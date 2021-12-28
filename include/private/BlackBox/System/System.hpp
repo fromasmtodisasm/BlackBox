@@ -3,7 +3,6 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
-#include <BlackBox/GUI/ImGuiManager.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
@@ -495,10 +494,6 @@ class CSystem final : public ISystem
 	uint64_t NOW;
 	uint64_t LAST;
 	double	 m_DeltaTime = 0.0;
-
-#if ENABLE_DEBUG_GUI
-	IImGuiManager* m_GuiManager = nullptr;
-#endif
 
 	//! global root folder
 	string m_root;

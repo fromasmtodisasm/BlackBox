@@ -9,6 +9,7 @@ struct IGuiElement
 
 struct IEditor
 {
+	virtual bool Init() = 0;
 	virtual void Draw() = 0;
 };
 

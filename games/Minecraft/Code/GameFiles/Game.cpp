@@ -27,6 +27,7 @@
 #include <CMovieUser.h>
 
 //#include "CMovieUser.h"
+#define EDITOR_IMPLEMENT_LOAD_LEVEL
 
 
 #include <Client/Client.hpp>
@@ -35,7 +36,7 @@
 #include "UISystem.h"
 #include "UIHud.h"
 #include "IngameDialog.h"
-#if EDITOR_IMPLEMENT_LOAD_LEVEL
+#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
 #include "Minecraft.h"
 #endif
 
@@ -879,7 +880,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_bOK				 = true;
 	e_deformable_terrain = NULL;
 
-	#if EDITOR_IMPLEMENT_LOAD_LEVEL
+	#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
 	minecraft = new Minecraft;
 	minecraft->init();
 	minePlayer = &minecraft->player;
@@ -1211,7 +1212,7 @@ bool CXGame::Update()
 	m_pSystem->GetIProfileSystem()->EndFrame();
 	//////////////////////////////////////////////////////////////////////////
 
-	#if EDITOR_IMPLEMENT_LOAD_LEVEL
+	#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
 	minecraft->update();
 	#endif
 	return (m_bUpdateRet);

@@ -41,8 +41,11 @@ void ImGuiManager::Render()
 #if 0
         glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 #endif
+	int x, y, z, w;
+	gEnv->pRenderer->GetViewport(&x, &y, &z, &w);
 	gEnv->pRenderer->SetViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	gEnv->pRenderer->SetViewport(x, y, z, w);
 
 	// Update and Render additional Platform Windows
 	// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.

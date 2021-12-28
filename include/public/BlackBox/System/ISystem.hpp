@@ -390,6 +390,28 @@ struct SSystemGlobalEnvironment
 		return bDedicated;
 #endif
 	}
+#if defined(SYS_ENV_AS_STRUCT)
+	//! Remove pointer indirection.
+	ILINE SSystemGlobalEnvironment* operator->()
+	{
+		return this;
+	}
+
+	ILINE SSystemGlobalEnvironment& operator*()
+	{
+		return *this;
+	}
+
+	ILINE const bool operator!() const
+	{
+		return false;
+	}
+
+	ILINE operator bool() const
+	{
+		return true;
+	}
+#endif
 
 #if BB_PLATFORM_DESKTOP
 	bool bDedicatedArbitrator;

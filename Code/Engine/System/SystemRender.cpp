@@ -35,11 +35,6 @@ void CSystem::RenderBegin()
 void CSystem::OnRenderer_BeforeEndFrame()
 {
 	RenderStats();
-	ImGui::Begin("System");
-	ImGui::End();
-	// FIXME: implement imgui rendering over internal rendering api
-	if (m_GuiManager)
-		m_GuiManager->Render();
 }
 
 void CSystem::RenderStats()

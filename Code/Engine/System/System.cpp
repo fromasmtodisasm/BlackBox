@@ -596,7 +596,6 @@ void CSystem::ShutDown()
 	//SAFE_DELETE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_env.p3DEngine);
-	SAFE_RELEASE(m_GuiManager);
 	#if 1
 	if (ICVar* pDriverCVar = m_env.pConsole->GetCVar("r_Driver"))
 	{
@@ -639,16 +638,6 @@ void CSystem::ShutDown()
 
 void CSystem::EnableGui(bool enable)
 {
-#if ENABLE_DEBUG_GUI
-    if (enable)
-    {
-        m_env.pInput->AddEventListener(m_GuiManager);
-    }
-    else
-    {
-        m_env.pInput->RemoveEventListener(m_GuiManager);
-    }
-#endif
 }
 
 void CSystem::SaveConfiguration()
@@ -901,6 +890,11 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 
 	//m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	m_DeltaTime = gEnv->pTimer->GetFrameRate()*0.001f;
+
+	
+    bool updateInput =
+        !(updateFlags & ESYSUPDATE_EDITOR);
+    if (updateInput)
 	{
 		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
 		//FIXME: CHECK IT
@@ -923,20 +917,6 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	{
 		m_env.p3DEngine->Update();
 	}
-
-	//m_env.pScriptSystem->update
-
-	if (m_env.pInput && m_env.pInput->GetModifiers() & eMM_Ctrl)
-	{
-		return false;
-	}
-#if ENABLE_DEBUG_GUI
-	if (m_GuiManager)
-	{
-		m_GuiManager->NewFrame();
-		m_GuiManager->ShowDemoWindow();
-	}
-#endif
 
 	return !m_bQuit;
 }
