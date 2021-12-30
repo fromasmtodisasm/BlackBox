@@ -1,5 +1,6 @@
 #pragma once
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <mutex>
 #include "imgui.h"
@@ -12,7 +13,7 @@
 // For the console example, we are using a more C++ like approach of declaring a class to hold both data and functions.
 namespace gui
 {
-struct Console : public IOutputPrintSink
+struct Console : public IOutputPrintSink, public IEditorNotifyListener, public IPane
 {
 	char				  InputBuf[256];
 	ImVector<char*>		  Items;
@@ -58,5 +59,8 @@ struct Console : public IOutputPrintSink
 
 	// Inherited via IOutputPrintSink
 	virtual void Print(const char* inszText) override;
+
+	// Inherited via IEditorNotifyListener
+	virtual void OnEditorNotifyEvent(EEditorNotifyEvent event) override;
 };
 }

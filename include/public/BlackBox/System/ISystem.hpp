@@ -159,6 +159,9 @@ enum ESystemEvent : uint
 	//! This is needed because some sub-systems still want to work even without focus on main application
 	//! while others would prefer to suspend their operation
 	ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE,
+
+	//! Sent once the Editor finished initialization.
+	ESYSTEM_EVENT_EDITOR_ON_INIT,
 };
 
 //! User defined callback, which can be passed to ISystem.

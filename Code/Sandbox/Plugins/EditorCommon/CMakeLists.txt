@@ -13,6 +13,16 @@ add_sources(
 	SOURCE_GROUP "Source Files"
 		"EditorCommon.h"
 		"EditorCommonAPI.h"
+		"EditorCommonInit.h"
+		"EditorCommonInit.cpp"
+		"ImGuiManager.hpp"
+		"IEditorClassFactory.h"
+		"ViewPane.h"
+
+		"AutoRegister.cpp"
+		"AutoRegister.h"
+
+		"IPlugin.h"
 		"Lib.cpp"
 )
 
@@ -21,6 +31,7 @@ EngineModule(EditorCommon EDITOR_COMPILE_SETTINGS PCH "pch.hpp" SOLUTION_FOLDER 
 target_compile_definitions(${THIS_PROJECT} PRIVATE
 	-DEDITOR_COMMON_EXPORTS 
 	-DNOT_USE_CRY_MEMORY_MANAGER
+	-DDONT_USE_CRY_MEMORY_MANAGER
 )
 
 #TODO: remove dependencies from editor common to editor!

@@ -29,7 +29,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Simple type definitions.
 //////////////////////////////////////////////////////////////////////////
-#include <CryCore/BaseTypes.h>
+#include <BlackBox/Core/BaseTypes.hpp>
 
 // If #defined, then shapes of newly created AITerritoryShapes will be limited to a single point, which is less confusing for level-designers nowadays
 // as the actual shape has no practical meaning anymore (C1 and maybe C2 may have used the shape, but it was definitely no longer used for C3).
@@ -45,10 +45,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // CRY Stuff.
 /////////////////////////////////////////////////////////////////////////////
-#include <CryCore/Platform/platform.h>
-#include <CryCore/smartptr.h>
-#include <CryCore/StlUtils.h>
-#include <CryMath/Cry_Geo.h>
-#include <CryMath/Range.h>
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/StlUtils.hpp>
+#include <BlackBox/Core/Math/Cry_Geo.h>
 
 #define CRY_ENABLE_FBX_SDK

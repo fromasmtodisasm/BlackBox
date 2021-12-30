@@ -12,7 +12,7 @@ add_sources(
 		"Include/SandboxAPI.h"
 	SOURCE_GROUP "Resource Files"
 		"resource.h"
-	SOURCE_GROUP "Source Files"
+	SOURCE_GROUP "Core"
 		"EditorApp.cpp"
 		"EditorApp.h"
 		"EditorDefs.h"
@@ -26,6 +26,21 @@ add_sources(
 		"MainMenu.hpp"
 		"GameEngine.cpp"
 		"GameEngine.hpp"
+
+		"PluginManager.cpp"
+		"PluginManager.h"
+
+		 "LogFile.h"
+
+		 "SplashScreen.cpp"
+		 "SplashScreen.h"
+
+		 "ClassFactory.cpp"
+		 "ClassFactory.h"
+
+SOURCE_GROUP "Util"
+		 "Util/FileEnum.cpp"
+		 "Util/FileEnum.h"
 )
 Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
 target_include_directories( ${THIS_PROJECT}

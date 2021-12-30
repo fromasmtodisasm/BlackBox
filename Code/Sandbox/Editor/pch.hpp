@@ -86,3 +86,18 @@
 
 // Resource includes
 #include "Resource.h"
+
+//////////////////////////////////////////////////////////////////////////
+// Main Editor include.
+//////////////////////////////////////////////////////////////////////////
+#include "EditorDefs.h"
+#include "IPlugin.h"
+#include "PluginManager.h"
+
+using CString = string;
+
+#define CRY_PROFILE_FUNCTION(p)
+#define CRY_PROFILE_SECTION_ARG(...)
+
+#define cry_strcpy strcpy
+#define cry_strcat strcat

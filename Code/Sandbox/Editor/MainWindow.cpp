@@ -59,3 +59,19 @@ void MainWindow::Draw()
 	//ImGui::EndTabItem();
 	ImGui::End();
 }
+
+void MainWindow::OnEditorNotifyEvent(EEditorNotifyEvent event)
+{
+	switch (event)
+	{
+	case eNotify_OnInit:
+		break;
+	case eNotify_OnQuit:
+		break;
+	case eNotify_OnIdleUpdate:
+		Draw();
+		break;
+	default:
+		break;
+	}
+}

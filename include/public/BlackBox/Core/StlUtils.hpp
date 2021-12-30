@@ -197,6 +197,21 @@ namespace stl
 		return false;
 	}
 
+    //! Find and erase element from map.
+    //! \return true if item was find and erased, false if item not found.
+    template<class Container, class Key>
+    inline bool member_find_and_erase(Container& container, const Key& key)
+    {
+        typename Container::iterator it = container.find(key);
+        if (it != container.end())
+        {
+            container.erase(it);
+            return true;
+        }
+        return false;
+    }
+
+
 	//////////////////////////////////////////////////////////////////////////
 	//! Push back to container unique element.
 	// @return true if item added, false overwise.

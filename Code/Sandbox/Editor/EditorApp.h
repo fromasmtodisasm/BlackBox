@@ -21,13 +21,18 @@ class SANDBOX_API CEditApp
 
 	static CEditApp* GetInstance();
 
-public:
+  public:
 	bool InitInstance();
 	bool PostInit();
 	int	 ExitInstance();
 
+	void InitPlugins();
+
 	void Run();
 
-private:
+	bool IdleProcessing(bool bBackground);
+
+  private:
 	CEditorImpl* m_pEditor{nullptr};
+	bool		 m_bExiting{false};
 };

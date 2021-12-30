@@ -66,7 +66,9 @@ void ImGuiManager::NewFrame()
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 	bool p_open{};
 	bool open_console = true;
+	#if 0
 	console.Draw("Console", &open_console);
+	#endif
 }
 
 bool ImGuiManager::Init()

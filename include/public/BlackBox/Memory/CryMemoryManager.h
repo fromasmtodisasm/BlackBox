@@ -129,7 +129,7 @@ struct CryModuleMemoryInfo
 //#ifndef CRYSYSTEM_EXPORTS
 #define _ACCESS_POOL
 //#if defined(_DEBUG) || defined(DONT_USE_CRY_MEMORY_MANAGER)
-#if defined(DONT_USE_CRY_MEMORY_MANAGER)
+#if defined(NOT_USE_CRY_MEMORY_MANAGER)
 	#define CryModuleMalloc malloc
 	#define CryModuleRealloc realloc
 	#define CryModuleFree free

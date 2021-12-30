@@ -42,10 +42,19 @@ class SANDBOX_API CEditorImpl : public IEditor
 	~CEditorImpl();
 
 	// Inherited via IEditor
-	virtual bool Init() override;
-	virtual void Draw() override;
+	virtual bool	 Init() override;
+	void			 ExecuteCommand(const char* sCommand, ...);
+	virtual void	 Draw() override;
+	virtual ISystem* GetSystem() override;
+
+	CPluginManager*             GetPluginManager()  { return m_pPluginManager; }
 
 	bool Update();
+	void InitFinished();
+
+	void Notify(EEditorNotifyEvent event);
+	void RegisterNotifyListener(IEditorNotifyListener* listener);
+	void UnregisterNotifyListener(IEditorNotifyListener* listener);
 
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
@@ -61,9 +70,19 @@ class SANDBOX_API CEditorImpl : public IEditor
 	}
 
 private:
-	MainMenu   m_MainMenu;
-	MainWindow m_MainWindow;
-	IGame*	   m_pGame = nullptr;
-	bool	   m_bQuit = false;
-	IImGuiManager* m_GuiManager = nullptr;
+	//! List of all notify listeners.
+  std::list<IEditorNotifyListener*> m_listeners;
+
+  MainMenu							m_MainMenu;
+  MainWindow						m_MainWindow;
+  IGame*							m_pGame		 = nullptr;
+  bool								m_bQuit		 = false;
+  IImGuiManager*					m_GuiManager = nullptr;
+  CPluginManager*					m_pPluginManager;
+  IEditorClassFactory*				m_pClassFactory;
+
+	// Inherited via IEditor
+	virtual IEditorClassFactory* GetClassFactory() override;
 };
+
+CEditorImpl* GetIEditorImpl();

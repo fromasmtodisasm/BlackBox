@@ -1,4 +1,4 @@
-#include "Console.h"
+#include "ConsoleWindow.h"
 
 #if 0
 #	define IMGUI_DEMO_MARKER(section)                                                                                                     \
@@ -446,6 +446,23 @@ void Console::Print(const char* inszText)
 {
 	auto lock = std::lock_guard(ConsoleLock);
 	AddLog(inszText);
+}
+
+void Console::OnEditorNotifyEvent(EEditorNotifyEvent event)
+{
+	switch (event)
+	{
+	case eNotify_OnInit:
+		break;
+	case eNotify_OnQuit:
+		break;
+	case eNotify_OnIdleUpdate:
+		static bool p_open;
+		Draw("Console", &p_open);
+		break;
+	default:
+		break;
+	}
 }
 
 }

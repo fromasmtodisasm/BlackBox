@@ -74,12 +74,13 @@ void CrySetCurrentWorkingDirectory(const char* szWorkingDirectory)
 
 //////////////////////////////////////////////////////////////////////////
 #include <CryString/CryPath.h>
+#endif
 void CryGetExecutableFolder(unsigned int pathSize, char* szPath)
 {
-	WCHAR filePath[512];
-	size_t nLen = GetModuleFileNameW(CryGetCurrentModule(), filePath, BB_ARRAY_COUNT(filePath));
+	/*W*/CHAR filePath[512];
+	size_t nLen = GetModuleFileNameA(CryGetCurrentModule(), filePath, CRY_ARRAY_COUNT(filePath));
 
-	if (nLen >= BB_ARRAY_COUNT(filePath))
+	if (nLen >= CRY_ARRAY_COUNT(filePath))
 	{
 		CryFatalError("The path to the current executable exceeds the expected length. TruncatedPath:%s", filePath);
 	}
@@ -89,16 +90,18 @@ void CryGetExecutableFolder(unsigned int pathSize, char* szPath)
 		CryFatalError("Unexpected error encountered trying to get executable path. GetModuleFileNameW failed.");
 	}
 
-	if (wchar_t* pathEnd = wcsrchr(filePath, L'\\'))
+	if (auto pathEnd = strrchr(filePath, L'\\'))
 	{
 		pathEnd[1] = L'\0';
 	}
 
-	size_t requiredLength = Unicode::Convert(szPath, pathSize, filePath);
+	//size_t requiredLength = Unicode::Convert(szPath, pathSize, filePath);
+	size_t requiredLength = strlen(filePath);
 	if (requiredLength > pathSize)
 	{
 		CryFatalError("Executable path is to long. MaxPathSize:%u, PathSize:%u, Path:%s", pathSize, (uint)requiredLength, filePath);
 	}
+	strncpy(szPath, filePath, pathSize);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,7 +109,6 @@ int CryGetWritableDirectory(unsigned int nBufferLength, char* lpBuffer)
 {
 	return 0;
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 short CryGetAsyncKeyState(int vKey)

@@ -5,7 +5,6 @@
 #include <BlackBox/System/ConsoleRegistration.h>
 
 #include "ImGuiManager.hpp"
-#include "Console.h"
 struct CVars
 {
 	int gui_docking{1};
@@ -38,7 +37,9 @@ class ImGuiManager : public IImGuiManager, public ISystemEventListener, public C
 
   private:
 	bool show_demo_window = true;
+	#if 0
     gui::Console console;
+	#endif
 
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;

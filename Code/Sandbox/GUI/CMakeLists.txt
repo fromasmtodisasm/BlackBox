@@ -4,9 +4,9 @@ add_sources(
 	"NoUberFile"
 	PROJECTS
 	GUI
-	SOURCE_GROUP "Source Files"
-		Console.cpp
-		Console.h
+	SOURCE_GROUP "Code"
+		#Console.cpp
+		#Console.h
 		GUI.cpp
 		ImGuiInput.cpp
 		ImGuiInput.hpp
@@ -56,3 +56,7 @@ add_subdirectory(GuiTools)
 #add_private_headers()
 
 add_library(imgui::imgui ALIAS GUI)
+target_compile_definitions(${THIS_PROJECT} PRIVATE
+	-DNOT_USE_CRY_MEMORY_MANAGER
+	-DDONT_USE_CRY_MEMORY_MANAGER
+)

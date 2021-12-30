@@ -556,7 +556,7 @@ bool    ImGui_ImplDX11_Init(ID3D11Device* device, ID3D11DeviceContext* device_co
     IM_ASSERT(io.BackendRendererUserData == NULL && "Already initialized a renderer backend!");
 
     // Setup backend capabilities flags
-    ImGui_ImplDX11_Data* bd = IM_NEW(ImGui_ImplDX11_Data)();
+	ImGui_ImplDX11_Data* bd	   = new ImGui_ImplDX11_Data;
     io.BackendRendererUserData = (void*)bd;
     io.BackendRendererName = "imgui_impl_dx11";
     io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
@@ -599,7 +599,7 @@ void ImGui_ImplDX11_Shutdown()
     if (bd->pd3dDeviceContext)    { bd->pd3dDeviceContext->Release(); }
     io.BackendRendererName = NULL;
     io.BackendRendererUserData = NULL;
-    IM_DELETE(bd);
+    delete bd;
 }
 
 void ImGui_ImplDX11_NewFrame()
@@ -630,7 +630,7 @@ struct ImGui_ImplDX11_ViewportData
 static void ImGui_ImplDX11_CreateWindow(ImGuiViewport* viewport)
 {
     ImGui_ImplDX11_Data* bd = ImGui_ImplDX11_GetBackendData();
-    ImGui_ImplDX11_ViewportData* vd = IM_NEW(ImGui_ImplDX11_ViewportData)();
+    ImGui_ImplDX11_ViewportData* vd = new ImGui_ImplDX11_ViewportData;
     viewport->RendererUserData = vd;
 
     // PlatformHandleRaw should always be a HWND, whereas PlatformHandle might be a higher-level handle (e.g. GLFWWindow*, SDL_Window*).
@@ -677,7 +677,7 @@ static void ImGui_ImplDX11_DestroyWindow(ImGuiViewport* viewport)
         if (vd->RTView)
             vd->RTView->Release();
         vd->RTView = NULL;
-        IM_DELETE(vd);
+        delete vd;
     }
     viewport->RendererUserData = NULL;
 }
