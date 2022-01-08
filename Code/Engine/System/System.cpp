@@ -1271,10 +1271,10 @@ void CSystem::SleepIfNeeded()
 }
 
 
-ISystem* CreateSystemInterface(SSystemInitParams& initParams)
+ISystem* CreateSystemInterface(SSystemInitParams& startupParams)
 {
-	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
-	initParams.pSystem				 = pSystem.get();
+	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(startupParams);
+	startupParams.pSystem				 = pSystem.get();
 	ModuleInitISystem(pSystem.get(), "System");
 #if BB_PLATFORM_WINDOWS
 	SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
@@ -1286,16 +1286,20 @@ ISystem* CreateSystemInterface(SSystemInitParams& initParams)
 #	endif
 	m_env.pWindow = startupParams.hWnd;
 #endif
+	// the earliest point the system exists - w2e tell the callback
+	if (startupParams.pUserCallback)
+		startupParams.pUserCallback->OnSystemConnect(pSystem.get());
+
 	if (!pSystem->Init())
 	{
 		//pSystem.release();
-		initParams.pSystem = nullptr;
+		startupParams.pSystem = nullptr;
 		//gEnv->pSystem	   = nullptr;
 		return nullptr;
 	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
 	// run main loop
-	if (!initParams.bManualEngineLoop)
+	if (!startupParams.bManualEngineLoop)
 	{
 		pSystem->RunMainLoop();
 		return nullptr;

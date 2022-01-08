@@ -45,9 +45,12 @@ class SANDBOX_API CEditorImpl : public IEditor
 	virtual bool	 Init() override;
 	void			 ExecuteCommand(const char* sCommand, ...);
 	virtual void	 Draw() override;
+
+	bool			 SaveDocumentBackup();
 	virtual ISystem* GetSystem() override;
 
-	CPluginManager*             GetPluginManager()  { return m_pPluginManager; }
+	CPluginManager* GetPluginManager() { return m_pPluginManager; }
+	CGameEngine*	GetGameEngine() { return m_pGameEngine; }
 
 	bool Update();
 	void InitFinished();
@@ -62,6 +65,9 @@ class SANDBOX_API CEditorImpl : public IEditor
 	virtual void CallBack(Type type) override;
 	virtual void OnRenderer_BeforeEndFrame() override;
 
+	virtual bool IsInGameMode() override;
+	virtual void SetInGameMode(bool inGame) override;
+
 	bool InitGUI()
 	{
 		m_GuiManager = CreateGUI(gEnv->pSystem);
@@ -71,15 +77,19 @@ class SANDBOX_API CEditorImpl : public IEditor
 
 private:
 	//! List of all notify listeners.
-  std::list<IEditorNotifyListener*> m_listeners;
+	std::list<IEditorNotifyListener*> m_listeners;
 
-  MainMenu							m_MainMenu;
-  MainWindow						m_MainWindow;
-  IGame*							m_pGame		 = nullptr;
-  bool								m_bQuit		 = false;
-  IImGuiManager*					m_GuiManager = nullptr;
-  CPluginManager*					m_pPluginManager;
-  IEditorClassFactory*				m_pClassFactory;
+	MainMenu			 m_MainMenu;
+	MainWindow			 m_MainWindow;
+	IGame*				 m_pGame = nullptr;
+	CGameEngine*		 m_pGameEngine = nullptr;
+	IImGuiManager*		 m_GuiManager  = nullptr;
+	CPluginManager*		 m_pPluginManager;
+	IEditorClassFactory* m_pClassFactory;
+
+	bool m_bQuit	= false;
+	bool m_bExiting = false;
+
 
 	// Inherited via IEditor
 	virtual IEditorClassFactory* GetClassFactory() override;

@@ -48,6 +48,13 @@ void CEditorImpl::Draw()
 	PluginManagerWindow::Draw();
 }
 
+bool CEditorImpl::SaveDocumentBackup()
+{
+	if (m_bExiting)
+		return false;
+	return false;
+}
+
 inline ISystem* CEditorImpl::GetSystem() { return gEnv->pSystem; }
 
 bool CEditorImpl::Update()
@@ -56,7 +63,9 @@ bool CEditorImpl::Update()
 	m_GuiManager->NewFrame();
 	m_GuiManager->ShowDemoWindow();
 	gEnv->pSystem->Update(ESYSUPDATE_EDITOR);
+	#if 0
 	GetIEditorImpl()->Notify(eNotify_OnIdleUpdate);
+	#endif
 
 	return m_pGame->Update();
 }
@@ -127,6 +136,34 @@ void CEditorImpl::OnRenderer_BeforeEndFrame()
 IEditorClassFactory* CEditorImpl::GetClassFactory()
 {
 	return m_pClassFactory;
+}
+
+bool CEditorImpl::IsInGameMode()
+{
+	if (m_pGameEngine)
+		return m_pGameEngine->IsInGameMode();
+	return false;
+}
+
+void CEditorImpl::SetInGameMode(bool inGame)
+{	
+	static bool bWasInSimulationMode(false);
+
+	if (inGame)
+	{
+		bWasInSimulationMode = GetIEditorImpl()->GetGameEngine()->GetSimulationMode();
+		GetIEditorImpl()->GetGameEngine()->SetSimulationMode(false);
+		#if 0
+		GetIEditorImpl()->GetCommandManager()->Execute("game.enter");
+		#endif
+	}
+	else
+	{
+		#if 0
+		GetIEditorImpl()->GetCommandManager()->Execute("game.exit");
+		#endif
+		GetIEditorImpl()->GetGameEngine()->SetSimulationMode(bWasInSimulationMode);
+	}
 }
 
 bool CEditorImpl::Init()

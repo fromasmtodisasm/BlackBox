@@ -32,7 +32,10 @@ class SANDBOX_API CEditApp
 
 	bool IdleProcessing(bool bBackground);
 
+	std::unique_ptr<CGameEngine> InitGameSystem();
+
   private:
 	CEditorImpl* m_pEditor{nullptr};
 	bool		 m_bExiting{false};
+	bool		 m_bTestMode{false};
 };

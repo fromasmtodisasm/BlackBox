@@ -37,6 +37,9 @@ struct IEditor
 	//! Unregister Editor notifications listener.
 	virtual void                     UnregisterNotifyListener(IEditorNotifyListener* listener) = 0;
 
+	virtual bool IsInGameMode()				= 0;
+	virtual void SetInGameMode(bool inGame) = 0;
+
 };
 
 IEditor* GetIEditor();
