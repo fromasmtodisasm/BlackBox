@@ -1,5 +1,4 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
-#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/System.hpp>
 
 #include <BlackBox/Core/IGame.hpp>
@@ -1009,51 +1008,6 @@ const char* CSystem::GetUserName()
 #endif
 }
 
-void CSystem::FatalError(const char* format, ...)
-{
-	// format message
-	va_list ArgList;
-	char szBuffer[MAX_WARNING_LENGTH];
-	const char* sPrefix = "";
-	strcpy(szBuffer, sPrefix);
-	va_start(ArgList, format);
-	vsprintf(szBuffer + strlen(szBuffer)/*, sizeof(szBuffer) - strlen(szBuffer)*/, format, ArgList);
-	va_end(ArgList);
-
-	#
-	// get system error message before any attempt to write into log
-	const char* szSysErrorMessage = CryGetLastSystemErrorMessage();
-
-	CryLogAlways("=============================================================================");
-	CryLogAlways("*ERROR");
-	CryLogAlways("=============================================================================");
-	// write both messages into log
-	CryLogAlways("%s", szBuffer);
-
-	if (szSysErrorMessage)
-		CryLogAlways("<System> Last System Error: %s", szSysErrorMessage);
-
-	assert(szBuffer[0] >= ' ');
-	//strcpy(szBuffer,szBuffer+1);	// remove verbosity tag since it is not supported by ::MessageBox
-
-	//LogSystemInfo();
-
-	//CollectMemStats(0, nMSP_ForCrashLog);
-
-	OutputDebugString(szBuffer);
-	//OnFatalError(szBuffer);
-
-	if (!g_cvars.sys_no_crash_dialog)
-	{
-		CryMessageBox(szBuffer,"ENGINE FATAL ERROR", eMB_Error);
-	}
-
-	//GetITextModeConsole()->OnShutdown();
-	DebugBreak();
-	//__debugbreak();
-
-}
-
 //////////////////////////////////////////////////////////////////////////
 void CSystem::ExecuteCommandLine()
 {
@@ -1148,23 +1102,6 @@ ITextModeConsole* CSystem::GetITextModeConsole()
 IProjectManager* CSystem::GetIProjectManager()
 {
 	return m_env.pProjectManager;
-}
-
-LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
-{
-	static char msg[1024];
-
-	CryError(
-		"Code: %x\nAddress: 0x%p",
-		pExceptionPtrs->ExceptionRecord->ExceptionCode,
-		pExceptionPtrs->ExceptionRecord->ExceptionAddress
-	);
-	// Do something, for example generate error report
-	MessageBox(NULL, msg, "Exception", 0);
-	//..
-
-	// Execute default exception handler next
-	return EXCEPTION_EXECUTE_HANDLER;
 }
 
 int CSystem::GetCPUFlags()
@@ -1268,40 +1205,6 @@ void CSystem::SleepIfNeeded()
 		m_lastTickTime = pTimer->GetAsyncTime();
 		sTimeLast	   = m_lastTickTime.GetMicroSecondsAsInt64() + safeMarginMS;
 	}
-}
-
-
-ISystem* CreateSystemInterface(SSystemInitParams& initParams)
-{
-	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(initParams);
-	initParams.pSystem				 = pSystem.get();
-	ModuleInitISystem(pSystem.get(), "System");
-#if BB_PLATFORM_WINDOWS
-	SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
-#endif
-
-#if CRY_PLATFORM_DURANGO
-#	if !defined(_LIB)
-	m_env = pSystem->GetGlobalEnvironment();
-#	endif
-	m_env.pWindow = startupParams.hWnd;
-#endif
-	if (!pSystem->Init())
-	{
-		//pSystem.release();
-		initParams.pSystem = nullptr;
-		//gEnv->pSystem	   = nullptr;
-		return nullptr;
-	}
-	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
-	// run main loop
-	if (!initParams.bManualEngineLoop)
-	{
-		pSystem->RunMainLoop();
-		return nullptr;
-	}
-
-	return pSystem.release();
 }
 
 

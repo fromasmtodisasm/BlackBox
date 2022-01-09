@@ -6,7 +6,8 @@
 
 #include <BlackBox/Core/Path.hpp>
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Platform/platform_impl.inl>
+//#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/CryLibrary.h>
 #include <BlackBox/System/File/ICryPak.hpp>
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,35 +41,24 @@ CEditApp* CEditApp::GetInstance()
 
 bool CEditApp::InitInstance()
 {
-	SSystemInitParams startupParams;
-	startupParams.sLogFileName		= "Editor.log";
-	startupParams.bManualEngineLoop = true;
-	//startupParams.bEditor			= true;
-	startupParams.bEditor = false;
-	// Enable run-time memory check for debug builds.
-
-	// Note: lpCmdLine does not contain the filename.
-	const string cmdLine = GetCommandLineA();
-	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
+	auto pGameEngine = InitGameSystem();
+	if (!pGameEngine)
+	{
+		return false;
+	}
 
 	auto result = false;
 
-	if (InitializeEngine(startupParams, true))
-	{
-		auto pSystem = startupParams.pSystem;
-		pSystem->GetILog()->Log("ISystem created");
-		gEnv = pSystem->GetGlobalEnvironment();
 
-		m_pEditor = new CEditorImpl(new CGameEngine(gEnv->pSystem->GetIGame()));
+    m_pEditor = new CEditorImpl(pGameEngine.release());
 
-		result = m_pEditor->Init();
-		// Create Sandbox user folder if necessary
-		GetISystem()->GetIPak()->MakeDir("%USER%/Sandbox");
+    result = m_pEditor->Init();
+    // Create Sandbox user folder if necessary
+    GetISystem()->GetIPak()->MakeDir("%USER%/Sandbox");
 
-		InitPlugins();
+    InitPlugins();
 
-        m_pEditor->InitFinished();
-	}
+    m_pEditor->InitFinished();
 	return result;
 }
 
@@ -142,6 +132,22 @@ bool CEditApp::IdleProcessing(bool bBackground)
 	GetIEditorImpl()->Notify(eNotify_OnIdleUpdate);
 	#endif
 	return res;
+}
+
+std::unique_ptr<CGameEngine> CEditApp::InitGameSystem()
+{
+	bool bShaderCacheGen = false;
+	//m_bPrecacheShaderList | m_bPrecacheShaders | m_bPrecacheShadersLevels;
+	//std::unique_ptr<CGameEngine> pGameEngine	 = stl::make_unique<CGameEngine>();
+	std::unique_ptr<CGameEngine> pGameEngine	 = std::make_unique<CGameEngine>();
+	//auto						 uiinfo		 = &SInitializeUIInfo::GetInstance();
+	auto						 uiinfo		 = nullptr;
+	if (!pGameEngine->Init(m_bTestMode, bShaderCacheGen, GetCommandLineA(), uiinfo))
+	{
+		return nullptr;
+	}
+
+	return pGameEngine;
 }
 
 CEditApp::CEditApp()

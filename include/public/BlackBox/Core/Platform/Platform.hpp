@@ -334,6 +334,16 @@ ILINE bool IsAligned(T nData, size_t nAlign)
   #include <BlackBox/Core/Platform/Orbis_Win32Wrapper.h>
 #endif
 
+// Formatted error messages
+
+//! Returns a pointer to a string describing the error, or a nullptr.
+//! Subsequent calls to this function may overwrite/change previously returned strings.
+const char* CryGetSystemErrorMessage(DWORD errorId);
+//! GetErrorMessage(GetLastError())
+const char* CryGetLastSystemErrorMessage();
+//! Resets the info on the last system error.
+void CryClearSytemError();
+
 // Provide special cast function which mirrors C++ style casts to support aliasing correct type punning casts in gcc with strict-aliasing enabled
 template<typename DestinationType, typename SourceType>
 inline DestinationType alias_cast(SourceType pPtr)

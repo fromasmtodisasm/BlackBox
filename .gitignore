@@ -38,3 +38,4 @@ out/*
 /Data/Sounds
 /Data/Music
 /Code/Engine/Renderer/Shaders/Parser.output
+/Editor.log
