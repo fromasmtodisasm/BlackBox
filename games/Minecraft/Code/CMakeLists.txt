@@ -191,25 +191,27 @@ if(OPTION_NOT_USE_DIVX_SDK)
 endif()
 
 
-target_include_directories(
-	${THIS_PROJECT}
-	PRIVATE "${INCLUDE_ROOT}"
-	PRIVATE "${INCLUDE_ROOT}/GameFiles"
-	PRIVATE "${INCLUDE_ROOT}/Network"
-	PRIVATE "${INCLUDE_ROOT}/Bink"
-	PRIVATE "${INCLUDE_ROOT}/GUI")
-
 file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)
 
 target_sources(${THIS_PROJECT} PRIVATE ${INCLUDE_FILES})
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/UI)
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Legacy)
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/TimeDemoRecorder)
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Weapons)
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Network)
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Vehicle)
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/GameSystem)
-target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Player)
+
+target_include_directories(${THIS_PROJECT} 
+	PRIVATE 
+		"${INCLUDE_ROOT}"
+		"${INCLUDE_ROOT}/GameFiles"
+		"${INCLUDE_ROOT}/Network"
+		"${INCLUDE_ROOT}/Bink"
+		"${INCLUDE_ROOT}/GUI"
+	
+		${CMAKE_CURRENT_LIST_DIR}/UI
+		${CMAKE_CURRENT_LIST_DIR}/Legacy
+		${CMAKE_CURRENT_LIST_DIR}/TimeDemoRecorder
+		${CMAKE_CURRENT_LIST_DIR}/Weapons
+		${CMAKE_CURRENT_LIST_DIR}/Network
+		${CMAKE_CURRENT_LIST_DIR}/Vehicle
+		${CMAKE_CURRENT_LIST_DIR}/GameSystem
+		${CMAKE_CURRENT_LIST_DIR}/Player
+)
 
 source_group(
 	TREE ${INCLUDE_ROOT}

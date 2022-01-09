@@ -5,8 +5,7 @@
 
 #include "RenderThread.h"
 
-#include <imgui.h>
-
+#define EDITOR (gEnv->IsEditing())
 // Globals
 ID3DShaderResourceView* GlobalResources::FontAtlasRV{};
 ID3D11SamplerState*		GlobalResources::LinearSampler{};
@@ -125,11 +124,15 @@ void CD3DRenderer::BeginFrame(void)
 {
 	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
 	auto pDC = m_Device->Get<ID3D11DeviceContext>();
-	//pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
-	pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+	if (EDITOR)
+        pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+	else
+        pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 
-	//pDC->ClearRenderTargetView(m_pMainRenderTargetView.Get(), &m_ClearColor[0]);
-	pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
+	if (EDITOR)
+        pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
+	else
+        pDC->ClearRenderTargetView(m_pMainRenderTargetView.Get(), &m_ClearColor[0]);
 	pDC->ClearDepthStencilView(static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView), D3D11_CLEAR_DEPTH, 1.f, 0);
 }
 
@@ -186,7 +189,8 @@ void CD3DRenderer::Update(void)
 						pConsole->Draw();
 					D3DPERF_EndEvent();
 				}
-				GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+				if (!EDITOR)
+                    GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 				if (m_FrameID > 20)
 				{
 					#if 0
