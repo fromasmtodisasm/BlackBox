@@ -97,6 +97,7 @@ bool ImGuiManager::OnInputEvent(const SInputEvent& event)
 ImGuiManager::~ImGuiManager()
 {
 	ImGui_ImplDX11_InvalidateDeviceObjects();
+    ImGui_ImplDX11_Shutdown();
 }
 
 void ImGuiManager::ShowDemoWindow()

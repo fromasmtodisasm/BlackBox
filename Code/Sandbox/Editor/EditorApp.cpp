@@ -96,6 +96,12 @@ int CEditApp::ExitInstance()
 		CloseHandle(m_mutexApplication);
 #endif
 
+	gEnv->pSystem->Release();
+
+	auto h = GetModuleHandleA("System.dll");
+	if (h)
+		CryFreeLibrary(h);
+
 	return 0;
 }
 

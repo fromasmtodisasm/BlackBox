@@ -330,6 +330,7 @@ void CSystem::Quit()
 #endif
 	}
 #if !BB_PLATFORM_LINUX && !BB_PLATFORM_ANDROID && !BB_PLATFORM_APPLE && !BB_PLATFORM_DURANGO && !BB_PLATFORM_ORBIS
+	// FIXME: wtf!!!  it is not worked
 	//PostQuitMessage(0);
 #endif
 
@@ -606,7 +607,10 @@ void CSystem::ShutDown()
 	#endif
 
 
+    SAFE_DELETE(m_env.pFrameProfileSystem);
 	ShutDownThreadSystem();
+
+    SAFE_DELETE(m_env.pFrameProfileSystem);
 
 	SAFE_DELETE(m_ScriptObjectConsole);
 	SAFE_DELETE(m_ScriptObjectSound);
@@ -623,15 +627,15 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pSoundSystem);
 	#if 0
 	SAFE_RELEASE(m_pNetwork);
-	SAFE_RELEASE(m_env.pConsole);
+	#endif
 	SAFE_DELETE(m_pSystemEventDispatcher);
 	SAFE_DELETE(m_pCmdLine);
 	SAFE_DELETE(m_env.pProjectManager);
 	SAFE_RELEASE(m_env.pLog);
 	SAFE_RELEASE(m_env.pCryPak);
 	SAFE_RELEASE(m_pCryPak);
-	#endif
 	UnloadSubsystems();
+	SAFE_RELEASE(m_env.pConsole);
     SDL_Quit();
 }
 

@@ -197,7 +197,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #if 0
 	g_FxParser = &s_FxParser;
 #else
-	g_FxParser		= nullptr;
+	g_FxParser		= new FxParser;
 #endif
 #if 0
 	if (!InitResourceManagers())
@@ -694,6 +694,10 @@ void CRenderer::Sh_Reload()
 
 void CRenderer::ShutDown()
 {
+	#if 0
+	PEffect effect{nullptr};
+	g_FxParser->Parse("123", &effect);
+	#endif
 	gEnv->pConsole->RemoveConsoleVarSink(this);
 	for (size_t i = 0; i < m_Fonts.size(); i++)
 	{

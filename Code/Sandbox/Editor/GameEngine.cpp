@@ -193,6 +193,7 @@ static void GameSystemAuthCheckFunction(void* data)
 bool CGameEngine::Init(bool bTestMode, bool bShaderCacheGen, const char* sInCmdLine, IInitializeUIInfo* logo)
 {
 	m_pSystemUserCallback = new SSystemUserCallback(logo);
+	m_pGameToEditorInterface = new CGameToEditorInterface();
 
 	SSystemInitParams startupParams;
 

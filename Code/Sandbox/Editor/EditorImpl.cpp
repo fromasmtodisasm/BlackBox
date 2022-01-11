@@ -20,6 +20,7 @@ CEditorImpl* GetIEditorImpl()
 CEditorImpl::CEditorImpl(CGameEngine* ge)
 {
 	m_pGame = ge->m_pGame;
+	m_pGameEngine = ge;
 	gEnv->pRenderer->RegisterCallbackClient(this);
 
 	s_pEditor = this;
@@ -38,6 +39,7 @@ CEditorImpl::~CEditorImpl()
 	SAFE_DELETE(m_pPluginManager)
 	EditorCommon::Deinitialize();
 
+	SAFE_DELETE(m_pGameEngine);
 	s_pEditor = nullptr;
 }
 
