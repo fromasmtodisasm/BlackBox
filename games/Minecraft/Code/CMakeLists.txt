@@ -6,8 +6,6 @@ start_sources()
 sources_platform(ALL)
 add_sources(
 	"NoUberFile"
-	PROJECTS
-	MineCRY
 	SOURCE_GROUP "Source Files"
 		Main.cpp
 		Commands.cpp
@@ -26,8 +24,6 @@ add_sources(
 		GameSystem/XSystemEntities.h
 		GameSystem/XSystemServer.cpp
 		GameSystem/XSystemServer.h
-
-
 	SOURCE_GROUP "GameFiles"
 		#GameFiles/GameObject.h
 		# GameFiles/GameGUI.cpp
@@ -124,7 +120,6 @@ add_sources(
 		UI/UIVideoPanel.h
 		UI/UIWidget.cpp
 		UI/UIWidget.h
-
 	#UI/Proxy.cpp
 	SOURCE_GROUP "Legacy"
 		Legacy/CryCharAnimationParams.h
@@ -142,14 +137,12 @@ add_sources(
 		Legacy/Stream.h
 		Legacy/TArray.h
 		Legacy/TimeValue.h
-
 	SOURCE_GROUP "Weapons"
 		Weapons/FireType.h
 		Weapons/WeaponClass.cpp
 		Weapons/WeaponClass.h
 		Weapons/WeaponSystemEx.cpp
 		Weapons/WeaponSystemEx.h
-
 	SOURCE_GROUP "Vehicle"
 		#Vehicle/XVehicle.cpp
 		Vehicle/XVehicle.h
@@ -158,7 +151,6 @@ add_sources(
 		#Vehicle/XVehicleProxyHeli.cpp
 		#Vehicle/XVehicleSystem.cpp
 		Vehicle/XVehicleSystem.h
-
 )
 end_sources()
 GameModule(MineCRY FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
@@ -179,9 +171,7 @@ set(OPTION_NOT_USE_DIVX_SDK ON)
 if(OPTION_NOT_USE_DIVX_SDK)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE NOT_USE_DIVX_SDK)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE NOT_USE_BINK_SDK)
-
 endif()
-
 
 file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)
 
