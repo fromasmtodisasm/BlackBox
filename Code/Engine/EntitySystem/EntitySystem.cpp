@@ -8,7 +8,7 @@
 
 inline CEntitySystem::CEntitySystem(ISystem* pSystem) : m_EntityIt(m_Entities)
 {
-	#if 0
+	#if 1
 	m_Entities.resize(16*16*256 + 1024);
 	#endif
 

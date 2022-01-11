@@ -1,3 +1,4 @@
+if (0)
 cmake_minimum_required(VERSION 3.5)
 
 project(EditorQt VERSION 0.1 LANGUAGES CXX)
@@ -57,3 +58,4 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 target_link_libraries(EditorQt PRIVATE BlackBox)
+endif()

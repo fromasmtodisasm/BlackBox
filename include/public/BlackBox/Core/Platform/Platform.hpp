@@ -405,3 +405,4 @@ bool			InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEng
   typedef std::weak_ptr<name> name ##         WeakPtr;  \
   typedef std::weak_ptr<const name> name ##   ConstWeakPtr;
 
+#define fxopen fopen

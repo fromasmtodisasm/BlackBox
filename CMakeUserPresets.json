@@ -14,7 +14,8 @@
       "generator": "Visual Studio 16 2019",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
-        "OPTION_EDITOR":  true
+        "OPTION_EDITOR": true,
+        "QT_SDK_ROOT": "C:"
       }
     }
   ],

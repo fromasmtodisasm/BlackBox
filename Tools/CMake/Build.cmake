@@ -22,6 +22,25 @@ if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 endif()
 	
 if (OPTION_EDITOR)
+	if (NOT QT_SDK_ROOT)
+		message(FATAL_ERROR "Qt Sdk Root Not Installed")
+	endif()
+		# Find Qt before including any plugin subdirectories
+	if (MSVC_VERSION GREATER 1900) # Visual Studio > 2015
+		set(QT_DIR "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64")
+		message(STATUS "Qt Sdk Root: ${QT_SDK_ROOT}")
+	endif()
+	set(Qt6_DIR "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64/lib/cmake/Qt6")
+
+	#find_package(Qt6 COMPONENTS Core Gui OpenGL Widgets REQUIRED PATHS "${QT_DIR}" NO_DEFAULT_PATH)
+	find_package(Qt6 COMPONENTS Core Gui OpenGL Widgets REQUIRED PATHS "${QT_DIR}")
+
+	set(QT_DIR "${QT_DIR}" CACHE INTERNAL "QT directory" FORCE)
+	set(Qt6_DIR "${Qt6_DIR}" CACHE INTERNAL "QT directory" FORCE)
+
+	set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER  "${VS_FOLDER_PREFIX}/Sandbox/AUTOGEN")
+
+	message(STATUS "Include Sandbox Editor")
 	include ("${TOOLS_CMAKE_DIR}/BuildEditor.cmake")
 endif()
 
