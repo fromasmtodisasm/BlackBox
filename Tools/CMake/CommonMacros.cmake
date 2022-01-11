@@ -913,6 +913,8 @@ function(CSharpApplication target)
 		set_property(TARGET ${THIS_PROJECT} PROPERTY VS_DOTNET_TARGET_FRAMEWORK_VERSION ${MODULE_FRAMEWORK_VERSION})
 	endif()
 	set_property(TARGET ${THIS_PROJECT} PROPERTY WIN32_EXECUTABLE TRUE)
+	#set_property(TARGET ${THIS_PROJECT} PROPERTY CMAKE_ARCHIVE_OUTPUT_DIRECTORY TRUE)
+	set_target_properties(${THIS_PROJECT} PROPERTIES VS_GLOBAL_RegisterForComInterop "true")
 	set(CMAKE_CSharp_FLAGS "/langversion:latest")
 	set_property(TARGET ${THIS_PROJECT} PROPERTY VS_DOTNET_REFERENCES
 		"Microsoft.CSharp"
