@@ -2,8 +2,6 @@
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/System/System.hpp>
 
-#include <imgui.h>
-
 #include "CrySizerImpl.h"
 
 

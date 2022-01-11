@@ -90,8 +90,6 @@ add_sources(
 
 		TimeDemoRecorder/XDemoMgr.cpp
 		TimeDemoRecorder/XDemoMgr.h
-	SOURCE_GROUP "GUI"
-		GUI/TextEditorDemo.cpp
 	SOURCE_GROUP "UI"
 		UI/IngameDialog.cpp
 		UI/IngameDialog.h
@@ -168,12 +166,6 @@ GameModule(MineCRY FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Game
 add_subdirectory(../thirdparty 3rdparty)
 
 target_link_libraries(${THIS_PROJECT} PRIVATE BlackBox)
-if(OPTION_USE_GUI)
-	add_compile_definitions("USE_GUI")
-	target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
-	target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiFileBrowser)
-	target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiColorTextEdit)
-endif()
 if(WINDOWS)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Ws2_32)
 	target_link_libraries(${THIS_PROJECT} PRIVATE dbghelp)

@@ -76,9 +76,6 @@ enginemodule(System FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
-if(OPTION_USE_GUI)
-	target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
-endif()
 
 add_sdl(${THIS_PROJECT})
 target_link_libraries(${THIS_PROJECT} PUBLIC tinyxml2::tinyxml2)

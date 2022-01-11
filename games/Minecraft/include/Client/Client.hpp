@@ -162,6 +162,5 @@ class CClient :
 	bool  m_OnGround	= true;
 	bool  m_JumpPressed = false;
 
-    GLSLEditor glslEditor;
 	bool	   m_ShowEditor = false;
 };
