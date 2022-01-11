@@ -1,4 +1,4 @@
-[submodule "res/shaders/tonemap"]
+[submodule "Data/shaders/tonemap"]
 	path = Data/shaders/tonemap
 	url = https://github.com/dmnsgn/glsl-tone-map.git
 [submodule "Code/Sandbox/GUI/GuiTools/ImGuiColorTextEdit"]

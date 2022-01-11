@@ -37,11 +37,11 @@ add_sources(
 
 		 "ClassFactory.cpp"
 		 "ClassFactory.h"
-
-SOURCE_GROUP "Util"
+	SOURCE_GROUP "Util"
 		 "Util/FileEnum.cpp"
 		 "Util/FileEnum.h"
 )
+
 Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
 target_include_directories( ${THIS_PROJECT}
 PUBLIC
@@ -55,4 +55,3 @@ PRIVATE
 	-DNOT_USE_CRY_MEMORY_MANAGER
 	-DSANDBOX_EDITOR_IMPL
 )
-
