@@ -14,7 +14,7 @@ GameWindow::GameWindow(QWidget *parent)
 
 
     QFrame * frame = nullptr;
-    frame = (QFrame *)findChild<QWidget*>("frame");
+    frame = (QFrame *)findChild<QWidget*>("MainFrame");
     game_window = frame;
 
 	QTimer::singleShot(0, this, &GameWindow::OnIdleCallback);
@@ -29,18 +29,18 @@ void GameWindow::OnIdleCallback()
 {
 	//qDebug() << "Idle processing";
     auto res = CEditApp::GetInstance()->IdleProcessing(false);
+    (void)res;
+
 	QTimer::singleShot(0, this, &GameWindow::OnIdleCallback);
 }
-
-
-void GameWindow::on_actionQuit_triggered()
-{
-    qApp->quit();
-}
-
 
 void GameWindow::on_checkBox_stateChanged(int arg1)
 {
     gEnv->pConsole->ShowConsole(arg1);
+}
+
+void GameWindow::on_action_Quit_triggered()
+{
+    qApp->quit();
 }
 
