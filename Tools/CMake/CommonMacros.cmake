@@ -916,6 +916,7 @@ endfunction()
 macro(use_qt)
 	#custom_enable_QT6()
 	set(CMAKE_PREFIX_PATH "${QT_DIR}")
+	set_property(TARGET ${THIS_PROJECT} PROPERTY AUTOUIC TRUE)
 	set_property(TARGET ${THIS_PROJECT} PROPERTY AUTOMOC TRUE)
 	set_property(TARGET ${THIS_PROJECT} PROPERTY AUTORCC TRUE)
 

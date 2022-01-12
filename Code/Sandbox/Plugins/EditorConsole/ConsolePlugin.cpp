@@ -1,3 +1,4 @@
+#if o
 #include <IEditorClassFactory.h>
 
 #include "ConsolePlugin.h"
@@ -57,3 +58,4 @@ void CConsolePlugin::OnEditorNotifyEvent(EEditorNotifyEvent event)
 	}
 }
 
+#endif

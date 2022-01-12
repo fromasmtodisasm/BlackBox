@@ -1,61 +1,96 @@
-if (1)
-cmake_minimum_required(VERSION 3.5)
+#if (1)
+#cmake_minimum_required(VERSION 3.5)
+#
+#project(EditorQt VERSION 0.1 LANGUAGES CXX)
+#
+#set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#
+#set(CMAKE_AUTOUIC ON)
+#set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTORCC ON)
+#
+#set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#
+#find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+#
+#set(PROJECT_SOURCES
+#        main.cpp
+#        mainwindow.cpp
+#        mainwindow.h
+#        mainwindow.ui
+#)
+#
+#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+#    qt_add_executable(EditorQt
+#        MANUAL_FINALIZATION
+#        ${PROJECT_SOURCES}
+#    )
+## Define target properties for Android with Qt 6 as:
+##    set_property(TARGET EditorQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+##                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+## For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+#else()
+#    if(ANDROID)
+#        add_library(EditorQt SHARED
+#            ${PROJECT_SOURCES}
+#        )
+## Define properties for Android with Qt 5 after find_package() calls as:
+##    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+#    else()
+#        add_executable(EditorQt
+#            ${PROJECT_SOURCES}
+#        )
+#    endif()
+#endif()
+#
+#target_link_libraries(EditorQt PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+#
+#set_target_properties(EditorQt PROPERTIES
+#    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+#    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+#    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+#)
+#
+#if(QT_VERSION_MAJOR EQUAL 6)
+#    qt_finalize_executable(EditorQt)
+#endif()
+#
+#target_link_libraries(EditorQt PRIVATE BlackBox)
+#target_precompile_headers(EditorQt PRIVATE pch.hpp)
+#endif()
 
-project(EditorQt VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-
-set(PROJECT_SOURCES
+start_sources()
+# -- launcher.waf_files --
+sources_platform(WINDOWS)
+add_sources(
+	"NoUberFile"
+	SOURCE_GROUP "Header Files"
+		"pch.hpp"
+	SOURCE_GROUP "Resource Files"
+		"resource.h"
+	SOURCE_GROUP "Core"
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        gamewindow.cpp
+        gamewindow.h
+        gamewindow.ui
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(EditorQt
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET EditorQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(EditorQt SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(EditorQt
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
-
-target_link_libraries(EditorQt PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-
-set_target_properties(EditorQt PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+Editor(EditorQt PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
+#target_include_directories( ${THIS_PROJECT}
+#PUBLIC
+#	.
+#	Include
+#)
+target_compile_definitions( ${THIS_PROJECT}
+PRIVATE 
+	-DDONT_BAN_STD_STRING
+	-DFBXSDK_NEW_API=1
+	-DNOT_USE_CRY_MEMORY_MANAGER
+	-DSANDBOX_EDITOR_IMPL
 )
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(EditorQt)
-endif()
-
-target_link_libraries(EditorQt PRIVATE BlackBox)
-endif()

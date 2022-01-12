@@ -28,7 +28,7 @@
 
 //#include "CMovieUser.h"
 #define EDITOR_IMPLEMENT_LOAD_LEVEL
-//#undef EDITOR_IMPLEMENT_LOAD_LEVEL
+#undef EDITOR_IMPLEMENT_LOAD_LEVEL
 
 
 #include <Client/Client.hpp>

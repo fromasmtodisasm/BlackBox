@@ -49,6 +49,7 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Utils/smartptr.hpp>
 #include <BlackBox/Core/StlUtils.hpp>
-#include <BlackBox/Core/Math/Cry_Geo.h>
+// FIXME: error on build with this header!!!
+//#include <BlackBox/Core/Math/Cry_Geo.h>
 
 #define CRY_ENABLE_FBX_SDK

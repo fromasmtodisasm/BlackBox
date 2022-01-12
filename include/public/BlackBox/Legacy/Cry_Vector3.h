@@ -316,10 +316,12 @@ typedef Vec3_f64 vectorr;
 typedef Vec3_tpl<int>		vectori;
 
 
+#if 0
 inline Vec3_tpl<f32>::Vec3_tpl(type_min) { x=y=z=-3.3E38f; }
 inline Vec3_tpl<f32>::Vec3_tpl(type_max) { x=y=z=3.3E38f; }
 inline Vec3_tpl<f64>::Vec3_tpl(type_min) { x=y=z=-1.7E308; }
 inline Vec3_tpl<f64>::Vec3_tpl(type_max) { x=y=z=1.7E308; }
+#endif
 
 template<class F> 
 ILINE F GetLengthSquared( const Vec3_tpl<F> &v ) { return v.x*v.x + v.y*v.y + v.z*v.z; }

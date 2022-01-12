@@ -40,6 +40,10 @@ add_sources(
 	SOURCE_GROUP "Util"
 		 "Util/FileEnum.cpp"
 		 "Util/FileEnum.h"
+	SOURCE_GROUP "UI"
+        "gamewindow.cpp"
+        "gamewindow.h"
+        "gamewindow.ui"
 )
 
 Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")

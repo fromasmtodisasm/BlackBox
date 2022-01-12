@@ -35,7 +35,7 @@ add_sources(
 )
 end_sources()
 
-EngineModule(GUI FORCE_STATIC EDITOR_COMPILE_SETTINGS PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
+EngineStaticModule(GUI EDITOR_COMPILE_SETTINGS PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
 
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Window)
