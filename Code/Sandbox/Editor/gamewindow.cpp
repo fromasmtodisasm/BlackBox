@@ -46,3 +46,14 @@ void GameWindow::on_action_Open_File_triggered()
     QString str = QFileDialog::getOpenFileName(0, "Open Dialog", "", "*.*");
 }
 
+
+void GameWindow::on_action_Toggle_Console_triggered()
+{
+
+}
+
+void GameWindow::on_action_Toggle_Console_toggled(bool arg1)
+{
+    gEnv->pConsole->ShowConsole(arg1);
+}
+

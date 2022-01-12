@@ -82,7 +82,7 @@
      <x>0</x>
      <y>0</y>
      <width>842</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -116,6 +116,7 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <addaction name="action_Toggle_Console"/>
    </widget>
    <widget class="QMenu" name="menu_Tools">
     <property name="title">
@@ -205,6 +206,14 @@
   <action name="action_Model_Viewer">
    <property name="text">
     <string>&amp;Model Viewer</string>
+   </property>
+  </action>
+  <action name="action_Toggle_Console">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Toggle Console</string>
    </property>
   </action>
  </widget>

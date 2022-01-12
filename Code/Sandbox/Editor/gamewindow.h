@@ -19,6 +19,12 @@ public:
 
 
 private slots:
+    void on_action_Toggle_Console_toggled(bool arg1);
+
+private slots:
+    void on_action_Toggle_Console_triggered();
+
+private slots:
     void on_action_Quit_triggered();
     void on_action_Open_File_triggered();
 
