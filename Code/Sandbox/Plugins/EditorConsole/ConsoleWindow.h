@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Renderer/IRender.hpp>
+//#include <BlackBox/Renderer/IRender.hpp>
 #include <mutex>
 #include "imgui.h"
 

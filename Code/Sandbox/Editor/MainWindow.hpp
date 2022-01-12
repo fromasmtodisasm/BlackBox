@@ -3,8 +3,6 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <IEditor.h>
 
-//#include <QMainWindow>
-
 class MainWindow : public IEditorNotifyListener
 {
   public:
