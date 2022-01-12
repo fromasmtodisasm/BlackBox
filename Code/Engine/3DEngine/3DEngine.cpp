@@ -701,7 +701,11 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	//PRINT(py, "Ver = 1.0.0.0");
 	//PRINT(py, "Polygons 0,000");
 	//PRINT(py, "...");
-	PRINT(py, "FPS %.2f ( 60.. 50) / 60", 1.f / gEnv->pTimer->GetRealFrameTime());
+	static float	   prevTime = 0;
+	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+	auto const delta   = curTime - prevTime;
+	prevTime					= curTime;
+	PRINT(py, "FPS %.2f ( 60.. 50) / 60", 1000.f / delta);
 	//PRINT(py, "ViewDist = 1024/0.0");
 	//PRINT(py, "Render path = ...");
 	if (gEnv->pSystem->IsDevMode())

@@ -33,7 +33,7 @@ void GameWindow::OnIdleCallback()
     auto res = CEditApp::GetInstance()->IdleProcessing(false);
     (void)res;
 
-	QTimer::singleShot(0, this, &GameWindow::OnIdleCallback);
+    QTimer::singleShot(8, this, &GameWindow::OnIdleCallback);
 }
 
 void GameWindow::on_action_Quit_triggered()
@@ -55,5 +55,11 @@ void GameWindow::on_action_Toggle_Console_triggered()
 void GameWindow::on_action_Toggle_Console_toggled(bool arg1)
 {
     gEnv->pConsole->ShowConsole(arg1);
+}
+
+
+void GameWindow::on_action_Clear_Console_triggered()
+{
+   gEnv->pConsole->Clear();
 }
 

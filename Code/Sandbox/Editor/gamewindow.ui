@@ -117,6 +117,7 @@
      <string>&amp;View</string>
     </property>
     <addaction name="action_Toggle_Console"/>
+    <addaction name="action_Clear_Console"/>
    </widget>
    <widget class="QMenu" name="menu_Tools">
     <property name="title">
@@ -214,6 +215,11 @@
    </property>
    <property name="text">
     <string>&amp;Toggle Console</string>
+   </property>
+  </action>
+  <action name="action_Clear_Console">
+   <property name="text">
+    <string>&amp;Clear Console</string>
    </property>
   </action>
  </widget>

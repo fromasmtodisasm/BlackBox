@@ -421,7 +421,8 @@ void MinePlayer::update()
 	gEnv->pAuxGeomRenderer->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
 
 	auto const gravity = 4.f;
-	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * gEnv->pTimer->GetRealFrameTime());
+	auto	   ft	   = 100 * gEnv->pTimer->GetRealFrameTime();
+	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * ft);
 
 	applyMovement();
 	getCamera()->SetPos(entity->GetPos());
@@ -432,6 +433,7 @@ bool timingAction(float& prevTime, float interval)
 {
 	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
 	auto const delta   = curTime - prevTime;
+	CryLog("delta time: %f", delta);
 	if (delta > interval)
 	{
 		prevTime = curTime;
@@ -481,6 +483,12 @@ void MineDebug::init()
 
 void MineDebug::update()
 {
+	//CryLog("MineDebug::update");
+	static float	   prevTime = 0;
+	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+	auto const delta   = curTime - prevTime;
+	prevTime					= curTime;
+	CryLog("delta time: %f", delta);
 	for (auto box : tmpBoxes)
 	{
 		//gEnv->p3DEngine->UnRegisterEntity(box);
