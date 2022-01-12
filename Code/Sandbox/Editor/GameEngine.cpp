@@ -5,6 +5,8 @@
 
 #include "EditorApp.h"
 
+HWND main_hwnd();
+
 // Implementation of System Callback structure.
 struct SSystemUserCallback : public ISystemUserCallback
 {
@@ -201,6 +203,8 @@ bool CGameEngine::Init(bool bTestMode, bool bShaderCacheGen, const char* sInCmdL
 
 	startupParams.sLogFileName	= "Editor.log";
 	startupParams.pUserCallback = m_pSystemUserCallback;
+
+	startupParams.hWnd = main_hwnd();
 
 	if (sInCmdLine)
 	{

@@ -8,6 +8,11 @@
 
 
 extern CEditApp theApp;
+
+QWidget* game_window;
+HWND main_hwnd() { return (HWND)game_window->winId(); }
+
+
 int main(int argc, char* argv[])
 {
 	if (argc > 1)
