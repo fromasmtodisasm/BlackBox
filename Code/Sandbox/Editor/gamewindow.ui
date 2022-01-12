@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1102</width>
-    <height>780</height>
+    <width>842</width>
+    <height>709</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,7 +33,6 @@
       <widget class="QWidget" name="tab">
        <property name="font">
         <font>
-         <family>Source Sans Pro</family>
          <pointsize>11</pointsize>
         </font>
        </property>
@@ -82,8 +81,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1102</width>
-     <height>20</height>
+     <width>842</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -210,5 +209,25 @@
   </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>action_File</sender>
+   <signal>triggered()</signal>
+   <receiver>GameWindow</receiver>
+   <slot>on_action_Open_File_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_action_Open_File_triggered()</slot>
+ </slots>
 </ui>

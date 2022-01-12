@@ -20,9 +20,7 @@ public:
 
 private slots:
     void on_action_Quit_triggered();
-
-private slots:
-    void on_checkBox_stateChanged(int arg1);
+    void on_action_Open_File_triggered();
 
 private:
     Ui::GameWindow *ui;

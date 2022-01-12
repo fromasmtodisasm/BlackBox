@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <EditorApp.h>
 
+#include <QFileDialog>
+
 extern QWidget* game_window;
 
 GameWindow::GameWindow(QWidget *parent)
@@ -34,13 +36,13 @@ void GameWindow::OnIdleCallback()
 	QTimer::singleShot(0, this, &GameWindow::OnIdleCallback);
 }
 
-void GameWindow::on_checkBox_stateChanged(int arg1)
-{
-    gEnv->pConsole->ShowConsole(arg1);
-}
-
 void GameWindow::on_action_Quit_triggered()
 {
     qApp->quit();
+}
+
+void GameWindow::on_action_Open_File_triggered()
+{
+    QString str = QFileDialog::getOpenFileName(0, "Open Dialog", "", "*.*");
 }
 
