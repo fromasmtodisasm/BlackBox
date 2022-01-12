@@ -64,7 +64,7 @@ void CXGame::InitConsoleCommands()
 	IConsole *pConsole = m_pSystem->GetIConsole();
 
 	pConsole->AddCommand("reload_materials","Game.ReloadMaterials()");
-	if(!m_bEditor)
+	//if(!m_bEditor)
 	{
 		pConsole->AddCommand("sensitivity", "if (Game) then Game:SetSensitivity(%%); end", VF_NULL,"");
 

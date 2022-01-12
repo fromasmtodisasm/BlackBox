@@ -18,7 +18,8 @@
 #define WINDOW_MAX_PEEP 64
 
 static SDL_Window* g_CurrentWindow;
-CSDLWindow::CSDLWindow(std::string, int width, int height)
+CSDLWindow::CSDLWindow(NativeWindow* hwnd, std::string, int width, int height)
+	: m_hWnd(hwnd)
 {
 }
 
@@ -39,6 +40,8 @@ bool CSDLWindow::init(SInitParams* pInitParams)
 	auto p		  = pInitParams;
 	bInFullScreen = p->fullscreen;
 	m_Title		  = p->title;
+	// tmp
+	//
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -281,7 +284,14 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 		InitForGl();
 	}
 	SelectDisplay(posx, posy, width, height);
-	m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
+	if (m_hWnd)
+	{
+		m_MainWindow = SDL_CreateWindowFrom(m_hWnd);
+	}
+	else
+	{
+        m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
+	}
 	if (m_MainWindow == NULL)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -432,9 +442,9 @@ void CSDLWindow::EnterFullscreen(bool mode)
 }
 extern "C"
 {
-	IWINDOW_API IWindow* CreateIWindow()
+	IWindow* CreateIWindow(NativeWindow* hWnd)
 	{
-		return new CSDLWindow();
+		return new CSDLWindow(hWnd);
 	}
 	void* CurrentHandledWindow()
 	{

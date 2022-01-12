@@ -1,6 +1,8 @@
 #pragma once
 #include "SandboxAPI.h"
 
+#include "gamewindow.h"
+
 class CCryEditDoc;
 class CEditCommandLineInfo;
 class CEditorImpl;
@@ -38,4 +40,6 @@ class SANDBOX_API CEditApp
 	CEditorImpl* m_pEditor{nullptr};
 	bool		 m_bExiting{false};
 	bool		 m_bTestMode{false};
+
+	GameWindow*  m_GameWindow;
 };

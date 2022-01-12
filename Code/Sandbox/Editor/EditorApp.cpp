@@ -14,6 +14,7 @@
 // The one and only CCryEditApp object
 //////////////////////////////////////////////////////////////////////////
 CEditApp theApp;
+extern QWidget* game_window;
 
 namespace
 {
@@ -41,6 +42,9 @@ CEditApp* CEditApp::GetInstance()
 
 bool CEditApp::InitInstance()
 {
+    m_GameWindow = new GameWindow;
+    m_GameWindow->show();
+
 	auto pGameEngine = InitGameSystem();
 	if (!pGameEngine)
 	{
@@ -55,6 +59,7 @@ bool CEditApp::InitInstance()
     result = m_pEditor->Init();
     // Create Sandbox user folder if necessary
     GetISystem()->GetIPak()->MakeDir("%USER%/Sandbox");
+
 
     InitPlugins();
 
@@ -119,11 +124,13 @@ void CEditApp::InitPlugins()
 
 void CEditApp::Run()
 {
+	#if 0
 	while (true)
 	{
 		if (!IdleProcessing(false))
 			return;
 	}
+	#endif
 }
 
 bool CEditApp::IdleProcessing(bool bBackground)

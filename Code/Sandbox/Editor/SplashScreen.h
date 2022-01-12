@@ -1,13 +1,13 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
 #pragma once
-struct QPixmap
-{
-};
+//struct QPixmap
+//{
+//};
 struct Version;
 class QPainter;
 
-using QString = string;
+//using QString = string;
 
 struct QSplashScreen
 {

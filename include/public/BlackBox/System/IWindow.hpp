@@ -21,6 +21,7 @@ typedef void* Params;
 typedef void* GLContext;
 typedef void* DisplayMode;
 
+struct NativeWindow;
 struct IWindow
 {
 	struct SInitParams
@@ -60,7 +61,7 @@ struct IWindow
 
 extern "C"
 {
-	IWINDOW_API IWindow* CreateIWindow();
+	IWINDOW_API IWindow* CreateIWindow(NativeWindow* hWnd);
 	IWINDOW_API void* CurrentHandledWindow();
-	typedef IWindow* (*PFNCREATEWINDOW)();
+	typedef IWindow* (*PFNCREATEWINDOW)(NativeWindow*  hWnd);
 }

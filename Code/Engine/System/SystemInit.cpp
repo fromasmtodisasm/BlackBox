@@ -714,7 +714,7 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	if (!LoadSubsystem<PFNCREATEWINDOW>("Window", "CreateIWindow", [&](PFNCREATEWINDOW p)
 										{
 											Log("Load Window Library");
-											m_pWindow = p();
+											m_pWindow = p((NativeWindow*)m_startupParams.hWnd);
 											if (m_pWindow == nullptr)
 												return false;
 											return true;

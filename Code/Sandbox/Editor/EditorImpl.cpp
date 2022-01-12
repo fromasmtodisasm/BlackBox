@@ -71,8 +71,10 @@ inline ISystem* CEditorImpl::GetSystem() { return gEnv->pSystem; }
 bool CEditorImpl::Update()
 {
 	gEnv->pSystem->GetIInput()->Update(true);
+	#if 0
 	m_GuiManager->NewFrame();
 	m_GuiManager->ShowDemoWindow();
+	#endif
 	gEnv->pSystem->Update(ESYSUPDATE_EDITOR);
 	#if 0
 	GetIEditorImpl()->Notify(eNotify_OnIdleUpdate);
@@ -140,8 +142,10 @@ void CEditorImpl::CallBack(Type type)
 
 void CEditorImpl::OnRenderer_BeforeEndFrame()
 {
+	#if 0
 	Draw();
 	m_GuiManager->Render();
+	#endif
 }
 
 IEditorClassFactory* CEditorImpl::GetClassFactory()
@@ -180,11 +184,13 @@ void CEditorImpl::SetInGameMode(bool inGame)
 bool CEditorImpl::Init()
 {
 	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CEditorImpl");
+	#if 0
 	if (!InitGUI())
 	{
 		return false;
 	}
 	gEnv->pInput->AddEventListener(m_GuiManager);
+	#endif
 	EditorCommon::Initialize();
 
     GetIEditor()->RegisterNotifyListener(&m_MainWindow);
