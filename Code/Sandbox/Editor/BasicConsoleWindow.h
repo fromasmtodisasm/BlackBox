@@ -13,12 +13,6 @@ public:
 	BasicConsoleWindow(QWidget* parent)
 		: QListWidget(parent)
 	{
-		items << "All"
-			  << "Weekend Plus";
-		addItems(items);
-		setCurrentRow(1);
-
-
 	} 
 
 	void PostLoad()
