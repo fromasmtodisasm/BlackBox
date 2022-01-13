@@ -240,6 +240,8 @@ bool CSystem::Init()
 #ifdef ENABLE_PROFILER
 	initTimer();
 #endif
+	m_pUserCallback = m_startupParams.pUserCallback;
+
 	//====================================================
 #if BB_PLATFORM_DESKTOP
 #	if !defined(_RELEASE)

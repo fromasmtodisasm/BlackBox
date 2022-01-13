@@ -144,14 +144,33 @@ bool CEditApp::IdleProcessing(bool bBackground)
 	return res;
 }
 
+namespace
+{
+
+// Callback class for initialization messages from system.
+struct SInitializeUIInfo : IInitializeUIInfo
+{
+	virtual void SetInfoText(const char* text) override
+	{
+		SplashScreen::SetText(text);
+	}
+
+	static SInitializeUIInfo& GetInstance()
+	{
+		static SInitializeUIInfo theInstance;
+		return theInstance;
+	}
+};
+
+} // namespace
+
 std::unique_ptr<CGameEngine> CEditApp::InitGameSystem()
 {
 	bool bShaderCacheGen = false;
 	//m_bPrecacheShaderList | m_bPrecacheShaders | m_bPrecacheShadersLevels;
 	//std::unique_ptr<CGameEngine> pGameEngine	 = stl::make_unique<CGameEngine>();
 	std::unique_ptr<CGameEngine> pGameEngine	 = std::make_unique<CGameEngine>();
-	//auto						 uiinfo		 = &SInitializeUIInfo::GetInstance();
-	auto						 uiinfo		 = nullptr;
+	auto						 uiinfo		 = &SInitializeUIInfo::GetInstance();
 	if (!pGameEngine->Init(m_bTestMode, bShaderCacheGen, GetCommandLineA(), uiinfo))
 	{
 		return nullptr;

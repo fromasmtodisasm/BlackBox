@@ -7,20 +7,19 @@
 
 #include <QApplication>
 #include <QPainter>
+#include <Qicon>
 
 SplashScreen* SplashScreen::s_pLogoWindow = nullptr;
 
 SplashScreen::SplashScreen(const QPixmap& pixmap /* = QPixmap() */, Qt::WindowFlags f /* = Qt::Widget*/)
 	: QSplashScreen(pixmap, f)
 {
-	#if 0
 	s_pLogoWindow = this;
 	setWindowIcon(QIcon("icons:editor_icon.ico"));
 	setWindowTitle("CRYENGINE Sandbox");
 
 	//Should be set after parent construction: it overwrites default Qt behavior
 	setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-	#endif
 }
 
 SplashScreen::~SplashScreen()
@@ -54,9 +53,9 @@ void SplashScreen::SetText(const char* szText)
 
 void SplashScreen::drawContents(QPainter* painter)
 {
-	//QSplashScreen::drawContents(painter);
-	//painter->setPen(Qt::white);
-	//painter->drawText(rect().adjusted(30, 5, -5, -42), Qt::AlignLeft | Qt::AlignBottom, version);
-	//painter->drawText(rect().adjusted(30, 5, -5, -25), Qt::AlignLeft | Qt::AlignBottom, m_text);
+	QSplashScreen::drawContents(painter);
+	painter->setPen(Qt::white);
+	painter->drawText(rect().adjusted(30, 5, -5, -42), Qt::AlignLeft | Qt::AlignBottom, version);
+	painter->drawText(rect().adjusted(30, 5, -5, -25), Qt::AlignLeft | Qt::AlignBottom, m_text);
 }
 #endif

@@ -29,10 +29,8 @@ struct SSystemUserCallback : public ISystemUserCallback
 
 	virtual void OnInitProgress(const char* sProgressMsg)
 	{
-		#if 0
 		if (m_pLogo)
 			m_pLogo->SetInfoText(sProgressMsg);
-		#endif
 	}
 
 	struct SEditorSuspendUpdateScopeHelper

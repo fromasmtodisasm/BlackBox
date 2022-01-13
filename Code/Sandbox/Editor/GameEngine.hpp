@@ -1,7 +1,12 @@
 #pragma once
 
 struct IGame;
-struct IInitializeUIInfo;
+//! Callback used by editor when initializing for info in UI dialogs
+struct IInitializeUIInfo
+{
+	virtual ~IInitializeUIInfo() {}
+	virtual void SetInfoText(const char* text) = 0;
+};
 
 class CGameEngine
 {

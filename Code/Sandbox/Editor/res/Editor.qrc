@@ -1,5 +1,8 @@
 <RCC>
-  <qresource prefix="/">
-    <file>splash.png</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>splash.png</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>editor_icon.ico</file>
+    </qresource>
 </RCC>
