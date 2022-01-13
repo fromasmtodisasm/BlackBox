@@ -39,6 +39,8 @@ add_sources(
 		 "ClassFactory.cpp"
 		 "ClassFactory.h"
 	SOURCE_GROUP "Util"
+		"BasicConsoleWindow.h"
+		"BasicConsoleWindow.cpp"
 		 "Util/FileEnum.cpp"
 		 "Util/FileEnum.h"
 )

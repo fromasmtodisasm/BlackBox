@@ -1,4 +1,4 @@
-#if o
+#if 1
 #include <IEditorClassFactory.h>
 
 #include "ConsolePlugin.h"

@@ -98,7 +98,9 @@ int CEditApp::ExitInstance()
 		CloseHandle(m_mutexApplication);
 #endif
 
+	#if 0
 	gEnv->pSystem->Release();
+	#endif
 
 	auto h = GetModuleHandleA("System.dll");
 	if (h)

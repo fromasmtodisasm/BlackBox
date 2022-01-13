@@ -1,4 +1,4 @@
-#if 0
+#if 1
 #include <BlackBox/Renderer/IRender.hpp>
 #include "ConsoleWindow.h"
 

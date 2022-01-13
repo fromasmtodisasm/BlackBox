@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class EditorMainFrame; }
+namespace Ui { class CEditorMainFrame; }
 QT_END_NAMESPACE
 
 class CEditorMainFrame : public QMainWindow
@@ -26,6 +26,6 @@ private slots:
     void on_action_Open_File_triggered();
 
 private:
-    Ui::EditorMainFrame *ui;
+    Ui::CEditorMainFrame *ui;
 };
 #endif // GAMEWINDOW_H

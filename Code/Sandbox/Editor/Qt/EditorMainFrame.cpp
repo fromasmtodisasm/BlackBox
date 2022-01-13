@@ -10,7 +10,7 @@ extern QWidget* game_window;
 
 CEditorMainFrame::CEditorMainFrame(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::EditorMainFrame)
+    , ui(new Ui::CEditorMainFrame)
 {
     ui->setupUi(this);
 
@@ -29,7 +29,7 @@ CEditorMainFrame::~CEditorMainFrame()
 
 void CEditorMainFrame::PostLoad()
 {
-
+	ui->listView->PostLoad();
     this->show();
 }
 

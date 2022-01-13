@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EditorMainFrame</class>
+ <class>CEditorMainFrame</class>
  <widget class="QMainWindow" name="CEditorMainFrame">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
-    <height>709</height>
+    <width>1327</width>
+    <height>718</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,58 +21,12 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>Data/images/icon.ico</normaloff>Data/images/icon.ico</iconset>
+    <normaloff>../../../../../../../../.designer/backup/Data/images/icon.ico</normaloff>../../../../../../../../.designer/backup/Data/images/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tab">
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="cursor">
-        <cursorShape>ArrowCursor</cursorShape>
-       </property>
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QFrame" name="MainFrame">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>800</width>
-            <height>600</height>
-           </size>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
-      </widget>
-     </widget>
+     <widget class="BasicConsoleWindow" name="listView"/>
     </item>
    </layout>
   </widget>
@@ -81,7 +35,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>842</width>
+     <width>1327</width>
      <height>20</height>
     </rect>
    </property>
@@ -96,9 +50,11 @@
      <addaction name="action_Project"/>
      <addaction name="action_File"/>
     </widget>
+    <addaction name="actionNew"/>
     <addaction name="menuOpen"/>
     <addaction name="action_Create"/>
     <addaction name="action_Save"/>
+    <addaction name="actionSave_As"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -106,11 +62,22 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menu_Project">
-    <property name="title">
-     <string>&amp;Project</string>
-    </property>
+    <widget class="QMenu" name="menuEditing_Mode">
+     <property name="title">
+      <string>Editing Mode</string>
+     </property>
+     <addaction name="actionSelect"/>
+     <addaction name="actionMove"/>
+     <addaction name="actionRotate"/>
+     <addaction name="actionScale"/>
+    </widget>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionDelete"/>
+    <addaction name="actionClone"/>
+    <addaction name="separator"/>
+    <addaction name="menuEditing_Mode"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -123,60 +90,181 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menu_About">
-    <property name="title">
-     <string>&amp;About</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuPl_ugins">
-    <property name="title">
-     <string>Pl&amp;ugins</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_Options">
-    <property name="title">
-     <string>&amp;Options</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_Create">
-    <property name="title">
-     <string>&amp;Create</string>
-    </property>
-    <addaction name="action_Object"/>
-    <addaction name="action_Script"/>
+    <addaction name="actionReload_Textures"/>
+    <addaction name="actionReload_Texture_Shaders"/>
+    <addaction name="actionReload_Geometry"/>
+    <addaction name="actionReload_Terrain"/>
+    <addaction name="separator"/>
+    <addaction name="actionCheck_level_for_errors"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menu_Windows">
     <property name="title">
      <string>&amp;Windows</string>
     </property>
     <addaction name="action_Model_Viewer"/>
+    <addaction name="actionShow_Data_Base_View"/>
+    <addaction name="actionShow_Console"/>
+   </widget>
+   <widget class="QMenu" name="menuModify">
+    <property name="title">
+     <string>&amp;Modify</string>
+    </property>
+    <addaction name="actionLink"/>
+    <addaction name="actionUnlink"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuDisplay">
+    <property name="title">
+     <string>&amp;Display</string>
+    </property>
+    <addaction name="action_Wireframe"/>
+   </widget>
+   <widget class="QMenu" name="menuGroup">
+    <property name="title">
+     <string>&amp;Group</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuMission">
+    <property name="title">
+     <string>&amp;Mission</string>
+    </property>
+    <addaction name="action_New"/>
+    <addaction name="action_Duplicate"/>
+    <addaction name="actionD_elete"/>
+    <addaction name="separator"/>
+    <addaction name="action_Select_2"/>
+    <addaction name="actionRename"/>
+   </widget>
+   <widget class="QMenu" name="menuTerrain">
+    <property name="title">
+     <string>&amp;Terrain</string>
+    </property>
+    <addaction name="action_Edit_Terrain"/>
+    <addaction name="actionTexture"/>
+    <addaction name="actionLighting"/>
+    <addaction name="separator"/>
+    <addaction name="action_Reload_Terrain"/>
+   </widget>
+   <widget class="QMenu" name="menuSound">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout_Editor"/>
+   </widget>
+   <widget class="QMenu" name="menuSound_2">
+    <property name="title">
+     <string>&amp;Sound</string>
+    </property>
+    <addaction name="action_Sound"/>
+   </widget>
+   <widget class="QMenu" name="menuGame">
+    <property name="title">
+     <string>&amp;Game</string>
+    </property>
+    <addaction name="actionSwitch_to_Game"/>
+    <addaction name="actionEnable_Physics_AI"/>
+    <addaction name="actionEnable_Collision"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
-   <addaction name="menu_Create"/>
-   <addaction name="menu_View"/>
-   <addaction name="menu_Project"/>
-   <addaction name="menu_Options"/>
+   <addaction name="menuModify"/>
+   <addaction name="menuDisplay"/>
+   <addaction name="menuGroup"/>
+   <addaction name="menuMission"/>
+   <addaction name="menuTerrain"/>
+   <addaction name="menuSound_2"/>
+   <addaction name="menuGame"/>
    <addaction name="menu_Tools"/>
-   <addaction name="menuPl_ugins"/>
+   <addaction name="menu_View"/>
    <addaction name="menu_Windows"/>
-   <addaction name="menu_About"/>
+   <addaction name="menuSound"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QFrame" name="MainFrame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>600</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+   <addaction name="action_Save"/>
+   <addaction name="actionSave_As"/>
+   <addaction name="separator"/>
+   <addaction name="actionLink"/>
+   <addaction name="actionUnlink"/>
+   <addaction name="separator"/>
+   <addaction name="actionSelect"/>
+   <addaction name="actionMove"/>
+   <addaction name="actionRotate"/>
+   <addaction name="actionScale"/>
+   <addaction name="separator"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+   <addaction name="separator"/>
+   <addaction name="actionSwitch_to_Game"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2"/>
+  </widget>
   <action name="action_Create">
    <property name="text">
     <string>&amp;Create</string>
    </property>
   </action>
   <action name="action_Save">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/General/File_Save.ico</normaloff>:/icons/General/File_Save.ico</iconset>
+   </property>
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="action_Quit">
    <property name="text">
-    <string>&amp;Quit</string>
+    <string>&amp;Exit</string>
    </property>
   </action>
   <action name="action_Object">
@@ -206,7 +294,7 @@
   </action>
   <action name="action_Model_Viewer">
    <property name="text">
-    <string>&amp;Model Viewer</string>
+    <string>&amp;Show Toolbar</string>
    </property>
   </action>
   <action name="action_Toggle_Console">
@@ -222,8 +310,274 @@
     <string>&amp;Clear Console</string>
    </property>
   </action>
+  <action name="action_Game">
+   <property name="text">
+    <string>&amp;Game</string>
+   </property>
+  </action>
+  <action name="action_Sound">
+   <property name="text">
+    <string>&amp;Sound</string>
+   </property>
+  </action>
+  <action name="action_Terrain">
+   <property name="text">
+    <string>&amp;Terrain</string>
+   </property>
+  </action>
+  <action name="action_Terrain_2">
+   <property name="text">
+    <string>&amp;Terrain</string>
+   </property>
+  </action>
+  <action name="action_Wireframe">
+   <property name="text">
+    <string>&amp;Wireframe</string>
+   </property>
+  </action>
+  <action name="action_New">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/VersionControl/new.ico</normaloff>:/icons/VersionControl/new.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+  </action>
+  <action name="action_Duplicate">
+   <property name="text">
+    <string>&amp;Duplicate</string>
+   </property>
+  </action>
+  <action name="actionD_elete">
+   <property name="text">
+    <string>D&amp;elete</string>
+   </property>
+  </action>
+  <action name="action_Select">
+   <property name="text">
+    <string>&amp;Select</string>
+   </property>
+  </action>
+  <action name="action_Select_2">
+   <property name="text">
+    <string>&amp;Select</string>
+   </property>
+  </action>
+  <action name="actionRename">
+   <property name="text">
+    <string>Rename</string>
+   </property>
+  </action>
+  <action name="action_Edit_Terrain">
+   <property name="text">
+    <string>&amp;Edit Terrain</string>
+   </property>
+  </action>
+  <action name="actionTexture">
+   <property name="text">
+    <string>Texture</string>
+   </property>
+  </action>
+  <action name="actionLighting">
+   <property name="text">
+    <string>Lighting</string>
+   </property>
+  </action>
+  <action name="action_Reload_Terrain">
+   <property name="text">
+    <string>&amp;Reload Terrain</string>
+   </property>
+  </action>
+  <action name="actionSwitch_to_Game">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Game/Game_Play.ico</normaloff>:/icons/Game/Game_Play.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Switch to Game</string>
+   </property>
+  </action>
+  <action name="actionEnable_Physics_AI">
+   <property name="text">
+    <string>Enable Physics/AI</string>
+   </property>
+  </action>
+  <action name="actionEnable_Collision">
+   <property name="text">
+    <string>Enable Collision</string>
+   </property>
+  </action>
+  <action name="actionReload_Textures">
+   <property name="text">
+    <string>Reload Scripts</string>
+   </property>
+  </action>
+  <action name="actionReload_Texture_Shaders">
+   <property name="text">
+    <string>Reload Texture/Shaders</string>
+   </property>
+  </action>
+  <action name="actionReload_Geometry">
+   <property name="text">
+    <string>Reload Geometry</string>
+   </property>
+  </action>
+  <action name="actionReload_Terrain">
+   <property name="text">
+    <string>Reload Terrain</string>
+   </property>
+  </action>
+  <action name="actionCheck_level_for_errors">
+   <property name="text">
+    <string>Check Level for Errors</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/General/Save_as.ico</normaloff>:/icons/General/Save_as.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionLink">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Navigation/Tools_Link_Unlink.ico</normaloff>:/icons/Navigation/Tools_Link_Unlink.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Link</string>
+   </property>
+  </action>
+  <action name="actionUnlink">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Navigation/UnLink_Classic.ico</normaloff>:/icons/Navigation/UnLink_Classic.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Unlink</string>
+   </property>
+  </action>
+  <action name="actionAbout_Editor">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Navigation/edit-above-terrain.ico</normaloff>:/icons/Navigation/edit-above-terrain.ico</iconset>
+   </property>
+   <property name="text">
+    <string>About Editor</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/General/History_Undo.ico</normaloff>:/icons/General/History_Undo.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/General/History_Redo.ico</normaloff>:/icons/General/History_Redo.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/General/Delete.ico</normaloff>:/icons/General/Delete.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionClone">
+   <property name="text">
+    <string>Clone</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionSelect">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Navigation/Basics_Select.ico</normaloff>:/icons/Navigation/Basics_Select.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Select</string>
+   </property>
+  </action>
+  <action name="actionMove">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Navigation/Basics_Move.ico</normaloff>:/icons/Navigation/Basics_Move.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Move</string>
+   </property>
+  </action>
+  <action name="actionRotate">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Navigation/Basics_Rotate.ico</normaloff>:/icons/Navigation/Basics_Rotate.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Rotate</string>
+   </property>
+  </action>
+  <action name="actionScale">
+   <property name="icon">
+    <iconset resource="../../Plugins/EditorCommon/EditorCommon.qrc">
+     <normaloff>:/icons/Navigation/Basics_Scale.ico</normaloff>:/icons/Navigation/Basics_Scale.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Scale</string>
+   </property>
+  </action>
+  <action name="actionShow_Console">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Console</string>
+   </property>
+  </action>
+  <action name="actionShow_Data_Base_View">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Data Base View</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>BasicConsoleWindow</class>
+   <extends>QListView</extends>
+   <header location="global">BasicConsoleWindow.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../Plugins/EditorCommon/EditorCommon.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>action_File</sender>
