@@ -40,10 +40,28 @@ add_sources(
 	SOURCE_GROUP "Util"
 		 "Util/FileEnum.cpp"
 		 "Util/FileEnum.h"
-	SOURCE_GROUP "UI"
-        "gamewindow.cpp"
-        "gamewindow.h"
-        "gamewindow.ui"
+)
+
+add_sources("NoUberFile"
+	SOURCE_GROUP "MainFrame"
+        "Qt/EditorMainFrame.cpp"
+        "Qt/EditorMainFrame.h"
+        "Qt/EditorMainFrame.ui"
+
+		#"MainFrameWidgets.h"
+		#"QMainFrameMenuBar.cpp"
+		#"QMainFrameMenuBar.h"
+		#"TraySearchBox.cpp"
+		#"TraySearchBox.h"
+	#SOURCE_GROUP "MainFrame\\\\About"
+	#	"AboutDialog.cpp"
+	#	"AboutDialog.h"
+	#SOURCE_GROUP "MainFrame\\\\Splash"
+	#	"SplashScreen.cpp"
+	#	"SplashScreen.h"
+	#SOURCE_GROUP "MainFrame\\\\TabPaneManager"
+	#	"QT/QToolTabManager.cpp"
+	#	"QT/QToolTabManager.h"
 )
 
 Editor(Sandbox PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")

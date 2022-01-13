@@ -4,34 +4,27 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class GameWindow; }
+namespace Ui { class EditorMainFrame; }
 QT_END_NAMESPACE
 
-class GameWindow : public QMainWindow
+class CEditorMainFrame : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    GameWindow(QWidget *parent = nullptr);
-    ~GameWindow();
+    CEditorMainFrame(QWidget *parent = nullptr);
+    ~CEditorMainFrame();
 
 	void OnIdleCallback();
 
-
 private slots:
     void on_action_Clear_Console_triggered();
-
-private slots:
     void on_action_Toggle_Console_toggled(bool arg1);
-
-private slots:
     void on_action_Toggle_Console_triggered();
-
-private slots:
     void on_action_Quit_triggered();
     void on_action_Open_File_triggered();
 
 private:
-    Ui::GameWindow *ui;
+    Ui::EditorMainFrame *ui;
 };
 #endif // GAMEWINDOW_H

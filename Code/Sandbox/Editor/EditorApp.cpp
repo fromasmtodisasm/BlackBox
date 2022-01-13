@@ -42,7 +42,7 @@ CEditApp* CEditApp::GetInstance()
 
 bool CEditApp::InitInstance()
 {
-    m_GameWindow = new GameWindow;
+    m_GameWindow = new CEditorMainFrame;
     m_GameWindow->show();
 
 	auto pGameEngine = InitGameSystem();

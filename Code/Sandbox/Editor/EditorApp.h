@@ -1,7 +1,7 @@
 #pragma once
 #include "SandboxAPI.h"
 
-#include "gamewindow.h"
+#include "Qt/EditorMainFrame.h"
 
 class CCryEditDoc;
 class CEditCommandLineInfo;
@@ -41,5 +41,5 @@ class SANDBOX_API CEditApp
 	bool		 m_bExiting{false};
 	bool		 m_bTestMode{false};
 
-	GameWindow*  m_GameWindow;
+	CEditorMainFrame*  m_GameWindow;
 };

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GameWindow</class>
- <widget class="QMainWindow" name="GameWindow">
+ <class>EditorMainFrame</class>
+ <widget class="QMainWindow" name="CEditorMainFrame">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../Data/images/icon.ico</normaloff>../../../Data/images/icon.ico</iconset>
+    <normaloff>Data/images/icon.ico</normaloff>Data/images/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -228,7 +228,7 @@
   <connection>
    <sender>action_File</sender>
    <signal>triggered()</signal>
-   <receiver>GameWindow</receiver>
+   <receiver>CEditorMainFrame</receiver>
    <slot>on_action_Open_File_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
