@@ -41,9 +41,11 @@ ISystem* CreateSystemInterface(SSystemInitParams& startupParams)
 
 	if (!pSystem->Init())
 	{
-		//pSystem.release();
+		CryMessageBox("CrySystem initialization failed!", "Engine initialization failed!");
+		pSystem.release();
 		startupParams.pSystem = nullptr;
-		//gEnv->pSystem	   = nullptr;
+		gEnv->pSystem		  = nullptr;
+
 		return nullptr;
 	}
 	pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_SYSTEM_INIT_DONE, 0, 0);
