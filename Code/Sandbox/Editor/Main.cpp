@@ -2,15 +2,54 @@
 //////////////////////////////////////////////////////////////////////////
 #include "EditorApp.h"
 //////////////////////////////////////////////////////////////////////////
+#include <QWidget>
+#include <QStyleFactory>
+#include <QFile>
+#include <QDir>
+#include <QMainWindow>
+#include <QLabel>
+#include <QSettings>
+#include <QFileSystemWatcher>
+#include <QMenuBar>
+#include <QProxyStyle>
+//////////////////////////////////////////////////////////////////////////
 
 #include <QApplication>
 #include <QFrame>
 #include <QStyleFactory>
 
+#include "Qt/EditorMainFrame.h"
+#include "SplashScreen.h"
+
+#include "EditorImpl.h"
+#include <BlackBox/Core/Path.hpp>
+
 extern CEditApp theApp;
 
 QWidget* game_window;
 HWND	 main_hwnd() { return (HWND)game_window->winId(); }
+QFileSystemWatcher* watcher;
+
+static void QtLogToDebug(QtMsgType Type, const QMessageLogContext& Context, const QString& message)
+{
+	OutputDebugStringW(L"Qt: ");
+	OutputDebugStringW(reinterpret_cast<const wchar_t*>(message.utf16()));
+	OutputDebugStringW(L"\n");
+}
+
+void OnFileChanged(const QString& path)
+{
+	QByteArray ba = path.toLocal8Bit();
+	CryLog("File [%s] changed", ba.data());
+}
+void OnDirectoryChanged(const QString& path)
+{
+	QByteArray ba = path.toLocal8Bit();
+	CryLog("Directory [%s] changed", ba.data());
+	QStringList fileList = watcher->directories();
+	Q_FOREACH (QString file, fileList)
+		qDebug() << "file name" << file << "\n";
+}
 
 void SetStyle()
 {
@@ -52,13 +91,44 @@ int main(int argc, char* argv[])
 	QApplication a(argc, argv);
 	SetStyle();
 
-	if (theApp.InitInstance())
+	QPixmap pixmap(":/splash.png");
+	SplashScreen splash(pixmap);
+	splash.show();
+	qApp->processEvents();
+
+	qInstallMessageHandler(QtLogToDebug);
+
+	CEditorMainFrame* mainFrame = new CEditorMainFrame(nullptr);
+
+	watcher = new QFileSystemWatcher();
+	if (!watcher->addPath(R"(Data/scripts/)"))
 	{
-		theApp.PostInit();
-		//theApp.Run();
-		result = a.exec();
+		delete watcher;
+		watcher = nullptr;
+		CryWarning(VALIDATOR_MODULE_EDITOR, VALIDATOR_ERROR, "Failed to add qss stylesheet to watcher");
 	}
+	else
+	{
+		QObject::connect(watcher, &QFileSystemWatcher::fileChanged, OnFileChanged);
+		QObject::connect(watcher, &QFileSystemWatcher::directoryChanged, OnDirectoryChanged);
+	}
+
+	if (!theApp.InitInstance())
+	{
+		theApp.ExitInstance();
+		return -1;
+	}
+
+	mainFrame->PostLoad();
+	splash.close();
+
+    theApp.PostInit();
+	result = a.exec();
+
 	theApp.ExitInstance();
+
+    delete watcher;
+	delete mainFrame;
 
 #if defined(DEBUG) | defined(_DEBUG) && 0
 	_CrtMemCheckpoint(&s2);

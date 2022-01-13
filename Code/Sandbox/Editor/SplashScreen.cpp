@@ -1,15 +1,16 @@
-#if 0
+#if 1
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
 #include "SplashScreen.h"
-//#include "Version.h"
+#include <BlackBox/Core/MathHelper.hpp>
+#include "Version.h"
 
-//#include <QApplication>
-//#include <QPainter>
+#include <QApplication>
+#include <QPainter>
 
 SplashScreen* SplashScreen::s_pLogoWindow = nullptr;
 
-SplashScreen::SplashScreen(const QPixmap& pixmap /* = QPixmap() */)
+SplashScreen::SplashScreen(const QPixmap& pixmap /* = QPixmap() */, Qt::WindowFlags f /* = Qt::Widget*/)
 	: QSplashScreen(pixmap, f)
 {
 	#if 0
@@ -30,7 +31,7 @@ SplashScreen::~SplashScreen()
 void SplashScreen::SetVersion(const Version& v)
 {
 	char pVersionText[256];
-	cry_sprintf(pVersionText, "Version %d.%d.%d - Build %d", v[3], v[2], v[1], v[0]);
+	sprintf(pVersionText, "Version %d.%d.%d - Build %d", v[3], v[2], v[1], v[0]);
 	s_pLogoWindow->version = pVersionText;
 	s_pLogoWindow->repaint();
 	qApp->processEvents();

@@ -27,6 +27,12 @@ CEditorMainFrame::~CEditorMainFrame()
     delete ui;
 }
 
+void CEditorMainFrame::PostLoad()
+{
+
+    this->show();
+}
+
 void CEditorMainFrame::OnIdleCallback()
 {
 	//qDebug() << "Idle processing";

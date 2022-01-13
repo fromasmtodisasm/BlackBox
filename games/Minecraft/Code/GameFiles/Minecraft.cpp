@@ -488,7 +488,7 @@ void MineDebug::update()
 	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
 	auto const delta   = curTime - prevTime;
 	prevTime					= curTime;
-	CryLog("delta time: %f", delta);
+	//CryLog("delta time: %f", delta);
 	for (auto box : tmpBoxes)
 	{
 		//gEnv->p3DEngine->UnRegisterEntity(box);

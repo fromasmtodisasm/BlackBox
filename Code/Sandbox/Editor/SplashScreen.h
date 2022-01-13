@@ -1,23 +1,15 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
 #pragma once
-//struct QPixmap
-//{
-//};
+#include <QPixmap>
+#include <QSplashScreen>
+
 struct Version;
-class QPainter;
-
-//using QString = string;
-
-struct QSplashScreen
-{
-	virtual void drawContents(QPainter* painter)  = 0;
-};
 
 class SplashScreen : public QSplashScreen
 {
 public:
-	SplashScreen(const QPixmap& pixmap = QPixmap());
+	SplashScreen(const QPixmap& pixmap = QPixmap(), Qt::WindowFlags f = Qt::Widget);
 	~SplashScreen();
 
 	static SplashScreen* GetSplashScreen() { return s_pLogoWindow; }

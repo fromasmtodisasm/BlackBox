@@ -14,6 +14,7 @@ class CEditorMainFrame : public QMainWindow
 public:
     CEditorMainFrame(QWidget *parent = nullptr);
     ~CEditorMainFrame();
+	void PostLoad();
 
 	void OnIdleCallback();
 
