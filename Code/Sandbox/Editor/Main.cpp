@@ -59,7 +59,7 @@ void SetStyle()
 	QColor	 disabledColor = QColor(127, 127, 127);
 	darkPalette.setColor(QPalette::Window, darkColor);
 	darkPalette.setColor(QPalette::WindowText, Qt::white);
-	darkPalette.setColor(QPalette::Base, QColor(18, 18, 18));
+    darkPalette.setColor(QPalette::Base, QColor(35, 35, 35));
 	darkPalette.setColor(QPalette::AlternateBase, darkColor);
 	darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
 	darkPalette.setColor(QPalette::ToolTipText, Qt::white);
@@ -71,13 +71,14 @@ void SetStyle()
 	darkPalette.setColor(QPalette::BrightText, Qt::red);
 	darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
 
-	darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::Highlight, QColor(42, 200, 218));
 	darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 	darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledColor);
 
 	qApp->setPalette(darkPalette);
 
 	qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    qApp->setStyleSheet("QMenuBar::separator { background-color: #ffffff; width: 1px; height: 1px; }");
 }
 
 int main(int argc, char* argv[])

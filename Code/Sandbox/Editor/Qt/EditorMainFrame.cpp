@@ -19,7 +19,9 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
     frame = (QFrame *)findChild<QWidget*>("MainFrame");
     game_window = frame;
 
-    ui->toolBar->setStyleSheet("QToolBar::separator { background-color: #454545; width: 1px; height: 1px; }");
+    ui->toolBar->setStyleSheet("QToolBar::separator { background-color: #ffffff; width: 1px; height: 1px; }");
+    //ui->toolBar->setStyleSheet("QMenuBar::separator { background-color: #454545; }");
+    //ui->toolBar->setStyleSheet("QMenuBar { background-color: #454545; }");
 
 	QTimer::singleShot(0, this, &CEditorMainFrame::OnIdleCallback);
 }
