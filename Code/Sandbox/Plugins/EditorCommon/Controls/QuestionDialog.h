@@ -15,7 +15,7 @@ enum EInfoMessageType
 	WarningType
 };
 
-class EDITOR_COMMON_API CQuestionDialog : public CEditorDialog
+class EDITOR_COMMON_API CQuestionDialog : public QDialog//public CEditorDialog
 {
 	Q_OBJECT
 public:

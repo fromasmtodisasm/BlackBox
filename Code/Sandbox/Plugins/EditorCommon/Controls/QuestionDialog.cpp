@@ -10,7 +10,12 @@ using CryIcon = QIcon;
 #include <QCheckBox>
 
 CQuestionDialog::CQuestionDialog(QWidget* pParent /*= nullptr*/)
+#if 0
 	: CEditorDialog(QStringLiteral("QuestionDialog"), pParent, false)
+#else
+	: QDialog(pParent)
+#endif
+
 	, m_defaultButton(QDialogButtonBox::NoButton)
 {
 	setWindowTitle(tr(""));
@@ -41,7 +46,11 @@ CQuestionDialog::~CQuestionDialog()
 
 void CQuestionDialog::showEvent(QShowEvent* pEvent)
 {
+	#if 0
 	CEditorDialog::showEvent(pEvent);
+	#else
+	QDialog::showEvent(pEvent);
+	#endif
 
 	// Set default button. This needs to be done after the dialog has been shown (see Qt docs).
 	if (m_defaultButton != QDialogButtonBox::NoButton)
@@ -59,12 +68,15 @@ void CQuestionDialog::SetupUI(EInfoMessageType type, const QString& title, const
 	setWindowTitle(title);
 	m_infoLabel->setText(text);
 	m_buttons->setStandardButtons(buttons);
+	layout()->setSizeConstraint(QLayout::SetFixedSize);
 
 	m_defaultButton = defaultButton;
 
 	if (!(buttons & QDialogButtonBox::StandardButton::Cancel))
 	{
+		#if 0
 		SetDoNotClose();
+		#endif
 	}
 
 	int iconSize = 48;
@@ -94,7 +106,9 @@ void CQuestionDialog::SetupUI(EInfoMessageType type, const QString& title, const
 	auto row = m_layout->rowCount();
 	m_layout->addWidget(m_buttons, row, 0, 1, -1, Qt::AlignRight);
 
+	#if 0
 	SetResizable(false);
+	#endif
 }
 
 void CQuestionDialog::SetupCritical(const QString& title, const QString& text, QDialogButtonBox::StandardButtons buttons, QDialogButtonBox::StandardButton defaultButton)

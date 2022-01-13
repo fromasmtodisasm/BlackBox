@@ -10,6 +10,7 @@ add_sources(
 		"pch.hpp"
 	SOURCE_GROUP "Resource Files"
 		"Resource.h"
+		"EditorCommon.qrc"
 	SOURCE_GROUP "Source Files"
 		"EditorCommon.h"
 		"EditorCommonAPI.h"
