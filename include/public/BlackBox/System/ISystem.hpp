@@ -211,7 +211,7 @@ struct ISystemUserCallback
 	{
 	}
 
-#if 0
+#if 1
 	//! Show message by provider.
 	virtual EQuestionResult ShowMessage(const char* text, const char* caption, EMessageBox uType) { return eQR_None; }
 #endif

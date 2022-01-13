@@ -301,6 +301,9 @@ void CSystem::Quit()
 		return;
 	m_bQuit = true;
 
+	if (m_pUserCallback)
+		m_pUserCallback->OnQuit();
+
 	// clean up properly the console
 	if (m_pTextModeConsole)
 		m_pTextModeConsole->OnShutdown();

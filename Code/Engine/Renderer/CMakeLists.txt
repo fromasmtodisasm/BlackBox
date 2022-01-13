@@ -11,7 +11,7 @@ sources_platform(ALL)
 add_sources(
 	"NoUberFile"
 	PROJECTS
-	RendererDX
+	RenderD3D11
 	RendererGL
 	RendererVK
 	SOURCE_GROUP "Source Files"
@@ -39,7 +39,7 @@ add_sources(
 add_sources(
 	"NoUberFile"
 	PROJECTS
-	RendererDX
+	RenderD3D11
 	SOURCE_GROUP "D3D"
 		"D3D/BufferManager.cpp"
 		"D3D/CMakeLists.txt"
@@ -94,16 +94,16 @@ endmacro()
 
 if(OPTION_DX_RENDERER)
 	message(STATUS "Using D3D11 Renderer Backend")
-	EngineModule(RendererDX FORCE_SHARED_WIN PCH
+	EngineModule(RenderD3D11 FORCE_SHARED_WIN PCH
 							 "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp" SOLUTION_FOLDER "Engine")
 	add_common_libs()
 	add_common_includes()
 
-	target_compile_definitions(RendererDX PUBLIC "DX_RENDERER")
-	target_link_libraries(${THIS_PROJECT} PRIVATE dxguid d3d11 d3d10 d3d9 d3dcompiler DXGI.lib GUI)
-	add_library(Renderer ALIAS RendererDX)
+	target_compile_definitions(RenderD3D11 PUBLIC "DX_RENDERER")
+	target_link_libraries(${THIS_PROJECT} PRIVATE dxguid d3d11 d3d10 d3d9 d3dcompiler DXGI.lib)
+	add_library(Renderer ALIAS RenderD3D11)
 else()
-	cryfilecontainer(RendererDX SOLUTION_FOLDER "Engine")
+	cryfilecontainer(RenderD3D11 SOLUTION_FOLDER "Engine")
 endif()
 if(OPTION_VK_RENDERER)
 	enginemodule(RendererVK FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER

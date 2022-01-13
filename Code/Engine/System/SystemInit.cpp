@@ -30,8 +30,11 @@ using stack_string = string;
 #define DLL_ANIMATION     "Animation"
 #define DLL_FONT          "Font"
 #define DLL_3DENGINE      "3DEngine"
-//#define DLL_RENDERER_DX11 "RenderD3D11"
+#if 1
+#define DLL_RENDERER_DX11 "RenderD3D11"
+#else
 #define DLL_RENDERER_DX11 "RendererDX"
+#endif
 #define DLL_RENDERER_DX12 "RenderD3D12"
 #define DLL_RENDERER_VK   "RenderVulkan"
 #define DLL_RENDERER_GNM  "RenderGNM"
@@ -729,11 +732,11 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	const char* RenderLibrary = "RendererGL";
 	if (render == "DX11")
 	{
-		RenderLibrary = "RendererDX";
+		RenderLibrary = DLL_RENDERER_DX11;
 	}
 	else if (render == "VK")
 	{
-		RenderLibrary = "RendererVK";
+		RenderLibrary = DLL_RENDERER_VK;
 	}
 	return LoadSubsystem<PFNCREATERENDERERINTERFACE>(RenderLibrary, "CreateIRender", [&](PFNCREATERENDERERINTERFACE p)
 													 {

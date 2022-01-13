@@ -191,11 +191,13 @@ int64 CryGetTicks()
 
 EQuestionResult CryMessageBox(const char* szText, const char* szCaption, EMessageBox type)
 {
+	#if 1
 	#if 0
 	if (gEnv && gEnv->bUnattendedMode)
 	{
 		return eQR_None;
 	}
+	#endif
 
 	if (gEnv && gEnv->pSystem && gEnv->pSystem->GetUserCallback() != nullptr)
 	{

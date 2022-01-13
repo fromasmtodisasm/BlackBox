@@ -4,6 +4,7 @@
 #include <EditorImpl.h>
 
 #include "EditorApp.h"
+#include <Controls/QuestionDialog.h>
 
 HWND main_hwnd();
 
@@ -50,8 +51,8 @@ struct SSystemUserCallback : public ISystemUserCallback
 
 	virtual EQuestionResult ShowMessage(const char* text, const char* caption, EMessageBox uType)
 	{
-		#if 0
 		SEditorSuspendUpdateScopeHelper suspendUpdateScope;
+		(void)suspendUpdateScope;
 
 		switch (uType)
 		{
@@ -72,7 +73,6 @@ struct SSystemUserCallback : public ISystemUserCallback
 		}
 
 		CQuestionDialog::SWarning(caption, text);
-		#endif
 
 		return eQR_None;
 	}

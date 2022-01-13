@@ -24,6 +24,16 @@ add_sources(
 
 		"IPlugin.h"
 		"Lib.cpp"
+	SOURCE_GROUP "Controls"
+		"Controls/QuestionDialog.h"
+		"Controls/QuestionDialog.cpp"
+		"Controls/EditorDialog.h"
+		"Controls/EditorDialog.cpp"
+
+		"Controls/QCustomWindowFrame.h"
+		"Controls/QCustomWindowFrame.cpp"
+		"Controls/SandboxWindowing.h"
+		"Controls/SandboxWindowing.cpp"
 )
 
 EngineModule(EditorCommon EDITOR_COMPILE_SETTINGS PCH "pch.hpp" SOLUTION_FOLDER "Sandbox")
