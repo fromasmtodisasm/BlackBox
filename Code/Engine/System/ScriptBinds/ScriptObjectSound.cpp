@@ -15,7 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <BlackBox/ScriptSystem/ScriptObjectSound.hpp>
+#include "ScriptObjectSound.hpp"
 enum
 {
 	SOUND_LOOP		 = FLAG_SOUND_LOOP,

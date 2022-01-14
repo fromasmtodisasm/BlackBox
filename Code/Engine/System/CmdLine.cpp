@@ -1,4 +1,4 @@
-#include <BlackBox/System/CmdLine.hpp>
+#include "CmdLine.hpp"
 #include <cstring>
 
 void CCmdLine::PushCommand(const string& sCommand, const string& sParameter)

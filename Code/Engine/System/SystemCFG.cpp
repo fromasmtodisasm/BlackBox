@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 #include "SystemCFG.hpp"
 
 

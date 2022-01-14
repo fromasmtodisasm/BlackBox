@@ -1,4 +1,4 @@
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 #include <BlackBox/System/ConsoleCommands.hpp>
 
 class SystemCommand : public BaseCommand

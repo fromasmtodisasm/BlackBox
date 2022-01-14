@@ -1,8 +1,8 @@
 #include "ProjectManager/ProjectManager.hpp"
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/System/IWindow.hpp>
-#include <BlackBox/System/NullLog.hpp>
-#include <BlackBox/System/System.hpp>
+#include "NullLog.hpp"
+#include "System.hpp"
 #include <WindowsConsole.h>
 
 #include "Profiling\ProfilingSystem.hpp"

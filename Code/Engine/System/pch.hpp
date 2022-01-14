@@ -9,19 +9,19 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IShader.hpp>
-#include <BlackBox/System/CmdLineArg.hpp>
-#include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
-#include <BlackBox/System/HardwareMouse.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
-//#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ITimer.hpp>
 #include <BlackBox/System/IWindow.hpp>
 #include <ISound.h>
 
+#include "CmdLineArg.hpp"
+#include "Console.hpp"
+#include "HardwareMouse.hpp"
+
 #ifndef LINUX
-#	include <BlackBox/System/File/CryPak.hpp>
+#	include "File/CryPak.hpp"
 #endif
 
 #include <BlackBox/Core/Utils.hpp>

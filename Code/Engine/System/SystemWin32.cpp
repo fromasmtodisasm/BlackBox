@@ -1,4 +1,4 @@
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 
 //////////////////////////////////////////////////////////////////////////
 void CSystem::FatalError(const char* format, ...)

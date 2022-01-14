@@ -1,7 +1,8 @@
 #pragma once
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#include <BlackBox/ScriptSystem/LuaCommon.hpp>
-#include <BlackBox/ScriptSystem/Iterator.hpp>
+
+#include "LuaCommon.hpp"
+#include "Iterator.hpp"
 
 class CScriptSystem;
 

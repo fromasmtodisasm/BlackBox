@@ -10,7 +10,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 #include <BlackBox/System/CrySizer.hpp>
 #include "WindowsConsole.h"
 //#include <CryGame/IGameFramework.h>

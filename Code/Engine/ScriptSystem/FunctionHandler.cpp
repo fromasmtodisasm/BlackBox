@@ -1,4 +1,4 @@
-#include <BlackBox/ScriptSystem/FunctionHandler.hpp>
+#include "FunctionHandler.hpp"
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 
 #define NOT_IMPL() assert(0 && __FUNCTION__ " not implemented")

@@ -10,7 +10,7 @@
    - Jan 20,2014:	Created by Leander Beernaert
 
 *************************************************************************/
-#include <BlackBox/Input/SDLPad.hpp>
+#include "SDLPad.hpp"
 
 // NOTE: The current implementation is modled after the XI input
 // Adjustments need to be made if this is not the case!

@@ -1,7 +1,7 @@
 #include <BlackBox/Renderer/Camera.hpp>
 
-#include <BlackBox/3DEngine/3DEngine.hpp>
-#include <BlackBox/3DEngine/ObjLoader.hpp>
+#include "3DEngine.hpp"
+#include "ObjLoader.hpp"
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>

@@ -1,5 +1,7 @@
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
+#include "Console.hpp"
 #include "ConsoleBatchFile.h"
+
 #include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/IInput.hpp>
@@ -8,7 +10,6 @@
 #include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#include <BlackBox/System/Console.hpp>
 #include <BlackBox/System/IClipBoard.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>

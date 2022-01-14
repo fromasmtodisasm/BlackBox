@@ -1,4 +1,4 @@
-#include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
+#include "ScriptObjectConsole.hpp"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

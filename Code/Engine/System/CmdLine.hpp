@@ -6,7 +6,7 @@
 #endif
 
 #include <BlackBox/System/ICmdLine.hpp>
-#include <BlackBox/System/CmdLineArg.hpp>
+#include "CmdLineArg.hpp"
 
 #include <string>
 #include <vector>

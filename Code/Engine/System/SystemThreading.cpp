@@ -1,5 +1,5 @@
 #include "SystemThreading.h"
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 
 void DumpThreads(IConsoleCmdArgs* args)
 {

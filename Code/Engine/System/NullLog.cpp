@@ -1,4 +1,4 @@
-#include <BlackBox/System/NullLog.hpp>
+#include "NullLog.hpp"
 
 #define CryGetCurrentThreadId() std::this_thread::get_id()
 

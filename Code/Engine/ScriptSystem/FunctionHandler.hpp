@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
+#include "ScriptSystem.hpp"
 
 class CFunctionHandler : public IFunctionHandler
 {

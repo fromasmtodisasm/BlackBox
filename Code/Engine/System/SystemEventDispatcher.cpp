@@ -1,4 +1,4 @@
-#include <BlackBox/System/SystemEventDispatcher.hpp>
+#include "SystemEventDispatcher.hpp"
 
 static const uint UserEventBase = 0x100;
 

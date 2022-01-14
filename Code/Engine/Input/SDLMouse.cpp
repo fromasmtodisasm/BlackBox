@@ -1,6 +1,7 @@
-#include <BlackBox/Input/SDLMouse.hpp>
+#include "SDLMouse.hpp"
+#include "InputCVars.hpp"
+
 #include <BlackBox/Input/Events.h>
-#include <BlackBox/Input/InputCVars.hpp>
 
 #include <SDL2/SDL.h>
 

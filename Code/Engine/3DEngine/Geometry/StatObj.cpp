@@ -1,4 +1,4 @@
-#include <BlackBox/3DEngine/StatObject.hpp>
+#include "StatObject.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
 //#include <BlackBox/Geometry/ObjLoader.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>

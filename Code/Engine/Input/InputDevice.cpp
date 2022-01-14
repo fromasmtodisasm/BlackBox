@@ -1,8 +1,8 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
-#include <BlackBox/Input/InputDevice.hpp>
+#include "InputDevice.hpp"
 
 #if !defined(RELEASE)
-	#include <BlackBox/Input/InputCVars.hpp>
+	#include "InputCVars.hpp"
 	extern CInputCVars* g_pInputCVars;
 #endif
 

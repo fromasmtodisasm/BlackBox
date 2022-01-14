@@ -1,7 +1,7 @@
 #pragma once
 #include "../BaseRenderer.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox\System\File\CryFile.h>
+#include <BlackBox/System/File/CryFile.h>
 #include <Cry_Color4.h>
 
 #include "Device.hpp"

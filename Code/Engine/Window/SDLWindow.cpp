@@ -3,7 +3,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/System/Platform/SDL/Window.hpp>
+#include "Window.hpp"
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 

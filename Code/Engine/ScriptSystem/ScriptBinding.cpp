@@ -1,5 +1,5 @@
-#include <BlackBox/ScriptSystem/ScriptBinding.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectSystem.hpp>
+#include "ScriptBinding.hpp"
+#include "ScriptObjectSystem.hpp"
 
 CScriptBindings::CScriptBindings()
 {

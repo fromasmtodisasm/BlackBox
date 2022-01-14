@@ -1,5 +1,5 @@
-#include <BlackBox/Input/ActionMap.hpp>
-#include <BlackBox/Input/ActionMapManager.hpp>
+#include "ActionMap.hpp"
+#include "ActionMapManager.hpp"
 
 CActionMap::CActionMap(CActionMapManager* pActionMapManager) 
 	: m_ActionMapManager(pActionMapManager)

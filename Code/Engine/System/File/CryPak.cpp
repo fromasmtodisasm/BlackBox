@@ -1,7 +1,7 @@
 #ifndef LINUX
 #	include <BlackBox/Core/Platform/Platform.hpp>
 #	include <BlackBox/Core/Platform/Windows.hpp>
-#	include <BlackBox/System/File/CryPak.hpp>
+#	include "CryPak.hpp"
 
 #	include <algorithm>
 #	include <cctype>

@@ -1,4 +1,4 @@
-#include <BlackBox/Network/Server.hpp>
+#include "Server.hpp"
 
 CNetworkServer::CNetworkServer()
 {

@@ -4,7 +4,7 @@
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IProjectManager.hpp>
 #include <BlackBox/System/IWindow.hpp>
-#include <BlackBox/Renderer/FreeTypeFont.hpp>
+#include "FreeTypeFont.hpp"
 
 #include "AuxRendererNull.hpp"
 

@@ -1,6 +1,6 @@
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
-#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
-#include <BlackBox/ScriptSystem/StackGuard.hpp>
+#include "ScriptSystem.hpp"
+#include "StackGuard.hpp"
 
 
 lua_State*	   CScriptObject::L		= nullptr;

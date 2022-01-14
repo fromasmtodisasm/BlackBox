@@ -1,14 +1,14 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/World/World.hpp>
-#include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/3DEngine/SceneManager.hpp>
+//#include "World.hpp"
+//#include "Scene.hpp"
+#include "SceneManager.hpp"
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
+#if 0
 float World::gravity = 9.8f;
 
-#if 0
 IScene* World::GetActiveScene()
 {
   return activeScene;

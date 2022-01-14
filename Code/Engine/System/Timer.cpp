@@ -1,6 +1,6 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
-#include <BlackBox/System/Timer.hpp>
+#include "Timer.hpp"
 #include <time.h>
 #include <BlackBox/System/ISystem.hpp>
 /////////////////////////////////////////////////////

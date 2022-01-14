@@ -1,4 +1,4 @@
-#include <BlackBox/Input/InputActionMap.hpp>
+#include "InputActionMap.hpp"
 
 CInputActionMap::CInputActionMap()
 {

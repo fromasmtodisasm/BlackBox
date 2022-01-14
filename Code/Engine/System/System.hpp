@@ -6,21 +6,22 @@
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#include <BlackBox/System/CmdLine.hpp>
+#include "CmdLine.hpp"
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/FrameProfiler.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/IWindowMessageHandler.h>
-#include <BlackBox/System/Timer.hpp>
-#include <BlackBox/System/Window.hpp>
-#include <BlackBox/System/PakVars.h>
+#include "Timer.hpp"
+#include "Window.hpp"
+#include "PakVars.h"
 #include <BlackBox/System/IProcess.hpp>
 
-#include <BlackBox/ScriptSystem/ScriptObjectConsole.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectRenderer.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
-#include <BlackBox/ScriptSystem/ScriptObjectSound.hpp>
-#include <Font\NullFont.h>
+#include "ScriptBinds/ScriptObjectConsole.hpp"
+#include "ScriptBinds/ScriptObjectRenderer.hpp"
+#include "ScriptBinds/ScriptObjectScript.hpp"
+#include "ScriptBinds/ScriptObjectSound.hpp"
+
+#include <Font/NullFont.h>
 
 #include <BlackBox/Core/Platform/CryLibrary.h>
 

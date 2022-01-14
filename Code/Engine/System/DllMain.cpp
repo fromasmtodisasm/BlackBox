@@ -1,5 +1,5 @@
 #include <BlackBox/Core/Platform/platform_impl.inl>
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 //#include <CrySystem/SystemInitParams.h>
 //#include "DebugCallStack.h"
 //#include "MemReplay.h"

@@ -1,7 +1,8 @@
-#include <BlackBox/ScriptSystem/FunctionHandler.hpp>
+#include "FunctionHandler.hpp"
+#include "ScriptSystem.hpp"
+#include "StackGuard.hpp"
+
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
-#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
-#include <BlackBox/ScriptSystem/StackGuard.hpp>
 
 
 // Undefine malloc for memory manager itself..
@@ -17,7 +18,7 @@
 #	define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #	define new DEBUG_CLIENTBLOCK
 #endif
-#include <BlackBox\System\File\CryFile.h>
+#include <BlackBox/System/File/CryFile.h>
 using CryPathString = string;
 
 #define INDENT_LOG_DURING_SCOPE(i, format, ...) CryLog(format, __VA_ARGS__)

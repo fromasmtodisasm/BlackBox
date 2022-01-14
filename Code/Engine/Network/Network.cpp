@@ -1,12 +1,14 @@
+#include "Client.hpp"
+#include "Network.hpp"
+#include "Server.hpp"
+
 #include <BlackBox/Core/ICompressionHelper.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
-#include <BlackBox/Network/Client.hpp>
 #include <BlackBox/Network/IPAddress.hpp>
-#include <BlackBox/Network/Network.hpp>
-#include <BlackBox/Network/Server.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
+
 
 #include <SDL2/SDL_net.h>
 #include <functional>

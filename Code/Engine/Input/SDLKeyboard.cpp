@@ -1,5 +1,5 @@
-#include <BlackBox/Input/SDLKeyboard.hpp>
-#include <BlackBox/Input/SDLMouse.hpp>
+#include "SDLKeyboard.hpp"
+#include "SDLMouse.hpp"
 #include <BlackBox/Input/Events.h>
 #include <SDL2/SDL.h>
 //#include <SDL.h>

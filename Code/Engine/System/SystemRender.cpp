@@ -1,6 +1,6 @@
-#include <BlackBox/3DEngine/3DEngine.hpp>
+#include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/Profiler/Profiler.h>
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 
 #include "CrySizerImpl.h"
 

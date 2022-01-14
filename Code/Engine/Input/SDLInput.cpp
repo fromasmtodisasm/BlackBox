@@ -1,9 +1,9 @@
-#include <BlackBox/Input/SDLInput.hpp>
-#include <BlackBox/Input/SDLKeyboard.hpp>
-#include <BlackBox/Input/SDLMouse.hpp>
-#include <BlackBox/Input/SDLPad.hpp>
+#include "SDLInput.hpp"
+#include "SDLKeyboard.hpp"
+#include "SDLMouse.hpp"
+#include "SDLPad.hpp"
 
-#include <BlackBox/Input/ActionMapManager.hpp>
+#include "ActionMapManager.hpp"
 
 class CCursor : public ICursor
 {

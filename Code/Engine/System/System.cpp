@@ -1,22 +1,22 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
-#include <BlackBox/System/System.hpp>
+#include "System.hpp"
 
 #include <BlackBox/Core/IGame.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/3DEngine/3DEngine.hpp>
-#include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
-#include <BlackBox/System/Console.hpp>
+#include <BlackBox/3DEngine/I3DEngine.hpp>
+//#include <BlackBox/Scene/Scene.hpp>
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+#include "Console.hpp"
 #include "RemoteConsole/RemoteConsole.h"
 #include <BlackBox/System/IProjectManager.hpp>
 
 #include <BlackBox/Core/Stream.hpp>
-#include <BlackBox/System/HardwareMouse.hpp>
+#include "HardwareMouse.hpp"
 #include <BlackBox/System/IWindow.hpp>
-#include <BlackBox/System/SystemEventDispatcher.hpp>
-#include <BlackBox/System/VersionControl.hpp>
+#include "SystemEventDispatcher.hpp"
+#include "VersionControl.hpp"
 #include <BlackBox/World/IWorld.hpp>
 #include <BlackBox/System/CVarOverrides.h>
 #include <BlackBox/System/ConsoleRegistration.h>

@@ -1,5 +1,5 @@
-#include <BlackBox/Scene/Scene.hpp>
-#include <BlackBox/Scene/XmlSerialization.hpp>
+#include "Scene.hpp"
+#include "XmlSerialization.hpp"
 
 using namespace tinyxml2;
 

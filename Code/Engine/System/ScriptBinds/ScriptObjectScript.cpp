@@ -1,5 +1,5 @@
-#include <BlackBox/ScriptSystem/ScriptObjectScript.hpp>
-#include <BlackBox/ScriptSystem/ScriptSystem.hpp>
+#include "ScriptObjectScript.hpp"
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

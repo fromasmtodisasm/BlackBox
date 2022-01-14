@@ -4,11 +4,8 @@
 #include <BlackBox/Renderer/IPostProcessor.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/ITechnique.hpp>
-#include <BlackBox/3DEngine/StatObject.hpp>
-#include <BlackBox/Renderer/MaterialManager.hpp>
-#include <BlackBox/Scene/Scene.hpp>
+#include "StatObject.hpp"
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/World/World.hpp>
 
 #include <algorithm>
 #if 0

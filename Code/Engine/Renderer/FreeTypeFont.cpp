@@ -1,9 +1,9 @@
 #ifndef VK_RENDERER
 #	include "D3D/Shader.hpp"
-#	include <BlackBox/Renderer/FreeTypeFont.hpp>
+#	include "FreeTypeFont.hpp"
 #	include <BlackBox/Renderer/IRender.hpp>
 
-#	include <BlackBox/Renderer/MaterialManager.hpp>
+#	include "MaterialManager.hpp"
 
 #	include "BaseRenderer.hpp"
 

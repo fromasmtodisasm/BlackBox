@@ -3,7 +3,8 @@
 #include <BlackBox/System/File/ICryPak.hpp>
 #include <BlackBox/System/IMiniLog.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/System/PakVars.h>
+
+//#include <PakVars.hpp>
 
 #include <zip.h>
 

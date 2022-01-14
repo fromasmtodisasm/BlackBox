@@ -17,7 +17,7 @@
 
 *************************************************************************/
 
-#include <BlackBox/System/HardwareMouse.hpp>
+#include "HardwareMouse.hpp"
 //#include <BlackBox/Core/Platform/WindowsUtils.hpp>
 
 //#include <BlackBox/Core/Platform/CryLibrary.hpp>

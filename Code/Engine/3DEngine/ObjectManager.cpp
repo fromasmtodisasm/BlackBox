@@ -1,4 +1,4 @@
-#include <BlackBox/3DEngine/StatObject.hpp>
+#include "StatObject.hpp"
 
 #include "ObjectManager.hpp"
 
