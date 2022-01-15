@@ -101,6 +101,13 @@ int main(int argc, char* argv[])
 
 	CEditorMainFrame* mainFrame = new CEditorMainFrame(nullptr);
 
+
+	if (!theApp.InitInstance())
+	{
+		theApp.ExitInstance();
+		return -1;
+	}
+
 	watcher = new QFileSystemWatcher();
 	if (!watcher->addPath(R"(Data/scripts/)"))
 	{
@@ -112,12 +119,6 @@ int main(int argc, char* argv[])
 	{
 		QObject::connect(watcher, &QFileSystemWatcher::fileChanged, OnFileChanged);
 		QObject::connect(watcher, &QFileSystemWatcher::directoryChanged, OnDirectoryChanged);
-	}
-
-	if (!theApp.InitInstance())
-	{
-		theApp.ExitInstance();
-		return -1;
 	}
 
 	mainFrame->PostLoad();
