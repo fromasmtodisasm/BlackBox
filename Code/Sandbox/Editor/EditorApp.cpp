@@ -115,9 +115,7 @@ int CEditApp::ExitInstance()
 void CEditApp::InitPlugins()
 {
 	CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
-#if 0
 	SplashScreen::SetText("Loading Plugins...");
-#endif
 	// Load the plugins
 	{
 		Command_LoadPlugins();
