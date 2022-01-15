@@ -27,10 +27,13 @@ if (OPTION_EDITOR)
 	endif()
 		# Find Qt before including any plugin subdirectories
 	if (MSVC_VERSION GREATER 1900) # Visual Studio > 2015
-		set(QT_DIR "${QT_SDK_ROOT}/Qt/6.2.0/msvc2019_64")
+		set(QT_DIR "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64")
 		message(STATUS "Qt Sdk Root: ${QT_SDK_ROOT}")
 	endif()
-	set(Qt6_DIR "${QT_SDK_ROOT}/Qt/6.2.0/msvc2019_64/lib/cmake/Qt6")
+	set(Qt6_DIR "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64/lib/cmake/Qt6")
+	set(QT_DEPLOY_ROOT "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64")
+	list(APPEND CMAKE_PREFIX_PATH "${QT_DIR}/lib/cmake")
+
 
 	#find_package(Qt6 COMPONENTS Core Gui OpenGL Widgets REQUIRED PATHS "${QT_DIR}" NO_DEFAULT_PATH)
 	find_package(Qt6 COMPONENTS Core Gui OpenGL Widgets REQUIRED PATHS "${QT_DIR}")
@@ -59,3 +62,5 @@ endif()
 #message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")
 
 #clang_format("${ALL_PROJECT_SOURCES}")
+
+copy_binary_files_to_target()

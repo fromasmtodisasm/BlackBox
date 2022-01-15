@@ -40,3 +40,4 @@ out/*
 /Code/Engine/Renderer/Shaders/Parser.output
 /Editor.log
 /Code/Sandbox/EditorCS/.vs/TestCSharp/v16
+/CMakeUserPresets.json
