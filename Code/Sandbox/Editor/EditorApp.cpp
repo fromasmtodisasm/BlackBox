@@ -54,6 +54,9 @@ bool CEditApp::InitInstance()
     m_pEditor = new CEditorImpl(pGameEngine.release());
 
     result = m_pEditor->Init();
+
+	SplashScreen::SetVersion(m_pEditor->GetFileVersion());
+
     // Create Sandbox user folder if necessary
     GetISystem()->GetIPak()->MakeDir("%USER%/Sandbox");
 

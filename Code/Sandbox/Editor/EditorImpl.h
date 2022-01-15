@@ -3,7 +3,8 @@
 
 #include "IEditor.h"
 #include "SandboxAPI.h"
-//#include "Version.h"
+#include <BlackBox/Core/MathHelper.hpp>
+#include "Version.h"
 #include "MainMenu.hpp"
 #include "MainWindow.hpp"
 
@@ -52,7 +53,8 @@ class SANDBOX_API CEditorImpl : public IEditor
 	CPluginManager* GetPluginManager() { return m_pPluginManager; }
 	CGameEngine*	GetGameEngine() { return m_pGameEngine; }
 
-	bool Update();
+	bool	Update();
+	Version GetFileVersion() { return m_fileVersion; }
 	void InitFinished();
 
 	void Notify(EEditorNotifyEvent event);
@@ -75,6 +77,9 @@ class SANDBOX_API CEditorImpl : public IEditor
 		return true;
 	}
 
+protected:
+	void DetectVersion();
+
 private:
 	//! List of all notify listeners.
 	std::list<IEditorNotifyListener*> m_listeners;
@@ -86,6 +91,8 @@ private:
 	IImGuiManager*		 m_GuiManager  = nullptr;
 	CPluginManager*		 m_pPluginManager;
 	IEditorClassFactory* m_pClassFactory;
+	Version				 m_fileVersion;
+	Version				 m_productVersion;
 
 	bool m_bQuit	= false;
 	bool m_bExiting = false;

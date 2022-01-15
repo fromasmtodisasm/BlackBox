@@ -8,6 +8,8 @@
 
 #include "ClassFactory.h"
 
+#pragma comment(lib, "version.lib")
+
 static CEditorImpl* s_pEditor = nullptr;
 
 IEditor* GetIEditor() { return s_pEditor; }
@@ -181,6 +183,35 @@ void CEditorImpl::SetInGameMode(bool inGame)
 	}
 }
 
+void CEditorImpl::DetectVersion()
+{
+	char exe[_MAX_PATH];
+	DWORD dwHandle;
+	UINT len;
+
+	char ver[1024 * 8];
+
+	GetModuleFileNameA(NULL, exe, _MAX_PATH);
+
+	int verSize = GetFileVersionInfoSizeA(exe, &dwHandle);
+	if (verSize > 0)
+	{
+		GetFileVersionInfoA(exe, dwHandle, 1024 * 8, ver);
+		VS_FIXEDFILEINFO* vinfo;
+		VerQueryValueA(ver, "\\", (void**)&vinfo, &len);
+
+		m_fileVersion.v[0] = vinfo->dwFileVersionLS & 0xFFFF;
+		m_fileVersion.v[1] = vinfo->dwFileVersionLS >> 16;
+		m_fileVersion.v[2] = vinfo->dwFileVersionMS & 0xFFFF;
+		m_fileVersion.v[3] = vinfo->dwFileVersionMS >> 16;
+
+		m_productVersion.v[0] = vinfo->dwProductVersionLS & 0xFFFF;
+		m_productVersion.v[1] = vinfo->dwProductVersionLS >> 16;
+		m_productVersion.v[2] = vinfo->dwProductVersionMS & 0xFFFF;
+		m_productVersion.v[3] = vinfo->dwProductVersionMS >> 16;
+	}
+}
+
 bool CEditorImpl::Init()
 {
 	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CEditorImpl");
@@ -194,6 +225,8 @@ bool CEditorImpl::Init()
 	EditorCommon::Initialize();
 
     GetIEditor()->RegisterNotifyListener(&m_MainWindow);
+
+	DetectVersion();
 
 	return true;
 }
