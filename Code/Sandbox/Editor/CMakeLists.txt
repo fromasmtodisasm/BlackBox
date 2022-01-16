@@ -43,6 +43,15 @@ add_sources(
 		"BasicConsoleWindow.cpp"
 		 "Util/FileEnum.cpp"
 		 "Util/FileEnum.h"
+	SOURCE_GROUP "ProjectManagement\\\\Data"
+		"ProjectManagement/Data/ProjectManager.cpp"
+		"ProjectManagement/Data/ProjectManager.h"
+	SOURCE_GROUP "ProjectManagement\\\\UI"
+		"ProjectManagement/UI/SelectProjectDialog.cpp"
+		"ProjectManagement/UI/SelectProjectDialog.h"
+	SOURCE_GROUP "ProjectManagement"
+		"ProjectManagement/Utils.cpp"
+		"ProjectManagement/Utils.h"
 )
 
 add_sources("NoUberFile"

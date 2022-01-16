@@ -5,6 +5,8 @@
 
 #include "EditorApp.h"
 #include <Controls/QuestionDialog.h>
+#include "SplashScreen.h"
+#include "ProjectManagement/Utils.h"
 
 HWND main_hwnd();
 
@@ -218,9 +220,47 @@ bool CGameEngine::Init(bool bTestMode, bool bShaderCacheGen, const char* sInCmdL
 	#if 0
 	if (bShaderCacheGen)
 		startupParams.bSkipFont = true;
+	#endif
 
 	// We do this manually in the Editor
 	startupParams.bExecuteCommandLine = false;
+
+	#if 0
+	if (strstr(sInCmdLine, "-create_project"))
+	{
+		const string projectPath = AskUserToSpecifyProject(SplashScreen::GetSplashScreen(), true, CSelectProjectDialog::Tab::Create);
+		if (projectPath.empty())
+		{
+			// Exit Sandbox
+			return false;
+		}
+		AppendProjectPathToCommandLine(projectPath, startupParams);
+	}
+	else if (strstr(sInCmdLine, "-project") == 0)
+	{
+		const string engineFolder = FindCryEngineRootFolder();
+		if (IsProjectSpecifiedInSystemConfig(engineFolder))
+		{
+			//1. it is responsibility of a user to check correctness of system.cfg file
+			//2. It is engine responsibility to run itself with this information (it will parse and use system.cfg as game_launcher)
+		}
+		else
+		{
+			string projPath = FindProjectInFolder(engineFolder);
+			if (projPath.empty())
+			{
+				projPath = AskUserToSpecifyProject(SplashScreen::GetSplashScreen(), true, CSelectProjectDialog::Tab::Open);
+			}
+
+			if (projPath.empty())
+			{
+				// Exit Sandbox
+				return false;
+			}
+
+			AppendProjectPathToCommandLine(projPath, startupParams);
+		}
+	}
 	#endif
 
 	if (!InitializeEngine(startupParams, true))

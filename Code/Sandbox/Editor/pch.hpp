@@ -101,3 +101,14 @@ using CString = string;
 
 #define cry_strcpy strcpy
 #define cry_strcat strcat
+
+#include <QString>
+#include <BlackBox/Core/MathHelper.hpp>
+namespace QtUtil
+{
+	inline string ToString(QString str)
+	{
+		return str.toStdString();
+	}
+} // namespace QtUtil
+

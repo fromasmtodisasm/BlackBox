@@ -304,6 +304,7 @@ struct SSystemInitParams
 	bool bMinimal;		   //!< Don't load banks.
 	bool bShaderCacheGen;  //!< When running in shadercache gen mode.
 	bool bManualEngineLoop;
+	bool bExecuteCommandLine;
 
 	ISystem* pSystem; // Pointer to existing ISystem interface, it will be reused if not NULL.
 
@@ -329,6 +330,7 @@ struct SSystemInitParams
 		bTestMode		  = false;
 		bDedicatedServer  = false;
 		bManualEngineLoop = true;
+		bExecuteCommandLine = true;
 		pSystem			  = nullptr;
 		pCheckFunc		  = nullptr;
 	}

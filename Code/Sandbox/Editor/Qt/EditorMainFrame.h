@@ -16,6 +16,8 @@ public:
     ~CEditorMainFrame();
 	void PostLoad();
 
+	void UpdateWindowTitle(const QString& levelPath = "");
+
 	void OnIdleCallback();
 
 private slots:

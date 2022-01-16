@@ -5,6 +5,11 @@
 #include <EditorApp.h>
 
 #include <QFileDialog>
+#include <QRegularExpression>
+#include "Version.h"
+#include <EditorImpl.h>
+
+#include <BlackBox/System/IProjectManager.hpp>
 
 extern QWidget* game_window;
 
@@ -36,6 +41,21 @@ void CEditorMainFrame::PostLoad()
 	ui->listView->PostLoad();
     this->show();
 }
+
+void CEditorMainFrame::UpdateWindowTitle(const QString& levelPath /*= "" */)
+{
+	const Version& v = GetIEditorImpl()->GetFileVersion();
+
+	// Show active game project as "ProjectDir/GameDll".
+	const QString game	= QString(gEnv->pSystem->GetIProjectManager()->GetCurrentProjectName());
+	QString title = QString("CRYENGINE Sandbox - Build %2 - Project '%3'").arg(QString::number(v[0])).arg(game);
+
+	if (!levelPath.isEmpty())
+		title.prepend(levelPath.mid(levelPath.lastIndexOf(QRegularExpression("[/\\\\]")) + 1) + " - ");
+
+	setWindowTitle(title);
+}
+
 
 void CEditorMainFrame::OnIdleCallback()
 {
