@@ -59,7 +59,6 @@ class CSDLWindow final : public IWindow
 
 	SDL_Window*	  m_MainWindow;
 	SDL_Window*	  m_SecondaryWindow;
-	SDL_GLContext glRenderContext, glThreadContext;
 	RenderBackend m_RendererBackend = RenderBackend::GL;
 	NativeWindow* m_hWnd{};
 

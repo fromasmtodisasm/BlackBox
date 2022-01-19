@@ -186,15 +186,19 @@ int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
 {
 	const char* name;
-	if (pH->GetParams(name))
+	if (gEnv->pRenderer)
 	{
-		#if 0
-		CryLog("User ask load %s texture", name);
-		#endif
-		int t = gEnv->pRenderer->LoadTexture(name, 0, 0);
-		USER_DATA pUserData = m_pScriptSystem->CreateUserData((int)t, USER_DATA_TEXTURE);
-		return pH->EndFunction(pUserData);
+		if (pH->GetParams(name))
+		{
+#if 0
+            CryLog("User ask load %s texture", name);
+#endif
+			int		  t			= gEnv->pRenderer->LoadTexture(name, 0, 0);
+			USER_DATA pUserData = m_pScriptSystem->CreateUserData((int)t, USER_DATA_TEXTURE);
+			return pH->EndFunction(pUserData);
+		}
 	}
+
 	return pH->EndFunctionNull();
 }
 

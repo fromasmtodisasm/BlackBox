@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SDL_EventFilter.h"
+
 struct IGame;
 //! Callback used by editor when initializing for info in UI dialogs
 struct IInitializeUIInfo
@@ -101,4 +103,6 @@ public:
 
 	//! Keeps the editor active even if no focus is set
 	int m_keepEditorActive;
+
+	std::unique_ptr<SDL_EventFilter> m_SDL_EventFilter;
 };

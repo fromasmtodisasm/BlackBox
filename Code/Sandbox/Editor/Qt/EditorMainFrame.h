@@ -22,15 +22,16 @@ public:
 
 	void OnIdleCallback();
 
-    void keyPressEvent(QKeyEvent* pEvent)
-	{
-		CryLog("Key [%s] pressed", pEvent->text().toLocal8Bit());
-    }
+    //void keyPressEvent(QKeyEvent* pEvent)
+	//{
+	//	CryLog("Key [%s] pressed", pEvent->text().toLocal8Bit());
+    //}
 
-    void mousePressEvent(QMouseEvent* pEvent)
-	{
-		CryLog("Mouse pressed");
-    }
+    //void mousePressEvent(QMouseEvent* pEvent)
+	//{
+	//	CryLog("Mouse pressed");
+    //}
+
 
 private slots:
     void on_action_Clear_Console_triggered();
@@ -38,6 +39,8 @@ private slots:
     void on_action_Toggle_Console_triggered();
     void on_action_Quit_triggered();
     void on_action_Open_File_triggered();
+
+    //std::thread m_UpdateThread;
 
 private:
     Ui::CEditorMainFrame *ui;

@@ -535,7 +535,8 @@ bool CSystem::Init()
 	ExecuteCommandLine();
 	Tests();
 
-	m_env.pRenderer->RegisterCallbackClient(this);
+	if (m_env.pRenderer)
+        m_env.pRenderer->RegisterCallbackClient(this);
 
 	if (m_startupParams.bShaderCacheGen)
 	{

@@ -77,7 +77,7 @@ bool CEditorImpl::Update()
 	m_GuiManager->NewFrame();
 	m_GuiManager->ShowDemoWindow();
 	#endif
-	gEnv->pSystem->Update(ESYSUPDATE_EDITOR);
+	//gEnv->pSystem->Update(ESYSUPDATE_EDITOR);
 	#if 0
 	GetIEditorImpl()->Notify(eNotify_OnIdleUpdate);
 	#endif

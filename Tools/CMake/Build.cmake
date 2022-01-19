@@ -26,12 +26,12 @@ if (OPTION_EDITOR)
 		message(FATAL_ERROR "Qt Sdk Root Not Installed. --- ${QT_SDK_ROOT}")
 	endif()
 		# Find Qt before including any plugin subdirectories
-	if (MSVC_VERSION GREATER 1900) # Visual Studio > 2015
+	#if (MSVC_VERSION GREATER 1900) # Visual Studio > 2015
 		set(QT_DIR "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64")
-		message(STATUS "Qt Sdk Root: ${QT_SDK_ROOT}")
-	endif()
-	set(Qt6_DIR "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64/lib/cmake/Qt6")
-	set(QT_DEPLOY_ROOT "${QT_SDK_ROOT}/Qt/6.2.2/msvc2019_64")
+		#message(STATUS "Qt Sdk Root: ${QT_SDK_ROOT}")
+	#endif()
+	set(Qt6_DIR "${QT_DIR}/lib/cmake/Qt6")
+	set(QT_DEPLOY_ROOT "${QT_DIR}")
 	list(APPEND CMAKE_PREFIX_PATH "${QT_DIR}/lib/cmake")
 
 

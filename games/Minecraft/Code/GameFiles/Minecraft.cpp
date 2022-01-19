@@ -421,7 +421,7 @@ void MinePlayer::update()
 	gEnv->pAuxGeomRenderer->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
 
 	auto const gravity = 4.f;
-	auto	   ft	   = 0.016f; //gEnv->pTimer->GetRealFrameTime();
+	auto	   ft	   = gEnv->pTimer->GetRealFrameTime();
 	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * ft);
 
 	applyMovement();

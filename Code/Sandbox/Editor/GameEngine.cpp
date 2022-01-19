@@ -7,6 +7,7 @@
 #include <Controls/QuestionDialog.h>
 #include "SplashScreen.h"
 #include "ProjectManagement/Utils.h"
+#include <QApplication>
 
 HWND main_hwnd();
 
@@ -263,15 +264,17 @@ bool CGameEngine::Init(bool bTestMode, bool bShaderCacheGen, const char* sInCmdL
 	}
 	#endif
 
-	auto wnd_proc_before = GetWindowLongPtr((HWND)startupParams.hWnd, GWLP_WNDPROC);
+	auto wnd_proc_before = (WNDPROC)GetWindowLongPtr((HWND)startupParams.hWnd, GWLP_WNDPROC);
 	if (!InitializeEngine(startupParams, true))
 	{
 		return false;
 	}
-	auto wnd_proc_after = GetWindowLongPtr((HWND)startupParams.hWnd, GWLP_WNDPROC);
+	auto wnd_proc_after = (WNDPROC)GetWindowLongPtr((HWND)startupParams.hWnd, GWLP_WNDPROC);
+	m_SDL_EventFilter	= std::make_unique<SDL_EventFilter>((HWND)startupParams.hWnd);
+	qApp->installNativeEventFilter(m_SDL_EventFilter.get());
+	
 	#if 0
 	assert(wnd_proc_before == wnd_proc_after && "Wnd procedures missmatch");
-
 	#endif
 	m_pGame = gEnv->pSystem->GetIGame();
 	return true;

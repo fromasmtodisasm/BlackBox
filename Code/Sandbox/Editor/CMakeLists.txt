@@ -50,8 +50,9 @@ add_sources(
 		"ProjectManagement/UI/SelectProjectDialog.cpp"
 		"ProjectManagement/UI/SelectProjectDialog.h"
 	SOURCE_GROUP "ProjectManagement"
-		"ProjectManagement/Utils.cpp"
-		"ProjectManagement/Utils.h"
+	SOURCE_GROUP "Hooks"
+		"SDL_EventFilter.h"
+		"SDL_EventFilter.cpp"
 )
 
 add_sources("NoUberFile"

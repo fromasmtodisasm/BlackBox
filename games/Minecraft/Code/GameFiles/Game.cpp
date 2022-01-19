@@ -678,7 +678,6 @@ IXSystem* CXGame::GetXSystem()
 bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
 	gGame = this;
-	m_pLegacyInput = new Legacy::CInput(gEnv->pInput);
 	// Setup the system and 3D Engine pointers
 	m_pSystem = pSystem;
 
@@ -804,7 +803,10 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 
 	// init key-bindings
 	if (!m_bDedicatedServer)
+	{
+		m_pLegacyInput = new Legacy::CInput(gEnv->pInput);
 		InitInputMap();
+	}
 
 	// create various console-commands/variables
 	InitConsoleCommands();
@@ -882,9 +884,12 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	e_deformable_terrain = NULL;
 
 	#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
-	minecraft = new Minecraft;
-	minecraft->init();
-	minePlayer = &minecraft->player;
+	if (!m_bDedicatedServer)
+	{
+		minecraft = new Minecraft;
+		minecraft->init();
+		minePlayer = &minecraft->player;
+	}
 	#endif
 	return (true);
 }

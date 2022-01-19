@@ -37,4 +37,5 @@ endif()
 
 if (OPTION_CONFIGURATOR OR OPTION_EDITOR)
 	set(OPTION_USE_GUI ON)
+	option(OPTION_QT_DIR "Qt Sdk Dir" "")
 endif()

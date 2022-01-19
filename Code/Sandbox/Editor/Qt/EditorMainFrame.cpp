@@ -20,7 +20,10 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
     ui->setupUi(this);
 	setEnabled(true);
 	setFocusPolicy(Qt::StrongFocus);
+	setAttribute(Qt::WA_NativeWindow, true);
 	setFocus();
+	setMouseTracking(true);
+
 
 
     QFrame * frame = nullptr;
@@ -35,6 +38,7 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
 
 	setWindowIcon(QIcon("icons:editor_icon.ico"));
 	qApp->setWindowIcon(windowIcon());
+
 
 
 	QTimer::singleShot(0, this, &CEditorMainFrame::OnIdleCallback);

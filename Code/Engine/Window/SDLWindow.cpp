@@ -297,11 +297,6 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
 	}
-	SDL_GL_SetSwapInterval(-1);
-//SDL_HideWindow(m_MainWindow);
-
-// Now I need to create another window from hEternalHwnd for my swap chain that will have the same pixel format as mainWindow, so set the hint
-	glRenderContext = SDL_GL_CreateContext(m_MainWindow);
 	if (fullscreen)
 	{
 		SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -313,7 +308,6 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 		}
 		SDL_SetWindowDisplayMode(m_MainWindow, &dm);
 	}
-	//SDL_AddEventWatch(EventWatcher, this);
 	SDL_SetWindowInputFocus(m_MainWindow);
 	return true;
 }
@@ -360,7 +354,7 @@ void CSDLWindow::setCursor(Cursor* cursor)
 
 GLContext CSDLWindow::getContext()
 {
-	return static_cast<GLContext>(glThreadContext);
+	return nullptr;
 }
 
 void CSDLWindow::SetIcon(char* path)
