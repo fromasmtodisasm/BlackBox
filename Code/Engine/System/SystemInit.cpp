@@ -519,7 +519,6 @@ bool CSystem::Init()
 		return false;
 	//LoadCrynetwork();
 	//====================================================
-	Log("Initialize Game");
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing Game...");
 	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "FunCry"))
@@ -584,7 +583,7 @@ bool CSystem::InitRender()
 	// In release mode it failed!!!
 	// TODO: Fix it
 	if (m_pUserCallback)
-		m_pUserCallback->OnInitProgress("Initializing Render...");
+		m_pUserCallback->OnInitProgress("Initializing Renderer...");
 
 	if (m_env.pRenderer)
 	{
@@ -982,6 +981,8 @@ bool CSystem::LoadCrynetwork()
 IGame* CSystem::CreateGame(IGame* game)
 {
 	string gameDLLName = "Game";
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Game...");
 	if (ICVar* pCVarGameDir = gEnv->pConsole->GetCVar("sys_dll_game"))
 	{
 		gameDLLName = pCVarGameDir->GetString();

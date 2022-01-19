@@ -2,6 +2,8 @@
 #define GAMEWINDOW_H
 
 #include <QMainWindow>
+#include <QKeyEvent>
+#include <QEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CEditorMainFrame; }
@@ -19,6 +21,16 @@ public:
 	void UpdateWindowTitle(const QString& levelPath = "");
 
 	void OnIdleCallback();
+
+    void keyPressEvent(QKeyEvent* pEvent)
+	{
+		CryLog("Key [%s] pressed", pEvent->text().toLocal8Bit());
+    }
+
+    void mousePressEvent(QMouseEvent* pEvent)
+	{
+		CryLog("Mouse pressed");
+    }
 
 private slots:
     void on_action_Clear_Console_triggered();

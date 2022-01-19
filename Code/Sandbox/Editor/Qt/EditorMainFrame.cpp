@@ -18,6 +18,9 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
     , ui(new Ui::CEditorMainFrame)
 {
     ui->setupUi(this);
+	setEnabled(true);
+	setFocusPolicy(Qt::StrongFocus);
+	setFocus();
 
 
     QFrame * frame = nullptr;
@@ -27,6 +30,12 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
     ui->toolBar->setStyleSheet("QToolBar::separator { background-color: #ffffff; width: 1px; height: 1px; }");
     //ui->toolBar->setStyleSheet("QMenuBar::separator { background-color: #454545; }");
     //ui->toolBar->setStyleSheet("QMenuBar { background-color: #454545; }");
+
+	//UpdateWindowTitle();
+
+	setWindowIcon(QIcon("icons:editor_icon.ico"));
+	qApp->setWindowIcon(windowIcon());
+
 
 	QTimer::singleShot(0, this, &CEditorMainFrame::OnIdleCallback);
 }

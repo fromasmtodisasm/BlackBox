@@ -12,8 +12,20 @@ struct Rect
 	int top;
 	int width;
 	int height;
-	Rect(int l, int t, int w, int h) : left(l), top(t), width(w), height(h) {}
-	Rect() : left(0), top(0), width(0), height(0) {}
+	Rect(int l, int t, int w, int h)
+		: left(l)
+		, top(t)
+		, width(w)
+		, height(h)
+	{
+	}
+	Rect()
+		: left(0)
+		, top(0)
+		, width(0)
+		, height(0)
+	{
+	}
 };
 
 typedef void* Params;
@@ -26,42 +38,42 @@ struct IWindow
 {
 	struct SInitParams
 	{
-		const char* title;
-		int x;
-		int y;
-		int width;
-		int height;
-		unsigned int cbpp;
-		int zbpp;
-		int sbits;
-		bool fullscreen;
+		const char*	  title;
+		int			  x;
+		int			  y;
+		int			  width;
+		int			  height;
+		unsigned int  cbpp;
+		int			  zbpp;
+		int			  sbits;
+		bool		  fullscreen;
 		RenderBackend backend;
 	};
-	virtual void Release()						= 0;
-	virtual bool create(Params params)			= 0;
-	virtual bool init(SInitParams* pInitParams) = 0;
-	virtual void update()						= 0;
-	virtual void clear()						= 0;
-	virtual bool closed()						= 0;
-	virtual void swap()							= 0;
-	virtual void setTitle(const char*)			= 0;
-	virtual void show()							= 0;
-	virtual int getWidth()						= 0;
-	virtual int getHeight()						= 0;
-	virtual void* getHandle()					= 0;
-	virtual void* getNativeHandle()				= 0;
-	virtual void setFlags(int flags)			= 0;
-	virtual Rect& getViewPort()					= 0;
-	virtual void changeSize(int w, int h)		= 0;
-	virtual GLContext getContext()				= 0;
-	virtual DisplayMode GetDesktopMode()		= 0;
-	virtual void EnterFullscreen(bool mode)		= 0;
-	virtual void close()						= 0;
+	virtual void		Release()					   = 0;
+	virtual bool		create(Params params)		   = 0;
+	virtual bool		init(SInitParams* pInitParams) = 0;
+	virtual void		update()					   = 0;
+	virtual void		clear()						   = 0;
+	virtual bool		closed()					   = 0;
+	virtual void		swap()						   = 0;
+	virtual void		setTitle(const char*)		   = 0;
+	virtual void		show()						   = 0;
+	virtual int			getWidth()					   = 0;
+	virtual int			getHeight()					   = 0;
+	virtual void*		getHandle()					   = 0;
+	virtual void*		getNativeHandle()			   = 0;
+	virtual void		setFlags(int flags)			   = 0;
+	virtual Rect&		getViewPort()				   = 0;
+	virtual void		changeSize(int w, int h)	   = 0;
+	virtual GLContext	getContext()				   = 0;
+	virtual DisplayMode GetDesktopMode()			   = 0;
+	virtual void		EnterFullscreen(bool mode)	   = 0;
+	virtual void		close()						   = 0;
 };
 
 extern "C"
 {
 	IWINDOW_API IWindow* CreateIWindow(NativeWindow* hWnd);
-	IWINDOW_API void* CurrentHandledWindow();
-	typedef IWindow* (*PFNCREATEWINDOW)(NativeWindow*  hWnd);
+	IWINDOW_API void*	 CurrentHandledWindow();
+	typedef IWindow* (*PFNCREATEWINDOW)(NativeWindow* hWnd);
 }
