@@ -520,6 +520,8 @@ bool CSystem::Init()
 	//LoadCrynetwork();
 	//====================================================
 	Log("Initialize Game");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Game...");
 	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "FunCry"))
 	{
 		return false;
@@ -581,6 +583,8 @@ bool CSystem::InitRender()
 		return true;
 	// In release mode it failed!!!
 	// TODO: Fix it
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Render...");
 
 	if (m_env.pRenderer)
 	{
@@ -607,7 +611,8 @@ bool CSystem::InitRender()
 
 bool CSystem::InitInput()
 {
-	Log("Creating Input");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Input...");
 	return LoadSubsystem<PTRCREATEINPUTFUNC>("Input", "CreateInput", [&](PTRCREATEINPUTFUNC p)
 											 {
 												 if (!m_env.IsDedicated())
@@ -626,7 +631,8 @@ bool CSystem::InitInput()
 
 bool CSystem::InitScriptSystem()
 {
-	Log("Creating ScriptSystem");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing ScriptSystem...");
 	return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p)
 													{
 														m_env.pScriptSystem = p(this, true);
@@ -636,7 +642,8 @@ bool CSystem::InitScriptSystem()
 
 bool CSystem::InitEntitySystem()
 {
-	Log("Creating EntitySystem");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing EntitySystem...");
 	return LoadSubsystem<PFNCREATEENTITYSYSTEM>("EntitySystem", "CreateEntitySystem", [&](PFNCREATEENTITYSYSTEM p)
 												{
 													m_env.pEntitySystem = p(this);
@@ -646,7 +653,8 @@ bool CSystem::InitEntitySystem()
 
 bool CSystem::InitNetwork()
 {
-	Log("Creating Network");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Network...");
 	return LoadSubsystem<PFNCREATENETWORK>("Network", "CreateNetwork", [&](PFNCREATENETWORK p)
 										   {
 											   m_env.pLog->Log("Creating Network");
@@ -677,7 +685,8 @@ bool CSystem::InitGUI()
 
 bool CSystem::Init3DEngine()
 {
-	Log("Creating 3DEngine");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing 3DEngine...");
 	return LoadSubsystem<PFNCREATE3DENGINE>("3DEngine", "Create3DEngine", [&](PFNCREATE3DENGINE p)
 											{
 												m_env.p3DEngine = p(this, "0.0.0");
@@ -695,7 +704,8 @@ bool CSystem::Init3DEngine()
 
 bool CSystem::InitSoundSystem()
 {
-	Log("Creating SoundSystem");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing SoundSystem...");
 	return LoadSubsystem<PFNCREATESOUNDSYSTEM>("Sound", "CreateSoundSystem", [&](PFNCREATESOUNDSYSTEM p)
 											   {
 												   m_env.pSoundSystem = p(this, "0.0.0");
@@ -987,7 +997,8 @@ IGame* CSystem::CreateGame(IGame* game)
 typedef IPhysicalWorld* (*PFNCREATEPHYSICS)(ISystem* pSystem);
 bool CSystem::InitPhysics()
 {
-	Log("Creating Physics");
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Physics...");
 	return LoadSubsystem<PFNCREATEPHYSICS>("Physics", "CreatePhysicalWorld", [&](PFNCREATEPHYSICS p)
 										   {
 											   m_env.pPhysicalWorld = p(this);
