@@ -12,6 +12,7 @@
 #include <BlackBox/System/IProjectManager.hpp>
 
 extern QWidget* game_window;
+CEditorMainFrame* CEditorMainFrame::m_Instance;
 
 CEditorMainFrame::CEditorMainFrame(QWidget *parent)
     : QMainWindow(parent)
@@ -24,6 +25,8 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
 	setFocus();
 	setMouseTracking(true);
 
+
+	m_Instance = this;
 
 
     QFrame * frame = nullptr;
@@ -93,6 +96,11 @@ void CEditorMainFrame::on_action_Open_File_triggered()
 void CEditorMainFrame::on_action_Toggle_Console_triggered()
 {
 
+}
+
+QWidget* CEditorMainFrame::GetDockContent()
+{
+	return ui->dockWidgetContents;
 }
 
 void CEditorMainFrame::on_action_Toggle_Console_toggled(bool arg1)

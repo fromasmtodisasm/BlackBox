@@ -9,6 +9,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class CEditorMainFrame; }
 QT_END_NAMESPACE
 
+
 class CEditorMainFrame : public QMainWindow
 {
     Q_OBJECT
@@ -31,9 +32,12 @@ public:
 	//{
 	//	CryLog("Mouse pressed");
     //}
+	static CEditorMainFrame* instance() { return m_Instance; }
 
 
-private slots:
+	static CEditorMainFrame* m_Instance;
+	QWidget*				 GetDockContent();
+  private slots:
     void on_action_Clear_Console_triggered();
     void on_action_Toggle_Console_toggled(bool arg1);
     void on_action_Toggle_Console_triggered();
@@ -42,7 +46,7 @@ private slots:
 
     //std::thread m_UpdateThread;
 
-private:
+public:
     Ui::CEditorMainFrame *ui;
 };
 #endif // GAMEWINDOW_H
