@@ -328,7 +328,7 @@ inline string RemoveSlash(const char* szPath)
 
 inline string GetEnginePath()
 {
-	char szEngineRootDir[_MAX_PATH];
+	char szEngineRootDir[_MAX_PATH] = ".";
 	#if 0
 	CryFindEngineRootFolder(CRY_ARRAY_COUNT(szEngineRootDir), szEngineRootDir);
 	#endif

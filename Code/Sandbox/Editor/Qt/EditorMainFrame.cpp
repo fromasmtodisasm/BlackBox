@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QWindow>
 #include <QFrame>
+#include <QSizePolicy>
 #include <EditorApp.h>
 
 #include <QFileDialog>
@@ -44,7 +45,7 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
 
 	setWindowIcon(QIcon("icons:editor_icon.ico"));
 	qApp->setWindowIcon(windowIcon());
-
+	//qApp->setOverrideCursor(QCursor(Qt::BlankCursor));
 
 
 	QTimer::singleShot(16, this, &CEditorMainFrame::OnIdleCallback);
@@ -110,7 +111,30 @@ void CEditorMainFrame::on_gamewindow_created(WId hwnd)
 	widget->setAttribute(Qt::WA_NativeWindow, true);
 	widget->setParent(parent);
 	widget->setWindowState(Qt::WindowMaximized);
+	widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	ui->horizontalLayout->addWidget(widget);
+
+	//RECT rcClip;	// new area for ClipCursor
+	RECT rcOldClip; // previous area for ClipCursor
+	auto pos	   = widget->pos();
+	auto size	   = widget->size();
+	RECT rcClip1{
+		50, 100, 1800, 900};
+
+	// Record the area in which the cursor can move.
+
+	GetClipCursor(&rcOldClip);
+	//GetWindowRect((HWND)hwnd, &rcClip1);
+
+	// Get the dimensions of the application's window.
+
+	//GetWindowRect((HWND)hwnd, &rcClip);
+	//rcClip.left = rcClip1.left;
+	//rcClip.right = rcClip1.right;
+
+	// Confine the cursor to the application's window.
+
+	ClipCursor(&rcClip1); 
 	
 }
 
@@ -122,7 +146,8 @@ void CEditorMainFrame::on_action_Toggle_Console_triggered()
 
 QWidget* CEditorMainFrame::GetDockContent()
 {
-	return ui->dockWidgetContents;
+	return nullptr;
+	//return ui->dockWidgetContents;
 }
 
 void CEditorMainFrame::on_action_Toggle_Console_toggled(bool arg1)

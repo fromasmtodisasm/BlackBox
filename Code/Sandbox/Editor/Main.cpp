@@ -12,6 +12,7 @@
 #include <QFileSystemWatcher>
 #include <QMenuBar>
 #include <QProxyStyle>
+#include <QProcess>
 //////////////////////////////////////////////////////////////////////////
 
 #include <QApplication>
@@ -20,9 +21,22 @@
 
 #include "Qt/EditorMainFrame.h"
 #include "SplashScreen.h"
+#include "EditorStyleHelper.h"
+
 
 #include "EditorImpl.h"
 #include <BlackBox/Core/Path.hpp>
+
+static const char* styleSheetPath = "Editor/Styles/stylesheet.qss";
+
+// Advise notebook graphics drivers to prefer discrete GPU when no explicit application profile exists
+extern "C"
+{
+	// nVidia
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	// AMD
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
 
 extern CEditApp theApp;
 
@@ -51,6 +65,7 @@ void OnDirectoryChanged(const QString& path)
 		qDebug() << "file name" << file << "\n";
 }
 
+#if 0
 void SetStyle()
 {
 	qApp->setStyle(QStyleFactory::create("Fusion"));
@@ -80,6 +95,28 @@ void SetStyle()
 	qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
     qApp->setStyleSheet("QMenuBar::separator { background-color: #ffffff; width: 1px; height: 1px; }");
 }
+#endif
+
+#if 1
+void LoadStyleSheet()
+{
+	QFile styleSheetFile(PathUtil::Make(PathUtil::GetEnginePath().c_str(), styleSheetPath).c_str());
+
+	if (styleSheetFile.open(QFile::ReadOnly))
+	{
+		qApp->setStyleSheet(styleSheetFile.readAll());
+		qApp->setPalette(GetStyleHelper()->palette());
+	}
+}
+
+void UpdateStyleSheet(const QString& path)
+{
+	if (path != PathUtil::Make(PathUtil::GetEnginePath().c_str(), styleSheetPath).c_str())
+		return;
+
+	LoadStyleSheet();
+}
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -90,7 +127,8 @@ int main(int argc, char* argv[])
 	_CrtMemCheckpoint(&s1);
 #endif
 	QApplication a(argc, argv);
-	SetStyle();
+	//SetStyle();
+	LoadStyleSheet();
 
 	QPixmap pixmap(":/splash.png");
 	SplashScreen splash(pixmap);
@@ -108,8 +146,8 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	watcher = new QFileSystemWatcher();
-	if (!watcher->addPath(R"(Data/scripts/)"))
+	QFileSystemWatcher* watcher = new QFileSystemWatcher();
+	if (!watcher->addPath(PathUtil::Make(PathUtil::GetEnginePath().c_str(), styleSheetPath).c_str()))
 	{
 		delete watcher;
 		watcher = nullptr;
@@ -117,9 +155,9 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		QObject::connect(watcher, &QFileSystemWatcher::fileChanged, OnFileChanged);
-		QObject::connect(watcher, &QFileSystemWatcher::directoryChanged, OnDirectoryChanged);
+		QObject::connect(watcher, &QFileSystemWatcher::fileChanged, UpdateStyleSheet);
 	}
+
 
 	mainFrame->PostLoad();
 	splash.close();
@@ -131,6 +169,8 @@ int main(int argc, char* argv[])
 
     delete watcher;
 	delete mainFrame;
+	//NOTE: for restart purpose
+	//QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 
 #if defined(DEBUG) | defined(_DEBUG) && 0
 	_CrtMemCheckpoint(&s2);

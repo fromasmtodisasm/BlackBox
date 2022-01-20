@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1340</width>
-    <height>729</height>
+    <width>784</width>
+    <height>589</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,14 +24,14 @@
     <normaloff>../../../../../../../../.designer/backup/Data/images/icon.ico</normaloff>../../../../../../../../.designer/backup/Data/images/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+   <layout class="QHBoxLayout" name="horizontalLayout"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1340</width>
+     <width>784</width>
      <height>22</height>
     </rect>
    </property>
@@ -170,26 +170,6 @@
    <addaction name="menuSound"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dockWidget">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle">
-    <string>Main Viewport</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QHBoxLayout" name="horizontalLayout"/>
-   </widget>
-  </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -555,7 +535,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>action_File</sender>
+   <sender>actionOpen</sender>
    <signal>triggered()</signal>
    <receiver>CEditorMainFrame</receiver>
    <slot>on_action_Open_File_triggered()</slot>

@@ -15,7 +15,7 @@ bool SDL_EventFilter::nativeEventFilter(const QByteArray& eventType, void* messa
 	//if (eventType == "windows_generic_MSG")
 	{
 #ifdef WIN32
-		gEnv->pInput->GrabInput(true);
+		//gEnv->pInput->GrabInput(true);
 		MSG* winMsg = (MSG*)message;
 		// This is wrong condition!!! to be more precise, the passed window handle is incorrect
 		//TODO: Understand which window handle should be passed to this filter
