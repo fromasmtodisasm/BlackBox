@@ -37,13 +37,16 @@ public:
 
 	static CEditorMainFrame* m_Instance;
 	QWidget*				 GetDockContent();
+  public slots:
+	void on_gamewindow_created(WId hwnd);
+
   private slots:
     void on_action_Clear_Console_triggered();
     void on_action_Toggle_Console_toggled(bool arg1);
     void on_action_Toggle_Console_triggered();
     void on_action_Quit_triggered();
     void on_action_Open_File_triggered();
-
+	
     //std::thread m_UpdateThread;
 
 public:

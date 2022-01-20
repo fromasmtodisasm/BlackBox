@@ -266,7 +266,7 @@ bool CSDLWindow::InitForGl()
 }
 bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend backend)
 {
-	int flags = SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_HIDDEN*/;
+	int flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
 	int posx  = 0;
 	int posy  = 0;
 	if (fullscreen)

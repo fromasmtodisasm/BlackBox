@@ -2,6 +2,8 @@
 #include "./ui_editormainframe.h"
 
 #include <QTimer>
+#include <QWindow>
+#include <QFrame>
 #include <EditorApp.h>
 
 #include <QFileDialog>
@@ -19,6 +21,7 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
     , ui(new Ui::CEditorMainFrame)
 {
     ui->setupUi(this);
+	setWindowState(Qt::WindowMaximized);
 	setEnabled(true);
 	setFocusPolicy(Qt::StrongFocus);
 	setAttribute(Qt::WA_NativeWindow, true);
@@ -44,7 +47,7 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
 
 
 
-	QTimer::singleShot(0, this, &CEditorMainFrame::OnIdleCallback);
+	QTimer::singleShot(16, this, &CEditorMainFrame::OnIdleCallback);
 }
 
 CEditorMainFrame::~CEditorMainFrame()
@@ -54,7 +57,9 @@ CEditorMainFrame::~CEditorMainFrame()
 
 void CEditorMainFrame::PostLoad()
 {
+	#if 0
 	ui->listView->PostLoad();
+	#endif
     this->show();
 }
 
@@ -79,7 +84,7 @@ void CEditorMainFrame::OnIdleCallback()
     auto res = CEditApp::GetInstance()->IdleProcessing(false);
     (void)res;
 
-    QTimer::singleShot(8, this, &CEditorMainFrame::OnIdleCallback);
+    QTimer::singleShot(16, this, &CEditorMainFrame::OnIdleCallback);
 }
 
 void CEditorMainFrame::on_action_Quit_triggered()
@@ -90,6 +95,23 @@ void CEditorMainFrame::on_action_Quit_triggered()
 void CEditorMainFrame::on_action_Open_File_triggered()
 {
     QString str = QFileDialog::getOpenFileName(0, "Open Dialog", "", "*.*");
+}
+
+void CEditorMainFrame::on_gamewindow_created(WId hwnd)
+{
+	#if 1
+	//auto wnd_proc_after = (WNDPROC)GetWindowLongPtr((HWND)startupParams.hWnd, GWLP_WNDPROC);
+	#endif
+	QWindow* window = QWindow::fromWinId((WId)hwnd);
+	QWidget* widget = QWidget::createWindowContainer(window);
+
+	auto parent = GetDockContent();
+	widget->setFocusPolicy(Qt::StrongFocus);
+	widget->setAttribute(Qt::WA_NativeWindow, true);
+	widget->setParent(parent);
+	widget->setWindowState(Qt::WindowMaximized);
+	ui->horizontalLayout->addWidget(widget);
+	
 }
 
 

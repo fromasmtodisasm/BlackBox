@@ -12,7 +12,7 @@ SDL_EventFilter::SDL_EventFilter(HWND hwnd)
 
 bool SDL_EventFilter::nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result)
 {
-	if (eventType == "windows_generic_MSG")
+	//if (eventType == "windows_generic_MSG")
 	{
 #ifdef WIN32
 		gEnv->pInput->GrabInput(true);
@@ -25,8 +25,6 @@ bool SDL_EventFilter::nativeEventFilter(const QByteArray& eventType, void* messa
 		{
 		// whitelist some events as user events
 		case WM_KEYDOWN:
-			CallWindowProc(m_WndPrc, m_Hwnd, winMsg->message, winMsg->wParam, winMsg->lParam);
-            return false;
 		case WM_LBUTTONDOWN:
 		case WM_RBUTTONDOWN:
 		case WM_MBUTTONDOWN:
@@ -35,11 +33,8 @@ bool SDL_EventFilter::nativeEventFilter(const QByteArray& eventType, void* messa
 		case WM_MBUTTONUP:
 		case WM_KEYUP:
 		case WM_MOUSEWHEEL:
-
-		//case WM_INPUT:
-			CallWindowProc(m_WndPrc, m_Hwnd, winMsg->message, winMsg->wParam, winMsg->lParam);
-            return false;
         case WM_INPUT:
+		case WM_CHAR:
 			CallWindowProc(m_WndPrc, m_Hwnd, winMsg->message, winMsg->wParam, winMsg->lParam);
             return false;
 		}

@@ -12,8 +12,6 @@
 #include "SplashScreen.h"
 #include "ProjectManagement/Utils.h"
 #include <QApplication>
-#include <QWindow>
-#include <QFrame>
 
 
 HWND main_hwnd();
@@ -279,30 +277,16 @@ bool CGameEngine::Init(bool bTestMode, bool bShaderCacheGen, const char* sInCmdL
 	{
 		return false;
 	}
+	HWND hwnd = (HWND)gEnv->pSystem->GetIWindow()->getNativeHandle();
+	auto mf = CEditorMainFrame::instance();
+	m_SDL_EventFilter	= std::make_unique<SDL_EventFilter>((HWND)hwnd);
+	qApp->installNativeEventFilter(m_SDL_EventFilter.get());
+	mf->on_gamewindow_created((WId)hwnd);
 	#if 0
 	auto wnd_proc_after = (WNDPROC)GetWindowLongPtr((HWND)startupParams.hWnd, GWLP_WNDPROC);
 	m_SDL_EventFilter	= std::make_unique<SDL_EventFilter>((HWND)startupParams.hWnd);
 	qApp->installNativeEventFilter(m_SDL_EventFilter.get());
 	#endif
-	HWND hwnd = (HWND)gEnv->pSystem->GetIWindow()->getNativeHandle();
-	#if 1
-	auto wnd_proc_after = (WNDPROC)GetWindowLongPtr((HWND)startupParams.hWnd, GWLP_WNDPROC);
-	m_SDL_EventFilter	= std::make_unique<SDL_EventFilter>((HWND)hwnd);
-	qApp->installNativeEventFilter(m_SDL_EventFilter.get());
-	#endif
-	QWindow* window = QWindow::fromWinId((WId)hwnd);
-	QWidget* widget = QWidget::createWindowContainer(window);
-
-	auto mf = CEditorMainFrame::instance();
-	auto parent = mf->GetDockContent();
-    QFrame * frame = nullptr;
-    //frame = (QFrame *)parent->findChild<QWidget*>("frame");
-	//frame->setFocusPolicy()
-	widget->setFocusPolicy(Qt::StrongFocus);
-	widget->setAttribute(Qt::WA_NativeWindow, true);
-    //game_window = frame;
-	widget->setParent(parent);
-	
 	#if 0
 	assert(wnd_proc_before == wnd_proc_after && "Wnd procedures missmatch");
 	#endif
