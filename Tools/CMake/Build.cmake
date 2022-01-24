@@ -53,7 +53,7 @@ endif()
 
 # 5. Launchers
 # we not under vcpkg package build
-if (NOT ${DOWNLOAD_VCPKG})
+if (${DOWNLOAD_VCPKG})
 	include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 endif()
 

@@ -1,6 +1,6 @@
 {
   "name": "blackbox-engine",
-  "version-string": "0.4.0",
+  "version-string": "0.4.1",
   "description": "Game engine pet project",
   "homepage": "https://github.com/fromasmtodisasm/BlackBox",
   "supports": "windows",
