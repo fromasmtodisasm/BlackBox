@@ -10,4 +10,4 @@ add_sources(
 	"Utils.cpp")
 end_sources()
 
-enginemodule(Utils FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+EngineModule(Utils FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")

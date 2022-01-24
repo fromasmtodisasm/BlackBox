@@ -52,4 +52,4 @@ target_compile_definitions(${THIS_PROJECT} PRIVATE
 target_include_directories(${THIS_PROJECT} PRIVATE "${BLACKBOX_DIR}/Code/Sandbox/Editor")	
 target_include_directories(${THIS_PROJECT} PRIVATE "${BLACKBOX_DIR}/Code/Sandbox/Editor/Include")
 
-target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
+#target_link_libraries(${THIS_PROJECT} PRIVATE GUI)

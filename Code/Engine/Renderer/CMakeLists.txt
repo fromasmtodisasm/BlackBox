@@ -106,7 +106,7 @@ else()
 	cryfilecontainer(RenderD3D11 SOLUTION_FOLDER "Engine")
 endif()
 if(OPTION_VK_RENDERER)
-	enginemodule(RendererVK FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
+	EngineModule(RendererVK FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
 							 "Engine")
 	add_common_libs()
 	add_common_includes()

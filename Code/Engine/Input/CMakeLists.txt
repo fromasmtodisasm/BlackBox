@@ -23,7 +23,7 @@ add_sources(
   "SDLPad.cpp")
 end_sources()
 
-enginemodule(Input FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+EngineModule(Input FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 
 if(OPTION_USE_LINUXINPUT)
   target_compile_definitions(${THIS_PROJECT} PUBLIC -DUSE_LINUXINPUT)

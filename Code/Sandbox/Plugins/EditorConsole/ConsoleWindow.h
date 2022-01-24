@@ -1,3 +1,4 @@
+#if 0
 #pragma once
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
@@ -64,3 +65,4 @@ struct Console : public IOutputPrintSink, public IEditorNotifyListener, public I
 	virtual void OnEditorNotifyEvent(EEditorNotifyEvent event) override;
 };
 }
+#endif

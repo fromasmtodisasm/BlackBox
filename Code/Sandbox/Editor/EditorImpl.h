@@ -72,8 +72,10 @@ class SANDBOX_API CEditorImpl : public IEditor
 
 	bool InitGUI()
 	{
+		#if 0
 		m_GuiManager = CreateGUI(gEnv->pSystem);
 		m_GuiManager->Init();
+		#endif
 		return true;
 	}
 
