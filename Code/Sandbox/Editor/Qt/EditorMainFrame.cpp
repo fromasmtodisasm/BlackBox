@@ -32,6 +32,7 @@ CEditorMainFrame::CEditorMainFrame(QWidget *parent)
 
 	m_Instance = this;
 
+	ui->toolBar->addWidget(ui->comboBox);
 
     QFrame * frame = nullptr;
     frame = (QFrame *)findChild<QWidget*>("MainFrame");
@@ -133,6 +134,9 @@ void CEditorMainFrame::on_gamewindow_created(WId hwnd)
 	//rcClip.right = rcClip1.right;
 
 	// Confine the cursor to the application's window.
+	ui->dockWidget->setWidget(widget);
+	ui->dockWidget->setWindowTitle("Perspective");
+	addDockWidget(Qt::DockWidgetArea::AllDockWidgetAreas, ui->dockWidget);
 
 	ClipCursor(&rcClip1); 
 	
