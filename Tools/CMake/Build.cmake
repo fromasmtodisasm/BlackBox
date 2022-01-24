@@ -18,7 +18,7 @@ endif()
 if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	# 2. Games
 	#add_subdirectories_glob("Code/Game*")
-	add_subdirectory(${CMAKE_SOURCE_DIR}/games)
+	#add_subdirectory(${CMAKE_SOURCE_DIR}/games)
 endif()
 	
 if (OPTION_EDITOR)
@@ -52,7 +52,10 @@ if (OPTION_CONFIGURATOR)
 endif()
 
 # 5. Launchers
-include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
+# we not under vcpkg package build
+if (NOT ${DOWNLOAD_VCPKG})
+	include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
+endif()
 
 if(OPTION_BUILD_TOOLS)
 	add_subdirectory("${BLACKBOX_DIR}/Code/Tools/")
