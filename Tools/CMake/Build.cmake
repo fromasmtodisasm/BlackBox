@@ -66,4 +66,7 @@ endif()
 
 #clang_format("${ALL_PROJECT_SOURCES}")
 
+set(CMAKE_INSTALL_MESSAGE LAZY)
+install(FILES "${TOOLS_CMAKE_DIR}/modules/BlackBoxEngine.cmake" DESTINATION share/cmake)
+
 copy_binary_files_to_target()
