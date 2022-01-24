@@ -1,24 +1,21 @@
 {
   "name": "blackbox-engine",
   "version-string": "0.3.6",
-  "homepage": "https://github.com/fromasmtodisasm/BlackBox",
   "description": "Game engine pet project",
+  "homepage": "https://github.com/fromasmtodisasm/BlackBox",
   "supports": "windows",
   "dependencies": [
-    "tinyxml2",
-    "lua",
-    "sdl2",
-    "sdl2-net",
-    "stb",
     "assimp",
     "freeimage",
-    "freetype",
     "freetype",
     "glm",
     "libzip",
     "libzippp",
+    "lua",
+    "sdl2",
     "sdl2-mixer",
+    "sdl2-net",
+    "stb",
     "tinyxml2"
   ]
 }
-
