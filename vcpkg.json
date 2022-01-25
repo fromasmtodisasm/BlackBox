@@ -17,5 +17,10 @@
     "sdl2-net",
     "stb",
     "tinyxml2"
-  ]
+  ],
+  "features": {
+    "d3d11": {
+      "description": "Using d3d11 rendering backend"
+    }
+  }
 }

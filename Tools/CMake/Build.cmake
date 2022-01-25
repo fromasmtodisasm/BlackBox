@@ -53,9 +53,7 @@ endif()
 
 # 5. Launchers
 # we not under vcpkg package build
-if (${DOWNLOAD_VCPKG})
-	include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
-endif()
+include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 
 if(OPTION_BUILD_TOOLS)
 	add_subdirectory("${BLACKBOX_DIR}/Code/Tools/")
@@ -69,5 +67,7 @@ endif()
 set(CMAKE_INSTALL_MESSAGE LAZY)
 configure_file("${TOOLS_CMAKE_DIR}/modules/BlackBoxEngineConfig.cmake.in" "${CMAKE_BINARY_DIR}/blackbox-engineConfig.cmake")
 install(FILES "${CMAKE_BINARY_DIR}/blackbox-engineConfig.cmake" DESTINATION share/blackbox-engine)
+
+install(DIRECTORY ${TOOLS_CMAKE_DIR} DESTINATION share/blackbox-engine/Tools)
 
 copy_binary_files_to_target()

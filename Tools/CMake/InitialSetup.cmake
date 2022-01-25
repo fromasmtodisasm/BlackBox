@@ -37,7 +37,7 @@ message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 ###################################################
 
 #if (DEFINED VCPKG_INSTALLER AND (NOT DEFINED VCPKG OR NOT CMAKE_TOOLCHAIN_FILE))
-  include(${CMAKE_SOURCE_DIR}/Tools/CMake/PrepareVcpkg.cmake)
+  include(${BLACKBOX_DIR}/Tools/CMake/PrepareVcpkg.cmake)
   PrepareVcpkg()
 #endif()
 
@@ -54,10 +54,10 @@ if (NOT DEFINED BUILD_PLATFORM)
 	message(FATAL_ERROR "BUILD_PLATFORM not defined. Please always supply one of the CRYENGINE toolchain files.")
 endif()
 
-set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/Code/Engine)
-set(SUBMODULES_DIR ${CMAKE_SOURCE_DIR}/submodules)
-set(INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/include)
-set(BLACKBOX_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
+set(ENGINE_DIR ${BLACKBOX_DIR}/Code/Engine)
+set(SUBMODULES_DIR ${BLACKBOX_DIR}/submodules)
+set(INCLUDE_DIRECTORIES ${BLACKBOX_DIR}/include)
+set(BLACKBOX_INCLUDE_DIRS ${BLACKBOX_DIR}/include)
 set(BLACKBOX_PUBLIC_INCLUDE_DIRS ${BLACKBOX_INCLUDE_DIRS}/public/BlackBox)
 set(BLACKBOX_PRIVATE_INCLUDE_DIRS ${BLACKBOX_INCLUDE_DIRS}/private/BlackBox)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
