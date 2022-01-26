@@ -705,8 +705,15 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	static float	   prevTime = 0;
 	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
 	auto const delta   = curTime - prevTime;
+	static float	   min		= std::numeric_limits<float>::max();
+	static float	   max		= 0;
+	if (delta < min) min = delta;
+	if (delta > max) max = delta;
+	if (max >= 500.f) max = 500.f;
+	if (min <= 0.f) min = 1.f;
 	prevTime					= curTime;
-	PRINT(py, "FPS %.2f ( 60.. 50) / 60", 1000.f / delta);
+	CryLog("%f", max);
+	PRINT(py, "FPS %.2f ( %.2f.. %.2f) / 60", 1000.f / delta, 1000.f / min, 1000.f / max);
 	//PRINT(py, "ViewDist = 1024/0.0");
 	//PRINT(py, "Render path = ...");
 	if (gEnv->pSystem->IsDevMode())
