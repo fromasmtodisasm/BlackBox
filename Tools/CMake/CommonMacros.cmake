@@ -199,16 +199,10 @@ macro(set_output_directory TargetProject)
 
 		# Iterate Debug/Release configs and adds _DEBUG or _RELEASE
 		foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
-			message(STATUS "TargetProject: ${TargetProject}")
-			message(STATUS "CONFIG: ${OUTPUTCONFIG}")
-			message(STATUS "libout: ${libout}")
-			message(STATUS "runout: ${runout}")
 			string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
 
 			string(REPLACE ${BASE_OUTPUT_DIRECTORY} ${BASE_OUTPUT_DIRECTORY_${OUTPUTCONFIG}} libout_config "${libout}")
 			string(REPLACE ${BASE_OUTPUT_DIRECTORY} ${BASE_OUTPUT_DIRECTORY_${OUTPUTCONFIG}} runout_config "${runout}")
-			message(STATUS "libout_config: ${libout_config}")
-			message(STATUS "runout_config: ${runout_config}")
 
 			set_target_properties(${TargetProject} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${libout_config})
 			set_target_properties(${TargetProject} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${runout_config})

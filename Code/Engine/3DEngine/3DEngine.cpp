@@ -672,7 +672,7 @@ const char* C3DEngine::GetLevelFilePath(const char* szFileName)
 
 void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStepY)
 {
-	#ifdef CLANG_FIXED
+	#if 1
 	float px = 20;
 	float py = fTextPosY;
 	auto  dy = fTextStepY;
@@ -684,7 +684,7 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 		pFont = gEnv->pRenderer->GetIFont();
 		pFont->Init("VeraMono.ttf", 16, 16);
 	}
-	auto PRINT = [=, &py](float y, char* szFormat, ...)
+	auto PRINT = [=, &py](float y, const char* szFormat, ...)
 	{
 		char	temp[256];
 		va_list arglist;

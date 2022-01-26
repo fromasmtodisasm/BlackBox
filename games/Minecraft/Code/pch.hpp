@@ -362,15 +362,11 @@ ILINE float __fastcall Ffabs(float f) {
 
 namespace Legacy
 {
-	inline vectorf from(Vec3& v) {
-		return vectorf{v.x, v.y, v.z};
-	}
-
 	inline vectorf from(const Vec3& v) {
 		return vectorf{v.x, v.y, v.z};
 	}
 
-	inline Vec3 to(vectorf& v) {
+	inline Vec3 to(const vectorf& v) {
 		return Vec3{v.x, v.y, v.z};
 	}
 }
