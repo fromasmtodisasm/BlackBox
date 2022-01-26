@@ -712,7 +712,6 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	if (max >= 500.f) max = 500.f;
 	if (min <= 0.f) min = 1.f;
 	prevTime					= curTime;
-	CryLog("%f", max);
 	PRINT(py, "FPS %.2f ( %.2f.. %.2f) / 60", 1000.f / delta, 1000.f / min, 1000.f / max);
 	//PRINT(py, "ViewDist = 1024/0.0");
 	//PRINT(py, "Render path = ...");
