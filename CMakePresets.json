@@ -55,6 +55,8 @@
       "displayName": "Windows x64 Ninja Multi-Config",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
+        "OPTION_EDITOR": "ON",
+        "QT_SDK_ROOT" : "C:",
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-Clang.cmake"
       },
       "vendor": {
@@ -64,11 +66,26 @@
       }
     },
     {
-      "name": "vs2019",
+      "name": "vs2022-msvc",
       "inherits": "ninja",
-      "displayName": "VS2019 Config",
-      "description": "Visual Studio 2019 Config generator",
-      "generator": "Visual Studio 16 2019",
+      "displayName": "vs2022 Config",
+      "description": "Visual Studio 2022 Config generator",
+      "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_VERSION": "10",
+        "OPTION_EDITOR": "ON",
+        "QT_SDK_ROOT" : "C:",
+
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
+        "USE_MSVC": "ON"
+      }
+    },
+    {
+      "name": "vs2022-clang",
+      "inherits": "ninja",
+      "displayName": "vs2022 Config",
+      "description": "Visual Studio 2022 Config generator",
+      "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
         "OPTION_EDITOR": "ON",
@@ -96,13 +113,23 @@
       "configuration": "Release"
     },
     {
-      "name": "vs2019-debug",
-      "configurePreset": "vs2019",
+      "name": "vs2022-msvc-debug",
+      "configurePreset": "vs2022-msvc",
       "configuration": "Debug"
     },
     {
-      "name": "vs2019-release",
-      "configurePreset": "vs2019",
+      "name": "vs2022-msvc-release",
+      "configurePreset": "vs2022-msvc",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2022-clang-debug",
+      "configurePreset": "vs2022-clang",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-clang-release",
+      "configurePreset": "vs2022-clang",
       "configuration": "Release"
     }
   ]
