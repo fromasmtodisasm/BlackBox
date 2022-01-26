@@ -45,7 +45,7 @@ typedef void* WIN_HDC;
 typedef void* WIN_HGLRC;
 
 class CCamera;
-class CMatInfo;
+struct CMatInfo;
 struct IMatInfo;
 struct IRenderAuxGeom;
 struct ITechniqueManager;

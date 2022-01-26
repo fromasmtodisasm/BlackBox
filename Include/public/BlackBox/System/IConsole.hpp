@@ -428,7 +428,7 @@ struct IBaseConsole
 	virtual void DumpCommandsVars(char *prefix) = 0;
 
 	//! Calculation of the memory used by the whole console system
-	virtual void GetMemoryUsage (struct ICrySizer* pSizer) const = 0;
+	virtual void GetMemoryUsage (class ICrySizer* pSizer) const = 0;
 
 	//! Function related to progress bar
 	virtual void ResetProgressBar(int nProgressRange) = 0;

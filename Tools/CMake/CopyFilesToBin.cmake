@@ -26,7 +26,10 @@ endmacro()
 
 macro(set_base_outdir)
 	set(base_outdir ${BASE_OUTPUT_DIRECTORY})
-	if(NOT ${CMAKE_GENERATOR} MATCHES "Visual Studio")
+	if(
+		(NOT ${CMAKE_GENERATOR} MATCHES "Visual Studio") AND
+		(NOT ${CMAKE_GENERATOR} MATCHES "Ninja Multi-Config")
+	)
 		string( TOUPPER ${CMAKE_BUILD_TYPE} BUILD_CONFIG )
 		set(base_outdir ${BASE_OUTPUT_DIRECTORY_${BUILD_CONFIG}})
 	endif()

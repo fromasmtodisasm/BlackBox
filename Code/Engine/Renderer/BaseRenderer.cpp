@@ -578,7 +578,8 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 #define FX_BASE "tmp"
 	[[nodiscard]] int GetCount() const override
 	{
-#ifndef LINUX
+		#if 0
+#ifndef LINUX && 0
 		int cnt = std::count_if(
 			fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
 			fs::directory_iterator::directory_iterator(),
@@ -587,6 +588,9 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 #else
 		return 0;
 #endif
+		#else
+		return 0;
+		#endif
 	};
 
 	const char* GetValue(int nIndex) const override

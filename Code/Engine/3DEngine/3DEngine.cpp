@@ -672,6 +672,7 @@ const char* C3DEngine::GetLevelFilePath(const char* szFileName)
 
 void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStepY)
 {
+	#ifdef CLANG_FIXED
 	float px = 20;
 	float py = fTextPosY;
 	auto  dy = fTextStepY;
@@ -711,6 +712,7 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	if (gEnv->pSystem->IsDevMode())
 		PRINT(py, gEnv->IsEditor() ? "DevMode (Editor)" : "DevMode");
 	//PRINT(py, "Frame rate: %f\n                        Frame time: %f", gEnv->pTimer->GetFrameRate(), gEnv->pTimer->GetRealFrameTime());
+	#endif
 
 #undef PRINT
 }

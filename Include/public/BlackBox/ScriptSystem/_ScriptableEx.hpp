@@ -582,7 +582,7 @@ class _ScriptableEx : public ScriptBase
 };
 
 /////////////////////////////////////////////////////////////////////////////
-#	if defined(LINUX) || defined(__MINGW32__)
+#	if defined(LINUX) || defined(__MINGW32__) || defined(__clang__)
 #		define _DECLARE_SCRIPTABLEEX(_class)                                                                            \
 			template<>                                                                                                   \
 			IFunctionHandler* _ScriptableEx<_class>::m_pFunctionHandler = NULL;                                          \

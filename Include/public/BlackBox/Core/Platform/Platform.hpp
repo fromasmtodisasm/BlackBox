@@ -95,17 +95,17 @@ enum class EPlatform
 #define DEBUG_BREAK
 #endif
 
-#if defined(WIN32) && !defined(WIN64)
-#define _CPU_X86
-// Insert your headers here
-#define WIN32_LEAN_AND_MEAN
-#ifdef APIENTRY
-#undef APIENTRY
-#endif
-#include <Windows.h>
-
-//#define RC_EXECUTABLE "rc.exe"
-#endif
+//#if defined(WIN32) && !defined(WIN64)
+//#define _CPU_X86
+//// Insert your headers here
+//#define WIN32_LEAN_AND_MEAN
+//#ifdef APIENTRY
+//#undef APIENTRY
+//#endif
+//#include <Windows.h>
+//
+////#define RC_EXECUTABLE "rc.exe"
+//#endif
 
 #if defined(LINUX64)
 //#include <BlackBox/Linux64Specific.h>

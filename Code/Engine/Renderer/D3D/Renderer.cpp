@@ -636,7 +636,8 @@ int CD3DRenderer::AddTextureResource(string name, ID3DShaderResourceView* pSRVie
 
 		D3D11_TEXTURE2D_DESC desc;
 		pTexture2D->GetDesc(&desc);
-		pic = new STexPic(CD3D11_TEXTURE2D_DESC(desc), texture_index, name.c_str());
+		auto d = CD3D11_TEXTURE2D_DESC(desc);
+		pic = new STexPic(d, texture_index, name.c_str());
 		//pic->m_Desc	  = CD3D11_TEXTURE2D_DESC(desc);
 		//pic->m_Id	  = (texture_index);
 		//pic->m_Name	  = (name);

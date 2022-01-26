@@ -708,7 +708,7 @@ bool CSystem::InitSoundSystem()
 		m_pUserCallback->OnInitProgress("Initializing SoundSystem...");
 	return LoadSubsystem<PFNCREATESOUNDSYSTEM>("Sound", "CreateSoundSystem", [&](PFNCREATESOUNDSYSTEM p)
 											   {
-												   m_env.pSoundSystem = p(this, "0.0.0");
+												   m_env.pSoundSystem = p(this, (void*)"0.0.0");
 												   if (m_env.pSoundSystem == nullptr)
 													   return false;
 												   return true;

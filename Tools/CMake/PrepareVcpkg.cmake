@@ -1,5 +1,5 @@
 function(PrepareVcpkg)
-  message(STATUS "Prepare VCPKG")
+	message(STATUS "Prepare VCPKG")
 	#set(VCPKG_ROOT $ENV{VCPKG_ROOT} CACHE STRING "VCPKG_ROOT" FORCE)
 	set(VCPKG "")
 	if (DEFINED VCPKG_ROOT)

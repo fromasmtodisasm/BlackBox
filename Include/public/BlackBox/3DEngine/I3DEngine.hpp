@@ -58,6 +58,7 @@ struct SVariationValue
 };
 
 // Specialation for vectors.
+template<>
 inline Legacy::Vec3 SVariationValue<Legacy::Vec3>::GetVariantValue() const
 {
 	Legacy::Vec3 v;

@@ -46,7 +46,7 @@ if(DEFINED TOOLCHAIN_FILE)
 	message(STATUS "USED TOOLCHAIN FILE ${TOOLS_CMAKE_DIR}/${TOOLCHAIN_FILE}")
 	include(${TOOLS_CMAKE_DIR}/${TOOLCHAIN_FILE})
 elseif(WIN32)
-	include("${TOOLS_CMAKE_DIR}/toolchain/windows/WindowsPC-MSVC.cmake")
+	include("${TOOLS_CMAKE_DIR}/toolchain/windows/WindowsPC-Clang.cmake")
 endif()
 
 if (NOT DEFINED BUILD_PLATFORM)

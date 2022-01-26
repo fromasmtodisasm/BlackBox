@@ -187,7 +187,35 @@ macro(set_solution_startup_target target)
 	endif()
 endmacro()
 
-macro(SET_PLATFORM_TARGET_PROPERTIES THIS_PROJECT)
+macro(set_output_directory TargetProject)
+		get_target_property(libout ${TargetProject} LIBRARY_OUTPUT_DIRECTORY)
+		get_target_property(runout ${TargetProject} RUNTIME_OUTPUT_DIRECTORY)
+		if (NOT libout)
+			set(libout "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+		endif()
+		if (NOT runout)
+			set(runout "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+		endif()
+
+		# Iterate Debug/Release configs and adds _DEBUG or _RELEASE
+		foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+			message(STATUS "TargetProject: ${TargetProject}")
+			message(STATUS "CONFIG: ${OUTPUTCONFIG}")
+			message(STATUS "libout: ${libout}")
+			message(STATUS "runout: ${runout}")
+			string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+
+			string(REPLACE ${BASE_OUTPUT_DIRECTORY} ${BASE_OUTPUT_DIRECTORY_${OUTPUTCONFIG}} libout_config "${libout}")
+			string(REPLACE ${BASE_OUTPUT_DIRECTORY} ${BASE_OUTPUT_DIRECTORY_${OUTPUTCONFIG}} runout_config "${runout}")
+			message(STATUS "libout_config: ${libout_config}")
+			message(STATUS "runout_config: ${runout_config}")
+
+			set_target_properties(${TargetProject} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${libout_config})
+			set_target_properties(${TargetProject} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${runout_config})
+		endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+endmacro()
+
+macro(SET_PLATFORM_TARGET_PROPERTIES TargetProject)
 	target_compile_definitions(
 		${THIS_PROJECT} PRIVATE "-DCODE_BASE_FOLDER=\"${CRYENGINE_DIR}/Code/\"")
 	target_link_libraries(${THIS_PROJECT} PRIVATE ${COMMON_LIBS})
@@ -200,6 +228,11 @@ macro(SET_PLATFORM_TARGET_PROPERTIES THIS_PROJECT)
 	if(OPTION_REMOTE_CONSOLE)
 		target_compile_definitions(${THIS_PROJECT} PRIVATE "-DUSE_REMOTE_CONSOLE")
 	endif()
+
+	if(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+		set_output_directory(${TargetProject})
+	endif()
+
 endmacro()
 function(add_subsystem subsystem)
 	add_subdirectory(${ENGINE_DIR}/${subsystem} ${subsystem})

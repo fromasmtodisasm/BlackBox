@@ -61,7 +61,7 @@ class IPhysicalWorld;
 struct IMemoryManager;
 struct ISoundSystem;
 struct IMusicSystem;
-struct XDOM::IXMLDOMDocument;
+namespace XDOM{struct IXMLDOMDocument;}
 struct IFrameProfileSystem;
 struct FrameProfiler;
 struct IStreamEngine;
@@ -402,11 +402,13 @@ typedef ISystem* (*PFNCREATESYSTEMINTERFACE)( SSystemInitParams &initParams );
 // Get the system interface (must be defined locally in each module)
 extern ISystem *GetISystem();
 
+#if 0
 // interface of the DLL
 extern "C" 
 {
 	CRYSYSTEM_API ISystem* CreateSystemInterface( SSystemInitParams &initParams );
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // Display error message.

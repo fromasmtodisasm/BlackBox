@@ -7,11 +7,11 @@
   },
   "configurePresets": [
     {
-      "name": "base",
+      "name": "ninja",
       "hidden": true,
-      "displayName": "Windows x64 Debug",
-      "description": "Sets Ninja generator, compilers, x64 architecture, build and install directory, debug build type",
-      "generator": "Ninja",
+      "displayName": "Base Config",
+      "description": "Sets Ninja Multi-Config generator, compilers, x64 architecture, build and install directory, debug build type",
+      "generator": "Ninja Multi-Config",
       "binaryDir": "${sourceDir}/Solutions/${presetName}",
       "warnings": { "dev": false },
       "errors": { "dev": false },
@@ -35,8 +35,9 @@
           "type": "FILEPATH"
         },
 
-        "ADD_PACKAGE_DEP_MODE": "OFF"
+        "ADD_PACKAGE_DEP_MODE": "OFF",
 
+        "CMAKE_CONFIGURATION_TYPES": "Release;Debug;Profile"
       },
       "environment": {
         "solutionDir": "${sourceDir}/Solutions",
@@ -49,46 +50,50 @@
       }
     },
     {
-      "name": "x64-debug",
-      "inherits": "base",
-      "displayName": "x64 Debug",
+      "name": "windows-ninja",
+      "inherits": "ninja",
+      "displayName": "Windows x64 Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "OUTPUT_DIRECTORY_SUFFIX": "debug"
-      }
-    },
-    {
-      "name": "x64-release",
-      "inherits": "base",
-      "displayName": "x64 Release",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "OUTPUT_DIRECTORY_SUFFIX": "relase"
+        "CMAKE_SYSTEM_VERSION": "10",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-Clang.cmake"
       }
     },
     {
       "name": "vs2019",
-      "inherits": "base",
+      "inherits": "ninja",
       "displayName": "VS2019 Config",
       "description": "Visual Studio 2019 Config generator",
       "generator": "Visual Studio 16 2019",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
+        }
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "default-debug",
-      "configurePreset": "x64-debug"
+      "name": "windows-ninja-debug",
+      "configurePreset": "windows-ninja",
+      "configuration": "Debug"
     },
     {
-      "name": "default-release",
-      "configurePreset": "x64-release"
+      "name": "windows-ninja-release",
+      "configurePreset": "windows-ninja",
+      "configuration": "Release"
     },
     {
-      "name": "vs2019",
-      "configurePreset": "vs2019"
+      "name": "vs2019-debug",
+      "configurePreset": "vs2019",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2019-release",
+      "configurePreset": "vs2019",
+      "configuration": "Release"
     }
   ]
 }

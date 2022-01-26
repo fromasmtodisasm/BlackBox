@@ -161,7 +161,7 @@
 #endif
 
 #if defined(__clang__)
-#	include <CryCore/Compiler/Clangspecific.h>
+#	include <BlackBox/Core/Compiler/Clangspecific.h>
 #elif defined(__GNUC__)
 #	include <CryCore/Compiler/GCCspecific.h>
 #elif defined(_MSC_VER)
