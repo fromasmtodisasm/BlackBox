@@ -3554,7 +3554,7 @@ int CUISystem::RetrieveRect(UIRect *pRect, char *szString)
 }
 
 ////////////////////////////////////////////////////////////////////// 
-int CUISystem::RetrieveTexRect(float *pTexCoords, INT_PTR iTextureID, char *szTexRect)
+int CUISystem::RetrieveTexRect(float *pTexCoords, INT_PTR iTextureID, const char *szTexRect)
 {
 	float fLeft, fTop, fWidth, fHeight;
 	int iLeft, iTop, iWidth, iHeight;

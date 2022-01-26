@@ -955,7 +955,7 @@ ITagPoint* CXServer::GetRandomRespawnPoint(const char *sFilter)
 		if(!count)
 		{
 			m_pGame->m_pLog->Log("CXServer::GetRandomRespawnPoint NO RESPAWN POINT[%s]",sFilter);
-			return false; // no respawn point
+			return nullptr; // no respawn point
 		}
 		itr=m_vRespawnPoints.find(sFilter);
 	}

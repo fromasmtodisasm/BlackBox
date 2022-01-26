@@ -34,5 +34,3 @@ if(USE_ASSIMP)
 	add_package(assimp )
 	target_link_libraries(${THIS_PROJECT} PRIVATE assimp::assimp)
 endif()
-
-# add_private_headers() add_subdirectory(Tools/xml_scene_to_lua)

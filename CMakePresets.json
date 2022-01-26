@@ -56,6 +56,11 @@
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-Clang.cmake"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
+        }
       }
     },
     {
@@ -65,13 +70,18 @@
       "description": "Visual Studio 2019 Config generator",
       "generator": "Visual Studio 16 2019",
       "cacheVariables": {
-        "CMAKE_SYSTEM_VERSION": "10"
+        "CMAKE_SYSTEM_VERSION": "10",
+        "OPTION_EDITOR": "ON",
+        "QT_SDK_ROOT" : "C:",
+      
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-Clang.cmake"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "intelliSenseMode": "windows-clang-x64"
         }
       }
+
     }
   ],
   "buildPresets": [

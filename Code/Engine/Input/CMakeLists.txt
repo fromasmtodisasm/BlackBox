@@ -43,5 +43,3 @@ target_include_directories(
   PRIVATE "${CMAKE_SOURCE_DIR}/include/"
   # PRIVATE $<TARGET_PROPERTY:SDL2,INTERFACE_INCLUDE_DIRECTORIES>
 )
-
-# add_private_headers()

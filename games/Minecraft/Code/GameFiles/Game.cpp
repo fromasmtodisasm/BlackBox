@@ -66,7 +66,7 @@ typedef std::vector<TCHAR>		 tvector;
 int render_camera = 0;
 
 static bool menuOnTopLevel = false;
-char*		mods_str[]	   = {"$0BlackBox", "$1WightBox", "$9GreyBox"};
+const char*		mods_str[]	   = {"$0BlackBox", "$1WightBox", "$9GreyBox"};
 int			selected_mod	   = 0;
 
 std::string vec_to_string(Legacy::Vec3 vec)

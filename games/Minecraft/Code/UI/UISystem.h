@@ -435,7 +435,7 @@ public:
 	int RetrieveCommonAttribute(IScriptObject *pObject, CUIWidget *pWidget);
 	int RetrieveColor(color4f *pColor, char *szString);
 	int RetrieveRect(UIRect *pRect, char *szString);
-	int RetrieveTexRect(float *pTexCoords, INT_PTR iTextureID, char *szTexRect);
+	int RetrieveTexRect(float *pTexCoords, INT_PTR iTextureID, const char *szTexRect);
 	int RetrieveTextAttribute(CUIWidget *pWidget, IScriptObject *pObject, const string &szTextField);
 	int RetrieveTextureAttribute(UISkinTexture *pSkinTexture, IScriptObject *pObject, const char *szTextureField, const char *szTexRectField);
 
@@ -606,7 +606,7 @@ private:
 
 	////////////////////////////////////////////////////////////////////// 
 	int						m_iLastKey;
-	char					*m_szLastKeyName;
+	const char*				m_szLastKeyName;
 	float					m_fRepeatTimer;
 
 	////////////////////////////////////////////////////////////////////// 

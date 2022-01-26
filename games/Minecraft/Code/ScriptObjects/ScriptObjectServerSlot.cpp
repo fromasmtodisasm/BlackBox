@@ -147,7 +147,7 @@ int CScriptObjectServerSlot::Disconnect(IFunctionHandler *pH)
 {
 	CHECK_PARAMETERS(1);
 
-	char *szCause = "";
+	const char *szCause = "";
 
 #if 0
 	pH->GetParam(1, szCause);

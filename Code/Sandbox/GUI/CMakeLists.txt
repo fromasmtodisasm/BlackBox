@@ -53,7 +53,6 @@ ${THIS_PROJECT}
 add_sdl(${THIS_PROJECT})
 
 add_subdirectory(GuiTools)
-#add_private_headers()
 
 add_library(imgui::imgui ALIAS GUI)
 target_compile_definitions(${THIS_PROJECT} PRIVATE

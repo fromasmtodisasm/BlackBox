@@ -288,7 +288,7 @@ int CUICheckBox::SetTexture(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 2)
 	{
-		char *szTexRect = "";
+		const char *szTexRect = "";
 
 		pH->GetParam(2, szTexRect);
 
