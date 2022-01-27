@@ -701,8 +701,8 @@ void CRenderer::ShutDown()
 	#if 0
 	PEffect effect{nullptr};
 	g_FxParser->Parse("123", &effect);
-	#endif
 	gEnv->pConsole->RemoveConsoleVarSink(this);
+	#endif
 	for (size_t i = 0; i < m_Fonts.size(); i++)
 	{
 		m_Fonts[i]->Release();

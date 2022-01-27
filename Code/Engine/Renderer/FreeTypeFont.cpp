@@ -589,9 +589,9 @@ FreeTypeFont::~FreeTypeFont()
 #	if 0
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
-#	endif
 	gEnv->pRenderer->ReleaseIndexBuffer(m_IB);
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
+#	endif
 }
 
 void FreeTypeFont::Release()
