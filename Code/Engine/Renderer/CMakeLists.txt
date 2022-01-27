@@ -51,6 +51,8 @@ add_sources(
 		"D3D/Shader.hpp"
 		"D3D/SwapChain.cpp"
 		"D3D/SwapChain.hpp"
+		"D3D/Device.cpp"
+		"D3D/Device.hpp"
 
 	SOURCE_GROUP "DeviceManager"
 		"DeviceManager/DeviceObjects.h"

@@ -9,6 +9,7 @@ public:
 	}
 	virtual bool Update() override
 	{
+		return true;
 	}
 	virtual bool Run(bool& bRelaunch) override
 	{
@@ -105,8 +106,10 @@ public:
 	bool m_IsRunning = true;
 };
 
+#if 0
 IGAME_API IGame* CreateGameInstance()
 {
 	CTestRenderer* game = new CTestRenderer();
 	return (game);
 }
+#endif

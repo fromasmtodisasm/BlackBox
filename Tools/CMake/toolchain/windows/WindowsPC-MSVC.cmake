@@ -16,7 +16,7 @@ set(OUTPUT_DIRECTORY_NAME "win_x64")
 include ("${CMAKE_CURRENT_LIST_DIR}/../../BLACKBOX-MSVC.cmake")
 
 add_definitions(-D_WINDOWS -DWIN32 -D_WIN32 -DWIN64)
-message(STATUS ${CMAKE_CXX_FLAGS})
+message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 if (EXISTS "${SDK_DIR}/Microsoft Windows SDK/10")
 	set(WINDOWS_SDK "${SDK_DIR}/Microsoft Windows SDK/10")
 else()

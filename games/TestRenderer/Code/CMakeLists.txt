@@ -13,14 +13,14 @@ add_sources(
 		TestRenderer.cpp
 )
 end_sources()
-GameModule(TestRenderer FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
+GameModule(TestRenderer PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
 
 target_link_libraries(${THIS_PROJECT} PRIVATE BlackBox)
 if(OPTION_USE_GUI)
 	add_compile_definitions("USE_GUI")
-	target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
-	target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiFileBrowser)
-	target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiColorTextEdit)
+	#target_link_libraries(${THIS_PROJECT} PRIVATE GUI)
+	#target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiFileBrowser)
+	#target_link_libraries(${THIS_PROJECT} PRIVATE ImGuiColorTextEdit)
 endif()
 
 file(GLOB_RECURSE INCLUDE_FILES ${INCLUDE_ROOT}/*.hpp ${INCLUDE_ROOT}/*.h)

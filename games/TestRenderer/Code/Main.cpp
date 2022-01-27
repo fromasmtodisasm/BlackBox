@@ -6,7 +6,7 @@
 #endif //_XBOX
 
 //////////////////////////////////////////////////////////////////////////
-#if !defined(PS2) && !defined(_XBOX) && !defined(LINUX)
+#if !defined(_LIB) && !defined(PS2) && !defined(_XBOX) && !defined(LINUX)
 #include <BlackBox/Core/Platform/Windows.hpp>
 // DLL-EntryPoint
 BOOL CALLBACK DllMain( HANDLE hModule, 
