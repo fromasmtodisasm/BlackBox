@@ -14,7 +14,7 @@
 #	include "TypedConstantBuffer.hpp"
 #endif
 #include <Cry_Color4.h>
-#include <D3D\RenderThread.h>
+#include "RenderThread.h"
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
