@@ -15,7 +15,7 @@ add_sources("NoUberFile"
 end_sources()
 
 if(WINDOWS)
-	DedicatedServer(DedicatedLauncher SOLUTION_FOLDER "Launcher")
+	DedicatedServer(DedicatedLauncher SOLUTION_FOLDER "Launcher" PCH "pch.hpp")
 	target_link_libraries( ${THIS_PROJECT} PRIVATE Shell32)
 	target_link_libraries(${THIS_PROJECT} PRIVATE  BlackBox)
 else()
