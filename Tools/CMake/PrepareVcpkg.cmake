@@ -17,9 +17,9 @@ function(PrepareVcpkg)
 			include(FetchContent)
 			FetchContent_Declare(
 			  vcpkg  
-			  GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
-			  GIT_TAG        2021.05.12
-			  SOURCE_DIR     ${CMAKE_SOURCE_DIR}/Solutions/vcpkg
+			  GIT_REPOSITORY https://github.com/fromasmtodisasm/vcpkg.git
+			  GIT_TAG        2022.01.01
+			  SOURCE_DIR     ${CMAKE_SOURCE_DIR}/vcpkg
 			)
 
 			message(STATUS "Download VCPKG")
@@ -28,14 +28,14 @@ function(PrepareVcpkg)
 			message(STATUS "VCPKG_ROOT: ${VCPKG_ROOT}")
 		endif()
 		if(NOT (EXISTS ${VCPKG_ROOT}/vcpkg OR EXISTS ${VCPKG_ROOT}/vcpkg.exe))
-			message(STATUS "Compiling vcpkg")
+			message(STATUS "Bootraping vcpkg")
 			set(FEXT bat)
 			if (UNIX)
 				set(FEXT sh)
 			endif()
 			execute_process(COMMAND ${VCPKG_ROOT}/bootstrap-vcpkg.${FEXT} WORKING_DIRECTORY ${VCPKG_ROOT} RESULT_VARIABLE RESULT)
 			if (NOT ${RESULT} EQUAL 0)
-				message(FATAL_ERROR "Could not compile vcpkg")
+				message(FATAL_ERROR "Could not bootstrap vcpkg")
 			endif()
 		endif()
 	endif()

@@ -8,9 +8,12 @@
 
 #ifdef SYSTEM_EXPORTS
 #	define ISYSTEM_API DLL_EXPORT
+#elif defined(IS_MONOLITHIC_BUILD) && defined(CRY_IS_APPLICATION)
+#	define ISYSTEM_API
 #else
 #	define ISYSTEM_API DLL_IMPORT
 #endif
+
 
 //! Static branch-prediction helpers
 #define IF(condition, hint) if (condition)
