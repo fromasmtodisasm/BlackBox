@@ -92,8 +92,7 @@ endmacro()
 
 if(OPTION_DX_RENDERER)
 	message(STATUS "Using D3D11 Renderer Backend")
-	EngineModule(RenderD3D11 FORCE_SHARED_WIN PCH
-							 "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp" SOLUTION_FOLDER "Engine")
+	EngineModule(RenderD3D11 PCH "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp" SOLUTION_FOLDER "Engine")
 	add_common_libs()
 	add_common_includes()
 
@@ -104,7 +103,7 @@ else()
 	cryfilecontainer(RenderD3D11 SOLUTION_FOLDER "Engine")
 endif()
 if(OPTION_VK_RENDERER)
-	EngineModule(RendererVK FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
+	EngineModule(RendererVK PCH "pch.hpp" SOLUTION_FOLDER
 							 "Engine")
 	add_common_libs()
 	add_common_includes()

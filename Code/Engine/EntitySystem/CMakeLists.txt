@@ -12,7 +12,7 @@ add_sources(
 	)
 end_sources()
 
-EngineModule(EntitySystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
+EngineModule(EntitySystem PCH "pch.hpp" SOLUTION_FOLDER
 						 "Engine")
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Utils)

@@ -670,6 +670,9 @@ inline ISystem* GetISystem()
 	return gEnv->pSystem;
 };
 
+//! This function must be called once by each module at the beginning, to setup global pointers.
+extern "C" DLL_EXPORT void ModuleInitISystem(ISystem* pSystem, const char* moduleName);
+
 // System DLL Exports.
 typedef ISystem* (*PFNCREATESYSTEMINTERFACE)(SSystemInitParams& initParams /*, bool bManualEngineLoop*/);
 

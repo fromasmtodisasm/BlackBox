@@ -24,7 +24,7 @@ add_sources(
 	"Scene/XmlSerialization.cpp"
 	"World/World.cpp")
 end_sources()
-EngineModule(3DEngine FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+EngineModule(3DEngine PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PUBLIC tinyxml2::tinyxml2)

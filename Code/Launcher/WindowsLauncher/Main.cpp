@@ -6,6 +6,7 @@
 
 #include <BlackBox/Core/Platform/CryLibrary.h>
 
+#define _LAUNCHER
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #include <crtdbg.h>
 #include "resource.h"

@@ -61,6 +61,8 @@ add_sources(
 		${INC}/Core/Platform/_CryLibrary.h
 		${INC}/Core/Platform/platform_impl.inl
 		${INC}/Core/Platform/platform_impl_winapi.inl
+	SOURCE_GROUP "Core\\\\Platform"
+		${INC}/Core/Platform/Project/ProjectDefines.hpp
 	SOURCE_GROUP "EntitySystem"
 		${INC}/EntitySystem/EntityDesc.hpp
 		${INC}/EntitySystem/IEntityRenderState.hpp

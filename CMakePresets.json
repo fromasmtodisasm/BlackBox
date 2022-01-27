@@ -74,9 +74,9 @@
       "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
-        "OPTION_EDITOR": "ON",
+        "OPTION_EDITOR": "OFF",
+        "OPTION_STATIC_LINKING": "ON",
         "QT_SDK_ROOT" : "C:",
-
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
         "USE_MSVC": "ON"
       }

@@ -1037,13 +1037,13 @@ void CScriptSystem::GetMemoryUsage(ICrySizer* pSizer) const
 		// Nothing to do.
 #else
 		SIZER_COMPONENT_NAME(pSizer, "Lua");
-#	ifdef _LIB
-		pSizer->AddObject(&gLuaAlloc, gLuaAlloc.get_alloc_size());
-#	else
-		#if 0
-		pSizer->AddObject(&gLuaAlloc, gLuaAlloc.get_alloc_size() + gLuaAlloc.get_wasted_in_blocks() + gLuaAlloc.get_wasted_in_allocation());
-		#endif
-#	endif
+//#	ifdef _LIB && defined(NON)
+//		pSizer->AddObject(&gLuaAlloc, gLuaAlloc.get_alloc_size());
+//#	else
+//		#if 0
+//		pSizer->AddObject(&gLuaAlloc, gLuaAlloc.get_alloc_size() + gLuaAlloc.get_wasted_in_blocks() + gLuaAlloc.get_wasted_in_allocation());
+//		#endif
+//#	endif
 #endif // USE_RAW_LUA_ALLOCS
 	}
 }

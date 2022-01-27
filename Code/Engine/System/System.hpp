@@ -323,8 +323,33 @@ class CSystem final : public ISystem
     }
 
     template<typename Proc>
+	inline bool InitStatic(const char* proc_name, std::function<bool(Proc proc)> f)
+	{
+			
+        auto P = GetProcedure<HANDLE, Proc>(NULL, proc_name);
+		if (P)
+		{
+			typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
+			PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(NULL, DLL_MODULE_INIT_ISYSTEM);
+			if (pfnModuleInitISystem)
+			{
+				pfnModuleInitISystem(gEnv->pSystem, "");
+			}
+			return f(P);
+		}
+		else
+		{
+			CryError("Entrypoint %s not found", proc_name);
+		}
+		return false;
+	}
+
+    template<typename Proc>
 	inline bool LoadSubsystem(const char* szModulePath, const char* proc_name, std::function<bool(Proc proc)> f)
 	{
+		auto initStatic = InitStatic(proc_name, f);
+		if (initStatic)
+			return true;
 		//gEnv->pSystem->Log("Loading...");
         stack_string modulePath = szModulePath;
         modulePath = CrySharedLibraryPrefix + PathUtil::ReplaceExtension(modulePath.c_str(), CrySharedLibraryExtension);

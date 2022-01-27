@@ -87,6 +87,8 @@ enum class EPlatform
 #	endif
 #endif
 
+#include <BlackBox/Core/Platform/Project/ProjectDefines.hpp>  // to get some defines available in every CryEngine project
+
 
 
 #if defined(WIN32) || defined(WIN64)

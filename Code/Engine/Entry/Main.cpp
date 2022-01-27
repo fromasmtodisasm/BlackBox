@@ -1,3 +1,5 @@
+#if 0
+#define _LAUNCHER
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/System/ILog.hpp>
@@ -46,3 +48,4 @@ int main(int argc, char* argv[])
 
 	return status;
 }
+#endif

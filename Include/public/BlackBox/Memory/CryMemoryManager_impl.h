@@ -3,7 +3,7 @@
 #pragma once
 
 #ifdef _LIB
-	#include <CrySystem/ISystem.h> // <> required for Interfuscator
+	//#include <CrySystem/ISystem.h> // <> required for Interfuscator
 #endif
 
 #include <BlackBox/Core/Platform/CryLibrary.h>

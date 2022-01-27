@@ -63,7 +63,7 @@ IProcess* CSystem::GetIProcess()
 CSystem::CSystem(SSystemInitParams& startupParams)
 	:
 #if defined(SYS_ENV_AS_STRUCT)
-	  m_env(m_env),
+	  m_env(gEnv),
 #endif
 	  //m_startupParams(startupParams),
 	  cvGameName(nullptr),
