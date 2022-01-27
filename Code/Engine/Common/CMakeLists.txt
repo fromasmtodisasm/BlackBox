@@ -234,19 +234,20 @@ target_include_directories(Interface INTERFACE
     $<INSTALL_INTERFACE:include> 
 )
 
+target_link_libraries(Interface INTERFACE GameLauncher)
+
 install(TARGETS Interface
-	EXPORT blackbox-engineConfig 
+	EXPORT blackboxConfig 
 	INCLUDES DESTINATION include
 )
 
 export(TARGETS
 	Interface
 	NAMESPACE BlackBox::
-	FILE "${CMAKE_CURRENT_BINARY_DIR}/blackbox-engineConfig.cmake"
+	FILE "${CMAKE_CURRENT_BINARY_DIR}/blackboxConfig.cmake"
 )
 install(EXPORT
-        blackbox-engineConfig
-    DESTINATION "${CMAKE_INSTALL_DATADIR}/blackbox-engine/cmake"
+        blackboxConfig
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/blackbox/cmake"
     NAMESPACE BlackBox::
 )
-

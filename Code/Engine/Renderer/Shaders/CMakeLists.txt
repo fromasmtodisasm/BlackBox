@@ -6,9 +6,9 @@ add_sources(
 	FxParser
 	SOURCE_GROUP
 	"Source Files"
-	"Parser.cpp"
+	${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp
 	"Effect.cpp"
-	"Scanner.cpp"
+	${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp
 	"Driver.cpp"
 	"Parser.yy"
 	"Parser.hpp"
@@ -17,7 +17,7 @@ add_sources(
 	"ScannerHelpers.cpp")
 end_sources()
 
-EngineModule(FxParser PCH "./pch.hpp" SOLUTION_FOLDER "Engine")
+EngineModule(FxParser PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 target_compile_definitions(FxParser PUBLIC "-DYYDEBUG=1")
 
 # ===============> bison
@@ -61,12 +61,12 @@ macro(setup_bison_target)
 	if(BISON_FOUND)
 		bison_target(
 			ShaderParser ${CMAKE_CURRENT_SOURCE_DIR}/Parser.yy
-			${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp
+			${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp
 		)
 	elseif(CYGWIN_INSTALL_PATH)
 		cygwin_bison_target(
 			ShaderParser ${CMAKE_CURRENT_SOURCE_DIR}/Parser.yy
-			${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp
+			${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp
 		)
 	endif()
 endmacro()
@@ -74,10 +74,10 @@ endmacro()
 macro(setup_flex_target)
 	if(FLEX_FOUND)
 		flex_target(ShaderScanner ${CMAKE_CURRENT_SOURCE_DIR}/Scanner.ll
-								${CMAKE_CURRENT_SOURCE_DIR}/Scanner.cpp)
+								${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp)
 	elseif(CYGWIN_INSTALL_PATH)
 		cygwin_flex_target(ShaderScanner ${CMAKE_CURRENT_SOURCE_DIR}/Scanner.ll
-								${CMAKE_CURRENT_SOURCE_DIR}/Scanner.cpp)
+								${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp)
 	endif()
 endmacro()
 
