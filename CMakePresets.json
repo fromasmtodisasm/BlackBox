@@ -55,7 +55,8 @@
       "displayName": "Windows x64 Ninja Multi-Config",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
-        "OPTION_EDITOR": "ON",
+        //"OPTION_EDITOR": "ON",
+        "OPTION_STATIC_LINKING": "ON",
         "QT_SDK_ROOT" : "C:",
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-Clang.cmake"
       },

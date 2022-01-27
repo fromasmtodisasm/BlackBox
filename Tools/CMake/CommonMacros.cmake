@@ -1161,4 +1161,9 @@ function(add_metadata)
 	endif()
 endfunction()
 
+macro(use_scaleform)
+	if (OPTION_SCALEFORMHELPER)
+	endif()
+endmacro()
+
 commonmacrosinit()
