@@ -27,7 +27,7 @@
 #include <CMovieUser.h>
 
 //#include "CMovieUser.h"
-#if 0
+#if 1
 #define EDITOR_IMPLEMENT_LOAD_LEVEL
 #else
 #undef EDITOR_IMPLEMENT_LOAD_LEVEL
