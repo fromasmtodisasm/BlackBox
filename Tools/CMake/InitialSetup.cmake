@@ -37,7 +37,7 @@ message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 ###################################################
 
 #if (DEFINED VCPKG_INSTALLER AND (NOT DEFINED VCPKG OR NOT CMAKE_TOOLCHAIN_FILE))
-  include(${CMAKE_SOURCE_DIR}/Tools/CMake/PrepareVcpkg.cmake)
+  include(${BLACKBOX_DIR}/Tools/CMake/PrepareVcpkg.cmake)
   PrepareVcpkg()
 #endif()
 

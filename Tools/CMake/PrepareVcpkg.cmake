@@ -1,4 +1,8 @@
 function(PrepareVcpkg)
+	if (NOT DOWNLOAD_VCPKG)
+		message(STATUS "Skip vcpkg prepare")
+		return()
+	endif()
 	message(STATUS "Prepare VCPKG")
 	#set(VCPKG_ROOT $ENV{VCPKG_ROOT} CACHE STRING "VCPKG_ROOT" FORCE)
 	set(VCPKG "")

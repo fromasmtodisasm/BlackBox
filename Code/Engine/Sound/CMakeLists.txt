@@ -16,7 +16,7 @@ add_sources(
 	)
 end_sources()
 
-enginemodule(Sound FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER  "Engine")
+EngineModule(Sound FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER  "Engine")
 target_link_libraries(${THIS_PROJECT} PRIVATE Math)
 target_link_libraries(${THIS_PROJECT} PRIVATE Utils)
 

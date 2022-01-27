@@ -18,7 +18,7 @@ endif()
 if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	# 2. Games
 	#add_subdirectories_glob("Code/Game*")
-	add_subdirectory(${CMAKE_SOURCE_DIR}/games)
+	#add_subdirectory(${CMAKE_SOURCE_DIR}/games)
 endif()
 	
 if (OPTION_EDITOR)
@@ -52,6 +52,7 @@ if (OPTION_CONFIGURATOR)
 endif()
 
 # 5. Launchers
+# we not under vcpkg package build
 include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 
 if(OPTION_BUILD_TOOLS)
@@ -62,5 +63,11 @@ endif()
 #message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")
 
 #clang_format("${ALL_PROJECT_SOURCES}")
+
+set(CMAKE_INSTALL_MESSAGE LAZY)
+configure_file("${TOOLS_CMAKE_DIR}/modules/BlackBoxEngineConfig.cmake.in" "${CMAKE_BINARY_DIR}/blackbox-engineConfig.cmake")
+install(FILES "${CMAKE_BINARY_DIR}/blackbox-engineConfig.cmake" DESTINATION share/blackbox-engine)
+
+install(DIRECTORY ${TOOLS_CMAKE_DIR} DESTINATION share/blackbox-engine/Tools)
 
 copy_binary_files_to_target()

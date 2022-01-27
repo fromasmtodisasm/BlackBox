@@ -38,7 +38,7 @@ add_sources(
 )
 end_sources()
 
-enginemodule(ScriptSystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
+EngineModule(ScriptSystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
 						 "Engine")
 # ##############################################################################
 include(FindLua)

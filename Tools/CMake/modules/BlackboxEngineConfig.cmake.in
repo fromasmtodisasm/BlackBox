@@ -1,0 +1,7 @@
+add_library(BlackBox::Interface INTERFACE IMPORTED)
+
+set_property(TARGET BlackBox::Interface PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+	"${CMAKE_INSTALL_PREFIX}/Include"
+)
+
+set(BLACKBOX_DIR ${CMAKE_INSTALL_PREFIX}/share/blackbox-engine)

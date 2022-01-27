@@ -47,17 +47,14 @@ CEditorImpl::~CEditorImpl()
 
 void CEditorImpl::Draw()
 {
-	//m_MainMenu.Draw();
-	//m_MainWindow.Draw();
-	auto UI_ToolBar = [&] {
-		ImGui::Begin("##tool_bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-		if (ImGui::Button("play"))
-		{
-		}
-		ImGui::End();
-	};
-
-	UI_ToolBar();
+	//auto UI_ToolBar = [&] {
+	//	ImGui::Begin("##tool_bar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	//	if (ImGui::Button("play"))
+	//	{
+	//	}
+	//	ImGui::End();
+	//};
+	//UI_ToolBar();
 	PluginManagerWindow::Draw();
 }
 

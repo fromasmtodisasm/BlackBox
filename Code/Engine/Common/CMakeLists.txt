@@ -219,9 +219,32 @@ endmacro()
 
 install_headers(3DEngine)
 install_headers(Core EntitySystem)
-install_headers(Game Input Legacy Math)
+#install_headers(Game Input Legacy Math)
+install_headers(Input Legacy)
 install_headers(Memory Network)
 install_headers(Renderer ScriptSystem)
 install_headers(System Threading)
 install_headers(Utils)
+
+add_library(Interface INTERFACE ${SOURCES})
+target_include_directories(Interface INTERFACE
+    $<BUILD_INTERFACE:${INC}>  
+    $<INSTALL_INTERFACE:include> 
+)
+
+install(TARGETS Interface
+	EXPORT blackbox-engineConfig 
+	INCLUDES DESTINATION include
+)
+
+export(TARGETS
+	Interface
+	NAMESPACE BlackBox::
+	FILE "${CMAKE_CURRENT_BINARY_DIR}/blackbox-engineConfig.cmake"
+)
+install(EXPORT
+        blackbox-engineConfig
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/blackbox-engine/cmake"
+    NAMESPACE BlackBox::
+)
 

@@ -10,7 +10,7 @@ add_sources(
 	"Network.cpp"
 	"Server.cpp")
 end_sources()
-enginemodule(Network FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+EngineModule(Network FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 add_sdl(${THIS_PROJECT})
 set(PROJECT_NAME ${THIS_PROJECT})
 add_sdl_net()
