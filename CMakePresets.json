@@ -28,7 +28,7 @@
         "OPTION_DEDICATED_SERVER": "OFF",
 
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
-        "VCPKG_TARGET_TRIPLET": "x64-windows-static",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
         "VCPKG_INSTALLER": "ON",
         "VCPKG_ROOT": {
           "value": "$env{solutionDir}/vcpkg",

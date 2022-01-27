@@ -53,7 +53,6 @@ bool FreeTypeFont::printColorTableRegistered = false;
 
 void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<float>& image, std::vector<uint8>& _test)
 {
-	#if 0
 	// Load character glyph
 	uint c = ch;
 	auto h = m_Height;
@@ -95,12 +94,10 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 		face->glyph->advance.x};
 	Characters.insert(std::pair<char, Character>(ch, character));
 	cur_pos.x += character.Size.x + symbol_padding;
-	#endif
 }
 
 void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
-	#if 0
 	auto		 render = GetISystem()->GetIRenderer();
 	Legacy::Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4	 projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
@@ -206,7 +203,6 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
-	#endif
 }
 
 float FreeTypeFont::TextWidth(const std::string_view text)
@@ -248,7 +244,6 @@ bool operator<(const STestSize& a, const STestSize& b)
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-	#if 0
 	m_Height = static_cast<float>(h);
 	std::set<STestSize> test;
 
@@ -507,7 +502,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 
 	GlobalResources::FontAtlasRV   = m_pTextureRV;
 	GlobalResources::LinearSampler = m_Sampler;
-	#endif
 	return true;
 }
 
@@ -586,12 +580,10 @@ void FreeTypeFont::Submit()
 
 FreeTypeFont::~FreeTypeFont()
 {
-#	if 0
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 	gEnv->pRenderer->ReleaseIndexBuffer(m_IB);
 	gEnv->pRenderer->ReleaseBuffer(m_VB);
-#	endif
 }
 
 void FreeTypeFont::Release()
