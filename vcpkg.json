@@ -1,5 +1,5 @@
 {
-  "name": "blackbox-engine",
+  "name": "blackbox",
   "version-string": "0.4.4",
   "description": "Game engine pet project",
   "homepage": "https://github.com/fromasmtodisasm/BlackBox",
@@ -18,9 +18,19 @@
     "stb",
     "tinyxml2"
   ],
+  "default-features": [ "d3d11", "release-console", "static-linking" ],
   "features": {
     "d3d11": {
       "description": "Using d3d11 rendering backend"
+    },
+    "release-console": {
+      "description": "Using d3d11 rendering backend"
+    },
+    "static-linking": {
+      "description": "Link all Engine modules as static libs to single exe"
+    },
+    "static-linking-with-dll-game": {
+      "description": "Build game as DLL in a monolithic Engine build"
     }
   }
 }
