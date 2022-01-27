@@ -24,9 +24,14 @@ bool FxParser::Parse(const std::string& f, PEffect* pEffect)
 #define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
 	//auto g_driver = std::unique_ptr<IDriver>(CreateParserDriver());
 	//CCryLibrary ;
+#ifndef _LIB
 	if (!m_FxLibrary)
 		m_FxLibrary = CryLoadLibrary("FxParser");
 	if (m_FxLibrary)
+#else
+	m_FxLibrary = NULL;
+#endif // _LIB
+
 	{
 		if (g_driver != nullptr)
 		{
