@@ -1,5 +1,39 @@
+#include <string>
+using std::wstring;
+using std::string;
+
+#include <codecvt> // for std::codecvt_utf8
+#include <locale>  // for std::wstring_convert
+#include <string>
+
+//std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv_utf8_utf32;
+
+namespace Unicode
+{
+	wstring Convert(wstring& widt, const char*& narow)
+	{
+		::std::wstring wideWhat;
+		{
+			int convertResult = MultiByteToWideChar(CP_UTF8, 0, narow, (int)strlen(narow), NULL, 0);
+			if (convertResult <= 0)
+			{
+				wideWhat = L"Exception occurred: Failure to convert its message text using MultiByteToWideChar: convertResult=";
+				wideWhat += std::to_wstring(convertResult);
+				wideWhat += L"  GetLastError()=";
+				wideWhat += std::to_wstring(GetLastError());
+			}
+			else
+			{
+				wideWhat.resize(convertResult + 10);
+				convertResult = MultiByteToWideChar(CP_UTF8, 0, narow, (int)strlen(narow), &wideWhat[0], (int)wideWhat.size());
+			}
+		}
+		widt = wideWhat;
+		return widt;
+	}
+} // namespace Unicode
+
 //////////////////////////////////////////////////////////////////////////
-#if 0
 bool CryCreateDirectory(const char* lpPathName)
 {
 	// Convert from UTF-8 to UNICODE
@@ -31,6 +65,7 @@ bool CryDirectoryExists(const char* szPath)
 	return false;
 }
 
+#if 0
 //////////////////////////////////////////////////////////////////////////
 void CryGetCurrentDirectory(unsigned int nBufferLength, char* lpBuffer)
 {
@@ -65,16 +100,17 @@ void CryGetCurrentDirectory(unsigned int nBufferLength, char* lpBuffer)
 		*lpBuffer = 0;
 	}
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////////
 void CrySetCurrentWorkingDirectory(const char* szWorkingDirectory)
 {
-	SetCurrentDirectoryW(Unicode::Convert<wstring>(szWorkingDirectory).c_str());
+	wstring cwd;
+	Unicode::Convert(cwd, szWorkingDirectory).c_str();
+	SetCurrentDirectoryW(cwd.data());
 }
 
 //////////////////////////////////////////////////////////////////////////
-#include <CryString/CryPath.h>
-#endif
+#include <BlackBox/Core/Path.hpp>
 void CryGetExecutableFolder(unsigned int pathSize, char* szPath)
 {
 	/*W*/CHAR filePath[512];
