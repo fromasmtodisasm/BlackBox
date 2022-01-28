@@ -5,20 +5,17 @@ add_sources(
 	PROJECTS
 	FxParser
 	SOURCE_GROUP
-	"Source Files"
-	${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp
-	"Effect.cpp"
-	${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp
-	"Driver.cpp"
-	"Parser.yy"
-	"Parser.hpp"
-	"Scanner.ll"
-	"dummy.cpp"
-	"ScannerHelpers.cpp")
+		"Source Files"
+		${CMAKE_CURRENT_BINARY_DIR}/Parser.cpp
+		"Effect.cpp"
+		${CMAKE_CURRENT_BINARY_DIR}/Scanner.cpp
+		"Driver.cpp"
+		"Parser.yy"
+		#${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp
+		"Scanner.ll"
+		"dummy.cpp"
+		"ScannerHelpers.cpp")
 end_sources()
-
-EngineModule(FxParser PCH "pch.hpp" SOLUTION_FOLDER "Engine")
-target_compile_definitions(FxParser PUBLIC "-DYYDEBUG=1")
 
 # ===============> bison
 find_package(BISON)
@@ -109,8 +106,13 @@ setup_bison_target()
 setup_flex_target()
 setup_flex_bison_dependencies()
 
+EngineModule(FxParser PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+target_compile_definitions(FxParser PUBLIC "-DYYDEBUG=1")
+
+
 target_include_directories(FxParser PRIVATE ${CMAKE_SOURCE_DIR})
 target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Shaders)
+target_include_directories(FxParser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_definitions(FxParser PRIVATE "-DYY_NO_UNISTD_H")
 
 target_link_libraries(FxParser PUBLIC Math)
