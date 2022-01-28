@@ -31,7 +31,7 @@
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "VCPKG_INSTALLER": "ON",
         "VCPKG_ROOT": {
-          "value": "$env{solutionDir}/vcpkg",
+          "value": "$env{sourceDir}/vcpkg",
           "type": "FILEPATH"
         },
 
@@ -40,8 +40,7 @@
         "CMAKE_CONFIGURATION_TYPES": "Release;Debug;Profile"
       },
       "environment": {
-        "solutionDir": "${sourceDir}/Solutions",
-        "DXSDK_DIR": "${sourceDir}/lib/DirectX-SDK-June2010"
+        "solutionDir": "${sourceDir}/Solutions"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {

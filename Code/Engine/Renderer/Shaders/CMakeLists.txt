@@ -86,7 +86,7 @@ macro(setup_flex_bison_dependencies)
 	endif()
 endmacro()
 
-if((NOT BISON_FOUND) OR (NOT FLEX_FOUND))
+if((NOT BISON_FOUND) OR (NOT FLEX_FOUND) AND (NOT CYGWIN_INSTALL_PATH))
 	message(
 		WARNING
 			"
