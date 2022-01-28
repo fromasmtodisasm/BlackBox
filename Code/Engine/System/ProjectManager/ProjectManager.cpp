@@ -139,7 +139,13 @@ bool CProjectManager::ParseProjectFile()
 			//legacyGameDllPath = 
 		}
 
+		#if 0
 		gEnv->pConsole->LoadConfigVar("sys_dll_game", legacyGameDllPath.c_str());
+		#else
+		auto path = PathUtil::Make(m_project.rootDirectory, string("bin/win_x64"));
+		path = PathUtil::Make(path, m_project.name);
+		gEnv->pConsole->LoadConfigVar("sys_dll_game", path.c_str());
+		#endif
 
 #ifdef BB_PLATFORM_WINDOWS
 		#if 0
