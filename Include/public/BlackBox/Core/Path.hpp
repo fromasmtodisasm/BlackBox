@@ -1,4 +1,5 @@
 #pragma once
+#include <BlackBox/System/ICmdLine.hpp>
 namespace PathUtil
 {
 namespace detail
@@ -787,9 +788,53 @@ inline /*void*/ UnifyFilePath(TString& path)
 	path.MakeLower();
 }
 
+#define STACK_ARRAY(type, name, length) \
+	std::vector<type> name;             \
+	name.resize(length);
 inline string GetProjectFile()
 {
-	return string();
+	static bool	  initializedProjectFilePath = false;
+	static string projectFilePath;
+	if (!initializedProjectFilePath)
+	{
+		CRY_ASSERT(gEnv && gEnv->pSystem && gEnv->pSystem->GetICmdLine(), "PathUtil::GetProjectFolder() was called before system was initialized");
+		const ICmdLineArg* project = gEnv->pSystem->GetICmdLine()->FindArg(eCLAT_Pre, "project");
+		if (project)
+		{
+			projectFilePath = project->GetValue();
+		}
+		else
+		{
+			ICVar* pSysProject = gEnv->pConsole->GetCVar("sys_project");
+			if (pSysProject && pSysProject->GetString())
+			{
+				projectFilePath = pSysProject->GetString();
+			}
+			else
+			{
+				projectFilePath = "game.project";
+			}
+		}
+
+		if (PathUtil::IsRelativePath(projectFilePath.c_str()))
+		{
+			projectFilePath = PathUtil::Make(GetEnginePath(), projectFilePath);
+		}
+
+		// TODO: move to a standalone helper function
+		{
+			projectFilePath = PathUtil::ToUnixPath(projectFilePath);
+
+			const size_t bufferLength = projectFilePath.size() + 1;
+			STACK_ARRAY(char, szNormalizedProjectFilePath, bufferLength);
+			PathUtil::SimplifyFilePath(projectFilePath.c_str(), szNormalizedProjectFilePath.data(), bufferLength, PathUtil::ePathStyle_Posix);
+			projectFilePath = szNormalizedProjectFilePath.data();
+		}
+
+		initializedProjectFilePath = true;
+	}
+
+	return projectFilePath;
 }
 }
 

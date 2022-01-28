@@ -199,10 +199,11 @@ bool CScriptSystem::_ExecuteFile(const char* sFileName, bool bRaiseError, IScrip
 	if (!fileSize)
 		return false;
 
-	std::vector<char> buffer(fileSize);
+	std::vector<char> buffer(fileSize + 1);
 
 	if (file.ReadRaw(&buffer.front(), fileSize) == 0)
 		return false;
+	buffer[fileSize] = 0;
 
 	// Translate pak alias filenames
 	CryPathString translated;

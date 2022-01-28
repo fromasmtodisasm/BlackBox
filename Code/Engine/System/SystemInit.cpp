@@ -488,10 +488,6 @@ bool CSystem::Init()
 	//====================================================
 	//m_env.pLog->Log("[OK] Window susbsystem inited\n");
 	//====================================================
-	if (!InitScriptSystem())
-	{
-		return false;
-	}
 	if (!InitEntitySystem())
 	{
 		return false;
@@ -903,6 +899,10 @@ bool CSystem::InitFileSystem()
 
 	// Now set up the log
 	InitLog();
+	if (!InitScriptSystem())
+	{
+		return false;
+	}
 
 #if 0
 	LogVersion();

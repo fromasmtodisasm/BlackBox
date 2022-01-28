@@ -589,11 +589,12 @@ endfunction()
 
 function(GameModule target)
 	prepare_project(${ARGN})
-	if(OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
-		add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
-	else()
+	#if(OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+	#	add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
+	#else()
+	#	add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
+	#endif()
 		add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
-	endif()
 	apply_compile_settings()
 	set(game_folder
 			${CMAKE_CURRENT_SOURCE_DIR}
@@ -1167,5 +1168,13 @@ macro(use_scaleform)
 	if (OPTION_SCALEFORMHELPER)
 	endif()
 endmacro()
+
+function(set_visual_studio_debugger_command TARGET_NAME EXE_PATH CMD_LINE)
+	set_target_properties(${TARGET_NAME}
+		#VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TARGET_NAME}>"
+		#VS_DEBUGGER_WORKING_DIRECTORY ${BLACKBOX_DIR}
+		PROPERTIES VS_DEBUGGER_COMMAND ${EXE_PATH}
+		VS_DEBUGGER_COMMAND_ARGUMENTS ${CMD_LINE})
+endfunction()
 
 commonmacrosinit()

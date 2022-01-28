@@ -44,6 +44,16 @@ bool CProjectManager::ParseProjectFile()
 			m_sys_game_folder->Set("Assets");
 			return false;
 		}
+		else
+		{
+			if (gEnv->pScriptSystem->ExecuteFile(projectFile.c_str()))
+			{
+				const char* sys_dll_game{};
+				gEnv->pScriptSystem->GetGlobalValue("sys_dll_game", sys_dll_game);	
+				CryLog("sys_dll_game: %s", sys_dll_game);
+				gEnv->pConsole->LoadConfigVar("sys_dll_game", sys_dll_game);
+			}
+		}
 	}
 	return true;
 }
