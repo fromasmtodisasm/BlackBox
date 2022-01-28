@@ -232,6 +232,7 @@ add_library(Interface INTERFACE ${SOURCES})
 target_include_directories(Interface INTERFACE
     $<BUILD_INTERFACE:${INC}>  
     $<INSTALL_INTERFACE:include> 
+    $<INSTALL_INTERFACE:include/BlackBox/Legacy> 
 )
 
 target_link_libraries(Interface INTERFACE GameLauncher)
