@@ -1,6 +1,6 @@
 project(Common CXX)
 
-set(INC "${CMAKE_SOURCE_DIR}/include/public/BlackBox")
+set(INC "${CMAKE_SOURCE_DIR}/Include/BlackBox")
 
 start_sources()
 sources_platform(ALL)

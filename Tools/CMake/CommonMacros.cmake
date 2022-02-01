@@ -808,7 +808,7 @@ macro(set_editor_module_flags)
 		"${BLACKBOX_DIR}/Code/Sandbox/Plugins/EditorCommon"
 		"${BLACKBOX_DIR}/Code/Sandbox/EditorInterface"
 		#"${BLACKBOX_DIR}/Code/CryEngine/CryCommon" 
-		"${BLACKBOX_DIR}/include/public"
+		"${BLACKBOX_DIR}/Include"
 	)
 	target_compile_definitions( ${THIS_PROJECT} PRIVATE
 		-DWIN32

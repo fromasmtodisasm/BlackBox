@@ -14,7 +14,7 @@ option(OPTION_USE_GLM "Build with GLM Math library" ON)
 option(OPTION_USE_GUI "Build GUI library" ON)
 option(OPTION_USE_LINUXINPUT "Build GUI library" ON)
 option(OPTION_EDITOR "Build editor" OFF)
-option(OPTION_BUILD_TOOLS "Build Tools" ON)
+option(OPTION_BUILD_TOOLS "Build Tools" OFF)
 option(OPTION_VCPKG "Use vcpkg for libraries" ON)
 
 option(OPTION_DX_RENDERER "Compile D3D library" OFF)

@@ -1,6 +1,6 @@
 function(PrepareVcpkg)
 	message(STATUS "WTF")
-	if (NOT DOWNLOAD_VCPKG)
+	if (NOT ${DOWNLOAD_VCPKG})
 		message(STATUS "Skip vcpkg prepare")
 		return()
 	endif()

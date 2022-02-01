@@ -111,7 +111,7 @@ list(APPEND global_defines "BLACKBOX_DEFINE")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-list(APPEND global_includes "${CMAKE_SOURCE_DIR}/include/public/BlackBox/Legacy")
+list(APPEND global_includes "${CMAKE_SOURCE_DIR}/Include/BlackBox/Legacy")
 
 # Apply global defines
 set_property(DIRECTORY "${BLACKBOX_DIR}" PROPERTY COMPILE_DEFINITIONS ${global_defines})
@@ -123,7 +123,7 @@ set_property(DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY INCLUDE_DIRECTORIES ${glob
 set_property(DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY LINK_DIRECTORIES ${global_links})
 
 # Set the METADATA fields used by `add_metadata` macro from CommonMacros
-if(WINDOWS)
+if(FALSE)
 	if (NOT METADATA_COMPANY)
 		set(METADATA_COMPANY "3D Space")
 	endif()
@@ -137,7 +137,7 @@ if(WINDOWS)
 
 	string(REPLACE . , METADATA_VERSION_COMMA ${METADATA_VERSION})
 	set(METADATA_VERSION_COMMA ${METADATA_VERSION_COMMA} CACHE INTERNAL "" FORCE)
-endif(WINDOWS)
+endif()
 
 include("${TOOLS_CMAKE_DIR}/ClangFormat.cmake")
 include("${TOOLS_CMAKE_DIR}/Build.cmake")

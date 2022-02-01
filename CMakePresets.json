@@ -24,6 +24,7 @@
         "OPTION_REMOTE_CONSOLE": "ON",
         "OPTION_DX_RENDERER": "ON",
         "OPTION_VK_RENDERER": "OFF",
+        "OPTION_BUILD_DOCS": "ON",
         "USE_STEAM": "OFF",
         "OPTION_DEDICATED_SERVER": "OFF",
 
