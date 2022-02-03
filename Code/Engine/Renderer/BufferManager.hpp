@@ -12,7 +12,7 @@
 
 #include <BlackBox/Renderer/IRender.hpp>
 #include "DeviceManager/DeviceResources.hpp"
-#include <BlackBox\Core\Math\Cry_Math.h>
+#include <BlackBox\Math\Cry_Math.h>
 
 #include "DeviceManager\DeviceObjects.h"
 

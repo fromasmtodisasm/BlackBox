@@ -3,7 +3,6 @@
 #include <BlackBox/EntitySystem/IEntityRenderState.hpp>
 
 #include <BlackBox/3DEngine/I3DEngine.hpp>
-#include "SceneManager.hpp"
 //#include "World.hpp"
 
 #include "StatObject.hpp"
@@ -134,7 +133,6 @@ class C3DEngine : public I3DEngine
   private:
 	ISystem*					m_pSystem;
 	//World*						m_pWorld;
-	SceneManager				m_SceneManager;
 	CCamera						m_Camera;
 	bool						m_Enabled;
 	string						m_LevelPath;

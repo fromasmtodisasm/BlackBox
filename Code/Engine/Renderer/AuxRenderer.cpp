@@ -1,5 +1,5 @@
+#include "AuxRenderer.hpp"
 #include "D3D/Renderer.h"
-#include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 

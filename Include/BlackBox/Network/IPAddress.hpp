@@ -18,8 +18,8 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Platform/Windows.hpp>
 #include <BlackBox/Core/Stream.hpp>
 
 

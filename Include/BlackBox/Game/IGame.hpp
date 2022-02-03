@@ -7,7 +7,7 @@
 #endif
 
 #include <BlackBox/Core/Version.hpp>
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 
 #define PLAYER_CLASS_ID						1
 #define ADVCAMSYSTEM_CLASS_ID			97			// is this the right place to put that define?

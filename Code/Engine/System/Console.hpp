@@ -2,13 +2,12 @@
 #include "NullImplementation/NullFont.hpp"
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
-#include <BlackBox/Renderer/Texture.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Platform/Windows.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
-#include <BlackBox/Core/StlUtils.hpp>
+#include <BlackBox/Utils/StlUtils.hpp>
 
 #include <list>
 #include <map>

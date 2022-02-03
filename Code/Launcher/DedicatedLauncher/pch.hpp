@@ -2,4 +2,4 @@
 
 #define _LAUNCHER
 
-#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Platform/Platform.hpp>

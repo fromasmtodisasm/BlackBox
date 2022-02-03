@@ -1,4 +1,3 @@
-#include "Scene.hpp"
 #include "XmlSerialization.hpp"
 
 using namespace tinyxml2;

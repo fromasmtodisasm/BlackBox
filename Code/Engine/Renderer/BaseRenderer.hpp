@@ -1,5 +1,4 @@
 #pragma once
-#include <BlackBox/Renderer/AuxRenderer.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/IConsole.hpp>

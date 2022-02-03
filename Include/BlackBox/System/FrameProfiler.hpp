@@ -48,7 +48,7 @@ enum EProfiledSubsystem
 	PROFILE_LAST_SUBSYSTEM //!< Must always be last.
 };
 
-#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
 class CFrameProfiler;

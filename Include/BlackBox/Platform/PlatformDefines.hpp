@@ -161,11 +161,11 @@
 #endif
 
 #if defined(__clang__)
-#	include <BlackBox/Core/Compiler/Clangspecific.h>
+#	include <BlackBox/Compiler/Clangspecific.h>
 #elif defined(__GNUC__)
 #	include <CryCore/Compiler/GCCspecific.h>
 #elif defined(_MSC_VER)
-#	include <BlackBox/Core/Compiler/MSVCspecific.h>
+#	include <BlackBox/Compiler/MSVCspecific.h>
 #else
 #	error Unsupported compiler was used.
 #endif

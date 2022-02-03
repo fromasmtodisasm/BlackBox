@@ -1,8 +1,8 @@
 #pragma once
 
-#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Core/Platform/CryLibrary.h>
+#include <BlackBox/Platform/CryLibrary.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Global environment variable.

@@ -87,7 +87,7 @@ enum class EPlatform
 #	endif
 #endif
 
-#include <BlackBox/Core/Platform/Project/ProjectDefines.hpp>  // to get some defines available in every CryEngine project
+#include <BlackBox/Platform/Project/ProjectDefines.hpp>  // to get some defines available in every CryEngine project
 
 
 
@@ -318,7 +318,7 @@ ILINE bool IsAligned(T nData, size_t nAlign)
 #define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 
 #if BB_PLATFORM_WINDOWS && BB_PLATFORM_64BIT
-#include <BlackBox/Core/Platform/WindowsSpecific.hpp>
+#include <BlackBox/Platform/WindowsSpecific.hpp>
 #endif
 
 #if BB_PLATFORM_LINUX

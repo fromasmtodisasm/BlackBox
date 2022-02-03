@@ -14,61 +14,62 @@ add_sources(
 		${INC}/3DEngine/IBindable.hpp
 		${INC}/3DEngine/IObject.hpp
 		${INC}/3DEngine/IStatObj.hpp
+		${INC}/3DEngine/IMarkers.hpp
+	SOURCE_GROUP "Compiler"
+		${INC}/Compiler/MSVCspecific.h
+		${INC}/Compiler/Clangspecific.h
+	SOURCE_GROUP "Game"
+		${INC}/Game/IGame.hpp
 	SOURCE_GROUP "Core"
-		#${INC}/Core/StlUtils.hpp
-		${INC}/Core/MathHelper.hpp
 		${INC}/Core/Path.hpp
-		${INC}/Core/Primitives.hpp
 		${INC}/Core/Stream.hpp
-		${INC}/Core/StringUtils.h
-		${INC}/Core/TArrays.h
-		${INC}/Core/Tarray.h
-		${INC}/Core/Utils.hpp
 		${INC}/Core/Version.hpp
-		${INC}/Core/BaseTypes.hpp
-		${INC}/Core/Compiler/MSVCspecific.h
-		${INC}/Core/IApp.hpp
 		${INC}/Core/ICompressionHelper.hpp
-		${INC}/Core/IGame.hpp
-		${INC}/Core/IMarkers.hpp
-	SOURCE_GROUP "Core\\\\Math"
-		${INC}/Core/Math/Cry_Camera.h
-		${INC}/Core/Math/Cry_Color4.h
-		${INC}/Core/Math/Cry_Geo.h
-		${INC}/Core/Math/Cry_GeoDistance.h
-		${INC}/Core/Math/Cry_GeoIntersect.h
-		${INC}/Core/Math/Cry_GeoOverlap.h
-		${INC}/Core/Math/Cry_Math.h
-		${INC}/Core/Math/Cry_Matrix.h
-		${INC}/Core/Math/Cry_Quat.h
-		${INC}/Core/Math/Cry_Vector2.h
-		${INC}/Core/Math/Cry_Vector3.h
-		${INC}/Core/Math/Cry_XOptimise.h
-		${INC}/Core/Math/Geo.hpp
-		${INC}/Core/Math/platform.h
-	SOURCE_GROUP "Core\\\\Platform"
-		${INC}/Core/Platform/CryLibrary.h
-		${INC}/Core/Platform/Linux32Specific.h
-		${INC}/Core/Platform/Linux64Specific.h
-		${INC}/Core/Platform/LinuxSpecific.h
-		${INC}/Core/Platform/Linux_Win32Wrapper.h
-		${INC}/Core/Platform/Platform.hpp
-		${INC}/Core/Platform/PlatformDefines.hpp
-		${INC}/Core/Platform/Project/ProjectDefines.hpp
-		${INC}/Core/Platform/StlConfig.h
-		${INC}/Core/Platform/Windows.hpp
-		${INC}/Core/Platform/WindowsSpecific.hpp
-		${INC}/Core/Platform/_CryLibrary.h
-		${INC}/Core/Platform/platform_impl.inl
-		${INC}/Core/Platform/platform_impl_winapi.inl
-	SOURCE_GROUP "Core\\\\Platform"
-		${INC}/Core/Platform/Project/ProjectDefines.hpp
+		${INC}/Core/BaseTypes.hpp
+		${INC}/Core/smartptr.hpp
+	SOURCE_GROUP "Utils"
+		${INC}/Utils/StringUtils.h
+		${INC}/Utils/Utils.hpp
+		${INC}/Utils/StlUtils.hpp
+	SOURCE_GROUP "GUI"
+		${INC}/GUI/GUI.hpp
+	SOURCE_GROUP "Math"
+		${INC}/Math/MathHelper.hpp
+		${INC}/Math/Cry_Camera.h
+		${INC}/Math/Cry_Color4.h
+		${INC}/Math/Cry_Geo.h
+		${INC}/Math/Cry_GeoDistance.h
+		${INC}/Math/Cry_GeoIntersect.h
+		${INC}/Math/Cry_GeoOverlap.h
+		${INC}/Math/Cry_Math.h
+		${INC}/Math/Cry_Matrix.h
+		${INC}/Math/Cry_Quat.h
+		${INC}/Math/Cry_Vector2.h
+		${INC}/Math/Cry_Vector3.h
+		${INC}/Math/Cry_XOptimise.h
+		${INC}/Math/Geo.hpp
+		${INC}/Math/platform.h
+	SOURCE_GROUP "Platform"
+		${INC}/Platform/CryLibrary.h
+		${INC}/Platform/Linux32Specific.h
+		${INC}/Platform/Linux64Specific.h
+		${INC}/Platform/LinuxSpecific.h
+		${INC}/Platform/Linux_Win32Wrapper.h
+		${INC}/Platform/Platform.hpp
+		${INC}/Platform/PlatformDefines.hpp
+		${INC}/Platform/Project/ProjectDefines.hpp
+		${INC}/Platform/StlConfig.h
+		${INC}/Platform/Windows.hpp
+		${INC}/Platform/WindowsSpecific.hpp
+		${INC}/Platform/_CryLibrary.h
+		${INC}/Platform/platform_impl.inl
+		${INC}/Platform/platform_impl_winapi.inl
+		${INC}/Platform/Project/ProjectDefines.hpp
 	SOURCE_GROUP "EntitySystem"
 		${INC}/EntitySystem/EntityDesc.hpp
 		${INC}/EntitySystem/IEntityRenderState.hpp
 		${INC}/EntitySystem/IEntitySystem.hpp
 	SOURCE_GROUP "Input"
-		${INC}/Input/Events.h
 		${INC}/Input/IHardwareMouse.hpp
 		${INC}/Input/IInput.hpp
 	SOURCE_GROUP "Legacy"
@@ -146,28 +147,13 @@ add_sources(
 	#Profiler/Thread.h
 	#Profiler/Utils.h
 	SOURCE_GROUP "Renderer"
-		${INC}/Renderer/AuxRenderer.hpp
-		${INC}/Renderer/BaseTexture.hpp
 		${INC}/Renderer/Camera.hpp
-		${INC}/Renderer/IDrawable.hpp
 		${INC}/Renderer/IFont.hpp
-		${INC}/Renderer/IGeometry.hpp
-		${INC}/Renderer/IMaterial.hpp
-		${INC}/Renderer/IMaterialManager.hpp
-		${INC}/Renderer/IPostProcessor.hpp
-		${INC}/Renderer/IRender.cpp
 		${INC}/Renderer/IRender.hpp
-		${INC}/Renderer/IRenderAuxGeom.hpp
-		${INC}/Renderer/ISceneManager.hpp
 		${INC}/Renderer/IShader.hpp
-		${INC}/Renderer/IShaderManager.hpp
-		${INC}/Renderer/ITechnique.hpp
-		${INC}/Renderer/ITexture.hpp
-		${INC}/Renderer/Light.hpp
-		${INC}/Renderer/Material.hpp
-		${INC}/Renderer/QuadTree.hpp
-		${INC}/Renderer/Texture.hpp
+		${INC}/Renderer/IRenderAuxGeom.hpp
 		${INC}/Renderer/VertexFormats.hpp
+		${INC}/Renderer/RendElement.h
 	SOURCE_GROUP "ScriptSystem"
 		${INC}/ScriptSystem/IScriptSystem.hpp
 		${INC}/ScriptSystem/ScriptObject.hpp
@@ -201,11 +187,7 @@ add_sources(
 		${INC}/System/IWindowMessageHandler.h
 		${INC}/System/TimeValue.hpp
 	SOURCE_GROUP "Threading"
-		${INC}/Threading/IThread.h
 		${INC}/Threading/IThreadManager.h
-	SOURCE_GROUP "Utils"
-		${INC}/Utils/smartptr.hpp
-		${INC}/Utils/Text.hpp
 	)
 
 end_sources()

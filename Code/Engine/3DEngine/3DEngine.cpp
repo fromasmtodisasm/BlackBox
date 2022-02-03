@@ -1,17 +1,13 @@
 #include <BlackBox/Renderer/Camera.hpp>
 
 #include "3DEngine.hpp"
-#include "ObjLoader.hpp"
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
-#include <BlackBox/Renderer/ITechnique.hpp>
-#include <BlackBox/Scene/IScene.hpp>
 
 #include <BlackBox/EntitySystem/EntityDesc.hpp>
 #include <BlackBox\Renderer\IFont.hpp>
 #include <BlackBox\System\ITimer.hpp>
-#include <BlackBox\Utils\Text.hpp>
 
 #include "ObjectManager.hpp"
 
@@ -668,6 +664,21 @@ void C3DEngine::SetSkyBoxAlpha(float fAlpha)
 const char* C3DEngine::GetLevelFilePath(const char* szFileName)
 {
 	return nullptr;
+}
+
+inline void PrintRightAlignedText(float posY, const char* szText, IFont* pFont = nullptr)
+{
+	SDrawTextInfo info;
+	float		  rightMargin = 20;
+	info.font				  = pFont;
+#if 0
+		auto& color = info.color;
+		color[0]	= 1.0; //green
+		color[1]	= 1.0;
+		color[2]	= 1.0; //alpha
+		color[3]	= 0.0; //red
+#endif
+	gEnv->pRenderer->Draw2dText(gEnv->pRenderer->GetWidth() - info.font->TextWidth(szText) - rightMargin, posY, szText, info);
 }
 
 void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStepY)
