@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 	message(
 		FATAL_ERROR 
@@ -29,7 +29,8 @@ set(METADATA_VERSION ${VERSION} CACHE STRING "Version number for executable meta
 set(METADATA_PROJECT_NAME "BLACKBOX" CACHE STRING "Name of the solution project")
 project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"
 		VERSION "${METADATA_VERSION}"
-		LANGUAGES C CXX)
+		# Strange Behaviour! D in tail not worked!
+		LANGUAGES D C CXX)
 
 ###################################################
 include(Tools/CMake/Configure.cmake)

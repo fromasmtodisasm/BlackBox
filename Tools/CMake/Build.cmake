@@ -19,6 +19,7 @@ if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	# 2. Games
 	#add_subdirectories_glob("Code/Game*")
 	#add_subdirectory(${CMAKE_SOURCE_DIR}/games)
+	add_subdirectory("${BLACKBOX_DIR}/Tools/")
 endif()
 	
 if (OPTION_EDITOR)
@@ -55,9 +56,6 @@ endif()
 # we not under vcpkg package build
 include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 
-if(OPTION_BUILD_TOOLS)
-	add_subdirectory("${BLACKBOX_DIR}/Code/Tools/")
-endif()
 
 
 #message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")

@@ -5,9 +5,9 @@ bool CDevice::Create(_smart_ptr<IDXGIAdapter> pAdapter)
 {
 	HRESULT hr				  = S_OK;
 	UINT	createDeviceFlags = 0;
-#ifdef _DEBUG
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
+//#ifdef _DEBUG
+//	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+//#endif
 	D3D_DRIVER_TYPE driverTypes[] =
 		{
 			D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_HARDWARE),

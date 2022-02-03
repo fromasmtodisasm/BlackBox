@@ -22,7 +22,8 @@ file(TO_CMAKE_PATH "${TOOLS_CMAKE_DIR}" TOOLS_CMAKE_DIR)
 
 set(TOOLS_CMAKE_DIR "${BLACKBOX_DIR}/Tools/CMake")
 set(TOOLS_DIR "${BLACKBOX_DIR}/Tools")
-set(CMAKE_MODULE_PATH "${TOOLS_CMAKE_DIR}/modules")
+list(APPEND CMAKE_MODULE_PATH "${TOOLS_CMAKE_DIR}/modules")
+list(APPEND CMAKE_MODULE_PATH "${TOOLS_CMAKE_DIR}/modules/cmake-d/cmake-d")
 
 ###################################################
 message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")

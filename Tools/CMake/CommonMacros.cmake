@@ -986,6 +986,7 @@ endfunction()
 # For Windows, an argument may be provided to specify the location of an icon
 # for the executable
 function(add_metadata)
+	return()
 	if(WINDOWS)
 		get_target_property(project_type ${THIS_PROJECT} TYPE)
 		set(valid_types EXECUTABLE MODULE_LIBRARY SHARED_LIBRARY)
