@@ -31,7 +31,6 @@ macro(setup_subsystems)
 	add_subsystem(Network)
 
 	add_subsystem(AppMain)
-	add_subsystem(Entry)
 	add_subsystem(Common)
 
 	#foreach(system IN LISTS ALL_PROJECT_SYSTEMS)
