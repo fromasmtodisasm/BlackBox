@@ -15,6 +15,11 @@
 #include <iostream>
 #include <memory>
 
+extern "C"
+{
+	int testd();
+}
+
 #define WINDOW_MAX_PEEP 64
 
 static SDL_Window* g_CurrentWindow;
@@ -266,6 +271,7 @@ bool CSDLWindow::InitForGl()
 }
 bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend backend)
 {
+	CryFatalError("testd: %d", testd());
 	int flags = SDL_WINDOW_RESIZABLE;
 	int posx  = 0;
 	int posy  = 0;
