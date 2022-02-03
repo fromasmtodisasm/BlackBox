@@ -1,8 +1,12 @@
 # ##############################################################################
 start_sources()
 sources_platform(ALL)
-add_sources("NoUberFile" PROJECTS Window SOURCE_GROUP "Source Files"
-						"SDLWindow.cpp")
+add_sources("NoUberFile" 
+	SOURCE_GROUP "Source Files"
+		"SDLWindow.cpp"
+)
+
+#add_library(window_d "test.d")
 
 EngineModule(Window PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 target_compile_definitions(${THIS_PROJECT} PUBLIC -DSDL_WINDOW)
