@@ -1,7 +1,7 @@
 macro(BuildDocs)
 	# Require dot, treat the other components as optional
 	find_package(Doxygen
-				 REQUIRED dot
+				 COMPONENTS dot
 				 OPTIONAL_COMPONENTS mscgen dia)
 
 	 if (DOXYGEN_FOUND)
