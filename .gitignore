@@ -1,43 +1,37 @@
-build/*
+# Temporary files.
+*.log
 *.swp
-*.bak
 *.swo
+
+# Visual Studio Files
 /.vs
 *.swo
 *.lnk
+/out
+
+# Qt Creator Project Files List
 CMakeLists.txt.user*
-res/tmp/*
-res/geom/tmp/
-imgui.ini
-/out/build/x64-Debug
-screen_shots/*
-out/build
-out/glDebug.txt
-/log.txt
-/tmp
-/logs
-compile_commands.json
-.clangd/
-bin/*
-vcpkg/
-/.vscode
-/out/kate
+
+# Binary directories.
+/[Bb]in*/
+
+# CMake
 cmake-build*
-/msvc
-/vcpkg_lin
-/Game.log
+
+
+/vcpkg
+vcpkg_installed/*
+
+# Temporary Directories
 Solutions/*
-out/*
-/history.txt
-/res/Sounds
-/res/Music
-/Mods/FunCry
-/res/Textures
-/vcpkg_installed/x64-windows
-/Data/Textures
-/Data/Sounds
-/Data/Music
-/Code/Engine/Renderer/Shaders/Parser.output
-/Editor.log
-/Code/Sandbox/EditorCS/.vs/TestCSharp/v16
-/CMakeUserPresets.json
+
+/.vscode
+
+# Config files
+/user.cfg
+/system.cfg
+/editor.cfg
+
+#
+Code/Engine/Renderer/Shaders/Parser.output
+Thumbs.db
