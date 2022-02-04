@@ -15,9 +15,8 @@ add_sources(
 		${INC}/3DEngine/IObject.hpp
 		${INC}/3DEngine/IStatObj.hpp
 	SOURCE_GROUP "Core"
-		#${INC}/Core/StlUtils.hpp
+		${INC}/Core/StlUtils.hpp
 		${INC}/Core/Path.hpp
-		${INC}/Core/Primitives.hpp
 		${INC}/Core/Stream.hpp
 		${INC}/Core/StringUtils.h
 		${INC}/Core/TArrays.h
@@ -26,9 +25,7 @@ add_sources(
 		${INC}/Core/Version.hpp
 		${INC}/Core/BaseTypes.hpp
 		${INC}/Core/Compiler/MSVCspecific.h
-		${INC}/Core/IApp.hpp
 		${INC}/Core/ICompressionHelper.hpp
-		${INC}/Core/IGame.hpp
 		${INC}/Core/IMarkers.hpp
 		${INC}/Core/smartptr.hpp
 	
@@ -162,7 +159,7 @@ add_sources(
 	SOURCE_GROUP "System"
 		${INC}/System/ConsoleCommands.hpp
 		${INC}/System/ConsoleRegistration.h
-		${INC}/System/CryFile.h
+		${INC}/System/File/CryFile.h
 		${INC}/System/CrySizer.hpp
 		${INC}/System/CVarOverrides.h
 		${INC}/System/File/ICryPak.hpp
@@ -195,18 +192,18 @@ add_sources(
 
 end_sources()
 
-#make_directory(CopyIncludes)
-#foreach(src ${SOURCES})
-#	#get_filename_component(DIR ${src} )
-#	file(RELATIVE_PATH
-#		ITEM_PATH_REL # Output variable
-#		${BLACKBOX_DIR} # Base directory
-#		${src} # Absolute path to the file
-#	)
-#	#message("Relative path: ${ITEM_PATH_REL}")
-#	get_filename_component(REL ${ITEM_PATH_REL} DIRECTORY)
-#	file(INSTALL ${src} DESTINATION ${CMAKE_BINARY_DIR}/CopyIncludes/${REL})
-#endforeach()
+make_directory(CopyIncludes)
+foreach(src ${SOURCES})
+	#get_filename_component(DIR ${src} )
+	file(RELATIVE_PATH
+		ITEM_PATH_REL # Output variable
+		${BLACKBOX_DIR} # Base directory
+		${src} # Absolute path to the file
+	)
+	#message("Relative path: ${ITEM_PATH_REL}")
+	get_filename_component(REL ${ITEM_PATH_REL} DIRECTORY)
+	file(INSTALL ${src} DESTINATION ${CMAKE_BINARY_DIR}/CopyIncludes/${REL})
+endforeach()
 
 CryFileContainer(Common SOLUTION_FOLDER "Engine")
 

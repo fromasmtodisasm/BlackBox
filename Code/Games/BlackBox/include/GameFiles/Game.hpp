@@ -48,7 +48,7 @@ enum
 //#include "BitStream_Base.h"						// CBitStream_Base
 //#include "BitStream_Compressed.h"			// CBitStream_Compressed
 
-#include <BlackBox/Core/IGame.hpp>
+#include <BlackBox/Game/IGame.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 #include <BlackBox/Input/IInput.hpp>
@@ -23,7 +23,7 @@
 
 #include <Font/NullFont.h>
 
-#include <BlackBox/Platform/CryLibrary.h>
+#include <BlackBox/Core/Platform/CryLibrary.h>
 
 #include <Legacy\System.h>
 

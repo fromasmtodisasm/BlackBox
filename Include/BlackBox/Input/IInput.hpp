@@ -12,7 +12,7 @@ struct ISystem;
 #include <cstring>
 #include <vector>
 
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/Core/Platform/Platform.hpp>
 
 enum EModifierMask

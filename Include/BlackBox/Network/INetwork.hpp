@@ -9,7 +9,7 @@
 #endif
 
 #include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/System/IBitStream.hpp>
 
 #include <vector>				// STL vector<>

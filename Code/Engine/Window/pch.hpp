@@ -1,5 +1,5 @@
 #pragma once
 
 #define IWINDOW_EXPORTS
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 

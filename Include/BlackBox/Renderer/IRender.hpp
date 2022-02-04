@@ -14,9 +14,8 @@ typedef unsigned int   uint;
 typedef unsigned short ushort;
 #endif
 
-#include <BlackBox/Core/MathHelper.hpp>
-#include <BlackBox/Renderer/Light.hpp>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 
 #include <string_view>
 #include <vector>

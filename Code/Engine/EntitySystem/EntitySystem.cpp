@@ -2,7 +2,7 @@
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 
-#include <BlackBox/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 
 #define LOG_FUNCTION() CryLog("[EntitySystemLogging]: %s", __FUNCTION__)
 

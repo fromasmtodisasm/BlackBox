@@ -1,4 +1,4 @@
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 
 #include <tinyxml2.h> 
 
@@ -7,7 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 
 using namespace tinyxml2;
 #define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return false; }

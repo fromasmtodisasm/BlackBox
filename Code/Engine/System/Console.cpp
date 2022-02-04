@@ -2,7 +2,7 @@
 #include "Console.hpp"
 #include "ConsoleBatchFile.h"
 
-#include <BlackBox/Utils/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
@@ -17,7 +17,7 @@
 
 #include "NullImplementation/NullFont.hpp"
 #include "XConsoleVariable.h"
-#include <BlackBox\Utils\StringUtils.h>
+#include <BlackBox/Core/StringUtils.h>
 
 #define BACKGROUND_SERVER_CHAR '/'
 #define CONST_TEMP_STRING(s) s

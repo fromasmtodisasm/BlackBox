@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/Core/Platform/Platform.hpp>
 
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/IRender.hpp>

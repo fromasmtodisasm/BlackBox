@@ -14,7 +14,7 @@
 #ifndef __CS_HEADERS_H__
 #define __CS_HEADERS_H__
 
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 
 enum ChunkTypes
 {

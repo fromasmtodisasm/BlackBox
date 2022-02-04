@@ -1,12 +1,12 @@
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/Core/smartptr.hpp>
 
-#include <BlackBox/Platform/CryLibrary.h>
+#include <BlackBox/Core/Platform/CryLibrary.h>
 
-#include <BlackBox/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <crtdbg.h>
 #include "resource.h"
 

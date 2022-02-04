@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "TimeDemoRecorder.h"
-#include <BlackBox/System/CryFile.h>
+#include <BlackBox/System/File/CryFile.h>
 //#include "Game.h"
 
 #if defined(WIN32) && !defined(WIN64)

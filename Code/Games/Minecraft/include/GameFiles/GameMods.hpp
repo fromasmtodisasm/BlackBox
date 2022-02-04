@@ -16,7 +16,7 @@
 #ifndef __GameMods_h__
 #define __GameMods_h__
 
-#include <BlackBox/Core/IGame.hpp>
+#include <BlackBox/Game/IGame.hpp>
 #include <vector>
 #include <string>
 

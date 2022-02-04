@@ -354,7 +354,7 @@ struct TestObject
 	bool m_Intersected = false;
 };
 
-//#include <BlackBox/Core/IGame.hpp>
+//#include <BlackBox/Game/IGame.hpp>
 #include <IXGame.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/IConsole.hpp>

@@ -1,4 +1,4 @@
-#include <BlackBox\Platform\platform_impl.inl>
+#include <BlackBox\Core\Platform\platform_impl.inl>
 
 #include "PhysicalWorld.hpp"
 

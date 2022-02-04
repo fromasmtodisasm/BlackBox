@@ -2,6 +2,7 @@
 #include "InputCVars.hpp"
 
 #include <SDL2/SDL.h>
+#include <BlackBox/Input/Events.h>
 
 #define MOUSE_SYM_BASE (1024)
 #define MOUSE_SYM(X)      (MOUSE_SYM_BASE + (X))

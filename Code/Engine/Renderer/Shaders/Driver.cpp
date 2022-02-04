@@ -1,5 +1,5 @@
 #pragma warning(push, 0)
-#include <BlackBox/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Core/Path.hpp>
 #include "Driver.hpp"
 #include "Scanner.hpp"

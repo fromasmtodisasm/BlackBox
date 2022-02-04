@@ -4,7 +4,7 @@
 #include <time.h>
 #include <BlackBox/System/ISystem.hpp>
 /////////////////////////////////////////////////////
-#include <BlackBox/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 
 #if BB_PLATFORM_WINDOWS
 	//#include <Mmsystem.h> // needs <windows.h>

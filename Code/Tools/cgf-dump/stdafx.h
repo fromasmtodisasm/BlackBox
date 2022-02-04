@@ -32,7 +32,7 @@
 #ifndef max
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #endif
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 #include "CryHeaders.h"
 
 //#include "CryCompiledFile.h"

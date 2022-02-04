@@ -11,7 +11,7 @@
 #define VALIDATOR_RANGE2(member,minval,maxval)
 #define VALIDATORS_END //CryLog("[PhysValidator] End")
 
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>

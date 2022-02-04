@@ -1,7 +1,7 @@
 #pragma once
 #define IRENDER_EXPORTS
 
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>

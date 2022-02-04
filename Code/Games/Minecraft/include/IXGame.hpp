@@ -20,7 +20,7 @@
 #ifndef __IXGAME_H__
 #define __IXGAME_H__
 
-#include <BlackBox/Core/IGame.hpp>
+#include <BlackBox/Game/IGame.hpp>
 
 //////////////////////////////////////////////////////////////////////////
 struct IXGame : public IGame

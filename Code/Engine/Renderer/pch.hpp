@@ -1,8 +1,8 @@
 #pragma once
 #define IRENDER_EXPORTS
 
-#include <BlackBox/Platform/Platform.hpp>
-#include <BlackBox/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -15,7 +15,7 @@
 #define DX_11
 #define BB_RENDERER_DIRECT3D 110
 #ifdef DX_RENDERER
-#	include <BlackBox/Platform/Windows.hpp>
+#	include <BlackBox/Core/Platform/Windows.hpp>
 #	define __IFont_INTERFACE_DEFINED__
 
 #	include <d3d11.h>

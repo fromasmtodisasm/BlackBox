@@ -1,6 +1,6 @@
 #pragma once
 
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/Core/IMarkers.hpp>
 #include <Game.hpp>
 #include <string>

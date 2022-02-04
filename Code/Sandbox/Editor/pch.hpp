@@ -103,7 +103,7 @@ using CString = string;
 #define cry_strcat strcat
 
 #include <QString>
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 namespace QtUtil
 {
 	inline string ToString(QString str)
