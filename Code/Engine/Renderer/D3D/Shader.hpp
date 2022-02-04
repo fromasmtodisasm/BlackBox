@@ -1,8 +1,8 @@
 #pragma once
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include "../Shaders/Effect.hpp"

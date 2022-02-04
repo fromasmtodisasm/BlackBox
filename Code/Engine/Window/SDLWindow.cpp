@@ -1,11 +1,11 @@
 #define CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
-#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include "Window.hpp"
 
-#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Platform/platform_impl.inl>
 
 #include <SDL.h>
 #include <SDL_platform.h>
@@ -271,7 +271,6 @@ bool CSDLWindow::InitForGl()
 }
 bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend backend)
 {
-	CryFatalError("testd: %d", testd());
 	int flags = SDL_WINDOW_RESIZABLE;
 	int posx  = 0;
 	int posy  = 0;

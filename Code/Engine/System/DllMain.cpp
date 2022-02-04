@@ -1,4 +1,4 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Platform/platform_impl.inl>
 #include "System.hpp"
 //#include <CrySystem/SystemInitParams.h>
 //#include "DebugCallStack.h"

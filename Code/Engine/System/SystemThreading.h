@@ -2,7 +2,7 @@
 
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/Threading/IThreadManager.h>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 
 #include <thread>
 #include <mutex>

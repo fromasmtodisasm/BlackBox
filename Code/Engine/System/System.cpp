@@ -1,7 +1,7 @@
-#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Platform/Windows.hpp>
 #include "System.hpp"
 
-#include <BlackBox/Core/IGame.hpp>
+#include <BlackBox/Game/IGame.hpp>
 #include <BlackBox/Profiler/Drawer2D.h>
 #include <BlackBox/Profiler/Profiler.h>
 #include <BlackBox/Renderer/Camera.hpp>
@@ -17,7 +17,6 @@
 #include <BlackBox/System/IWindow.hpp>
 #include "SystemEventDispatcher.hpp"
 #include "VersionControl.hpp"
-#include <BlackBox/World/IWorld.hpp>
 #include <BlackBox/System/CVarOverrides.h>
 #include <BlackBox/System/ConsoleRegistration.h>
 //#include <BlackBox/Profiler/HP_Timer.h>

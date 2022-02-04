@@ -23,7 +23,7 @@
 
 class CStream;
 
-#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Platform/Platform.hpp>
 
 //////////////////////////////////////////////////////////////////////
 enum eBitStreamHint

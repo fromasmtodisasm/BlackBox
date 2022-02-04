@@ -1,4 +1,4 @@
-#include <BlackBox/Core/Platform/CryLibrary.h>
+#include <BlackBox/Platform/CryLibrary.h>
 
 #include "FxParser.h"
 #include "Driver.hpp"

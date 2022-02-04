@@ -1,4 +1,4 @@
-#include <BlackBox\Utils\smartptr.hpp>
+#include <BlackBox\Core\smartptr.hpp>
 //#define SOUND_SAMPLE
 
 class CSound : public ISound, _reference_target_t

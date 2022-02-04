@@ -1,8 +1,6 @@
 #include "SDLMouse.hpp"
 #include "InputCVars.hpp"
 
-#include <BlackBox/Input/Events.h>
-
 #include <SDL2/SDL.h>
 
 #define MOUSE_SYM_BASE (1024)
@@ -34,6 +32,7 @@
 #undef HIDE_MOUSE_POINTER
 
 static uint KeyboardEvent = 0;
+
 
 CSDLMouse::CSDLMouse(CLinuxInput& input) :
   CLinuxInputDevice(input, "SDL Mouse"),

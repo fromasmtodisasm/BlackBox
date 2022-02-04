@@ -7,10 +7,11 @@
 #include "FreeTypeFont.hpp"
 
 #include "AuxRendererNull.hpp"
+#include "AuxRenderer.hpp"
 
 #include <SDL2/SDL.h>
 
-#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Platform/platform_impl.inl>
 
 #include <filesystem>
 #pragma warning(push)
@@ -571,7 +572,7 @@ using fs = std::experimental::filesystem;
 #	include <filesystem>
 namespace fs = std::filesystem;
 #endif
-#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/Utils/Utils.hpp>
 struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 {
 	wchar_t c_file[256];

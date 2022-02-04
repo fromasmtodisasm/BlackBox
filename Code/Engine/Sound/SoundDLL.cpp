@@ -1,1 +1,1 @@
-#include <BlackBox\Core\Platform\platform_impl.inl>
+#include <BlackBox\Platform\platform_impl.inl>

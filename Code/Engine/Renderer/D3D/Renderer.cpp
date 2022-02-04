@@ -2,6 +2,7 @@
 #include "DDSTextureLoader11.h"
 #include <BlackBox/Core/Path.hpp>
 #include <BlackBox/System/File/CryFile.h>
+#include "AuxRenderer.hpp"
 
 #include "RenderThread.h"
 

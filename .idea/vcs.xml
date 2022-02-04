@@ -2,8 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Code/Engine/GUI/GuiTools/ImGuiColorTextEdit" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Code/Sandbox/GUI/GuiTools/ImGuiColorTextEdit" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Solutions/vcpkg" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Solutions/vcpkg/downloads/git-tmp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/res/shaders/tonemap" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vcpkg" vcs="Git" />
   </component>
 </project>

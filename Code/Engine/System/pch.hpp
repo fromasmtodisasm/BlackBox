@@ -2,8 +2,8 @@
 
 #define SYSTEM_EXPORTS
 
-#include <BlackBox/Core/Platform/Platform.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Platform/Windows.hpp>
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Network/INetwork.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
@@ -24,7 +24,7 @@
 #	include "File/CryPak.hpp"
 #endif
 
-#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/Utils/Utils.hpp>
 
 #include <cassert>
 #include <cstdlib>

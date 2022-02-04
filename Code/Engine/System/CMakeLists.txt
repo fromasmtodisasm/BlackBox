@@ -18,7 +18,6 @@ add_sources(
 	SOURCE_GROUP "Source Files"
 		"CmdLine.cpp"
 		"CmdLineArg.cpp"
-		"Commands.cpp"
 		"Console.cpp"
 		"ConsoleBatchFile.cpp"
 		"CrySizerImpl.cpp"

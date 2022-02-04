@@ -1,0 +1,22 @@
+<21:19:34> Initializing ScriptSystem
+<21:19:34> Executing file 'scripts/common.lua' (raiseErrors=1)
+<21:19:34> ###################################################################
+<21:19:34> Executing file 'game.project' (raiseErrors=1)
+<21:19:34> [Warning] [Lua Error] Failed to load script file game.project
+<21:19:34> CMD: C:\Users\Vova\CLionProjects\Minecraft\bin\win_x64\Game_Server.exe
+<21:19:35> Initializing System on dedicated server
+<21:19:35> Initializing Console
+<21:19:35> Loading config
+<21:19:35> here r_DisplayIndex
+<21:19:35> Open Render Library
+<21:19:35> Initialize Render
+<21:19:35> Initializing Script Bindings
+<21:19:35> Executing file 'scripts/engine.lua' (raiseErrors=1)
+<21:19:35> [Error] Entrypoint CreateGameInstance not found
+<21:19:35> =============================================================================
+<21:19:35> *ERROR
+<21:19:35> =============================================================================
+<21:19:35> Error loading dynamic library: .dll, error code 126
+<21:19:35> <System> Last System Error: Не найден указанный модуль.
+<21:19:35> [Error] Code: 80000003
+Address: 0x00007FFD820257A2

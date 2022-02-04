@@ -2,7 +2,7 @@
 
 #ifndef _CRY_WINDOW_MESSAGE_HANDLER_H_
 #define _CRY_WINDOW_MESSAGE_HANDLER_H_
-#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Platform/Windows.hpp>
 //! Window message handler for Windows OS
 struct IWindowMessageHandler
 {

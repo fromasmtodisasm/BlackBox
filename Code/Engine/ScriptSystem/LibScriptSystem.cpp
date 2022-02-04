@@ -1,7 +1,7 @@
-#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Platform/platform_impl.inl>
 
 #if BB_PLATFORM_WINDOWS
-#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Platform/Windows.hpp>
 	#ifndef _LIB
 HANDLE gDLLHandle = NULL;
 BOOL CALLBACK DllMain(HANDLE hModule,

@@ -1,6 +1,6 @@
 #pragma once
 //#include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 #include <map>
 #include <string>
 #include <string_view>
@@ -13,7 +13,7 @@
 
 #include <Cry_Math.h>
 #include "Cry_XOptimise.h"
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
 struct IShader;
