@@ -3,8 +3,6 @@
 #include <TagPoint.hpp>
 
 #include <BlackBox/Renderer/Camera.hpp>
-#include <BlackBox/Renderer/Material.hpp>
-#include <BlackBox/Renderer/Texture.hpp>
 
 #include <ScriptObjects/ScriptObjectInput.hpp>
 #include <ScriptObjects/ScriptObjectStream.hpp>
@@ -56,7 +54,6 @@ static int g_FontSize = 32;
 static CXGame* gGame;
 
 
-#include <BlackBox/GUI/ControlPanel.hpp>
 #ifdef WIN32
 #	include <tchar.h>
 #	include <winioctl.h>

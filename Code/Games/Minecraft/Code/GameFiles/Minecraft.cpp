@@ -3,6 +3,8 @@
 
 #include "Minecraft.h"
 #include <glm/gtc/noise.hpp>
+#include <glm/glm.hpp>
+#include <array>
 
 Minecraft* minecraft;
 

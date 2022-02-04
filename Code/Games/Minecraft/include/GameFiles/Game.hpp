@@ -359,7 +359,6 @@ struct TestObject
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
-#include <BlackBox/World/IWorld.hpp>
 
 //#include "Player.h"
 #include "EntityClassRegistry.h"
@@ -367,7 +366,6 @@ struct TestObject
 #include <ScriptObjects/ScriptObjectGame.hpp>
 #include <ScriptObjects/ScriptObjectServer.hpp>
 
-#include <BlackBox/Renderer/QuadTree.hpp>
 #include <CameraController.hpp>
 #include <DevMode.hpp>
 

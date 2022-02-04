@@ -1,4 +1,4 @@
-#include <BlackBox\Core\MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox\EntitySystem\IEntitySystem.hpp>
 
 //////////////////////////////////////////////////////////////////////

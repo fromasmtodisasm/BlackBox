@@ -25,7 +25,7 @@
 
 #include <BlackBox\Core\IMarkers.hpp>
 //#include <Cry_Math.h>
-#include <BlackBox\Core\MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 
 class CXGame;
 //////////////////////////////////////////////////////////////////////

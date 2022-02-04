@@ -152,9 +152,7 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 #include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Renderer/IFont.hpp>
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
-#include <BlackBox/Scene/IScene.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#include <BlackBox/World/IWorld.hpp>
 
 #include <IMovieSystem.h>
 #include <ISound.h>

@@ -25,6 +25,7 @@ add_sources(
 		${INC}/Core/Version.hpp
 		${INC}/Core/BaseTypes.hpp
 		${INC}/Core/Compiler/MSVCspecific.h
+		${INC}/Core/Compiler/Clangspecific.h
 		${INC}/Core/ICompressionHelper.hpp
 		${INC}/Core/IMarkers.hpp
 		${INC}/Core/smartptr.hpp
@@ -70,6 +71,8 @@ add_sources(
 		${INC}/Input/Events.h
 		${INC}/Input/IHardwareMouse.hpp
 		${INC}/Input/IInput.hpp
+	SOURCE_GROUP "Input"
+		${INC}/Game/IGame.hpp
 	SOURCE_GROUP "Legacy"
 		${INC}/Legacy/AgentParams.h
 		${INC}/Legacy/StlUtils.h
@@ -96,8 +99,12 @@ add_sources(
 		${INC}/Legacy/Cry_Vector3.h
 		${INC}/Legacy/Cry_XOptimise.h
 		${INC}/Legacy/Font.h
+		${INC}/Legacy/IFont.h
 		${INC}/Legacy/IAISystem.h
 		${INC}/Legacy/IAgent.h
+		${INC}/Legacy/list2.h
+		${INC}/Legacy/IMiniLog.h
+		${INC}/Legacy/ILog.h
 		${INC}/Legacy/IBindable.h
 		${INC}/Legacy/ICryAnimation.h
 		${INC}/Legacy/IDataProbe.h
