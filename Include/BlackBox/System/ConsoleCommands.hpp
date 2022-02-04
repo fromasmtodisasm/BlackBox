@@ -1,7 +1,7 @@
 #pragma once
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Math/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 
 class BaseCommand : public IConsoleCommand
 {

@@ -27,7 +27,7 @@
 #ifndef _CRY_COMMON_STREAM_ENGINE_HDR_
 #define _CRY_COMMON_STREAM_ENGINE_HDR_
 
-#include <BlackBox/Core/smartptr.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 #include <BlackBox\System\ILog.hpp>
 
 struct StreamEngineParams;

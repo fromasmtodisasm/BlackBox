@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-#include <BlackBox/Math/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>

@@ -6,8 +6,8 @@
 	//#include <CrySystem/ISystem.h> // <> required for Interfuscator
 #endif
 
-#include <BlackBox/Platform/CryLibrary.h>
-#include <BlackBox/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/CryLibrary.h>
+#include <BlackBox/Core/Platform/Windows.hpp>
 
 #define DLL_ENTRY_CRYMALLOC     "CryMalloc"
 #define DLL_ENTRY_CRYFREE       "CryFree"

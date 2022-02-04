@@ -18,7 +18,7 @@
 #include <CryMath/Cry_Color.h>
 #include <CryMemory/STLAlignedAlloc.h>
 #endif
-#include <BlackBox/Core/smartptr.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 
 // forward declarations for overloads
 struct AABB;

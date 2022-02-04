@@ -16,7 +16,7 @@
 #ifndef _ICRY_PAK_HDR_
 #define _ICRY_PAK_HDR_
 
-#include <BlackBox/Core/smartptr.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 #ifdef LINUX
 #	if 0
 #		include <winbase.h>

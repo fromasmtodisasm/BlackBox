@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Version.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/IValidator.hpp>

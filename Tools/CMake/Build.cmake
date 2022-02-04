@@ -17,8 +17,7 @@ endif()
 # Only allow building legacy GameDLL's with the engine, assuming that we're not using the project system
 if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	# 2. Games
-	#add_subdirectories_glob("Code/Game*")
-	#add_subdirectory(${CMAKE_SOURCE_DIR}/games)
+	add_subdirectories_glob("Code/Game*")
 	add_subdirectory("${BLACKBOX_DIR}/Tools/")
 endif()
 	

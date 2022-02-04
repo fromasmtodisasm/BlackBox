@@ -14,8 +14,9 @@ typedef unsigned int   uint;
 typedef unsigned short ushort;
 #endif
 
-#include <BlackBox/Math/MathHelper.hpp>
-#include <BlackBox/Core/smartptr.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Renderer/Light.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 
 #include <string_view>
 #include <vector>
@@ -142,7 +143,7 @@ struct Transform
 // DOC-IGNORE-BEGIN
 #include "ColorDefs.h"
 #include "TArray.h"
-#include "..\Platform\Platform.hpp"
+#include "..\Core\Platform\Platform.hpp"
 
 //#include <IFont.h>
 // DOC-IGNORE-END

@@ -36,7 +36,7 @@ class CEntityDesc;
 struct I3DEngine;
 
 // Common
-#include <BlackBox/Math/MathHelper.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/EntitySystem/IEntityRenderState.hpp>
 //#include <Legacy>
@@ -1631,7 +1631,7 @@ typedef struct IEntitySystem * (* PFNCREATEMAINENTITYSYSTEM) (ISystem *pISystem)
 
 
 //DOC-IGNORE-BEGIN
-#include <BlackBox/Core/smartptr.hpp>
+#include <BlackBox/Utils/smartptr.hpp>
 typedef _smart_ptr<IEntityIt> IEntityItPtr;
 //DOC-IGNORE-END
 

@@ -3,7 +3,7 @@
 #ifndef _SCRIPTABLE_H_
 #	define _SCRIPTABLE_H_
 
-#	include <BlackBox/Math/MathHelper.hpp>
+#	include <BlackBox/Core/MathHelper.hpp>
 #	include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #	include <BlackBox/System/ISystem.hpp>
 #	include <string>

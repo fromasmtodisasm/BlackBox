@@ -12,8 +12,8 @@ struct ISystem;
 #include <cstring>
 #include <vector>
 
-#include <BlackBox/Math/MathHelper.hpp>
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 enum EModifierMask
 {
@@ -102,8 +102,6 @@ inline bool   operator>(const char* str, const TKeyName& n) { return n > str; }
 #define KI_MOTION_BASE     2048
 #define KI_EYETRACKER_BASE 4096
 #define KI_SYS_BASE        8192
-
-constexpr const char* InputNewFrame = "Input_NewFrame";
 
 enum EKeyId : uint32_t
 {

@@ -1,7 +1,7 @@
 #ifndef CRY3DENGINEINTERFACE_H
 #define CRY3DENGINEINTERFACE_H
 
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 
 #ifdef BB_3DENGINE_EXPORTS

@@ -52,7 +52,7 @@ namespace Detail
 
 #define CRY_ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 #if BB_PLATFORM_WINDOWS
-	#include <BlackBox/Platform/Windows.hpp>
+	#include <BlackBox/Core/Platform/Windows.hpp>
 
 	#define CryGetCurrentModule() ::GetModuleHandle(nullptr)
 	#define CrySharedLibrarySupported true

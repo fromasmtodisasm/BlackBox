@@ -1162,6 +1162,33 @@ macro(use_scaleform)
 	endif()
 endmacro()
 
+# Function lists the subdirectories using the glob expression
+function(list_subdirectories_glob globPattern result)
+	file(GLOB _pathList LIST_DIRECTORIES true "${globPattern}")
+	set(_dirList)
+	foreach(_child ${_pathList})
+		if (IS_DIRECTORY "${_child}")
+			list(APPEND _dirList "${_child}")
+		endif()
+	endforeach()
+	set(${result} ${_dirList} PARENT_SCOPE)
+endfunction()
+
+# Helper function finds and adds subdirectories containing CMakeLists.txt
+function(add_subdirectories_glob globPattern)
+	set(_dirs)
+	list_subdirectories_glob("${globPattern}" _dirs)
+	foreach(dir ${_dirs})
+		if (EXISTS "${dir}/CMakeLists.txt")
+			#message(STATUS "add_subdirectory ${dir}")
+			add_subdirectory("${dir}")
+		endif()
+	endforeach()
+endfunction()
+
+function(add_subdirectories)
+	add_subdirectories_glob("*")
+endfunction()
 function(set_visual_studio_debugger_command TARGET_NAME EXE_PATH CMD_LINE)
 	set_target_properties(${TARGET_NAME}
 		#VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TARGET_NAME}>"
