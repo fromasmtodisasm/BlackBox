@@ -1,6 +1,0 @@
-message(STATUS "Thirdparty libs adding...")
-if (USE_STEAM)
-	if (NOT TARGET Steam)
-		add_subdirectory(Steam)
-	endif()
-endif()
