@@ -2,7 +2,7 @@
 
 #define INPUT_EXPORTS
 
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
@@ -12,7 +12,7 @@
 #include <BlackBox/System/ITimer.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 
-#include <BlackBox/Utils/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 
 #include <cmath>
 #include <string>

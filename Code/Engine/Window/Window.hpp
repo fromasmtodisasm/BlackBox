@@ -1,7 +1,7 @@
 #pragma once
 #include <BlackBox/System/IInputHandler.hpp>
 #include <BlackBox/System/IWindow.hpp>
-//#include <BlackBox/Core/MathHelper.hpp>
+//#include <BlackBox/Math/MathHelper.hpp>
 #include <SDL_events.h>
 #include <SDL_video.h>
 

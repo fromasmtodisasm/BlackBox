@@ -14,25 +14,22 @@ add_sources(
 		${INC}/3DEngine/IBindable.hpp
 		${INC}/3DEngine/IObject.hpp
 		${INC}/3DEngine/IStatObj.hpp
-		${INC}/3DEngine/IMarkers.hpp
-	SOURCE_GROUP "Compiler"
-		${INC}/Compiler/MSVCspecific.h
-		${INC}/Compiler/Clangspecific.h
-	SOURCE_GROUP "Game"
-		${INC}/Game/IGame.hpp
 	SOURCE_GROUP "Core"
+		${INC}/Core/StlUtils.hpp
 		${INC}/Core/Path.hpp
 		${INC}/Core/Stream.hpp
+		${INC}/Core/StringUtils.h
+		${INC}/Core/TArrays.h
+		${INC}/Core/Tarray.h
+		${INC}/Core/Utils.hpp
 		${INC}/Core/Version.hpp
-		${INC}/Core/ICompressionHelper.hpp
 		${INC}/Core/BaseTypes.hpp
+		${INC}/Core/Compiler/MSVCspecific.h
+		${INC}/Core/Compiler/Clangspecific.h
+		${INC}/Core/ICompressionHelper.hpp
+		${INC}/Core/IMarkers.hpp
 		${INC}/Core/smartptr.hpp
-	SOURCE_GROUP "Utils"
-		${INC}/Utils/StringUtils.h
-		${INC}/Utils/Utils.hpp
-		${INC}/Utils/StlUtils.hpp
-	SOURCE_GROUP "GUI"
-		${INC}/GUI/GUI.hpp
+	
 	SOURCE_GROUP "Math"
 		${INC}/Math/MathHelper.hpp
 		${INC}/Math/Cry_Camera.h
@@ -49,29 +46,33 @@ add_sources(
 		${INC}/Math/Cry_XOptimise.h
 		${INC}/Math/Geo.hpp
 		${INC}/Math/platform.h
-	SOURCE_GROUP "Platform"
-		${INC}/Platform/CryLibrary.h
-		${INC}/Platform/Linux32Specific.h
-		${INC}/Platform/Linux64Specific.h
-		${INC}/Platform/LinuxSpecific.h
-		${INC}/Platform/Linux_Win32Wrapper.h
-		${INC}/Platform/Platform.hpp
-		${INC}/Platform/PlatformDefines.hpp
-		${INC}/Platform/Project/ProjectDefines.hpp
-		${INC}/Platform/StlConfig.h
-		${INC}/Platform/Windows.hpp
-		${INC}/Platform/WindowsSpecific.hpp
-		${INC}/Platform/_CryLibrary.h
-		${INC}/Platform/platform_impl.inl
-		${INC}/Platform/platform_impl_winapi.inl
-		${INC}/Platform/Project/ProjectDefines.hpp
+	SOURCE_GROUP "Core\\\\Platform"
+		${INC}/Core/Platform/CryLibrary.h
+		${INC}/Core/Platform/Linux32Specific.h
+		${INC}/Core/Platform/Linux64Specific.h
+		${INC}/Core/Platform/LinuxSpecific.h
+		${INC}/Core/Platform/Linux_Win32Wrapper.h
+		${INC}/Core/Platform/Platform.hpp
+		${INC}/Core/Platform/PlatformDefines.hpp
+		${INC}/Core/Platform/Project/ProjectDefines.hpp
+		${INC}/Core/Platform/StlConfig.h
+		${INC}/Core/Platform/Windows.hpp
+		${INC}/Core/Platform/WindowsSpecific.hpp
+		${INC}/Core/Platform/_CryLibrary.h
+		${INC}/Core/Platform/platform_impl.inl
+		${INC}/Core/Platform/platform_impl_winapi.inl
+	SOURCE_GROUP "Core\\\\Platform"
+		${INC}/Core/Platform/Project/ProjectDefines.hpp
 	SOURCE_GROUP "EntitySystem"
 		${INC}/EntitySystem/EntityDesc.hpp
 		${INC}/EntitySystem/IEntityRenderState.hpp
 		${INC}/EntitySystem/IEntitySystem.hpp
 	SOURCE_GROUP "Input"
+		${INC}/Input/Events.h
 		${INC}/Input/IHardwareMouse.hpp
 		${INC}/Input/IInput.hpp
+	SOURCE_GROUP "Input"
+		${INC}/Game/IGame.hpp
 	SOURCE_GROUP "Legacy"
 		${INC}/Legacy/AgentParams.h
 		${INC}/Legacy/StlUtils.h
@@ -98,8 +99,12 @@ add_sources(
 		${INC}/Legacy/Cry_Vector3.h
 		${INC}/Legacy/Cry_XOptimise.h
 		${INC}/Legacy/Font.h
+		${INC}/Legacy/IFont.h
 		${INC}/Legacy/IAISystem.h
 		${INC}/Legacy/IAgent.h
+		${INC}/Legacy/list2.h
+		${INC}/Legacy/IMiniLog.h
+		${INC}/Legacy/ILog.h
 		${INC}/Legacy/IBindable.h
 		${INC}/Legacy/ICryAnimation.h
 		${INC}/Legacy/IDataProbe.h
@@ -161,7 +166,7 @@ add_sources(
 	SOURCE_GROUP "System"
 		${INC}/System/ConsoleCommands.hpp
 		${INC}/System/ConsoleRegistration.h
-		${INC}/System/CryFile.h
+		${INC}/System/File/CryFile.h
 		${INC}/System/CrySizer.hpp
 		${INC}/System/CVarOverrides.h
 		${INC}/System/File/ICryPak.hpp
@@ -188,12 +193,27 @@ add_sources(
 		${INC}/System/TimeValue.hpp
 	SOURCE_GROUP "Threading"
 		${INC}/Threading/IThreadManager.h
+	SOURCE_GROUP "Utils"
+		${INC}/Utils/Text.hpp
 	)
 
 end_sources()
 
+make_directory(CopyIncludes)
+foreach(src ${SOURCES})
+	#get_filename_component(DIR ${src} )
+	file(RELATIVE_PATH
+		ITEM_PATH_REL # Output variable
+		${BLACKBOX_DIR} # Base directory
+		${src} # Absolute path to the file
+	)
+	#message("Relative path: ${ITEM_PATH_REL}")
+	get_filename_component(REL ${ITEM_PATH_REL} DIRECTORY)
+	file(INSTALL ${src} DESTINATION ${CMAKE_BINARY_DIR}/CopyIncludes/${REL})
+endforeach()
 
 CryFileContainer(Common SOLUTION_FOLDER "Engine")
+
 
 macro(install_headers)
 	foreach(dir ${ARGN})

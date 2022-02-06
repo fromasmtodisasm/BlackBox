@@ -1,5 +1,5 @@
 #pragma once
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <IEditor.h>
 

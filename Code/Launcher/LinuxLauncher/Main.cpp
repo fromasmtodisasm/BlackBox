@@ -2,7 +2,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <iostream>

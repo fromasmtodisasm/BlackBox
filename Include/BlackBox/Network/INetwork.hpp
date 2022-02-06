@@ -8,7 +8,7 @@
   #define NETWORK_API DLL_IMPORT
 #endif
 
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Math/MathHelper.hpp>
 #include <BlackBox/System/IBitStream.hpp>
 

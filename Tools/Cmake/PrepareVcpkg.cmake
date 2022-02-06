@@ -1,17 +1,35 @@
 function(PrepareVcpkg)
-	message(STATUS "WTF")
-	if (NOT ${DOWNLOAD_VCPKG})
-		message(STATUS "Skip vcpkg prepare")
+	if (NOT DOWNLOAD_VCPKG)
+		message(STATUS "Skiping vcpkg prepare")
 		return()
 	endif()
 	message(STATUS "Prepare VCPKG")
-	#set(VCPKG_ROOT $ENV{VCPKG_ROOT} CACHE STRING "VCPKG_ROOT" FORCE)
-	set(VCPKG "")
-	if (DEFINED VCPKG_ROOT)
-		message(STATUS "Finding vcpkg in ${VCPKG_ROOT}")
-		find_program(VCPKG NAMES vcpkg vcpkg.exe PATHS ${VCPKG_ROOT})
-		message(STATUS "vcpkg is: ${VCPKG}")
+	if (ENV{VCPKG_ROOT})
+		if (NOT DEFINED VCPKG_ROOT)
+			message(FATAL_ERROR "VCPKG_ROOT not defined")
+			set(VCPKG_ROOT ENV{VCPKG_ROOT})
+		endif()
 	endif()
+	if (NOT VCPKG_ROOT)
+		message(STATUS ${BLACKBOX_DIR}/vcpkg)
+		set(VCPKG_ROOT "${BLACKBOX_DIR}/vcpkg" CACHE FILEPATH "VCPKG_ROOT" FORCE)
+	endif()
+
+	message(STATUS "VCPKG_ROOT = ${VCPKG_ROOT}")
+
+	find_program(VCPKG 
+		NAMES 
+			vcpkg vcpkg.exe 
+		PATHS 
+			${VCPKG_ROOT} ${BLACKBOX_DIR}
+		HINTS 
+			${VCPKG_ROOT}
+		PATH_SUFFIXES
+			vcpkg
+		NO_CACHE
+		)
+	message(STATUS "VCPKG = ${VCPKG}")
+
 	if (NOT VCPKG)
 		message(STATUS "VCPKG NOT FOUND")
 		if (NOT (IS_DIRECTORY ${VCPKG_ROOT}/.git))
@@ -20,7 +38,7 @@ function(PrepareVcpkg)
 			  vcpkg  
 			  GIT_REPOSITORY https://github.com/fromasmtodisasm/vcpkg.git
 			  GIT_TAG        2022.01.01
-			  SOURCE_DIR     ${CMAKE_SOURCE_DIR}/vcpkg
+			  SOURCE_DIR     ${BLACKBOX_DIR}/vcpkg
 			)
 
 			message(STATUS "Download VCPKG")
@@ -28,18 +46,10 @@ function(PrepareVcpkg)
 			set(VCPKG_ROOT ${vcpkg_SOURCE_DIR} CACHE STRING "VCPKG_ROOT" FORCE)
 			message(STATUS "VCPKG_ROOT: ${VCPKG_ROOT}")
 		endif()
-		if(NOT (EXISTS ${VCPKG_ROOT}/vcpkg OR EXISTS ${VCPKG_ROOT}/vcpkg.exe))
-			message(STATUS "Bootraping vcpkg")
-			set(FEXT bat)
-			if (UNIX)
-				set(FEXT sh)
-			endif()
-			execute_process(COMMAND ${VCPKG_ROOT}/bootstrap-vcpkg.${FEXT} WORKING_DIRECTORY ${VCPKG_ROOT} RESULT_VARIABLE RESULT)
-			if (NOT ${RESULT} EQUAL 0)
-				message(FATAL_ERROR "Could not bootstrap vcpkg")
-			endif()
-		endif()
 	endif()
-	set(VCPKG ${VCPKG_ROOT}/vcpkg CACHE FILEPATH "VCPKG EXECUTABLE" FORCE)
+	#set(VCPKG ${VCPKG_ROOT}/vcpkg CACHE FILEPATH "VCPKG EXECUTABLE" FORCE)
 	set(CMAKE_TOOLCHAIN_FILE ${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "CMake toolchain file" FORCE)
+
+	message(STATUS "VCPKG = ${VCPKG}")
+	message(STATUS "CMAKE_TOOLCHAIN_FILE = ${CMAKE_TOOLCHAIN_FILE}")
 endfunction()

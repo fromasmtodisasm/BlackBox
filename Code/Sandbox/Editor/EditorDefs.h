@@ -47,7 +47,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 #include <BlackBox/Core/StlUtils.hpp>
 // FIXME: error on build with this header!!!
 //#include <BlackBox/Core/Math/Cry_Geo.h>

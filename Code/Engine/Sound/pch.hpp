@@ -2,7 +2,7 @@
 
 #define CRYSOUNDSYSTEM_EXPORTS
 
-#include <BlackBox/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Math/MathHelper.hpp>

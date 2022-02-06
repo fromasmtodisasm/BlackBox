@@ -3,7 +3,7 @@
 
 #include "IEditor.h"
 #include "SandboxAPI.h"
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include "Version.h"
 #include "MainMenu.hpp"
 #include "MainWindow.hpp"

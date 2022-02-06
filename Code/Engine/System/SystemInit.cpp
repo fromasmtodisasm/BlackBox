@@ -8,7 +8,7 @@
 #include "Profiling\ProfilingSystem.hpp"
 
 #include <BlackBox/Core/Path.hpp>
-#include <BlackBox/Platform/CryLibrary.h>
+#include <BlackBox/Core/Platform/CryLibrary.h>
 
 using stack_string = string;
 

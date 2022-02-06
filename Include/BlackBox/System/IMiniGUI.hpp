@@ -12,7 +12,7 @@
 #ifndef __ICryMiniGUI_h__
 #define __ICryMiniGUI_h__
 
-#include <BlackBox/Utils/smartptr.hpp>
+#include <BlackBox/Core/smartptr.hpp>
 #include <CryMath/Cry_Color.h>
 //#include <CryExtension/ICryUnknown.h>
 

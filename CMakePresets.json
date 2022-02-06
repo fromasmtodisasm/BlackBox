@@ -31,8 +31,9 @@
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "VCPKG_INSTALLER": "ON",
+        "DOWNLOAD_VCPKG" : "ON",
         "VCPKG_ROOT": {
-          "value": "$env{sourceDir}/vcpkg",
+          "value": "${sourceDir}/vcpkg",
           "type": "FILEPATH"
         },
 

@@ -11,7 +11,7 @@
 
 #include <SDL2/SDL.h>
 
-#include <BlackBox/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <filesystem>
 #pragma warning(push)
@@ -572,7 +572,7 @@ using fs = std::experimental::filesystem;
 #	include <filesystem>
 namespace fs = std::filesystem;
 #endif
-#include <BlackBox/Utils/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 {
 	wchar_t c_file[256];

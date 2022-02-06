@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/Platform/Platform.hpp>
-#include <BlackBox/Utils/Utils.hpp>
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Utils.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>

@@ -2,7 +2,7 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
 #include "SplashScreen.h"
-#include <BlackBox/Core/MathHelper.hpp>
+#include <BlackBox/Math/MathHelper.hpp>
 #include "Version.h"
 
 #include <QApplication>

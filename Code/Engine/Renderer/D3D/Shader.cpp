@@ -1,6 +1,6 @@
 #include "Shader.hpp"
 #include "Renderer.h"
-#include <BlackBox/Utils/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 #include <filesystem>
 #include <fstream>
 #include <string_view>

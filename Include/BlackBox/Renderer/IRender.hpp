@@ -142,7 +142,7 @@ struct Transform
 // DOC-IGNORE-BEGIN
 #include "ColorDefs.h"
 #include "TArray.h"
-#include "..\Platform\Platform.hpp"
+#include "..\Core\Platform\Platform.hpp"
 
 //#include <IFont.h>
 // DOC-IGNORE-END

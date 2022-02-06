@@ -24,7 +24,7 @@
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Input/IHardwareMouse.hpp>
 #include <BlackBox/Input/IInput.hpp>
-#include <BlackBox/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 
 #include "System.hpp"
 

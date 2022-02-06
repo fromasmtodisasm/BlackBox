@@ -81,5 +81,5 @@
 #include <vector>
 #endif
 
-//#include <BlackBox/Utils/smartptr.hpp>
+//#include <BlackBox/Core/smartptr.hpp>
 //#include <BlackBox/Core/StlUtils.hpp>

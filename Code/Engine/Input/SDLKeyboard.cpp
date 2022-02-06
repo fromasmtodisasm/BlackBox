@@ -1,6 +1,7 @@
 #include "SDLKeyboard.hpp"
 #include "SDLMouse.hpp"
 #include <SDL2/SDL.h>
+#include <BlackBox/Input/Events.h>
 //#include <SDL.h>
 
 #define KEYBOARD_MAX_PEEP 64

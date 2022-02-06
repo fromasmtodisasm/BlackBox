@@ -1,4 +1,4 @@
-#include <BlackBox/Platform/Windows.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
 #include "System.hpp"
 
 #include <BlackBox/Game/IGame.hpp>

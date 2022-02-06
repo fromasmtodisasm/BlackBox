@@ -1,6 +1,6 @@
 #pragma once
-#include <BlackBox/Utils/Utils.hpp>
-#include <BlackBox/Utils/StlUtils.hpp>
+#include <BlackBox/Core/Utils.hpp>
+#include <BlackBox/Core/StlUtils.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include "LuaCommon.hpp"
 #include "ScriptBinding.hpp"

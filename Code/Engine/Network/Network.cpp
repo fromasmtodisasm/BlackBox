@@ -3,7 +3,7 @@
 #include "Server.hpp"
 
 #include <BlackBox/Core/ICompressionHelper.hpp>
-#include <BlackBox/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Network/IPAddress.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
@@ -15,7 +15,7 @@
 #include <map>
 #include <sstream>
 
-#include <BlackBox/Utils/Utils.hpp>
+#include <BlackBox/Core/Utils.hpp>
 
 CNetwork g_Network;
 

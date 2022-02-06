@@ -1,6 +1,6 @@
-#include <BlackBox/Platform/platform_impl.inl>
-#include <BlackBox/Platform/Windows.hpp>
-#include <BlackBox/Utils/Utils.hpp>
+#include <BlackBox/Core/Platform/platform_impl.inl>
+#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/Core/Utils.hpp>
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #define DS "\\" //dir separator
