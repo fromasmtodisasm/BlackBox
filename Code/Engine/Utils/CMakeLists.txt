@@ -6,7 +6,6 @@ add_sources(
 	Utils
 	SOURCE_GROUP
 	"Source Files"
-	"MusicList.cpp"
 	"Utils.cpp")
 end_sources()
 
