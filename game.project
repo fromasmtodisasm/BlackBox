@@ -1,0 +1,31 @@
+project = {
+    version = 1,
+    type = "",
+    info = {
+        name = "MineCRY",
+    },
+    content = {
+        assets = {"Assets"},
+        code = {"Code"},
+        libs = {{
+            name = "MineCRY",
+            shared = {
+                any = "",
+                win_x64 = "",
+                win_x86 = ""
+            }
+        }}
+    },
+    require = {
+        engine = "engine-0.0.1",
+        plugins = {{
+            guid = "",
+            type = "EType::Native",
+            path = "bin/win_x64/Game.dll"
+        }}
+    },
+    console_variables = {
+        --sys_target_platforms = "pc"
+    },
+    console_commands = {}
+}

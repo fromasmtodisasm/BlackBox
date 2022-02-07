@@ -25,6 +25,7 @@
 #include "WindowsConsole.h"
 
 #include <XML/xml.h>
+#include <BlackBox/Core/Path.hpp>
 
 
 // Define global cvars.
@@ -88,6 +89,8 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 	gEnv = &m_env;
 #endif
 	m_pValidator = nullptr;
+
+	m_root = PathUtil::AddSlash(PathUtil::GetEnginePath());
 
 	m_env.pConsole = new CXConsole(*this);
 	REGISTER_COMMAND("touch", utils::touch, 0, "touch file");

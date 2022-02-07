@@ -1,14 +1,13 @@
 #include "StatObject.hpp"
 
 #include "ObjectManager.hpp"
+#include <BlackBox/Core/Path.hpp>
 
 IStatObj* CObjectManager::LoadStatObj(const char* szFileName, const char* szGeomName)
 {
-	string prefix = "Data/";
-
 	CStatObj* obj{};
 	{
-		const string AdjastedFileName = prefix + szFileName;
+		const string AdjastedFileName = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/")).c_str(), szFileName);
 		obj							  = stl::find_in_map(m_nameToObjectMap, AdjastedFileName, nullptr);
 
 		if (obj)

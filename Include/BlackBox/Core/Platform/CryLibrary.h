@@ -50,7 +50,6 @@ namespace Detail
 	char (&ArrayCountHelper(T(&)[size]))[size];
 }
 
-#define CRY_ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 #if BB_PLATFORM_WINDOWS
 	#include <BlackBox/Core/Platform/Windows.hpp>
 
