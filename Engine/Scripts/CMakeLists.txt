@@ -1,7 +1,7 @@
 start_sources()
 # -- hwscripts.waf_files --
 
-set(ROOT "${CMAKE_SOURCE_DIR}/Data/scripts")
+set(ROOT "${BLACKBOX_DIR}/Engine/Scripts")
 
 sources_platform(ALL)
 add_sources(
