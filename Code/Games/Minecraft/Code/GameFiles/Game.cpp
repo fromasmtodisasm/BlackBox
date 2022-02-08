@@ -62,6 +62,8 @@ typedef std::basic_string<TCHAR> tstring;
 typedef std::vector<TCHAR>		 tvector;
 #endif
 
+using namespace std::literals;
+
 
 int render_camera = 0;
 
@@ -725,9 +727,9 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pWeaponSystemEx = new CWeaponSystemEx();
 	m_pVehicleSystem  = new CVehicleSystem();
 	m_pPlayerSystem	  = new CPlayerSystem();
-	#if 0
+#if 0
 	m_pFlockManager	  = new CFlockManager(m_pSystem);
-	#endif
+#endif
 
 	CScriptObjectUI::InitializeTemplate(m_pScriptSystem);
 
@@ -739,15 +741,15 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	CScriptObjectInput::InitializeTemplate(m_pScriptSystem);
 	m_pScriptObjectLanguage = new CScriptObjectLanguage;
 	CScriptObjectLanguage::InitializeTemplate(m_pScriptSystem);
-	#if 0
+#if 0
 	m_pScriptObjectBoids = new CScriptObjectBoids;
 	CScriptObjectBoids::InitializeTemplate(m_pScriptSystem);
 	m_pScriptObjectAI = new CScriptObjectAI;
 	CScriptObjectAI::InitializeTemplate(m_pScriptSystem);
-	#endif
+#endif
 	CScriptObjectServer::InitializeTemplate(m_pScriptSystem);
 
-	#if 0
+#if 0
 	CScriptObjectPlayer::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectFireParam::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectWeaponClass::InitializeTemplate(m_pScriptSystem);
@@ -756,16 +758,16 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	CScriptObjectAdvCamSystem::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectSynched2DTable::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
-	#endif
+#endif
 
 	m_pScriptObjectGame->Init(m_pScriptSystem, this);
 	m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
 
 	m_pScriptObjectLanguage->Init(m_pScriptSystem, &m_StringTableMgr);
-	#if 0
+#if 0
 	m_pScriptObjectBoids->Init(m_pScriptSystem, m_pSystem, m_pFlockManager);
 	m_pScriptObjectAI->Init(m_pScriptSystem, m_pSystem, this);
-	#endif
+#endif
 
 	CScriptObjectServerSlot::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectClient::InitializeTemplate(m_pScriptSystem);
@@ -797,6 +799,27 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pScriptSystem->BeginCall("Init");
 	m_pScriptSystem->PushFuncParam(0);
 	m_pScriptSystem->EndCall();
+	auto script = R"(
+	DownloaderTest = {
+    }
+
+	function DownloaderTest.Call(url, __)
+        BannerCfgDownload = System:CreateDownload();
+        BannerCfgDownload.OnComplete = (function() System:Warning("Download Completed"); end);
+        BannerCfgDownload.OnError = (function() System:Error("Download Error"); end);
+		System:Error("4")
+        BannerCfgDownload:Download(url, __);
+		System:Error("5")
+	end
+
+)"sv;
+	if (!m_pScriptSystem->ExecuteBuffer(script.data(), script.size()))
+	{
+		CryFatalError("Cannot load downloadtest script");
+	}
+	
+
+
 
 	// initialize the surface-manager
 	m_XSurfaceMgr.Init(m_pScriptSystem, m_p3DEngine, GetSystem()->GetIPhysicalWorld());

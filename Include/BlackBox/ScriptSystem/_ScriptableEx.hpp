@@ -247,7 +247,7 @@ class _ScriptableEx : public ScriptBase
 	typedef std::vector<Property*> PropertiesVec;
 	typedef typename PropertiesVec::iterator PropertiesVecItor;
 
-	void Init(IScriptSystem* pScriptSystem, T* pParent)
+	void Init(IScriptSystem* pScriptSystem, T* pParent, bool dump = false)
 	{
 		class CPrintSink : public IScriptObjectDumpSink
 		{
@@ -295,15 +295,22 @@ class _ScriptableEx : public ScriptBase
 			CryError("Scriptable EX:FUNCTION HANDLER NULL");
 		m_pScriptThis = pScriptSystem->CreateObject();
 		m_pScriptThis->SetNativeData(pParent);
-		//CryLog("----------------------------------------------");
-		//m_pScriptThis->Dump(&sink);
+		if (dump)
+		{
+            CryLog("----------------------------------------------");
+            m_pScriptThis->Dump(&sink);
+		}
 		m_pScriptThis->Delegate(_ScriptableEx<T>::m_pTemplateTable);
-		//m_pScriptThis->Dump(&sink);
-		//CryLog("##############################################");
+		if (dump)
+		{
+			m_pScriptThis->Dump(&sink);
+			CryLog("##############################################");
+		}
 
 		if (m_pScriptThis->GetNativeData() != pParent)
 			CryError("Scriptable EX:Properties map");
-		//m_pTemplateTable->Dump(&sink);
+		if (dump)
+            m_pTemplateTable->Dump(&sink);
 	}
 
 	void InitGlobal(IScriptSystem* pScriptSystem, const char* sName, T* pParent)

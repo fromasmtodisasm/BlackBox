@@ -13,6 +13,10 @@ public:
   static void InitializeTemplate(IScriptSystem* pSS);
 
   void Init(IScriptSystem* pScriptSystem, ISystem* pSystem);
+
+  //! <code>System.CreateDownload()</code>
+  int CreateDownload(IFunctionHandler* pH);
+
   int EnumDisplayFormats(IFunctionHandler* pH);
   int ScreenShot(IFunctionHandler* pH);
   int ClearConsole(IFunctionHandler* pH);

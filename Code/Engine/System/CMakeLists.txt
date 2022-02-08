@@ -15,6 +15,11 @@ start_sources()
 sources_platform(ALL)
 add_sources(
 	"NoUberFile"
+	SOURCE_GROUP "HTTPDownloader"
+		"DownloadManager.cpp"
+		"HTTPDownloader.cpp"
+		"DownloadManager.h"
+		"HTTPDownloader.h"
 	SOURCE_GROUP "Source Files"
 		"CmdLine.cpp"
 		"CmdLineArg.cpp"
@@ -64,6 +69,9 @@ add_sources(
 	SOURCE_GROUP "Font"
 		"Font/NullFont.h"
 		"Font/NullFont.cpp"
+	SOURCE_GROUP "ScriptObject"
+		"ScriptObjectSystem.cpp"
+		"ScriptObjectSystem.hpp"
 )
 end_sources()
 
@@ -95,3 +103,6 @@ target_include_directories(${THIS_PROJECT} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 add_package(libzip)
 add_package(libzippp)
 target_link_libraries(${THIS_PROJECT} PUBLIC libzip::zip libzippp::libzippp)
+if (WINDOWS)
+	target_link_libraries(${THIS_PROJECT} PUBLIC Wininet)
+endif()

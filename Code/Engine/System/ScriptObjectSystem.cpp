@@ -3,6 +3,9 @@
 #include <BlackBox\System\ITimer.hpp>
 #include <BlackBox\System\File\ICryPak.hpp>
 
+#include "System.hpp"
+#include "HTTPDownloader.h"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -42,6 +45,7 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
   // NOTE:
   // regex for change function signature to script registration macro
   // s/int \(\w\+\).*/SCRIPT_REG_FUNC(\1);/g
+  SCRIPT_REG_FUNC(CreateDownload);
   SCRIPT_REG_FUNC(EnumDisplayFormats);
   SCRIPT_REG_FUNC(ScreenShot);
   SCRIPT_REG_FUNC(ClearConsole);
@@ -84,6 +88,17 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 }
 
 #include <lua.hpp>
+
+/////////////////////////////////////////////////////////////////////////////////
+/*! Creates a download object
+    @return download object just created
+ */
+int CScriptObjectSystem::CreateDownload(IFunctionHandler* pH)
+{
+	auto download = ((CSystem*)(gEnv->pSystem))->m_pDownloadManager->CreateDownload();
+	
+	return pH->EndFunction(download->GetScriptObject());
+}
 
 int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 {

@@ -359,6 +359,10 @@ bool CSystem::Init()
 		GetIRemoteConsole()->Update();
 		CreateSystemVars();
 	}
+#ifdef DOWNLOAD_MANAGER
+		m_pDownloadManager = new CDownloadManager;
+		m_pDownloadManager->Create(this);
+#endif //DOWNLOAD_MANAGER
 	LogCommandLine();
 
 #endif // CRY_PLATFORM_DESKTOP

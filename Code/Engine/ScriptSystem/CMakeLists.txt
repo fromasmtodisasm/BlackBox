@@ -10,7 +10,6 @@ add_sources(
 	"FunctionHandler.cpp"
 	"ScriptBinding.cpp"
 	"ScriptObject.cpp"
-	"ScriptObjectSystem.cpp"
 	"ScriptSystem.cpp"
 	#[[
 		"LuaDebugger/AboutWnd.h"
