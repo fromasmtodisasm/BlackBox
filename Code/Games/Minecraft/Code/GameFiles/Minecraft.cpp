@@ -414,6 +414,9 @@ void MinePlayer::init()
 	entity->SetPos(glm::vec3(5, 20, 5));
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
+
+	m_pSetBlockSound = gEnv->pSoundSystem->LoadSound("sounds/doors/open.wav", 0);
+	m_pDestroyBlockSound = gEnv->pSoundSystem->LoadSound("sounds/doors/close.wav", 0);
 }
 
 void MinePlayer::update()
@@ -456,6 +459,7 @@ void MinePlayer::destroyBlockOnCursor()
 		selectedPos(pos, outPickPos, pickDistance))
 	{
 		minecraft->world.destroy(pos);
+		m_pDestroyBlockSound->Play();
 	}
 }
 
@@ -469,6 +473,7 @@ void MinePlayer::placeBlockOnCursor()
 		blockSideOnCursor(pos, side, pickDistance))
 	{
 		minecraft->world.set(side, MineWorld::Grass);
+		m_pSetBlockSound->Play();
 	}
 }
 

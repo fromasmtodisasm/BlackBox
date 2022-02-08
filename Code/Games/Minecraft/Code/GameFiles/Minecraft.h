@@ -71,6 +71,9 @@ class MinePlayer
 	IEntity*  entity = nullptr;
 	glm::vec3 movement{};
 
+	ISound* m_pSetBlockSound;
+	ISound* m_pDestroyBlockSound;
+
 	float cameraDistance = -4.0;
 	float destroyTime	 = 0.0;
 	float placeTime		 = 0.0;
