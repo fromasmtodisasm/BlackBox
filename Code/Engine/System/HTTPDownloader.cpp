@@ -53,7 +53,7 @@ int CHTTPDownloader::Create(ISystem* pISystem, CDownloadManager* pParent)
 {
 	m_pSystem = pISystem;
 	m_pParent = pParent;
-	Init(m_pSystem->GetIScriptSystem(), this, true);
+	Init(m_pSystem->GetIScriptSystem(), this);
 
 	return 1;
 }

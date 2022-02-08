@@ -473,9 +473,10 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 #endif
 }
 
+auto static NulTex = STexPic();
 ITexPic* CD3DRenderer::EF_GetTextureByID(int Id)
 {
-	ITexPic* result{};
+	ITexPic* result{&NulTex};
 	auto	 it = m_TexPics.find(Id);
 	if (it != m_TexPics.end())
 	{

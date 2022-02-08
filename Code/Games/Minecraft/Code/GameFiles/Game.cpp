@@ -25,7 +25,7 @@
 #include <CMovieUser.h>
 
 //#include "CMovieUser.h"
-#if 1
+#if 0
 #define EDITOR_IMPLEMENT_LOAD_LEVEL
 #else
 #undef EDITOR_IMPLEMENT_LOAD_LEVEL
@@ -799,27 +799,11 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pScriptSystem->BeginCall("Init");
 	m_pScriptSystem->PushFuncParam(0);
 	m_pScriptSystem->EndCall();
-	auto script = R"(
-	DownloaderTest = {
-    }
-
-	function DownloaderTest.Call(url, __)
-        BannerCfgDownload = System:CreateDownload();
-        BannerCfgDownload.OnComplete = (function() System:Warning("Download Completed"); end);
-        BannerCfgDownload.OnError = (function() System:Error("Download Error"); end);
-		System:Error("4")
-        BannerCfgDownload:Download(url, __);
-		System:Error("5")
-	end
-
-)"sv;
-	if (!m_pScriptSystem->ExecuteBuffer(script.data(), script.size()))
+	if (!m_pScriptSystem->ExecuteFile("Scripts/Tests/DownloaderTest.lua"))
 	{
 		CryFatalError("Cannot load downloadtest script");
 	}
 	
-
-
 
 	// initialize the surface-manager
 	m_XSurfaceMgr.Init(m_pScriptSystem, m_p3DEngine, GetSystem()->GetIPhysicalWorld());
@@ -853,7 +837,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	if (!m_bDedicatedServer)
 	{
 		m_pSystem->GetIConsole()->ShowConsole(0);
-		if (!bInEditor && 0)
+		if (!bInEditor)
 		{
 			//////////////////////////////////////////////////////////////////////
 			m_pUISystem = new CUISystem;

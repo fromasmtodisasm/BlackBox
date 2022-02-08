@@ -43,7 +43,7 @@ void CSound::Play(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true
 	#ifdef SOUND_SAMPLE
 	auto channel = Mix_PlayChannel(-1, m_Sample, 0);
 	#else
-	auto channel = Mix_PlayMusic(Data.Music, -1);
+	auto channel = Mix_PlayMusic(Data.Music, 0);
 	#endif
 	CryLog("[Sound] Playing at channel: %d", channel);
 }
