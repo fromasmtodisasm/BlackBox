@@ -34,6 +34,7 @@
 struct IWindow;
 
 class CScriptObjectConsole;
+class CScriptObjectSystem;
 class CScriptObjectScript;
 class CScriptObjectRenderer;
 
@@ -50,6 +51,15 @@ class CScriptObjectRenderer;
 #if defined(USE_UNIXCONSOLE) || defined(USE_ANDROIDCONSOLE) || defined(USE_WINDOWSCONSOLE) || defined(USE_IOSCONSOLE)
 	#define USE_DEDICATED_SERVER_CONSOLE
 #endif
+
+#if !BB_PLATFORM_LINUX && !BB_PLATFORM_ANDROID && !BB_PLATFORM_DURANGO && !BB_PLATFORM_APPLE && !BB_PLATFORM_ORBIS
+	#define DOWNLOAD_MANAGER
+#endif
+
+#ifdef DOWNLOAD_MANAGER
+	#include "DownloadManager.h"
+#endif //DOWNLOAD_MANAGER
+
 
 typedef void* WIN_HMODULE;
 
@@ -91,6 +101,8 @@ struct SSystemCVars
 extern SSystemCVars g_cvars;
 
 class CSystem;
+class CDownloadManager;
+
 
 IThreadManager* CreateThreadManager();
 struct SubsystemWrapper : public _i_reference_target_t
@@ -500,9 +512,14 @@ class CSystem final : public ISystem
 	CTimeValue m_lastTickTime;
 
 	CScriptObjectConsole*  m_ScriptObjectConsole  = nullptr;
+	CScriptObjectSystem*   m_ScriptObjectSystem   = nullptr;
 	CScriptObjectSound*	   m_ScriptObjectSound	  = nullptr;
 	CScriptObjectScript*   m_ScriptObjectScript	  = nullptr;
 	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
+
+public:
+	//! Pointer to the download manager
+	CDownloadManager* m_pDownloadManager;
 
   private:
 	ICVar* cvGameName = nullptr;
@@ -542,6 +559,8 @@ class CSystem final : public ISystem
 	//ICVar* m_rFullsceenNativeRes;
 	//ICVar* m_rWindowState;
 	ICVar* m_rDriver;
+	ICVar* m_sysNoUpdate{};
+
 	int	   m_rDisplayInfo;
 	int	   m_rDebug;
 	int	   m_rTonemap;
@@ -560,6 +579,12 @@ class CSystem final : public ISystem
 	CCryNullFont	 m_Font;
 
 	bool m_bCanSwitch = false;
+	// Pause mode.
+	bool   m_bPaused;
+	uint8  m_PlatformOSCreateFlags;
+	bool   m_bNoUpdate;
+
+	uint64 m_nUpdateCounter;
 
 
     // ISystem interface

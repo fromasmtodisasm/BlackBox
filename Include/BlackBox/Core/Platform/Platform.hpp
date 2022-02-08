@@ -315,6 +315,7 @@ ILINE bool IsAligned(T nData, size_t nAlign)
 	return (size_t(nData) & (nAlign - 1)) == 0;
 }
 
+#define CRY_ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 #define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
 
 #if BB_PLATFORM_WINDOWS && BB_PLATFORM_64BIT

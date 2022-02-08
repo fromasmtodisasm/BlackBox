@@ -14,6 +14,7 @@
 #endif
 #include <Cry_Color4.h>
 #include "RenderThread.h"
+#include <BlackBox/Core/Path.hpp>
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
@@ -524,8 +525,9 @@ class ShaderMan
 			real_name = name.substr(0, pos);
 			technique = name.substr(pos + 1);
 		}
-		path << "Data/shaders/fx/" << real_name << ".fx";
-		if (g_FxParser->Parse(path.str().data(), &pEffect))
+		path << real_name << ".fx";
+        auto shader_path = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/shaders/fx")), path.str());
+		if (g_FxParser->Parse(shader_path.c_str(), &pEffect))
 		{
 			auto nTech = 0;
 			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)

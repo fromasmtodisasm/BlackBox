@@ -10,7 +10,6 @@ add_sources(
 	"FunctionHandler.cpp"
 	"ScriptBinding.cpp"
 	"ScriptObject.cpp"
-	"ScriptObjectSystem.cpp"
 	"ScriptSystem.cpp"
 	#[[
 		"LuaDebugger/AboutWnd.h"
@@ -38,7 +37,7 @@ add_sources(
 )
 end_sources()
 
-EngineModule(ScriptSystem PCH "pch.hpp" SOLUTION_FOLDER
+EngineModule(ScriptSystem FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER
 						 "Engine")
 # ##############################################################################
 include(FindLua)

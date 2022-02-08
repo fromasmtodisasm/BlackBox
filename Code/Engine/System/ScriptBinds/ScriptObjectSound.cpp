@@ -81,7 +81,7 @@ int CScriptObjectSound::LoadSound(IFunctionHandler* pH)
 		auto sound = gEnv->pSoundSystem->LoadSound(szFileName, Flags);
 		if (sound)
 		{
-			USER_DATA pUserData = gEnv->pScriptSystem->CreateUserData((int)sound, USER_DATA_SOUND);
+			USER_DATA pUserData = gEnv->pScriptSystem->CreateUserData((INT_PTR)sound, USER_DATA_SOUND);
 			return pH->EndFunction(pUserData);
 		}
 	}

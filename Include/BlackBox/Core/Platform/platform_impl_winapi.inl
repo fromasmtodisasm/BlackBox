@@ -1,3 +1,5 @@
+#include <BlackBox\Core\Platform\Windows.hpp>
+
 #include <string>
 using std::wstring;
 using std::string;

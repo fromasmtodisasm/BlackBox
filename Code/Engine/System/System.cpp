@@ -25,6 +25,9 @@
 #include "WindowsConsole.h"
 
 #include <XML/xml.h>
+#include <BlackBox/Core/Path.hpp>
+
+#include "ScriptObjectSystem.hpp"
 
 
 // Define global cvars.
@@ -88,6 +91,8 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 	gEnv = &m_env;
 #endif
 	m_pValidator = nullptr;
+
+	m_root = PathUtil::AddSlash(PathUtil::GetEnginePath());
 
 	m_env.pConsole = new CXConsole(*this);
 	REGISTER_COMMAND("touch", utils::touch, 0, "touch file");
@@ -444,6 +449,9 @@ bool CSystem::InitScripts()
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_env.pScriptSystem);
 
+	m_ScriptObjectSystem = new CScriptObjectSystem(this, gEnv->pScriptSystem);
+	//CScriptObjectSystem::InitializeTemplate(m_env.pScriptSystem);
+
 	m_ScriptObjectScript = new CScriptObjectScript();
 	CScriptObjectScript::InitializeTemplate(m_env.pScriptSystem);
 
@@ -630,6 +638,9 @@ void CSystem::ShutDown()
 	#if 0
 	SAFE_RELEASE(m_pNetwork);
 	#endif
+#ifdef DOWNLOAD_MANAGER
+	SAFE_RELEASE(m_pDownloadManager);
+#endif //DOWNLOAD_MANAGER
 	SAFE_DELETE(m_pSystemEventDispatcher);
 	SAFE_DELETE(m_pCmdLine);
 	SAFE_DELETE(m_env.pProjectManager);
@@ -872,7 +883,6 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	LAST = NOW;
 	NOW	 = SDL_GetPerformanceCounter();
 
-	//m_pNetwork->Update();
 	#if 0
 	if (!nPauseMode)
 	#endif
@@ -889,9 +899,32 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	GetIRemoteConsole()->Update();
 #endif
 
+	bool bNoUpdate = false;
+#ifndef EXCLUDE_UPDATE_ON_CONSOLE
+	//check what is the current process
+	IProcess* pProcess = GetIProcess();
+	if (!pProcess)
+		return (true); //should never happen
+
+	if (m_sysNoUpdate && m_sysNoUpdate->GetIVal())
+	{
+		bNoUpdate = true;
+		updateFlags = { ESYSUPDATE_IGNORE_AI | ESYSUPDATE_IGNORE_PHYSICS };
+	}
+
+	m_bNoUpdate = bNoUpdate;
+#endif //EXCLUDE_UPDATE_ON_CONSOLE
 	//check if we are quitting from the game
 	if (IsQuitting())
 		return (false);
+
+	//m_pNetwork->Update();
+#ifdef DOWNLOAD_MANAGER
+	if (m_pDownloadManager && !bNoUpdate)
+	{
+		m_pDownloadManager->Update();
+	}
+#endif //DOWNLOAD_MANAGER
 
 	//m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
 	m_DeltaTime = gEnv->pTimer->GetFrameRate()*0.001f;

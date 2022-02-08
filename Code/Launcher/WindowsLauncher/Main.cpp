@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	_CrtMemState s1, s2, s3;
 	_CrtMemCheckpoint(&s1);
 #endif
-	if (InitializeEngine(startupParams))
+	if (InitializeEngine(startupParams, true))
 	{
 		startupParams.pSystem->Start();
 		startupParams.pSystem->Release();

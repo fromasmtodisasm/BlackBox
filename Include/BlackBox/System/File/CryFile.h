@@ -21,6 +21,7 @@
 //#include "ICryPak.h"
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/File/ICryPak.hpp>
+#include <BlackBox/Core/Path.hpp>
 
 #define IfPak(PakFunc, stdfunc, args) (m_pIPak ? m_pIPak->PakFunc args : stdfunc args)
 
@@ -111,8 +112,8 @@ inline bool CCryFile::Open( const char *filename, const char *mode )
 	m_file = m_pIPak->FOpen( filename,mode );
 	if (!m_file)
 	{
-		string adjustedName = string("Data/") + filename;
-		m_file = m_pIPak->FOpen(adjustedName.data(), mode);
+		string adjustedName = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/")).c_str(), filename);
+		m_file = m_pIPak->FOpen(adjustedName.c_str(), mode);
 	}
 	return m_file != NULL;
 }

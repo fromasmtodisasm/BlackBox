@@ -9,7 +9,7 @@ macro(BuildDocs)
 		"${BLACKBOX_DIR}/Code/"
 		"${BLACKBOX_DIR}/Include/"
 		"${BLACKBOX_DIR}/Data/Scripts/"
-		ALL
+		#ALL
 		#USE_STAMP_FILE
 		WORKING_DIRECTORY
 			${BLACKBOX_DIR} 

@@ -167,6 +167,61 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 	#include <BlackBox/Memory/CryMemoryManager_impl.h>
 #endif
 
+#if BB_PLATFORM_WINAPI || BB_PLATFORM_LINUX
+//////////////////////////////////////////////////////////////////////////
+void CryFindEngineRootFolder(unsigned int engineRootPathSize, char* szEngineRootPath)
+{
+		#if BB_PLATFORM_WINAPI
+	char osSeperator = '\\';
+		#elif BB_PLATFORM_POSIX
+	char osSeperator = '/';
+		#endif
+	char szExecFilePath[_MAX_PATH] = "";
+	CryGetExecutableFolder(ARRAY_COUNT(szExecFilePath), szExecFilePath);
+
+	string strTempPath(szExecFilePath);
+	size_t nCurDirSlashPos = strTempPath.size() - 1;
+
+	// Try to find directory named "Engine" or "engine"
+	do
+	{
+		bool bFoundMatch = false;
+		for (int i = 0; i < 2; ++i)
+		{
+			strTempPath.erase(nCurDirSlashPos + 1, string::npos);
+			strTempPath.append(i == 0 ? "Engine" : "engine");
+
+			if(CryDirectoryExists(strTempPath.c_str()))
+			{
+				bFoundMatch = true;
+				break;
+			}
+		}
+		if (bFoundMatch)
+		{
+			break;
+		}
+		// Move up to parent directory
+		nCurDirSlashPos = strTempPath.rfind(osSeperator, nCurDirSlashPos - 1);
+
+	}
+	while (nCurDirSlashPos != 0 && nCurDirSlashPos != string::npos);
+
+	if (nCurDirSlashPos == 0 || nCurDirSlashPos == string::npos)
+	{
+		CryFatalError("Unable to locate CryEngine root folder. Ensure that the 'engine' folder exists in your CryEngine root directory");
+		return;
+	}
+
+	strTempPath.erase(strTempPath.rfind(osSeperator) + 1, string::npos);
+	if (!strcpy(szEngineRootPath, /*engineRootPathSize, */strTempPath.c_str()))
+	{
+		CryFatalError("CryEngine root path is to long. MaxPathSize:%u, PathSize:%u, Path:%s", engineRootPathSize, (uint)strTempPath.length() + 1, strTempPath.c_str());
+	}
+}
+
+#endif 
+
 int64 CryGetTicks()
 {
 	LARGE_INTEGER li;

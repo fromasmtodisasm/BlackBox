@@ -7,6 +7,7 @@
     #include <iostream>
     #include "Driver.hpp"
     #include "Scanner.hpp"
+	#include <BlackBox/Core/Path.hpp>
 	#pragma warning(push, 0)
 	#include "Parser.hpp"
     #define MAX_STR_CONST 16382 // TODO: Change this and make it dynamic... functions could be big
@@ -398,7 +399,8 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     if(s)
         *s = '\0';
     include_stack.push(IncludeData(YY_CURRENT_BUFFER, driver.location, driver.file.c_str()));
-    driver.file = "Data/shaders/fx/" + std::string(YYText());
+    //driver.file = "Data/shaders/fx/" + std::string(YYText());
+    driver.file = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/shaders/fx")).c_str(), YYText());
     driver.location.initialize(&driver.file);
     //line_num  = 1;
     //FILE *fd = NULL;
