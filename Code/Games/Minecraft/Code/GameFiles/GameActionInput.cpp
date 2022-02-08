@@ -275,6 +275,11 @@ void CXGame::InitConsoleCommands()
 		"Loads player position from the tagpoint file.\n"
 		"Usage: loadpos pointname\n");
 	pConsole->AddCommand("SkipCutScene","Movie:StopAllCutScenes()");
+
+	pConsole->AddCommand("download","Downloader.Call(%1,%2)",VF_EXPERIMENTAL,
+		"\n"
+		"Usage: download \"http://google.com\" \"file/name/to/save\"\n"
+		"");
 }
 
 //extern float CameraRayLength = 40.f;
