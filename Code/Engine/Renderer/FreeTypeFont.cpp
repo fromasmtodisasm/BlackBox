@@ -3,8 +3,6 @@
 #	include "FreeTypeFont.hpp"
 #	include <BlackBox/Renderer/IRender.hpp>
 
-#	include "MaterialManager.hpp"
-
 #	include "BaseRenderer.hpp"
 
 #	include <memory>
