@@ -56,7 +56,7 @@
       "displayName": "Windows x64 Ninja Multi-Config",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
-        //"OPTION_EDITOR": "ON",
+        //"OPTION_SANDBOX": "ON",
         "OPTION_STATIC_LINKING": "ON",
         "OPTION_STATIC_LINKING_WITH_GAME_AS_DLL": "ON",
 
@@ -75,7 +75,7 @@
       "generator": "Visual Studio 16 2019",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
-        "OPTION_EDITOR": "OFF",
+        "OPTION_SANDBOX": "OFF",
         "OPTION_STATIC_LINKING": "ON",
         "OPTION_STATIC_LINKING_WITH_GAME_AS_DLL": "ON",
         "QT_SDK_ROOT" : "C:",
@@ -91,7 +91,7 @@
       "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
-        "OPTION_EDITOR": "OFF",
+        "OPTION_SANDBOX": "OFF",
         "OPTION_STATIC_LINKING": "ON",
         "QT_SDK_ROOT" : "C:",
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
@@ -106,7 +106,7 @@
       "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "CMAKE_SYSTEM_VERSION": "10",
-        "OPTION_EDITOR": "ON",
+        "OPTION_SANDBOX": "ON",
         "QT_SDK_ROOT" : "C:",
       
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-Clang.cmake"

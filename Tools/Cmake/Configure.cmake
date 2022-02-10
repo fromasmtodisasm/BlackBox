@@ -49,6 +49,11 @@ endif()
 include("${TOOLS_CMAKE_DIR}/CommonOptions.cmake")# Must be included after SDK_DIR definition
 include("${TOOLS_CMAKE_DIR}/CopyFilesToBin.cmake")
 
+if(OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+	MESSAGE(STATUS "Enabling OPTION_STATIC_LINKING because OPTION_STATIC_LINKING_WITH_GAME_AS_DLL was set")
+	set(OPTION_STATIC_LINKING ON CACHE BOOL "Enabling OPTION_STATIC_LINKING because OPTION_STATIC_LINKING_WITH_GAME_AS_DLL was set" FORCE)
+endif()
+
 if(OPTION_STATIC_LINKING)
 	# Enable static libraries
 	MESSAGE(STATUS "Use Static Linking (.lib/.a)")

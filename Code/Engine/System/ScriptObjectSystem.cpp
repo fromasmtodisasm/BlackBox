@@ -87,8 +87,6 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 
 }
 
-#include <lua.hpp>
-
 /////////////////////////////////////////////////////////////////////////////////
 /*! Creates a download object
     @return download object just created

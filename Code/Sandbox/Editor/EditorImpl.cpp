@@ -2,7 +2,7 @@
 #include "GameEngine.hpp"
 
 #include "PluginManagerWindow.h"
-#include <BlackBox\Core\IGame.hpp>
+#include <BlackBox/Game/IGame.hpp>
 
 #include "EditorCommonInit.h"
 

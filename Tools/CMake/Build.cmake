@@ -5,6 +5,12 @@ include_guard(GLOBAL)
 # Templates do need Configure.cmake to set up some defines.
 # In order to not have duplicate add_subdirectory calls (which causes errors), we need an include guard here.
 
+# Sandbox Editor
+if (OPTION_SANDBOX AND OPTION_STATIC_LINKING)
+	message(STATUS "Disabling Sandbox - requires dynamic linking")
+	set(OPTION_SANDBOX OFF)
+endif()
+
 if(OPTION_ENGINE OR OPTION_SANDBOX)
 	# Add custom project with just listing of cmake files
 	add_subdirectory("${TOOLS_CMAKE_DIR}")
@@ -21,7 +27,7 @@ if(OPTION_ENGINE AND NOT PROJECT_BUILD)
 	add_subdirectory("${BLACKBOX_DIR}/Tools/")
 endif()
 	
-if (OPTION_EDITOR)
+if (OPTION_SANDBOX AND WINDOWS)
 	if (NOT QT_SDK_ROOT)
 		message(FATAL_ERROR "Qt Sdk Root Not Installed. --- ${QT_SDK_ROOT}")
 	endif()

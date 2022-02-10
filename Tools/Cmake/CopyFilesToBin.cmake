@@ -72,7 +72,7 @@ macro(copy_binary_files_to_target)
 	message( STATUS "copy_binary_files_to_target start ${BUILD_PLATFORM}" )
 	set_base_outdir()
 
-	if (OPTION_EDITOR)
+	if (OPTION_SANDBOX)
 		# Qt: Debug && Profile will use the same win_x64 folder, for Release Qt will not be deployed. Empty second arg do the job.
 		# d3dcompiler_47.dll file from Qt bin should not be copied in output folder
 		#deploy_runtime_files("${QT_DEPLOY_ROOT}/bin/[^d][^3]*.dll" "")
