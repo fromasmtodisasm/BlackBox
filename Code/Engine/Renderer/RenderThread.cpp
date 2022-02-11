@@ -4,7 +4,7 @@
 void CRenderThread::ThreadEntry()
 {
 #ifdef MULTITHREADED_RENDER
-	threadID renderThreadId			= GetCurrentThreadId();
+	threadID renderThreadId                  = GetCurrentThreadId();
 	gRenDev->m_RenderThread->m_nRenderThread = renderThreadId;
 	//CNameTableR::m_nRenderThread	= renderThreadId;
 	//gEnv->pCryPak->SetRenderThreadId(renderThreadId);
@@ -57,5 +57,4 @@ void SRenderThread::ProcessCommands()
 		cmd();
 		Commands.pop_front();
 	}
-
 }

@@ -15,18 +15,17 @@
 
 _DECLARE_SCRIPTABLEEX(CHTTPDownloader)
 
-
 //-------------------------------------------------------------------------------------------------
 CHTTPDownloader::CHTTPDownloader()
-	: m_hThread(NULL),
-	m_hINET(NULL),
-	m_hUrl(NULL),
-	m_pBuffer(nullptr),
-	m_iFileSize(0),
-	m_iState(HTTP_STATE_NONE),
-	m_bContinue(false),
-	m_pSystem(nullptr),
-	m_pParent(nullptr)
+    : m_hThread(NULL)
+    , m_hINET(NULL)
+    , m_hUrl(NULL)
+    , m_pBuffer(nullptr)
+    , m_iFileSize(0)
+    , m_iState(HTTP_STATE_NONE)
+    , m_bContinue(false)
+    , m_pSystem(nullptr)
+    , m_pParent(nullptr)
 {
 }
 
@@ -36,16 +35,16 @@ CHTTPDownloader::~CHTTPDownloader()
 }
 
 //-------------------------------------------------------------------------------------------------
-void CHTTPDownloader::InitializeTemplate(IScriptSystem *pSS)
+void CHTTPDownloader::InitializeTemplate(IScriptSystem* pSS)
 {
-    _ScriptableEx<CHTTPDownloader>::InitializeTemplate(pSS);
+	_ScriptableEx<CHTTPDownloader>::InitializeTemplate(pSS);
 
-    REG_FUNC(CHTTPDownloader, Download);
-    REG_FUNC(CHTTPDownloader, Cancel);
-    REG_FUNC(CHTTPDownloader, Release);
-    REG_FUNC(CHTTPDownloader, GetURL);
-    REG_FUNC(CHTTPDownloader, GetFileName);
-    REG_FUNC(CHTTPDownloader, GetFileSize);
+	REG_FUNC(CHTTPDownloader, Download);
+	REG_FUNC(CHTTPDownloader, Cancel);
+	REG_FUNC(CHTTPDownloader, Release);
+	REG_FUNC(CHTTPDownloader, GetURL);
+	REG_FUNC(CHTTPDownloader, GetFileName);
+	REG_FUNC(CHTTPDownloader, GetFileSize);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -61,7 +60,7 @@ int CHTTPDownloader::Create(ISystem* pISystem, CDownloadManager* pParent)
 //-------------------------------------------------------------------------------------------------
 int CHTTPDownloader::Download(const char* szURL, const char* szDestination)
 {
-	m_szURL = szURL;
+	m_szURL     = szURL;
 	m_szDstFile = szDestination;
 	m_bContinue = 1;
 
@@ -89,7 +88,7 @@ void CHTTPDownloader::CreateDownloadThread()
 {
 	DWORD dwThreadId = 0;
 
-	m_hThread = ::CreateThread(0, 0, (LPTHREAD_START_ROUTINE)DownloadProc, this, 0, &dwThreadId);
+	m_hThread        = ::CreateThread(0, 0, (LPTHREAD_START_ROUTINE)DownloadProc, this, 0, &dwThreadId);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -97,7 +96,7 @@ DWORD CHTTPDownloader::DoDownload()
 {
 	m_iState = HTTP_STATE_WORKING;
 
-	m_hINET = InternetOpen("", INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, 0);
+	m_hINET  = InternetOpen("", INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, 0);
 
 	if (!m_hINET)
 	{
@@ -114,7 +113,7 @@ DWORD CHTTPDownloader::DoDownload()
 	}
 
 	DWORD dwFlags = INTERNET_FLAG_NO_CACHE_WRITE | INTERNET_FLAG_NO_COOKIES | INTERNET_FLAG_NO_UI | INTERNET_FLAG_RELOAD;
-	m_hUrl = InternetOpenUrl(m_hINET, m_szURL.c_str(), 0, 0, dwFlags, 0);
+	m_hUrl        = InternetOpenUrl(m_hINET, m_szURL.c_str(), 0, 0, dwFlags, 0);
 
 	if (!m_hUrl)
 	{
@@ -130,9 +129,9 @@ DWORD CHTTPDownloader::DoDownload()
 		return 1;
 	}
 
-	char szBuffer[64] = { 0 };
-	DWORD dwSize = 64;
-	int bQuery = HttpQueryInfo(m_hUrl, HTTP_QUERY_CONTENT_LENGTH, szBuffer, &dwSize, 0);
+	char  szBuffer[64] = {0};
+	DWORD dwSize       = 64;
+	int   bQuery       = HttpQueryInfo(m_hUrl, HTTP_QUERY_CONTENT_LENGTH, szBuffer, &dwSize, 0);
 
 	if (bQuery)
 	{
@@ -228,8 +227,8 @@ void CHTTPDownloader::Release()
 		m_pBuffer = 0;
 	}
 
-	m_hINET = 0;
-	m_hUrl = 0;
+	m_hINET     = 0;
+	m_hUrl      = 0;
 	m_iFileSize = 0;
 	m_szURL.clear();
 	m_szDstFile.clear();
@@ -248,7 +247,7 @@ void CHTTPDownloader::OnError()
 {
 	m_pSystem->GetILog()->LogError("DOWNLOAD ERROR: %s", CHTTPDownloader::GetURL().c_str());
 
-	IScriptObject* pScriptObject = GetScriptObject();
+	IScriptObject*  pScriptObject   = GetScriptObject();
 
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
@@ -267,7 +266,7 @@ void CHTTPDownloader::OnComplete()
 {
 	m_pSystem->GetILog()->Log("DOWNLOAD COMPLETE: %s", CHTTPDownloader::GetURL().c_str());
 
-	IScriptObject* pScriptObject = GetScriptObject();
+	IScriptObject*  pScriptObject   = GetScriptObject();
 
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
@@ -286,7 +285,7 @@ void CHTTPDownloader::OnCancel()
 {
 	m_pSystem->GetILog()->Log("DOWNLOAD CANCELED: %s", CHTTPDownloader::GetURL().c_str());
 
-	IScriptObject* pScriptObject = GetScriptObject();
+	IScriptObject*  pScriptObject   = GetScriptObject();
 
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
@@ -307,7 +306,7 @@ int CHTTPDownloader::Download(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(2);
 
-	char* szURL = 0;
+	char* szURL      = 0;
 	char* szFileName = 0;
 
 	pH->GetParam(1, szURL);

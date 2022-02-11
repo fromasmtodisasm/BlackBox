@@ -4,4 +4,3 @@
 CNullCryFont CCryNullFont::ms_nullFont;
 
 #endif // USE_NULLFONT
-

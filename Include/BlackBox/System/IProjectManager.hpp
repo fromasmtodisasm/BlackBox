@@ -1,13 +1,12 @@
 #pragma once
 
 using CryGUID = int64[2];
-class SmartScriptObject; 
+class SmartScriptObject;
 
 namespace Serialization
 {
 	class Archive
 	{
-
 	public:
 		enum Type
 		{
@@ -15,7 +14,7 @@ namespace Serialization
 			OUTPUT
 		};
 		Archive(Type type)
-			: m_Type(type)
+		    : m_Type(type)
 		{
 		}
 		bool isOutput() { return m_Type == OUTPUT; }
@@ -34,7 +33,7 @@ namespace Serialization
 
 	using IArchive = Archive;
 
-}
+} // namespace Serialization
 
 //! Latest version of the project syntax
 //! Bump this when syntax changes, or default plug-ins are added
@@ -45,27 +44,27 @@ constexpr unsigned int LatestProjectFileVersion = 4;
 struct SProject
 {
 	// Serialize the project file
-	bool Serialize(SmartScriptObject& ar);
+	bool                                                         Serialize(SmartScriptObject& ar);
 
-	unsigned int version = 0;
+	unsigned int                                                 version = 0;
 	// why do we need this?
-	string type;
+	string                                                       type;
 	// Project name
-	string	name;
-	CryGUID guid;
+	string                                                       name;
+	CryGUID                                                      guid;
 	// Path to the .cryproject file
-	string filePath;
-	string engineVersionId;
+	string                                                       filePath;
+	string                                                       engineVersionId;
 
 	// Directory containing the .cryproject file
-	string rootDirectory;
+	string                                                       rootDirectory;
 	// Directory game will search for assets in (relative to project directory)
-	string assetDirectory;
+	string                                                       assetDirectory;
 	// Full path to the asset directory
-	string assetDirectoryFullPath;
+	string                                                       assetDirectoryFullPath;
 
 	// Directory containing native and managed code (relative to project directory)
-	string codeDirectory;
+	string                                                       codeDirectory;
 
 	// List of plug-ins to load
 	//std::vector<SPluginDefinition> plugins;
@@ -73,9 +72,9 @@ struct SProject
 	std::unordered_map<string, string, stl::hash_strcmp<string>> legacyGameDllPaths;
 
 	// Specialized CVar values for the project
-	std::map<string, string> consoleVariables;
+	std::map<string, string>                                     consoleVariables;
 	// Specialized console commands for the project
-	std::map<string, string> consoleCommands;
+	std::map<string, string>                                     consoleCommands;
 };
 
 template<unsigned int version>
@@ -91,7 +90,7 @@ struct SProjectFileParser<LatestProjectFileVersion>
 		struct SRequire
 		{
 			SRequire(SProject& _project)
-				: project(_project)
+			    : project(_project)
 			{
 			}
 
@@ -107,7 +106,7 @@ struct SProjectFileParser<LatestProjectFileVersion>
 		struct SInfo
 		{
 			SInfo(SProject& _project)
-				: project(_project)
+			    : project(_project)
 			{
 			}
 
@@ -144,12 +143,12 @@ struct SProjectFileParser<LatestProjectFileVersion>
 					ar(shared, "shared", "shared");
 				}
 
-				string	name;
+				string  name;
 				SShared shared;
 			};
 
 			SContent(SProject& _project)
-				: project(_project)
+			    : project(_project)
 			{
 			}
 
@@ -158,11 +157,11 @@ struct SProjectFileParser<LatestProjectFileVersion>
 				if (ar.isOutput())
 				{
 					assetDirectories = {project.assetDirectory};
-					codeDirectories	 = {project.codeDirectory};
+					codeDirectories  = {project.codeDirectory};
 
 					libraries.resize(1);
-					libraries[0].name				 = project.name;
-					libraries[0].shared.libPathAny	 = project.legacyGameDllPaths["any"];
+					libraries[0].name                = project.name;
+					libraries[0].shared.libPathAny   = project.legacyGameDllPaths["any"];
 					libraries[0].shared.libPathWin64 = project.legacyGameDllPaths["win_x64"];
 					libraries[0].shared.libPathWin32 = project.legacyGameDllPaths["win_x86"];
 				}
@@ -178,18 +177,18 @@ struct SProjectFileParser<LatestProjectFileVersion>
 
 					if (!libraries.empty())
 					{
-						project.legacyGameDllPaths["any"]	  = libraries[0].shared.libPathAny;
+						project.legacyGameDllPaths["any"]     = libraries[0].shared.libPathAny;
 						project.legacyGameDllPaths["win_x64"] = libraries[0].shared.libPathWin64;
 						project.legacyGameDllPaths["win_x86"] = libraries[0].shared.libPathWin32;
 					}
 				}
 			}
 
-			std::vector<string>	  assetDirectories;
-			std::vector<string>	  codeDirectories;
+			std::vector<string>   assetDirectories;
+			std::vector<string>   codeDirectories;
 			std::vector<SLibrary> libraries;
 
-			SProject& project;
+			SProject&             project;
 		};
 
 		ar(project.type, "type", "type");
@@ -202,16 +201,14 @@ struct SProjectFileParser<LatestProjectFileVersion>
 	}
 };
 
-
-
 //! Main interface used to manage the currently run project (known by the .cryproject extension).
 struct IProjectManager
 {
 	virtual ~IProjectManager() {}
 
 	//! Gets the human readable name of the game, for example used for updating the window title on desktop
-	virtual const char* GetCurrentProjectName() const = 0;
-	virtual bool		ParseProjectFile()			  = 0;
+	virtual const char* GetCurrentProjectName() const              = 0;
+	virtual bool        ParseProjectFile()                         = 0;
 	//! Gets the absolute path to the root of the project directory, where the .cryproject resides.
 	//! \return Path without trailing separator.
 	virtual const char* GetCurrentProjectDirectoryAbsolute() const = 0;

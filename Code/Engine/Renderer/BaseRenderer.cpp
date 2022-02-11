@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 CRenderer* gRenDev = NULL;
 
-int		   RenderCVars::CV_r_GetScreenShot;
+int        RenderCVars::CV_r_GetScreenShot;
 static int dump_shaders_on_load = false;
 FxParser*  g_FxParser;
 ShaderMan* gShMan;
@@ -30,7 +30,7 @@ ShaderMan* gShMan;
 
 class CNullFont : public IFont
 {
-  public:
+public:
 	bool  Init(const char* font, unsigned int w, unsigned int h) override { return true; };
 	void  RenderText(const std::string_view text, float x, float y, float scale, float color[4]) override{};
 	float GetXPos() override { return 0.f; };
@@ -66,18 +66,18 @@ void TestFx(IConsoleCmdArgs* args)
 }
 
 CRenderer::CRenderer()
-	: m_viewPort(0, 0, 0, 0)
+    : m_viewPort(0, 0, 0, 0)
 {
 }
 
 void CRenderer::Release()
 {
-	//FIXME:
-	#if 0
+//FIXME:
+#if 0
 	delete this;
-	#else
+#else
 	this->~CRenderer();
-	#endif
+#endif
 }
 
 void CRenderer::RegisterCallbackClient(IRendererCallbackClient* pClient)
@@ -169,7 +169,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	m_pSystem = gEnv->pSystem;
 	InitCVars();
 	IWindow* result = m_Window = window;
-	bInFullScreen			   = fullscreen;
+	bInFullScreen              = fullscreen;
 	if (window == nullptr)
 		return nullptr;
 	//=======================
@@ -198,7 +198,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #if 0
 	g_FxParser = &s_FxParser;
 #else
-	g_FxParser		= new FxParser;
+	g_FxParser      = new FxParser;
 #endif
 #if 0
 	if (!InitResourceManagers())
@@ -211,9 +211,9 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #ifndef VK_RENDERER
 	m_BufferManager = new CBufferManager();
 #endif
-	#if 0
+#if 0
 	CreateQuad();
-	#endif
+#endif
 	gShMan = new ShaderMan;
 	//=======================
 	//pd.vs.macro["STORE_TEXCOORDS"] = "1";
@@ -232,9 +232,9 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #endif
 	gEnv->pAuxGeomRenderer = m_RenderAuxGeom;
 
-	#if 0
+#if 0
 	CreateRenderTarget();
-	#endif
+#endif
 
 	auto* dm = static_cast<SDL_DisplayMode*>(window->GetDesktopMode());
 #if 0
@@ -269,11 +269,11 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 
 int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 {
-	static int		displayInUse = 0; /* Only using first display */
-	int				numModes	 = 0;
-	int				i			 = 0;
+	static int      displayInUse = 0; /* Only using first display */
+	int             numModes     = 0;
+	int             i            = 0;
 	SDL_DisplayMode mode;
-	Uint32			f;
+	Uint32          f;
 
 	gEnv->pLog->Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
 
@@ -294,10 +294,10 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 				gEnv->pLog->Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
 				return 1;
 			}
-			f = mode.format;
+			f                   = mode.format;
 
-			formats[i].m_BPP	= SDL_BITSPERPIXEL(f);
-			formats[i].m_Width	= mode.w;
+			formats[i].m_BPP    = SDL_BITSPERPIXEL(f);
+			formats[i].m_Width  = mode.w;
 			formats[i].m_Height = mode.h;
 		}
 	}
@@ -320,8 +320,8 @@ void RenderCVars::InitCVars()
 	REGISTER_CVAR(r_DisplayIndex, r_DisplayIndex, VF_DUMPTODISK, "");
 	//REGISTER_CVAR3("r_GetScreenShot", CV_r_GetScreenShot, 0, VF_NULL,
 	REGISTER_CVAR3("r_getscreenshot", CV_r_GetScreenShot, 0, VF_NULL,
-				   "To capture one screenshot (variable is set to 0 after capturing)\n"
-				   "0=do not take a screenshot (default), 1=save a screenshot (together with .HDR if enabled), 2=save a screenshot");
+	               "To capture one screenshot (variable is set to 0 after capturing)\n"
+	               "0=do not take a screenshot (default), 1=save a screenshot (together with .HDR if enabled), 2=save a screenshot");
 	REGISTER_CVAR(r_GraphicsDeviceId, r_GraphicsDeviceId, VF_DUMPTODISK, "");
 }
 
@@ -380,10 +380,10 @@ void CRenderer::ReleaseIndexBuffer(SVertexStream* dest)
 void CRenderer::CreateQuad()
 {
 	SVF_P3F_T2F verts[] = {
-		{{0, 1, 0}, {0, 1}},
-		{{0, 0, 0}, {0, 0}},
-		{{1, 1, 0}, {1, 1}},
-		{{1, 0, 0}, {1, 0}}};
+	    {{0, 1, 0}, {0, 1}},
+	    {{0, 0, 0}, {0, 0}},
+	    {{1, 1, 0}, {1, 1}},
+	    {{1, 0, 0}, {1, 0}}};
 	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "screen_quad", false);
 	UpdateBuffer(m_VertexBuffer, verts, 4, false);
 }
@@ -460,9 +460,9 @@ void CRenderer::ProjectToScreen(float ptx, float pty, float ptz, float* sx, floa
 {
 	auto s = glm::project(Legacy::Vec3(ptx, pty, ptz), m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), Legacy::Vec4(0, 0, GetWidth(), GetHeight()));
 
-	*sx = s.x;
-	*sy = s.y;
-	*sz = s.z;
+	*sx    = s.x;
+	*sy    = s.y;
+	*sz    = s.z;
 }
 
 int CRenderer::UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4])
@@ -477,7 +477,7 @@ int CRenderer::UnProjectFromScreen(float sx, float sy, float sz, float* px, floa
 	glGetIntegerv(GL_VIEWPORT, &vp[0]); // Retrieves The Viewport Values (X, Y, Width, Height)
 #endif
 	auto p = glm::unProject(
-		glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+	    glm::vec3(sx, GetHeight() - sy, sz), m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 	*px = p.x;
 	*py = p.y;
 	*pz = p.z;
@@ -506,7 +506,7 @@ Legacy::Vec3 CRenderer::GetUnProject(const Legacy::Vec3& WindowCoords, const CCa
 {
 	auto& c = WindowCoords;
 	return glm::unProject(
-		glm::vec3(c.x, GetHeight() - c.y, 0), cam.GetViewMatrix(), cam.GetProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
+	    glm::vec3(c.x, GetHeight() - c.y, 0), cam.GetViewMatrix(), cam.GetProjectionMatrix(), glm::vec4(0, 0, GetWidth(), GetHeight()));
 }
 
 int CRenderer::GetFrameID(bool bIncludeRecursiveCalls /* = true*/)
@@ -541,7 +541,7 @@ IShader* CRenderer::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 void CRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 {
 	//TODO: acount ortox and ortoy
-	ortho	   = Vec2(ortox, ortoy);
+	ortho      = Vec2(ortox, ortoy);
 	m_Is2DMode = enable;
 }
 
@@ -566,10 +566,10 @@ IRenderAuxGeom* CRenderer::GetIRenderAuxGeom()
 }
 
 #ifdef LINUX
-#	include <experimental/filesystem>
+	#include <experimental/filesystem>
 using fs = std::experimental::filesystem;
 #else
-#	include <filesystem>
+	#include <filesystem>
 namespace fs = std::filesystem;
 #endif
 #include <BlackBox/Core/Utils.hpp>
@@ -579,25 +579,25 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 #define FX_BASE "tmp"
 	[[nodiscard]] int GetCount() const override
 	{
-		#if 0
-#ifndef LINUX && 0
+#if 0
+	#ifndef LINUX && 0
 		int cnt = std::count_if(
 			fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
 			fs::directory_iterator::directory_iterator(),
 			static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
 		return cnt;
+	#else
+		return 0;
+	#endif
 #else
 		return 0;
 #endif
-		#else
-		return 0;
-		#endif
 	};
 
 	const char* GetValue(int nIndex) const override
 	{
 #ifndef LINUX
-		int				   i = 0;
+		int                i = 0;
 		static std::string file;
 		for (fs::directory_iterator next(fs::path(FX_BASE)), end; next != end; ++next, ++i)
 		{
@@ -615,7 +615,7 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 };
 
 static STestFXAutoComplete s_TestFXAutoComplete;
-void					   CRenderer::InitConsoleCommands() const
+void                       CRenderer::InitConsoleCommands() const
 {
 	/*
   REGISTER_COMMAND(
@@ -673,12 +673,12 @@ void CRenderer::Flush()
 	D3DPERF_BeginEvent(D3DC_Blue, L"Flush");
 
 #ifndef VK_RENDERER
-	auto pvb			 = perViewBuffer;
-	pvb->Projection		 = m_Camera.GetProjectionMatrix();
-	pvb->View			 = m_Camera.GetViewMatrix();
+	auto pvb             = perViewBuffer;
+	pvb->Projection      = m_Camera.GetProjectionMatrix();
+	pvb->View            = m_Camera.GetViewMatrix();
 	pvb->OrthoProjection = glm::ortho(0.f, float(GetWidth()), float(GetHeight()), 0.f);
-	pvb->ViewProjection	 = pvb->Projection * pvb->View;
-	pvb->Eye			 = gEnv->pSystem->GetViewCamera().GetPos();
+	pvb->ViewProjection  = pvb->Projection * pvb->View;
+	pvb->Eye             = gEnv->pSystem->GetViewCamera().GetPos();
 
 	pvb.CopyToDevice();
 #endif
@@ -699,19 +699,19 @@ void CRenderer::Sh_Reload()
 
 void CRenderer::ShutDown()
 {
-	#if 0
+#if 0
 	PEffect effect{nullptr};
 	g_FxParser->Parse("123", &effect);
 	gEnv->pConsole->RemoveConsoleVarSink(this);
-	#endif
+#endif
 	for (size_t i = 0; i < m_Fonts.size(); i++)
 	{
 		m_Fonts[i]->Release();
 	}
-	//FIXME:
-	#if 0
+//FIXME:
+#if 0
 	ReleaseBuffer(m_VertexBuffer);
-	#endif
+#endif
 	SAFE_DELETE(m_RenderAuxGeom);
 #ifndef VK_RENDERER
 	SAFE_DELETE(m_BufferManager);

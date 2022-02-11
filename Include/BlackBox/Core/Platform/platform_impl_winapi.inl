@@ -1,8 +1,8 @@
 #include <BlackBox\Core\Platform\Windows.hpp>
 
 #include <string>
-using std::wstring;
 using std::string;
+using std::wstring;
 
 #include <codecvt> // for std::codecvt_utf8
 #include <locale>  // for std::wstring_convert
@@ -115,8 +115,8 @@ void CrySetCurrentWorkingDirectory(const char* szWorkingDirectory)
 #include <BlackBox/Core/Path.hpp>
 void CryGetExecutableFolder(unsigned int pathSize, char* szPath)
 {
-	/*W*/CHAR filePath[512];
-	size_t nLen = GetModuleFileNameA(CryGetCurrentModule(), filePath, CRY_ARRAY_COUNT(filePath));
+	/*W*/ CHAR filePath[512];
+	size_t     nLen = GetModuleFileNameA(CryGetCurrentModule(), filePath, CRY_ARRAY_COUNT(filePath));
 
 	if (nLen >= CRY_ARRAY_COUNT(filePath))
 	{
@@ -214,26 +214,26 @@ uint32 CryGetFileAttributes(const char* lpFileName)
 	// Normal GetFileAttributes not available anymore in non desktop applications (eg Durango)
 	WIN32_FILE_ATTRIBUTE_DATA data;
 	BOOL res;
-#if BB_PLATFORM_DURANGO
+	#if BB_PLATFORM_DURANGO
 	res = GetFileAttributesExA(lpFileName, GetFileExInfoStandard, &data);
-#else
+	#else
 	wstring widePath;
 	Unicode::Convert(widePath, lpFileName);
 	res = GetFileAttributesExW(widePath.c_str(), GetFileExInfoStandard, &data);
-#endif
+	#endif
 	return res != 0 ? data.dwFileAttributes : -1;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CrySetFileAttributes(const char* lpFileName, uint32 dwFileAttributes)
 {
-#if BB_PLATFORM_DURANGO
+	#if BB_PLATFORM_DURANGO
 	return SetFileAttributesA(lpFileName, dwFileAttributes) != 0;
-#else
+	#else
 	wstring widePath;
 	Unicode::Convert(widePath, lpFileName);
 	return SetFileAttributesW(widePath.c_str(), dwFileAttributes) != 0;
-#endif
+	#endif
 }
 #endif
 
@@ -281,7 +281,7 @@ namespace
 			return eQR_None;
 		}
 	}
-}
+} // namespace
 
 EQuestionResult CryMessageBoxImpl(const char* szText, const char* szCaption, EMessageBox type)
 {
@@ -306,15 +306,15 @@ const char* CryGetSystemErrorMessage(DWORD error)
 		LPVOID lpMsgBuf = 0;
 
 		if (FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			error,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR)&lpMsgBuf,
-			0,
-			NULL))
+		        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		            FORMAT_MESSAGE_FROM_SYSTEM |
+		            FORMAT_MESSAGE_IGNORE_INSERTS,
+		        NULL,
+		        error,
+		        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+		        (LPTSTR)&lpMsgBuf,
+		        0,
+		        NULL))
 		{
 			strcpy(szBuffer, (char*)lpMsgBuf);
 			LocalFree(lpMsgBuf);

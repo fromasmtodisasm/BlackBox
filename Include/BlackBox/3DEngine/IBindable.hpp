@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //	File: IBindable.h
@@ -19,8 +19,8 @@
 
 //////////////////////////////////////////////////////////////////////
 // Description:
-//     This interface define a way to allow an object to be bound to a 
-//     character bone. An IBindable should usually be attached to a bone using 
+//     This interface define a way to allow an object to be bound to a
+//     character bone. An IBindable should usually be attached to a bone using
 //     member functions of ICryCharInstance.
 struct IBindable
 {
@@ -29,11 +29,11 @@ struct IBindable
 	// Arguments:
 	//     Mins - Position of the bottom left close corner of the bounding box
 	//     Maxs - Position of the top right far corner of the bounding box
-	virtual void GetBBox(Legacy::Vec3& Mins, Legacy::Vec3& Maxs)=0;
+	virtual void                    GetBBox(Legacy::Vec3& Mins, Legacy::Vec3& Maxs)                                                                                          = 0;
 
 	// Description:
-	//     Will return the position of the helper named in the argument. The 
-	//     helper should have been specified during the exporting process of 
+	//     Will return the position of the helper named in the argument. The
+	//     helper should have been specified during the exporting process of
 	//     the cgf file.
 	// Arguments:
 	//     szHelperName - A null terminated string holding the name of the helper
@@ -41,11 +41,11 @@ struct IBindable
 	//     A Legacy::Vec3 object which contains the position.
 	// Summary:
 	//     Gets the position of a specified helper
-	virtual Legacy::Vec3 GetHelperPos(const char * szHelperName) = 0;
+	virtual Legacy::Vec3            GetHelperPos(const char* szHelperName)                                                                                                   = 0;
 
 	// Description:
-	//     Will return the matrix of the helper named in the argument. The 
-	//     helper should have been specified during the exporting process of 
+	//     Will return the matrix of the helper named in the argument. The
+	//     helper should have been specified during the exporting process of
 	//     the cgf file.
 	// Arguments:
 	//     szHelperName - A null terminated string holding the name of the helper
@@ -53,31 +53,31 @@ struct IBindable
 	//     A Legacy::Matrix44 of the object
 	// Summary:
 	//     Gets the matrix of a specified helper
-	virtual const Legacy::Matrix44 * GetHelperMatrixByName(const char * szHelperName) = 0;
+	virtual const Legacy::Matrix44* GetHelperMatrixByName(const char* szHelperName)                                                                                          = 0;
 
 	// renders the shadow volumes of this whole object (together with attachments if any)
 	// the implementation may or may not implement the limit lod functionality: if it does,
 	// it will render the specified or lower LOD
-	virtual void RenderShadowVolumes(const struct SRendParams *pParams, int nLimitLod = -1)=0;
+	virtual void                    RenderShadowVolumes(const struct SRendParams* pParams, int nLimitLod = -1)                                                               = 0;
 
 	//! Sets shader template for rendering
-	virtual bool SetShaderTemplate(int nTemplate, const char *TemplName, const char *ShaderName, bool bOnlyRegister=false, int * pnNewTemplateId=NULL)=0;
+	virtual bool                    SetShaderTemplate(int nTemplate, const char* TemplName, const char* ShaderName, bool bOnlyRegister = false, int* pnNewTemplateId = NULL) = 0;
 
 	// Description:
 	//     Values for the nFlags parameter of SetShaderTemplateName.
 	// Summary:
 	//     Flags used for SetShaderTemplateName
-	enum ECharShaderFlags 
+	enum ECharShaderFlags
 	{
 		FLAGS_SET_SHADER_RECURSIVE = 1
 	};
 
 	//! Set shader template to be used with character
-	virtual bool SetShaderTemplateName(const char *TemplName, int Id, const char *ShaderName=0,struct IMatInfo *pCustomMaterial=0,unsigned nFlags = 0)
+	virtual bool SetShaderTemplateName(const char* TemplName, int Id, const char* ShaderName = 0, struct IMatInfo* pCustomMaterial = 0, unsigned nFlags = 0)
 	{
 		// [Sergiy] please ask Tiago about details: this function maps to SetShaderTemplate because some of the derived classes (IStatObj)
 		// don't implement it, but do implement SetShaderTemplate. The mapping is exactly like in ScriptObjectEntity::SetShader function
-		return SetShaderTemplate(-1,TemplName,NULL);
+		return SetShaderTemplate(-1, TemplName, NULL);
 	}
 
 	//there must be only one function
@@ -89,43 +89,43 @@ struct IBindable
 	//     nLogLevel - Level of the LOD
 	// Summary:
 	//     Renders the object
-	virtual void Render(const struct SRendParams & rParams,const Legacy::Vec3& t, int nLodLevel)=0;
+	virtual void                     Render(const struct SRendParams& rParams, const Legacy::Vec3& t, int nLodLevel) = 0;
 
 	//! Start the specified animation with the given parameters, if the bindable is an animatable object
-	virtual bool StartAnimation (const char* szAnimName, const struct CryCharAnimationParams& params){return false;}
+	virtual bool                     StartAnimation(const char* szAnimName, const struct CryCharAnimationParams& params) { return false; }
 
 	//! Start the specified by parameters morph target, if the bindable is a morphable object
-	virtual void StartMorph (const char* szMorphTarget, const struct CryCharMorphParams& params) {}
+	virtual void                     StartMorph(const char* szMorphTarget, const struct CryCharMorphParams& params) {}
 
 	//! Resets all animation layers ( stops all animations )
-	virtual void ResetAnimations() {}
+	virtual void                     ResetAnimations() {}
 
 	//! Stops all morphs
-	virtual void StopAllMorphs() {}
+	virtual void                     StopAllMorphs() {}
 
 	//! freezes all currently playing morphs at the point they're at
-	virtual void FreezeAllMorphs(){}
+	virtual void                     FreezeAllMorphs() {}
 
 	//! Processes skining (call this function every frame to animate character)
 	//! dwFlags	is a bitwise OR of one of the flags specified in the UpdateEnum enumeration
-	virtual void Update (Legacy::Vec3 vPos = Legacy::Vec3(0,0,0), float fRadius=0, unsigned uFlags = 0) {}
+	virtual void                     Update(Legacy::Vec3 vPos = Legacy::Vec3(0, 0, 0), float fRadius = 0, unsigned uFlags = 0) {}
 
 	//! start preloading of object resources
-	virtual void PreloadResources(float fDist, float fTime, int dwFlags) = 0;
+	virtual void                     PreloadResources(float fDist, float fTime, int dwFlags) = 0;
 
 	// Summary:
 	//     Get the character instance, if valid
 	// Return Value:
-	//     A pointer to an IStatObj object if the IBindable represent a static 
+	//     A pointer to an IStatObj object if the IBindable represent a static
 	//     object, else the NULL value will be returned.
-	virtual struct IStatObj* GetIStatObj() {return NULL;}
+	virtual struct IStatObj*         GetIStatObj() { return NULL; }
 
 	// Summary:
 	//     Get the character instance, if valid
 	// Return Value:
-	//     A pointer to an ICryCharInstance object if the IBindable represent 
+	//     A pointer to an ICryCharInstance object if the IBindable represent
 	//     a character instance, else the NULL value will be returned.
-	virtual struct ICryCharInstance* GetICryCharInstance() {return NULL;}
+	virtual struct ICryCharInstance* GetICryCharInstance() { return NULL; }
 };
 
 #endif

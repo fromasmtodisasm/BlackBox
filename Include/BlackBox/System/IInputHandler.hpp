@@ -1,7 +1,7 @@
 #pragma once
 #if 0
-#include <BlackBox/ICommand.hpp>
-#include <SFML/Window/Event.hpp>
+	#include <BlackBox/ICommand.hpp>
+	#include <SFML/Window/Event.hpp>
 
 struct IInputEventListener
 {

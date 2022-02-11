@@ -3,8 +3,8 @@
 inline void PrintRightAlignedText(float posY, const char* szText, IFont* pFont = nullptr)
 {
 	SDrawTextInfo info;
-	float		  rightMargin = 20;
-	info.font				  = pFont;
+	float         rightMargin = 20;
+	info.font                 = pFont;
 #if 0
 		auto& color = info.color;
 		color[0]	= 1.0; //green

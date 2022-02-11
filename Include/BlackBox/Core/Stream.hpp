@@ -7,37 +7,37 @@
 //////////////////////////////////////////////////////////////////////
 
 #if _MSC_VER > 1000
-#	pragma once
+	#pragma once
 #endif // _MSC_VER > 1000
 
 //////////////////////////////////////////////////////////////////////
 // size in bytes
 #define DEFAULT_STREAM_BYTESIZE 1124
-#define MAX_STRING_SIZE 256
+#define MAX_STRING_SIZE         256
 
 #ifndef CHAR_BIT
-#	define CHAR_BIT 8
+	#define CHAR_BIT 8
 #endif //CHAR_BIT
 
-#define DIV8(n) ((n) >> 3)
-#define MODULO8(n) ((n)&0x00000007)
-#define BITS2BYTES(n) (MODULO8((n)) ? (DIV8((n)) + 1) : DIV8((n)))
-#define BYTES2BITS(n) ((n) << 3)
+#define DIV8(n)           ((n) >> 3)
+#define MODULO8(n)        ((n)&0x00000007)
+#define BITS2BYTES(n)     (MODULO8((n)) ? (DIV8((n)) + 1) : DIV8((n)))
+#define BYTES2BITS(n)     ((n) << 3)
 #define GET_BYTE_INDEX(n) DIV8((n))
 #include <BlackBox/Core/ICompressionHelper.hpp> // ICompressionHelper
-#include <BlackBox/Game/IGame.hpp>				// IGame
-#include <BlackBox/Math/MathHelper.hpp>			// Legacy::Vec3
-#include <BlackBox/Network/INetwork.hpp>		// INetwork
-#include <BlackBox/System/ILog.hpp>				// ILog
-#include <BlackBox/System/IStreamEngine.h>		// IStreamEngine
-#include <BlackBox/System/ISystem.hpp>			// ISystem
+#include <BlackBox/Game/IGame.hpp>              // IGame
+#include <BlackBox/Math/MathHelper.hpp>         // Legacy::Vec3
+#include <BlackBox/Network/INetwork.hpp>        // INetwork
+#include <BlackBox/System/ILog.hpp>             // ILog
+#include <BlackBox/System/IStreamEngine.h>      // IStreamEngine
+#include <BlackBox/System/ISystem.hpp>          // ISystem
 #include <string>
 
 class CStream;
 
 //////////////////////////////////////////////////////////////////////
 #ifdef STREAM_ACTIVETYPECHECK
-#	define STREAM_VERIFY_TYPE_READ(a)                                                       \
+	#define STREAM_VERIFY_TYPE_READ(a)                                                       \
 		{                                                                                    \
 			if ((GetISystem()->GetStreamEngine()->GetStreamCompressionMask() & 0x80) != 0)   \
 			{                                                                                \
@@ -47,14 +47,14 @@ class CStream;
 				{                                                                            \
 					char str[256];                                                           \
 					sprintf(str, "Entity read typedcookie error %d!=%d file '%s' @ line %d", \
-							(DWORD)t1, (DWORD)t2, __FILE__, __LINE__);                       \
+					        (DWORD)t1, (DWORD)t2, __FILE__, __LINE__);                       \
 					Debug(str);                                                              \
 					assert(0);                                                               \
 					return false;                                                            \
 				}                                                                            \
 			}                                                                                \
 		}
-#	define STREAM_VERIFY_TYPE_WRITE(a)                                                    \
+	#define STREAM_VERIFY_TYPE_WRITE(a)                                                    \
 		{                                                                                  \
 			if ((GetISystem()->GetStreamEngine()->GetStreamCompressionMask() & 0x80) != 0) \
 			{                                                                              \
@@ -63,10 +63,10 @@ class CStream;
 			}                                                                              \
 		}
 #else // !STREAM_ACTIVETYPECHECK
-#	define STREAM_VERIFY_TYPE_READ(a) \
+	#define STREAM_VERIFY_TYPE_READ(a) \
 		{                              \
 		}
-#	define STREAM_VERIFY_TYPE_WRITE(a) \
+	#define STREAM_VERIFY_TYPE_WRITE(a) \
 		{                               \
 		}
 #endif // STREAM_ACTIVETYPECHECK
@@ -74,15 +74,15 @@ class CStream;
 //////////////////////////////////////////////////////////////////////
 struct IStreamAllocator
 {
-	virtual void* Alloc(size_t size)			  = 0;
+	virtual void* Alloc(size_t size)              = 0;
 	virtual void* Realloc(void* old, size_t size) = 0;
-	virtual void Free(void* old)				  = 0;
+	virtual void  Free(void* old)                 = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
 struct IStreamData
 {
-	virtual bool Read(CStream& inStream) const	= 0;
+	virtual bool Read(CStream& inStream) const  = 0;
 	virtual bool Write(CStream& inStream) const = 0;
 };
 
@@ -90,14 +90,14 @@ struct IStreamData
 //#define OLD_STREAM
 class CStream
 {
-  public:
+public:
 	//! default constructor
 	CStream()
 	{
-		m_sa				 = NULL;
-		m_bStackBuffer		 = true;
+		m_sa                 = NULL;
+		m_bStackBuffer       = true;
 		m_dwAllocatedBitSize = DEFAULT_STREAM_BYTESIZE * 8;
-		m_pBuffer			 = &m_vBuffer[0];
+		m_pBuffer            = &m_vBuffer[0];
 		Reset();
 		if (m_dwAllocatedBitSize < 1)
 			CryError("CStream:CStream()");
@@ -113,10 +113,10 @@ class CStream
 		assert(indwByteSize > 0);
 		assert(sa);
 
-		m_sa				 = sa;
-		m_bStackBuffer		 = false;
+		m_sa                 = sa;
+		m_bStackBuffer       = false;
 		m_dwAllocatedBitSize = indwByteSize * 8;
-		m_pBuffer			 = (BYTE*)m_sa->Alloc(BITS2BYTES(m_dwAllocatedBitSize)); //new BYTE[BITS2BYTES(m_dwAllocatedBitSize)];
+		m_pBuffer            = (BYTE*)m_sa->Alloc(BITS2BYTES(m_dwAllocatedBitSize)); //new BYTE[BITS2BYTES(m_dwAllocatedBitSize)];
 
 		Reset();
 		m_iStreamVersion = 999999; // newest
@@ -129,13 +129,13 @@ class CStream
 	{
 		assert(indwByteSize);
 		assert(inpBuffer);
-		m_sa				 = NULL;
-		m_bStackBuffer		 = true;
+		m_sa                 = NULL;
+		m_bStackBuffer       = true;
 		m_dwAllocatedBitSize = m_dwBitSize = indwByteSize * 8;
-		m_pBuffer						   = inpBuffer;
-		m_dwReadBitPos					   = 0;
-		m_nCheckPoint					   = 0;
-		m_iStreamVersion				   = 999999; // newest
+		m_pBuffer                          = inpBuffer;
+		m_dwReadBitPos                     = 0;
+		m_nCheckPoint                      = 0;
+		m_iStreamVersion                   = 999999; // newest
 	}
 
 	//! destructor
@@ -152,7 +152,7 @@ class CStream
 	{
 		m_iStreamVersion = s.m_iStreamVersion;
 
-		m_pBuffer = &m_vBuffer[0];
+		m_pBuffer        = &m_vBuffer[0];
 		if (s.m_bStackBuffer)
 		{
 			m_dwAllocatedBitSize = s.GetAllocatedSize();
@@ -307,7 +307,7 @@ class CStream
 	//@}
 
 	//! move the read pointer to the dwPos bit
-	bool Seek(size_t dwPos = 0);
+	bool   Seek(size_t dwPos = 0);
 	//! Get the sizeof the stream in bits
 	size_t GetSize() const
 	{
@@ -379,7 +379,7 @@ class CStream
 			return false;
 		size_t oldsize = BITS2BYTES(m_dwAllocatedBitSize);
 
-		m_pBuffer = (BYTE*)m_sa->Realloc(m_pBuffer, BITS2BYTES(iniBitSize));
+		m_pBuffer      = (BYTE*)m_sa->Realloc(m_pBuffer, BITS2BYTES(iniBitSize));
 
 		if (oldsize < BITS2BYTES(iniBitSize))
 			memset(&m_pBuffer[oldsize], 0, BITS2BYTES(iniBitSize) - oldsize);
@@ -399,31 +399,31 @@ class CStream
 		m_iStreamVersion = iVersion;
 	}
 
-  private:
+private:
 	unsigned int htonl(unsigned int n)
 	{
 		return (unsigned int)(((n & 0xFF000000) >> 24) |
-							  ((n & 0x00FF0000) >> 8) |
-							  ((n & 0x0000FF00) << 8) |
-							  ((n & 0x000000FF) << 24));
+		                      ((n & 0x00FF0000) >> 8) |
+		                      ((n & 0x0000FF00) << 8) |
+		                      ((n & 0x000000FF) << 24));
 	}
 	unsigned int ntohl(unsigned int n)
 	{
 		return (unsigned int)(((n & 0xFF000000) >> 24) |
-							  ((n & 0x00FF0000) >> 8) |
-							  ((n & 0x0000FF00) << 8) |
-							  ((n & 0x000000FF) << 24));
+		                      ((n & 0x00FF0000) >> 8) |
+		                      ((n & 0x0000FF00) << 8) |
+		                      ((n & 0x000000FF) << 24));
 	}
 
-	BYTE* m_pBuffer;						 //!<
-	BYTE m_vBuffer[DEFAULT_STREAM_BYTESIZE]; //!<
-	size_t m_dwAllocatedBitSize;			 //!< allocated size is in bits
-	size_t m_dwBitSize;						 //!< payload size is in bits
-	size_t m_dwReadBitPos;					 //!< pos in bits
-	size_t m_nCheckPoint;					 //!<
-	IStreamAllocator* m_sa;					 //!< might be 0 if there was no allocator specified
-	bool m_bStackBuffer;					 //!<
-	int m_iStreamVersion;					 //!< 999999=newest, PATCH1_SAVEVERSION, SAVEVERSION, ..
+	BYTE*             m_pBuffer;                          //!<
+	BYTE              m_vBuffer[DEFAULT_STREAM_BYTESIZE]; //!<
+	size_t            m_dwAllocatedBitSize;               //!< allocated size is in bits
+	size_t            m_dwBitSize;                        //!< payload size is in bits
+	size_t            m_dwReadBitPos;                     //!< pos in bits
+	size_t            m_nCheckPoint;                      //!<
+	IStreamAllocator* m_sa;                               //!< might be 0 if there was no allocator specified
+	bool              m_bStackBuffer;                     //!<
+	int               m_iStreamVersion;                   //!< 999999=newest, PATCH1_SAVEVERSION, SAVEVERSION, ..
 };
 
 #define _GROW()                                \
@@ -488,7 +488,7 @@ inline bool CStream::GetBit(size_t nPos, bool& bBit)
 inline bool CStream::SetBits(BYTE* pBits, size_t nPos, size_t nSize)
 {
 #ifdef OLD_STREAM
-	BYTE *pBuf, *pSource;
+	BYTE *    pBuf, *pSource;
 	DWORD_PTR nValue;
 #endif
 	if ((nPos + nSize) > GetAllocatedSize())
@@ -500,7 +500,7 @@ inline bool CStream::SetBits(BYTE* pBits, size_t nPos, size_t nSize)
 #ifdef OLD_STREAM
 	for (size_t n = 0; n < nSize; n++)
 	{
-		pBuf	= pBuffer;
+		pBuf    = pBuffer;
 		pSource = pBits;
 		pSource += GET_BYTE_INDEX(n);
 		nValue = ((*pSource & (0x80 >> (MODULO8(n)))) != 0);
@@ -511,17 +511,17 @@ inline bool CStream::SetBits(BYTE* pBits, size_t nPos, size_t nSize)
 			*pBuf &= ~(0x80 >> MODULO8(nPos + n));
 	}
 #else
-	BYTE* pSrc		  = pBits;
-	BYTE* pStart	  = &pBuffer[GET_BYTE_INDEX(nPos)]; // + (nPos >> 3);
-	BYTE* pEnd		  = pBuffer + ((nSize + nPos - 1) >> 3);
-	size_t nUpShift	  = MODULO8(nPos);
+	BYTE*  pSrc       = pBits;
+	BYTE*  pStart     = &pBuffer[GET_BYTE_INDEX(nPos)]; // + (nPos >> 3);
+	BYTE*  pEnd       = pBuffer + ((nSize + nPos - 1) >> 3);
+	size_t nUpShift   = MODULO8(nPos);
 	size_t nDownShift = 8 - nUpShift;
-	BYTE cLastMask	  = 0xFF << (7 - MODULO8((nPos + nSize - 1)));
-	BYTE cStartMask	  = 0xFF << nDownShift;
-	BYTE cCurrent	  = *pSrc++;
+	BYTE   cLastMask  = 0xFF << (7 - MODULO8((nPos + nSize - 1)));
+	BYTE   cStartMask = 0xFF << nDownShift;
+	BYTE   cCurrent   = *pSrc++;
 	// #unreferenced
 	//BYTE end		  = *pEnd;
-	*pStart			  = (cCurrent >> nUpShift) | (*pStart & cStartMask);
+	*pStart           = (cCurrent >> nUpShift) | (*pStart & cStartMask);
 	pStart++;
 	while (pStart <= pEnd)
 	{
@@ -530,7 +530,7 @@ inline bool CStream::SetBits(BYTE* pBits, size_t nPos, size_t nSize)
 		cCurrent  = next;
 	}
 	*pEnd &= cLastMask;
-	//m_dwBitSize += nSize;
+		//m_dwBitSize += nSize;
 #endif
 	return true;
 }
@@ -539,7 +539,7 @@ inline bool CStream::SetBits(BYTE* pBits, size_t nPos, size_t nSize)
 inline bool CStream::GetBits(BYTE* pBits, size_t nPos, size_t nSize)
 {
 #ifdef OLD_STREAM
-	BYTE *pBuf, *pDest;
+	BYTE *    pBuf, *pDest;
 	DWORD_PTR nValue;
 #endif
 	BYTE* pBuffer = GetPtr();
@@ -560,20 +560,20 @@ inline bool CStream::GetBits(BYTE* pBits, size_t nPos, size_t nSize)
 			*pDest &= ~(0x80 >> MODULO8(n));
 	}
 #else
-	BYTE* stPtr		 = pBuffer + (nPos >> 3);
+	BYTE*  stPtr     = pBuffer + (nPos >> 3);
 	size_t byteCount = (nSize + 7) >> 3;
 
-	BYTE* ptr = (BYTE*)pBits;
+	BYTE*  ptr       = (BYTE*)pBits;
 
 	size_t downShift = nPos & 0x7;
-	size_t upShift	 = 8 - downShift;
+	size_t upShift   = 8 - downShift;
 
-	BYTE curB = *stPtr;
+	BYTE   curB      = *stPtr;
 	while (byteCount--)
 	{
 		BYTE nextB = *++stPtr;
-		*ptr++	   = (curB << downShift) | (nextB >> upShift);
-		curB	   = nextB;
+		*ptr++     = (curB << downShift) | (nextB >> upShift);
+		curB       = nextB;
 	};
 #endif
 	return true;
@@ -608,7 +608,7 @@ inline bool CStream::WriteNumberInBits(unsigned int n, size_t nSize)
 		CryError("CStream:WriteNumberinBits");
 		return false;
 	}
-	n		 = n << (32 - nSize);
+	n        = n << (32 - nSize);
 	nSwapped = htonl(n);
 	return WriteBits((BYTE*)&nSwapped, nSize);
 }
@@ -642,7 +642,7 @@ inline bool CStream::WriteNumberInBits(int n, size_t nSize)
 		CryError("CStream:WriteNumberinBits");
 		return false;
 	}
-	n		 = n << (32 - nSize);
+	n        = n << (32 - nSize);
 	nSwapped = htonl((unsigned int)n);
 	return WriteBits((BYTE*)&nSwapped, nSize);
 }
@@ -670,7 +670,7 @@ inline bool CStream::ReadNumberInBits(int& n, size_t nSize)
 inline void CStream::Reset()
 {
 	memset(GetPtr(), 0, BITS2BYTES(GetAllocatedSize()));
-	m_dwBitSize	   = 0;
+	m_dwBitSize    = 0;
 	m_dwReadBitPos = 0;
 	m_nCheckPoint  = 0;
 }
@@ -690,7 +690,7 @@ inline bool CStream::_Read(unsigned char& uc)
 inline bool CStream::Read(bool& b)
 {
 	STREAM_VERIFY_TYPE_READ(9);
-	static bool bRet;
+	static bool          bRet;
 	static unsigned char cTemp;
 	cTemp = 0;
 	bRet  = GetBit(m_dwReadBitPos, b);
@@ -764,8 +764,8 @@ inline bool CStream::Read(std::string& str)
 	STREAM_VERIFY_TYPE_READ(30);
 	ICompressionHelper* pCHelper = GetISystem()->GetINetwork()->GetCompressionHelper();
 
-	bool bRet = pCHelper->Read(*this, cTemp, MAX_STRING_SIZE);
-	str		  = cTemp;
+	bool                bRet     = pCHelper->Read(*this, cTemp, MAX_STRING_SIZE);
+	str                          = cTemp;
 	return bRet;
 }
 
@@ -785,7 +785,7 @@ inline bool CStream::Read(CStream& stm)
 	if (nToRead > 0 && ((stm.GetSize() + nToRead) <= stm.GetAllocatedSize()))
 	{
 		static BYTE cTemp[MAX_STRING_SIZE];
-		size_t readed;
+		size_t      readed;
 		while (nToRead > 0)
 		{
 			readed = std::min((int)nToRead, (int)BYTES2BITS(100));
@@ -1027,7 +1027,7 @@ inline bool CStream::ReadPkd(unsigned short& us)
 	{
 		BYTE b;
 		ret = Read(b);
-		us	= b;
+		us  = b;
 	}
 	else
 	{
@@ -1047,7 +1047,7 @@ inline bool CStream::ReadPkd(unsigned int& ul)
 	{
 		unsigned short us;
 		ret = Read(us);
-		ul	= us;
+		ul  = us;
 	}
 	else
 	{
@@ -1075,7 +1075,7 @@ inline bool CStream::ReadPkd(short& s)
 		BYTE b;
 		Read(sign);
 		ret = Read(b);
-		s	= sign ? -b : b;
+		s   = sign ? -b : b;
 	}
 	else
 	{
@@ -1095,7 +1095,7 @@ inline bool CStream::ReadPkd(int& i)
 		unsigned short b;
 		Read(sign);
 		ret = Read(b);
-		i	= sign ? -b : b;
+		i   = sign ? -b : b;
 	}
 	else
 		ret = ReadBits((BYTE*)&i, BYTES2BITS(sizeof(int)));
@@ -1126,7 +1126,7 @@ inline bool CStream::WritePacked(unsigned int ul)
 
 	bool res = WriteNumberInBits(i - 1, 4); //
 
-	res = WriteNumberInBits(ul, i * 2);
+	res      = WriteNumberInBits(ul, i * 2);
 
 	return res;
 }
@@ -1136,7 +1136,7 @@ inline bool CStream::ReadPacked(unsigned int& ul)
 {
 	STREAM_VERIFY_TYPE_READ(91);
 	int i;
-	ul		 = 0;
+	ul       = 0;
 	bool res = ReadNumberInBits(i, 4);
 	i++; // i=1..16
 
@@ -1182,23 +1182,23 @@ inline bool CStream::Seek(size_t dwPos)
 	#define NOT_COOKIEFIED
 #endif
 #ifndef NOT_COOKIEFIED
-#	define WRITE_COOKIE_NO(stm, c)                                                                                                                      \
+	#define WRITE_COOKIE_NO(stm, c)                                                                                                                      \
 		{                                                                                                                                                \
 			if ((GetISystem()->GetStreamEngine()->GetStreamCompressionMask() & 0x8) == 0 || !GetISystem()->GetIGame()->GetModuleState(EGameMultiplayer)) \
 				stm.Write((BYTE)(c));                                                                                                                    \
 		}
-#	define WRITE_COOKIE(stm) WRITE_COOKIE_NO(stm, 0xAA);
+	#define WRITE_COOKIE(stm) WRITE_COOKIE_NO(stm, 0xAA);
 #else
-#	define WRITE_COOKIE_NO(stm, c) \
+	#define WRITE_COOKIE_NO(stm, c) \
 		{                           \
 		}
-#	define WRITE_COOKIE(stm) \
+	#define WRITE_COOKIE(stm) \
 		{                     \
 		}
 #endif
 
 #ifndef NOT_COOKIEFIED
-#	define VERIFY_COOKIE_NO(stm, c)                                                                                                                     \
+	#define VERIFY_COOKIE_NO(stm, c)                                                                                                                     \
 		{                                                                                                                                                \
 			if ((GetISystem()->GetStreamEngine()->GetStreamCompressionMask() & 0x8) == 0 || !GetISystem()->GetIGame()->GetModuleState(EGameMultiplayer)) \
 			{                                                                                                                                            \
@@ -1215,8 +1215,8 @@ inline bool CStream::Seek(size_t dwPos)
 				}                                                                                                                                        \
 			}                                                                                                                                            \
 		}
-#	define VERIFY_COOKIE(stm) VERIFY_COOKIE_NO(stm, 0xAA)
-#	define VERIFY_ENTITY_COOKIE_NO(stm, c)                                                                                                              \
+	#define VERIFY_COOKIE(stm) VERIFY_COOKIE_NO(stm, 0xAA)
+	#define VERIFY_ENTITY_COOKIE_NO(stm, c)                                                                                                              \
 		{                                                                                                                                                \
 			if ((GetISystem()->GetStreamEngine()->GetStreamCompressionMask() & 0x8) == 0 || !GetISystem()->GetIGame()->GetModuleState(EGameMultiplayer)) \
 			{                                                                                                                                            \
@@ -1226,23 +1226,23 @@ inline bool CStream::Seek(size_t dwPos)
 				{                                                                                                                                        \
 					stm.Debug();                                                                                                                         \
 					m_pISystem->GetILog()->LogError("Entity read cookie error %x!=%x file '%s' @ line %d (%s of class %s)",                              \
-													(DWORD)cCookie, (DWORD)c, __FILE__, __LINE__, GetName(), GetEntityClassName());                      \
+					                                (DWORD)cCookie, (DWORD)c, __FILE__, __LINE__, GetName(), GetEntityClassName());                      \
 					return false;                                                                                                                        \
 				}                                                                                                                                        \
 			}                                                                                                                                            \
 		}
-#	define VERIFY_ENTITY_COOKIE(stm) VERIFY_ENTITY_COOKIE_NO(stm, 0xAA)
+	#define VERIFY_ENTITY_COOKIE(stm) VERIFY_ENTITY_COOKIE_NO(stm, 0xAA)
 #else
-#	define VERIFY_COOKIE(stm) \
+	#define VERIFY_COOKIE(stm) \
 		{                      \
 		}
-#	define VERIFY_COOKIE_NO(stm, c) \
+	#define VERIFY_COOKIE_NO(stm, c) \
 		{                            \
 		}
-#	define VERIFY_ENTITY_COOKIE_NO(stm, c) \
+	#define VERIFY_ENTITY_COOKIE_NO(stm, c) \
 		{                                   \
 		}
-#	define VERIFY_ENTITY_COOKIE(stm) \
+	#define VERIFY_ENTITY_COOKIE(stm) \
 		{                             \
 		}
 #endif

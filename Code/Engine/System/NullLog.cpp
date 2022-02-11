@@ -10,7 +10,6 @@ void CLog::Log(const char* szFormat, ...)
 	va_end(arg);
 }
 
-
 //////////////////////////////////////////////////////////////////////
 static void RemoveColorCodeInPlace(CLog::LogStringType& rStr)
 {
@@ -32,17 +31,17 @@ static void RemoveColorCodeInPlace(CLog::LogStringType& rStr)
 	rStr.resize(d - rStr.c_str());
 }
 CLog::CLog(ISystem* pSystem)
-	: m_pSystem(pSystem)
-	, m_fLastLoadingUpdateTime(-1.0f)
-	, m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")
+    : m_pSystem(pSystem)
+    , m_fLastLoadingUpdateTime(-1.0f)
+    , m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")
 {
 	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CLog");
 
-	m_nMainThreadId = std::this_thread::get_id();
+	m_nMainThreadId   = std::this_thread::get_id();
 
 	IConsole* console = m_pSystem->GetIConsole();
 
-#ifdef  _RELEASE
+#ifdef _RELEASE
 	#if defined(RELEASE_LOGGING)
 		#define DEFAULT_VERBOSITY 0
 	#elif defined(DEDICATED_SERVER)
@@ -62,28 +61,28 @@ CLog::CLog(ISystem* pSystem)
 
 	if (console)
 	{
-		m_pLogVerbosity = REGISTER_INT("log_Verbosity", DEFAULT_VERBOSITY, VF_DUMPTODISK,
-									   "defines the verbosity level for log messages written to console\n"
-									   "-1=suppress all logs (including eAlways)\n"
-									   "0=suppress all logs(except eAlways)\n"
-									   "1=additional errors\n"
-									   "2=additional warnings\n"
-									   "3=additional messages\n"
-									   "4=additional comments");
+		m_pLogVerbosity   = REGISTER_INT("log_Verbosity", DEFAULT_VERBOSITY, VF_DUMPTODISK,
+                                       "defines the verbosity level for log messages written to console\n"
+                                       "-1=suppress all logs (including eAlways)\n"
+                                       "0=suppress all logs(except eAlways)\n"
+                                       "1=additional errors\n"
+                                       "2=additional warnings\n"
+                                       "3=additional messages\n"
+                                       "4=additional comments");
 
 		//writing to game.log during game play causes stalls on consoles
 		m_pLogWriteToFile = REGISTER_INT("log_WriteToFile", 1, VF_DUMPTODISK, "toggle whether to write log to file (game.log)");
 
 		// put time into begin of the string if requested by cvar
 		m_pLogIncludeTime = REGISTER_INT("log_IncludeTime", 1, 0,
-										 "Toggles time stamping of log entries.\n"
-										 "Usage: log_IncludeTime [0/1/2/3/4/5]\n"
-										 "  0=off (default)\n"
-										 "  1=current time\n"
-										 "  2=relative time\n"
-										 "  3=current+relative time\n"
-										 "  4=absolute time in seconds since this mode was started\n"
-										 "  5=current time+server time");
+		                                 "Toggles time stamping of log entries.\n"
+		                                 "Usage: log_IncludeTime [0/1/2/3/4/5]\n"
+		                                 "  0=off (default)\n"
+		                                 "  1=current time\n"
+		                                 "  2=relative time\n"
+		                                 "  3=current+relative time\n"
+		                                 "  4=absolute time in seconds since this mode was started\n"
+		                                 "  5=current time+server time");
 	}
 }
 
@@ -92,11 +91,10 @@ CLog::~CLog()
 	Shutdown();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void CLog::CloseLogFile(bool forceClose)
 {
-	#if 0
+#if 0
 	if (m_pLogFile)
 	{
 		LockNoneExclusiveAccess(&m_exclusiveLogFileThreadAccessLock);
@@ -104,18 +102,18 @@ void CLog::CloseLogFile(bool forceClose)
 		m_pLogFile = NULL;
 		UnlockNoneExclusiveAccess(&m_exclusiveLogFileThreadAccessLock);
 	}
-	#else
+#else
 	fclose(m_pLogFile);
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 FILE* CLog::OpenLogFile(const char* filename, const char* mode)
 {
-	#if 0
+#if 0
 	SCOPED_ALLOW_FILE_ACCESS_FROM_THIS_THREAD();
 
-#if CRY_PLATFORM_IOS
+	#if CRY_PLATFORM_IOS
 	char buffer[1024];
 	cry_strcpy(buffer, "");
 	if (AppleGetUserLibraryDirectory(buffer, sizeof(buffer)))
@@ -130,32 +128,31 @@ FILE* CLog::OpenLogFile(const char* filename, const char* mode)
 	{
 		m_pLogFile = NULL;
 	}
-#else
+	#else
 	LockNoneExclusiveAccess(&m_exclusiveLogFileThreadAccessLock);
 	m_pLogFile = fxopen(filename, mode);
 	UnlockNoneExclusiveAccess(&m_exclusiveLogFileThreadAccessLock);
-#endif
+	#endif
 
 	if (m_pLogFile)
 	{
-#if KEEP_LOG_FILE_OPEN
+	#if KEEP_LOG_FILE_OPEN
 		m_bFirstLine = true;
 		setvbuf(m_pLogFile, m_logBuffer, _IOFBF, sizeof(m_logBuffer));
-#endif
+	#endif
 	}
 	else
 	{
-#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
+	#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
 		syslog(LOG_NOTICE, "Failed to open log file [%s], mode [%s]", filename, mode);
-#endif
-	}
-	#else
-	m_pLogFile = fopen(filename, mode);
 	#endif
+	}
+#else
+	m_pLogFile = fopen(filename, mode);
+#endif
 
 	return m_pLogFile;
 }
-
 
 void CLog::Release()
 {
@@ -179,14 +176,14 @@ void CLog::LogToConsole(const char* szFormat, ...)
 		return;
 	}
 
-	bool bfile = false, bconsole = false;
+	bool        bfile = false, bconsole = false;
 	const char* szszFormat = CheckAgainstVerbosity(szFormat, bfile, bconsole);
 	if (!bconsole)
 	{
 		return;
 	}
 
-	char temp[256];
+	char    temp[256];
 	va_list arglist;
 	va_start(arglist, szFormat);
 	vsprintf(temp, szszFormat, arglist);
@@ -199,7 +196,7 @@ void CLog::SetFileName(const char* filename)
 {
 	string temp(filename);
 	if (temp.empty() || temp.size() >= sizeof(m_szFilename))
-		return ;
+		return;
 
 	strcpy(m_szFilename, temp.c_str());
 
@@ -229,12 +226,12 @@ void CLog::LogToFile(const char* szFormat, ...)
 		return;
 	}
 
-	bool bfile = false, bconsole = false;
+	bool        bfile = false, bconsole = false;
 	const char* szszFormat = CheckAgainstVerbosity(szFormat, bfile, bconsole);
 	if (!bfile)
 		return;
 
-	char temp[256];
+	char    temp[256];
 	va_list arglist;
 	va_start(arglist, szFormat);
 	vsprintf(temp, szszFormat, arglist);
@@ -259,10 +256,10 @@ void CLog::LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_li
 	FUNCTION_PROFILER(PROFILE_SYSTEM);
 	//LOADING_TIME_PROFILE_SECTION(GetISystem());
 
-	bool bfile = false, bconsole = false;
-	const char* szCommand = szFormat;
+	bool        bfile = false, bconsole = false;
+	const char* szCommand        = szFormat;
 
-	uint8 DefaultVerbosity = 0; // 0 == Always log (except for special -1 verbosity overrides)
+	uint8       DefaultVerbosity = 0; // 0 == Always log (except for special -1 verbosity overrides)
 
 	switch (nType)
 	{
@@ -297,24 +294,24 @@ void CLog::LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_li
 		return;
 	}
 
-	bool bError = false;
+	bool        bError   = false;
 
 	const char* szPrefix = nullptr;
 	switch (nType)
 	{
 	case eWarning:
 	case eWarningAlways:
-		bError = true;
+		bError   = true;
 		szPrefix = "$6[Warning] ";
 		break;
 
 	case eError:
 	case eErrorAlways:
-		bError = true;
+		bError   = true;
 		szPrefix = "$4[Error] ";
 		break;
 	case eAssert:
-		bError = true;
+		bError   = true;
 		szPrefix = "$4[Assert] ";
 	case eMessage:
 	case eAlways:
@@ -380,14 +377,14 @@ void CLog::LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_li
 		IValidator* pValidator = m_pSystem->GetIValidator();
 		if (pValidator && (flags & VALIDATOR_FLAG_SKIP_VALIDATOR) == 0)
 		{
-			std::lock_guard scope_lock(m_logCriticalSection);
+			std::lock_guard  scope_lock(m_logCriticalSection);
 
 			SValidatorRecord record;
-			record.text = formatted.c_str();
-			record.module = VALIDATOR_MODULE_SYSTEM;
+			record.text     = formatted.c_str();
+			record.module   = VALIDATOR_MODULE_SYSTEM;
 			record.severity = VALIDATOR_WARNING;
 			//record.assetScope = GetAssetScopeString();
-			record.flags = flags;
+			record.flags    = flags;
 			if (nType == eError || nType == eErrorAlways)
 			{
 				record.severity = VALIDATOR_ERROR;
@@ -461,12 +458,12 @@ void CLog::LogPlus(const char* szFormat, ...)
 	if (!szFormat)
 		return;
 
-	bool bfile = false, bconsole = false;
+	bool        bfile = false, bconsole = false;
 	const char* szCommand = CheckAgainstVerbosity(szFormat, bfile, bconsole);
 	if (!bfile && !bconsole)
 		return;
 
-	char temp[256];
+	char    temp[256];
 	va_list arglist;
 	va_start(arglist, szFormat);
 	vsprintf(temp, szFormat, arglist);
@@ -481,8 +478,6 @@ void CLog::LogPlus(const char* szFormat, ...)
 		LogStringToConsole(temp, true);
 	}
 }
-
-
 
 void CLog::LogToFilePlus(const char* szFormat, ...)
 {
@@ -500,7 +495,7 @@ void CLog::LogToConsolePlus(const char* szFormat, ...)
 		return;
 	}
 
-	bool bfile = false, bconsole = false;
+	bool        bfile = false, bconsole = false;
 	const char* szszFormat = CheckAgainstVerbosity(szFormat, bfile, bconsole);
 	if (!bconsole)
 	{
@@ -512,7 +507,7 @@ void CLog::LogToConsolePlus(const char* szFormat, ...)
 		return;
 	}
 
-	char temp[256];
+	char    temp[256];
 	va_list arglist;
 	va_start(arglist, szFormat);
 	vsprintf(temp, szszFormat, arglist);
@@ -535,9 +530,9 @@ void CLog::UpdateLoadingScreen(const char* szFormat, ...)
 	}
 #endif
 
-	#if 1
+#if 1
 	if (CryGetCurrentThreadId() == m_nMainThreadId)
-	#endif
+#endif
 	{
 		((CSystem*)m_pSystem)->UpdateLoadingScreen();
 
@@ -582,9 +577,9 @@ int CLog::GetVerbosityLevel()
 
 void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 {
-	#if defined(_RELEASE) && defined(EXCLUDE_NORMAL_LOG) // no file logging in release
+#if defined(_RELEASE) && defined(EXCLUDE_NORMAL_LOG) // no file logging in release
 	return;
-	#endif
+#endif
 
 	if (!szString)
 	{
@@ -596,21 +591,21 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 	{
 		// When logging from other thread then main, push all log strings to queue.
 		SLogMsg msg;
-		msg.msg = szString;
-		msg.bAdd = bAdd;
-		msg.bError = bError;
+		msg.msg      = szString;
+		msg.bAdd     = bAdd;
+		msg.bError   = bError;
 		msg.bConsole = false;
-		// don't try to store the log message for later in case of out of memory, since then its very likely that this allocation
-		// also fails and results in a stack overflow. This way we should at least get a out of memory on-screen message instead of
-		// a not obvious crash
-		#if 0
+// don't try to store the log message for later in case of out of memory, since then its very likely that this allocation
+// also fails and results in a stack overflow. This way we should at least get a out of memory on-screen message instead of
+// a not obvious crash
+#if 0
 		if (gEnv->bIsOutOfMemory == false)
 		{
 			m_threadSafeMsgQueue.push(msg);
 		}
-		#else
+#else
 		m_threadSafeMsgQueue.push(msg);
-		#endif
+#endif
 		return;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -631,19 +626,19 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 
 	RemoveColorCodeInPlace(tempString);
 
-	#if defined(SUPPORT_LOG_IDENTER)
+#if defined(SUPPORT_LOG_IDENTER)
 	if (m_topIndenter)
 	{
 		m_topIndenter->DisplaySectionText();
 	}
 
 	tempString = m_indentWithString + tempString;
-	#endif
+#endif
 
 	if (m_pLogIncludeTime && gEnv->pTimer)
 	{
 		uint32 dwCVarState = m_pLogIncludeTime->GetIVal();
-		char sTime[21];
+		char   sTime[21];
 		if (dwCVarState == 5) // Log_IncludeTime
 		{
 			dwCVarState = 1; // Afterwards insert time as-if Log_IncludeTime == 1
@@ -662,7 +657,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 			if (dwCVarState & 2) // Log_IncludeTime
 			{
 				static CTimeValue lasttime;
-				const CTimeValue currenttime = gEnv->pTimer->GetAsyncTime();
+				const CTimeValue  currenttime = gEnv->pTimer->GetAsyncTime();
 				if (lasttime != CTimeValue())
 				{
 					const uint32 dwMs = (uint32)((currenttime - lasttime).GetMilliSeconds());
@@ -674,9 +669,9 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 		}
 		else if (dwCVarState == 4) // Log_IncludeTime
 		{
-			static bool bFirst = true;
+			static bool       bFirst = true;
 			static CTimeValue lasttime;
-			const CTimeValue currenttime = gEnv->pTimer->GetAsyncTime();
+			const CTimeValue  currenttime = gEnv->pTimer->GetAsyncTime();
 			if (lasttime != CTimeValue())
 			{
 				const uint32 dwMs = (uint32)((currenttime - lasttime).GetMilliSeconds());
@@ -686,20 +681,20 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 			if (bFirst)
 			{
 				lasttime = currenttime;
-				bFirst = false;
+				bFirst   = false;
 			}
 		}
 	}
 
-	#if !KEEP_LOG_FILE_OPEN
+#if !KEEP_LOG_FILE_OPEN
 	// add \n at end.
 	if (tempString.empty() || tempString[tempString.length() - 1] != '\n')
 	{
 		tempString += '\n';
 	}
-	#endif
+#endif
 
-	#if 0
+#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// Call callback function (on invoke if we are not in application crash)
 	if (!m_callbacks.empty() && m_eLogMode != eLogMode_AppCrash)
@@ -709,7 +704,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 			(*it)->OnWriteToFile(tempString.c_str(), !bAdd);
 		}
 	}
-	#endif
+#endif
 	//////////////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////////////
@@ -721,7 +716,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 	{
 		//SCOPED_ALLOW_FILE_ACCESS_FROM_THIS_THREAD();
 
-	#if KEEP_LOG_FILE_OPEN
+#if KEEP_LOG_FILE_OPEN
 		if (!m_pLogFile)
 		{
 			OpenLogFile(m_szFilename, "at");
@@ -743,7 +738,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 
 			fputs(tempString.c_str(), m_pLogFile);
 		}
-	#else
+#else
 		if (bAdd)
 		{
 			FILE* fp = OpenLogFile(m_szFilename, "r+t");
@@ -770,10 +765,10 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 				CloseLogFile();
 			}
 		}
-	#endif
+#endif
 	}
 
-	#if !defined(_RELEASE) && !defined(DISABLE_OUTPUTDEBUGSTRING)
+#if !defined(_RELEASE) && !defined(DISABLE_OUTPUTDEBUGSTRING)
 	// Note: OutputDebugString(A) only accepts current ANSI code-page, and the W variant will call the A variant internally.
 	// Here we replace non-ASCII characters with '?', which is the same as OutputDebugStringW will do for non-ANSI.
 	// Thus, we discard slightly more characters (ie, those inside the current ANSI code-page, but outside ASCII).
@@ -785,16 +780,16 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 	#else
 	OutputDebugString(tempString.c_str());
 	#endif
-	#endif
+#endif
 }
 
 //log to console only
 //////////////////////////////////////////////////////////////////////
 void CLog::LogStringToConsole(const char* szString, bool bAdd)
 {
-	#if defined(_RELEASE) && defined(EXCLUDE_NORMAL_LOG) // no console logging in release
+#if defined(_RELEASE) && defined(EXCLUDE_NORMAL_LOG) // no console logging in release
 	return;
-	#endif
+#endif
 
 	//#if 0
 	//////////////////////////////////////////////////////////////////////////
@@ -802,16 +797,16 @@ void CLog::LogStringToConsole(const char* szString, bool bAdd)
 	{
 		// When logging from other thread then main, push all log strings to queue.
 		SLogMsg msg;
-		msg.msg = szString;
-		msg.bAdd = bAdd;
-		msg.bError = false;
+		msg.msg      = szString;
+		msg.bAdd     = bAdd;
+		msg.bError   = false;
 		msg.bConsole = true;
-		// don't try to store the log message for later in case of out of memory, since then its very likely that this allocation
-		// also fails and results in a stack overflow. This way we should at least get a out of memory on-screen message instead of
-		// a not obvious crash
-		#if 0
+// don't try to store the log message for later in case of out of memory, since then its very likely that this allocation
+// also fails and results in a stack overflow. This way we should at least get a out of memory on-screen message instead of
+// a not obvious crash
+#if 0
 		if (gEnv->bIsOutOfMemory == false)
-		#endif
+#endif
 		{
 			m_threadSafeMsgQueue.push(msg);
 		}
@@ -847,7 +842,7 @@ void CLog::LogStringToConsole(const char* szString, bool bAdd)
 		console->PrintLine(tempString.c_str());
 	}
 
-	#if 0
+#if 0
 	// Call callback function.
 	if (!m_callbacks.empty())
 	{
@@ -856,9 +851,8 @@ void CLog::LogStringToConsole(const char* szString, bool bAdd)
 			(*it)->OnWriteToConsole(tempString.c_str(), !bAdd);
 		}
 	}
-	#endif
+#endif
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks the verbosity of the message and returns NULL if the message must NOT be
@@ -873,20 +867,20 @@ const char* CLog::CheckAgainstVerbosity(const char* pText, bool& logtofile, bool
 	// the max verbosity (most detailed level)
 #if defined(RELEASE)
 	const unsigned char nMaxVerbosity = 0;
-#else // #if defined(RELEASE)
+#else  // #if defined(RELEASE)
 	const unsigned char nMaxVerbosity = 8;
 #endif // #if defined(RELEASE)
 
 	// the current verbosity of the log
 	int nLogVerbosityConsole = m_pLogVerbosity ? m_pLogVerbosity->GetIVal() : nMaxVerbosity;
-	int nLogVerbosityFile = m_pLogWriteToFileVerbosity ? m_pLogWriteToFileVerbosity->GetIVal() : nMaxVerbosity;
+	int nLogVerbosityFile    = m_pLogWriteToFileVerbosity ? m_pLogWriteToFileVerbosity->GetIVal() : nMaxVerbosity;
 
-	logtoconsole = (nLogVerbosityConsole >= DefaultVerbosity);
+	logtoconsole             = (nLogVerbosityConsole >= DefaultVerbosity);
 
 	//to preserve logging to TTY, logWriteToFile logic has been moved to inside logStringToFile
 	//int logToFileCVar = m_pLogWriteToFile ? m_pLogWriteToFile->GetIVal() : 1;
 
-	logtofile = (nLogVerbosityFile >= DefaultVerbosity);
+	logtofile                = (nLogVerbosityFile >= DefaultVerbosity);
 
 	return pText;
 }

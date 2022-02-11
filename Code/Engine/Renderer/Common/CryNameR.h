@@ -25,28 +25,28 @@ public:
 	struct SNameEntryR
 	{
 		// Reference count of this string.
-		int nRefCount;
+		int         nRefCount;
 		// Current length of string.
-		int nLength;
+		int         nLength;
 		// Size of memory allocated at the end of this class.
-		int nAllocSize;
+		int         nAllocSize;
 		// Here in memory starts character buffer of size nAllocSize.
 		//char data[nAllocSize]
 
-		const char* GetStr()         { return (char*)(this + 1); }
-		void        AddRef()         { CryInterlockedIncrement(&nRefCount); }
-		int         Release()        { return CryInterlockedDecrement(&nRefCount); }
+		const char* GetStr() { return (char*)(this + 1); }
+		void        AddRef() { CryInterlockedIncrement(&nRefCount); }
+		int         Release() { return CryInterlockedDecrement(&nRefCount); }
 		int         GetMemoryUsage() { return sizeof(SNameEntryR) + strlen(GetStr()); }
-		int         GetLength()      { return nLength; }
+		int         GetLength() { return nLength; }
 	};
 
 	static threadID m_nRenderThread;
 
 private:
 	typedef std::unordered_map<const char*, SNameEntryR*, stl::hash_stricmp<const char*>, stl::hash_stricmp<const char*>> NameMap;
-	NameMap m_nameMap;
+	NameMap                                                                                                               m_nameMap;
 
-	void CheckThread()
+	void                                                                                                                  CheckThread()
 	{
 #ifdef CHECK_INVALID_ACCESS
 		DWORD d = ::GetCurrentThreadId();
@@ -58,7 +58,6 @@ private:
 	}
 
 public:
-
 	CNameTableR() {}
 
 	~CNameTableR()
@@ -85,15 +84,15 @@ public:
 		if (!pEntry)
 		{
 			// Create a new entry.
-			unsigned int nLen = strlen(str);
+			unsigned int nLen     = strlen(str);
 			unsigned int allocLen = sizeof(SNameEntryR) + (nLen + 1) * sizeof(char);
-			pEntry = (SNameEntryR*)malloc(allocLen);
+			pEntry                = (SNameEntryR*)malloc(allocLen);
 			assert(pEntry != NULL);
-			pEntry->nRefCount = 0;
-			pEntry->nLength = nLen;
+			pEntry->nRefCount  = 0;
+			pEntry->nLength    = nLen;
 			pEntry->nAllocSize = allocLen;
 			// Copy string to the end of name entry.
-			char* pEntryStr = const_cast<char*>(pEntry->GetStr());
+			char* pEntryStr    = const_cast<char*>(pEntry->GetStr());
 			memcpy(pEntryStr, str, nLen + 1);
 			// put in map.
 			//m_nameMap.insert( NameMap::value_type(pEntry->GetStr(),pEntry) );
@@ -112,9 +111,9 @@ public:
 	}
 	int GetMemoryUsage()
 	{
-		int nSize = 0;
+		int               nSize = 0;
 		NameMap::iterator it;
-		int n = 0;
+		int               n = 0;
 		for (it = m_nameMap.begin(); it != m_nameMap.end(); ++it)
 		{
 			nSize += strlen(it->first);
@@ -147,7 +146,6 @@ public:
 		}
 #endif
 	}
-
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -215,9 +213,9 @@ public:
 
 private:
 	typedef CNameTableR::SNameEntryR SNameEntry;
-	static CNameTableR* ms_table;
+	static CNameTableR*              ms_table;
 
-	static CNameTableR* GetNameTable()
+	static CNameTableR*              GetNameTable()
 	{
 		// Note: can not use a 'static CNameTable sTable' here, because that
 		// implies a static destruction order dependency - the name table is
@@ -419,9 +417,9 @@ inline bool CCryNameTSCRC::operator!=(const char* str) const
 		return true;
 	if (*str) // if not empty
 	{
-		#if 0
+	#if 0
 		uint32 nID = CCrc32::ComputeLowercase(str);
-		#endif
+	#endif
 		auto nID = 0;
 		assert(0);
 		return m_nID != nID;

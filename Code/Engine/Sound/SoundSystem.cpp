@@ -24,7 +24,7 @@ IMusicSystem* CSoundSystem::CreateMusicSystem()
 
 ISound* CSoundSystem::LoadSound(const char* szFile, int nFlags)
 {
-	auto Sound = CSound::Load(szFile, nFlags); 
+	auto Sound = CSound::Load(szFile, nFlags);
 	if (Sound)
 	{
 		CryLog("[SoundSystem] %s loaded", szFile);
@@ -179,7 +179,6 @@ bool CSoundSystem::Init()
 	REGISTER_CVAR(s_MusicVolume, s_MusicVolume, 0, "Music volume [0..1]");
 	REGISTER_CVAR(s_SFXVolume, s_SFXVolume, 0, "SFX volume [0..1]");
 
-
 	return true;
 }
 
@@ -203,14 +202,13 @@ ISoundSystem* CreateSoundSystem(struct ISystem*, void* pInitData)
 		AudioSystem->Release();
 		AudioSystem = nullptr;
 	}
-	#if 0
+#if 0
 	auto sound = _smart_ptr<ISound>(AudioSystem->LoadSound("res/audio/file_example_WAV_1MG.wav", 0));
-	#else
-	//auto sound = AudioSystem->LoadSound("Sounds/MenuMusic_shortversion.wav", 0);
-	//auto sound = AudioSystem->LoadSound("Music/MENU/MenuMusic_shortversion_old.ogg", 0);
-	#endif
+#else
+//auto sound = AudioSystem->LoadSound("Sounds/MenuMusic_shortversion.wav", 0);
+//auto sound = AudioSystem->LoadSound("Music/MENU/MenuMusic_shortversion_old.ogg", 0);
+#endif
 
 	//sound->Play();
 	return AudioSystem;
 }
-

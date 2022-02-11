@@ -10,9 +10,9 @@ extern CD3DRenderer* gcpRendD3D;
 
 class CD3D_FEATURE_LEVEL
 {
-  public:
+public:
 	CD3D_FEATURE_LEVEL(D3D_FEATURE_LEVEL Type)
-		: m_Type(Type)
+	    : m_Type(Type)
 	{
 	}
 	operator const char*()
@@ -33,8 +33,8 @@ class CD3D_FEATURE_LEVEL
 		}
 #undef CONVERT
 	}
-					   operator D3D_FEATURE_LEVEL() { return m_Type; }
-					   operator D3D_FEATURE_LEVEL*() { return &m_Type; }
+	                   operator D3D_FEATURE_LEVEL() { return m_Type; }
+	                   operator D3D_FEATURE_LEVEL*() { return &m_Type; }
 	D3D_FEATURE_LEVEL* operator&() { return &m_Type; }
 	D3D_FEATURE_LEVEL  m_Type;
 };
@@ -43,7 +43,7 @@ class CDevice
 {
 public:
 	CDevice(HWND Hwnd)
-		: m_Hwnd(Hwnd)
+	    : m_Hwnd(Hwnd)
 	{
 	}
 
@@ -64,18 +64,17 @@ public:
 	}
 
 	std::tuple<bool, ID3D11Resource*, ID3DShaderResourceView*> CreateDDSTextureFromFile(
-        _In_z_ const wchar_t* szFileName,
-        _In_ size_t maxsize = 0
-		#if 0
+	    _In_z_ const wchar_t* szFileName,
+	    _In_ size_t           maxsize = 0
+#if 0
 		,_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr
-		#endif
-	) noexcept
+#endif
+	    ) noexcept
 	{
-        ID3D11Resource*			pTexture{};
-        ID3DShaderResourceView* pSRView = NULL;
-		auto hr =  DirectX::CreateDDSTextureFromFile(
-			m_pd3dDevice, szFileName, &pTexture, &pSRView, maxsize
-		);
+		ID3D11Resource*         pTexture{};
+		ID3DShaderResourceView* pSRView = NULL;
+		auto                    hr      = DirectX::CreateDDSTextureFromFile(
+            m_pd3dDevice, szFileName, &pTexture, &pSRView, maxsize);
 		if (SUCCEEDED(hr))
 		{
 			return std::make_tuple(true, pTexture, pSRView);
@@ -86,27 +85,28 @@ public:
 		}
 	}
 
-    HRESULT CreateDDSTextureFromMemory(
-        _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
-        _In_ size_t ddsDataSize,
-        _Outptr_opt_ ID3D11Resource** texture,
-        _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _In_ size_t maxsize = 0/*,
-        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr*/) noexcept
+	HRESULT CreateDDSTextureFromMemory(
+	    _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
+	    _In_ size_t                                  ddsDataSize,
+	    _Outptr_opt_ ID3D11Resource** texture,
+	    _Outptr_opt_ ID3D11ShaderResourceView** textureView,
+	    _In_ size_t                             maxsize = 0 /*,
+        _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr*/
+	    ) noexcept
 	{
 		auto HResult = DirectX::CreateDDSTextureFromMemory(
-			m_pd3dDevice,
-			ddsData,
-			ddsDataSize,
-			texture,
-			textureView);
+		    m_pd3dDevice,
+		    ddsData,
+		    ddsDataSize,
+		    texture,
+		    textureView);
 		return HResult;
 	}
-	ID3DTexture2D* CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT format, UINT bindFlags);
+	ID3DTexture2D*                CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT format, UINT bindFlags);
 
-	HWND						  m_Hwnd;
-	D3D_DRIVER_TYPE				  g_driverType		  = D3D_DRIVER_TYPE_NULL;
-	CD3D_FEATURE_LEVEL			  m_FeatureLevel	  = D3D_FEATURE_LEVEL_11_0;
-	_smart_ptr<ID3DDevice>		  m_pd3dDevice		  = NULL;
+	HWND                          m_Hwnd;
+	D3D_DRIVER_TYPE               g_driverType        = D3D_DRIVER_TYPE_NULL;
+	CD3D_FEATURE_LEVEL            m_FeatureLevel      = D3D_FEATURE_LEVEL_11_0;
+	_smart_ptr<ID3DDevice>        m_pd3dDevice        = NULL;
 	_smart_ptr<ID3DDeviceContext> m_pImmediateContext = NULL;
 };

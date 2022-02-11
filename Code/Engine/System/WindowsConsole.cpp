@@ -46,52 +46,52 @@
 	#define WINDOWS_CONSOLE_BGCOLOR_SHIFT       4
 
 const uint8 CWindowsConsole::s_colorTable[WINDOWS_CONSOLE_NUM_CRYENGINE_COLORS] =
-{
-	WINDOWS_CONSOLE_NATIVE_BLACK,
-	WINDOWS_CONSOLE_NATIVE_WHITE,
-	WINDOWS_CONSOLE_NATIVE_LIGHTBLUE,
-	WINDOWS_CONSOLE_NATIVE_LIGHTGREEN,
-	WINDOWS_CONSOLE_NATIVE_LIGHTRED,
-	WINDOWS_CONSOLE_NATIVE_LIGHTCYAN,
-	WINDOWS_CONSOLE_NATIVE_YELLOW,
-	WINDOWS_CONSOLE_NATIVE_LIGHTMAGENTA,
-	WINDOWS_CONSOLE_NATIVE_BROWN,
-	WINDOWS_CONSOLE_NATIVE_LIGHTGREY
-};
+    {
+        WINDOWS_CONSOLE_NATIVE_BLACK,
+        WINDOWS_CONSOLE_NATIVE_WHITE,
+        WINDOWS_CONSOLE_NATIVE_LIGHTBLUE,
+        WINDOWS_CONSOLE_NATIVE_LIGHTGREEN,
+        WINDOWS_CONSOLE_NATIVE_LIGHTRED,
+        WINDOWS_CONSOLE_NATIVE_LIGHTCYAN,
+        WINDOWS_CONSOLE_NATIVE_YELLOW,
+        WINDOWS_CONSOLE_NATIVE_LIGHTMAGENTA,
+        WINDOWS_CONSOLE_NATIVE_BROWN,
+        WINDOWS_CONSOLE_NATIVE_LIGHTGREY};
 
 CWindowsConsole::CWindowsConsole()
-	: m_lock(),
-	m_consoleScreenBufferSize(),
-	m_consoleWindow(),
-	m_inputBufferHandle(INVALID_HANDLE_VALUE),
-	m_screenBufferHandle(INVALID_HANDLE_VALUE),
-	m_logBuffer(0, 0, WINDOWS_CONSOLE_WIDTH, WINDOWS_CONSOLE_HEIGHT - 2, WINDOWS_CONSOLE_LOG_BUFFER_LINES, L' ', WINDOWS_CONSOLE_CRYENGINE_GREY, WINDOWS_CONSOLE_CRYENGINE_BLACK),
-	m_fullScreenBuffer(0, 0, WINDOWS_CONSOLE_WIDTH, WINDOWS_CONSOLE_HEIGHT - 2, WINDOWS_CONSOLE_HEIGHT - 2, L' ', WINDOWS_CONSOLE_CRYENGINE_GREY, WINDOWS_CONSOLE_CRYENGINE_BLACK),
-	m_statusBuffer(0, WINDOWS_CONSOLE_HEIGHT - 2, WINDOWS_CONSOLE_WIDTH, 1, 1, L' ', WINDOWS_CONSOLE_CRYENGINE_BLACK, WINDOWS_CONSOLE_CRYENGINE_GREY),
-	m_commandBuffer(0, WINDOWS_CONSOLE_HEIGHT - 1, WINDOWS_CONSOLE_WIDTH, 1, 1, L' ', WINDOWS_CONSOLE_CRYENGINE_WHITE, WINDOWS_CONSOLE_CRYENGINE_BLACK),
-	m_dirtyCellBuffers(0),
-	m_commandQueue(),
-	m_commandPrompt("] "),
-	m_commandPromptLength(m_commandPrompt.length()),
-	m_command(),
-	m_commandCursor(0),
-	m_logLine(),
-	m_progressString(),
-	m_header(),
-	//m_nubStats(),
-	//m_updStats(),
-	m_pInputThread(NULL),
-	m_pSystem(NULL),
-	m_pConsole(NULL),
-	m_pTimer(NULL),
-	m_pCVarSvMap(NULL),
-	m_pCVarSvMission(NULL),
-	m_pCVarSvGameRules(NULL),
-	m_lastStatusUpdate(),
-	m_lastUpdateTime(),
-	m_initialized(false),
-	m_OnUpdateCalled(false),
-	m_requireDedicatedServer(false)
+    : m_lock()
+    , m_consoleScreenBufferSize()
+    , m_consoleWindow()
+    , m_inputBufferHandle(INVALID_HANDLE_VALUE)
+    , m_screenBufferHandle(INVALID_HANDLE_VALUE)
+    , m_logBuffer(0, 0, WINDOWS_CONSOLE_WIDTH, WINDOWS_CONSOLE_HEIGHT - 2, WINDOWS_CONSOLE_LOG_BUFFER_LINES, L' ', WINDOWS_CONSOLE_CRYENGINE_GREY, WINDOWS_CONSOLE_CRYENGINE_BLACK)
+    , m_fullScreenBuffer(0, 0, WINDOWS_CONSOLE_WIDTH, WINDOWS_CONSOLE_HEIGHT - 2, WINDOWS_CONSOLE_HEIGHT - 2, L' ', WINDOWS_CONSOLE_CRYENGINE_GREY, WINDOWS_CONSOLE_CRYENGINE_BLACK)
+    , m_statusBuffer(0, WINDOWS_CONSOLE_HEIGHT - 2, WINDOWS_CONSOLE_WIDTH, 1, 1, L' ', WINDOWS_CONSOLE_CRYENGINE_BLACK, WINDOWS_CONSOLE_CRYENGINE_GREY)
+    , m_commandBuffer(0, WINDOWS_CONSOLE_HEIGHT - 1, WINDOWS_CONSOLE_WIDTH, 1, 1, L' ', WINDOWS_CONSOLE_CRYENGINE_WHITE, WINDOWS_CONSOLE_CRYENGINE_BLACK)
+    , m_dirtyCellBuffers(0)
+    , m_commandQueue()
+    , m_commandPrompt("] ")
+    , m_commandPromptLength(m_commandPrompt.length())
+    , m_command()
+    , m_commandCursor(0)
+    , m_logLine()
+    , m_progressString()
+    , m_header()
+    ,
+    //m_nubStats(),
+    //m_updStats(),
+    m_pInputThread(NULL)
+    , m_pSystem(NULL)
+    , m_pConsole(NULL)
+    , m_pTimer(NULL)
+    , m_pCVarSvMap(NULL)
+    , m_pCVarSvMission(NULL)
+    , m_pCVarSvGameRules(NULL)
+    , m_lastStatusUpdate()
+    , m_lastUpdateTime()
+    , m_initialized(false)
+    , m_OnUpdateCalled(false)
+    , m_requireDedicatedServer(false)
 {
 }
 
@@ -147,9 +147,9 @@ void CWindowsConsole::Print(const char* pInszText)
 {
 	Lock();
 
-	bool isContinue = true;
+	bool        isContinue   = true;
 	const char* pInszTextPtr = pInszText;
-	const char* pLogLinePtr = m_logLine.c_str();
+	const char* pLogLinePtr  = m_logLine.c_str();
 
 	// FIXME: very strange code
 	#if 0
@@ -182,12 +182,12 @@ void CWindowsConsole::Print(const char* pInszText)
 	Unlock();
 }
 
-#if 0
+	#if 0
 bool CWindowsConsole::OnSaveDocument()
 {
 	return false;
 }
-#endif
+	#endif
 
 void CWindowsConsole::OnProcessSwitch()
 {
@@ -233,11 +233,11 @@ void CWindowsConsole::OnInit(ISystem* pSystem)
 		assert(m_pSystem == NULL);
 		assert(m_pConsole == NULL);
 
-		m_pSystem = pSystem;
+		m_pSystem  = pSystem;
 		m_pConsole = pSystem->GetIConsole();
 
 		AllocConsole();
-		m_inputBufferHandle = GetStdHandle(STD_INPUT_HANDLE);
+		m_inputBufferHandle  = GetStdHandle(STD_INPUT_HANDLE);
 		m_screenBufferHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 		if (!SetConsoleMode(m_inputBufferHandle, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
 		{
@@ -246,10 +246,10 @@ void CWindowsConsole::OnInit(ISystem* pSystem)
 		SetConsoleCtrlHandler(CtrlHandler, TRUE);
 		m_consoleScreenBufferSize.X = WINDOWS_CONSOLE_WIDTH;
 		m_consoleScreenBufferSize.Y = WINDOWS_CONSOLE_HEIGHT;
-		m_consoleWindow.Left = 0;
-		m_consoleWindow.Top = 0;
-		m_consoleWindow.Right = WINDOWS_CONSOLE_WIDTH - 1;
-		m_consoleWindow.Bottom = WINDOWS_CONSOLE_HEIGHT - 1;
+		m_consoleWindow.Left        = 0;
+		m_consoleWindow.Top         = 0;
+		m_consoleWindow.Right       = WINDOWS_CONSOLE_WIDTH - 1;
+		m_consoleWindow.Bottom      = WINDOWS_CONSOLE_HEIGHT - 1;
 		SetConsoleScreenBufferSize(m_screenBufferHandle, m_consoleScreenBufferSize);
 		SetConsoleWindowInfo(m_screenBufferHandle, TRUE, &m_consoleWindow);
 		SetConsoleTitle(m_header.c_str());
@@ -263,14 +263,15 @@ void CWindowsConsole::OnInit(ISystem* pSystem)
 
 		m_pInputThread = new CWindowsConsoleInputThread(*this);
 
-		#if 0
+	#if 0
 		if (!gEnv->pThreadManager->SpawnThread(m_pInputThread, "WindowsConsoleInput"))
 		{
 			CryFatalError("Error spawning \"WindowsConsoleInput\" thread.");
 		}
-#		esle
-#	endif
-		m_thread = std::thread([this] { m_pInputThread->ThreadEntry(); });
+		#esle
+	#endif
+		m_thread      = std::thread([this]
+                               { m_pInputThread->ThreadEntry(); });
 
 		m_initialized = true;
 	}
@@ -298,15 +299,14 @@ void CWindowsConsole::OnUpdate()
 			assert(m_pTimer == NULL);
 
 			{
-				m_pCVarSvMap = m_pConsole->CreateVariable("sv_map", "no_level", VF_DUMPTODISK);
+				m_pCVarSvMap       = m_pConsole->CreateVariable("sv_map", "no_level", VF_DUMPTODISK);
 				m_pCVarSvGameRules = m_pConsole->CreateVariable("sv_gamerules", "no_rules", VF_DUMPTODISK);
-
 			}
 
-			m_pCVarSvMap = m_pConsole->GetCVar("sv_map");
+			m_pCVarSvMap       = m_pConsole->GetCVar("sv_map");
 			m_pCVarSvGameRules = m_pConsole->GetCVar("sv_gamerules");
-			m_pTimer = m_pSystem->GetITimer();
-			m_OnUpdateCalled = true;
+			m_pTimer           = m_pSystem->GetITimer();
+			m_OnUpdateCalled   = true;
 
 			assert(m_pCVarSvMission == NULL);
 
@@ -329,12 +329,12 @@ void CWindowsConsole::OnUpdate()
 
 		m_lastUpdateTime = now;
 
-		#if 0
+	#if 0
 		if (IGameFramework* pGameFramework = gEnv->pGameFramework)
 			if (INetNub* pNub = pGameFramework->GetServerNetNub())
 				m_nubStats = pNub->GetStatistics();
 		m_pSystem->GetUpdateStats(m_updStats);
-		#endif
+	#endif
 
 		if (updateStatus)
 		{
@@ -470,7 +470,7 @@ void CWindowsConsole::OnTab()
 
 	if (pCompletion)
 	{
-		m_command = pCompletion;
+		m_command       = pCompletion;
 		m_commandCursor = m_command.length();
 		DrawCommand();
 	}
@@ -601,12 +601,12 @@ void CWindowsConsole::InputIdle()
 {
 	if (m_pTimer)
 	{
-		CTimeValue now = m_pTimer->GetAsyncTime();
-		float timePassed = (now - m_lastUpdateTime).GetSeconds();
+		CTimeValue now        = m_pTimer->GetAsyncTime();
+		float      timePassed = (now - m_lastUpdateTime).GetSeconds();
 
 		if (timePassed > 0.2F)
 		{
-			int nDots = (int)(timePassed + 0.5) / 3;
+			int nDots    = (int)(timePassed + 0.5) / 3;
 			int nDotsMax = m_statusBuffer.Width() - 2;
 
 			if (nDots > nDotsMax)
@@ -676,10 +676,10 @@ void CWindowsConsole::Repaint()
 
 void CWindowsConsole::DrawStatus()
 {
-	const char* pStatusLeft = nullptr;
+	const char* pStatusLeft  = nullptr;
 	const char* pStatusRight = nullptr;
-	char bufferLeft[256];
-	char bufferRight[256];
+	char        bufferLeft[256];
+	char        bufferRight[256];
 
 	// If we're scrolled, then the right size shows a scroll indicator.
 	if (m_logBuffer.IsScrolledUp())
@@ -699,7 +699,7 @@ void CWindowsConsole::DrawStatus()
 		// Map name and game rules on the left.
 		// Current update rate and player count on the right.
 
-		const char* const pMapName = m_pCVarSvMap->GetString();
+		const char* const pMapName     = m_pCVarSvMap->GetString();
 
 		const char* const pMissionName = m_pCVarSvMission ? m_pCVarSvMission->GetString() : "";
 		sprintf(bufferLeft, " mission: %s map:%s", pMissionName, pMapName);
@@ -715,14 +715,14 @@ void CWindowsConsole::DrawStatus()
 			{
 				const float updateRate = m_pTimer ? m_pTimer->GetFrameRate() : 0.0f;
 
-				#if 0
+	#if 0
 				sprintf(
 				  &bufferRight[len], sizeof(bufferRight) - len,
 				  "upd:%.1fms(%.2f..%.2f) " \
 					  "rate:%.1f/s up:%.1fk/s dn: %.1fk/s",
 				  m_updStats.avgUpdateTime, m_updStats.minUpdateTime, m_updStats.maxUpdateTime,
 				  updateRate, m_nubStats.bandwidthUp / 1000.0f, m_nubStats.bandwidthDown / 1000.0f);
-				#endif
+	#endif
 			}
 			else
 			{
@@ -769,12 +769,12 @@ void CWindowsConsole::CleanUp()
 			m_pConsole->RemoveOutputPrintSink(this);
 		}
 
-		m_pSystem = NULL;
-		m_pConsole = NULL;
-		m_pTimer = NULL;
-		m_pCVarSvMap = NULL;
-		m_pCVarSvGameRules = NULL;
-		m_inputBufferHandle = INVALID_HANDLE_VALUE;
+		m_pSystem            = NULL;
+		m_pConsole           = NULL;
+		m_pTimer             = NULL;
+		m_pCVarSvMap         = NULL;
+		m_pCVarSvGameRules   = NULL;
+		m_inputBufferHandle  = INVALID_HANDLE_VALUE;
 		m_screenBufferHandle = INVALID_HANDLE_VALUE;
 		FreeConsole();
 
@@ -802,21 +802,21 @@ void CWindowsConsole::DrawFull()
 CWindowsConsole::CCellBuffer::CCellBuffer(SHORT x, short y, SHORT w, SHORT h, SHORT lines, WCHAR emptyChar, uint8 defaultFgColor, uint8 defaultBgColor)
 {
 	m_emptyCell.Char.UnicodeChar = emptyChar;
-	m_emptyCell.Attributes = s_colorTable[defaultFgColor] | (s_colorTable[defaultBgColor] << WINDOWS_CONSOLE_BGCOLOR_SHIFT);
-	m_attr = m_emptyCell.Attributes;
-	m_size.X = w;
-	m_size.Y = lines;
-	m_screenArea.Left = x;
-	m_screenArea.Top = y;
-	m_screenArea.Right = x + w - 1;
-	m_screenArea.Bottom = y + h - 1;
-	m_position.head = 0;
-	m_position.lines = 1;
-	m_position.wrap = 0;
-	m_position.offset = 0;
-	m_position.scroll = 0;
-	m_escape = false;
-	m_color = false;
+	m_emptyCell.Attributes       = s_colorTable[defaultFgColor] | (s_colorTable[defaultBgColor] << WINDOWS_CONSOLE_BGCOLOR_SHIFT);
+	m_attr                       = m_emptyCell.Attributes;
+	m_size.X                     = w;
+	m_size.Y                     = lines;
+	m_screenArea.Left            = x;
+	m_screenArea.Top             = y;
+	m_screenArea.Right           = x + w - 1;
+	m_screenArea.Bottom          = y + h - 1;
+	m_position.head              = 0;
+	m_position.lines             = 1;
+	m_position.wrap              = 0;
+	m_position.offset            = 0;
+	m_position.scroll            = 0;
+	m_escape                     = false;
+	m_color                      = false;
 	m_buffer.resize(w * lines, m_emptyCell);
 }
 
@@ -828,11 +828,11 @@ void CWindowsConsole::CCellBuffer::PutText(int x, int y, const char* pMsg)
 {
 	SPosition position;
 
-	position.head = m_position.head;
+	position.head   = m_position.head;
 	position.offset = x;
-	position.lines = y;
+	position.lines  = y;
 	position.scroll = 0;
-	position.wrap = 0;
+	position.wrap   = 0;
 
 	if (position.offset < 0)
 	{
@@ -859,7 +859,7 @@ void CWindowsConsole::CCellBuffer::ClearCells(TBuffer::iterator pDst, TBuffer::i
 
 bool CWindowsConsole::CCellBuffer::Scroll(SHORT numLines)
 {
-	bool result = false;
+	bool  result    = false;
 	SHORT newScroll = m_position.scroll + numLines;
 	SHORT maxScroll = m_position.lines - 1 - (m_screenArea.Bottom - m_screenArea.Top);
 
@@ -876,7 +876,7 @@ bool CWindowsConsole::CCellBuffer::Scroll(SHORT numLines)
 	if (newScroll != m_position.scroll)
 	{
 		m_position.scroll = newScroll;
-		result = true;
+		result            = true;
 	}
 
 	return result;
@@ -901,9 +901,9 @@ void CWindowsConsole::CCellBuffer::AddCharacter(WCHAR ch, SPosition& position)
 	int32 index = (((position.head + position.lines + m_size.Y - 1) % m_size.Y) * m_size.X) + position.offset;
 
 	CRY_ASSERT(index >= 0 && index < m_buffer.size(), "Invalid text position, would overflow");
-	CHAR_INFO& info = m_buffer[index];
+	CHAR_INFO& info       = m_buffer[index];
 
-	info.Attributes = m_attr;
+	info.Attributes       = m_attr;
 	info.Char.UnicodeChar = ch;
 	++position.offset;
 }
@@ -921,7 +921,7 @@ void CWindowsConsole::CCellBuffer::NewLine()
 
 void CWindowsConsole::CCellBuffer::NewLine(SPosition& position)
 {
-	m_attr = m_emptyCell.Attributes;
+	m_attr        = m_emptyCell.Attributes;
 	position.wrap = 0;
 	AdvanceLine(position);
 }
@@ -930,7 +930,7 @@ void CWindowsConsole::CCellBuffer::ClearLine(SPosition& position)
 {
 	ClearCells(m_buffer.begin() + ((position.head + position.lines - position.wrap) % m_size.Y) * m_size.X, m_buffer.begin() + ((position.head + position.lines + 1) % m_size.Y) * m_size.X);
 	position.lines -= position.wrap;
-	position.wrap = 0;
+	position.wrap   = 0;
 	position.offset = 0;
 }
 
@@ -939,24 +939,23 @@ void CWindowsConsole::CCellBuffer::Tab(SPosition& position)
 	do
 	{
 		AddCharacter(' ', position);
-	}
-	while (position.offset % WINDOWS_CONSOLE_TAB_SIZE);
+	} while (position.offset % WINDOWS_CONSOLE_TAB_SIZE);
 }
 
 void CWindowsConsole::CCellBuffer::Blit(HANDLE hScreenBuffer)
 {
-	COORD src;
+	COORD      src;
 	SMALL_RECT dst;
 
 	src.X = 0;
 	src.Y = (m_position.head + m_position.scroll) % m_size.Y;
-	dst = m_screenArea;
+	dst   = m_screenArea;
 	WriteConsoleOutput(hScreenBuffer, &*m_buffer.begin(), m_size, src, &dst);
 
 	if ((m_size.Y - src.Y) < (m_screenArea.Bottom - m_screenArea.Top + 1))
 	{
-		src.Y = 0;
-		dst.Top = dst.Bottom + 1;
+		src.Y      = 0;
+		dst.Top    = dst.Bottom + 1;
 		dst.Bottom = m_screenArea.Bottom;
 		WriteConsoleOutput(hScreenBuffer, &*m_buffer.begin(), m_size, src, &dst);
 	}
@@ -981,7 +980,7 @@ void CWindowsConsole::CCellBuffer::AdvanceLine(SPosition& position)
 	}
 
 	TBuffer::iterator start = m_buffer.begin() + ((position.head + position.lines + m_size.Y - 1) % m_size.Y) * m_size.X;
-	TBuffer::iterator end = start + m_size.X;
+	TBuffer::iterator end   = start + m_size.X;
 
 	ClearCells(start, end);
 }
@@ -1080,7 +1079,7 @@ void CWindowsConsole::CCellBuffer::FmtScrollStatus(uint32 size, char* pBuffer)
 	}
 	else
 	{
-		strcpy(pBuffer/*, size*/, "| SCROLL:TOP ");
+		strcpy(pBuffer /*, size*/, "| SCROLL:TOP ");
 	}
 }
 
@@ -1095,9 +1094,9 @@ SHORT CWindowsConsole::CCellBuffer::Width()
 }
 
 CWindowsConsoleInputThread::CWindowsConsoleInputThread(CWindowsConsole& console)
-	: m_WindowsConsole(console)
+    : m_WindowsConsole(console)
 {
-	m_handles[eWH_Event] = CreateEvent(NULL, TRUE, FALSE, NULL);
+	m_handles[eWH_Event]   = CreateEvent(NULL, TRUE, FALSE, NULL);
 	m_handles[eWH_Console] = m_WindowsConsole.m_inputBufferHandle;
 }
 
@@ -1128,7 +1127,7 @@ void CWindowsConsoleInputThread::ThreadEntry()
 
 			ReadConsoleInput(m_WindowsConsole.m_inputBufferHandle, m_inputRecords, WINDOWS_CONSOLE_MAX_INPUT_RECORDS, &inputRecordCount);
 
-		// FALL THROUGH
+			// FALL THROUGH
 
 		case WAIT_TIMEOUT:
 
@@ -1157,8 +1156,7 @@ void CWindowsConsoleInputThread::ThreadEntry()
 
 			break;
 		}
-	}
-	while (!cancelled);
+	} while (!cancelled);
 }
 
 void CWindowsConsoleInputThread::SignalStopWork()
@@ -1166,7 +1164,7 @@ void CWindowsConsoleInputThread::SignalStopWork()
 	SetEvent(m_handles[eWH_Event]);
 }
 
-#if 0
+	#if 0
 ///////////////////////////////////////////////////////////////////////////////////////
 //
 // simple light-weight console implementation
@@ -1181,14 +1179,14 @@ void CNULLConsole::Print(const char* inszText)
 	if (m_isDaemon)
 		return;
 
-	#if CRY_PLATFORM_WINDOWS
+		#if CRY_PLATFORM_WINDOWS
 	DWORD written;
 	char buf[1024];
 	cry_sprintf(buf, "%s\n", inszText);
 	WriteConsole(m_hOut, buf, strlen(buf), &written, NULL);
-	#elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_MAC
+		#elif CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_MAC
 	printf("%s\n", inszText);
-	#endif
+		#endif
 }
 
 void CNULLConsole::OnInit(ISystem* pSystem)
@@ -1201,10 +1199,10 @@ void CNULLConsole::OnInit(ISystem* pSystem)
 	IConsole* pConsole = pSystem->GetIConsole();
 	pConsole->AddOutputPrintSink(this);
 
-	#if CRY_PLATFORM_WINDOWS
+		#if CRY_PLATFORM_WINDOWS
 	AllocConsole();
 	m_hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	#endif
+		#endif
 }
 
 void CNULLConsole::OnUpdate()
@@ -1213,7 +1211,7 @@ void CNULLConsole::OnUpdate()
 	float srvRate = 0;
 	//INetNub::SStatistics netNub;
 
-	#if defined(UC_ENABLE_PLAYER_COUNT)
+		#if defined(UC_ENABLE_PLAYER_COUNT)
 	if (!gEnv->pSystem->IsQuitting())
 	{
 		IGameFramework* pGameFramework = gEnv->pGameFramework;
@@ -1227,7 +1225,7 @@ void CNULLConsole::OnUpdate()
 				netNub = pNub->GetStatistics();
 		}
 	}
-	#endif
+		#endif
 	if (ITimer* pTimer = gEnv->pSystem->GetITimer())
 		srvRate = pTimer->GetFrameRate();
 
@@ -1237,6 +1235,6 @@ void CNULLConsole::OnUpdate()
 void CNULLConsole::PutText(int x, int y, const char* msg)
 {
 }
-#endif
+	#endif
 
 #endif // def USE_WINDOWSCONSOLE

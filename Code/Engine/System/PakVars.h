@@ -21,28 +21,27 @@ struct PakVars
 	int nLoadCache                  = 0; // Load in memory paks from _FastLoad folder
 	int nLoadModePaks               = 0; // Load menucommon/gamemodeswitch paks
 	int nReadSlice                  = 0;
-	int nPriority                   =
+	int nPriority =
 #if defined(_RELEASE)
-		ePakPriorityPakOnly;  // Only read from pak files by default
+	    ePakPriorityPakOnly; // Only read from pak files by default
 #else
-		ePakPriorityFileFirst;
+	    ePakPriorityFileFirst;
 #endif
-	int nMessageInvalidFileAccess   = 0;
-	int nValidateFileHashes         =
+	int nMessageInvalidFileAccess = 0;
+	int nValidateFileHashes =
 #if defined(_DEBUG)
-		1;
+	    1;
 #else
-		0;
+	    0;
 #endif
-	int nTotalInMemoryPakSizeLimit  = 30; // Megabytes
-	int nStreamCache                = 0;
-	int nInMemoryPerPakSizeLimit    = 6;  // 6 Megabytes limit
-	int nLogInvalidFileAccess       = 0;
-	int nLoadFrontendShaderCache    = 0;
-	int nUncachedStreamReads        = 1;
+	int nTotalInMemoryPakSizeLimit = 30; // Megabytes
+	int nStreamCache               = 0;
+	int nInMemoryPerPakSizeLimit   = 6; // 6 Megabytes limit
+	int nLogInvalidFileAccess      = 0;
+	int nLoadFrontendShaderCache   = 0;
+	int nUncachedStreamReads       = 1;
 #ifndef _RELEASE
-	int nLogAllFileAccess           = 0;
+	int nLogAllFileAccess = 0;
 #endif
 	int nDisableNonLevelRelatedPaks = 1;
 };
-

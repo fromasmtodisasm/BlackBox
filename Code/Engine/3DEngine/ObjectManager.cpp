@@ -8,7 +8,7 @@ IStatObj* CObjectManager::LoadStatObj(const char* szFileName, const char* szGeom
 	CStatObj* obj{};
 	{
 		const string AdjastedFileName = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/")).c_str(), szFileName);
-		obj							  = stl::find_in_map(m_nameToObjectMap, AdjastedFileName, nullptr);
+		obj                           = stl::find_in_map(m_nameToObjectMap, AdjastedFileName, nullptr);
 
 		if (obj)
 		{
@@ -19,7 +19,7 @@ IStatObj* CObjectManager::LoadStatObj(const char* szFileName, const char* szGeom
 			CIndexedMesh im;
 			if (im.LoadCGF(szFileName, szGeomName))
 			{
-				obj									= new CStatObj(im);
+				obj                                 = new CStatObj(im);
 				m_nameToObjectMap[AdjastedFileName] = obj;
 				obj->SetBBoxMin(obj->m_IndexedMesh.m_vBoxMin);
 				obj->SetBBoxMax(obj->m_IndexedMesh.m_vBoxMax);

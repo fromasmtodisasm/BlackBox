@@ -19,9 +19,9 @@ struct SSystemGlobalEnvironment* gEnv = nullptr;
 
 #if (defined(_LAUNCHER) && defined(IS_MONOLITHIC_BUILD)) || !defined(_LIB)
 //The reg factory is used for registering the different modules along the whole project
-struct SRegFactoryNode* g_pHeadToRegFactories = nullptr;
-std::vector<const char*> g_moduleCommands;
-std::vector<const char*> g_moduleCVars;
+struct SRegFactoryNode*    g_pHeadToRegFactories = nullptr;
+std::vector<const char*>   g_moduleCommands;
+std::vector<const char*>   g_moduleCVars;
 
 extern "C" DLL_EXPORT void CleanupModuleCVars()
 {
@@ -48,18 +48,18 @@ extern "C" DLL_EXPORT void CleanupModuleCVars()
 //////////////////////////////////////////////////////////////////////////
 // If not in static library.
 
-#	if BB_PLATFORM_WINDOWS
+	#if BB_PLATFORM_WINDOWS
 void CryPureCallHandler()
 {
 	CryFatalError("Pure function call");
 }
 
 void CryInvalidParameterHandler(
-	const wchar_t* expression,
-	const wchar_t* function,
-	const wchar_t* file,
-	unsigned int   line,
-	uintptr_t	   pReserved)
+    const wchar_t* expression,
+    const wchar_t* function,
+    const wchar_t* file,
+    unsigned int   line,
+    uintptr_t      pReserved)
 {
 	return;
 	size_t i;
@@ -77,11 +77,11 @@ void InitCRTHandlers()
 	_set_purecall_handler(CryPureCallHandler);
 	_set_invalid_parameter_handler(CryInvalidParameterHandler);
 }
-#	else
-void							InitCRTHandlers()
+	#else
+void                            InitCRTHandlers()
 {
 }
-#	endif
+	#endif
 
 //////////////////////////////////////////////////////////////////////////
 // This is an entry to DLL initialization function that must be called for each loaded module
@@ -119,7 +119,7 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 {
 	//CryFindRootFolderAndSetAsCurrentWorkingDirectory();
 
-#if !defined(IS_MONOLITHIC_BUILD)
+	#if !defined(IS_MONOLITHIC_BUILD)
 	CCryLibrary systemLibrary(CryLibraryDefName("System"));
 	if (!systemLibrary.IsLoaded())
 	{
@@ -138,12 +138,12 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 
 		return false;
 	}
-#endif
+	#endif
 
 	startupParams.bManualEngineLoop = bManualEngineLoop;
-	if (CreateSystemInterface(startupParams/*, bManualEngineLoop*/) != nullptr)
+	if (CreateSystemInterface(startupParams /*, bManualEngineLoop*/) != nullptr)
 	{
-#if !defined(IS_MONOLITHIC_BUILD)
+	#if !defined(IS_MONOLITHIC_BUILD)
 		if (bManualEngineLoop)
 		{
 			// Forward ownership to the function caller
@@ -151,7 +151,7 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 			// In other cases we would be exiting the engine at this point.
 			systemLibrary.ReleaseOwnership();
 		}
-#endif
+	#endif
 	}
 	else
 	{
@@ -160,14 +160,14 @@ bool InitializeEngine(SSystemInitParams& startupParams, bool bManualEngineLoop)
 
 	return true;
 }
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
-// If we use cry memory manager this should be also included in every module.
-#if defined(USING_CRY_MEMORY_MANAGER)
-	#include <BlackBox/Memory/CryMemoryManager_impl.h>
-#endif
+    // If we use cry memory manager this should be also included in every module.
+	#if defined(USING_CRY_MEMORY_MANAGER)
+		#include <BlackBox/Memory/CryMemoryManager_impl.h>
+	#endif
 
-#if BB_PLATFORM_WINAPI || BB_PLATFORM_LINUX
+	#if BB_PLATFORM_WINAPI || BB_PLATFORM_LINUX
 //////////////////////////////////////////////////////////////////////////
 void CryFindEngineRootFolder(unsigned int engineRootPathSize, char* szEngineRootPath)
 {
@@ -191,7 +191,7 @@ void CryFindEngineRootFolder(unsigned int engineRootPathSize, char* szEngineRoot
 			strTempPath.erase(nCurDirSlashPos + 1, string::npos);
 			strTempPath.append(i == 0 ? "Engine" : "engine");
 
-			if(CryDirectoryExists(strTempPath.c_str()))
+			if (CryDirectoryExists(strTempPath.c_str()))
 			{
 				bFoundMatch = true;
 				break;
@@ -204,8 +204,7 @@ void CryFindEngineRootFolder(unsigned int engineRootPathSize, char* szEngineRoot
 		// Move up to parent directory
 		nCurDirSlashPos = strTempPath.rfind(osSeperator, nCurDirSlashPos - 1);
 
-	}
-	while (nCurDirSlashPos != 0 && nCurDirSlashPos != string::npos);
+	} while (nCurDirSlashPos != 0 && nCurDirSlashPos != string::npos);
 
 	if (nCurDirSlashPos == 0 || nCurDirSlashPos == string::npos)
 	{
@@ -214,13 +213,13 @@ void CryFindEngineRootFolder(unsigned int engineRootPathSize, char* szEngineRoot
 	}
 
 	strTempPath.erase(strTempPath.rfind(osSeperator) + 1, string::npos);
-	if (!strcpy(szEngineRootPath, /*engineRootPathSize, */strTempPath.c_str()))
+	if (!strcpy(szEngineRootPath, /*engineRootPathSize, */ strTempPath.c_str()))
 	{
 		CryFatalError("CryEngine root path is to long. MaxPathSize:%u, PathSize:%u, Path:%s", engineRootPathSize, (uint)strTempPath.length() + 1, strTempPath.c_str());
 	}
 }
 
-#endif 
+	#endif
 
 int64 CryGetTicks()
 {
@@ -229,30 +228,30 @@ int64 CryGetTicks()
 	return li.QuadPart;
 }
 
-#if BB_PLATFORM_WINAPI
-#include "platform_impl_winapi.inl"
-#elif BB_PLATFORM_ANDROID
-#include "platform_impl_android.inl"
-#elif BB_PLATFORM_ORBIS
-#include "platform_impl_orbis.inl"
-#elif BB_PLATFORM_MAC
-#include "platform_impl_mac.inl"
-#endif
+	#if BB_PLATFORM_WINAPI
+		#include "platform_impl_winapi.inl"
+	#elif BB_PLATFORM_ANDROID
+		#include "platform_impl_android.inl"
+	#elif BB_PLATFORM_ORBIS
+		#include "platform_impl_orbis.inl"
+	#elif BB_PLATFORM_MAC
+		#include "platform_impl_mac.inl"
+	#endif
 
-#if BB_PLATFORM_POSIX
-#include "platform_impl_posix.inl"
-#endif
+	#if BB_PLATFORM_POSIX
+		#include "platform_impl_posix.inl"
+	#endif
 // Functions that depend on the platform-specific includes below
 
 EQuestionResult CryMessageBox(const char* szText, const char* szCaption, EMessageBox type)
 {
 	#if 1
-	#if 0
+		#if 0
 	if (gEnv && gEnv->bUnattendedMode)
 	{
 		return eQR_None;
 	}
-	#endif
+		#endif
 
 	if (gEnv && gEnv->pSystem && gEnv->pSystem->GetUserCallback() != nullptr)
 	{
@@ -260,12 +259,12 @@ EQuestionResult CryMessageBox(const char* szText, const char* szCaption, EMessag
 	}
 	#endif
 
-#if !defined(CRY_PLATFORM_MOBILE) && !defined(CRY_PLATFORM_LINUX)
+	#if !defined(CRY_PLATFORM_MOBILE) && !defined(CRY_PLATFORM_LINUX)
 	// Invoke platform-specific implementation
 	EQuestionResult result = CryMessageBoxImpl(szText, szCaption, type);
-#else
+	#else
 	EQuestionResult result = eQR_None;
-#endif
+	#endif
 
 	if (gEnv && gEnv->pSystem && gEnv->pLog)
 	{
@@ -279,7 +278,7 @@ EQuestionResult CryMessageBox(const char* szText, const char* szCaption, EMessag
 	return result;
 }
 
-#if 0
+	#if 0
 EQuestionResult CryMessageBox(const wchar_t* szText, const wchar_t* szCaption, EMessageBox type)
 {
 	string text;
@@ -288,6 +287,6 @@ EQuestionResult CryMessageBox(const wchar_t* szText, const wchar_t* szCaption, E
 	Unicode::Convert(caption, szCaption);
 	return CryMessageBox(text, caption, type);
 }
-#endif
+	#endif
 
 #endif

@@ -6,7 +6,8 @@ CSound::~CSound()
 	DeleteThis();
 }
 
-CSound::CSound(SampleType pChunk) : Data(pChunk)
+CSound::CSound(SampleType pChunk)
+    : Data(pChunk)
 {
 }
 
@@ -38,23 +39,22 @@ bool CSound::IsLoaded()
 	return false;
 }
 
-void CSound::Play(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true*/, bool bSetRatio/* = true*/)
+void CSound::Play(float fVolumeScale /* = 1.0f*/, bool bForceActiveState /* = true*/, bool bSetRatio /* = true*/)
 {
-	#ifdef SOUND_SAMPLE
+#ifdef SOUND_SAMPLE
 	auto channel = Mix_PlayChannel(-1, m_Sample, 0);
-	#else
+#else
 	auto channel = Mix_PlayMusic(Data.Music, 0);
-	#endif
+#endif
 	CryLog("[Sound] Playing at channel: %d", channel);
 }
 
-void CSound::PlayFadeUnderwater(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true*/, bool bSetRatio/* = true*/)
+void CSound::PlayFadeUnderwater(float fVolumeScale /* = 1.0f*/, bool bForceActiveState /* = true*/, bool bSetRatio /* = true*/)
 {
 }
 
 void CSound::Stop()
 {
-
 }
 
 const char* CSound::GetName()
@@ -76,7 +76,7 @@ bool CSound::Preload()
 	return false;
 }
 
-unsigned int CSound::GetCurrentSamplePos(bool bMilliSeconds/* = false*/)
+unsigned int CSound::GetCurrentSamplePos(bool bMilliSeconds /* = false*/)
 {
 	return 0;
 }
@@ -212,7 +212,7 @@ void CSound::SetSoundPriority(unsigned char nSoundPriority)
 
 void CSound::DeleteThis()
 {
-	if(nFlags & FLAG_SOUND_16BITS)
+	if (nFlags & FLAG_SOUND_16BITS)
 		Mix_FreeChunk(Data.Sample);
 	else
 	{
@@ -223,10 +223,10 @@ void CSound::DeleteThis()
 CSound* CSound::Load(const char* path, int nFlags)
 {
 	SampleType Data{};
-	CSound*	   pSound{};
-	char buf[256];
+	CSound*    pSound{};
+	char       buf[256];
 	sprintf(buf, "Data/%s", path);
-	if(nFlags & FLAG_SOUND_16BITS)
+	if (nFlags & FLAG_SOUND_16BITS)
 		Data.Sample = Mix_LoadWAV(buf);
 	else
 		Data.Music = Mix_LoadMUS(buf);

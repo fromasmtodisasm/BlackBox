@@ -6,8 +6,8 @@ void CCmdLine::PushCommand(const string& sCommand, const string& sParameter)
 	if (sCommand.empty())
 		return;
 
-	ECmdLineArgType type  = eCLAT_Normal;
-	const char* szCommand = sCommand.c_str();
+	ECmdLineArgType type      = eCLAT_Normal;
+	const char*     szCommand = sCommand.c_str();
 
 	if (sCommand[0] == '-')
 	{
@@ -27,7 +27,7 @@ CCmdLine::CCmdLine(const char* commandLine)
 {
 	m_sCmdLine = commandLine;
 
-	char* src = (char*)commandLine;
+	char*  src = (char*)commandLine;
 
 	string command, parameter;
 
@@ -57,7 +57,7 @@ CCmdLine::CCmdLine(const char* commandLine)
 			{
 				PushCommand(command, parameter);
 
-				command	  = arg;
+				command   = arg;
 				parameter = "";
 			}
 			else
@@ -118,7 +118,7 @@ const ICmdLineArg* CCmdLine::FindArg(const ECmdLineArgType ArgType, const char* 
 
 string CCmdLine::Next(char*& src)
 {
-	char ch	  = 0;
+	char  ch  = 0;
 	char* org = src;
 
 	while ((ch = *src++))

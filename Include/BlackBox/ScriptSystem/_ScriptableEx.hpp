@@ -1,28 +1,28 @@
 #pragma once
 
 #ifndef _SCRIPTABLE_H_
-#	define _SCRIPTABLE_H_
+	#define _SCRIPTABLE_H_
 
-#	include <BlackBox/Math/MathHelper.hpp>
-#	include <BlackBox/ScriptSystem/IScriptSystem.hpp>
-#	include <BlackBox/System/ISystem.hpp>
-#	include <string>
-#	include <vector>
-//#define _NO_HASHMAP
-//#define NO_USERDATA_FOR_PROPERTIES
-#	ifndef _NO_HASHMAP
-#		include <map>
-#	else
-#		if defined(LINUX)
-#			include <ext/hash_map>
-#		else
-#			include <hash_map>
-#		endif
-#	endif
+	#include <BlackBox/Math/MathHelper.hpp>
+	#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+	#include <BlackBox/System/ISystem.hpp>
+	#include <string>
+	#include <vector>
+    //#define _NO_HASHMAP
+    //#define NO_USERDATA_FOR_PROPERTIES
+	#ifndef _NO_HASHMAP
+		#include <map>
+	#else
+		#if defined(LINUX)
+			#include <ext/hash_map>
+		#else
+			#include <hash_map>
+		#endif
+	#endif
 
-#	if !defined(_WIN32) || !defined(_WIN64)
-#		define OutputDebugString(str) printf(str)/*GetISystem()->Log(str)*/
-#	endif
+	#if !defined(_WIN32) || !defined(_WIN64)
+		#define OutputDebugString(str) printf(str) /*GetISystem()->Log(str)*/
+	#endif
 
 struct ScriptBase
 {
@@ -37,8 +37,8 @@ struct ScriptBase
 // See Also: CScriptableBase::RegisterTemplateFunction
 struct ScriptTemplateCallHelper
 {
-	template <typename Callee>
-	static int Call(Callee* callee, int (Callee::*func)(IFunctionHandler*), IFunctionHandler *pH )
+	template<typename Callee>
+	static int Call(Callee* callee, int (Callee::*func)(IFunctionHandler*), IFunctionHandler* pH)
 	{
 		return (callee->*func)(pH);
 	}
@@ -158,15 +158,15 @@ struct ScriptTemplateCallHelper
 	template<typename Callee, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9, typename P10>
 	static int Call(Callee* callee, P0 (Callee::*func)(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10), IFunctionHandler* pH)
 	{
-		P1 p1;
-		P2 p2;
-		P3 p3;
-		P4 p4;
-		P5 p5;
-		P6 p6;
-		P7 p7;
-		P8 p8;
-		P9 p9;
+		P1  p1;
+		P2  p2;
+		P3  p3;
+		P4  p4;
+		P5  p5;
+		P6  p6;
+		P7  p7;
+		P8  p8;
+		P9  p9;
 		P10 p10;
 		if (!pH->GetParams(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10))
 			return pH->EndFunction();
@@ -179,8 +179,8 @@ struct ScriptTemplateCallHelper
 		static int Dispatch(IFunctionHandler* pH)
 		{
 			Callee* pCallee = (Callee*)pH->GetThis();
-			Func func;
-			auto i = pH->GetFunctionID();
+			Func    func;
+			auto    i = pH->GetFunctionID();
 			memcpy(&func, &i, sizeof(func));
 			return ScriptTemplateCallHelper::Call(pCallee, func, pH);
 			return 0;
@@ -192,12 +192,12 @@ struct ScriptTemplateCallHelper
 template<class T>
 class _ScriptableEx : public ScriptBase
 {
-  public:
+public:
 	_ScriptableEx()
 	{
-		m_pScriptThis	= NULL;
+		m_pScriptThis   = NULL;
 		m_pScriptSystem = NULL;
-		m_nBase			= NULL;
+		m_nBase         = NULL;
 	}
 
 	virtual ~_ScriptableEx()
@@ -212,7 +212,7 @@ class _ScriptableEx : public ScriptBase
 
 	typedef int (T::*MemberFunc)(IFunctionHandler* pH);
 
-	typedef std::vector<MemberFunc> FunctionsVec;
+	typedef std::vector<MemberFunc>         FunctionsVec;
 	typedef typename FunctionsVec::iterator FunctionsVecItor;
 
 	//////////////////////////////////////////////////////////////////////
@@ -236,26 +236,25 @@ class _ScriptableEx : public ScriptBase
 		Property(const Property& p)
 		{
 			nType = p.nType;
-			val	  = p.val;
+			val   = p.val;
 		}
 		PropertyType nType;
 		unsigned int val;
 	};
 
-	UINT_PTR m_nBase;
+	UINT_PTR                                 m_nBase;
 
-	typedef std::vector<Property*> PropertiesVec;
+	typedef std::vector<Property*>           PropertiesVec;
 	typedef typename PropertiesVec::iterator PropertiesVecItor;
 
-	void Init(IScriptSystem* pScriptSystem, T* pParent, bool dump = false)
+	void                                     Init(IScriptSystem* pScriptSystem, T* pParent, bool dump = false)
 	{
 		class CPrintSink : public IScriptObjectDumpSink
 		{
-		  public:
+		public:
 			void OnElementFound(int nIdx, ScriptVarType type){/*ignore non string indexed values*/};
 			void OnElementFound(const char* sName, ScriptVarType type)
 			{
-
 				switch (type)
 				{
 				case ScriptVarType::Null:
@@ -289,7 +288,7 @@ class _ScriptableEx : public ScriptBase
 
 		CPrintSink sink;
 
-		m_pScriptSystem						 = pScriptSystem;
+		m_pScriptSystem                      = pScriptSystem;
 		_ScriptableEx<T>::m_pFunctionHandler = m_pScriptSystem->GetFunctionHandler();
 		if (!_ScriptableEx<T>::m_pFunctionHandler)
 			CryError("Scriptable EX:FUNCTION HANDLER NULL");
@@ -297,8 +296,8 @@ class _ScriptableEx : public ScriptBase
 		m_pScriptThis->SetNativeData(pParent);
 		if (dump)
 		{
-            CryLog("----------------------------------------------");
-            m_pScriptThis->Dump(&sink);
+			CryLog("----------------------------------------------");
+			m_pScriptThis->Dump(&sink);
 		}
 		m_pScriptThis->Delegate(_ScriptableEx<T>::m_pTemplateTable);
 		if (dump)
@@ -310,12 +309,12 @@ class _ScriptableEx : public ScriptBase
 		if (m_pScriptThis->GetNativeData() != pParent)
 			CryError("Scriptable EX:Properties map");
 		if (dump)
-            m_pTemplateTable->Dump(&sink);
+			m_pTemplateTable->Dump(&sink);
 	}
 
 	void InitGlobal(IScriptSystem* pScriptSystem, const char* sName, T* pParent)
 	{
-		m_pScriptSystem						 = pScriptSystem;
+		m_pScriptSystem                      = pScriptSystem;
 		_ScriptableEx<T>::m_pFunctionHandler = m_pScriptSystem->GetFunctionHandler();
 		if (!_ScriptableEx<T>::m_pFunctionHandler)
 			CryError("Scriptable EX:FUNCTION HANDLER NULL");
@@ -391,14 +390,14 @@ class _ScriptableEx : public ScriptBase
 	{
 		if (m_pPropertiesTable == NULL)
 		{
-			m_pPropertiesTable	 = pSS->CreateObject();
+			m_pPropertiesTable   = pSS->CreateObject();
 			m_pvPropertiesVector = new PropertiesVec;
 		}
 	}
 
 	static void InsertProperty(const char* sName, Property& prop)
 	{
-#	if 0
+	#if 0
     USER_DATA ud;
     Property* p = new Property;
     m_pvPropertiesVector->push_back(p);
@@ -413,7 +412,7 @@ class _ScriptableEx : public ScriptBase
     p = (Property*)nP;
     if (p->nType != prop.nType)
       CryError("Scriptable EX:Insert Property");
-#	endif // 0
+	#endif // 0
 	}
 
 	static void RegisterProperty(const char* sName, PropertyType t, unsigned int offset)
@@ -434,7 +433,7 @@ class _ScriptableEx : public ScriptBase
 		return m_pScriptThis;
 	}
 
-  protected:
+protected:
 	static int FuncThunk(HSCRIPT h)
 	{
 		m_pFunctionHandler->__Attach(h);
@@ -465,11 +464,11 @@ class _ScriptableEx : public ScriptBase
 	static int SetThunk(HSCRIPT h)
 	{
 		m_pFunctionHandler->__Attach(h);
-		T* pThis = (T*)m_pFunctionHandler->GetThis();
+		T*          pThis = (T*)m_pFunctionHandler->GetThis();
 		const char* sIndex;
 		if (pThis && m_pFunctionHandler->GetParam(1, sIndex))
 		{
-			int nCookie;
+			int       nCookie;
 			USER_DATA nP;
 			if (_ScriptableEx<T>::m_pPropertiesTable->GetUDValue(sIndex, nP, nCookie) /*pThis->m_pProperties->GetUDValue(sIndex,nP,nCookie)*/)
 			{
@@ -504,9 +503,9 @@ class _ScriptableEx : public ScriptBase
 					m_pFunctionHandler->GetParam(2, sTemp);
 					if (!sTemp)
 						return -1;
-#	if 0
+	#if 0
           (*((string*)val)) = sTemp;
-#	endif // 0
+	#endif // 0
 				}
 					return 0;
 					break;
@@ -532,11 +531,11 @@ class _ScriptableEx : public ScriptBase
 	{
 		static char cTemp[200];
 		m_pFunctionHandler->__Attach(h);
-		T* pThis = (T*)m_pFunctionHandler->GetThis();
+		T*          pThis = (T*)m_pFunctionHandler->GetThis();
 		const char* sIndex;
 		if (pThis && m_pFunctionHandler->GetParam(1, sIndex))
 		{
-			int nCookie;
+			int       nCookie;
 			USER_DATA nP;
 			if (_ScriptableEx<T>::m_pPropertiesTable->GetUDValue(sIndex, nP, nCookie))
 			{
@@ -577,20 +576,20 @@ class _ScriptableEx : public ScriptBase
 		return -1;
 	}
 
-	IScriptObject* m_pScriptThis;
-	IScriptSystem* m_pScriptSystem;
+	IScriptObject*           m_pScriptThis;
+	IScriptSystem*           m_pScriptSystem;
 
-	static FunctionsVec m_vFuncs;
-	static IScriptObject* m_pTemplateTable;
-	static IScriptObject* m_pPropertiesTable;
-	static PropertiesVec* m_pvPropertiesVector;
+	static FunctionsVec      m_vFuncs;
+	static IScriptObject*    m_pTemplateTable;
+	static IScriptObject*    m_pPropertiesTable;
+	static PropertiesVec*    m_pvPropertiesVector;
 	static IFunctionHandler* m_pFunctionHandler;
-	static IScriptSystem* m_pSS;
+	static IScriptSystem*    m_pSS;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-#	if defined(LINUX) || defined(__MINGW32__) || defined(__clang__)
-#		define _DECLARE_SCRIPTABLEEX(_class)                                                                            \
+    /////////////////////////////////////////////////////////////////////////////
+	#if defined(LINUX) || defined(__MINGW32__) || defined(__clang__)
+		#define _DECLARE_SCRIPTABLEEX(_class)                                                                            \
 			template<>                                                                                                   \
 			IFunctionHandler* _ScriptableEx<_class>::m_pFunctionHandler = NULL;                                          \
 			template<>                                                                                                   \
@@ -603,18 +602,18 @@ class _ScriptableEx : public ScriptBase
 			IScriptSystem* _ScriptableEx<_class>::m_pSS = NULL;                                                          \
 			template<>                                                                                                   \
 			_ScriptableEx<_class>::PropertiesVec* _ScriptableEx<_class>::m_pvPropertiesVector = NULL;
-#	else
-#		define _DECLARE_SCRIPTABLEEX(_class)                                                         \
+	#else
+		#define _DECLARE_SCRIPTABLEEX(_class)                                                         \
 			template<>                                                                                \
-			IFunctionHandler* _ScriptableEx<_class>::m_pFunctionHandler = NULL;                       \
-			_ScriptableEx<_class>::FunctionsVec _ScriptableEx<_class>::m_vFuncs;                      \
-			IScriptObject* _ScriptableEx<_class>::m_pTemplateTable							  = NULL; \
-			IScriptObject* _ScriptableEx<_class>::m_pPropertiesTable						  = NULL; \
-			IScriptSystem* _ScriptableEx<_class>::m_pSS										  = NULL; \
+			IFunctionHandler*                     _ScriptableEx<_class>::m_pFunctionHandler = NULL;   \
+			_ScriptableEx<_class>::FunctionsVec   _ScriptableEx<_class>::m_vFuncs;                    \
+			IScriptObject*                        _ScriptableEx<_class>::m_pTemplateTable     = NULL; \
+			IScriptObject*                        _ScriptableEx<_class>::m_pPropertiesTable   = NULL; \
+			IScriptSystem*                        _ScriptableEx<_class>::m_pSS                = NULL; \
 			_ScriptableEx<_class>::PropertiesVec* _ScriptableEx<_class>::m_pvPropertiesVector = NULL;
-#	endif //LINUX
+	#endif //LINUX
 
-#	define CHECK_PARAMETERS_SS(_pSS, _n)                                                                      \
+	#define CHECK_PARAMETERS_SS(_pSS, _n)                                                                      \
 		if (pH->GetParamCount() != _n)                                                                         \
 		{                                                                                                      \
 			_pSS->RaiseError("%s: %d arguments passed, " #_n " expected)", __FUNCTION__, pH->GetParamCount()); \
@@ -626,37 +625,37 @@ class _ScriptableEx : public ScriptBase
 // Find: CHECK_PARAMETERS(:Wh)*\([^,]+,(:Wh)*{[0-9]+}\)
 // Repl: CHECK_PARAMETERS(\1)
 
-#	ifndef __INTEL_COMPILER
-#		define CHECK_PARAMETERS(_n) CHECK_PARAMETERS_SS(m_pScriptSystem, _n)
-#	else
-// For Intel Compiler.
-#		define CHECK_PARAMETERS(_n)                                                                          \
+	#ifndef __INTEL_COMPILER
+		#define CHECK_PARAMETERS(_n) CHECK_PARAMETERS_SS(m_pScriptSystem, _n)
+	#else
+	    // For Intel Compiler.
+		#define CHECK_PARAMETERS(_n)                                                                          \
 			if (pH->GetParamCount() != _n)                                                                    \
 			{                                                                                                 \
 				m_pScriptSystem->RaiseError(": %d arguments passed, " #_n " expected)", pH->GetParamCount()); \
 				return pH->EndFunctionNull();                                                                 \
 			}
-#	endif
-#	define SCRIPT_CHECK_PARAMETERS(_n) CHECK_PARAMETERS(_n)
-#	define SCRIPT_REG_CLASSNAME
-#	define SCRIPT_REG_FUNC(_func) SCRIPT_REG_CLASSNAME::RegisterFunction(m_pSS, #	 _func, &SCRIPT_REG_CLASSNAME::_func);
-#	define REG_FUNC(_class, _func) _class::RegisterFunction(pSS, #	_func, &_class::_func);
-#	define SCRIPT_REG_TEMPLFUNC(func, sFuncParams) RegisterTemplateFunction(#	 func, sFuncParams, *this, &SCRIPT_REG_CLASSNAME::func);
-#	define SCRIPT_REG_TEMPLFUNC_U(func) SCRIPT_REG_TEMPLFUNC(func, "")
-#	define REG_DERIVED_FUNC(_class, _func) RegisterFunction(m_pSS, #	_func, &_class::_func);
-#	define SCRIPT_REG_CONST_SS(_pSS, _const) m_pSS->SetGlobalValue(#	_const, _const);
-#	define SCRIPT_REG_CONST(_const) SCRIPT_REG_CONST_SS(m_pScriptSystem, _const)
+	#endif
+	#define SCRIPT_CHECK_PARAMETERS(_n) CHECK_PARAMETERS(_n)
+	#define SCRIPT_REG_CLASSNAME
+	#define SCRIPT_REG_FUNC(_func)                  SCRIPT_REG_CLASSNAME::RegisterFunction(m_pSS, #_func, &SCRIPT_REG_CLASSNAME::_func);
+	#define REG_FUNC(_class, _func)                 _class::RegisterFunction(pSS, #_func, &_class::_func);
+	#define SCRIPT_REG_TEMPLFUNC(func, sFuncParams) RegisterTemplateFunction(#func, sFuncParams, *this, &SCRIPT_REG_CLASSNAME::func);
+	#define SCRIPT_REG_TEMPLFUNC_U(func)            SCRIPT_REG_TEMPLFUNC(func, "")
+	#define REG_DERIVED_FUNC(_class, _func)         RegisterFunction(m_pSS, #_func, &_class::_func);
+	#define SCRIPT_REG_CONST_SS(_pSS, _const)       m_pSS->SetGlobalValue(#_const, _const);
+	#define SCRIPT_REG_CONST(_const)                SCRIPT_REG_CONST_SS(m_pScriptSystem, _const)
 
 // Description:
 //		This class map an 3d vector to a LUA table with x,y,z members.
 class CScriptObjectVector : public SmartScriptObject
 {
-  public:
+public:
 	CScriptObjectVector()
 	{
 	}
 	CScriptObjectVector(IScriptSystem* pSS, bool bCreateEmpty = false)
-		: SmartScriptObject(pSS, bCreateEmpty)
+	    : SmartScriptObject(pSS, bCreateEmpty)
 	{
 	}
 	void Set(const Legacy::Vec3& v)
@@ -668,7 +667,7 @@ class CScriptObjectVector : public SmartScriptObject
 	}
 	Legacy::Vec3 Get()
 	{
-		Legacy::Vec3 v(0, 0, 0);
+		Legacy::Vec3       v(0, 0, 0);
 		CScriptSetGetChain chain(*this);
 		chain.GetValue("x", v.x);
 		chain.GetValue("y", v.y);
@@ -685,12 +684,12 @@ class CScriptObjectVector : public SmartScriptObject
 //! This class map an "color" to a LUA table with indexed 3 numbers [1],[2],[3] members.
 class CScriptObjectColor : public SmartScriptObject
 {
-  public:
+public:
 	CScriptObjectColor()
 	{
 	}
 	CScriptObjectColor(IScriptSystem* pSS, bool bCreateEmpty = false)
-		: SmartScriptObject(pSS, bCreateEmpty)
+	    : SmartScriptObject(pSS, bCreateEmpty)
 	{
 	}
 	void Set(const Legacy::Vec3& v)
@@ -703,7 +702,7 @@ class CScriptObjectColor : public SmartScriptObject
 	Legacy::Vec3 Get()
 	{
 		IScriptObject* pObject = *this;
-		Legacy::Vec3 v(0, 0, 0);
+		Legacy::Vec3   v(0, 0, 0);
 		pObject->GetAt(1, v.x);
 		pObject->GetAt(2, v.y);
 		pObject->GetAt(3, v.z);
@@ -924,7 +923,7 @@ struct Script
 	//////////////////////////////////////////////////////////////////////////
 	template<class P1, class P2, class P3, class P4, class P5>
 	static bool CallMethod(IScriptObject* pTable, const char* sMethod, const P1& p1, const P2& p2, const P3& p3, const P4& p4,
-						   const P5& p5)
+	                       const P5& p5)
 	{
 		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
 
@@ -938,11 +937,11 @@ struct Script
 	//! Call to table.
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func)
 	{
-		#if 0
+	#if 0
 		IScriptSystem* pSS = gEnv->pScriptSystem;
-		#else
+	#else
 		IScriptSystem* pSS = gEnv->pScriptSystem;
-		#endif
+	#endif
 		if (!pSS->BeginCall(func))
 			return false;
 		PushParams(pSS, pTable);
@@ -991,7 +990,7 @@ struct Script
 	//////////////////////////////////////////////////////////////////////////
 	template<class P1, class P2, class P3, class P4, class P5>
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4,
-						   const P5& p5)
+	                       const P5& p5)
 	{
 		IScriptSystem* pSS = gEnv->pScriptSystem;
 		if (!pSS->BeginCall(func))
@@ -1054,7 +1053,7 @@ struct Script
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-  private:
+private:
 	template<class P1>
 	static void PushParams(IScriptSystem* pSS, const P1& p1)
 	{
@@ -1101,8 +1100,6 @@ struct Script
 		pSS->PushFuncParam(p6);
 	}
 };
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 #endif //_SCRIPTABLE_H_

@@ -5,7 +5,7 @@
 
 uint8_t SInputLayoutCompositionDescriptor::GenerateShaderMask(const InputLayoutHandle VertexFormat, D3DShaderReflection* pShaderReflection)
 {
-	uint8_t shaderMask = 0;
+	uint8_t         shaderMask = 0;
 
 	D3D_SHADER_DESC Desc;
 	pShaderReflection->GetDesc(&Desc);
@@ -27,13 +27,13 @@ uint8_t SInputLayoutCompositionDescriptor::GenerateShaderMask(const InputLayoutH
 
 		// Insert ordered by element name
 		auto it = std::lower_bound(reflectedNames.begin(), reflectedNames.end(), Sig.SemanticName, [](const char* const lhs, const char* const rhs)
-								   { return ::strcmp(lhs, rhs) <= 0; });
+		                           { return ::strcmp(lhs, rhs) <= 0; });
 		reflectedNames.insert(it, Sig.SemanticName);
 	}
 
 	// Check which of the names that are expected by the vertex format actually exist as input in the VS
 	auto layout_it = layoutDescriptor->m_Declaration.cbegin();
-	auto vs_it	   = reflectedNames.cbegin();
+	auto vs_it     = reflectedNames.cbegin();
 	for (int i = 0; layout_it != layoutDescriptor->m_Declaration.cend() && vs_it != reflectedNames.cend(); ++i, ++layout_it)
 	{
 		int compResult;
@@ -71,102 +71,100 @@ CDeviceObjectFactory::~CDeviceObjectFactory()
 #endif
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////
 // InputLayout API
 
-std::vector<SInputLayout> CDeviceObjectFactory::m_vertexFormatToInputLayoutCache;
+std::vector<SInputLayout>                                                                                                                CDeviceObjectFactory::m_vertexFormatToInputLayoutCache;
 std::unordered_map<SInputLayoutCompositionDescriptor, CDeviceObjectFactory::SInputLayoutPair, SInputLayoutCompositionDescriptor::hasher> CDeviceObjectFactory::s_InputLayoutCompositions;
 
-static const D3D11_INPUT_ELEMENT_DESC VertexDecl_Empty[] = {{}}; // Empty
+static const D3D11_INPUT_ELEMENT_DESC                                                                                                    VertexDecl_Empty[] = {{}}; // Empty
 
-static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+static const D3D11_INPUT_ELEMENT_DESC                                                                                                    VertexDecl_P3F[] =
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_C4B[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_C4B, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_C4B, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_C4B, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_C4B, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_N[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_T2F[] =
-	{
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
+    {
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_N_C4B[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_N_C4B, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_N_C4B, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_T2F[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_N_T2F[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_T2F, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_N_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_T2F, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_N_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_N_C4B_T2F[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B_T2F, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_N_C4B_T2F, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_N_C4B_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_N_C4B_T2F, normal), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_N_C4B_T2F, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_N_C4B_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_P3F_C4B_T2F[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_C4B_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_C4B_T2F, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_C4B_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
+    {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVF_P3F_C4B_T2F, xyz), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(SVF_P3F_C4B_T2F, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVF_P3F_C4B_T2F, st), D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_T3F_B4F_N3F[] =
-	{
-		{"TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, VSF_TANGENTS, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BITANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, VSF_TANGENTS, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, VSF_TANGENTS, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}};
+    {
+        {"TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, VSF_TANGENTS, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"BITANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, VSF_TANGENTS, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, VSF_TANGENTS, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
 static const D3D11_INPUT_ELEMENT_DESC VertexDecl_T4S_B4S[] =
-	{
-		{"TANGENT", 0, DXGI_FORMAT_R16G16B16A16_SNORM, VSF_TANGENTS, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BITANGENT", 0, DXGI_FORMAT_R16G16B16A16_SNORM, VSF_TANGENTS, 8, D3D11_INPUT_PER_VERTEX_DATA, 0}};
+    {
+        {"TANGENT", 0, DXGI_FORMAT_R16G16B16A16_SNORM, VSF_TANGENTS, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"BITANGENT", 0, DXGI_FORMAT_R16G16B16A16_SNORM, VSF_TANGENTS, 8, D3D11_INPUT_PER_VERTEX_DATA, 0}};
 
 static const struct
 {
-	size_t							numDescs;
+	size_t                          numDescs;
 	const D3D11_INPUT_ELEMENT_DESC* inputDescs;
 } VertexDecls[eVertexFormat::VERTEX_FORMAT_NUMS] =
-{
-	{0, VertexDecl_Empty},
-	{ARRAY_COUNT(VertexDecl_P3F), VertexDecl_P3F},
-	{ARRAY_COUNT(VertexDecl_P3F_C4B), VertexDecl_P3F_C4B},
-	{ARRAY_COUNT(VertexDecl_P3F_T2F), VertexDecl_P3F_T2F},
-	{ARRAY_COUNT(VertexDecl_P3F_C4B_T2F), VertexDecl_P3F_C4B_T2F},
-	{0, VertexDecl_Empty},
-	{0, VertexDecl_Empty},
-	{ARRAY_COUNT(VertexDecl_P3F_N), VertexDecl_P3F_N},
-	{ARRAY_COUNT(VertexDecl_P3F_N_C4B), VertexDecl_P3F_N_C4B},
-	{ARRAY_COUNT(VertexDecl_P3F_N_T2F), VertexDecl_P3F_N_T2F},
-	{ARRAY_COUNT(VertexDecl_P3F_N_C4B_T2F), VertexDecl_P3F_N_C4B_T2F},
-	{0, VertexDecl_Empty},
-	{0, VertexDecl_Empty},
-	{0, VertexDecl_Empty},
-	{0, VertexDecl_Empty},
-	{ARRAY_COUNT(VertexDecl_T2F), VertexDecl_T2F},
-	{0, VertexDecl_Empty},
+    {
+        {0, VertexDecl_Empty},
+        {ARRAY_COUNT(VertexDecl_P3F), VertexDecl_P3F},
+        {ARRAY_COUNT(VertexDecl_P3F_C4B), VertexDecl_P3F_C4B},
+        {ARRAY_COUNT(VertexDecl_P3F_T2F), VertexDecl_P3F_T2F},
+        {ARRAY_COUNT(VertexDecl_P3F_C4B_T2F), VertexDecl_P3F_C4B_T2F},
+        {0, VertexDecl_Empty},
+        {0, VertexDecl_Empty},
+        {ARRAY_COUNT(VertexDecl_P3F_N), VertexDecl_P3F_N},
+        {ARRAY_COUNT(VertexDecl_P3F_N_C4B), VertexDecl_P3F_N_C4B},
+        {ARRAY_COUNT(VertexDecl_P3F_N_T2F), VertexDecl_P3F_N_T2F},
+        {ARRAY_COUNT(VertexDecl_P3F_N_C4B_T2F), VertexDecl_P3F_N_C4B_T2F},
+        {0, VertexDecl_Empty},
+        {0, VertexDecl_Empty},
+        {0, VertexDecl_Empty},
+        {0, VertexDecl_Empty},
+        {ARRAY_COUNT(VertexDecl_T2F), VertexDecl_T2F},
+        {0, VertexDecl_Empty},
 
 };
 
@@ -189,7 +187,7 @@ void CDeviceObjectFactory::TrimInputLayouts()
 
 const SInputLayout* CDeviceObjectFactory::GetInputLayoutDescriptor(const InputLayoutHandle VertexFormat)
 {
-	uint64_t idx = static_cast<uint64_t>(VertexFormat);
+	uint64_t   idx  = static_cast<uint64_t>(VertexFormat);
 	const auto size = m_vertexFormatToInputLayoutCache.size();
 	if (idx >= size)
 	{
@@ -215,19 +213,19 @@ const CDeviceObjectFactory::SInputLayoutPair* CDeviceObjectFactory::GetOrCreateI
 		CRY_VERIFY(SUCCEEDED(hr) && pShaderReflBuf);
 	}
 
-	D3DShaderReflection* pShaderReflection = (D3DShaderReflection*)pShaderReflBuf;
+	D3DShaderReflection*              pShaderReflection = (D3DShaderReflection*)pShaderReflBuf;
 
 	// Create the composition descriptor
 	SInputLayoutCompositionDescriptor compositionDescriptor(VertexFormat, StreamMask, pShaderReflection);
 
-	auto it = s_InputLayoutCompositions.find(compositionDescriptor);
+	auto                              it = s_InputLayoutCompositions.find(compositionDescriptor);
 	if (it == s_InputLayoutCompositions.end() || it->first != compositionDescriptor)
 	{
 		// Create the input layout for the current permutation
-		auto il = CreateInputLayoutForPermutation(pVertexShader, compositionDescriptor, StreamMask, VertexFormat);
+		auto il                = CreateInputLayoutForPermutation(pVertexShader, compositionDescriptor, StreamMask, VertexFormat);
 		auto deviceInputLayout = CreateInputLayout(il, pVertexShader);
 
-		auto pair = std::make_pair(il, deviceInputLayout);
+		auto pair              = std::make_pair(il, deviceInputLayout);
 		// Insert with hint
 		return &s_InputLayoutCompositions.insert(it, std::make_pair(compositionDescriptor, pair))->second;
 	}
@@ -242,9 +240,9 @@ const CDeviceObjectFactory::SInputLayoutPair* CDeviceObjectFactory::GetOrCreateI
 	return GetOrCreateInputLayout(pVS, VSM_NONE, VertexFormat);
 }
 
-SInputLayout CDeviceObjectFactory::CreateInputLayoutForPermutation(const SShaderBlob* m_pConsumingVertexShader, const SInputLayoutCompositionDescriptor &compositionDescription, EStreamMasks StreamMask, const InputLayoutHandle VertexFormat)
+SInputLayout CDeviceObjectFactory::CreateInputLayoutForPermutation(const SShaderBlob* m_pConsumingVertexShader, const SInputLayoutCompositionDescriptor& compositionDescription, EStreamMasks StreamMask, const InputLayoutHandle VertexFormat)
 {
-	bool bInstanced = (StreamMask & VSM_INSTANCED) != 0;
+	bool        bInstanced       = (StreamMask & VSM_INSTANCED) != 0;
 
 	const auto* layoutDescriptor = GetInputLayoutDescriptor(VertexFormat);
 	CRY_ASSERT(layoutDescriptor);
@@ -254,8 +252,8 @@ SInputLayout CDeviceObjectFactory::CreateInputLayoutForPermutation(const SShader
 	// Copy layout declarations that also exists in shader, using the shaderMask of the composition description
 	std::vector<D3D11_INPUT_ELEMENT_DESC> decs;
 	decs.reserve(layoutDescriptor->m_Declaration.size());
-	for (int i=0; i<layoutDescriptor->m_Declaration.size(); ++i)
-			decs.push_back(layoutDescriptor->m_Declaration[i]);
+	for (int i = 0; i < layoutDescriptor->m_Declaration.size(); ++i)
+		decs.push_back(layoutDescriptor->m_Declaration[i]);
 
 	// Create instanced vertex declaration
 	if (bInstanced)
@@ -264,8 +262,8 @@ SInputLayout CDeviceObjectFactory::CreateInputLayoutForPermutation(const SShader
 		{
 			D3D11_INPUT_ELEMENT_DESC& elem = decs[n];
 
-			elem.InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-			elem.InstanceDataStepRate = 1;
+			elem.InputSlotClass            = D3D11_INPUT_PER_INSTANCE_DATA;
+			elem.InstanceDataStepRate      = 1;
 		}
 	}
 
@@ -278,13 +276,17 @@ SInputLayout CDeviceObjectFactory::CreateInputLayoutForPermutation(const SShader
 		InputLayoutHandle AttachmentFormat = 0;
 		switch (n)
 		{
-		case VSF_TANGENTS: AttachmentFormat = eVertexFormat::VERTEX_FORMAT_T3F_B3F_N3F; break;
-			#if 0
+		case VSF_TANGENTS:
+			AttachmentFormat = eVertexFormat::VERTEX_FORMAT_T3F_B3F_N3F;
+			break;
+#if 0
 		case VSF_QTANGENTS: AttachmentFormat = EDefaultInputLayouts::Q4F; break;
-			#endif
-			#ifdef ENABLE_NORMALSTREAM_SUPPORT
-		case VSF_NORMALS: AttachmentFormat = eVertexFormat::VERTEX_FORMAT_N3F; break;
-			#endif
+#endif
+#ifdef ENABLE_NORMALSTREAM_SUPPORT
+		case VSF_NORMALS:
+			AttachmentFormat = eVertexFormat::VERTEX_FORMAT_N3F;
+			break;
+#endif
 		}
 
 		const auto* addLayout = GetInputLayoutDescriptor(AttachmentFormat);
@@ -302,18 +304,16 @@ SInputLayout CDeviceObjectFactory::CreateInputLayoutForPermutation(const SShader
 InputLayoutHandle CDeviceObjectFactory::CreateCustomVertexFormat(size_t numDescs, const D3D11_INPUT_ELEMENT_DESC* inputLayout)
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> decs;
-	for (int n = 0; n < numDescs; ++n) 
+	for (int n = 0; n < numDescs; ++n)
 	{
 		// Insert ordered by element name
 		auto it = std::lower_bound(decs.begin(), decs.end(), inputLayout[n], [](const D3D11_INPUT_ELEMENT_DESC& lhs, const D3D11_INPUT_ELEMENT_DESC& rhs)
-		{
-			return ::strcmp(lhs.SemanticName, rhs.SemanticName) <= 0;
-		});
+		                           { return ::strcmp(lhs.SemanticName, rhs.SemanticName) <= 0; });
 		decs.insert(it, inputLayout[n]);
 	}
 
 	// Find existing vertex format or store a new one
-	auto it = std::find(m_vertexFormatToInputLayoutCache.begin(), m_vertexFormatToInputLayoutCache.end(), decs);
+	auto it  = std::find(m_vertexFormatToInputLayoutCache.begin(), m_vertexFormatToInputLayoutCache.end(), decs);
 	auto idx = it - m_vertexFormatToInputLayoutCache.begin();
 	if (it == m_vertexFormatToInputLayoutCache.end())
 	{
@@ -331,16 +331,16 @@ CDeviceInputLayout* CDeviceObjectFactory::CreateInputLayout(const SInputLayout& 
 	if (!m_pConsumingVertexShader || !m_pConsumingVertexShader->m_pShaderData)
 		return nullptr;
 
-	const int   nSize = m_pConsumingVertexShader->m_nDataSize;
-	const void* pVSData = m_pConsumingVertexShader->m_pShaderData;
+	const int           nSize   = m_pConsumingVertexShader->m_nDataSize;
+	const void*         pVSData = m_pConsumingVertexShader->m_pShaderData;
 
 	CDeviceInputLayout* Layout;
-	HRESULT hr = E_FAIL;
-	#if 0
+	HRESULT             hr = E_FAIL;
+#if 0
 	if (FAILED(hr = /*gcpRendD3D->*/GetDevice()->CreateInputLayout(&pLayout.m_Declaration[0], pLayout.m_Declaration.size(), pVSData, nSize, &Layout)))
-	#else
+#else
 	if (FAILED(hr = GetDevice()->CreateInputLayout(&pLayout.m_Declaration[0], pLayout.m_Declaration.size(), pVSData, nSize, &Layout)))
-	#endif
+#endif
 	{
 		CRY_ASSERT(false);
 		return Layout;
@@ -349,54 +349,52 @@ CDeviceInputLayout* CDeviceObjectFactory::CreateInputLayout(const SInputLayout& 
 	return Layout;
 }
 
-
-
 // Shader API
 
 uint8* CDeviceObjectFactory::Map(D3DBuffer* buffer, uint32 subresource, buffer_size_t offset, buffer_size_t size, D3D11_MAP mode)
 {
 	D3D11_MAPPED_SUBRESOURCE mapped_resource = {0};
-	/*gcpRendD3D->*/GetDeviceContext()->Map(buffer, subresource, mode, 0, &mapped_resource);
+	/*gcpRendD3D->*/ GetDeviceContext()->Map(buffer, subresource, mode, 0, &mapped_resource);
 	return reinterpret_cast<uint8*>(mapped_resource.pData);
 }
 
 void CDeviceObjectFactory::Unmap(D3DBuffer* buffer, uint32 subresource, buffer_size_t offset, buffer_size_t size, D3D11_MAP mode)
 {
-	/*gcpRendD3D->*/GetDeviceContext()->Unmap(buffer, subresource);
+	/*gcpRendD3D->*/ GetDeviceContext()->Unmap(buffer, subresource);
 }
 
 ID3D11VertexShader* CDeviceObjectFactory::CreateVertexShader(const void* pData, size_t bytes)
 {
 	ID3D11VertexShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/GetDevice()->CreateVertexShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateVertexShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11PixelShader* CDeviceObjectFactory::CreatePixelShader(const void* pData, size_t bytes)
 {
 	ID3D11PixelShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/GetDevice()->CreatePixelShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreatePixelShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11GeometryShader* CDeviceObjectFactory::CreateGeometryShader(const void* pData, size_t bytes)
 {
 	ID3D11GeometryShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/GetDevice()->CreateGeometryShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateGeometryShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11HullShader* CDeviceObjectFactory::CreateHullShader(const void* pData, size_t bytes)
 {
 	ID3D11HullShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/GetDevice()->CreateHullShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateHullShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11DomainShader* CDeviceObjectFactory::CreateDomainShader(const void* pData, size_t bytes)
 {
 	ID3D11DomainShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/GetDevice()->CreateDomainShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateDomainShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11ComputeShader* CDeviceObjectFactory::CreateComputeShader(const void* pData, size_t bytes)
 {
 	ID3D11ComputeShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/GetDevice()->CreateComputeShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateComputeShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }

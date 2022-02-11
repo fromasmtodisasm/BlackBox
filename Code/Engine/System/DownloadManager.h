@@ -20,7 +20,6 @@ public:
 	void             Release();
 
 private:
-
 	ISystem*                    m_pSystem;
 	std::list<CHTTPDownloader*> m_lDownloadList;
 };

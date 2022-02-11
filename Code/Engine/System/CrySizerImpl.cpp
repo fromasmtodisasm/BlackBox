@@ -4,13 +4,13 @@
 #include <BlackBox/System/CrySizer.hpp>
 #include "CrySizerImpl.h"
 
-CrySizerImpl::CrySizerImpl()  
-	#if 0
+CrySizerImpl::CrySizerImpl()
+#if 0
 :
 	m_pResourceCollector(0)
-	#endif
+#endif
 {
-	m_nFlags = 0;
+	m_nFlags     = 0;
 	m_nTotalSize = 0;
 	// to avoid reallocations during walk through the memory tree, reserve the space for the names
 	clear();
@@ -56,13 +56,13 @@ size_t CrySizerImpl::getNameIndex(size_t nParent, const char* szComponentName)
 	for (; it != itEnd; ++it)
 	{
 		if (!strcasecmp(it->strName.c_str(), szComponentName) && it->nParent == nParent)
-			return (size_t)(it - m_arrNames.begin());//it-m_arrNames.begin();
+			return (size_t)(it - m_arrNames.begin()); //it-m_arrNames.begin();
 	}
 #else
 	for (; it != itEnd; ++it)
 	{
 		if (!strcmp(it->strName.c_str(), szComponentName) && it->nParent == nParent)
-			return (size_t)(it - m_arrNames.begin());//it-m_arrNames.begin();
+			return (size_t)(it - m_arrNames.begin()); //it-m_arrNames.begin();
 	}
 #endif
 
@@ -124,8 +124,8 @@ bool CrySizerImpl::AddObject(const void* pIdentifier, size_t sizeBytes, int nCou
 		return false;
 	}
 
-	ObjectSet& rSet = m_setObjects[getHash(pIdentifier)];
-	ObjectSet::iterator it = rSet.find(NewObject);
+	ObjectSet&          rSet = m_setObjects[getHash(pIdentifier)];
+	ObjectSet::iterator it   = rSet.find(NewObject);
 	if (it == rSet.end())
 	{
 		// there's no such object in the map, add it
@@ -198,12 +198,12 @@ void CrySizerImpl::clear()
 	m_stackNames.push_back(0);
 	m_LastObject.pId = NULL;
 
-	#if 0
+#if 0
 	if (m_pResourceCollector)
 	{
 		m_pResourceCollector->Reset();
 	}
-	#endif
+#endif
 }
 
 // hash function for an address; returns value 0..1<<g_nHashSize
@@ -213,16 +213,15 @@ unsigned CrySizerImpl::getHash(const void* pId)
 
 	// pseudorandomizing transform
 	ldiv_t _Qrem = (ldiv_t)ldiv(((uint32)(UINT_PTR)pId >> 2), 127773);
-	_Qrem.rem = 16807 * _Qrem.rem - 2836 * _Qrem.quot;
+	_Qrem.rem    = 16807 * _Qrem.rem - 2836 * _Qrem.quot;
 	if (_Qrem.rem < 0)
 		_Qrem.rem += 2147483647; // 0x7FFFFFFF
 	return ((unsigned)_Qrem.rem) & (g_nHashSize - 1);
-
 }
 unsigned CrySizerImpl::GetDepthLevel(unsigned nCurrent)
 {
 	uint32 nDepth = 0;
-	nCurrent = m_arrNames[nCurrent].nParent;
+	nCurrent      = m_arrNames[nCurrent].nParent;
 	while (nCurrent != 0)
 	{
 		nDepth++;

@@ -60,7 +60,6 @@ bool CThreadManager::UnregisterThread(IThread* pThreadTask)
 
 bool CThreadManager::SpawnThreadImpl(IThread* pThreadTask, const char* sThreadName)
 {
-	
 	if (pThreadTask == NULL)
 	{
 		CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_ERROR, "<ThreadInfo>: SpawnThread '%s' ThreadTask is NULL : ignoring", sThreadName);
@@ -69,9 +68,9 @@ bool CThreadManager::SpawnThreadImpl(IThread* pThreadTask, const char* sThreadNa
 
 	// Init thread meta data
 	SThreadMetaData* pThreadMetaData = new SThreadMetaData();
-	pThreadMetaData->m_pThreadTask = pThreadTask;
-	pThreadMetaData->m_pThreadMngr = this;
-	pThreadMetaData->m_threadName = sThreadName;
+	pThreadMetaData->m_pThreadTask   = pThreadTask;
+	pThreadMetaData->m_pThreadMngr   = this;
+	pThreadMetaData->m_threadName    = sThreadName;
 
 	// Add thread to map
 	{
@@ -89,7 +88,7 @@ bool CThreadManager::SpawnThreadImpl(IThread* pThreadTask, const char* sThreadNa
 		m_spawnedThreads.insert(ThreadMapPair(pThreadTask, pThreadMetaData));
 	}
 
-	#if 0
+#if 0
 	// Load config if we can and if no config has been defined to be loaded
 	const SThreadConfig* pThreadConfig = gEnv->pThreadManager->GetThreadConfigManager()->GetThreadConfig(sThreadName);
 
@@ -100,23 +99,22 @@ bool CThreadManager::SpawnThreadImpl(IThread* pThreadTask, const char* sThreadNa
 	pThreadMetaData->m_isRunning = true;
 	std::
 	CryThreadUtil::CryCreateThread(&(pThreadMetaData->m_threadHandle), desc);
-	#else
-	pThreadMetaData->m_threadHandle = std::thread([pThreadTask,pThreadMetaData] { 
-		pThreadTask->ThreadEntry(); 
-		// Signal imminent thread end
-		pThreadMetaData->m_threadExitMutex.Lock();
-		pThreadMetaData->m_isRunning = false;
-		pThreadMetaData->m_threadExitCondition.notify_all();
-		pThreadMetaData->m_threadExitMutex.Unlock();
+#else
+	pThreadMetaData->m_threadHandle = std::thread([pThreadTask, pThreadMetaData]
+	                                              {
+		                                              pThreadTask->ThreadEntry();
+		                                              // Signal imminent thread end
+		                                              pThreadMetaData->m_threadExitMutex.Lock();
+		                                              pThreadMetaData->m_isRunning = false;
+		                                              pThreadMetaData->m_threadExitCondition.notify_all();
+		                                              pThreadMetaData->m_threadExitMutex.Unlock();
 
-		// Unregister thread
-		// Note: Unregister after m_threadExitCondition.Notify() to ensure pThreadData is still valid
-		pThreadMetaData->m_pThreadMngr->UnregisterThread(pThreadMetaData->m_pThreadTask);
-	
-	});
-	pThreadMetaData->m_isRunning = true;
-	#endif
-
+		                                              // Unregister thread
+		                                              // Note: Unregister after m_threadExitCondition.Notify() to ensure pThreadData is still valid
+		                                              pThreadMetaData->m_pThreadMngr->UnregisterThread(pThreadMetaData->m_pThreadTask);
+	                                              });
+	pThreadMetaData->m_isRunning    = true;
+#endif
 
 	// Validate thread creation
 	if (!pThreadMetaData->m_isRunning)
@@ -133,7 +131,6 @@ bool CThreadManager::SpawnThreadImpl(IThread* pThreadTask, const char* sThreadNa
 
 bool CThreadManager::JoinThread(IThread* pThreadTask, EJoinMode eJoinMode)
 {
-	
 	// Get thread object
 	_smart_ptr<SThreadMetaData> pThreadImpl = 0;
 	{
@@ -159,25 +156,25 @@ bool CThreadManager::JoinThread(IThread* pThreadTask, EJoinMode eJoinMode)
 
 	// Wait for completion of the target thread exit condition
 	AUTO_LOCK_T(decltype(pThreadImpl->m_threadExitMutex.m_mutex), pThreadImpl->m_threadExitMutex.m_mutex);
-	#if 1
+#if 1
 	while (pThreadImpl->m_isRunning)
 	{
-#if !BB_PLATFORM_ORBIS
+	#if !BB_PLATFORM_ORBIS
 		// Ensure thread is still alive.
 		// Handle special case where engine shutdown is using exit(1) e.g. CrashHandler.
-		// Exit(1) force terminates all threads so they don't reach the cleanup code at the end of the RunThread() function.		
-		// 1) Thread must be running as we hold the m_threadExitMutex and pThreadImpl->m_isRunning == true. 
+		// Exit(1) force terminates all threads so they don't reach the cleanup code at the end of the RunThread() function.
+		// 1) Thread must be running as we hold the m_threadExitMutex and pThreadImpl->m_isRunning == true.
 		// 2) If pThreadImpl->m_isRunning == false we would not be in this loop. Hence there is no double call of UnregisterThread()
 		if (!CryThreadUtil::CryIsThreadAlive(pThreadImpl->m_threadHandle))
 		{
 			pThreadImpl->m_pThreadMngr->UnregisterThread(pThreadImpl->m_pThreadTask);
 			break;
 		}
-#endif
+	#endif
 		std::unique_lock<std::mutex> lk(pThreadImpl->m_threadExitMutex.m_mutex);
 		pThreadImpl->m_threadExitCondition.wait(lk);
 	}
-	#endif
+#endif
 
 	return true;
 }
@@ -202,11 +199,11 @@ threadID CThreadManager::GetThreadId(const char* sThreadName, ...)
 	return threadID();
 }
 
-void CThreadManager::ForEachOtherThread(IThreadManager::ThreadModifFunction fpThreadModiFunction, void* pFuncData/* = 0*/)
+void CThreadManager::ForEachOtherThread(IThreadManager::ThreadModifFunction fpThreadModiFunction, void* pFuncData /* = 0*/)
 {
 }
 
-void CThreadManager::EnableFloatExceptions(EFPE_Severity eFPESeverity, threadID nThreadId/* = 0*/)
+void CThreadManager::EnableFloatExceptions(EFPE_Severity eFPESeverity, threadID nThreadId /* = 0*/)
 {
 }
 
@@ -240,5 +237,3 @@ IThreadManager* CreateThreadManager()
 {
 	return new CThreadManager();
 }
-
-

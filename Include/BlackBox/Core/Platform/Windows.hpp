@@ -1,4 +1,4 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 // -------------------------------------------------------------------------
 //  File name:   CryWindows.h
@@ -27,7 +27,7 @@
 	#ifndef _WINSOCKAPI_
 		#define _WINSOCKAPI_
 	#endif
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
+	#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 	#if defined(_WINDOWS_) && !defined(CRY_INCLUDE_WINDOWS_VIA_MFC_OR_ATL_INCLUDES)
 		#error "<windows.h> has been included by other means than CryWindows.h"
@@ -45,8 +45,8 @@
 		#undef DrawText
 		#undef GetCharWidth
 		#undef GetUserName
-		//#undef SendMessage
-		//#undef LoadLibrary
+	//#undef SendMessage
+	//#undef LoadLibrary
 	#endif
 	#undef GetCompressedFileSize
 
@@ -57,10 +57,10 @@
 // In RELEASE disable OutputDebugString
 	#if defined(_RELEASE) && !BB_PLATFORM_DESKTOP && !defined(RELEASE_LOGGING)
 		#undef OutputDebugString
-		#define OutputDebugString(...) (void) 0
+		#define OutputDebugString(...) (void)0
 	#else
-		//#undef OutputDebugString
-		//#define OutputDebugString(...) (void) 0
+	//#undef OutputDebugString
+	//#define OutputDebugString(...) (void) 0
 	#endif
 
 #endif

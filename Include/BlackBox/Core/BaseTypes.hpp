@@ -1,10 +1,10 @@
-// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved. 
+// Copyright 2001-2017 Crytek GmbH / Crytek Group. All rights reserved.
 
 #pragma once
 
 // SWIG can't handle static_assert so we hide it behind a macro.
 #if SWIG
-#define static_assert(...)
+	#define static_assert(...)
 #endif
 
 static_assert(sizeof(char) == 1, "Wrong type size!");
@@ -18,7 +18,7 @@ typedef unsigned short ushort;
 typedef signed short   sshort;
 
 #if !defined(CLANG_FIX_UINT_REDEF)
-typedef unsigned int       uint;
+typedef unsigned int uint;
 #endif
 typedef signed int         sint;
 

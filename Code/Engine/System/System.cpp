@@ -29,7 +29,6 @@
 
 #include "ScriptObjectSystem.hpp"
 
-
 // Define global cvars.
 SSystemCVars g_cvars;
 
@@ -47,7 +46,7 @@ namespace utils
 			gEnv->pLog->LogError("Cannot touch file \"%s\"", args->GetArg(i));
 		}
 	}
-}
+} // namespace utils
 
 void CSystem::SetGCFrequency(const float fRate)
 {
@@ -61,22 +60,23 @@ IProcess* CSystem::GetIProcess()
 	return m_pProcess;
 }
 
-
 CSystem::CSystem(SSystemInitParams& startupParams)
-	:
+    :
 #if defined(SYS_ENV_AS_STRUCT)
-	  m_env(gEnv),
+    m_env(gEnv)
+    ,
 #endif
-	  //m_startupParams(startupParams),
-	  cvGameName(nullptr),
-	  //m_pInput(nullptr),
-	  //m_pFont(nullptr),
-	  m_pGame(nullptr),
-	  m_pWindow(nullptr),
-	  m_ScriptObjectConsole(nullptr),
-	  m_pTextModeConsole(nullptr)
+    //m_startupParams(startupParams),
+    cvGameName(nullptr)
+    ,
+    //m_pInput(nullptr),
+    //m_pFont(nullptr),
+    m_pGame(nullptr)
+    , m_pWindow(nullptr)
+    , m_ScriptObjectConsole(nullptr)
+    , m_pTextModeConsole(nullptr)
 {
-	m_startupParams			 = startupParams;
+	m_startupParams          = startupParams;
 	m_pSystemEventDispatcher = new CSystemEventDispatcher(); // Must be first.
 	if (m_pSystemEventDispatcher)
 	{
@@ -85,14 +85,14 @@ CSystem::CSystem(SSystemInitParams& startupParams)
 	//////////////////////////////////////////////////////////////////////////
 	// Initialize global environment interface pointers.
 	m_env.pSystem = this;
-	m_env.pTimer = &m_Time;
+	m_env.pTimer  = &m_Time;
 
 #if !defined(SYS_ENV_AS_STRUCT)
 	gEnv = &m_env;
 #endif
-	m_pValidator = nullptr;
+	m_pValidator   = nullptr;
 
-	m_root = PathUtil::AddSlash(PathUtil::GetEnginePath());
+	m_root         = PathUtil::AddSlash(PathUtil::GetEnginePath());
 
 	m_env.pConsole = new CXConsole(*this);
 	REGISTER_COMMAND("touch", utils::touch, 0, "touch file");
@@ -112,8 +112,8 @@ void CSystem::Start()
 
 	m_pGame->Run(bRelaunch);
 
-	NOW	 = SDL_GetPerformanceCounter();
-	LAST = 0;
+	NOW         = SDL_GetPerformanceCounter();
+	LAST        = 0;
 
 	m_DeltaTime = 0.0;
 
@@ -138,8 +138,8 @@ void CSystem::Relaunch(bool bRelaunch)
 
 void CSystem::Error(const char* sFormat, ...)
 {
-	va_list	ArgList;
-	char szBuffer[MAX_WARNING_LENGTH];
+	va_list ArgList;
+	char    szBuffer[MAX_WARNING_LENGTH];
 	va_start(ArgList, sFormat);
 	vsprintf(szBuffer, sFormat, ArgList);
 	va_end(ArgList);
@@ -206,7 +206,7 @@ void CSystem::WarningV(EValidatorModule module, EValidatorSeverity severity, int
 		return;
 	}
 
-	#if 0
+#if 0
 	const char* sModuleFilter = m_env.pLog->GetModuleFilter();
 	if (sModuleFilter && *sModuleFilter != 0)
 	{
@@ -217,13 +217,13 @@ void CSystem::WarningV(EValidatorModule module, EValidatorSeverity severity, int
 			return;
 		}
 	}
-	#endif
+#endif
 
 	bool bDbgBreak = false;
 	if (severity == VALIDATOR_ERROR_DBGBRK)
 	{
 		bDbgBreak = true;
-		severity = VALIDATOR_ERROR; // change it to a standard VALIDATOR_ERROR for simplicity in the rest of the system
+		severity  = VALIDATOR_ERROR; // change it to a standard VALIDATOR_ERROR for simplicity in the rest of the system
 	}
 
 	IMiniLog::ELogType ltype = ILog::eComment;
@@ -264,7 +264,7 @@ void CSystem::WarningV(EValidatorModule module, EValidatorSeverity severity, int
 	//if(file)
 	//m_env.pLog->LogWithType( ltype, "  ... caused by file '%s'",file);
 
-	#if 0
+#if 0
 	if (m_pValidator && (flags & VALIDATOR_FLAG_SKIP_VALIDATOR) == 0)
 	{
 		SValidatorRecord record;
@@ -276,13 +276,12 @@ void CSystem::WarningV(EValidatorModule module, EValidatorSeverity severity, int
 		record.assetScope = m_env.pLog->GetAssetScopeString();
 		m_pValidator->Report(record);
 	}
-	#endif
+#endif
 
 #if !defined(_RELEASE)
 	if (bDbgBreak && g_cvars.sys_error_debugbreak)
 		__debugbreak();
 #endif
-
 }
 
 bool CSystem::CheckLogVerbosity(int verbosity)
@@ -316,18 +315,17 @@ void CSystem::Quit()
 
 	GetIRemoteConsole()->Stop();
 
-    extern std::vector<const char*> g_moduleCVars;
-    printf("vars size: %d", g_moduleCVars.size());
-	#if 0
+	extern std::vector<const char*> g_moduleCVars;
+	printf("vars size: %d", g_moduleCVars.size());
+#if 0
     for (auto& var : g_moduleCVars)
     {
         printf("var: %s", var);
     }
-	#endif
+#endif
 
 	//Release();
 
-	
 	if (0)
 	{
 #if BB_PLATFORM_WINDOWS
@@ -340,7 +338,6 @@ void CSystem::Quit()
 	// FIXME: wtf!!!  it is not worked
 	//PostQuitMessage(0);
 #endif
-
 }
 
 IFont* CSystem::GetIFont()
@@ -352,7 +349,7 @@ IFont* CSystem::GetIFont()
 
 IWindow* CSystem::GetIWindow()
 {
-    return m_pWindow;
+	return m_pWindow;
 }
 
 #if 0
@@ -384,7 +381,7 @@ void CSystem::RunMainLoop()
 bool CSystem::DoFrame(int updateFlags)
 {
 	bool continueRunning = true;
-	int pauseMode{};
+	int  pauseMode{};
 
 	if (m_env.pFrameProfileSystem)
 		m_env.pFrameProfileSystem->StartFrame();
@@ -436,10 +433,10 @@ void CSystem::LoadScreen()
 	string sLoadingScreenTexture = string("loading.png");
 
 	m_env.pConsole->SetLoadingImage(sLoadingScreenTexture.c_str());
-	#if 0
+#if 0
 	m_env.pConsole->ResetProgressBar(0x7fffffff);
 	GetILog()->UpdateLoadingScreen("");	// just to draw the console
-	#endif
+#endif
 }
 
 bool CSystem::InitScripts()
@@ -510,23 +507,23 @@ void CSystem::PollEvents()
 void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 {
 	m_rDriver = REGISTER_STRING("r_Driver", "DX11", VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
-		"Sets the renderer driver ( DX11/DX12/GL/VK/AUTO ).\n"
-		"Specify in system.cfg like this: r_Driver = \"DX11\"");
+	                            "Sets the renderer driver ( DX11/DX12/GL/VK/AUTO ).\n"
+	                            "Specify in system.cfg like this: r_Driver = \"DX11\"");
 	REGISTER_CVAR2("r_InitialWindowSizeRatio", &m_rIntialWindowSizeRatio, 0.666f, VF_DUMPTODISK,
-				   "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
-				   "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
+	               "Sets the size ratio of the initial application window in relation to the primary monitor resolution.\n"
+	               "Usage: r_InitialWindowSizeRatio [1.0/0.666/..]");
 
-	int iFullScreenDefault	= 0;
+	int iFullScreenDefault  = 0;
 	int iDisplayInfoDefault = 1;
-	int iWidthDefault		= 1280;
-	int iHeightDefault		= 720;
+	int iWidthDefault       = 1280;
+	int iHeightDefault      = 720;
 #if BB_PLATFORM_WINDOWS && 0
-	iFullScreenDefault				   = 0;
+	iFullScreenDefault                 = 0;
 	const float initialWindowSizeRatio = m_rIntialWindowSizeRatio->GetFVal();
-	iWidthDefault					   = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) * initialWindowSizeRatio);
-	iHeightDefault					   = static_cast<int>(GetSystemMetrics(SM_CYSCREEN) * initialWindowSizeRatio);
+	iWidthDefault                      = static_cast<int>(GetSystemMetrics(SM_CXSCREEN) * initialWindowSizeRatio);
+	iHeightDefault                     = static_cast<int>(GetSystemMetrics(SM_CYSCREEN) * initialWindowSizeRatio);
 #elif BB_PLATFORM_LINUX || BB_PLATFORM_APPLE
-	iFullScreenDefault		 = 0;
+	iFullScreenDefault = 0;
 #endif
 
 #if defined(RELEASE)
@@ -535,23 +532,23 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 
 	// load renderer settings from engine.ini
 	REGISTER_CVAR2("r_Width", &m_rWidth, iWidthDefault, VF_DUMPTODISK,
-				   "Sets the display width, in pixels.\n"
-				   "Usage: r_Width [800/1024/..]");
+	               "Sets the display width, in pixels.\n"
+	               "Usage: r_Width [800/1024/..]");
 	REGISTER_CVAR2("r_Height", &m_rHeight, iHeightDefault, VF_DUMPTODISK,
-				   "Sets the display height, in pixels.\n"
-				   "Usage: r_Height [600/768/..]");
+	               "Sets the display height, in pixels.\n"
+	               "Usage: r_Height [600/768/..]");
 	REGISTER_CVAR2("r_ColorBits", &m_rColorBits, 32, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
-				   "Sets the color resolution, in bits per pixel. Default is 32.\n"
-				   "Usage: r_ColorBits [32/24/16/8]");
+	               "Sets the color resolution, in bits per pixel. Default is 32.\n"
+	               "Usage: r_ColorBits [32/24/16/8]");
 	REGISTER_CVAR2("r_DepthBits", &m_rDepthBits, 24, VF_DUMPTODISK | VF_REQUIRE_APP_RESTART,
-				   "Sets the depth precision, in bits per pixel. Default is 24.\n"
-				   "Usage: r_DepthBits [32/24/16]");
+	               "Sets the depth precision, in bits per pixel. Default is 24.\n"
+	               "Usage: r_DepthBits [32/24/16]");
 	REGISTER_CVAR2("r_StencilBits", &m_rStencilBits, 8, VF_DUMPTODISK,
-				   "Sets the stencil precision, in bits per pixel. Default is 8.\n");
+	               "Sets the stencil precision, in bits per pixel. Default is 8.\n");
 
 	REGISTER_CVAR2("r_Fullscreen", &m_rFullscreen, iFullScreenDefault, VF_DUMPTODISK,
-				   "Toggles fullscreen mode. Default is 1 in normal game and 0 in DevMode.\n"
-				   "Usage: r_Fullscreen [0=window/1=fullscreen]");
+	               "Toggles fullscreen mode. Default is 1 in normal game and 0 in DevMode.\n"
+	               "Usage: r_Fullscreen [0=window/1=fullscreen]");
 
 #if 0
 	REGISTER_CVAR2("r_FullscreenNativeRes", &m_rFullscreenNativeRes, 0, VF_DUMPTODISK,
@@ -560,26 +557,26 @@ void CSystem::CreateRendererVars(const SSystemInitParams& startupParams)
 #endif
 
 	REGISTER_CVAR2("r_DisplayInfo", &m_rDisplayInfo, 1, VF_RESTRICTEDMODE | VF_DUMPTODISK,
-				   "Toggles debugging information display.\n"
-				   "Usage: r_DisplayInfo [0=off/1=show/2=enhanced/3=minimal/4=fps bar/5=heartbeat]");
+	               "Toggles debugging information display.\n"
+	               "Usage: r_DisplayInfo [0=off/1=show/2=enhanced/3=minimal/4=fps bar/5=heartbeat]");
 	REGISTER_CVAR2("r_Debug", &m_rDebug, 0, VF_RESTRICTEDMODE | VF_DUMPTODISK,
-				   "Toggles debugging of renderer.\n"
-				   "Usage: r_DisplayInfo [0=off/1=on]");
+	               "Toggles debugging of renderer.\n"
+	               "Usage: r_DisplayInfo [0=off/1=on]");
 	REGISTER_CVAR2("r_Tonemap", &m_rTonemap, 1, VF_DUMPTODISK,
-				   "Using tonemap.\n"
-				   "Usage: r_Tonemap [0=off/1=on]");
+	               "Using tonemap.\n"
+	               "Usage: r_Tonemap [0=off/1=on]");
 	REGISTER_CVAR2("r_SkipShaderCache", &m_rSkipShaderCache, 1, VF_DUMPTODISK,
-				   "Skip loading binary shader from disk.\n"
-				   "Usage: r_SkipShaderCache [0=off/1=on]");
+	               "Skip loading binary shader from disk.\n"
+	               "Usage: r_SkipShaderCache [0=off/1=on]");
 }
 
 void CSystem::CreateSystemVars()
 {
-	#define DEFAULT_SYS_MAX_FPS 60
+#define DEFAULT_SYS_MAX_FPS 60
 	REGISTER_CVAR2("sys_dump_memstats", &sys_dump_memstats, 0, VF_NULL, "");
 	REGISTER_CVAR2("sys_MaxFPS", &g_cvars.sys_MaxFPS, DEFAULT_SYS_MAX_FPS, VF_NULL, "Limits the frame rate to specified number n (if n>0 and if vsync is disabled).\n"
-																					" 0 = on PC if vsync is off auto throttles fps while in menu or game is paused (default)\n"
-																					"-1 = off");
+	                                                                                " 0 = on PC if vsync is off auto throttles fps while in menu or game is paused (default)\n"
+	                                                                                "-1 = off");
 }
 
 void CSystem::ShutDown()
@@ -606,21 +603,20 @@ void CSystem::ShutDown()
 	//SAFE_DELETE(m_pFont);
 	SAFE_RELEASE(m_pWindow);
 	SAFE_RELEASE(m_env.p3DEngine);
-	#if 1
+#if 1
 	if (ICVar* pDriverCVar = m_env.pConsole->GetCVar("r_Driver"))
 	{
 		const char* szRenderDriver = pDriverCVar->GetString();
 		CloseRenderLibrary(szRenderDriver);
 	}
-	#else
+#else
 	SAFE_RELEASE(m_env.pRenderer);
-	#endif
+#endif
 
-
-    SAFE_DELETE(m_env.pFrameProfileSystem);
+	SAFE_DELETE(m_env.pFrameProfileSystem);
 	ShutDownThreadSystem();
 
-    SAFE_DELETE(m_env.pFrameProfileSystem);
+	SAFE_DELETE(m_env.pFrameProfileSystem);
 
 	SAFE_DELETE(m_ScriptObjectConsole);
 	SAFE_DELETE(m_ScriptObjectSound);
@@ -635,9 +631,9 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_env.pEntitySystem);
 	//FIXME: memory manager errors on free memory!!!
 	SAFE_RELEASE(m_env.pSoundSystem);
-	#if 0
+#if 0
 	SAFE_RELEASE(m_pNetwork);
-	#endif
+#endif
 #ifdef DOWNLOAD_MANAGER
 	SAFE_RELEASE(m_pDownloadManager);
 #endif //DOWNLOAD_MANAGER
@@ -649,7 +645,7 @@ void CSystem::ShutDown()
 	SAFE_RELEASE(m_pCryPak);
 	UnloadSubsystems();
 	SAFE_RELEASE(m_env.pConsole);
-    SDL_Quit();
+	SDL_Quit();
 }
 
 void CSystem::EnableGui(bool enable)
@@ -662,27 +658,27 @@ void CSystem::SaveConfiguration()
 
 float CSystem::GetDeltaTime()
 {
-    return static_cast<float>(m_DeltaTime);
+	return static_cast<float>(m_DeltaTime);
 }
 
 const SFileVersion& CSystem::GetFileVersion()
 {
-    return m_FileVersion;
+	return m_FileVersion;
 }
 
 const SFileVersion& CSystem::GetProductVersion()
 {
-    return m_ProductVersion;
+	return m_ProductVersion;
 }
 
-const char * CSystem::GetRootFolder() const
+const char* CSystem::GetRootFolder() const
 {
 	return m_RootFolder.c_str();
 }
 
 IEntitySystem* CSystem::GetIEntitySystem()
 {
-    return m_env.pEntitySystem;
+	return m_env.pEntitySystem;
 }
 
 ICryPak* CSystem::GetIPak()
@@ -697,7 +693,7 @@ INetwork* CSystem::GetINetwork()
 
 ITimer* CSystem::GetITimer()
 {
-    return &m_Time;
+	return &m_Time;
 }
 void CSystem::SetForceNonDevMode(const bool bValue)
 {
@@ -749,9 +745,9 @@ void CSystem::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 	case ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE:
 		m_bIsActive = bool(wparam);
 		if (m_bIsActive)
-			g_cvars.sys_MaxFPS = 60; 
+			g_cvars.sys_MaxFPS = 60;
 		else
-			g_cvars.sys_MaxFPS = 20; 
+			g_cvars.sys_MaxFPS = 20;
 		break;
 	default:
 		break;
@@ -798,7 +794,7 @@ bool CSystem::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 
 bool CSystem::OnInputEvent(const SInputEvent& event)
 {
-	bool result = false;
+	bool result  = false;
 	//TODO: handle resized
 	bool resized = false;
 	switch (event.deviceType)
@@ -881,11 +877,11 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 
 	m_env.pTimer->UpdateOnFrameStart();
 	LAST = NOW;
-	NOW	 = SDL_GetPerformanceCounter();
+	NOW  = SDL_GetPerformanceCounter();
 
-	#if 0
+#if 0
 	if (!nPauseMode)
-	#endif
+#endif
 	{
 		m_pProcess->SetFlags(PROC_3DENGINE);
 		m_bCanSwitch = m_pProcess->GetFlags() & PROC_3DENGINE;
@@ -908,8 +904,8 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 
 	if (m_sysNoUpdate && m_sysNoUpdate->GetIVal())
 	{
-		bNoUpdate = true;
-		updateFlags = { ESYSUPDATE_IGNORE_AI | ESYSUPDATE_IGNORE_PHYSICS };
+		bNoUpdate   = true;
+		updateFlags = {ESYSUPDATE_IGNORE_AI | ESYSUPDATE_IGNORE_PHYSICS};
 	}
 
 	m_bNoUpdate = bNoUpdate;
@@ -918,7 +914,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	if (IsQuitting())
 		return (false);
 
-	//m_pNetwork->Update();
+		//m_pNetwork->Update();
 #ifdef DOWNLOAD_MANAGER
 	if (m_pDownloadManager && !bNoUpdate)
 	{
@@ -927,12 +923,11 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 #endif //DOWNLOAD_MANAGER
 
 	//m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
-	m_DeltaTime = gEnv->pTimer->GetFrameRate()*0.001f;
+	m_DeltaTime = gEnv->pTimer->GetFrameRate() * 0.001f;
 
-	
-    bool updateInput =
-        !(updateFlags & ESYSUPDATE_EDITOR);
-    if (updateInput)
+	bool updateInput =
+	    !(updateFlags & ESYSUPDATE_EDITOR);
+	if (updateInput)
 	{
 		PROFILER_PUSH_CPU_MARKER("INPUT", Utils::COLOR_LIGHT_BLUE);
 		//FIXME: CHECK IT
@@ -961,8 +956,8 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 
 bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitlen)
 {
-	FILE* fp	= fopen(filename, "wb");
-	bool result = false;
+	FILE* fp     = fopen(filename, "wb");
+	bool  result = false;
 	if (fp != nullptr)
 	{
 		if (BITS2BYTES(bitlen) == fwrite(data, 1, BITS2BYTES(bitlen), fp))
@@ -976,8 +971,8 @@ bool CSystem::WriteCompressedFile(char* filename, void* data, unsigned int bitle
 
 unsigned int CSystem::ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen)
 {
-	FILE* fp   = fopen(filename, "rb");
-	int result = 0;
+	FILE* fp     = fopen(filename, "rb");
+	int   result = 0;
 	if (fp != nullptr)
 	{
 		result = fread(data, 1, BITS2BYTES(maxbitlen), fp);
@@ -988,8 +983,8 @@ unsigned int CSystem::ReadCompressedFile(char* filename, void* data, unsigned in
 
 unsigned int CSystem::GetCompressedFileSize(char* filename)
 {
-	FILE* fp = fopen(filename, "rb");
-	int size = 0;
+	FILE* fp   = fopen(filename, "rb");
+	int   size = 0;
 	if (fp != nullptr)
 	{
 		fseek(fp, 0L, SEEK_END);
@@ -1016,16 +1011,16 @@ const char* CSystem::GetUserName()
 {
 #if BB_PLATFORM_WINDOWS
 	static const int iNameBufferSize = 1024;
-	static char szNameBuffer[iNameBufferSize];
+	static char      szNameBuffer[iNameBufferSize];
 	memset(szNameBuffer, 0, iNameBufferSize);
 
-	DWORD dwSize = iNameBufferSize;
+	DWORD   dwSize = iNameBufferSize;
 	wchar_t nameW[iNameBufferSize];
 	::GetUserNameW(nameW, &dwSize);
 	strcpy(szNameBuffer, wstr_to_str(nameW).c_str());
 	return szNameBuffer;
 #elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID
-	static uid_t uid		 = geteuid();
+	static uid_t uid = geteuid();
 	static struct passwd* pw = getpwuid(uid);
 	if (pw)
 	{
@@ -1037,7 +1032,7 @@ const char* CSystem::GetUserName()
 	}
 #elif BB_PLATFORM_APPLE
 	static const int iNameBufferSize = 1024;
-	static char szNameBuffer[iNameBufferSize];
+	static char      szNameBuffer[iNameBufferSize];
 	if (AppleGetUserName(szNameBuffer, iNameBufferSize))
 		return szNameBuffer;
 	else
@@ -1133,7 +1128,7 @@ IRemoteConsole* CSystem::GetIRemoteConsole()
 
 ITextModeConsole* CSystem::GetITextModeConsole()
 {
-    if (m_env.IsDedicated())
+	if (m_env.IsDedicated())
 		return m_pTextModeConsole;
 	return 0;
 }
@@ -1153,9 +1148,8 @@ double CSystem::GetSecondsPerCycle()
 	assert(0 && __FUNCTION__);
 	return 0.;
 }
-void CSystem::DumpMemoryUsageStatistics() 
+void CSystem::DumpMemoryUsageStatistics()
 {
-
 }
 bool CSystem::IsTestMode() const
 {
@@ -1184,7 +1178,7 @@ void CSystem::SleepIfNeeded()
 	FUNCTION_PROFILER(PROFILE_SYSTEM)
 
 	static ICVar* pSysMaxFPS = NULL;
-	static ICVar* pVSync	 = NULL;
+	static ICVar* pVSync     = NULL;
 
 	if (pSysMaxFPS == NULL && gEnv && gEnv->pConsole)
 		pSysMaxFPS = gEnv->pConsole->GetCVar("sys_MaxFPS");
@@ -1193,14 +1187,14 @@ void CSystem::SleepIfNeeded()
 
 	int32 maxFPS = 0;
 
-	#if 0
+#if 0
 	if (m_env.IsDedicated())
 	{
 		const float maxRate = m_svDedicatedMaxRate->GetFVal();
 		maxFPS				= int32(maxRate);
 	}
 	else
-	#endif
+#endif
 	{
 		if (pSysMaxFPS && pVSync)
 		{
@@ -1210,7 +1204,7 @@ void CSystem::SleepIfNeeded()
 				maxFPS = pSysMaxFPS->GetIVal();
 				if (maxFPS == 0)
 				{
-					const bool bInLoading = true;	//(ESYSTEM_GLOBAL_STATE_RUNNING != m_systemGlobalState);
+					const bool bInLoading = true; //(ESYSTEM_GLOBAL_STATE_RUNNING != m_systemGlobalState);
 					if (bInLoading /* || IsPaused() || m_throttleFPS*/)
 					{
 						maxFPS = 60;
@@ -1222,12 +1216,12 @@ void CSystem::SleepIfNeeded()
 
 	if (maxFPS > 0)
 	{
-		const int64 safeMarginMS = 5; // microseconds
-		const int64 thresholdMs	 = (1000 * 1000) / (maxFPS);
+		const int64  safeMarginMS = 5; // microseconds
+		const int64  thresholdMs  = (1000 * 1000) / (maxFPS);
 
-		ITimer*		 pTimer		 = gEnv->pTimer;
-		static int64 sTimeLast	 = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
-		int64		 currentTime = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		ITimer*      pTimer       = gEnv->pTimer;
+		static int64 sTimeLast    = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
+		int64        currentTime  = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
 		for (;;)
 		{
 			const int64 frameTime = currentTime - sTimeLast;
@@ -1242,27 +1236,25 @@ void CSystem::SleepIfNeeded()
 		}
 
 		m_lastTickTime = pTimer->GetAsyncTime();
-		sTimeLast	   = m_lastTickTime.GetMicroSecondsAsInt64() + safeMarginMS;
+		sTimeLast      = m_lastTickTime.GetMicroSecondsAsInt64() + safeMarginMS;
 	}
 }
 
-
-XDOM::IXMLDOMDocument *CSystem::CreateXMLDocument()
+XDOM::IXMLDOMDocument* CSystem::CreateXMLDocument()
 {
 	return new CXMLDocument;
 }
 
-XmlNodeRef CSystem::CreateXmlNode(const char *sNodeName)
+XmlNodeRef CSystem::CreateXmlNode(const char* sNodeName)
 {
 	return {};
 }
-XmlNodeRef CSystem::LoadXmlFromString(const char *sXmlString)
+XmlNodeRef CSystem::LoadXmlFromString(const char* sXmlString)
 {
 	return {};
-
 }
 
-XmlNodeRef CSystem::LoadXmlFile(const char *sFilename)
+XmlNodeRef CSystem::LoadXmlFile(const char* sFilename)
 {
 	return {};
 }
@@ -1272,20 +1264,20 @@ void CSystem::UpdateScriptSink()
 	//PROFILE_SECTION(PROFILE_SCRIPT, "ScriptSystem: Update");
 	//MEMSTAT_FUNCTION_CONTEXT(EMemStatContextType::Other);
 
-	ITimer*	   pTimer	= gEnv->pTimer;
+	ITimer*    pTimer   = gEnv->pTimer;
 	CTimeValue nCurTime = pTimer->GetFrameStartTime();
 
-	// Enable debugger if needed.
-	// Some code is executed even if the debugMode doesn't change, including clearing the exposed stack
-	#if 0
+// Enable debugger if needed.
+// Some code is executed even if the debugMode doesn't change, including clearing the exposed stack
+#if 0
 	ELuaDebugMode debugMode = (ELuaDebugMode)m_cvar_script_debugger->GetIVal();
 	EnableDebugger(debugMode);
-	#endif
+#endif
 
 	// Might need to check for new lua code needing hooks
 
-	float currTime	= pTimer->GetCurrTime();
-	float frameTime = pTimer->GetFrameTime();
+	float          currTime      = pTimer->GetCurrTime();
+	float          frameTime     = pTimer->GetFrameTime();
 
 	IScriptSystem* pScriptSystem = GetIScriptSystem();
 
@@ -1293,7 +1285,7 @@ void CSystem::UpdateScriptSink()
 	pScriptSystem->SetGlobalValue("_time", currTime);
 	pScriptSystem->SetGlobalValue("_frametime", frameTime);
 
-	#if 0
+#if 0
 	{
 		int aiTicks = 0;
 
@@ -1341,5 +1333,5 @@ void CSystem::UpdateScriptSink()
 	}
 
 	m_pScriptTimerMgr->Update(nCurTime.GetMilliSecondsAsInt64());
-	#endif
+#endif
 }

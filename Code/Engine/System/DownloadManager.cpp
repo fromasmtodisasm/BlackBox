@@ -9,7 +9,7 @@
 
 //-------------------------------------------------------------------------------------------------
 CDownloadManager::CDownloadManager()
-	: m_pSystem(0)
+    : m_pSystem(0)
 {
 }
 
@@ -83,11 +83,11 @@ void CDownloadManager::Update()
 //-------------------------------------------------------------------------------------------------
 void CDownloadManager::Release()
 {
-	for (std::list<CHTTPDownloader*>::iterator it = m_lDownloadList.begin(); it != m_lDownloadList.end(); )
+	for (std::list<CHTTPDownloader*>::iterator it = m_lDownloadList.begin(); it != m_lDownloadList.end();)
 	{
 		CHTTPDownloader* pDL = *it;
 
-		it = m_lDownloadList.erase(it);
+		it                   = m_lDownloadList.erase(it);
 
 		pDL->Release();
 	}

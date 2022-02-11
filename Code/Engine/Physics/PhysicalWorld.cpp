@@ -11,7 +11,7 @@ IPhysUtils* CPhysicalWorld::GetPhysUtils()
 {
 	NOT_IMPLEMENTED_V;
 }
-void CPhysicalWorld::Shutdown(int bDeleteGeometries )
+void CPhysicalWorld::Shutdown(int bDeleteGeometries)
 {
 }
 void CPhysicalWorld::Release()
@@ -32,25 +32,25 @@ PhysicsVars* CPhysicalWorld::GetPhysVars()
 {
 	return &m_PhysVars;
 }
-IPhysicalEntity* CPhysicalWorld::CreatePhysicalEntity(pe_type type, pe_params* params , void* pforeigndata , int iforeigndata , int id )
+IPhysicalEntity* CPhysicalWorld::CreatePhysicalEntity(pe_type type, pe_params* params, void* pforeigndata, int iforeigndata, int id)
 {
 	NOT_IMPLEMENTED_V;
 }
-IPhysicalEntity* CPhysicalWorld::CreatePhysicalEntity(pe_type type, float lifeTime, pe_params* params , void* pForeignData , int iForeignData ,
-									  int id , IPhysicalEntity* pHostPlaceholder )
+IPhysicalEntity* CPhysicalWorld::CreatePhysicalEntity(pe_type type, float lifeTime, pe_params* params, void* pForeignData, int iForeignData,
+                                                      int id, IPhysicalEntity* pHostPlaceholder)
 {
 	NOT_IMPLEMENTED_V;
 }
-IPhysicalEntity* CPhysicalWorld::CreatePhysicalPlaceholder(pe_type type, pe_params* params , void* pForeignData , int iForeignData , int id )
+IPhysicalEntity* CPhysicalWorld::CreatePhysicalPlaceholder(pe_type type, pe_params* params, void* pForeignData, int iForeignData, int id)
 {
 	NOT_IMPLEMENTED_V;
 }
-int CPhysicalWorld::DestroyPhysicalEntity(IPhysicalEntity* pent, int mode )
+int CPhysicalWorld::DestroyPhysicalEntity(IPhysicalEntity* pent, int mode)
 {
 	NOT_IMPLEMENTED_V;
 }
 
-int CPhysicalWorld::SetPhysicalEntityId(IPhysicalEntity* pent, int id, int bReplace )
+int CPhysicalWorld::SetPhysicalEntityId(IPhysicalEntity* pent, int id, int bReplace)
 {
 	NOT_IMPLEMENTED_V;
 }
@@ -63,7 +63,7 @@ IPhysicalEntity* CPhysicalWorld::GetPhysicalEntityById(int id)
 	NOT_IMPLEMENTED_V;
 }
 
-int CPhysicalWorld::SetSurfaceParameters(int surface_idx, float bounciness, float friction, unsigned int flags )
+int CPhysicalWorld::SetSurfaceParameters(int surface_idx, float bounciness, float friction, unsigned int flags)
 {
 	NOT_IMPLEMENTED_V;
 }
@@ -89,10 +89,10 @@ void CPhysicalWorld::SetPhysicsTime(float time)
 void CPhysicalWorld::SetiPhysicsTime(int itime)
 {
 }
-void CPhysicalWorld::SetSnapshotTime(float time_snapshot, int iType )
+void CPhysicalWorld::SetSnapshotTime(float time_snapshot, int iType)
 {
 }
-void CPhysicalWorld::SetiSnapshotTime(int itime_snapshot, int iType )
+void CPhysicalWorld::SetiSnapshotTime(int itime_snapshot, int iType)
 {
 }
 
@@ -102,7 +102,7 @@ int CPhysicalWorld::GetEntitiesInBox(vectorf ptmin, vectorf ptmax, IPhysicalEnti
 }
 
 int CPhysicalWorld::RayWorldIntersection(vectorf org, vectorf dir, int objtypes, unsigned int flags, ray_hit* hits, int nMaxHits,
-						 IPhysicalEntity* pSkipEnt , IPhysicalEntity* pSkipEntAux )
+                                         IPhysicalEntity* pSkipEnt, IPhysicalEntity* pSkipEntAux)
 {
 	NOT_IMPLEMENTED_V;
 }
@@ -118,8 +118,8 @@ void CPhysicalWorld::PurgeDeletedEntities()
 }
 
 void CPhysicalWorld::SimulateExplosion(vectorf epicenter, vectorf epicenterImp, float rmin, float rmax, float r, float impulsive_pressure_at_r,
-					   int nOccRes , int nGrow , float rmin_occ , IPhysicalEntity** pSkipEnts , int nSkipEnts ,
-					   int iTypes)
+                                       int nOccRes, int nGrow, float rmin_occ, IPhysicalEntity** pSkipEnts, int nSkipEnts,
+                                       int iTypes)
 {
 }
 
@@ -136,7 +136,7 @@ int CPhysicalWorld::CollideEntityWithBeam(IPhysicalEntity* _pent, vectorf org, v
 {
 	NOT_IMPLEMENTED_V;
 }
-int CPhysicalWorld::RayTraceEntity(IPhysicalEntity* pient, vectorf origin, vectorf dir, ray_hit* pHit, pe_params_pos* pp )
+int CPhysicalWorld::RayTraceEntity(IPhysicalEntity* pient, vectorf origin, vectorf dir, ray_hit* pHit, pe_params_pos* pp)
 {
 	NOT_IMPLEMENTED_V;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #define D3DBaseBuffer ID3D10Resource
-#define D3DResource ID3D10Resource
+#define D3DResource   ID3D10Resource
 
 typedef uintptr_t DeviceBufferHandle;
 typedef uint32    buffer_size_t;
@@ -21,7 +21,7 @@ struct SBufferLayout
 	buffer_size_t m_elementCount;
 	uint16        m_elementSize;
 
-	uint32        m_eFlags;           // e.g. CDeviceObjectFactory::BIND_VERTEX_BUFFER
+	uint32        m_eFlags; // e.g. CDeviceObjectFactory::BIND_VERTEX_BUFFER
 };
 
 class CDeviceResource
@@ -29,7 +29,7 @@ class CDeviceResource
 public:
 	D3DResource* GetNativeResource() const { return m_pD3DResource; }
 
-  private:
+private:
 	ID3D10Resource* m_pD3DResource;
 };
 
@@ -45,24 +45,24 @@ class CDeviceBuffer : public CDeviceResource
 	void* m_handleMGPU;
 #endif
 #if (CRY_RENDERER_DIRECT3D >= 110) && (CRY_RENDERER_DIRECT3D < 120) && DEVRES_USE_PINNING
-	SGPUMemHdl               m_gpuHdl;
+	SGPUMemHdl m_gpuHdl;
 #endif
 #if (CRY_RENDERER_DIRECT3D >= 110) && (CRY_RENDERER_DIRECT3D < 120) && CRY_PLATFORM_DURANGO
 	const SDeviceBufferDesc* m_pLayout;
 #endif
 
 public:
-	static CDeviceBuffer*    Create(const SBufferLayout& pLayout, const void* pData);
-	static CDeviceBuffer*    Associate(const SBufferLayout& pLayout, D3DResource* pBuf);
+	static CDeviceBuffer* Create(const SBufferLayout& pLayout, const void* pData);
+	static CDeviceBuffer* Associate(const SBufferLayout& pLayout, D3DResource* pBuf);
 
-	SBufferLayout            GetLayout() const;
+	SBufferLayout         GetLayout() const;
 	// This calculates the hardware alignments of a texture resource, respecting block-compression and tiling mode (typeStride will round up if a fraction)
 #if 0
 	SResourceMemoryAlignment GetAlignment() const;
 	SResourceDimension       GetDimension() const;
 #endif
 
-	inline D3DBaseBuffer*    GetBaseBuffer() const
+	inline D3DBaseBuffer* GetBaseBuffer() const
 	{
 		return reinterpret_cast<D3DBaseBuffer*>(GetNativeResource());
 	}
@@ -103,12 +103,14 @@ public:
 	}
 
 private:
-	CDeviceBuffer() : m_nBaseAllocatedSize(0), m_bNoDelete(false)
+	CDeviceBuffer()
+	    : m_nBaseAllocatedSize(0)
+	    , m_bNoDelete(false)
 #if (CRY_RENDERER_DIRECT3D >= 110) && (CRY_RENDERER_DIRECT3D < 120) && defined(USE_NV_API)
-		, m_handleMGPU(NULL)
+	    , m_handleMGPU(NULL)
 #endif
 #if (CRY_RENDERER_DIRECT3D >= 110) && (CRY_RENDERER_DIRECT3D < 120) && CRY_PLATFORM_DURANGO
-		, m_pLayout(NULL)
+	    , m_pLayout(NULL)
 #endif
 	{
 	}
@@ -116,9 +118,6 @@ private:
 	CDeviceBuffer(const CDeviceBuffer&);
 	CDeviceBuffer& operator=(const CDeviceBuffer&);
 
-
-
 private:
 	int32 Cleanup();
 };
-

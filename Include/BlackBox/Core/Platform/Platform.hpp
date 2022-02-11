@@ -5,96 +5,94 @@
 #include "StlConfig.h"
 
 #ifdef _WINDOWS_
-#error windows.h should not be included prior to platform.h
+	#error windows.h should not be included prior to platform.h
 #endif
 
 enum class EPlatform
 {
-  Windows,
-  Linux,
-  MacOS,
-  XboxOne,
-  PS4,
-  Android,
-  iOS,
+	Windows,
+	Linux,
+	MacOS,
+	XboxOne,
+	PS4,
+	Android,
+	iOS,
 
 #ifdef BB_PLATFORM_WINDOWS
-  Current = Windows
+	Current = Windows
 #elif defined(BB_PLATFORM_LINUX)
-  Current = Linux
+	Current = Linux
 #elif defined(BB_PLATFORM_APPLE) && !defined(BB_PLATFORM_MOBILE)
-  Current = MacOS
+	Current = MacOS
 #elif defined(BB_PLATFORM_DURANGO)
-  Current = XboxOne
+	Current = XboxOne
 #elif defined(BB_PLATFORM_ORBIS)
-  Current = PS4
+	Current = PS4
 #elif defined(BB_PLATFORM_ANDROID)
-  Current = Android
+	Current = Android
 #elif defined(BB_PLATFORM_APPLE) && defined(BB_PLATFORM_MOBILE)
-  Current = iOS
+	Current = iOS
 #endif
 };
 
 #if BB_PLATFORM_WINAPI
-#	include <inttypes.h>
-#	define PLATFORM_I64(x) x##i64
+	#include <inttypes.h>
+	#define PLATFORM_I64(x) x##i64
 #else
-#	define __STDC_FORMAT_MACROS
-#	include <inttypes.h>
-#	if BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID
-#		undef PRIX64
-#		undef PRIx64
-#		undef PRId64
-#		undef PRIu64
-#		undef PRIi64
+	#define __STDC_FORMAT_MACROS
+	#include <inttypes.h>
+	#if BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID
+		#undef PRIX64
+		#undef PRIx64
+		#undef PRId64
+		#undef PRIu64
+		#undef PRIi64
 
-#		define PRIX64 "llX"
-#		define PRIx64 "llx"
-#		define PRId64 "lld"
-#		define PRIu64 "llu"
-#		define PRIi64 "lli"
-#	endif
-#	define PLATFORM_I64(x) x##ll
+		#define PRIX64 "llX"
+		#define PRIx64 "llx"
+		#define PRId64 "lld"
+		#define PRIu64 "llu"
+		#define PRIi64 "lli"
+	#endif
+	#define PLATFORM_I64(x) x##ll
 #endif
 
 #if !defined(PRISIZE_T)
-#	if BB_PLATFORM_WINDOWS || BB_PLATFORM_DURANGO
-#		define PRISIZE_T "I64u" //size_t defined as unsigned __int64
-#	elif BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID
-#		define PRISIZE_T "lu"
-#	else
-#		error "Please define PRISIZE_T for this platform"
-#	endif
+	#if BB_PLATFORM_WINDOWS || BB_PLATFORM_DURANGO
+		#define PRISIZE_T "I64u" //size_t defined as unsigned __int64
+	#elif BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID
+		#define PRISIZE_T "lu"
+	#else
+		#error "Please define PRISIZE_T for this platform"
+	#endif
 #endif
 
 #if !defined(PRI_PTRDIFF_T)
-#	if BB_PLATFORM_WINDOWS
-#		define PRI_PTRDIFF_T "I64d"
-#	elif BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID || BB_PLATFORM_DURANGO
-#		define PRI_PTRDIFF_T "ld"
-#	else
-#		error "Please defined PRI_PTRDIFF_T for this platform"
-#	endif
+	#if BB_PLATFORM_WINDOWS
+		#define PRI_PTRDIFF_T "I64d"
+	#elif BB_PLATFORM_APPLE || BB_PLATFORM_LINUX || BB_PLATFORM_ORBIS || BB_PLATFORM_ANDROID || BB_PLATFORM_DURANGO
+		#define PRI_PTRDIFF_T "ld"
+	#else
+		#error "Please defined PRI_PTRDIFF_T for this platform"
+	#endif
 #endif
 
 #if !defined(PRI_THREADID)
-#	if (BB_PLATFORM_APPLE && defined(__LP64__)) || BB_PLATFORM_ORBIS
-#		define PRI_THREADID "llu"
-#	elif BB_PLATFORM_WINDOWS || BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_DURANGO
-#		define PRI_THREADID "lu"
-#	else
-#		error "Please defined PRI_THREADID for this platform"
-#	endif
+	#if (BB_PLATFORM_APPLE && defined(__LP64__)) || BB_PLATFORM_ORBIS
+		#define PRI_THREADID "llu"
+	#elif BB_PLATFORM_WINDOWS || BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_DURANGO
+		#define PRI_THREADID "lu"
+	#else
+		#error "Please defined PRI_THREADID for this platform"
+	#endif
 #endif
 
-#include <BlackBox/Core/Platform/Project/ProjectDefines.hpp>  // to get some defines available in every CryEngine project
-
-
+#include <BlackBox/Core/Platform/Project/ProjectDefines.hpp> // to get some defines available in every CryEngine project
 
 #if defined(WIN32) || defined(WIN64)
-#define DEBUG_BREAK _asm { int 3 }
+	#define DEBUG_BREAK _asm { int 3}
 #else
-#define DEBUG_BREAK
+	#define DEBUG_BREAK
 #endif
 
 //#if defined(WIN32) && !defined(WIN64)
@@ -110,8 +108,8 @@ enum class EPlatform
 //#endif
 
 #if defined(LINUX64)
-//#include <BlackBox/Linux64Specific.h>
-#define _CPU_AMD64
+    //#include <BlackBox/Linux64Specific.h>
+	#define _CPU_AMD64
 #endif
 
 #include <cstring>
@@ -134,52 +132,78 @@ inline auto SAFE_DELETE(T*& t)
   }
 }
 #else
-// Safe memory helpers
-#define SAFE_DELETE(p)        { if (p) { delete (p);          (p) = nullptr; } }
-#define SAFE_DELETE_ARRAY(p)  { if (p) { delete[] (p);        (p) = nullptr; } }
-#define SAFE_RELEASE(p)       { if (p) { (p)->Release();      (p) = nullptr; } }
-#define SAFE_RELEASE_FORCE(p) { if (p) { (p)->ReleaseForce(); (p) = nullptr; } }
+    // Safe memory helpers
+	#define SAFE_DELETE(p)     \
+		{                      \
+			if (p)             \
+			{                  \
+				delete (p);    \
+				(p) = nullptr; \
+			}                  \
+		}
+	#define SAFE_DELETE_ARRAY(p) \
+		{                        \
+			if (p)               \
+			{                    \
+				delete[](p);     \
+				(p) = nullptr;   \
+			}                    \
+		}
+	#define SAFE_RELEASE(p)     \
+		{                       \
+			if (p)              \
+			{                   \
+				(p)->Release(); \
+				(p) = nullptr;  \
+			}                   \
+		}
+	#define SAFE_RELEASE_FORCE(p)    \
+		{                            \
+			if (p)                   \
+			{                        \
+				(p)->ReleaseForce(); \
+				(p) = nullptr;       \
+			}                        \
+		}
 #endif
 
 //! Use NoCopy as a base class to easily prevent copy ctor & operator for any class.
 struct NoCopy
 {
-	NoCopy() = default;
+	NoCopy()              = default;
 	NoCopy(const NoCopy&) = delete;
 	NoCopy& operator=(const NoCopy&) = delete;
-	NoCopy(NoCopy&&) = default;
+	NoCopy(NoCopy&&)                 = default;
 	NoCopy& operator=(NoCopy&&) = default;
 };
 
 //! Use NoMove as a base class to easily prevent move ctor & operator for any class.
 struct NoMove
 {
-	NoMove() = default;
+	NoMove()              = default;
 	NoMove(const NoMove&) = default;
 	NoMove& operator=(const NoMove&) = default;
-	NoMove(NoMove&&) = delete;
+	NoMove(NoMove&&)                 = delete;
 	NoMove& operator=(NoMove&&) = delete;
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // common Typedef                                                                   //
 ///////////////////////////////////////////////////////////////////////////////
-typedef double real;
-typedef int index_t;
-typedef int                 INT;
-typedef unsigned int        UINT;
-typedef unsigned int        *PUINT;
-
+typedef double        real;
+typedef int           index_t;
+typedef int           INT;
+typedef unsigned int  UINT;
+typedef unsigned int* PUINT;
 
 #if defined(WIN32) && defined(__GNUC__) || defined(BB_PLATFORM_LINUX)
-#if 0
-	#define DLL_EXPORT [[gnu::dllexport]]
-	#define DLL_IMPORT [[gnu::dllimport]]
-#else
-	#define DLL_EXPORT
-	#define DLL_IMPORT
-#endif
+	#if 0
+		#define DLL_EXPORT [[gnu::dllexport]]
+		#define DLL_IMPORT [[gnu::dllimport]]
+	#else
+		#define DLL_EXPORT
+		#define DLL_IMPORT
+	#endif
 #else
 	#define DLL_EXPORT __declspec(dllexport)
 	#define DLL_IMPORT __declspec(dllimport)
@@ -194,38 +218,38 @@ typedef unsigned int        *PUINT;
 
 #if defined(USE_CRY_ASSERT)
 #else
-	//! Use the platform's default assert.
+    //! Use the platform's default assert.
 	#include <assert.h>
-	#define CRY_ASSERT_TRACE(condition, parenthese_message) assert(condition)
+	#define CRY_ASSERT_TRACE(condition, parenthese_message)                  assert(condition)
 	#define CRY_ASSERT_MESSAGE_IMPL(condition, szCondition, file, line, ...) assert(condition)
-	#define CRY_ASSERT_MESSAGE(condition, ... )             assert(condition)
-	#define CRY_ASSERT(condition, ...)                      assert(condition)
+	#define CRY_ASSERT_MESSAGE(condition, ...)                               assert(condition)
+	#define CRY_ASSERT(condition, ...)                                       assert(condition)
 #endif
 namespace Cry
 {
-	template<typename T, typename ... Args>
-	inline T const& VerifyWithMessage(T const& expr, const char* szExpr, const char* szFile, int line, Args&& ... args)
+	template<typename T, typename... Args>
+	inline T const& VerifyWithMessage(T const& expr, const char* szExpr, const char* szFile, int line, Args&&... args)
 	{
-		CRY_ASSERT_MESSAGE_IMPL(expr, szExpr, szFile, line, std::forward<Args>(args) ...);
+		CRY_ASSERT_MESSAGE_IMPL(expr, szExpr, szFile, line, std::forward<Args>(args)...);
 		return expr;
 	}
-}
+} // namespace Cry
 
-#define CRY_VERIFY(expr, ...)              Cry::VerifyWithMessage(expr, # expr, __FILE__, __LINE__, ##__VA_ARGS__)
+#define CRY_VERIFY(expr, ...)        Cry::VerifyWithMessage(expr, #expr, __FILE__, __LINE__, ##__VA_ARGS__)
 
-#define CRY_FUNCTION_NOT_IMPLEMENTED       CRY_ASSERT(false, "Call to not implemented function: %s", __func__)
+#define CRY_FUNCTION_NOT_IMPLEMENTED CRY_ASSERT(false, "Call to not implemented function: %s", __func__)
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
 #if !defined(_DEBUG) && !defined(CRY_UBSAN)
-#define ILINE __forceinline
+	#define ILINE __forceinline
 #else
-#define ILINE inline
+	#define ILINE inline
 #endif
 #include <cstdint>
 
-int64_t    bbGetTicks();
-void       bbSleep(unsigned int dwMilliseconds);
+int64_t bbGetTicks();
+void    bbSleep(unsigned int dwMilliseconds);
 
 // Include most commonly used STL headers.
 // They end up in precompiled header and make compilation faster.
@@ -244,17 +268,16 @@ void       bbSleep(unsigned int dwMilliseconds);
 
 class MyString;
 #ifndef MY_STRING
-using string = std::string;
+using string  = std::string;
 using wstring = std::wstring;
 #else
 using string = MyString;
 #endif
 
-
 namespace Detail
 {
-template<typename T, size_t size>
-char (&ArrayCountHelper(T(&)[size]))[size];
+	template<typename T, size_t size>
+	char (&ArrayCountHelper(T (&)[size]))[size];
 }
 
 enum EQuestionResult
@@ -279,7 +302,7 @@ enum EMessageBox
 
 //! Loads CrySystem from disk and initializes the engine, commonly called from the Launcher implementation
 //! \param bManualEngineLoop Whether or not the caller will start and maintain the engine loop themselves. Otherwise the loop is started and engine shut down automatically inside the function.
-bool			CryInitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngineLoop = false);
+bool            CryInitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngineLoop = false);
 
 void            CrySleep(unsigned int dwMilliseconds);
 void            CryLowLatencySleep(unsigned int dwMilliseconds);
@@ -297,7 +320,11 @@ void            CryFindEngineRootFolder(unsigned int pathSize, char* szOutPath);
 void            CrySetCurrentWorkingDirectory(const char* szWorkingDirectory);
 void            CryFindRootFolderAndSetAsCurrentWorkingDirectory();
 
-template <class T> inline void ZeroStruct( T &t ) { memset( &t,0,sizeof(t) ); }
+template<class T>
+inline void ZeroStruct(T& t)
+{
+	memset(&t, 0, sizeof(t));
+}
 
 //! Align function works on integer or pointer values. Only supports power-of-two alignment.
 template<typename T>
@@ -316,25 +343,25 @@ ILINE bool IsAligned(T nData, size_t nAlign)
 }
 
 #define CRY_ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
-#define ARRAY_COUNT(arr) sizeof(::Detail::ArrayCountHelper(arr))
+#define ARRAY_COUNT(arr)     sizeof(::Detail::ArrayCountHelper(arr))
 
 #if BB_PLATFORM_WINDOWS && BB_PLATFORM_64BIT
-#include <BlackBox/Core/Platform/WindowsSpecific.hpp>
+	#include <BlackBox/Core/Platform/WindowsSpecific.hpp>
 #endif
 
 #if BB_PLATFORM_LINUX
-#include <BlackBox/Core/Platform/Linux64Specific.h>
+	#include <BlackBox/Core/Platform/Linux64Specific.h>
 #endif
 
 #if BB_PLATFORM_ANDROID
-#include <BlackBox/Core/Platform/Android64Specific.h>
+	#include <BlackBox/Core/Platform/Android64Specific.h>
 #endif
 
 // Wrapper code for non-windows builds.
 #if BB_PLATFORM_LINUX || BB_PLATFORM_MAC || BB_PLATFORM_IOS || BB_PLATFORM_ANDROID
-  #include <BlackBox/Core/Platform/Linux_Win32Wrapper.h>
+	#include <BlackBox/Core/Platform/Linux_Win32Wrapper.h>
 #elif BB_PLATFORM_ORBIS
-  #include <BlackBox/Core/Platform/Orbis_Win32Wrapper.h>
+	#include <BlackBox/Core/Platform/Orbis_Win32Wrapper.h>
 #endif
 
 // Formatted error messages
@@ -345,7 +372,7 @@ const char* CryGetSystemErrorMessage(DWORD errorId);
 //! GetErrorMessage(GetLastError())
 const char* CryGetLastSystemErrorMessage();
 //! Resets the info on the last system error.
-void CryClearSytemError();
+void        CryClearSytemError();
 
 // Provide special cast function which mirrors C++ style casts to support aliasing correct type punning casts in gcc with strict-aliasing enabled
 template<typename DestinationType, typename SourceType>
@@ -353,19 +380,18 @@ inline DestinationType alias_cast(SourceType pPtr)
 {
 	union
 	{
-		SourceType		pSrc;
+		SourceType      pSrc;
 		DestinationType pDst;
 	} conv_union;
 	conv_union.pSrc = pPtr;
 	return conv_union.pDst;
 }
 
-
 // CryModule memory manager routines must always be included.
 // They are used by any module which doesn't define NOT_USE_CRY_MEMORY_MANAGER
 // No Any STL includes must be before this line.
 //#ifndef NOT_USE_CRY_MEMORY_MANAGER
-#if 1  //#ifndef NOT_USE_CRY_MEMORY_MANAGER
+#if 1 //#ifndef NOT_USE_CRY_MEMORY_MANAGER
 	#define USE_NEWPOOL
 	#include <BlackBox/Memory/CryMemoryManager.h>
 #else
@@ -389,11 +415,10 @@ int64 CryGetTicks();
 
 //! Loads System from disk and initializes the engine, commonly called from the Launcher implementation
 //! \param bManualEngineLoop Whether or not the caller will start and maintain the engine loop themselves. Otherwise the loop is started and engine shut down automatically inside the function.
-bool			InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngineLoop = false);
-
+bool InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngineLoop = false);
 
 #undef STATIC_CHECK
-#define STATIC_CHECK(expr, msg) static_assert((expr) != 0, # msg)
+#define STATIC_CHECK(expr, msg) static_assert((expr) != 0, #msg)
 
 // Conditionally execute code in debug only
 #ifdef _DEBUG
@@ -403,9 +428,9 @@ bool			InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEng
 #endif
 
 #define DECLARE_SHARED_POINTERS(name)                   \
-  typedef std::shared_ptr<name> name ##       Ptr;      \
-  typedef std::shared_ptr<const name> name ## ConstPtr; \
-  typedef std::weak_ptr<name> name ##         WeakPtr;  \
-  typedef std::weak_ptr<const name> name ##   ConstWeakPtr;
+	typedef std::shared_ptr<name>       name##Ptr;      \
+	typedef std::shared_ptr<const name> name##ConstPtr; \
+	typedef std::weak_ptr<name>         name##WeakPtr;  \
+	typedef std::weak_ptr<const name>   name##ConstWeakPtr;
 
 #define fxopen fopen

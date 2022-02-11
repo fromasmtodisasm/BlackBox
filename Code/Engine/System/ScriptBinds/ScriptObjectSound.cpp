@@ -18,8 +18,8 @@
 #include "ScriptObjectSound.hpp"
 enum
 {
-	SOUND_LOOP		 = FLAG_SOUND_LOOP,
-	SOUND_MUSIC		 = FLAG_SOUND_MUSIC,
+	SOUND_LOOP       = FLAG_SOUND_LOOP,
+	SOUND_MUSIC      = FLAG_SOUND_MUSIC,
 	SOUND_UNSCALABLE = FLAG_SOUND_UNSCALABLE
 };
 
@@ -73,7 +73,7 @@ int CScriptObjectSound::LoadSound(IFunctionHandler* pH)
 {
 	//CHECK_PARAMETERS(2);
 	const char* szFileName{};
-	int			Flags{0};
+	int         Flags{0};
 
 	if (pH->GetParam(1, szFileName))
 	{
@@ -93,7 +93,7 @@ int CScriptObjectSound::Load3DSound(IFunctionHandler* pH)
 {
 	CHECK_PARAMETERS(5);
 	const char* szFileName{};
-	int			Flags{0};
+	int         Flags{0};
 
 	if (pH->GetParam(1, szFileName))
 	{
@@ -157,7 +157,7 @@ int CScriptObjectSound::LoadStreamSound(IFunctionHandler* pH)
 {
 	CHECK_PARAMETERS(2);
 	const char* szFileName{};
-	int			Flags{0};
+	int         Flags{0};
 
 	if (pH->GetParam(1, szFileName))
 	{

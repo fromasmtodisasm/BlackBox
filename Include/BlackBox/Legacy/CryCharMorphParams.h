@@ -1,12 +1,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-//	
+//
 //	File: CryCharMorphParams.h
-//  Description: 
-//		Parameters for the morphing functions in ICryCharInstance 
+//  Description:
+//		Parameters for the morphing functions in ICryCharInstance
 //		interface.
 //
 //	History:
@@ -22,22 +22,21 @@
 // StartMorph will accept this
 struct CryCharMorphParams
 {
-	CryCharMorphParams (
-			float _fBlendIn = 0.15f,
-			float _fLength = 0,
-			float _fBlendOut = 0.15f,
-			float _fAmplitude = 1,
-			float _fStartTime = 0,
-			float _fSpeed = 1,
-			unsigned _nFlags = 0
-		):
-		fBlendIn (_fBlendIn),
-		fLength (_fLength),
-		fBlendOut (_fBlendOut),
-		fAmplitude (_fAmplitude),
-		fStartTime (_fStartTime),
-		fSpeed (_fSpeed),
-		nFlags(_nFlags)
+	CryCharMorphParams(
+	    float    _fBlendIn   = 0.15f,
+	    float    _fLength    = 0,
+	    float    _fBlendOut  = 0.15f,
+	    float    _fAmplitude = 1,
+	    float    _fStartTime = 0,
+	    float    _fSpeed     = 1,
+	    unsigned _nFlags     = 0)
+	    : fBlendIn(_fBlendIn)
+	    , fLength(_fLength)
+	    , fBlendOut(_fBlendOut)
+	    , fAmplitude(_fAmplitude)
+	    , fStartTime(_fStartTime)
+	    , fSpeed(_fSpeed)
+	    , nFlags(_nFlags)
 	{
 	}
 	// the blend-in time
@@ -56,9 +55,9 @@ struct CryCharMorphParams
 	enum FlagsEnum
 	{
 		// with this flag set, the attachments will be traversed to attempt to start the same morph target
-		FLAGS_RECURSIVE = 1,
+		FLAGS_RECURSIVE   = 1,
 		// with this flag set, the morph will not be time-updated (it'll be frozen at the point where it is)
-		FLAGS_FREEZE    = 1 << 1,
+		FLAGS_FREEZE      = 1 << 1,
 		FLAGS_NO_BLENDOUT = 1 << 2
 	};
 

@@ -4,26 +4,25 @@
 
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 
-
 // Undefine malloc for memory manager itself..
 #undef malloc
 #undef realloc
 #undef free
 
 #if defined(_DEBUG) && !defined(LINUX)
-#	undef _CRTDBG_MAP_ALLOC
-#	define _CRTDBG_MAP_ALLOC
-#	include <stdlib.h>
-#	include <crtdbg.h>
-#	define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
-#	define new DEBUG_CLIENTBLOCK
+	#undef _CRTDBG_MAP_ALLOC
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
+	#include <crtdbg.h>
+	#define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_CLIENTBLOCK
 #endif
 #include <BlackBox/System/File/CryFile.h>
 using CryPathString = string;
 
 #define INDENT_LOG_DURING_SCOPE(i, format, ...) CryLog(format, __VA_ARGS__)
 
-void* g_pLuaDebugger{};
+void*           g_pLuaDebugger{};
 
 //////////////////////////////////////////////////////////////////////
 // Pointer to Global ISystem.
@@ -66,7 +65,7 @@ extern "C"
 CFunctionHandler* CScriptSystem::m_pH = nullptr;
 
 //////////////////////////////////////////////////////////////////////////
-const char* FormatPath(char* const sLowerName, const char* sPath)
+const char*       FormatPath(char* const sLowerName, const char* sPath)
 {
 	strcpy(sLowerName, sPath);
 	int i = 0;
@@ -80,7 +79,7 @@ const char* FormatPath(char* const sLowerName, const char* sPath)
 }
 
 CScriptSystem::CScriptSystem()
-	: m_pSystem(nullptr)
+    : m_pSystem(nullptr)
 {
 }
 
@@ -107,7 +106,7 @@ void* luaAlloc(void* userData, void* ptr, size_t oldSize, size_t newSize)
 	}
 	else
 		return CryModuleRealloc(ptr, newSize);
-		//return realloc(ptr, newSize);
+	//return realloc(ptr, newSize);
 }
 
 bool CScriptSystem::Init(ISystem* pSystem)
@@ -116,11 +115,11 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	m_pSystem = pSystem;
 	//L		  = lua_newstate(luaAlloc, nullptr);
 	//L		  = lua_newstate(nullptr, nullptr);
-	L = luaL_newstate();
+	L         = luaL_newstate();
 	luaL_openlibs(L);
-	CScriptObject::L	 = L; // Set lua state for script table class.
+	CScriptObject::L     = L; // Set lua state for script table class.
 	CScriptObject::m_pSS = this;
-	m_pH				 = new CFunctionHandler(this, L);
+	m_pH                 = new CFunctionHandler(this, L);
 
 	m_stdScriptBinds.Init(pSystem, this);
 
@@ -138,11 +137,11 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	RegisterErrorHandler();
 
 	m_cvar_script_debugger = pSystem->GetIConsole()->CreateVariable(
-		"lua_debugger", 0, VF_CHEAT,
-		"Enables the script debugger.\n"
-		"1 to trigger on breakpoints and errors\n"
-		"2 to only trigger on errors\n"
-		"Usage: lua_debugger [0/1/2]");
+	    "lua_debugger", 0, VF_CHEAT,
+	    "Enables the script debugger.\n"
+	    "1 to trigger on breakpoints and errors\n"
+	    "2 to only trigger on errors\n"
+	    "Usage: lua_debugger [0/1/2]");
 
 	//////////////////////////////////////////////////////////////////////////
 	// Execute common lua file.
@@ -212,15 +211,15 @@ bool CScriptSystem::_ExecuteFile(const char* sFileName, bool bRaiseError, IScrip
 
 	CryPathString fileName("@");
 	fileName.append(translated);
-	#if 0
+#if 0
 	fileName.replace('\\', '/');
-	#else
+#else
 	for (auto c : fileName)
 	{
 		if (c == '\\')
 			c = '/';
 	}
-	#endif
+#endif
 
 	//CRY_DEFINE_ASSET_SCOPE("LUA", sFileName);
 
@@ -232,9 +231,9 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 	if (strlen(sFileName) <= 0)
 		return false;
 
-	#if 0
+#if 0
 	FUNCTION_PROFILER(PROFILE_LOADING_ONLY, sFileName);
-	#endif
+#endif
 
 	INDENT_LOG_DURING_SCOPE(true, "Executing file '%s' (raiseErrors=%d%s)", sFileName, bRaiseError, bForceReload ? ", force reload" : "");
 
@@ -252,7 +251,7 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 		if (g_pLuaDebugger)
 		{
 			assert(0);
-			#if 0
+	#if 0
 			string name = sFileName;
 			char   sTempStr[_MAX_PATH];
 			assert(name.size() < _MAX_PATH);
@@ -260,7 +259,7 @@ bool CScriptSystem::ExecuteFile(const char* sFileName, bool bRaiseError /* = tru
 				sTempStr[i] = tolower(name[i]);
 			sTempStr[name.size()] = 0;
 			g_pLuaDebugger->GetCoverage()->ResetFile(sTempStr);
-			#endif
+	#endif
 		}
 #endif
 		if (!_ExecuteFile(sTemp, bRaiseError, nullptr))
@@ -293,18 +292,18 @@ bool CScriptSystem::ExecuteBuffer(const char* sBuffer, size_t nSize, const char*
 	if (status == 0)
 	{
 		// parse OK?
-		int base = lua_gettop(L);  // function index.
+		int base = lua_gettop(L); // function index.
 		lua_getref(L, (int)(INT_PTR)m_pErrorHandlerFunc);
-		lua_insert(L, base);  // put it under chunk and args
+		lua_insert(L, base); // put it under chunk and args
 
 		if (pEnv)
 		{
-			#if 0
+#if 0
 			PushObject(pEnv);
 			lua_setfenv(L, -2);
-			#else
+#else
 			CryError("Environment not supported");
-			#endif
+#endif
 		}
 
 		status = lua_pcall(L, 0, LUA_MULTRET, base); // call main
@@ -382,10 +381,10 @@ void CScriptSystem::UnloadScript(const char* sFileName)
 	if (strlen(sFileName) <= 0)
 		return;
 
-	char lowerName[_MAX_PATH];
-	const char* sTemp = FormatPath(lowerName, sFileName);
+	char               lowerName[_MAX_PATH];
+	const char*        sTemp = FormatPath(lowerName, sFileName);
 	//ScriptFileListItor itor = std::find(m_dqLoadedFiles.begin(), m_dqLoadedFiles.end(), sTemp.c_str());
-	ScriptFileListItor itor = m_dqLoadedFiles.find(/*CONST_TEMP_STRING(*/ sTemp /*)*/);
+	ScriptFileListItor itor  = m_dqLoadedFiles.find(/*CONST_TEMP_STRING(*/ sTemp /*)*/);
 	if (itor != m_dqLoadedFiles.end())
 	{
 		RemoveFileFromList(itor);
@@ -710,11 +709,11 @@ USER_DATA CScriptSystem::CreateUserData(INT_PTR nVal, int nCookie)
 {
 	CHECK_STACK(L);
 
-	auto		  size = sizeof(UserDataInfo);
+	auto          size = sizeof(UserDataInfo);
 	UserDataInfo* ud   = (UserDataInfo*)lua_newuserdata(L, size);
-	ud				   = new UserDataInfo;
-	ud->ptr			   = nVal;
-	ud->cookie		   = nCookie;
+	ud                 = new UserDataInfo;
+	ud->ptr            = nVal;
+	ud->cookie         = nCookie;
 	lua_pop(L, 1);
 
 	return ud;
@@ -726,10 +725,10 @@ void CScriptSystem::RemoveTaggedValue(HTAG tag)
 
 void CScriptSystem::RaiseError(const char* format, ...)
 {
-	va_list arglist;
-	char sBuf[2048];
-	int nCurrentLine		= 0;
-	const char* sSourceFile = "undefined";
+	va_list     arglist;
+	char        sBuf[2048];
+	int         nCurrentLine = 0;
+	const char* sSourceFile  = "undefined";
 
 	va_start(arglist, format);
 	vsprintf(sBuf, format, arglist);
@@ -755,10 +754,10 @@ void CScriptSystem::ForceGarbageCollection()
 #endif
 
 #if USE_RAW_LUA_ALLOCS
-// Nothing to do.
-#	ifdef USE_GLOBAL_BUCKET_ALLOCATOR
+	// Nothing to do.
+	#ifdef USE_GLOBAL_BUCKET_ALLOCATOR
 	gLuaAlloc.cleanup();
-#	endif
+	#endif
 #endif
 
 	CryComment("Lua garbage collection %i -> %i", beforeUsage, totalUsage);
@@ -820,8 +819,8 @@ HBREAKPOINT CScriptSystem::AddBreakPoint(const char* sFile, int nLineNumber)
 //////////////////////////////////////////////////////////////////////////
 IScriptObject* CScriptSystem::GetLocalVariables(int nLevel /* = 0*/)
 {
-	lua_Debug ar;
-	const char* name;
+	lua_Debug      ar;
+	const char*    name;
 	IScriptObject* pObj = CreateEmptyObject();
 	//pObj->AddRef();
 
@@ -899,12 +898,12 @@ IScriptObject* CScriptSystem::GetLocalVariables(int nLevel /* = 0*/)
 const int LEVELS1 = 12; /* size of the first part of the stack */
 const int LEVELS2 = 10; /* size of the second part of the stack */
 
-void CScriptSystem::GetCallStack(std::vector<SLuaStackEntry>& callstack)
+void      CScriptSystem::GetCallStack(std::vector<SLuaStackEntry>& callstack)
 {
 	callstack.clear();
 
-	int level	  = 0;
-	int firstpart = 1; /* still before eventual `...' */
+	int       level     = 0;
+	int       firstpart = 1; /* still before eventual `...' */
 	lua_Debug ar;
 	while (lua_getstack(L, level++, &ar))
 	{
@@ -955,8 +954,8 @@ void CScriptSystem::GetCallStack(std::vector<SLuaStackEntry>& callstack)
 
 		SLuaStackEntry se;
 		se.description = buff;
-		se.line		   = ar.currentline;
-		se.source	   = ar.source;
+		se.line        = ar.currentline;
+		se.source      = ar.source;
 
 		callstack.push_back(se);
 	}
@@ -966,7 +965,7 @@ IScriptObject* CScriptSystem::GetCallsStack()
 {
 	std::vector<SLuaStackEntry> stack;
 
-	IScriptObject* pCallsStack = CreateObject();
+	IScriptObject*              pCallsStack = CreateObject();
 	assert(pCallsStack);
 
 	//pCallsStack->AddRef();
@@ -1018,19 +1017,19 @@ void CScriptSystem::GetMemoryUsage(ICrySizer* pSizer) const
 
 #ifndef _LIB // Only when compiling as dynamic library
 	{
-		#if 0
+	#if 0
 		SIZER_COMPONENT_NAME(pSizer, "Strings");
 		pSizer->AddObject((this + 1), string::_usedMemory(0));
-		#endif
+	#endif
 	}
 	{
-		#if 0
+	#if 0
 		SIZER_COMPONENT_NAME(pSizer, "STL Allocator Waste");
 		CryModuleMemoryInfo meminfo;
 		ZeroStruct(meminfo);
 		CryGetMemoryInfoForModule(&meminfo);
 		pSizer->AddObject((this + 2), (size_t)meminfo.STL_wasted);
-		#endif
+	#endif
 	}
 #endif
 	{
@@ -1120,7 +1119,7 @@ int CScriptSystem::ErrorHandler(lua_State* L)
 	//	return 0; // ignore script errors if engine is running without game
 
 	// Handle error
-	lua_Debug ar;
+	lua_Debug      ar;
 	CScriptSystem* pThis = (CScriptSystem*)GetISystem()->GetIScriptSystem();
 
 	memset(&ar, 0, sizeof(lua_Debug));
@@ -1177,8 +1176,8 @@ void CScriptSystem::ShowDebugger(const char* pszSourceFile, int iLine, const cha
 class CPrintSink : public IScriptObjectDumpSink
 {
 public:
-	void OnElementFound(int nIdx,ScriptVarType type){/*ignore non string indexed values*/};
-	void OnElementFound(const char *sName,ScriptVarType type)
+	void OnElementFound(int nIdx, ScriptVarType type){/*ignore non string indexed values*/};
+	void OnElementFound(const char* sName, ScriptVarType type)
 	{
 		switch (type)
 		{
@@ -1198,7 +1197,6 @@ public:
 		}
 	}
 };
-
 
 void PrintStack(lua_State* L)
 {
@@ -1225,7 +1223,7 @@ void PrintStack(lua_State* L)
 		{
 			auto ud = lua_touserdata(L, i);
 			sprintf(msg, "ud: %p", ud);
-			auto so = (CScriptObject*)(ud);
+			auto       so = (CScriptObject*)(ud);
 			CPrintSink ps;
 			so->Dump(&ps);
 			break;
@@ -1245,14 +1243,14 @@ int CScriptSystem::GetStackSize() const
 
 static CPrintSink Sink;
 
-void CScriptSystem::PrintStack()
+void              CScriptSystem::PrintStack()
 {
 	::PrintStack(L);
 }
 
 SCRIPTSYSTEM_API IScriptSystem* CreateScriptSystem(ISystem* pSystem, bool bStdLibs)
 {
-	auto ss				= new CScriptSystem();
+	auto ss             = new CScriptSystem();
 	gEnv->pScriptSystem = ss;
 	if (ss->Init(pSystem))
 	{

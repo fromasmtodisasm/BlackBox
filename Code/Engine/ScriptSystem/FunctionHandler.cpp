@@ -4,8 +4,8 @@
 #define NOT_IMPL() assert(0 && __FUNCTION__ " not implemented")
 
 CFunctionHandler::CFunctionHandler(CScriptSystem* pSS, lua_State* L)
-	: m_pSS(pSS)
-	, L(L)
+    : m_pSS(pSS)
+    , L(L)
 {
 }
 
@@ -37,7 +37,7 @@ THIS_PTR CFunctionHandler::GetThis()
 INT_PTR CFunctionHandler::GetFunctionID()
 {
 	unsigned char* pBuffer = (unsigned char*)lua_touserdata(L, lua_upvalueindex(1));
-	INT_PTR		   fID	   = 0;
+	INT_PTR        fID     = 0;
 	memcpy(&fID, pBuffer, sizeof(INT_PTR));
 	return fID;
 }
@@ -89,16 +89,16 @@ bool CFunctionHandler::GetParam(int nIdx, USER_DATA& nValue)
 	auto result = GetParamAny(nIdx, nValue);
 	if (result && nValue != nullptr)
 	{
-		UserDataInfo* ud	  = (UserDataInfo*)nValue;
-		auto		  nCookie = ud->cookie;
-		nValue				  = (void*)ud->ptr;
+		UserDataInfo* ud      = (UserDataInfo*)nValue;
+		auto          nCookie = ud->cookie;
+		nValue                = (void*)ud->ptr;
 	}
 	return result;
 }
 
 ScriptVarType CFunctionHandler::GetParamType(int nIdx)
 {
-	int			  nRealIdx = nIdx + m_paramIdOffset;
+	int nRealIdx = nIdx + m_paramIdOffset;
 	return LuatypeToScriptVarType(lua_type(L, nRealIdx));
 }
 

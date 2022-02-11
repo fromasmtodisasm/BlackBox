@@ -15,15 +15,15 @@
 #define __NULLFONT_H__
 
 #pragma once
-#define  USE_NULLFONT
+#define USE_NULLFONT
 #if defined(USE_NULLFONT)
 
 	//#include <CryFont/IFont.h>
 	#include <IFont.h>
-#include <BlackBox/Renderer/IFont.hpp>
-#include <codecvt>
-#pragma warning(push)
-#pragma warning(disable: 4244)
+	#include <BlackBox/Renderer/IFont.hpp>
+	#include <codecvt>
+	#pragma warning(push)
+	#pragma warning(disable : 4244)
 
 class CNullCryFont : public IFFont
 {
@@ -110,9 +110,9 @@ public:
 	virtual void DrawStringW(float x, float y, const wchar_t* swStr, const bool bASCIIMultiLine = true) override
 	{
 		std::wstring ws(swStr);
-		std::string str(ws.begin(), ws.end());
+		std::string  str(ws.begin(), ws.end());
 
-		m_pFont->RenderText(str.data(), x, y,1.f, m_Color.v);
+		m_pFont->RenderText(str.data(), x, y, 1.f, m_Color.v);
 	}
 	virtual void DrawWrappedStringW(float x, float y, float w, const wchar_t* swStr, const bool bASCIIMultiLine = true) override
 	{
@@ -120,7 +120,7 @@ public:
 	virtual vector2f GetTextSizeW(const wchar_t* swStr, const bool bASCIIMultiLine = true) override
 	{
 		std::wstring ws(swStr);
-		std::string str(ws.begin(), ws.end());
+		std::string  str(ws.begin(), ws.end());
 		return GetTextSize(str.data());
 	}
 	virtual vector2f GetWrappedTextSizeW(const wchar_t* swStr, float w, const bool bASCIIMultiLine = true) override
@@ -138,26 +138,26 @@ public:
 	virtual void GetMemoryUsage(ICrySizer* pSizer) override
 	{
 	}
-	vector2f m_Size = vector2f(12,12);
-	color4f	 m_Color = color4f(1.f, 1.f, 1.f, 1.f);
-	IFont*	 m_pFont;
+	vector2f m_Size  = vector2f(12, 12);
+	color4f  m_Color = color4f(1.f, 1.f, 1.f, 1.f);
+	IFont*   m_pFont;
 };
 
 class CCryNullFont : public ICryFont
 {
 public:
-	virtual void    Release()                                   {}
-	virtual IFFont* NewFont(const char* pFontName)              { return &ms_nullFont; }
-	virtual IFFont* GetFont(const char* pFontName)		        { return &ms_nullFont; }
-	virtual void    SetRendererProperties(IRenderer* pRenderer) {}
-	virtual void	GetMemoryUsage(ICrySizer* pSizer)			{}
-	virtual string  GetLoadedFontNames() const                  { return ""; }
+	virtual void        Release() {}
+	virtual IFFont*     NewFont(const char* pFontName) { return &ms_nullFont; }
+	virtual IFFont*     GetFont(const char* pFontName) { return &ms_nullFont; }
+	virtual void        SetRendererProperties(IRenderer* pRenderer) {}
+	virtual void        GetMemoryUsage(ICrySizer* pSizer) {}
+	virtual string      GetLoadedFontNames() const { return ""; }
 
-//private:
+	//private:
 	static CNullCryFont ms_nullFont;
 };
 
-#pragma warning(pop)
+	#pragma warning(pop)
 #endif // USE_NULLFONT
 
 #endif

@@ -1,17 +1,17 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-//	
+//
 //	File: IStreamEngine.h
-//  Description: 
+//  Description:
 //		This is the prototypes of interfaces that will be used for asynchronous
 //		I/O (streaming).
 //		Some excerpts explaining basic ideas behind streaming design here:
 //		The idea is that the data loaded is ready for usage and ideally doesn't need further transformation,
-//		therefore the client allocates the buffer (to avoid extra copy). All the data transformations should take 
-//		place in the Resource Compiler. If you have to allocate a lot of small memory objects, you should revise 
+//		therefore the client allocates the buffer (to avoid extra copy). All the data transformations should take
+//		place in the Resource Compiler. If you have to allocate a lot of small memory objects, you should revise
 //		this strategy in favor of one big allocation (again, that will be read directly from the compiled file).
 //		Anyway, we can negotiate that the streaming engine allocates this memory.
 //		In the end, it could make use of a memory pool, and copying data is not the bottleneck in our engine
@@ -20,7 +20,7 @@
 //
 //	History:
 //	- Jan 2002: File created
-//	- February 2005: Modified by Marco Corbetta for SDK release	
+//	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -63,11 +63,11 @@ enum StreamReadParamsFlagEnum
 
 	// If this flag is set, the file will be read synchronously
 	// NOTE: Not implemented yet
-	SRP_FLAGS_SYNC_READ = 1 << 1,
+	SRP_FLAGS_SYNC_READ      = 1 << 1,
 
 	// if this flag is set, the stream will be treated as "permanent" and the file handle will
 	// be cached. This is needed for files which are accessed frequently, e.g. Resource files.
-	SRP_FLAGS_MAKE_PERMANENT = 1<<2,
+	SRP_FLAGS_MAKE_PERMANENT = 1 << 2,
 
 	// if this flag is set and the stream was made permanent before (either explicitly because of
 	// the SRP_FLAGS_MAKE_PERMANENT flag, or implicitly because of the policy of the StreamEngine),
@@ -97,28 +97,27 @@ enum StreamReadParamsFlagEnum
 // all the unnecessary parameters go here, because there are many of them
 struct StreamReadParams
 {
-	StreamReadParams (
-		//const char* _szFile,
-		//IStreamCallback* _pCallback,
-		DWORD_PTR _dwUserData = 0,
-		int _nPriority = 0,
-		unsigned _nLoadTime = 0,
-		unsigned _nMaxLoadTime = 0,
-		unsigned _nOffset = 0,
-		unsigned _nSize = 0,
-		void* _pBuffer = NULL,
-		unsigned _nFlags = 0
-	):
-		//szFile (_szFile),
-		//pCallback(_pCallback),
-		dwUserData (_dwUserData),
-		nPriority(_nPriority),
-		nLoadTime(_nLoadTime),
-		nMaxLoadTime(_nMaxLoadTime),
-		pBuffer (_pBuffer),
-		nOffset (_nOffset),
-		nSize (_nSize),
-		nFlags (_nFlags)
+	StreamReadParams(
+	    //const char* _szFile,
+	    //IStreamCallback* _pCallback,
+	    DWORD_PTR _dwUserData   = 0,
+	    int       _nPriority    = 0,
+	    unsigned  _nLoadTime    = 0,
+	    unsigned  _nMaxLoadTime = 0,
+	    unsigned  _nOffset      = 0,
+	    unsigned  _nSize        = 0,
+	    void*     _pBuffer      = NULL,
+	    unsigned  _nFlags       = 0)
+	    : //szFile (_szFile),
+	    //pCallback(_pCallback),
+	    dwUserData(_dwUserData)
+	    , nPriority(_nPriority)
+	    , nLoadTime(_nLoadTime)
+	    , nMaxLoadTime(_nMaxLoadTime)
+	    , pBuffer(_pBuffer)
+	    , nOffset(_nOffset)
+	    , nSize(_nSize)
+	    , nFlags(_nFlags)
 	{
 	}
 
@@ -130,42 +129,41 @@ struct StreamReadParams
 	DWORD_PTR dwUserData;
 
 	// the priority of this read; INT_MIN is the idle, INT_MAX is the highest, 0 is the average
-	int nPriority;
+	int       nPriority;
 
 	// the desirable loading time, in milliseconds, from the time of call
 	// 0 means as fast as possible (desirably in this frame)
-	unsigned nLoadTime;
+	unsigned  nLoadTime;
 
 	// the maximum load time, in milliseconds. 0 means forever. If the read lasts longer, it can be discarded.
 	// WARNING: avoid too small max times, like 1-10 ms, because many loads will be discarded in this case.
-	unsigned nMaxLoadTime;
+	unsigned  nMaxLoadTime;
 
 	// the buffer into which to read the file or the file piece
 	// if this is NULL, the streaming engine will supply the buffer
 	// DO NOT USE THIS BUFFER during read operation! DO NOT READ from it, it can lead to memory corruption!
-	void* pBuffer;
+	void*     pBuffer;
 
 	// offset in the file to read; if this is not 0, then the file read
 	// occurs beginning with the specified offset in bytes.
 	// the callback interface receives the size of already read data as nSize
 	// and generally behaves as if the piece of file would be a file of its own.
-	unsigned nOffset;
+	unsigned  nOffset;
 
-	// number of bytes to read; if this is 0, then the whole file is read	
+	// number of bytes to read; if this is 0, then the whole file is read
 	// if nSize == 0 && nOffset != 0, then the file from the offset to the end is read
 	// If nSize != 0, then the file piece from nOffset is read, at most nSize bytes
 	// (if less, an error is reported). So, from nOffset byte to nOffset + nSize - 1 byte in the file
-	unsigned nSize;
+	unsigned  nSize;
 
 	// the combination of one or several flags from StreamReadParamsFlagEnum
-	unsigned nFlags;
+	unsigned  nFlags;
 };
 
 class IReadStream;
 //typedef IReadStream_AutoPtr auto ptr wrapper
 TYPEDEF_AUTOPTR(IReadStream);
 typedef IReadStream_AutoPtr IReadStreamPtr;
-
 
 //////////////////////////////////////////////////////////////////////////
 // The highest level. THere is only one StreamingEngine in the application
@@ -184,7 +182,7 @@ public:
 	// Starts asynchronous read from the specified file (the file may be on a
 	// virtual file system, in pak or zip file or wherever).
 	// Reads the file contents into the given buffer, up to the given size.
-	// Upon success, calls success callback. If the file is truncated or for other 
+	// Upon success, calls success callback. If the file is truncated or for other
 	// reason can not be read, calls error callback. THe callback can be NULL (in this case, the client should poll
 	// the returned IReadStream object; the returned object must be locked for that)
 	// NOTE: the error/success/ progress callbacks can also be called from INSIDE this function.
@@ -200,33 +198,33 @@ public:
 	// (in the main thread) outside StartRead() (it happens in the entity update),
 	// so you're guaranteed that it won't trash inside the calling function. However, this may change in the future
 	// and you'll be required to assign it to IReadStream immediately (StartRead will return IReadStream_AutoPtr then)
-	virtual IReadStreamPtr StartRead (const char* szSource, const char* szFile, IStreamCallback* pCallback = NULL, StreamReadParams* pParams = NULL) = 0;
+	virtual IReadStreamPtr StartRead(const char* szSource, const char* szFile, IStreamCallback* pCallback = NULL, StreamReadParams* pParams = NULL) = 0;
 
 	// returns the size of the file; returns 0 if there's no such file.
 	// nCryPakFlags is the flag set as in ICryPak
-	virtual unsigned GetFileSize (const char* szFile, unsigned nCryPakFlags = 0) = 0;
+	virtual unsigned       GetFileSize(const char* szFile, unsigned nCryPakFlags = 0)                                                               = 0;
 
 	// waits at most the specified number of milliseconds, or until at least one pending operation is completed
-	// nFlags: may have the following flag set: 
+	// nFlags: may have the following flag set:
 	//    FLAGS_DISABLE_CALLBACK_TIME_QUOTA
-	virtual void Update (unsigned nFlags = 0) = 0;
+	virtual void           Update(unsigned nFlags = 0)                                                                                              = 0;
 
 	// wait at most the specified time for the IO jobs to be completed.
 	// Returns the number of jobs that actually were completed (finalized) during the call.
 	// It may be different from the number of executed jobs.
-	virtual unsigned Wait(unsigned nMilliseconds, unsigned nFlags = 0) = 0;
+	virtual unsigned       Wait(unsigned nMilliseconds, unsigned nFlags = 0)                                                                        = 0;
 
 	//! Puts the memory statistics into the given sizer object
 	//! According to the specifications in interface ICrySizer
-	virtual void GetMemoryStatistics(ICrySizer *pSizer) = 0;
+	virtual void           GetMemoryStatistics(ICrySizer* pSizer)                                                                                   = 0;
 
 	//! Enables or disables callback time quota per frame
-	virtual void SuspendCallbackTimeQuota(){}
-	virtual void ResumeCallbackTimeQuota(){}
+	virtual void           SuspendCallbackTimeQuota() {}
+	virtual void           ResumeCallbackTimeQuota() {}
 
 	//! lossy stream compression useful for network comunication (affects load/save as well)
 	//! /return 0=no compression
-	virtual DWORD GetStreamCompressionMask() const=0;
+	virtual DWORD          GetStreamCompressionMask() const = 0;
 
 	virtual ~IStreamEngine() {}
 };
@@ -239,10 +237,10 @@ public:
 	AutoSuspendTimeQuota(IStreamEngine* pStreamEngine)
 	{
 		CryError(__FUNCTION__);
-		#if 0
+#if 0
 		m_pStreamEngine = pStreamEngine;
 		pStreamEngine->SuspendCallbackTimeQuota();
-		#endif
+#endif
 	}
 
 	~AutoSuspendTimeQuota()
@@ -250,6 +248,7 @@ public:
 		CryError(__FUNCTION__);
 		//m_pStreamEngine->ResumeCallbackTimeQuota();
 	}
+
 protected:
 	IStreamEngine* m_pStreamEngine;
 };
@@ -268,6 +267,7 @@ public:
 	{
 		m_pStreamEngine->SuspendCallbackTimeQuota();
 	}
+
 protected:
 	IStreamEngine* m_pStreamEngine;
 };
@@ -284,44 +284,44 @@ protected:
 //   IReadStream_AutoPtr pReadStream = pStreamEngine->StartRead ("bla.xxx", this);
 // OR:
 //   pStreamEngine->StartRead ("MusicSystem","bla.xxx", this);
-class IReadStream: public _reference_target_MT
+class IReadStream : public _reference_target_MT
 {
 public:
 	// returns true if the file read was not successful.
-	virtual bool IsError() = 0;
-  // returns true if the file read was completed successfully
+	virtual bool         IsError()                        = 0;
+	// returns true if the file read was completed successfully
 	// check IsError to check if the whole requested file (piece) was read
-	virtual bool IsFinished() = 0;
+	virtual bool         IsFinished()                     = 0;
 	// returns the number of bytes read so far (the whole buffer size if IsFinished())
 	// if bWait == true, then waits until the pending I/O operation completes
 	// returns the total number of bytes read (if it completes successfully, returns the size of block being read)
-	virtual unsigned int GetBytesRead(bool bWait=false) = 0;
+	virtual unsigned int GetBytesRead(bool bWait = false) = 0;
 	// returns the buffer into which the data has been or will be read
 	// at least GetBytesRead() bytes in this buffer are guaranteed to be already read
 	// DO NOT USE THIS BUFFER during read operation! DO NOT READ from it, it can lead to memory corruption!
-	virtual const void* GetBuffer () = 0;
+	virtual const void*  GetBuffer()                      = 0;
 
 	// tries to stop reading the stream; this is advisory and may have no effect
 	// but the callback	will not be called after this. If you just destructing object,
 	// dereference this object and it will automatically abort and release all associated resources.
-	virtual void Abort() {}
+	virtual void         Abort() {}
 
 	// tries to raise the priority of the read; this is advisory and may have no effect
-	virtual void RaisePriority (int nPriority) {}
+	virtual void         RaisePriority(int nPriority) {}
 
 	// Returns the transparent DWORD that was passed in the StreamReadParams::dwUserData field
 	// of the structure passed in the call to IStreamEngine::StartRead
-	virtual DWORD_PTR GetUserData() = 0;
+	virtual DWORD_PTR    GetUserData() = 0;
 
 	// unconditionally waits until the callback is called
 	// i.e. if the stream hasn't yet finish, it's guaranteed that the user-supplied callback
 	// is called before return from this function (unless no callback was specified)
-  virtual void Wait() = 0;
+	virtual void         Wait()        = 0;
+
 protected:
 	// the clients are not allowed to destroy this object directly; only via Release()
 	virtual ~IReadStream() {}
 };
-
 
 //////////////////////////////////////////////////////////////////////////
 // the callback that will be called by the streaming engine
@@ -344,7 +344,7 @@ public:
 	//   If this callback is called, it doesn't mean the data load will finish successfully;
 	//     it still may not finish (then the OnError is called)
 	//   nSize is always LESS than the requested data size; when it's equal, StreamOnFinish is called instead
-	virtual void StreamOnProgress (IReadStream* pStream) {}
+	virtual void StreamOnProgress(IReadStream* pStream) {}
 
 	// signals that reading the requested data has completed (with or without error).
 	// this callback is always called, whether an error occurs or not
@@ -354,7 +354,7 @@ public:
 	// Pending status is true during this callback, because the callback itself is the part of IO operation
 	// nError == 0 : Success
 	// nError != 0 : Error code
-	virtual void StreamOnComplete (IReadStream* pStream, unsigned nError) = 0;
+	virtual void StreamOnComplete(IReadStream* pStream, unsigned nError) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -364,7 +364,7 @@ enum StreamingStrategy
 	SS_FIFO,
 	// Random order, ignoring priorities, but the sequence is chosen to read as fast as possible
 	SS_FAST,
-	// Inside the same priority class, first in - first out. 
+	// Inside the same priority class, first in - first out.
 	// The highest priorities get serviced first
 	SS_PRIORITIZED,
 	// attempt to make read smooth, taking priorities into account
@@ -372,7 +372,7 @@ enum StreamingStrategy
 };
 
 //////////////////////////////////////////////////////////////////////////
-// this is the approximate parameter block for the streaming engine 
+// this is the approximate parameter block for the streaming engine
 // set up
 struct StreamEngineParams
 {
@@ -380,17 +380,16 @@ struct StreamEngineParams
 	StreamingStrategy nStrategy;
 	// the stream capacity to use, at most N bytes per second
 	// if read requests come faster than that, delay loading
-	unsigned nMaxBytesPerSecond;
-	// the maximum number of ticks (TICK is yet to be defined - 
+	unsigned          nMaxBytesPerSecond;
+	// the maximum number of ticks (TICK is yet to be defined -
 	// CPU clock, or mcs, or ms, or whatever) to spend inside
-	// the callbacks per SECOND. If callbacks spend more than that, 
+	// the callbacks per SECOND. If callbacks spend more than that,
 	// delay callback execution until the next frame
 	// The actual limit is per-frame, the streaming engine uses estimated
 	// FPS to calculate the per-frame max callback time.
-	unsigned nMaxCallbackTicksPerSecond;
+	unsigned          nMaxCallbackTicksPerSecond;
 	// the maximum allowable simultaneously open streams
-	unsigned nMaxStreams;
+	unsigned          nMaxStreams;
 };
-
 
 #endif //_CRY_COMMON_STREAM_ENGINE_HDR_

@@ -2,8 +2,7 @@
 #include "ScriptSystem.hpp"
 #include "StackGuard.hpp"
 
-
-lua_State*	   CScriptObject::L		= nullptr;
+lua_State*     CScriptObject::L     = nullptr;
 CScriptSystem* CScriptObject::m_pSS = nullptr;
 
 #define LOG_FUNCTION() CryLog("$4%s", __FUNCTION__)
@@ -23,7 +22,7 @@ namespace
 		lua_pushstring(L, sKey);
 		lua_gettable(L, -2);
 		// #unreferenced
-		 bool res = CScriptObject::m_pSS->PopAny(Val);
+		bool res = CScriptObject::m_pSS->PopAny(Val);
 		lua_settop(L, top);
 		return res;
 	}
@@ -44,7 +43,7 @@ namespace
 		CHECK_STACK(L);
 		int top = lua_gettop(L);
 
-		T oldValue{};
+		T   oldValue{};
 		if (top && lua_getmetatable(L, -1)) // if there is no metatable nothing is pushed
 		{
 			lua_pop(L, 1); // pop the metatable - we only care that it exists, not about the value
@@ -108,7 +107,6 @@ CScriptObject::~CScriptObject()
 	m_nRef = DELETED_REF;
 }
 
-
 int CScriptObject::GetRef()
 {
 	return m_nRef;
@@ -139,12 +137,12 @@ void CScriptObject::Delegate(IScriptObject* pMetatable)
 	PushRef(pMetatable);
 	lua_rawset(L, -3); // sets metatable.__index = metatable
 
-	#if 0
+#if 0
 	lua_pushstring(L, "__newindex"); // push key.
 	PushRef(pMetatable);
 	lua_rawset(L, -3); // sets metatable.__newindex = metatable
-	#endif
-	lua_pop(L, 1);	   // pop metatable from stack.
+#endif
+	lua_pop(L, 1); // pop metatable from stack.
 
 	SetMetatable(pMetatable);
 }
@@ -245,8 +243,8 @@ bool CScriptObject::GetUDValue(const char* sKey, USER_DATA& nValue, int& nCookie
 	if (result && nValue != nullptr)
 	{
 		UserDataInfo* ud = (UserDataInfo*)nValue;
-		nCookie			 = ud->cookie;
-		nValue			 = (void*)ud->ptr;
+		nCookie          = ud->cookie;
+		nValue           = (void*)ud->ptr;
 	}
 	return result;
 }
@@ -480,20 +478,20 @@ bool CScriptObject::GetAt(int nIdx, IScriptObject* Val)
 
 bool CScriptObject::GetAtUD(int nIdx, USER_DATA& nValue, int& nCookie)
 {
-	// FIXME: 
+	// FIXME:
 	// ud was 0xFFFFF...
 	UserDataInfo* ud;
-	auto		  result = GetAtAny(this, nIdx, (USER_DATA&)ud);
-	nValue				 = (USER_DATA&)ud->ptr;
-	nCookie				 = ud->cookie;
+	auto          result = GetAtAny(this, nIdx, (USER_DATA&)ud);
+	nValue               = (USER_DATA&)ud->ptr;
+	nCookie              = ud->cookie;
 	return result;
 }
 //////////////////////////////////////////////////////////////////////
 class CPrintSink : public IScriptObjectDumpSink
 {
 public:
-	void OnElementFound(int nIdx,ScriptVarType type){/*ignore non string indexed values*/};
-	void OnElementFound(const char *sName,ScriptVarType type)
+	void OnElementFound(int nIdx, ScriptVarType type){/*ignore non string indexed values*/};
+	void OnElementFound(const char* sName, ScriptVarType type)
 	{
 		switch (type)
 		{
@@ -513,20 +511,16 @@ public:
 
 static CPrintSink Sink;
 
-
-
-bool CScriptObject::BeginIteration()
+bool              CScriptObject::BeginIteration()
 {
-	
-	iter.nKey = -1;
-	iter.sKey = NULL;
+	iter.nKey                   = -1;
+	iter.sKey                   = NULL;
 	iter.internal.nStackMarker1 = lua_gettop(L) + 1;
 	iter.internal.nStackMarker2 = 0;
 
 	PushRef();
 	lua_pushnil(L);
 	return true;
-
 }
 bool CScriptObject::MoveNext()
 {
@@ -547,10 +541,10 @@ bool CScriptObject::MoveNext()
 	bool bResult = lua_next(L, nTop + 1) != 0;
 	if (bResult)
 	{
-		iter.v.o		= 0;
-		iter.value_type =  LuatypeToScriptVarType(lua_type(L, -1));
-		bResult = m_pSS->PopAnyByType(iter.v);
-		iter.key_type =  LuatypeToScriptVarType(lua_type(L, -1));
+		iter.v.o        = 0;
+		iter.value_type = LuatypeToScriptVarType(lua_type(L, -1));
+		bResult         = m_pSS->PopAnyByType(iter.v);
+		iter.key_type   = LuatypeToScriptVarType(lua_type(L, -1));
 		// Get current key.
 		m_pSS->ToAny(iter.sKey, -1);
 		if (lua_type(L, -1) == LUA_TSTRING)
@@ -579,7 +573,7 @@ bool CScriptObject::MoveNext()
 			// => now see if we have a prototype table attached by inspecting our potential metatable
 			// => if we don't have a metatable, or have a metatable but no prototype table attached, finish the whole iteration
 
-			#if 0
+#if 0
 			if (iter.internal.resolvePrototypeTableAsWell)
 			{
 				if (lua_getmetatable(L, -1))
@@ -596,7 +590,7 @@ bool CScriptObject::MoveNext()
 					}
 				}
 			}
-			#endif
+#endif
 		}
 
 		EndIteration();
@@ -705,7 +699,7 @@ void CScriptObject::Clear()
 	lua_pushnil(L); // first key
 	while (lua_next(L, trgTable) != 0)
 	{
-		lua_pop(L, 1);		  // pop value, leave index.
+		lua_pop(L, 1);        // pop value, leave index.
 		lua_pushvalue(L, -1); // Push again index.
 		lua_pushnil(L);
 		lua_rawset(L, trgTable);
@@ -727,12 +721,12 @@ int CScriptObject::Count()
 
 bool CScriptObject::Clone(IScriptObject* pObj)
 {
-	int	 top			  = lua_gettop(L);
-	bool bDeepCopy		  = true;
+	int  top              = lua_gettop(L);
+	bool bDeepCopy        = true;
 	bool bCopyByReference = false;
 
 	PushRef(pObj); // src object at top + 1
-	PushRef();	   // target object at top + 2
+	PushRef();     // target object at top + 2
 
 	int srcTable = top + 1;
 	int trgTable = top + 2;
@@ -940,8 +934,8 @@ bool CScriptObject::AddFunction(const char* sName, SCRIPT_FUNCTION pThunk, const
 	if (pThunk)
 	{
 		member_ptr* pBuffer = (member_ptr*)lua_newuserdata(L, sizeof(member_ptr));
-		pBuffer->fID		= nFuncID;
-		pBuffer->ref		= GetRef();
+		pBuffer->fID        = nFuncID;
+		pBuffer->ref        = GetRef();
 		lua_pushcclosure(L, reinterpret_cast<lua_CFunction>(pThunk), 1);
 	}
 
@@ -976,16 +970,16 @@ void CScriptObject::Detach()
 
 void CScriptObject::Release()
 {
-	// FIXME: 
-	// Unbalanced AddRef and Release
-	#if 1
+// FIXME:
+// Unbalanced AddRef and Release
+#if 1
 	if (--m_nRefCount <= 0)
 	{
 		if (m_pParent)
 			m_pParent->OnRelease();
 		delete this;
 	}
-	#endif
+#endif
 }
 
 bool CScriptObject::GetValueRecursive(const char* szPath, IScriptObject* pObj)
@@ -1005,7 +999,7 @@ void CScriptObject::SetMetatable(IScriptObject* pMetatable)
 	//////////////////////////////////////////////////////////////////////////
 	// Set metatable for this script object.
 	//////////////////////////////////////////////////////////////////////////
-	PushRef();			 // -2
+	PushRef();           // -2
 	PushRef(pMetatable); // -1
 	lua_setmetatable(L, -2);
 	lua_pop(L, 1); // pop table
@@ -1068,7 +1062,7 @@ void CScriptObject::CloneTable_r(int srcTable, int trgTable)
 			int srct = lua_gettop(L);
 
 			lua_pushvalue(L, -2); // Push again index.
-			lua_newtable(L);	  // Make value.
+			lua_newtable(L);      // Make value.
 			int trgt = lua_gettop(L);
 			CloneTable_r(srct, trgt);
 			lua_rawset(L, trgTable); // Set new table to trgtable.
@@ -1090,11 +1084,11 @@ void CScriptObject::ReferenceTable_r(int srcTable, int trgTable)
 	CHECK_STACK(L);
 	int top = lua_gettop(L);
 
-	lua_newtable(L);								  // push new meta table
+	lua_newtable(L);                                  // push new meta table
 	lua_pushlstring(L, "__index", strlen("__index")); // push __index
-	lua_pushvalue(L, srcTable);						  // push src table
-	lua_rawset(L, -3);								  // meta.__index==src table
-	lua_setmetatable(L, trgTable);					  // set meta table
+	lua_pushvalue(L, srcTable);                       // push src table
+	lua_rawset(L, -3);                                // meta.__index==src table
+	lua_setmetatable(L, trgTable);                    // set meta table
 
 	lua_pushnil(L); // first key
 	while (lua_next(L, srcTable) != 0)
@@ -1103,7 +1097,7 @@ void CScriptObject::ReferenceTable_r(int srcTable, int trgTable)
 		{
 			int srct = lua_gettop(L);
 			lua_pushvalue(L, -2); // Push again index.
-			lua_newtable(L);	  // Make value.
+			lua_newtable(L);      // Make value.
 			int trgt = lua_gettop(L);
 			ReferenceTable_r(srct, trgt);
 			lua_rawset(L, trgTable); // Set new table to trgtable.

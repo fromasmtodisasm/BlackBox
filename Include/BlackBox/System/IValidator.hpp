@@ -1,17 +1,17 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File:   IValidator.h
-//  Description: 
+//  Description:
 //		IValidator interface used to check objects for warnings and errors
 //    Reports missing resources or invalid files.
 //
 //  History:
 //	- 3/6/2003: File created by Timur Davidenko
-//	- February 2005: Modified by Marco Corbetta for SDK release	
+//	- February 2005: Modified by Marco Corbetta for SDK release
 //
 ////////////////////////////////////////////////////////////////////////////
 
@@ -19,10 +19,10 @@
 #define __ivalidator_h__
 
 #if _MSC_VER > 1000
-#pragma once
+	#pragma once
 #endif // _MSC_VER > 1000
 
-#define MAX_WARNING_LENGTH	16 * 1024
+#define MAX_WARNING_LENGTH 16 * 1024
 
 ////////////////////////////////////////////////////////////////////////////
 enum EValidatorSeverity
@@ -76,25 +76,25 @@ struct SValidatorRecord
 	//! Severety of this error.
 	EValidatorSeverity severity;
 	//! In which module error occured.
-	EValidatorModule module;
+	EValidatorModule   module;
 	//! Error Text.
-	const char *text;
+	const char*        text;
 	//! File which is missing or causing problem.
-	const char *file;
+	const char*        file;
 	//! Additional description for this error.
-	const char *description;
+	const char*        description;
 	//! Flags that suggest kind of error.
-	int flags;
+	int                flags;
 
 	//////////////////////////////////////////////////////////////////////////
 	SValidatorRecord()
 	{
-		module = VALIDATOR_MODULE_UNKNOWN;
-		text = NULL;
-		file = NULL;
+		module      = VALIDATOR_MODULE_UNKNOWN;
+		text        = NULL;
+		file        = NULL;
 		description = NULL;
-		severity = VALIDATOR_WARNING;
-		flags = 0;
+		severity    = VALIDATOR_WARNING;
+		flags       = 0;
 	}
 };
 
@@ -102,7 +102,7 @@ struct SValidatorRecord
  */
 struct IValidator
 {
-	virtual void Report( SValidatorRecord &record ) = 0;
+	virtual void Report(SValidatorRecord& record) = 0;
 };
 
 #endif // __ivalidator_h__

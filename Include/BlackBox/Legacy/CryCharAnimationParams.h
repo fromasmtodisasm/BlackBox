@@ -1,10 +1,10 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: CryAnimationParams.h  
+//  File: CryAnimationParams.h
 //  Description: CryAnim parameters.
 //
 //  History:
@@ -22,14 +22,14 @@
 struct CryCharAnimationParams
 {
 	CryCharAnimationParams(
-		float _fBlendInTime = 0.125f,
-		float _fBlendOutTime = 0.125f,
-		int _nLayerID = 0,
-		unsigned _nFlags = 0):
-		fBlendInTime (_fBlendInTime),
-		fBlendOutTime (_fBlendOutTime),
-		nLayerID (_nLayerID),
-		nFlags (_nFlags)
+	    float    _fBlendInTime  = 0.125f,
+	    float    _fBlendOutTime = 0.125f,
+	    int      _nLayerID      = 0,
+	    unsigned _nFlags        = 0)
+	    : fBlendInTime(_fBlendInTime)
+	    , fBlendOutTime(_fBlendOutTime)
+	    , nLayerID(_nLayerID)
+	    , nFlags(_nFlags)
 	{
 	}
 
@@ -46,7 +46,7 @@ struct CryCharAnimationParams
 
 		// Means that the animation will be queued until the current one is finished
 		// and that the next animation will also be queued until this (aligned) one is finished.
-		FLAGS_ALIGNED                    = 1 << 2,
+		FLAGS_ALIGNED                  = 1 << 2,
 
 		// If set, the animation is not treated as default idle animation
 		// otherwise, if it's looped, it'll be used as default idle animation.
@@ -56,12 +56,12 @@ struct CryCharAnimationParams
 	// blendin and out times of the animation
 
 	// Used to specify the blend-in length of the animation.
-	float fBlendInTime;
+	float    fBlendInTime;
 	// Used to specify the blend-out length of the animation.
-	float fBlendOutTime;
-	
+	float    fBlendOutTime;
+
 	// Specify the layer where to start the animation.
-	int nLayerID;
+	int      nLayerID;
 
 	// Combination of flags defined above.
 	unsigned nFlags;

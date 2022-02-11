@@ -50,4 +50,3 @@ uint64 CTextureNull::getBindlesId() const
 void CTextureNull::bind() const
 {
 }
-

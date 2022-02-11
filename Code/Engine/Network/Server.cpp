@@ -26,7 +26,7 @@ void CNetworkServer::GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPer
 
 const char* CNetworkServer::GetHostName()
 {
-  return nullptr;
+	return nullptr;
 }
 
 void CNetworkServer::RegisterPacketSink(const unsigned char inPacketID, INetworkPacketSink* inpSink)
@@ -39,7 +39,7 @@ void CNetworkServer::SetSecuritySink(IServerSecuritySink* pSecuritySink)
 
 bool CNetworkServer::IsIPBanned(const unsigned int dwIP)
 {
-  return false;
+	return false;
 }
 
 void CNetworkServer::BanIP(const unsigned int dwIP)
@@ -52,15 +52,15 @@ void CNetworkServer::UnbanIP(const unsigned int dwIP)
 
 IServerSlot* CNetworkServer::GetServerSlotbyID(const unsigned char ucId) const
 {
-  return nullptr;
+	return nullptr;
 }
 
 uint8_t CNetworkServer::GetMaxClientID() const
 {
-  return uint8_t();
+	return uint8_t();
 }
 
 EMPServerType CNetworkServer::GetServerType() const
 {
-  return EMPServerType();
+	return EMPServerType();
 }

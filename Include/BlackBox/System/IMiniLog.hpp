@@ -14,19 +14,19 @@ struct IMiniLog
 		eAlways,
 		eWarningAlways,
 		eErrorAlways,
-		eInput,			//!< e.g. "e_CaptureFolder ?" or all printouts from history or auto completion.
+		eInput,         //!< e.g. "e_CaptureFolder ?" or all printouts from history or auto completion.
 		eInputResponse, //!< e.g. "Set output folder for video capturing" in response to "e_CaptureFolder ?".
 		eComment,
 		eAssert
 	};
 
 	//! you only have to implement this function
-	virtual void LogV(const ELogType nType, const char* szFormat, va_list args) = 0;
+	virtual void LogV(const ELogType nType, const char* szFormat, va_list args)                                = 0;
 	virtual void LogV(const ELogType nType, int flags, const char* szFormat, va_list args) PRINTF_PARAMS(4, 0) = 0;
 
 	//! Logs using type.
-	inline void LogWithType(ELogType nType, const char* szFormat, ...) PRINTF_PARAMS(3, 4);
-	inline void LogWithType(ELogType nType, int flags, const char* szFormat, ...) PRINTF_PARAMS(4, 5);
+	inline void  LogWithType(ELogType nType, const char* szFormat, ...) PRINTF_PARAMS(3, 4);
+	inline void  LogWithType(ELogType nType, int flags, const char* szFormat, ...) PRINTF_PARAMS(4, 5);
 
 	//! destructor
 	virtual ~IMiniLog()

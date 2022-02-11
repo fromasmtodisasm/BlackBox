@@ -1,7 +1,7 @@
 
 ////////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File:   ILog.h
@@ -10,27 +10,27 @@
 //  History:
 //	- 02/03/2001: Created by Marco Corbetta
 //	- February 2005: Modified by Marco Corbetta for SDK release
-//									
+//
 ////////////////////////////////////////////////////////////////////////////
 
 #if 0
-#ifndef _ILOG_H_
-#define _ILOG_H_
+	#ifndef _ILOG_H_
+		#define _ILOG_H_
 
-#include "IMiniLog.h"
-#if defined(LINUX)
-	#include "platform.h"
-#endif
+		#include "IMiniLog.h"
+		#if defined(LINUX)
+			#include "platform.h"
+		#endif
 
 ////////////////////////////////////////////////////////////////////////////
-#define LOG_TO_FILE					(1L<<8)
-#define LOG_TO_CONSOLE			(2L<<8)
-#define LOG_TO_FILE_PLUS		(4L<<8)	//
-#define LOG_TO_CONSOLE_PLUS	(8L<<8)	//
-#define LOG_TO_SCREEN				(16L<<8)
-#define LOG_TO_SCREEN_PLUS	(32L<<8) //
+		#define LOG_TO_FILE             (1L << 8)
+		#define LOG_TO_CONSOLE          (2L << 8)
+		#define LOG_TO_FILE_PLUS        (4L << 8) //
+		#define LOG_TO_CONSOLE_PLUS     (8L << 8) //
+		#define LOG_TO_SCREEN           (16L << 8)
+		#define LOG_TO_SCREEN_PLUS      (32L << 8) //
 
-#define LOG_TO_FILE_AND_CONSOLE	(LOG_TO_FILE | LOG_TO_CONSOLE)
+		#define LOG_TO_FILE_AND_CONSOLE (LOG_TO_FILE | LOG_TO_CONSOLE)
 
 
 //verbosity levels
@@ -112,11 +112,11 @@ struct ILog: public IMiniLog
 	virtual int		GetVerbosityLevel()=0;
 };
 
-#ifdef PS2
-#include "File.h"
-#endif
+		#ifdef PS2
+			#include "File.h"
+		#endif
 
-#ifdef _XBOX
+		#ifdef _XBOX
 
 ////////////////////////////////////////////////////////////////////////////
 // [Andrey]
@@ -153,24 +153,24 @@ inline void _ConvertNameForXBox(char *dst, const char *src)
     }
   }
 }
-#endif
+		#endif
 
 ////////////////////////////////////////////////////////////////////////////
 // wrapper for PC and Xbox
 inline FILE * fxopen(const char *file, const char *mode)
 {
-#ifdef _XBOX
+		#ifdef _XBOX
   char name[256];
   _ConvertNameForXBox(name, file);
   return fopen(name, mode);
-#else
-#if defined(LINUX)
+		#else
+			#if defined(LINUX)
 	return fopen_nocase(file, mode);
-#else
+			#else
   return fopen(file, mode);
-#endif //LINUX
-#endif
+			#endif //LINUX
+		#endif
 }
 
-#endif //_ILOG_H_
+	#endif //_ILOG_H_
 #endif

@@ -15,15 +15,15 @@ struct ICVar;
 
 // Default camera values
 //const float YAW		   = -90.0f;
-const float PITCH	   = 0.0f;
-const float SPEED	   = 0.1f;
+const float PITCH      = 0.0f;
+const float SPEED      = 0.1f;
 const float SENSITIVTY = 0.25f;
-const float ZOOM	   = 45.0f;
+const float ZOOM       = 45.0f;
 
 // An abstract camera class that processes input and calculates the corresponding Eular Angles, Vectors and Matrices for use in OpenGL
 class CCamera
 {
-  public:
+public:
 	enum class Mode
 	{
 		FPS,
@@ -35,35 +35,41 @@ class CCamera
 		Ortho
 	} type = Type::Perspective;
 
-  public:
+public:
 	// Camera Attributes
-	Transform transform;
+	Transform    transform;
 	Legacy::Vec3 Front;
 	Legacy::Vec3 Up;
 	Legacy::Vec3 Right;
 	Legacy::Vec3 WorldUp;
 	// Camera options
-	float MovementSpeed;
-	float Zoom;
-	float m_fov = 45.0f;
-	float Ratio = 16.0f / 9;
-	float zNear = 0.1f;
-	float zFar	= 1000.f;
+	float        MovementSpeed;
+	float        Zoom;
+	float        m_fov = 45.0f;
+	float        Ratio = 16.0f / 9;
+	float        zNear = 0.1f;
+	float        zFar  = 1000.f;
 
 	// Constructor with vectors
-	CCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.f, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, 0.0f)), MovementSpeed(10.f), Zoom(ZOOM)
+	CCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = -90.f, float pitch = PITCH)
+	    : Front(glm::vec3(0.0f, 0.0f, 0.0f))
+	    , MovementSpeed(10.f)
+	    , Zoom(ZOOM)
 	{
 		this->transform.position   = position;
-		this->WorldUp			   = up;
+		this->WorldUp              = up;
 		this->transform.rotation.y = yaw;
 		this->transform.rotation.x = pitch;
 		this->updateCameraVectors();
 	}
 	// Constructor with scalar values
-	CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, 0.0f)), MovementSpeed(10.f), Zoom(ZOOM)
+	CCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
+	    : Front(glm::vec3(0.0f, 0.0f, 0.0f))
+	    , MovementSpeed(10.f)
+	    , Zoom(ZOOM)
 	{
 		this->transform.position   = glm::vec3(posX, posY, posZ);
-		this->WorldUp			   = glm::vec3(upX, upY, upZ);
+		this->WorldUp              = glm::vec3(upX, upY, upZ);
 		this->transform.rotation.y = yaw;
 		this->transform.rotation.x = pitch;
 		this->updateCameraVectors();
@@ -77,8 +83,8 @@ class CCamera
 	void Init(int width, int height, float fov = 45.f)
 	{
 	}
-	void SetAngle(Legacy::Vec3 ang) {
-
+	void SetAngle(Legacy::Vec3 ang)
+	{
 	}
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
@@ -95,7 +101,6 @@ class CCamera
 		{
 			//return glm::perspective(glm::radians(m_fov), (float)(v.z) / (float)(v.w), zNear, zFar);
 			return glm::perspectiveFovLH_ZO(glm::radians(m_fov), (float)v.z, (float)v.w, zNear, zFar);
-
 		}
 		else
 		{
@@ -103,14 +108,14 @@ class CCamera
 		}
 	}
 
-  Legacy::Vec3 GetPos() const
-  {
-    return transform.position;
-  }
-  Legacy::Vec3 GetAngles() const
-  {
-    return transform.rotation;
-  }
+	Legacy::Vec3 GetPos() const
+	{
+		return transform.position;
+	}
+	Legacy::Vec3 GetAngles() const
+	{
+		return transform.rotation;
+	}
 
 	void SetPos(glm::vec3 pos)
 	{
@@ -122,12 +127,12 @@ class CCamera
 		transform.rotation = ang;
 	}
 
-	inline void SetFov(float fov) { m_fov = fov; }
+	inline void  SetFov(float fov) { m_fov = fov; }
 	inline float GetFov() const { return (m_fov); }
 
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-	void ProcessMouseScroll(float yoffset)
+	void         ProcessMouseScroll(float yoffset)
 	{
 		if (this->Zoom >= 1.0f && this->Zoom <= 45.0f)
 			this->Zoom -= yoffset;
@@ -142,13 +147,13 @@ class CCamera
 	{
 		// Calculate the new Front vector
 		glm::vec3 front;
-		front.x		= cos(glm::radians(this->transform.rotation.y)) * cos(glm::radians(this->transform.rotation.x));
-		front.y		= sin(glm::radians(this->transform.rotation.x));
-		front.z		= sin(glm::radians(this->transform.rotation.y)) * cos(glm::radians(this->transform.rotation.x));
+		front.x     = cos(glm::radians(this->transform.rotation.y)) * cos(glm::radians(this->transform.rotation.x));
+		front.y     = sin(glm::radians(this->transform.rotation.x));
+		front.z     = sin(glm::radians(this->transform.rotation.y)) * cos(glm::radians(this->transform.rotation.x));
 		this->Front = glm::normalize(front);
 		// Also re-calculate the Right and Up vector
 		this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp)); // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-		this->Up	= glm::normalize(glm::cross(this->Right, this->Front));
+		this->Up    = glm::normalize(glm::cross(this->Right, this->Front));
 	}
 };
 

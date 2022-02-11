@@ -6,9 +6,9 @@ CProjectManager::CProjectManager()
 #if 0
 	: m_sys_project(nullptr)
 #endif
-	: m_sys_game_name(nullptr)
-	, m_sys_dll_game(nullptr)
-	, m_sys_game_folder(nullptr)
+    : m_sys_game_name(nullptr)
+    , m_sys_dll_game(nullptr)
+    , m_sys_game_folder(nullptr)
 {
 }
 
@@ -20,8 +20,8 @@ const char* CProjectManager::GetCurrentProjectName() const
 void CProjectManager::RegisterCVars()
 {
 	// Legacy
-	m_sys_game_name	  = REGISTER_STRING("sys_game_name", "BlackBox", VF_DUMPTODISK, "Specifies the name to be displayed in the Launcher window title bar");
-	m_sys_dll_game	  = REGISTER_STRING("sys_dll_game", "", VF_REQUIRE_APP_RESTART | VF_DUMPTODISK, "Specifies the game DLL to load");
+	m_sys_game_name   = REGISTER_STRING("sys_game_name", "BlackBox", VF_DUMPTODISK, "Specifies the name to be displayed in the Launcher window title bar");
+	m_sys_dll_game    = REGISTER_STRING("sys_dll_game", "", VF_REQUIRE_APP_RESTART | VF_DUMPTODISK, "Specifies the game DLL to load");
 	m_sys_game_folder = REGISTER_STRING("sys_game_folder", "", VF_REQUIRE_APP_RESTART, "Specifies the game folder to read all data from. Can be fully pathed for external folders or relative path for folders inside the root.");
 }
 
@@ -61,7 +61,7 @@ bool CProjectManager::ParseProjectFile()
 	{
 		m_project.rootDirectory = PathUtil::RemoveSlash(PathUtil::ToUnixPath(PathUtil::GetPathWithoutFilename(m_project.filePath)));
 
-		const char*		  sys_dll_game{};
+		const char*       sys_dll_game{};
 		SmartScriptObject project(gEnv->pScriptSystem);
 		if (gEnv->pScriptSystem->GetGlobalValue("project", project))
 		{
@@ -71,7 +71,7 @@ bool CProjectManager::ParseProjectFile()
 			{
 				CryLog("sys_dll_game: %s", sys_dll_game);
 				gEnv->pConsole->LoadConfigVar("sys_dll_game", sys_dll_game);
-				m_project.name = sys_dll_game;
+				m_project.name           = sys_dll_game;
 				m_project.assetDirectory = "Assets";
 			}
 			else
@@ -82,22 +82,22 @@ bool CProjectManager::ParseProjectFile()
 		}
 		// Create the full path to the asset directory
 		m_project.assetDirectoryFullPath = PathUtil::Make(m_project.rootDirectory, m_project.assetDirectory);
-		// Ensure compatibility with all supported platform filesystems
-		#if 0
+// Ensure compatibility with all supported platform filesystems
+#if 0
 		m_project.assetDirectoryFullPath.MakeLower();
-		#endif
+#endif
 
 		// Does directory exist
 		if (!CryDirectoryExists(m_project.assetDirectoryFullPath.c_str()))
 		{
-			#if 0
+#if 0
 			EQuestionResult result = CryMessageBox(string().Format("Attempting to start the engine with non-existent asset directory %s!\nDo you want to create it?", m_project.assetDirectoryFullPath.c_str()), "Non-existent asset directory", eMB_YesCancel);
 			if (result == eQR_Cancel)
 			{
 				CryLogAlways("\tNon-existent asset directory %s detected, user opted to quit", m_project.assetDirectoryFullPath.c_str());
 				return false;
 			}
-			#endif
+#endif
 
 			CryCreateDirectory(m_project.assetDirectoryFullPath.c_str());
 		}
@@ -136,29 +136,28 @@ bool CProjectManager::ParseProjectFile()
 		}
 		else
 		{
-			//legacyGameDllPath = 
+			//legacyGameDllPath =
 		}
 
-		#if 0
+#if 0
 		gEnv->pConsole->LoadConfigVar("sys_dll_game", legacyGameDllPath.c_str());
-		#else
+#else
 		auto path = PathUtil::Make(m_project.rootDirectory, string("bin/win_x64"));
-		path = PathUtil::Make(path, m_project.name);
+		path      = PathUtil::Make(path, m_project.name);
 		gEnv->pConsole->LoadConfigVar("sys_dll_game", path.c_str());
-		#endif
+#endif
 
 #ifdef BB_PLATFORM_WINDOWS
-		#if 0
+	#if 0
 		SetDllDirectoryW(CryStringUtils::UTF8ToWStr(m_project.rootDirectory));
-		#else
+	#else
 		SetDllDirectoryA(m_project.rootDirectory.c_str());
-		#endif
+	#endif
 #endif
 
 #ifndef BB_PLATFORM_ORBIS
 		CrySetCurrentWorkingDirectory(m_project.rootDirectory.c_str());
 #endif
-
 	}
 	else if (m_sys_game_folder->GetString()[0] == '\0')
 	{
@@ -210,10 +209,9 @@ bool CProjectManager::ParseProjectFile()
 	CryLogAlways("\nProject %s", GetCurrentProjectName());
 	CryLogAlways("\tUsing Project Folder %s", GetCurrentProjectDirectoryAbsolute());
 	CryLogAlways("\tUsing Engine Folder %s", szEngineRootDirectory);
-	#if 0
+#if 0
 	CryLogAlways("\tUsing Asset Folder %s", GetCurrentAssetDirectoryAbsolute());
-	#endif
-
+#endif
 
 	return true;
 }
@@ -222,4 +220,3 @@ const char* CProjectManager::GetCurrentProjectDirectoryAbsolute() const
 {
 	return m_project.rootDirectory.c_str();
 }
-

@@ -5,7 +5,7 @@ int CListenerArea::GetVisFrameId()
 	return 0;
 }
 
-int CListenerArea::GetVisAreaConnections(IVisArea** pAreas, int nMaxConnNum, bool bSkipDisabledPortals/* = false*/)
+int CListenerArea::GetVisAreaConnections(IVisArea** pAreas, int nMaxConnNum, bool bSkipDisabledPortals /* = false*/)
 {
 	return 0;
 }

@@ -4,15 +4,15 @@
 void CSystem::FatalError(const char* format, ...)
 {
 	// format message
-	va_list ArgList;
-	char szBuffer[MAX_WARNING_LENGTH];
+	va_list     ArgList;
+	char        szBuffer[MAX_WARNING_LENGTH];
 	const char* sPrefix = "";
 	strcpy(szBuffer, sPrefix);
 	va_start(ArgList, format);
-	vsprintf(szBuffer + strlen(szBuffer)/*, sizeof(szBuffer) - strlen(szBuffer)*/, format, ArgList);
+	vsprintf(szBuffer + strlen(szBuffer) /*, sizeof(szBuffer) - strlen(szBuffer)*/, format, ArgList);
 	va_end(ArgList);
 
-	#
+#
 	// get system error message before any attempt to write into log
 	const char* szSysErrorMessage = CryGetLastSystemErrorMessage();
 
@@ -37,13 +37,10 @@ void CSystem::FatalError(const char* format, ...)
 
 	if (!g_cvars.sys_no_crash_dialog)
 	{
-		CryMessageBox(szBuffer,"ENGINE FATAL ERROR", eMB_Error);
+		CryMessageBox(szBuffer, "ENGINE FATAL ERROR", eMB_Error);
 	}
 
 	//GetITextModeConsole()->OnShutdown();
 	DebugBreak();
 	//__debugbreak();
-
 }
-
-

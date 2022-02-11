@@ -1,14 +1,19 @@
 #if 0
-#include <BlackBox/Renderer/MaterialManager.hpp>
-#include <BlackBox/Renderer/ShaderManager.hpp>
-#include <BlackBox/Renderer/TextureManager.hpp>
-#include <BlackBox/System/IConsole.hpp>
-#include <BlackBox/System/ISystem.hpp>
+	#include <BlackBox/Renderer/MaterialManager.hpp>
+	#include <BlackBox/Renderer/ShaderManager.hpp>
+	#include <BlackBox/Renderer/TextureManager.hpp>
+	#include <BlackBox/System/IConsole.hpp>
+	#include <BlackBox/System/ISystem.hpp>
 
-#include <tinyxml2.h>
-#ifndef XMLCheckResult
-#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { printf("Error: %i\n", a_eResult); return a_eResult; }
-#endif
+	#include <tinyxml2.h>
+	#ifndef XMLCheckResult
+		#define XMLCheckResult(a_eResult)         \
+			if (a_eResult != XML_SUCCESS)         \
+			{                                     \
+				printf("Error: %i\n", a_eResult); \
+				return a_eResult;                 \
+			}
+	#endif
 
 using	namespace std;
 using namespace tinyxml2;
@@ -252,7 +257,7 @@ XMLElement* MaterialManager::saveTexture(tinyxml2::XMLDocument& xmlDoc, Texture*
   return textureElement;
 }
 
-#if 0
+	#if 0
 XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, ShaderRef shader)
 {
   XMLElement* shaderElement = xmlDoc.NewElement("shader");
@@ -262,5 +267,5 @@ XMLElement* MaterialManager::saveShader(tinyxml2::XMLDocument& xmlDoc, ShaderRef
 
   return shaderElement;
 }
-#endif
+	#endif
 #endif

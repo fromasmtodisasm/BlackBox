@@ -9,7 +9,6 @@
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
 
-
 #include <SDL2/SDL_net.h>
 #include <functional>
 #include <map>
@@ -78,19 +77,19 @@ class CTmpServerSlot : public IServerSlot
 
 class CTmpNetworkServer : public IServer
 {
-	IServerSlotFactory*	   m_pFactory = nullptr;
-	uint16_t			   m_nPort;
-	bool				   m_bLocal;
-	IPaddress			   m_IP;
-	TCPsocket			   m_Socket;
+	IServerSlotFactory*    m_pFactory = nullptr;
+	uint16_t               m_nPort;
+	bool                   m_bLocal;
+	IPaddress              m_IP;
+	TCPsocket              m_Socket;
 	std::vector<TCPsocket> m_ClientSockes;
 	//std::map<string, std::function<void(std::stringstream& ss, const string& args)>> handlers;
 
-  public:
+public:
 	CTmpNetworkServer(IServerSlotFactory* pFactory, uint16_t nPort, bool local)
-		: m_pFactory(pFactory)
-		, m_nPort(nPort)
-		, m_bLocal(local)
+	    : m_pFactory(pFactory)
+	    , m_nPort(nPort)
+	    , m_bLocal(local)
 	{
 		gEnv->pLog->Log("NetworkServer Constructed");
 #if 0
@@ -180,10 +179,10 @@ class CTmpNetworkServer : public IServer
 			{
 				gEnv->pLog->Log("New connection");
 				//m_ClientSockes.push_back(new_tcpsock);
-				size_t			  length = 0, result;
+				size_t            length = 0, result;
 				std::stringstream response;
-				static char		  buf[1024];
-				int				  reslen = 0;
+				static char       buf[1024];
+				int               reslen = 0;
 				if ((reslen = SDLNet_TCP_Recv(new_tcpsock, buf, 1000)) <= 0)
 				{
 					gEnv->pLog->Log("Error of read");
@@ -205,21 +204,21 @@ class CTmpNetworkServer : public IServer
 					//gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
 					std::stringstream ss(buf);
 					//gEnv->pLog->Log("Response %s:\n", ss.str().data());
-					string line;
+					string            line;
 					std::getline(ss, line);
 					const int len = line.size() - 14; // GET / HTTP/1.1
-					string	  location;
-					string	  args;
+					string    location;
+					string    args;
 					location.resize(len);
 					string tmp = line;
 					urldecode2(tmp.data(), line.data());
-					line = tmp;
+					line     = tmp;
 					//auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
 					location = line.substr(5, line.size() - (5 + 10));
 					gEnv->pLog->Log("Location: %s", location.data());
 
 					auto pos = location.find('?');
-					auto s	 = location.size();
+					auto s   = location.size();
 					if (pos != string::npos)
 					{
 						args = location.substr(pos + 1);
@@ -237,14 +236,14 @@ class CTmpNetworkServer : public IServer
 </html>
 )";
 					response <<
-						R"(
+					    R"(
 	HTTP/1.1 200 OK
 	Host: site.com
 	Content-Type: text/html;
 	Connection: close
 	Content-Length: )";
 					response << content.str().length() << "\r\n\r\n"
-							 << content.str();
+					         << content.str();
 
 					length = response.str().length(); // add one for the terminating NULL
 					result = SDLNet_TCP_Send(new_tcpsock, response.str().data(), length);
@@ -305,24 +304,24 @@ class CTmpNetworkServer : public IServer
 		return EMPServerType();
 	}
 
-	bool ConnectTo(CTmpNetworkClient* pClient){
+	bool ConnectTo(CTmpNetworkClient* pClient)
+	{
 		auto ss = new CTmpServerSlot;
 		m_pFactory->CreateServerSlot(ss);
 		return true;
 	}
 };
 
-
 class CCompressionHelper : public ICompressionHelper
 {
-  public:
+public:
 	CCompressionHelper(CNetwork* pNetwork)
-		: m_pNetwork(pNetwork)
+	    : m_pNetwork(pNetwork)
 	{
 	}
 
-  public:
-	CNetwork* m_pNetwork;
+public:
+	CNetwork*    m_pNetwork;
 
 	// Inherited via ICompressionHelper
 	virtual bool Write(CStream& outStream, const unsigned char inChar) override
@@ -342,8 +341,8 @@ class CCompressionHelper : public ICompressionHelper
 	}
 	virtual bool Read(CStream& inStream, char* outszString, const DWORD indwStringSize) override
 	{
-		DWORD i = 0;
-		bool ok = false;
+		DWORD i  = 0;
+		bool  ok = false;
 		for (; i < indwStringSize && !inStream.EOS(); i++)
 		{
 			if (inStream.ReadBits((BYTE*)(outszString + i), BYTES2BITS(sizeof(char))))
@@ -351,7 +350,7 @@ class CCompressionHelper : public ICompressionHelper
 				if (outszString[i] == 0)
 				{
 					outszString[i + 1] = 0;
-					ok				   = true;
+					ok                 = true;
 					break;
 				}
 			}
@@ -366,9 +365,9 @@ class CCompressionHelper : public ICompressionHelper
 
 class CTmpNetworkClient : public IClient
 {
-  public:
+public:
 	CTmpNetworkClient(CNetwork* pNetwork)
-		: m_pNetwork(pNetwork)
+	    : m_pNetwork(pNetwork)
 	{
 	}
 	~CTmpNetworkClient()
@@ -394,12 +393,12 @@ class CTmpNetworkClient : public IClient
 	}
 	virtual bool IsReady() override
 	{
-		//FIXME:
-		#if 0
+//FIXME:
+#if 0
 		return false;
-		#else
+#else
 		return true;
-		#endif
+#endif
 	}
 	virtual bool Update(unsigned int nTime) override
 	{
@@ -439,7 +438,6 @@ class CTmpNetworkClient : public IClient
 	}
 	virtual void OnCDKeyAuthorization(uint8_t* pbAuthorizationID) override
 	{
-
 	}
 	virtual void SetServerIP(const char* szServerIP) override
 	{
@@ -448,7 +446,7 @@ class CTmpNetworkClient : public IClient
 };
 
 CNetwork::CNetwork()
-	: m_pSystem(nullptr)
+    : m_pSystem(nullptr)
 {
 }
 
@@ -468,17 +466,17 @@ CNetwork::~CNetwork()
 
 bool CNetwork::Init(ISystem* pSystem)
 {
-	SDL_version compile_version;
+	SDL_version        compile_version;
 	const SDL_version* link_version = SDLNet_Linked_Version();
 	SDL_NET_VERSION(&compile_version);
 	gEnv->pLog->Log("Compiled with SDL_net version: %d.%d.%d",
-					compile_version.major,
-					compile_version.minor,
-					compile_version.patch);
+	                compile_version.major,
+	                compile_version.minor,
+	                compile_version.patch);
 	gEnv->pLog->Log("Running with SDL_net version: %d.%d.%d",
-					link_version->major,
-					link_version->minor,
-					link_version->patch);
+	                link_version->major,
+	                link_version->minor,
+	                link_version->patch);
 	bool res = true;
 	if (SDL_Init(0) != -1)
 	{
@@ -614,7 +612,9 @@ const char* CNetwork::GetUBIGameServerIP(bool bLan)
 void CNetwork::UnregisterClient(CTmpNetworkClient* pClient)
 {
 	if (auto it = std::find_if(
-		m_Clients.begin(), m_Clients.end(), [pClient](IClient* cl) { return cl == pClient; }); it != m_Clients.end())
+	        m_Clients.begin(), m_Clients.end(), [pClient](IClient* cl)
+	        { return cl == pClient; });
+	    it != m_Clients.end())
 	{
 		m_Clients.erase(it);
 	}
@@ -623,7 +623,9 @@ void CNetwork::UnregisterClient(CTmpNetworkClient* pClient)
 void CNetwork::UnregisterServer(CTmpNetworkServer* pServer)
 {
 	if (auto it = std::find_if(
-		m_Servers.begin(), m_Servers.end(), [pServer](IServer* cl) { return cl == pServer; }); it != m_Servers.end())
+	        m_Servers.begin(), m_Servers.end(), [pServer](IServer* cl)
+	        { return cl == pServer; });
+	    it != m_Servers.end())
 	{
 		m_Servers.erase(it);
 	}

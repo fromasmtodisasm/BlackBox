@@ -4,21 +4,21 @@
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 
 class CScriptObjectConsole :
-  public _ScriptableEx<CScriptObjectConsole>
+    public _ScriptableEx<CScriptObjectConsole>
 {
 public:
-  CScriptObjectConsole();
-  ~CScriptObjectConsole();
-  static void InitializeTemplate(IScriptSystem* pSS);
+	CScriptObjectConsole();
+	~CScriptObjectConsole();
+	static void InitializeTemplate(IScriptSystem* pSS);
 
-  void Init(IScriptSystem* pScriptSystem, IConsole* pConsole);
+	void        Init(IScriptSystem* pScriptSystem, IConsole* pConsole);
 
-  int PrintLine(IFunctionHandler* pH);
-  int Clear(IFunctionHandler* pH);
-  int Show(IFunctionHandler* pH);
-  int ExecuteString(IFunctionHandler* pH);
-  int CreateKeyBind(IFunctionHandler* pH);
+	int         PrintLine(IFunctionHandler* pH);
+	int         Clear(IFunctionHandler* pH);
+	int         Show(IFunctionHandler* pH);
+	int         ExecuteString(IFunctionHandler* pH);
+	int         CreateKeyBind(IFunctionHandler* pH);
 
 private:
-  IConsole* m_Console;
+	IConsole* m_Console;
 };

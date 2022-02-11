@@ -5,7 +5,7 @@
 
 #include <memory>
 
-HMODULE	 m_FxLibrary{};
+HMODULE  m_FxLibrary{};
 IDriver* g_driver{};
 
 FxParser::FxParser()
@@ -20,7 +20,6 @@ FxParser::~FxParser()
 
 bool FxParser::Parse(const std::string& f, PEffect* pEffect)
 {
-
 #define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
 	//auto g_driver = std::unique_ptr<IDriver>(CreateParserDriver());
 	//CCryLibrary ;
@@ -37,8 +36,8 @@ bool FxParser::Parse(const std::string& f, PEffect* pEffect)
 		{
 			g_driver->Release();
 		}
-		PFNCREATEDRIVERINTERFACE CreateParserDriver = (PFNCREATEDRIVERINTERFACE)CryGetProcAddress(m_FxLibrary,"CreateParserDriver");
-		g_driver									= CreateParserDriver();
+		PFNCREATEDRIVERINTERFACE CreateParserDriver = (PFNCREATEDRIVERINTERFACE)CryGetProcAddress(m_FxLibrary, "CreateParserDriver");
+		g_driver                                    = CreateParserDriver();
 
 		typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
 		PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(m_FxLibrary, DLL_MODULE_INIT_ISYSTEM);

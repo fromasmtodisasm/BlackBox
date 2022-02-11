@@ -1,16 +1,16 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
-//	Copyright (c) Crytek 2001-2004	
-//	
+//	Crytek Source code
+//	Copyright (c) Crytek 2001-2004
+//
 //	File: STLutils.h
 //	Description : Various convenience utility functions for STL and alike.
 //		Used in Animation subsystem and in some tools.
 //
 //	History:
 //	- Created by Sergiy Migdalskiy
-//	- February 2005: Modified by Marco Corbetta for SDK release	
+//	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
 #ifndef _STL_UTILS_HEADER_
@@ -21,27 +21,27 @@
 //////////////////////////////////////////////////////////////////////
 // searches the given entry in the map by key, and if there is none, returns the default value
 #ifdef WIN32
-#include <map>
-#define hash_map map
-template <typename Map, typename key_type, typename mapped_type>
+	#include <map>
+	#define hash_map map
+template<typename Map, typename key_type, typename mapped_type>
 inline mapped_type find_in_map(const Map& mapKeyToValue, key_type key, mapped_type valueDefault)
 #else
-#if defined(LINUX)
-#include <BlackBox/Core/Platform/Platform.hpp>
-//#include <ext/hash_map>
-#include <unordered_map>
-#else
-#include <hash_map>
-#endif
+	#if defined(LINUX)
+		#include <BlackBox/Core/Platform/Platform.hpp>
+		//#include <ext/hash_map>
+		#include <unordered_map>
+	#else
+		#include <hash_map>
+	#endif
 
 //////////////////////////////////////////////////////////////////////
- // TODO: get rid of it and use map
-template <typename Map>
+// TODO: get rid of it and use map
+template<typename Map>
 inline typename Map::mapped_type find_in_map(const Map& mapKeyToValue, typename Map::key_type key, typename Map::mapped_type valueDefault)
 #endif
 
 {
-	typename Map::const_iterator it = mapKeyToValue.find (key);
+	typename Map::const_iterator it = mapKeyToValue.find(key);
 	if (it == mapKeyToValue.end())
 		return valueDefault;
 	else
@@ -52,14 +52,14 @@ inline typename Map::mapped_type find_in_map(const Map& mapKeyToValue, typename 
 // searches the given entry in the map by key, and if there is none, returns the default value
 // The values are taken/returned in REFERENCEs rather than values
 #ifdef WIN64
-template <typename Map, typename key_type, typename mapped_type>
+template<typename Map, typename key_type, typename mapped_type>
 inline mapped_type& find_in_map_ref(Map& mapKeyToValue, key_type key, mapped_type& valueDefault)
 #else
-template <typename Map>
+template<typename Map>
 inline typename Map::mapped_type& find_in_map_ref(Map& mapKeyToValue, typename Map::key_type key, typename Map::mapped_type& valueDefault)
 #endif
 {
-	typename Map::iterator it = mapKeyToValue.find (key);
+	typename Map::iterator it = mapKeyToValue.find(key);
 	if (it == mapKeyToValue.end())
 		return valueDefault;
 	else
@@ -67,47 +67,51 @@ inline typename Map::mapped_type& find_in_map_ref(Map& mapKeyToValue, typename M
 }
 
 // auto-cleaner: upon destruction, calls the clear() method
-template <class T>
+template<class T>
 class CAutoClear
 {
 public:
-	CAutoClear (T* p): m_p(p) {}
-	~CAutoClear () {m_p->clear();}
+	CAutoClear(T* p)
+	    : m_p(p)
+	{
+	}
+	~CAutoClear() { m_p->clear(); }
+
 protected:
 	T* m_p;
 };
 
 //////////////////////////////////////////////////////////////////////
-template <class Container>
-unsigned sizeofArray (const Container& arr)
+template<class Container>
+unsigned sizeofArray(const Container& arr)
 {
-	return (unsigned)(sizeof(typename Container::value_type)*arr.size());
+	return (unsigned)(sizeof(typename Container::value_type) * arr.size());
 }
 
 //////////////////////////////////////////////////////////////////////
-template <class Container>
-unsigned sizeofVector (const Container& arr)
+template<class Container>
+unsigned sizeofVector(const Container& arr)
 {
-	return (unsigned)(sizeof(typename Container::value_type)*arr.capacity());
+	return (unsigned)(sizeof(typename Container::value_type) * arr.capacity());
 }
 
 //////////////////////////////////////////////////////////////////////
-template <class Container>
-unsigned sizeofArray (const Container& arr, unsigned nSize)
+template<class Container>
+unsigned sizeofArray(const Container& arr, unsigned nSize)
 {
-	return arr.empty()?0u:(unsigned)(sizeof(typename Container::value_type)*nSize);
+	return arr.empty() ? 0u : (unsigned)(sizeof(typename Container::value_type) * nSize);
 }
 
 //////////////////////////////////////////////////////////////////////
-template <class Container>
-unsigned capacityofArray (const Container& arr)
+template<class Container>
+unsigned capacityofArray(const Container& arr)
 {
-	return (unsigned)(arr.capacity()*sizeof(arr[0]));
+	return (unsigned)(arr.capacity() * sizeof(arr[0]));
 }
 
 //////////////////////////////////////////////////////////////////////
-template <class T>
-unsigned countElements (const std::vector<T>& arrT, const T& x)
+template<class T>
+unsigned countElements(const std::vector<T>& arrT, const T& x)
 {
 	unsigned nSum = 0;
 	for (typename std::vector<T>::const_iterator iter = arrT.begin(); iter != arrT.end(); ++iter)
@@ -122,7 +126,6 @@ unsigned countElements (const std::vector<T>& arrT, const T& x)
 */
 namespace stl
 {
-	
 	//////////////////////////////////////////////////////////////////////////
 	//! Searches the given entry in the map by key, and if there is none, returns the default value
 	//////////////////////////////////////////////////////////////////////////
@@ -139,14 +142,14 @@ namespace stl
 	// searches the given entry in the map by key, and if there is none, returns the default value
 	// The values are taken/returned in REFERENCEs rather than values
 #ifdef WIN64
-	template <typename Map, typename key_type, typename mapped_type>
-		inline mapped_type& find_in_map_ref(Map& mapKeyToValue, key_type key, mapped_type& valueDefault)
+	template<typename Map, typename key_type, typename mapped_type>
+	inline mapped_type& find_in_map_ref(Map& mapKeyToValue, key_type key, mapped_type& valueDefault)
 #else
-	template <typename Map>
-		inline typename Map::mapped_type& find_in_map_ref(Map& mapKeyToValue, typename Map::key_type key, typename Map::mapped_type& valueDefault)
+	template<typename Map>
+	inline typename Map::mapped_type& find_in_map_ref(Map& mapKeyToValue, typename Map::key_type key, typename Map::mapped_type& valueDefault)
 #endif
 	{
-		typename Map::iterator it = mapKeyToValue.find (key);
+		typename Map::iterator it = mapKeyToValue.find(key);
 		if (it == mapKeyToValue.end())
 			return valueDefault;
 		else
@@ -156,28 +159,28 @@ namespace stl
 	//////////////////////////////////////////////////////////////////////////
 	//! Fills vector with contents of map.
 	//////////////////////////////////////////////////////////////////////////
-	template <class Map,class Vector>
-	inline void map_to_vector( const Map& theMap,Vector &array )
+	template<class Map, class Vector>
+	inline void map_to_vector(const Map& theMap, Vector& array)
 	{
 		array.resize(0);
-		array.reserve( theMap.size() );
+		array.reserve(theMap.size());
 		for (typename Map::const_iterator it = theMap.begin(); it != theMap.end(); ++it)
 		{
-			array.push_back( it->second );
+			array.push_back(it->second);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	//! Fills vector with contents of set.
 	//////////////////////////////////////////////////////////////////////////
-	template <class Set,class Vector>
-	inline void set_to_vector( const Set& theSet,Vector &array )
+	template<class Set, class Vector>
+	inline void set_to_vector(const Set& theSet, Vector& array)
 	{
 		array.resize(0);
-		array.reserve( theSet.size() );
+		array.reserve(theSet.size());
 		for (typename Set::const_iterator it = theSet.begin(); it != theSet.end(); ++it)
 		{
-			array.push_back( *it );
+			array.push_back(*it);
 		}
 	}
 
@@ -185,42 +188,41 @@ namespace stl
 	//! Find and erase element from container.
 	// @return true if item was find and erased, false if item not found.
 	//////////////////////////////////////////////////////////////////////////
-	template <class Container,class Value>
-		inline bool find_and_erase( Container& container,const Value &value )
+	template<class Container, class Value>
+	inline bool find_and_erase(Container& container, const Value& value)
 	{
-		typename Container::iterator it = std::find( container.begin(),container.end(),value );
+		typename Container::iterator it = std::find(container.begin(), container.end(), value);
 		if (it != container.end())
 		{
-			container.erase( it );
+			container.erase(it);
 			return true;
 		}
 		return false;
 	}
 
-    //! Find and erase element from map.
-    //! \return true if item was find and erased, false if item not found.
-    template<class Container, class Key>
-    inline bool member_find_and_erase(Container& container, const Key& key)
-    {
-        typename Container::iterator it = container.find(key);
-        if (it != container.end())
-        {
-            container.erase(it);
-            return true;
-        }
-        return false;
-    }
-
+	//! Find and erase element from map.
+	//! \return true if item was find and erased, false if item not found.
+	template<class Container, class Key>
+	inline bool member_find_and_erase(Container& container, const Key& key)
+	{
+		typename Container::iterator it = container.find(key);
+		if (it != container.end())
+		{
+			container.erase(it);
+			return true;
+		}
+		return false;
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	//! Push back to container unique element.
 	// @return true if item added, false overwise.
-	template <class Container,class Value>
-		inline bool push_back_unique( Container& container,const Value &value )
+	template<class Container, class Value>
+	inline bool push_back_unique(Container& container, const Value& value)
 	{
-		if (std::find(container.begin(),container.end(),value) == container.end())
+		if (std::find(container.begin(), container.end(), value) == container.end())
 		{
-			container.push_back( value );
+			container.push_back(value);
 			return true;
 		}
 		return false;
@@ -229,24 +231,24 @@ namespace stl
 	//////////////////////////////////////////////////////////////////////////
 	//! Find element in container.
 	// @return true if item found.
-	template <class Container,class Value>
-		inline bool find( Container& container,const Value &value )
+	template<class Container, class Value>
+	inline bool find(Container& container, const Value& value)
 	{
-		return std::find(container.begin(),container.end(),value) != container.end();
+		return std::find(container.begin(), container.end(), value) != container.end();
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	//! Convert arbitary class to const char*
 	//////////////////////////////////////////////////////////////////////////
-	template <class Type>
-		inline const char* constchar_cast( const Type &type )
+	template<class Type>
+	inline const char* constchar_cast(const Type& type)
 	{
 		return type;
 	}
 
 	//! Specialization of string to const char cast.
-	template <>
-		inline const char* constchar_cast( const string &type )
+	template<>
+	inline const char* constchar_cast(const string& type)
 	{
 		return type.c_str();
 	}
@@ -258,7 +260,8 @@ namespace stl
 
 	//! Find and erase element from container.
 	//! \return true if item was find and erased, false if item not found.
-	template<class CONTAINER, class PREDICATE> inline bool find_and_erase_if(CONTAINER& container, const PREDICATE& predicate)
+	template<class CONTAINER, class PREDICATE>
+	inline bool find_and_erase_if(CONTAINER& container, const PREDICATE& predicate)
 	{
 		typename CONTAINER::iterator end = container.end(), i = std::find_if(container.begin(), end, predicate);
 
@@ -306,7 +309,6 @@ namespace stl
 		}
 	};
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// Hash map usage:
 	// typedef stl::hash_map<string,int, stl::hash_stricmp<string> > StringToIntHash;
@@ -315,62 +317,65 @@ namespace stl
 	//////////////////////////////////////////////////////////////////////////
 	//! Case sensetive string hash map compare structure.
 	//////////////////////////////////////////////////////////////////////////
-	template <class Key>
+	template<class Key>
 	class hash_strcmp
 	{
 	public:
-		enum {	// parameters for hash table
-			bucket_size = 4,	// 0 < bucket_size
-			min_buckets = 8	};// min_buckets = 2 ^^ N, 0 < N
+		enum
+		{                    // parameters for hash table
+			bucket_size = 4, // 0 < bucket_size
+			min_buckets = 8
+		}; // min_buckets = 2 ^^ N, 0 < N
 
-			size_t operator()( const Key& key ) const
-			{
-				unsigned int h = 0; 
-				const char *s = constchar_cast(key);
-				for (; *s; ++s) h = 5*h + *(unsigned char*)s;
-				return size_t(h);
-
-			};
-			bool operator()( const Key& key1,const Key& key2 ) const
-			{
-				return strcmp(constchar_cast(key1),constchar_cast(key2)) < 0;
-			}
+		size_t operator()(const Key& key) const
+		{
+			unsigned int h = 0;
+			const char*  s = constchar_cast(key);
+			for (; *s; ++s) h = 5 * h + *(unsigned char*)s;
+			return size_t(h);
+		};
+		bool operator()(const Key& key1, const Key& key2) const
+		{
+			return strcmp(constchar_cast(key1), constchar_cast(key2)) < 0;
+		}
 	};
 
 	//////////////////////////////////////////////////////////////////////////
 	//! Case insensetive string hash map compare structure.
-	template <class Key>
+	template<class Key>
 	class hash_stricmp
 	{
 	public:
-		enum {	// parameters for hash table
-			bucket_size = 4,	// 0 < bucket_size
-			min_buckets = 8	};// min_buckets = 2 ^^ N, 0 < N
+		enum
+		{                    // parameters for hash table
+			bucket_size = 4, // 0 < bucket_size
+			min_buckets = 8
+		}; // min_buckets = 2 ^^ N, 0 < N
 
-			size_t operator()( const Key& key ) const
-			{
-				unsigned int h = 0; 
-				const char *s = constchar_cast(key);
-				for (; *s; ++s) h = 5*h + tolower(*(unsigned char*)s);
-				return size_t(h);
-
-			};
-			bool operator()( const Key& key1,const Key& key2 ) const
-			{
-				return stricmp(constchar_cast(key1),constchar_cast(key2)) < 0;
-			}
+		size_t operator()(const Key& key) const
+		{
+			unsigned int h = 0;
+			const char*  s = constchar_cast(key);
+			for (; *s; ++s) h = 5 * h + tolower(*(unsigned char*)s);
+			return size_t(h);
+		};
+		bool operator()(const Key& key1, const Key& key2) const
+		{
+			return stricmp(constchar_cast(key1), constchar_cast(key2)) < 0;
+		}
 	};
 #if !defined(LINUX)
 	// Support for both Microsoft and SGI kind of hash_map.
-	template <class Key,class Value,class HashFunc>
-	class hash_map : 
-#ifdef _STLP_HASH_MAP // STL Port
-		std::hash_map<Key,Value,HashFunc,HashFunc>
-#else
-		std::hash_map<Key,Value,HashFunc>
-#endif // STL Port
-	{};
+	template<class Key, class Value, class HashFunc>
+	class hash_map :
+	#ifdef _STLP_HASH_MAP // STL Port
+	    std::hash_map<Key, Value, HashFunc, HashFunc>
+	#else
+	    std::hash_map<Key, Value, HashFunc>
+	#endif // STL Port
+	{
+	};
 #endif //LINUX
-}
+} // namespace stl
 
 #endif

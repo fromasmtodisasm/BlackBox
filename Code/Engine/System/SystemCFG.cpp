@@ -2,13 +2,12 @@
 #include "System.hpp"
 #include "SystemCFG.hpp"
 
-
 namespace detail
 {
 	string Trim(string& str)
 	{
 		int begin = 0;
-		int end	  = 0;
+		int end   = 0;
 		for (int i = 0; i < str.size() && isspace(str[i]); i++)
 		{
 			begin++;
@@ -21,27 +20,27 @@ namespace detail
 		str.erase(0, begin);
 		return str;
 	}
-}
+} // namespace detail
 
 CSystemConfiguration::CSystemConfiguration(const string& strSysConfigFilePath, CSystem* pSystem, ILoadConfigurationEntrySink* pSink)
-	: 
-	m_strSysConfigFilePath(strSysConfigFilePath), 
-	m_bError(false), m_pSink(pSink)
+    : m_strSysConfigFilePath(strSysConfigFilePath)
+    , m_bError(false)
+    , m_pSink(pSink)
 {
 	CRY_ASSERT(pSink);
 	m_pSystem = pSystem;
-	m_bError = !ParseSystemConfig();
+	m_bError  = !ParseSystemConfig();
 }
 
 bool CSystemConfiguration::ParseSystemConfig()
 {
-	string filename = m_strSysConfigFilePath;
+	string        filename = m_strSysConfigFilePath;
 	std::ifstream t(filename);
-	std::string szFullText((std::istreambuf_iterator<char>(t)),
-									 std::istreambuf_iterator<char>());
+	std::string   szFullText((std::istreambuf_iterator<char>(t)),
+                           std::istreambuf_iterator<char>());
 
-	auto strLast = szFullText.c_str() + szFullText.size();
-	char* str = (char*)szFullText.c_str();
+	auto          strLast = szFullText.c_str() + szFullText.size();
+	char*         str     = (char*)szFullText.c_str();
 	while (str < strLast)
 	{
 		char* szLineStart = str;
@@ -57,14 +56,14 @@ bool CSystemConfiguration::ParseSystemConfig()
 
 		//trim all whitespace characters at the beginning and the end of the current line
 		string strLine = szLineStart;
-		strLine = detail::Trim(strLine);
+		strLine        = detail::Trim(strLine);
 
 		//skip empty lines
 		if (strLine.empty())
 			continue;
 
-		// detect groups e.g. "[General]" should set strGroup="General"
-		#if 0
+// detect groups e.g. "[General]" should set strGroup="General"
+#if 0
 		const size_t strLineSize = strLine.size();
 		if (strLineSize >= 3)
 		{
@@ -75,12 +74,12 @@ bool CSystemConfiguration::ParseSystemConfig()
 				continue;               // next line
 			}
 		}
-		#endif
+#endif
 
 		//skip comments, comments start with ";" or "--" (any preceding whitespaces have already been trimmed)
 		if (strLine[0] == ';' || strLine.find("--") == 0)
 			continue;
-		
+
 		//if line contains a '=' try to read and assign console variable
 		const string::size_type posEq(strLine.find("=", 0));
 		if (string::npos != posEq)
@@ -96,7 +95,7 @@ bool CSystemConfiguration::ParseSystemConfig()
 				strValue.pop_back();
 				strValue.erase(0, 1);
 			}
-			
+
 			//strValue.replace()
 			//strValue.replace("\\\\", "\\");
 			//strValue.replace("\\\"", "\"");
@@ -139,4 +138,3 @@ void CSystem::LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySi
 		CSystemConfiguration tempConfig("system.cfg", this, this);
 	}
 }
-

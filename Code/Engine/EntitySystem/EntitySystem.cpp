@@ -6,13 +6,14 @@
 
 #define LOG_FUNCTION() CryLog("[EntitySystemLogging]: %s", __FUNCTION__)
 
-inline CEntitySystem::CEntitySystem(ISystem* pSystem) : m_EntityIt(m_Entities)
+inline CEntitySystem::CEntitySystem(ISystem* pSystem)
+    : m_EntityIt(m_Entities)
 {
-	#if 1
-	m_Entities.resize(16*16*256 + 1024);
-	#endif
+#if 1
+	m_Entities.resize(16 * 16 * 256 + 1024);
+#endif
 
-#define SET_SCRIPTEVENT(event) gEnv->pScriptSystem->SetGlobalValue("ScriptEvent_"#event, ScriptEvent_##event)
+#define SET_SCRIPTEVENT(event) gEnv->pScriptSystem->SetGlobalValue("ScriptEvent_" #event, ScriptEvent_##event)
 	SET_SCRIPTEVENT(Activate);
 	SET_SCRIPTEVENT(Deactivate);
 	SET_SCRIPTEVENT(FireModeChange);
@@ -61,8 +62,6 @@ inline CEntitySystem::CEntitySystem(ISystem* pSystem) : m_EntityIt(m_Entities)
 	SET_SCRIPTEVENT(Jump);
 #undef SET_SCRIPTEVENT
 }
-
-
 
 void CEntitySystem::Update()
 {
@@ -193,7 +192,6 @@ void CEntitySystem::GetMemoryUsage(ICrySizer* pSizer) const
 	LOG_FUNCTION();
 	pSizer->AddObject(this, sizeof(*this));
 	pSizer->AddObject(m_Entities);
-
 }
 
 void CEntitySystem::SetDynamicEntityIdMode(const bool bActivate)
@@ -227,12 +225,11 @@ void CEntitySystem::ClearId(EntityId id)
 	LOG_FUNCTION();
 }
 
-
 extern "C"
 {
-	ENTITYDLL_API struct IEntitySystem * CreateEntitySystem(ISystem *pISystem)
+	ENTITYDLL_API struct IEntitySystem* CreateEntitySystem(ISystem* pISystem)
 	{
-		return new CEntitySystem(pISystem);	
+		return new CEntitySystem(pISystem);
 	}
 }
 

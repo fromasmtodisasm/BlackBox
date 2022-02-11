@@ -1,11 +1,11 @@
 
 ////////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File:   IMiniLog.h
-//  Description: This is the smallest possible interface to the Log - 
+//  Description: This is the smallest possible interface to the Log -
 //               it's independent and small, so that it can be easily moved
 //               across the engine and test applications, to test engine
 //               parts that need logging (e.g. Streaming Engine) separately
@@ -13,7 +13,7 @@
 //  History:
 //	- 03/6/2003: Created by Sergiy Migdalsky
 //	- February 2005: Modified by Marco Corbetta for SDK release
-//									
+//
 ////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
@@ -76,13 +76,13 @@ struct IMiniLog
 ////////////////////////////////////////////////////////////////////////////
 // By default, to make it possible not to implement the log at the beginning at all,
 // empty implementations of the two functions are given
-#if 0
+	#if 0
 struct CNullMiniLog: public IMiniLog
 {
 	// the default implementation just won't do anything
 	void LogV(const char* szFormat, va_list args) {}
 };
-#endif
+	#endif
 
 #endif //_CRY_ENGINE_MINI_LOG_HDR_
 #endif

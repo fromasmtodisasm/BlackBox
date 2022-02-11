@@ -13,23 +13,19 @@ struct GlobalResources
 	static ID3DShaderResourceView* WiteTextureRV;
 	static ID3DShaderResourceView* GreyTextureRV;
 
-	static ID3D11SamplerState* LinearSampler;
+	static ID3D11SamplerState*     LinearSampler;
 
-	static ID3D10EffectTechnique* BoxTechnique;
-	static ID3D10EffectTechnique* MeshTechnique;
+	static ID3D10EffectTechnique*  BoxTechnique;
+	static ID3D10EffectTechnique*  MeshTechnique;
 
-	static ID3DInputLayout* VERTEX_FORMAT_P3F_C4B_T2F_Layout;
+	static ID3DInputLayout*        VERTEX_FORMAT_P3F_C4B_T2F_Layout;
 
-	static _smart_ptr<CShader> SpriteShader;
-	static _smart_ptr<CShader> TexturedQuadShader;
+	static _smart_ptr<CShader>     SpriteShader;
+	static _smart_ptr<CShader>     TexturedQuadShader;
 
 	//static _smart_ptr<CShader> GrayScale
 
-
-
-
-	static ID3D11BlendState* FontBlendState;
-
+	static ID3D11BlendState*       FontBlendState;
 };
 
 namespace DeviceFormats
@@ -111,12 +107,12 @@ namespace DeviceFormats
 			return 1 * sizeof(float);
 			break;
 
-	#if CRY_RENDERER_VULKAN
+#if CRY_RENDERER_VULKAN
 		case DXGI_FORMAT_D16_UNORM_S8_UINT:
 		case DXGI_FORMAT_R16G8X8_TYPELESS:
 		case DXGI_FORMAT_D24_UNORM:
 		case DXGI_FORMAT_R24X8_TYPELESS:
-	#endif
+#endif
 		case DXGI_FORMAT_R24G8_TYPELESS:
 		case DXGI_FORMAT_D24_UNORM_S8_UINT:
 		case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
@@ -159,9 +155,9 @@ namespace DeviceFormats
 		case DXGI_FORMAT_R8_UINT:
 		case DXGI_FORMAT_R8_SNORM:
 		case DXGI_FORMAT_R8_SINT:
-	#if CRY_RENDERER_VULKAN
+#if CRY_RENDERER_VULKAN
 		case DXGI_FORMAT_S8_UINT:
-	#endif
+#endif
 		case DXGI_FORMAT_A8_UNORM:
 			return 1 * sizeof(char);
 			break;
@@ -175,8 +171,7 @@ namespace DeviceFormats
 		return 0;
 	}
 
-}
-
+} // namespace DeviceFormats
 
 ////////////////////////////////////////////////////////////////////////////
 // InputLayout API
@@ -189,10 +184,10 @@ struct SShaderBlob
 
 struct SInputLayout
 {
-	std::vector<D3D11_INPUT_ELEMENT_DESC> m_Declaration;			 // Configuration
+	std::vector<D3D11_INPUT_ELEMENT_DESC> m_Declaration; // Configuration
 	uint16                                m_firstSlot;
-	std::vector<uint16>                   m_Strides;				 // Stride of each input slot, starting from m_firstSlot
-	std::array<int8, 4>                   m_Offsets;				 // The offsets of "POSITION", "COLOR", "TEXCOORD" and "NORMAL"
+	std::vector<uint16>                   m_Strides; // Stride of each input slot, starting from m_firstSlot
+	std::array<int8, 4>                   m_Offsets; // The offsets of "POSITION", "COLOR", "TEXCOORD" and "NORMAL"
 
 	enum
 	{
@@ -202,15 +197,16 @@ struct SInputLayout
 		eOffset_Normal,
 	};
 
-	SInputLayout(std::vector<D3D11_INPUT_ELEMENT_DESC> &&decs) : m_Declaration(std::move(decs))
+	SInputLayout(std::vector<D3D11_INPUT_ELEMENT_DESC>&& decs)
+	    : m_Declaration(std::move(decs))
 	{
 		// Calculate first slot index
 		m_firstSlot = std::numeric_limits<uint16>::max();
-		for (const auto &dec : m_Declaration)
+		for (const auto& dec : m_Declaration)
 			m_firstSlot = std::min(m_firstSlot, static_cast<uint16>(dec.InputSlot));
 
 		// Calculate strides
-		for (const auto &dec : m_Declaration)
+		for (const auto& dec : m_Declaration)
 		{
 			const uint16 slot = dec.InputSlot - m_firstSlot;
 			if (m_Strides.size() <= slot)
@@ -238,11 +234,11 @@ struct SInputLayout
 	}
 
 	SInputLayout(const SInputLayout& src) = default;
-	SInputLayout(SInputLayout&& src) = default;
+	SInputLayout(SInputLayout&& src)      = default;
 	SInputLayout& operator=(const SInputLayout& src) = default;
 	SInputLayout& operator=(SInputLayout&& src) = default;
 
-	bool operator==(const std::vector<D3D11_INPUT_ELEMENT_DESC>& descs) const
+	bool          operator==(const std::vector<D3D11_INPUT_ELEMENT_DESC>& descs) const
 	{
 		size_t count = m_Declaration.size();
 		if (count != descs.size())
@@ -256,12 +252,12 @@ struct SInputLayout
 			const D3D11_INPUT_ELEMENT_DESC& desc1 = descs[i];
 
 			if (0 != stricmp(desc0.SemanticName, desc1.SemanticName) ||
-				desc0.SemanticIndex != desc1.SemanticIndex ||
-				desc0.Format != desc1.Format ||
-				desc0.InputSlot != desc1.InputSlot ||
-				desc0.AlignedByteOffset != desc1.AlignedByteOffset ||
-				desc0.InputSlotClass != desc1.InputSlotClass ||
-				desc0.InstanceDataStepRate != desc1.InstanceDataStepRate)
+			    desc0.SemanticIndex != desc1.SemanticIndex ||
+			    desc0.Format != desc1.Format ||
+			    desc0.InputSlot != desc1.InputSlot ||
+			    desc0.AlignedByteOffset != desc1.AlignedByteOffset ||
+			    desc0.InputSlotClass != desc1.InputSlotClass ||
+			    desc0.InstanceDataStepRate != desc1.InstanceDataStepRate)
 			{
 				return false;
 			}
@@ -269,5 +265,3 @@ struct SInputLayout
 		return true;
 	}
 };
-
-

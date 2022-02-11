@@ -27,16 +27,16 @@ CShader& CShader::operator=(const CShader& src)
 
 	//mfFree();
 
-	int	  Offs = (int)(INT_PTR) & (((CShader*)0)->m_NumRefs);
-	byte* d	   = (byte*)this;
-	byte* s	   = (byte*)&src;
+	int   Offs = (int)(INT_PTR) & (((CShader*)0)->m_NumRefs);
+	byte* d    = (byte*)this;
+	byte* s    = (byte*)&src;
 	memcpy(&d[Offs], &s[Offs], sizeof(CShader) - Offs);
 
-	m_NameShader	 = src.m_NameShader;
-	m_NameFile		 = src.m_NameFile;
+	m_NameShader = src.m_NameShader;
+	m_NameFile   = src.m_NameFile;
 	//m_NameShaderICRC = src.m_NameShaderICRC;
 
-	#if 0
+#if 0
 	if (src.m_HWTechniques.Num())
 	{
 		m_HWTechniques.Create(src.m_HWTechniques.Num());
@@ -47,7 +47,7 @@ CShader& CShader::operator=(const CShader& src)
 			m_HWTechniques[i]->m_shader = this; // copy operator will override m_shader
 		}
 	}
-	#endif
+#endif
 
 	return *this;
 }
@@ -141,11 +141,11 @@ struct PaddedStruct : public T
 
 void CShader::CreateInputLayout()
 {
-	HRESULT hr{};
+	HRESULT                               hr{};
 
-	auto								  pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_ByteCode;
+	auto                                  pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_ByteCode;
 	std::vector<D3D11_INPUT_ELEMENT_DESC> t_InputElementDescVec; // actually does not matter what store
-	unsigned int						  t_ByteOffset = 0;
+	unsigned int                          t_ByteOffset = 0;
 
 	for (int i = 0; i < m_Desc.InputParameters; ++i)
 	{
@@ -161,11 +161,11 @@ void CShader::CreateInputLayout()
 		// not found coresponding interface for IID_ID3D11ShaderReflection!!! it is worked, but...
 
 		D3D11_INPUT_ELEMENT_DESC t_InputElementDesc;
-		t_InputElementDesc.SemanticName			= SP_DESC.SemanticName;
-		t_InputElementDesc.SemanticIndex		= SP_DESC.SemanticIndex;
-		t_InputElementDesc.InputSlot			= 0;
-		t_InputElementDesc.AlignedByteOffset	= t_ByteOffset;
-		t_InputElementDesc.InputSlotClass		= D3D11_INPUT_PER_VERTEX_DATA;
+		t_InputElementDesc.SemanticName         = SP_DESC.SemanticName;
+		t_InputElementDesc.SemanticIndex        = SP_DESC.SemanticIndex;
+		t_InputElementDesc.InputSlot            = 0;
+		t_InputElementDesc.AlignedByteOffset    = t_ByteOffset;
+		t_InputElementDesc.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 		t_InputElementDesc.InstanceDataStepRate = 0;
 
 		if (SP_DESC.Mask == 1)
@@ -228,11 +228,11 @@ void CShader::CreateInputLayout()
 		else if (SP_DESC.Mask <= 15)
 		{
 			bool isColor = false;
-			uint offset	 = 16;
+			uint offset  = 16;
 
 			if (!strcmp(SP_DESC.SemanticName, "COLOR"))
 			{
-				offset	= 4;
+				offset  = 4;
 				isColor = true;
 			}
 			if (SP_DESC.ComponentType == D3D_REGISTER_COMPONENT_UINT32)
@@ -256,11 +256,11 @@ void CShader::CreateInputLayout()
 		t_InputElementDescVec.push_back(t_InputElementDesc);
 	}
 	hr = GetDevice()->CreateInputLayout(
-		t_InputElementDescVec.data(),
-		t_InputElementDescVec.size(),
-		pVSBuf->GetBufferPointer(),
-		pVSBuf->GetBufferSize(),
-		&m_pInputLayout);
+	    t_InputElementDescVec.data(),
+	    t_InputElementDescVec.size(),
+	    pVSBuf->GetBufferPointer(),
+	    pVSBuf->GetBufferSize(),
+	    &m_pInputLayout);
 	if (FAILED(hr))
 	{
 		CryError("Error create input layout for font");
@@ -273,9 +273,9 @@ void CShader::ReflectShader()
 {
 	HRESULT hr{};
 
-	auto pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_ByteCode;
+	auto    pVSBuf = (ID3DBlob*)m_Shaders[IShader::Type::E_VERTEX]->m_ByteCode;
 	//ID3D11ShaderReflection* pIShaderReflection1 = NULL;
-	hr = D3DReflect((void*)pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&m_pReflection);
+	hr             = D3DReflect((void*)pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&m_pReflection);
 	if (m_pReflection)
 	{
 		m_pReflection->GetDesc(&m_Desc);
@@ -284,25 +284,25 @@ void CShader::ReflectShader()
 
 bool CShader::LoadFromEffect(CShader* pSH, PEffect pEffect, int nTechnique, int nPass)
 {
-	auto				tech = pEffect->GetTechnique(nTechnique);
-	auto				pass = tech->GetPass(nPass);
+	auto                tech = pEffect->GetTechnique(nTechnique);
+	auto                pass = tech->GetPass(nPass);
 	std::vector<string> code{pEffect->GetCode()};
 
-	IShader::Type Types[] = {
-		IShader::Type::E_VERTEX,
-		IShader::Type::E_GEOMETRY,
-		IShader::Type::E_FRAGMENT,
-	};
+	IShader::Type       Types[] = {
+        IShader::Type::E_VERTEX,
+        IShader::Type::E_GEOMETRY,
+        IShader::Type::E_FRAGMENT,
+    };
 	for (auto st : Types)
 	{
 		auto entry = pass->EntryPoints[st].data();
 		if (auto res = LoadFromMemory(code, st, entry); res.first)
 		{
-			auto  shader = new CHWShader(st, entry);
+			auto shader        = new CHWShader(st, entry);
 			shader->m_ByteCode = res.first;
 			if (shader->Upload(shader->m_ByteCode, pSH))
 			{
-				pSH->m_Shaders[st]	  = shader;
+				pSH->m_Shaders[st] = shader;
 			}
 			else
 			{
@@ -315,7 +315,7 @@ bool CShader::LoadFromEffect(CShader* pSH, PEffect pEffect, int nTechnique, int 
 	return true;
 }
 
-std::pair<ID3DBlob*,ID3DBlob*> CShader::LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry)
+std::pair<ID3DBlob*, ID3DBlob*> CShader::LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry)
 {
 	std::string code;
 	for (const auto& piece : text)
@@ -349,39 +349,39 @@ const char* GetGLSLANGTargetName(IShader::Type target)
 
 void SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type)
 {
-	string									stage(GetGLSLANGTargetName(type));
-	std::ofstream							output_file(string("bin/shadercache/shader_") + stage + ".hlsl");
+	string                                  stage(GetGLSLANGTargetName(type));
+	std::ofstream                           output_file(string("bin/shadercache/shader_") + stage + ".hlsl");
 	std::ostream_iterator<std::string_view> output_iterator(output_file, "\n");
 	std::copy(code.begin(), code.end(), output_iterator);
 	output_file.close();
 }
 
-std::pair<ID3DBlob*,ID3DBlob*> CShader::Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory)
+std::pair<ID3DBlob*, ID3DBlob*> CShader::Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory)
 {
 	const char* profile = type == Type::E_VERTEX ? "vs_4_0" : type == Type::E_GEOMETRY ? "gs_4_0"
-																					   : "ps_4_0";
-	ID3DBlob*	pShaderBlob{};
-	ID3DBlob*	pErrorBlob{};
-	const char* code = bFromMemory ? text.data() : nullptr;
-	const char* file = bFromMemory ? nullptr : text.data();
-	auto		size = text.size();
+	                                                                                   : "ps_4_0";
+	ID3DBlob*   pShaderBlob{};
+	ID3DBlob*   pErrorBlob{};
+	const char* code   = bFromMemory ? text.data() : nullptr;
+	const char* file   = bFromMemory ? nullptr : text.data();
+	auto        size   = text.size();
 
-	auto nFlags = D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
-	auto hr		= D3DCompile(
-		code,
-		size,
-		file,
-		nullptr,
-		nullptr,
-		pEntry,
-		profile,
-		nFlags,
-		0, //flags2
-		&pShaderBlob,
-		&pErrorBlob);
+	auto        nFlags = D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
+	auto        hr     = D3DCompile(
+        code,
+        size,
+        file,
+        nullptr,
+        nullptr,
+        pEntry,
+        profile,
+        nFlags,
+        0, //flags2
+        &pShaderBlob,
+        &pErrorBlob);
 	if (FAILED(hr))
 	{
-		#if 0
+#if 0
 		auto pBlob = _smart_ptr(pShaderBlob);
 		auto error = _smart_ptr(pErrorBlob);
 		if (pErrorBlob && pErrorBlob->GetBufferPointer())
@@ -398,12 +398,12 @@ std::pair<ID3DBlob*,ID3DBlob*> CShader::Load(const std::string_view text, IShade
 			}
 			CryWarning(VALIDATOR_MODULE_RENDERER, severity, "Error and warning from compilation:\n%s", log.data());
 		}
-		#endif
-		return std::make_pair(nullptr,pErrorBlob);
+#endif
+		return std::make_pair(nullptr, pErrorBlob);
 	}
 	else
 	{
-		#if 0
+#if 0
 		void* pShaderReflBuf;
 		UINT* pData = (UINT*)pShaderBlob->GetBufferPointer();
 		UINT  nSize = (uint32)pShaderBlob->GetBufferSize();
@@ -417,18 +417,18 @@ std::pair<ID3DBlob*,ID3DBlob*> CShader::Load(const std::string_view text, IShade
 		{
 			assert(0);
 		}
-		#endif
+#endif
 	}
 
-	return std::make_pair(pShaderBlob,pErrorBlob);
+	return std::make_pair(pShaderBlob, pErrorBlob);
 	//return new CHWShader(pShader, pBlob, type);
 }
 
 bool CHWShader::Upload(ID3DBlob* pBlob, CShader* pSH)
 {
-	HRESULT hr;
-	auto	pBuf = (DWORD*)pBlob->GetBufferPointer();
-	auto	nSize = pBlob->GetBufferSize();
+	HRESULT   hr;
+	auto      pBuf  = (DWORD*)pBlob->GetBufferPointer();
+	auto      nSize = pBlob->GetBufferSize();
 
 	IUnknown* handle{};
 
@@ -452,20 +452,20 @@ bool CHWShader::Upload(ID3DBlob* pBlob, CShader* pSH)
 	if (SUCCEEDED(hr))
 	{
 		m_D3DShader = (ID3D11Resource*)handle;
-	// Assign name to Shader for enhanced debugging
+		// Assign name to Shader for enhanced debugging
 #if !defined(RELEASE) && (BB_PLATFORM_WINDOWS)
-	char name[1024];
-	sprintf(name, "%s_%s", pSH->GetName(), m_EntryFunc.c_str());
+		char name[1024];
+		sprintf(name, "%s_%s", pSH->GetName(), m_EntryFunc.c_str());
 
-#	if BB_PLATFORM_WINDOWS
-#		if BB_RENDERER_DIRECT3D
-	auto pObject = (ID3D11DeviceChild*)m_D3DShader;
-	::SetDebugName(pObject, name);
-#		elif BB_RENDERER_VULKAN
-	auto pObject = reinterpret_cast<NCryVulkan::CShader*>(pInst->m_Handle.m_pShader->GetHandle());
-	SetDebugName(pObject, name);
-#		endif
-#	endif
+	#if BB_PLATFORM_WINDOWS
+		#if BB_RENDERER_DIRECT3D
+		auto pObject = (ID3D11DeviceChild*)m_D3DShader;
+		::SetDebugName(pObject, name);
+		#elif BB_RENDERER_VULKAN
+		auto pObject = reinterpret_cast<NCryVulkan::CShader*>(pInst->m_Handle.m_pShader->GetHandle());
+		SetDebugName(pObject, name);
+		#endif
+	#endif
 #endif
 	}
 	return (hr == S_OK);

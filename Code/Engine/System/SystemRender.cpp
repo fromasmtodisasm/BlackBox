@@ -4,7 +4,6 @@
 
 #include "CrySizerImpl.h"
 
-
 void CSystem::Render()
 {
 	if (m_env.pRenderer)

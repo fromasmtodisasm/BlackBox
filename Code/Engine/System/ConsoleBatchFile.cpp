@@ -18,8 +18,8 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 		return;
 
 	const string filename = args->GetArg(1);
-	CCryFile file;
-	#if 0
+	CCryFile     file;
+#if 0
 	{
 		if (!CSystemConfiguration::OpenFile(filename, file, ICryPak::FOPEN_ONDISK))
 		{
@@ -28,9 +28,9 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 		}
 		CryLog("Found console batch file \"%s\" at %s", filename.c_str(), file.GetFilename());
 	}
-	#else
+#else
 	file.Open(filename.data(), "r");
-	#endif
+#endif
 
 	// Only circumvent whitelist when the file was in an archive, since we expect archives to be signed in release mode when whitelist is used
 	// Note that we still support running release mode without signed / encrypted archives, however this means that a conscious decision to sacrifice security has already been made.
@@ -43,9 +43,9 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 	std::vector<char> fileContents(file.GetLength() + 1);
 	file.ReadRaw(fileContents.data(), file.GetLength());
 	fileContents.back() = '\0';
-	
+
 	char* const strLast = &fileContents.back() + 1;
-	char* str = fileContents.data();
+	char*       str     = fileContents.data();
 	while (str < strLast)
 	{
 		char* szLineStart = str;

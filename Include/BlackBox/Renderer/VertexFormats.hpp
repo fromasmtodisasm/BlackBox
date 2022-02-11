@@ -17,30 +17,60 @@
 #define VERTEXFORMATS_H
 
 #if _MSC_VER > 1000
-#	pragma once
+	#pragma once
 #endif
 
 //////////////////////////////////////////////////////////////////////
 struct InputLayoutHandle
 {
 	typedef uint8_t ValueType;
-	ValueType value;
+	ValueType       value;
 
-	constexpr InputLayoutHandle() : value(Unspecified) { }
-	constexpr InputLayoutHandle(ValueType v) : value(v) { }
+	constexpr InputLayoutHandle()
+	    : value(Unspecified)
+	{
+	}
+	constexpr InputLayoutHandle(ValueType v)
+	    : value(v)
+	{
+	}
 
 	// Test operators
-	template<typename T> bool operator ==(const T other) const { return value == other; }
-	template<typename T> bool operator !=(const T other) const { return value != other; }
+	template<typename T>
+	bool operator==(const T other) const
+	{
+		return value == other;
+	}
+	template<typename T>
+	bool operator!=(const T other) const
+	{
+		return value != other;
+	}
 	// Range operators
-	template<typename T> bool operator <=(const T other) const { return value <= other; }
-	template<typename T> bool operator >=(const T other) const { return value >= other; }
+	template<typename T>
+	bool operator<=(const T other) const
+	{
+		return value <= other;
+	}
+	template<typename T>
+	bool operator>=(const T other) const
+	{
+		return value >= other;
+	}
 	// Sorting operators
-	template<typename T> bool operator < (const T other) const { return value <  other; }
-	template<typename T> bool operator > (const T other) const { return value >  other; }
+	template<typename T>
+	bool operator<(const T other) const
+	{
+		return value < other;
+	}
+	template<typename T>
+	bool operator>(const T other) const
+	{
+		return value > other;
+	}
 
 	// Auto cast for array access operator []
-	operator ValueType() const { return value; }
+	                           operator ValueType() const { return value; }
 
 	// Not an enum, because of SWIG
 	static constexpr ValueType Unspecified = ValueType(~0);
@@ -50,23 +80,23 @@ struct InputLayoutHandle
 // If you change this you also have to change gBufOffsTable in CRendElement.cpp
 enum eVertexFormat
 {
-	VERTEX_FORMAT_P3F				= 1,  // shadow volumes (12 bytes)
-	VERTEX_FORMAT_P3F_C4B			= 2,  // usually terrain (16 bytes)
-	VERTEX_FORMAT_P3F_T2F			= 3,  // everything else (20 bytes)
-	VERTEX_FORMAT_P3F_C4B_T2F		= 4,  // usually plants (24 bytes)
-	VERTEX_FORMAT_TRP3F_C4B_T2F		= 5,  // fonts (28 bytes)
-	VERTEX_FORMAT_P3F_C4B_C4B		= 6,  // terrain with detail layers (20 bytes)
-	VERTEX_FORMAT_P3F_N				= 7,  // (24 bytes)
-	VERTEX_FORMAT_P3F_N_C4B			= 8,  // (28 bytes)
-	VERTEX_FORMAT_P3F_N_T2F			= 9,  // (32 bytes)
-	VERTEX_FORMAT_P3F_N_C4B_T2F		= 10, // (36 bytes)
-	VERTEX_FORMAT_P3F_N_C4B_C4B		= 11, // terrain with detail layers (32 bytes)
-	VERTEX_FORMAT_P3F_C4B_C4B_T2F	= 12, // usually plants (28 bytes)
+	VERTEX_FORMAT_P3F               = 1,  // shadow volumes (12 bytes)
+	VERTEX_FORMAT_P3F_C4B           = 2,  // usually terrain (16 bytes)
+	VERTEX_FORMAT_P3F_T2F           = 3,  // everything else (20 bytes)
+	VERTEX_FORMAT_P3F_C4B_T2F       = 4,  // usually plants (24 bytes)
+	VERTEX_FORMAT_TRP3F_C4B_T2F     = 5,  // fonts (28 bytes)
+	VERTEX_FORMAT_P3F_C4B_C4B       = 6,  // terrain with detail layers (20 bytes)
+	VERTEX_FORMAT_P3F_N             = 7,  // (24 bytes)
+	VERTEX_FORMAT_P3F_N_C4B         = 8,  // (28 bytes)
+	VERTEX_FORMAT_P3F_N_T2F         = 9,  // (32 bytes)
+	VERTEX_FORMAT_P3F_N_C4B_T2F     = 10, // (36 bytes)
+	VERTEX_FORMAT_P3F_N_C4B_C4B     = 11, // terrain with detail layers (32 bytes)
+	VERTEX_FORMAT_P3F_C4B_C4B_T2F   = 12, // usually plants (28 bytes)
 	VERTEX_FORMAT_P3F_N_C4B_C4B_T2F = 13, // usually plants (40 bytes)
-	VERTEX_FORMAT_T3F_B3F_N3F		= 14, // tangent space (36 bytes)
-	VERTEX_FORMAT_T2F				= 15, // light maps TC (8 bytes)
-	VERTEX_FORMAT_P3F_C4B_T2F_T2F	= 16, // used for multitextured drawing
-	VERTEX_FORMAT_NUMS				= 17, // number of vertex formats
+	VERTEX_FORMAT_T3F_B3F_N3F       = 14, // tangent space (36 bytes)
+	VERTEX_FORMAT_T2F               = 15, // light maps TC (8 bytes)
+	VERTEX_FORMAT_P3F_C4B_T2F_T2F   = 16, // used for multitextured drawing
+	VERTEX_FORMAT_NUMS              = 17, // number of vertex formats
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -155,15 +185,15 @@ union UCol
 		bcolor[3] = static_cast<char>(v[2] * 255.f);
 	}
 	UCol(const Legacy::Vec3& v)
-		: UCol(Legacy::Vec4(v, 1))
+	    : UCol(Legacy::Vec4(v, 1))
 	{
 	}
 	UCol(const uint8 v[4])
-		: bcolor{v[0], v[1], v[2], v[3]}
+	    : bcolor{v[0], v[1], v[2], v[3]}
 	{
 	}
 	UCol(uint8 v0, uint8 v1, uint8 v2, uint8 v3)
-		: bcolor{v0, v1, v2, v3}
+	    : bcolor{v0, v1, v2, v3}
 	{
 	}
 };
@@ -176,7 +206,7 @@ struct SVF_P3F // 12 bytes
 struct SVF_P3F_C4B
 {
 	Legacy::Vec3 xyz;
-	UCol		 color;
+	UCol         color;
 };
 struct SVF_P3F_N // 24 bytes
 {
@@ -192,7 +222,7 @@ struct SVF_P3F_N_C4B
 {
 	Legacy::Vec3 xyz;
 	Legacy::Vec3 normal;
-	UCol		 color;
+	UCol         color;
 };
 
 struct SVF_P3F_T2F
@@ -210,28 +240,28 @@ struct SVF_P3F_N_T2F
 struct SVF_P3F_C4B_T2F
 {
 	Legacy::Vec3 xyz;
-	UCol		 color;
+	UCol         color;
 	Legacy::Vec2 st;
 };
 struct SVF_P3F_C4B_C4B_T2F
 {
 	Legacy::Vec3 xyz;
-	UCol		 color;
-	UCol		 seccolor;
+	UCol         color;
+	UCol         seccolor;
 	Legacy::Vec2 st;
 };
 struct SVF_P3F_N_C4B_C4B_T2F
 {
 	Legacy::Vec3 xyz;
 	Legacy::Vec3 normal;
-	UCol		 color;
-	UCol		 seccolor;
+	UCol         color;
+	UCol         seccolor;
 	Legacy::Vec2 st;
 };
 struct SVF_P3F_C4B_T2F_T2F
 {
 	Legacy::Vec3 xyz;
-	UCol		 color;
+	UCol         color;
 	Legacy::Vec2 st0[2];
 	Legacy::Vec2 st1[2];
 };
@@ -240,32 +270,32 @@ struct SVF_P3F_N_C4B_T2F
 {
 	Legacy::Vec3 xyz;
 	Legacy::Vec3 normal;
-	UCol		 color;
+	UCol         color;
 	Legacy::Vec2 st;
 
-	bool operator==(SVF_P3F_N_C4B_T2F& other);
+	bool         operator==(SVF_P3F_N_C4B_T2F& other);
 };
 
 struct SVF_TRP3F_C4B_T2F
 {
-	float		 x, y, z, rhw;
-	UCol		 color;
+	float        x, y, z, rhw;
+	UCol         color;
 	Legacy::Vec2 st;
 };
 
 struct SVF_P3F_C4B_C4B
 {
 	Legacy::Vec3 xyz;
-	UCol		 color;
-	UCol		 seccolor;
+	UCol         color;
+	UCol         seccolor;
 };
 
 struct SVF_P3F_N_C4B_C4B
 {
 	Legacy::Vec3 xyz;
 	Legacy::Vec3 normal;
-	UCol		 color;
-	UCol		 seccolor;
+	UCol         color;
+	UCol         seccolor;
 };
 
 struct SPipTangents
@@ -332,34 +362,34 @@ _inline void* CreateVertexBuffer(int nFormat, int nVerts)
 }
 
 #ifdef WIN64
-// we don't care about truncation of the struct member offset, because
-// it's a very small integer (even fits into a signed byte)
-#	pragma warning(push)
-#	pragma warning(disable : 4311)
-#	pragma warning(disable : 4302)
+	// we don't care about truncation of the struct member offset, because
+	// it's a very small integer (even fits into a signed byte)
+	#pragma warning(push)
+	#pragma warning(disable : 4311)
+	#pragma warning(disable : 4302)
 #endif
 
 //////////////////////////////////////////////////////////////////////////
 // Vertex Sizes
 const int gVertexSize[] =
-	{
-		0,
-		sizeof(SVF_P3F),
-		sizeof(SVF_P3F_C4B),
-		sizeof(SVF_P3F_T2F),
-		sizeof(SVF_P3F_C4B_T2F),
-		sizeof(SVF_TRP3F_C4B_T2F),
-		sizeof(SVF_P3F_C4B_C4B),
-		sizeof(SVF_P3F_N),
-		sizeof(SVF_P3F_N_C4B),
-		sizeof(SVF_P3F_N_T2F),
-		sizeof(SVF_P3F_N_C4B_T2F),
-		sizeof(SVF_P3F_N_C4B_C4B),
-		sizeof(SVF_P3F_C4B_C4B_T2F),
-		sizeof(SVF_P3F_N_C4B_C4B_T2F),
-		sizeof(SPipTangents),
-		sizeof(SVF_T2F),
-		sizeof(SVF_P3F_C4B_T2F_T2F),
+    {
+        0,
+        sizeof(SVF_P3F),
+        sizeof(SVF_P3F_C4B),
+        sizeof(SVF_P3F_T2F),
+        sizeof(SVF_P3F_C4B_T2F),
+        sizeof(SVF_TRP3F_C4B_T2F),
+        sizeof(SVF_P3F_C4B_C4B),
+        sizeof(SVF_P3F_N),
+        sizeof(SVF_P3F_N_C4B),
+        sizeof(SVF_P3F_N_T2F),
+        sizeof(SVF_P3F_N_C4B_T2F),
+        sizeof(SVF_P3F_N_C4B_C4B),
+        sizeof(SVF_P3F_C4B_C4B_T2F),
+        sizeof(SVF_P3F_N_C4B_C4B_T2F),
+        sizeof(SPipTangents),
+        sizeof(SVF_T2F),
+        sizeof(SVF_P3F_C4B_T2F_T2F),
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -367,21 +397,21 @@ const int gVertexSize[] =
 // -1 means there's no UVs in this format
 // This is required by Animation and must be kept intact with the vertex format enumeration
 const INT_PTR g_VertFormatUVOffsets[] =
-	{
-		-1,												  // no UVs in this format - invalid format
-		-1,												  // VERTEX_FORMAT_P3F=1,                // shadow volumes (12 bytes)
-		-1,												  // VERTEX_FORMAT_P3F_C4B=2,         // usually terrain (16 bytes)
-		(INT_PTR) & (((SVF_P3F_T2F*)0)->st[0]),			  // VERTEX_FORMAT_P3F_T2F=3,          // everything else (20 bytes)
-		(INT_PTR) & (((SVF_P3F_C4B_T2F*)0)->st[0]),		  // VERTEX_FORMAT_P3F_C4B_T2F=4,   // usually plants (24 bytes)
-		(INT_PTR) & (((SVF_TRP3F_C4B_T2F*)0)->st[0]),	  // VERTEX_FORMAT_TRP3F_C4B_T2F=5, // fonts (28 bytes)
-		-1,												  // VERTEX_FORMAT_P3F_C4B_C4B=1,
-		-1,												  // VERTEX_FORMAT_P3F_N=1,
-		-1,												  // VERTEX_FORMAT_P3F_N_C4B=1,
-		(INT_PTR) & (((SVF_P3F_N_T2F*)0)->st[0]),		  // VERTEX_FORMAT_P3F_N_T2F=3,          // everything else (20 bytes)
-		(INT_PTR) & (((SVF_P3F_N_C4B_T2F*)0)->st[0])	  // VERTEX_FORMAT_P3F_N_C4B_T2F=4,   // usually plants (24 bytes)
-						- 1,							  // VERTEX_FORMAT_P3F_N_C4B_C4B=1,
-		(INT_PTR) & (((SVF_P3F_C4B_C4B_T2F*)0)->st[0]),	  // VERTEX_FORMAT_P3F_C4B_C4B_T2F=4,   // usually plants (24 bytes)
-		(INT_PTR) & (((SVF_P3F_N_C4B_C4B_T2F*)0)->st[0]), // VERTEX_FORMAT_P3F_N_C4B_C4B_T2F=4,   // usually plants (24 bytes)
+    {
+        -1,                                               // no UVs in this format - invalid format
+        -1,                                               // VERTEX_FORMAT_P3F=1,                // shadow volumes (12 bytes)
+        -1,                                               // VERTEX_FORMAT_P3F_C4B=2,         // usually terrain (16 bytes)
+        (INT_PTR) & (((SVF_P3F_T2F*)0)->st[0]),           // VERTEX_FORMAT_P3F_T2F=3,          // everything else (20 bytes)
+        (INT_PTR) & (((SVF_P3F_C4B_T2F*)0)->st[0]),       // VERTEX_FORMAT_P3F_C4B_T2F=4,   // usually plants (24 bytes)
+        (INT_PTR) & (((SVF_TRP3F_C4B_T2F*)0)->st[0]),     // VERTEX_FORMAT_TRP3F_C4B_T2F=5, // fonts (28 bytes)
+        -1,                                               // VERTEX_FORMAT_P3F_C4B_C4B=1,
+        -1,                                               // VERTEX_FORMAT_P3F_N=1,
+        -1,                                               // VERTEX_FORMAT_P3F_N_C4B=1,
+        (INT_PTR) & (((SVF_P3F_N_T2F*)0)->st[0]),         // VERTEX_FORMAT_P3F_N_T2F=3,          // everything else (20 bytes)
+        (INT_PTR) & (((SVF_P3F_N_C4B_T2F*)0)->st[0])      // VERTEX_FORMAT_P3F_N_C4B_T2F=4,   // usually plants (24 bytes)
+                        - 1,                              // VERTEX_FORMAT_P3F_N_C4B_C4B=1,
+        (INT_PTR) & (((SVF_P3F_C4B_C4B_T2F*)0)->st[0]),   // VERTEX_FORMAT_P3F_C4B_C4B_T2F=4,   // usually plants (24 bytes)
+        (INT_PTR) & (((SVF_P3F_N_C4B_C4B_T2F*)0)->st[0]), // VERTEX_FORMAT_P3F_N_C4B_C4B_T2F=4,   // usually plants (24 bytes)
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -389,21 +419,21 @@ const INT_PTR g_VertFormatUVOffsets[] =
 // -1 means there's no colors in this format
 // This is required by Animation and must be kept in tact with the vertex format enumeration
 const INT_PTR g_VertFormatRGBAOffsets[] =
-	{
-		-1, // invalid format
-		-1,
-		(INT_PTR) & (((SVF_P3F_C4B*)0)->color.dcolor),
-		-1,
-		(INT_PTR) & (((SVF_P3F_C4B_T2F*)0)->color.dcolor),
-		(INT_PTR) & (((SVF_TRP3F_C4B_T2F*)0)->color.dcolor),
-		(INT_PTR) & (((SVF_P3F_C4B_C4B*)0)->color.dcolor),
-		-1,
-		(INT_PTR) & (((SVF_P3F_N_C4B*)0)->color.dcolor),
-		-1,
-		(INT_PTR) & (((SVF_P3F_N_C4B_T2F*)0)->color.dcolor),
-		(INT_PTR) & (((SVF_P3F_N_C4B_C4B*)0)->color.dcolor),
-		(INT_PTR) & (((SVF_P3F_C4B_C4B_T2F*)0)->color.dcolor),
-		(INT_PTR) & (((SVF_P3F_N_C4B_C4B_T2F*)0)->color.dcolor),
+    {
+        -1, // invalid format
+        -1,
+        (INT_PTR) & (((SVF_P3F_C4B*)0)->color.dcolor),
+        -1,
+        (INT_PTR) & (((SVF_P3F_C4B_T2F*)0)->color.dcolor),
+        (INT_PTR) & (((SVF_TRP3F_C4B_T2F*)0)->color.dcolor),
+        (INT_PTR) & (((SVF_P3F_C4B_C4B*)0)->color.dcolor),
+        -1,
+        (INT_PTR) & (((SVF_P3F_N_C4B*)0)->color.dcolor),
+        -1,
+        (INT_PTR) & (((SVF_P3F_N_C4B_T2F*)0)->color.dcolor),
+        (INT_PTR) & (((SVF_P3F_N_C4B_C4B*)0)->color.dcolor),
+        (INT_PTR) & (((SVF_P3F_C4B_C4B_T2F*)0)->color.dcolor),
+        (INT_PTR) & (((SVF_P3F_N_C4B_C4B_T2F*)0)->color.dcolor),
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -411,131 +441,131 @@ const INT_PTR g_VertFormatRGBAOffsets[] =
 // -1 means there's no colors in this format
 // This is required by Animation and must be kept in tact with the vertex format enumeration
 const INT_PTR g_VertFormatNormalOffsets[] =
-	{
-		-1,											   // invalid format
-		-1,											   // VERTEX_FORMAT_P3F=1
-		-1,											   // VERTEX_FORMAT_P3F_C4B=2,
-		-1,											   // VERTEX_FORMAT_P3F_T2F=3,
-		-1,											   // VERTEX_FORMAT_P3F_C4B_T2F=4,
-		-1,											   // VERTEX_FORMAT_TRP3F_C4B_T2F=5,
-		-1,											   // VERTEX_FORMAT_P3F_C4B_C4B,
-		(INT_PTR) & (((SVF_P3F_N*)0)->normal),		   // VERTEX_FORMAT_P3F_N=1,
-		(INT_PTR) & (((SVF_P3F_N_C4B*)0)->normal),	   // VERTEX_FORMAT_P3F_N_C4B=1,
-		(INT_PTR) & (((SVF_P3F_N_T2F*)0)->normal),	   // VERTEX_FORMAT_P3F_N_T2F=3,          // everything else (20 bytes)
-		(INT_PTR) & (((SVF_P3F_N_C4B_T2F*)0)->normal), // VERTEX_FORMAT_P3F_N_C4B_T2F=4,   // usually plants (24 bytes)
-		(INT_PTR) & (((SVF_P3F_N_C4B_C4B*)0)->normal),
-		-1,
-		(INT_PTR) & (((SVF_P3F_N_C4B_C4B_T2F*)0)->normal),
+    {
+        -1,                                            // invalid format
+        -1,                                            // VERTEX_FORMAT_P3F=1
+        -1,                                            // VERTEX_FORMAT_P3F_C4B=2,
+        -1,                                            // VERTEX_FORMAT_P3F_T2F=3,
+        -1,                                            // VERTEX_FORMAT_P3F_C4B_T2F=4,
+        -1,                                            // VERTEX_FORMAT_TRP3F_C4B_T2F=5,
+        -1,                                            // VERTEX_FORMAT_P3F_C4B_C4B,
+        (INT_PTR) & (((SVF_P3F_N*)0)->normal),         // VERTEX_FORMAT_P3F_N=1,
+        (INT_PTR) & (((SVF_P3F_N_C4B*)0)->normal),     // VERTEX_FORMAT_P3F_N_C4B=1,
+        (INT_PTR) & (((SVF_P3F_N_T2F*)0)->normal),     // VERTEX_FORMAT_P3F_N_T2F=3,          // everything else (20 bytes)
+        (INT_PTR) & (((SVF_P3F_N_C4B_T2F*)0)->normal), // VERTEX_FORMAT_P3F_N_C4B_T2F=4,   // usually plants (24 bytes)
+        (INT_PTR) & (((SVF_P3F_N_C4B_C4B*)0)->normal),
+        -1,
+        (INT_PTR) & (((SVF_P3F_N_C4B_C4B_T2F*)0)->normal),
 };
 
 static struct SBufInfoTable gBufInfoTable[] =
-	{
-		{0},
-		{//VERTEX_FORMAT_P3F
+    {
+        {0},
+        {//VERTEX_FORMAT_P3F
 #define OOFS(x) (INT_PTR) & (((SVF_P3F*)0)->x)
-		 0
+         0
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_C4B
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_C4B*)0)->x)
-			0,
-			OOFS(color.dcolor),
+            0,
+            OOFS(color.dcolor),
 #undef OOFS
-		},
-		{//VERTEX_FORMAT_P3F_T2F
+        },
+        {//VERTEX_FORMAT_P3F_T2F
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_T2F*)0)->x)
-		 OOFS(st[0])
+         OOFS(st[0])
 #undef OOFS
-		},
-		{//VERTEX_FORMAT_P3F_C4B_T2F
+        },
+        {//VERTEX_FORMAT_P3F_C4B_T2F
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_C4B_T2F*)0)->x)
-		 OOFS(st[0]),
-		 OOFS(color.dcolor)
+         OOFS(st[0]),
+         OOFS(color.dcolor)
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_TRP3F_C4B_T2F
 #define OOFS(x) (INT_PTR) & (((SVF_TRP3F_C4B_T2F*)0)->x)
-			OOFS(st[0]),
-			OOFS(color.dcolor),
+            OOFS(st[0]),
+            OOFS(color.dcolor),
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_C4B_C4B
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_C4B_C4B*)0)->x)
-			0,
-			OOFS(color.dcolor),
-			OOFS(seccolor.dcolor),
+            0,
+            OOFS(color.dcolor),
+            OOFS(seccolor.dcolor),
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_N
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_N*)0)->x)
-			0,
-			0,
-			0,
-			OOFS(normal.x),
+            0,
+            0,
+            0,
+            OOFS(normal.x),
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_N_C4B
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_N_C4B*)0)->x)
-			0,
-			OOFS(color.dcolor),
-			0,
-			OOFS(normal.x),
+            0,
+            OOFS(color.dcolor),
+            0,
+            OOFS(normal.x),
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_N_T2F
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_N_T2F*)0)->x)
-			OOFS(st[0]),
-			0,
-			0,
-			OOFS(normal.x),
+            OOFS(st[0]),
+            0,
+            0,
+            OOFS(normal.x),
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_N_C4B_T2F
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_N_C4B_T2F*)0)->x)
-			OOFS(st[0]),
-			OOFS(color.dcolor),
-			0,
-			OOFS(normal.x),
+            OOFS(st[0]),
+            OOFS(color.dcolor),
+            0,
+            OOFS(normal.x),
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_N_C4B_C4B
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_N_C4B_C4B*)0)->x)
-			0,
-			OOFS(color.dcolor),
-			OOFS(seccolor.dcolor),
-			OOFS(normal.x),
+            0,
+            OOFS(color.dcolor),
+            OOFS(seccolor.dcolor),
+            OOFS(normal.x),
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_C4B_C4B_T2F
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_C4B_C4B_T2F*)0)->x)
-			OOFS(st[0]),
-			OOFS(color.dcolor),
-			OOFS(seccolor.dcolor),
-			0,
+            OOFS(st[0]),
+            OOFS(color.dcolor),
+            OOFS(seccolor.dcolor),
+            0,
 #undef OOFS
-		},
-		{
+        },
+        {
 //VERTEX_FORMAT_P3F_N_C4B_C4B_T2F
 #define OOFS(x) (INT_PTR) & (((SVF_P3F_N_C4B_C4B_T2F*)0)->x)
-			OOFS(st[0]),
-			OOFS(color.dcolor),
-			OOFS(seccolor.dcolor),
-			OOFS(normal.x),
+            OOFS(st[0]),
+            OOFS(color.dcolor),
+            OOFS(seccolor.dcolor),
+            OOFS(normal.x),
 #undef OOFS
-		},
+        },
 };
 
 #ifdef WIN64
-#	pragma warning(pop)
+	#pragma warning(pop)
 #endif
 
 _inline void GetVertBufComps(SVertBufComps* Comps, int Format)
@@ -555,7 +585,7 @@ typedef SVF_P3F_C4B_T2F SAuxVertex;
 
 class DynVertexFormat
 {
-  public:
+public:
 	enum DataType
 	{
 		Float,
@@ -627,7 +657,7 @@ class DynVertexFormat
 		if (auto f = findField(name); f != nullptr)
 		{
 			DataType type = f->type;
-			auto	 mem  = (byte*)pData + f->offset;
+			auto     mem  = (byte*)pData + f->offset;
 
 			switch (type)
 			{
@@ -660,7 +690,7 @@ class DynVertexFormat
 		return false;
 	}
 
-  private:
+private:
 	template<typename T, typename F>
 	bool iterateField(F f, byte* data)
 	{
@@ -674,8 +704,8 @@ class DynVertexFormat
 	struct FieldInfo
 	{
 		unsigned long long id;
-		size_t			   offset;
-		DataType		   type;
+		size_t             offset;
+		DataType           type;
 	};
 
 	FieldInfo* findField(std::string_view name)
@@ -692,7 +722,7 @@ class DynVertexFormat
 	}
 
 	std::vector<FieldInfo> members;
-	size_t				   size = 0;
+	size_t                 size = 0;
 };
 
 #endif

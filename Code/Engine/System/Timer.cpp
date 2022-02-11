@@ -7,7 +7,7 @@
 #include <BlackBox/Core/Platform/Windows.hpp>
 
 #if BB_PLATFORM_WINDOWS
-	//#include <Mmsystem.h> // needs <windows.h>
+//#include <Mmsystem.h> // needs <windows.h>
 #endif
 
 //#define PROFILING 1
@@ -24,18 +24,18 @@ static const float fDEFAULT_PROFILE_SMOOTHING = 1.0f;
 CTimer::CTimer()
 {
 	// Default CVar values
-	m_fixed_time_step = 0;
-	m_max_time_step = 0.25f;
-	m_cvar_time_scale = 1.0f;
-	m_TimeSmoothing = DEFAULT_FRAME_SMOOTHING; // note: frame numbers (old version - commented out) are not used but is based on time
-	m_TimeDebug = 0;
+	m_fixed_time_step     = 0;
+	m_max_time_step       = 0.25f;
+	m_cvar_time_scale     = 1.0f;
+	m_TimeSmoothing       = DEFAULT_FRAME_SMOOTHING; // note: frame numbers (old version - commented out) are not used but is based on time
+	m_TimeDebug           = 0;
 
 	m_profile_smooth_time = fDEFAULT_PROFILE_SMOOTHING;
-	m_profile_weighting = 1;
+	m_profile_weighting   = 1;
 
 	// Persistant state
-	m_bEnabled = true;
-	m_nFrameCounter = 0;
+	m_bEnabled            = true;
+	m_nFrameCounter       = 0;
 
 	LARGE_INTEGER TTicksPerSec;
 	if (QueryPerformanceFrequency(&TTicksPerSec))
@@ -48,7 +48,7 @@ CTimer::CTimer()
 		assert(false && "QueryPerformanceFrequency failed");
 		m_lTicksPerSec = 1000000;
 	}
-	m_fSecsPerTick = 1.0 / m_lTicksPerSec;
+	m_fSecsPerTick      = 1.0 / m_lTicksPerSec;
 
 	m_fAverageFrameTime = 1.0f / 30.0f;
 	for (int i = 0; i < MAX_FRAME_AVERAGE; i++)
@@ -56,9 +56,9 @@ CTimer::CTimer()
 		m_arrFrameTimes[i] = m_fAverageFrameTime;
 	}
 
-	m_fAvgFrameTime = 0.0f;
-	m_fProfileBlend = 1.0f;
-	m_fSmoothTime = 0;
+	m_fAvgFrameTime  = 0.0f;
+	m_fProfileBlend  = 1.0f;
+	m_fSmoothTime    = 0;
 
 	m_totalTimeScale = 1.0f;
 	ClearTimeScales();
@@ -209,7 +209,7 @@ void CTimer::UpdateBlending()
 {
 	// Accumulate smoothing time up to specified max.
 	float fFrameTime = m_fRealFrameTime;
-	m_fSmoothTime = std::min(m_fSmoothTime + fFrameTime, m_profile_smooth_time);
+	m_fSmoothTime    = std::min(m_fSmoothTime + fFrameTime, m_profile_smooth_time);
 
 	if (m_fSmoothTime <= fFrameTime)
 	{
@@ -279,11 +279,11 @@ void CTimer::UpdateOnFrameStart()
 	if (!m_bEnabled)
 		return;
 
-	// On Windows before Vista, frequency can change (even though it should be impossible),
-	// See also: https://msdn.microsoft.com/en-us/library/windows/desktop/dn553408(v=vs.85).aspx
-	// Win2000, WinXP: Uses RDTSC, which may not be monotonic across all cores (a bug), costs in the order of 10~100 cycles (cheap).
-	// WinVista: Uses HPET or ACPI timer (a kernel call, and much more expensive than RDTSC, but it's not bugged).
-	// Win7+: RDTSC if the CPU feature bit for monotonic is set, HPET or ACPI otherwise (not bugged).
+		// On Windows before Vista, frequency can change (even though it should be impossible),
+		// See also: https://msdn.microsoft.com/en-us/library/windows/desktop/dn553408(v=vs.85).aspx
+		// Win2000, WinXP: Uses RDTSC, which may not be monotonic across all cores (a bug), costs in the order of 10~100 cycles (cheap).
+		// WinVista: Uses HPET or ACPI timer (a kernel call, and much more expensive than RDTSC, but it's not bugged).
+		// Win7+: RDTSC if the CPU feature bit for monotonic is set, HPET or ACPI otherwise (not bugged).
 #if defined(_WIN32_WINNT) && _WIN32_WINNT < 0x0600
 	if ((m_nFrameCounter & 127) == 0)
 	{
@@ -314,7 +314,7 @@ void CTimer::UpdateOnFrameStart()
 	{
 		// Enforce real framerate by sleeping.
 		const int64 elapsedTicks = CryGetTicks() - m_lBaseTime - m_lLastTime;
-		const int64 minTicks = SecondsToTicks(-m_fixed_time_step);
+		const int64 minTicks     = SecondsToTicks(-m_fixed_time_step);
 		if (elapsedTicks < minTicks)
 		{
 			const int64 ms = (minTicks - elapsedTicks) * 1000 / m_lTicksPerSec;
@@ -355,7 +355,7 @@ void CTimer::UpdateOnFrameStart()
 
 	// Adjust the base time so that time actually seems to have moved forward m_fFrameTime
 	const int64 frameTicks = SecondsToTicks(m_fFrameTime);
-	const int64 realTicks = SecondsToTicks(m_fRealFrameTime);
+	const int64 realTicks  = SecondsToTicks(m_fRealFrameTime);
 	m_lBaseTime += realTicks - frameTicks;
 	if (m_lBaseTime > now)
 	{
@@ -392,10 +392,10 @@ void CTimer::UpdateOnFrameStart()
 //------------------------------------------------------------------------
 float CTimer::GetAverageFrameTime()
 {
-	f32 LastAverageFrameTime = m_fAverageFrameTime;
-	f32 FrameTime = m_fFrameTime;
+	f32    LastAverageFrameTime = m_fAverageFrameTime;
+	f32    FrameTime            = m_fFrameTime;
 
-	uint32 numFT = MAX_FRAME_AVERAGE;
+	uint32 numFT                = MAX_FRAME_AVERAGE;
 	for (int32 i = (numFT - 2); i > -1; i--)
 		m_arrFrameTimes[i + 1] = m_arrFrameTimes[i];
 
@@ -404,7 +404,7 @@ float CTimer::GetAverageFrameTime()
 	m_arrFrameTimes[0] = FrameTime;
 
 	//get smoothed frame
-	uint32 avrg_ftime = 1;
+	uint32 avrg_ftime  = 1;
 	if (LastAverageFrameTime)
 	{
 		avrg_ftime = uint32(0.25f / LastAverageFrameTime + 0.5f); //average the frame-times for a certain time-period (sec)
@@ -428,18 +428,18 @@ float CTimer::GetAverageFrameTime()
 /////////////////////////////////////////////////////
 void CTimer::ResetTimer()
 {
-	m_lBaseTime = CryGetTicks();
-	m_lLastTime = 0;
-	m_lOffsetTime = 0;
+	m_lBaseTime       = CryGetTicks();
+	m_lLastTime       = 0;
+	m_lOffsetTime     = 0;
 
-	m_fFrameTime = 0.0f;
-	m_fRealFrameTime = 0.0f;
+	m_fFrameTime      = 0.0f;
+	m_fRealFrameTime  = 0.0f;
 	m_replicationTime = 0;
-	
+
 	RefreshGameTime(0);
 	RefreshUITime(0);
 
-	m_bGameTimerPaused = false;
+	m_bGameTimerPaused     = false;
 	m_lGameTimerPausedTime = 0;
 }
 
@@ -457,7 +457,7 @@ bool CTimer::IsTimerEnabled() const
 /////////////////////////////////////////////////////
 CTimeValue CTimer::GetAsyncTime() const
 {
-	int64 llNow = CryGetTicks();
+	int64  llNow    = CryGetTicks();
 	double fConvert = CTimeValue::TIMEVALUE_PRECISION * m_fSecsPerTick;
 	return CTimeValue(int64(llNow * fConvert));
 }
@@ -529,11 +529,11 @@ void CTimer::SecondsToDateUTC(time_t inTime, struct tm& outDateUTC)
 time_t gmt_to_local_win32(void)
 {
 	TIME_ZONE_INFORMATION tzinfo;
-	DWORD dwStandardDaylight;
-	long bias;
+	DWORD                 dwStandardDaylight;
+	long                  bias;
 
 	dwStandardDaylight = GetTimeZoneInformation(&tzinfo);
-	bias = tzinfo.Bias;
+	bias               = tzinfo.Bias;
 
 	if (dwStandardDaylight == TIME_ZONE_ID_STANDARD)
 		bias += tzinfo.StandardBias;
@@ -567,7 +567,7 @@ time_t CTimer::DateToSecondsUTC(struct tm& inDate)
 void CTimer::SetOffsetToMatchGameTime(int64 ticks)
 {
 #if !defined(EXCLUDE_NORMAL_LOG)
-	const int64 previousOffset = m_lOffsetTime;
+	const int64 previousOffset   = m_lOffsetTime;
 	const float previousGameTime = GetCurrTime(ETIMER_GAME);
 #endif
 

@@ -100,21 +100,21 @@ void CActionMapManager::Reset()
 
 void CActionMapManager::Update(unsigned int nTimeMSec)
 {
-	auto binding = m_ActionBindingMap.find(m_CurrentActionMap->second);
+	auto   binding = m_ActionBindingMap.find(m_CurrentActionMap->second);
 
-	uint32 i = 0;
-	for (auto &event : m_Queue)
+	uint32 i       = 0;
+	for (auto& event : m_Queue)
 	{
 		for (auto& bind : binding->second)
 		{
 			if (!m_ActionMapSink)
 				return;
-			if (bind.bind.nKey ==  event && ((bind.bind.nModifier == m_Modifires) || (bind.bind.nModifier == eMM_None)))
+			if (bind.bind.nKey == event && ((bind.bind.nModifier == m_Modifires) || (bind.bind.nModifier == eMM_None)))
 			{
-				#if 0
+#if 0
 				if ((m_Modifires != eMM_None) && (bind.bind.nModifier == eMM_None))
 					;
-				#endif
+#endif
 				//continue;
 				for (std::size_t i = 0; i < m_ActionList.size(); i++)
 				{
@@ -125,7 +125,7 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 					}
 				}
 			}
-			else if (bind.bind.nKey ==  event)
+			else if (bind.bind.nKey == event)
 			{
 				gEnv->pLog->Log("fffffffffffffff");
 			}
@@ -135,14 +135,14 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 	m_Queue.erase(eKI_MouseX);
 	m_Queue.erase(eKI_MouseY);
 	m_Queue.erase(eKI_MouseZ);
-	#if 0
+#if 0
 	for (auto it : m_EventRelease)
 	{
 		m_EventBuffer.erase(it);	
 	}
 
 	m_EventRelease.clear();
-	#endif
+#endif
 }
 
 void CActionMapManager::Release()
@@ -178,20 +178,20 @@ bool CActionMapManager::OnInputEvent(const SInputEvent& event)
 	case EInputState::eIS_Down:
 	{
 		EvnetBufferEntry ebe;
-		ebe.ae = XActivationEvent::etPressing;
-		ebe.aam = XActionActivationMode::aamOnPress;
+		ebe.ae        = XActivationEvent::etPressing;
+		ebe.aam       = XActionActivationMode::aamOnPress;
 		ebe.modifires = event.modifiers;
-		ebe.value	  = event.value;
-		ebe.empty	  = false;
+		ebe.value     = event.value;
+		ebe.empty     = false;
 		if (auto it = m_Keys.find(event.keyId); it != m_Keys.end())
 		{
 			m_Keys[event.keyId] = ebe;
 		}
 		else
 		{
-			auto &e = m_Keys[event.keyId];
-			e.ae = XActivationEvent::etHolding;
-			e.aam = XActionActivationMode::aamOnHold;
+			auto& e = m_Keys[event.keyId];
+			e.ae    = XActivationEvent::etHolding;
+			e.aam   = XActionActivationMode::aamOnHold;
 			e.value = event.value;
 		}
 		m_Queue.insert(event.keyId);

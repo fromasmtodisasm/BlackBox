@@ -1,12 +1,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-// 
+//
 //	File: ScriptObjectStream.h
 //
-//  Description: 
+//  Description:
 //		Interface for the CScriptObjectSound class.
 //		This class implements script-functions for exposing the bit stream functionalities
 //
@@ -16,7 +16,7 @@
 //		IMPLEMENTATIONS NOTES:
 //		These function will never be called from C-Code. They're script-exclusive.
 //
-//	History: 
+//	History:
 //	- File Created by Alberto Demichelis, Martin Mittring
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
@@ -31,24 +31,24 @@ class CStream;
 
 //////////////////////////////////////////////////////////////////////
 class CScriptObjectSound :
-public _ScriptableEx<CScriptObjectSound>
+    public _ScriptableEx<CScriptObjectSound>
 {
 public:
 	CScriptObjectSound();
 	virtual ~CScriptObjectSound();
+
 public:
-	int Init(IScriptSystem *pScriptSystem);
-	int LoadSound(IFunctionHandler *pH);
-	int	Load3DSound(IFunctionHandler* pH);
-	int SetSoundVolume(IFunctionHandler *pH);
-	int SetSoundLoop(IFunctionHandler *pH);
-	int PlaySound(IFunctionHandler *pH);
-	int StopSound(IFunctionHandler *pH);
-	int IsPlaying(IFunctionHandler *pH);
-	int LoadStreamSound(IFunctionHandler *pH);
-	int RemoveFromScaleGroup(IFunctionHandler *pH);
-	static void InitializeTemplate(IScriptSystem *pSS);
+	int         Init(IScriptSystem* pScriptSystem);
+	int         LoadSound(IFunctionHandler* pH);
+	int         Load3DSound(IFunctionHandler* pH);
+	int         SetSoundVolume(IFunctionHandler* pH);
+	int         SetSoundLoop(IFunctionHandler* pH);
+	int         PlaySound(IFunctionHandler* pH);
+	int         StopSound(IFunctionHandler* pH);
+	int         IsPlaying(IFunctionHandler* pH);
+	int         LoadStreamSound(IFunctionHandler* pH);
+	int         RemoveFromScaleGroup(IFunctionHandler* pH);
+	static void InitializeTemplate(IScriptSystem* pSS);
+
 public:
 };
-
-

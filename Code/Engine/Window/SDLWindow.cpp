@@ -24,7 +24,7 @@ extern "C"
 
 static SDL_Window* g_CurrentWindow;
 CSDLWindow::CSDLWindow(NativeWindow* hwnd, std::string, int width, int height)
-	: m_hWnd(hwnd)
+    : m_hWnd(hwnd)
 {
 }
 
@@ -42,9 +42,9 @@ void CSDLWindow::close()
 bool CSDLWindow::init(SInitParams* pInitParams)
 {
 	//Initialize SDL
-	auto p		  = pInitParams;
+	auto p        = pInitParams;
 	bInFullScreen = p->fullscreen;
-	m_Title		  = p->title;
+	m_Title       = p->title;
 	// tmp
 	//
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -69,7 +69,7 @@ void CSDLWindow::update()
 {
 	SDL_Event eventList[WINDOW_MAX_PEEP];
 
-	int nEvents;
+	int       nEvents;
 	//EInputState newState;
 
 	// Assuming that SDL_PumpEvents is called from CLinuxInput
@@ -133,20 +133,20 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 			break;
 		case SDL_WINDOWEVENT_MOVED:
 			SDL_Log("Window %d moved to %d,%d",
-					event.window.windowID, event.window.data1,
-					event.window.data2);
+			        event.window.windowID, event.window.data1,
+			        event.window.data2);
 			system->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_MOVE, event.window.data1, event.window.data2);
 			break;
 		case SDL_WINDOWEVENT_RESIZED:
 			SDL_Log("Window %d resized to %dx%d",
-					event.window.windowID, event.window.data1,
-					event.window.data2);
+			        event.window.windowID, event.window.data1,
+			        event.window.data2);
 			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, event.window.data1, event.window.data2);
 			break;
 		case SDL_WINDOWEVENT_SIZE_CHANGED:
 			SDL_Log("Window %d size changed to %dx%d",
-					event.window.windowID, event.window.data1,
-					event.window.data2);
+			        event.window.windowID, event.window.data1,
+			        event.window.data2);
 			break;
 		case SDL_WINDOWEVENT_MINIMIZED:
 			SDL_Log("Window %d minimized", event.window.windowID);
@@ -161,19 +161,19 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 			break;
 		case SDL_WINDOWEVENT_ENTER:
 			SDL_Log("Mouse entered window %d",
-					event.window.windowID);
+			        event.window.windowID);
 			break;
 		case SDL_WINDOWEVENT_LEAVE:
 			SDL_Log("Mouse left window %d", event.window.windowID);
 			break;
 		case SDL_WINDOWEVENT_FOCUS_GAINED:
 			SDL_Log("Window %d gained keyboard focus",
-					event.window.windowID);
+			        event.window.windowID);
 			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
 			break;
 		case SDL_WINDOWEVENT_FOCUS_LOST:
 			SDL_Log("Window %d lost keyboard focus",
-					event.window.windowID);
+			        event.window.windowID);
 			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
 			break;
 		case SDL_WINDOWEVENT_CLOSE:
@@ -189,7 +189,7 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 #endif
 		default:
 			SDL_Log("Window %d got unknown event %d",
-					event.window.windowID, event.window.event);
+			        event.window.windowID, event.window.event);
 			break;
 		}
 	}
@@ -241,14 +241,15 @@ bool CSDLWindow::InitForGl()
 		int maj = 4, min = 6;
 		GlVersion() = default;
 		GlVersion(int maj, int min)
-			: maj(maj), min(min)
+		    : maj(maj)
+		    , min(min)
 		{
 		}
 	};
 
 	GlVersion glVersion;
-	auto gl_v_maj = gEnv->pConsole->GetCVar("r_gl_v_maj");
-	auto gl_v_min = gEnv->pConsole->GetCVar("r_gl_v_min");
+	auto      gl_v_maj = gEnv->pConsole->GetCVar("r_gl_v_maj");
+	auto      gl_v_min = gEnv->pConsole->GetCVar("r_gl_v_min");
 	if (gl_v_maj && gl_v_min)
 	{
 		glVersion = GlVersion(gl_v_maj->GetIVal(), gl_v_min->GetIVal());
@@ -296,7 +297,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 	}
 	else
 	{
-        m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
+		m_MainWindow = SDL_CreateWindow(m_Title.c_str(), posx, posy, width, height, flags);
 	}
 	if (m_MainWindow == NULL)
 	{
@@ -321,9 +322,9 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 void CSDLWindow::SelectDisplay(int& x, int& y, int w, int h)
 {
 	// enumerate displays
-	int displays = SDL_GetNumVideoDisplays();
-	auto display = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
-	display		 = std::max(displays - 1, 0);
+	int  displays = SDL_GetNumVideoDisplays();
+	auto display  = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
+	display       = std::max(displays - 1, 0);
 
 	// get display bounds for all displays
 	std::vector<SDL_Rect> displayBounds;
@@ -365,41 +366,41 @@ GLContext CSDLWindow::getContext()
 
 void CSDLWindow::SetIcon(char* path)
 {
-	SDL_Surface* surface;	  // Declare an SDL_Surface to be filled in with pixel data from an image file
-	Uint16 pixels[16 * 16] = {// ...or with raw pixel data:
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0aab, 0x0789, 0x0bcc, 0x0eee, 0x09aa, 0x099a, 0x0ddd,
-							  0x0fff, 0x0eee, 0x0899, 0x0fff, 0x0fff, 0x1fff, 0x0dde, 0x0dee,
-							  0x0fff, 0xabbc, 0xf779, 0x8cdd, 0x3fff, 0x9bbc, 0xaaab, 0x6fff,
-							  0x0fff, 0x3fff, 0xbaab, 0x0fff, 0x0fff, 0x6689, 0x6fff, 0x0dee,
-							  0xe678, 0xf134, 0x8abb, 0xf235, 0xf678, 0xf013, 0xf568, 0xf001,
-							  0xd889, 0x7abc, 0xf001, 0x0fff, 0x0fff, 0x0bcc, 0x9124, 0x5fff,
-							  0xf124, 0xf356, 0x3eee, 0x0fff, 0x7bbc, 0xf124, 0x0789, 0x2fff,
-							  0xf002, 0xd789, 0xf024, 0x0fff, 0x0fff, 0x0002, 0x0134, 0xd79a,
-							  0x1fff, 0xf023, 0xf000, 0xf124, 0xc99a, 0xf024, 0x0567, 0x0fff,
-							  0xf002, 0xe678, 0xf013, 0x0fff, 0x0ddd, 0x0fff, 0x0fff, 0xb689,
-							  0x8abb, 0x0fff, 0x0fff, 0xf001, 0xf235, 0xf013, 0x0fff, 0xd789,
-							  0xf002, 0x9899, 0xf001, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0xe789,
-							  0xf023, 0xf000, 0xf001, 0xe456, 0x8bcc, 0xf013, 0xf002, 0xf012,
-							  0x1767, 0x5aaa, 0xf013, 0xf001, 0xf000, 0x0fff, 0x7fff, 0xf124,
-							  0x0fff, 0x089a, 0x0578, 0x0fff, 0x089a, 0x0013, 0x0245, 0x0eff,
-							  0x0223, 0x0dde, 0x0135, 0x0789, 0x0ddd, 0xbbbc, 0xf346, 0x0467,
-							  0x0fff, 0x4eee, 0x3ddd, 0x0edd, 0x0dee, 0x0fff, 0x0fff, 0x0dee,
-							  0x0def, 0x08ab, 0x0fff, 0x7fff, 0xfabc, 0xf356, 0x0457, 0x0467,
-							  0x0fff, 0x0bcd, 0x4bde, 0x9bcc, 0x8dee, 0x8eff, 0x8fff, 0x9fff,
-							  0xadee, 0xeccd, 0xf689, 0xc357, 0x2356, 0x0356, 0x0467, 0x0467,
-							  0x0fff, 0x0ccd, 0x0bdd, 0x0cdd, 0x0aaa, 0x2234, 0x4135, 0x4346,
-							  0x5356, 0x2246, 0x0346, 0x0356, 0x0467, 0x0356, 0x0467, 0x0467,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
-							  0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff};
-	surface				   = SDL_CreateRGBSurfaceFrom(pixels, 16, 16, 16, 16 * 2, 0x0f00, 0x00f0, 0x000f, 0xf000);
+	SDL_Surface* surface;           // Declare an SDL_Surface to be filled in with pixel data from an image file
+	Uint16       pixels[16 * 16] = {// ...or with raw pixel data:
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0aab, 0x0789, 0x0bcc, 0x0eee, 0x09aa, 0x099a, 0x0ddd,
+                              0x0fff, 0x0eee, 0x0899, 0x0fff, 0x0fff, 0x1fff, 0x0dde, 0x0dee,
+                              0x0fff, 0xabbc, 0xf779, 0x8cdd, 0x3fff, 0x9bbc, 0xaaab, 0x6fff,
+                              0x0fff, 0x3fff, 0xbaab, 0x0fff, 0x0fff, 0x6689, 0x6fff, 0x0dee,
+                              0xe678, 0xf134, 0x8abb, 0xf235, 0xf678, 0xf013, 0xf568, 0xf001,
+                              0xd889, 0x7abc, 0xf001, 0x0fff, 0x0fff, 0x0bcc, 0x9124, 0x5fff,
+                              0xf124, 0xf356, 0x3eee, 0x0fff, 0x7bbc, 0xf124, 0x0789, 0x2fff,
+                              0xf002, 0xd789, 0xf024, 0x0fff, 0x0fff, 0x0002, 0x0134, 0xd79a,
+                              0x1fff, 0xf023, 0xf000, 0xf124, 0xc99a, 0xf024, 0x0567, 0x0fff,
+                              0xf002, 0xe678, 0xf013, 0x0fff, 0x0ddd, 0x0fff, 0x0fff, 0xb689,
+                              0x8abb, 0x0fff, 0x0fff, 0xf001, 0xf235, 0xf013, 0x0fff, 0xd789,
+                              0xf002, 0x9899, 0xf001, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0xe789,
+                              0xf023, 0xf000, 0xf001, 0xe456, 0x8bcc, 0xf013, 0xf002, 0xf012,
+                              0x1767, 0x5aaa, 0xf013, 0xf001, 0xf000, 0x0fff, 0x7fff, 0xf124,
+                              0x0fff, 0x089a, 0x0578, 0x0fff, 0x089a, 0x0013, 0x0245, 0x0eff,
+                              0x0223, 0x0dde, 0x0135, 0x0789, 0x0ddd, 0xbbbc, 0xf346, 0x0467,
+                              0x0fff, 0x4eee, 0x3ddd, 0x0edd, 0x0dee, 0x0fff, 0x0fff, 0x0dee,
+                              0x0def, 0x08ab, 0x0fff, 0x7fff, 0xfabc, 0xf356, 0x0457, 0x0467,
+                              0x0fff, 0x0bcd, 0x4bde, 0x9bcc, 0x8dee, 0x8eff, 0x8fff, 0x9fff,
+                              0xadee, 0xeccd, 0xf689, 0xc357, 0x2356, 0x0356, 0x0467, 0x0467,
+                              0x0fff, 0x0ccd, 0x0bdd, 0x0cdd, 0x0aaa, 0x2234, 0x4135, 0x4346,
+                              0x5356, 0x2246, 0x0346, 0x0356, 0x0467, 0x0356, 0x0467, 0x0467,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff,
+                              0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0fff};
+	surface                      = SDL_CreateRGBSurfaceFrom(pixels, 16, 16, 16, 16 * 2, 0x0f00, 0x00f0, 0x000f, 0xf000);
 
 	// The icon is attached to the window pointer
 	SDL_SetWindowIcon(m_MainWindow, surface);

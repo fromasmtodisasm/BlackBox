@@ -1,14 +1,14 @@
 //#if !defined USE_DEBUG_NEW && !(defined(_DEBUG) && !defined(LINUX))
 // Undefine malloc for memory manager itself..
-#	undef malloc
-#	undef realloc
-#	undef free
+#undef malloc
+#undef realloc
+#undef free
 //#endif
 
 CRYMEMORYMANAGER_API void* CrySystemCrtMalloc(size_t size)
 {
 	void* ret = NULL;
-	ret = malloc(size);
+	ret       = malloc(size);
 	return ret;
 }
 
@@ -34,7 +34,7 @@ CRYMEMORYMANAGER_API void* CryMalloc(size_t size)
 		CryLogAlways("Allocation of size %d requested!", size);
 	}
 
-	uint8* p = nullptr;
+	uint8* p        = nullptr;
 	size_t sizePlus = size;
 
 	if (p == nullptr)

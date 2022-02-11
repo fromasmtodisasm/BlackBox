@@ -6,25 +6,26 @@ class CRenderThread : public IThread
 {
 public:
 	std::condition_variable m_started;
-	virtual void ThreadEntry();
+	virtual void            ThreadEntry();
 };
 
 struct SRT
 {
 	CRenderThread* rt;
-	std::thread	  std;
+	std::thread    std;
 };
 
 struct SRenderThread
 {
 	std::deque<std::function<void()>> Commands;
 	//CRenderThread*					  m_pThread;
-	SRT						  m_pThread;
+	SRT                               m_pThread;
 #ifdef MULTITHREADED_RENDER
-	std::mutex						  m_QueueMutex;
+	std::mutex m_QueueMutex;
 #endif
 
-	SRenderThread() {
+	SRenderThread()
+	{
 		//m_pThread = new CRenderThread();
 	}
 
@@ -39,19 +40,17 @@ struct SRenderThread
 	template<typename RenderThreadCallback>
 	void ExecuteRenderThreadCommand(RenderThreadCallback&& callback)
 	{
-		//#define MULTITHREADED_RENDER
-		#ifdef MULTITHREADED_RENDER
+//#define MULTITHREADED_RENDER
+#ifdef MULTITHREADED_RENDER
 		std::lock_guard<std::mutex> lock(m_QueueMutex);
 		Commands.push_back(callback);
-		#else
+#else
 		callback();
-		#endif
+#endif
 	}
 
 	std::atomic<bool> m_bQuit = false;
-	threadID		  m_nRenderThread;
+	threadID          m_nRenderThread;
 
-
-	std::mutex m_StartedMutex;
-
+	std::mutex        m_StartedMutex;
 };

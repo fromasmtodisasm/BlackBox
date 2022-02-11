@@ -13,22 +13,21 @@
 _DECLARE_SCRIPTABLEEX(CScriptObjectSystem)
 
 // modes of ScanDirectory function
-#define SCANDIR_ALL 0
-#define SCANDIR_FILES 1
+#define SCANDIR_ALL     0
+#define SCANDIR_FILES   1
 #define SCANDIR_SUBDIRS 2
 
 CScriptObjectSystem::CScriptObjectSystem(ISystem* pSystem, IScriptSystem* pSS)
-  :
-  m_pSystem(pSystem)
+    : m_pSystem(pSystem)
 {
-  m_pLog = m_pSystem->GetILog();
-  m_pRenderer = m_pSystem->GetIRenderer();
-  m_pConsole = m_pSystem->GetIConsole();
-  InitializeTemplate(pSS);
+	m_pLog      = m_pSystem->GetILog();
+	m_pRenderer = m_pSystem->GetIRenderer();
+	m_pConsole  = m_pSystem->GetIConsole();
+	InitializeTemplate(pSS);
 #undef SCRIPT_REG_CLASSNAME
 #define SCRIPT_REG_CLASSNAME CScriptObjectSystem
-  SCRIPT_REG_TEMPLFUNC(Print, "string, float, float, float, float, float g, float b, float a");
-  Init(pSS, pSystem);
+	SCRIPT_REG_TEMPLFUNC(Print, "string, float, float, float, float, float g, float b, float a");
+	Init(pSS, pSystem);
 }
 
 CScriptObjectSystem::~CScriptObjectSystem()
@@ -37,54 +36,52 @@ CScriptObjectSystem::~CScriptObjectSystem()
 
 void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 {
-  _ScriptableEx<CScriptObjectSystem>::InitializeTemplate(pSS);
+	_ScriptableEx<CScriptObjectSystem>::InitializeTemplate(pSS);
 
 #undef SCRIPT_REG_CLASSNAME
 #define SCRIPT_REG_CLASSNAME CScriptObjectSystem
 
-  // NOTE:
-  // regex for change function signature to script registration macro
-  // s/int \(\w\+\).*/SCRIPT_REG_FUNC(\1);/g
-  SCRIPT_REG_FUNC(CreateDownload);
-  SCRIPT_REG_FUNC(EnumDisplayFormats);
-  SCRIPT_REG_FUNC(ScreenShot);
-  SCRIPT_REG_FUNC(ClearConsole);
-  SCRIPT_REG_FUNC(ShowConsole);
-  SCRIPT_REG_FUNC(Log);
+	// NOTE:
+	// regex for change function signature to script registration macro
+	// s/int \(\w\+\).*/SCRIPT_REG_FUNC(\1);/g
+	SCRIPT_REG_FUNC(CreateDownload);
+	SCRIPT_REG_FUNC(EnumDisplayFormats);
+	SCRIPT_REG_FUNC(ScreenShot);
+	SCRIPT_REG_FUNC(ClearConsole);
+	SCRIPT_REG_FUNC(ShowConsole);
+	SCRIPT_REG_FUNC(Log);
 
-  SCRIPT_REG_FUNC(DrawImage);
-  SCRIPT_REG_FUNC(LoadTexture);
-  SCRIPT_REG_FUNC(LoadImage);
-  SCRIPT_REG_FUNC(ScanDirectory);
+	SCRIPT_REG_FUNC(DrawImage);
+	SCRIPT_REG_FUNC(LoadTexture);
+	SCRIPT_REG_FUNC(LoadImage);
+	SCRIPT_REG_FUNC(ScanDirectory);
 
-  SCRIPT_REG_FUNC(LogToConsole);
-  SCRIPT_REG_FUNC(ExecuteCommand);
-  SCRIPT_REG_FUNC(Warning);
-  SCRIPT_REG_FUNC(Error);
-  SCRIPT_REG_FUNC(IsEditor);
-  SCRIPT_REG_FUNC(LogAlways);
+	SCRIPT_REG_FUNC(LogToConsole);
+	SCRIPT_REG_FUNC(ExecuteCommand);
+	SCRIPT_REG_FUNC(Warning);
+	SCRIPT_REG_FUNC(Error);
+	SCRIPT_REG_FUNC(IsEditor);
+	SCRIPT_REG_FUNC(LogAlways);
 
-  
-  SCRIPT_REG_FUNC(GetCurrAsyncTime);
-  SCRIPT_REG_FUNC(GetFrameTime);
+	SCRIPT_REG_FUNC(GetCurrAsyncTime);
+	SCRIPT_REG_FUNC(GetFrameTime);
 
-  SCRIPT_REG_FUNC(IsDevModeEnable);
+	SCRIPT_REG_FUNC(IsDevModeEnable);
 
-  	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
+	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
 	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
 	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_SUBDIRS", SCANDIR_SUBDIRS);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 {
-  m_pSystem = pSystem;
-  InitGlobal(pScriptSystem, "System", this);
-  if (gEnv->pRenderer)
-  {
-	  m_pFont = gEnv->pRenderer->GetIFont();
-	  m_pFont->Init("VeraMono.ttf", 14,14);
-  }
-
+	m_pSystem = pSystem;
+	InitGlobal(pScriptSystem, "System", this);
+	if (gEnv->pRenderer)
+	{
+		m_pFont = gEnv->pRenderer->GetIFont();
+		m_pFont->Init("VeraMono.ttf", 14, 14);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -94,103 +91,103 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 int CScriptObjectSystem::CreateDownload(IFunctionHandler* pH)
 {
 	auto download = ((CSystem*)(gEnv->pSystem))->m_pDownloadManager->CreateDownload();
-	
+
 	return pH->EndFunction(download->GetScriptObject());
 }
 
 int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 {
-  SCRIPT_CHECK_PARAMETERS(0);
+	SCRIPT_CHECK_PARAMETERS(0);
 	if (gEnv->IsDedicated())
-  {
-    return pH->EndFunction();
-  }
-  CryLog("Enumerating display settings...");
-  SmartScriptObject pDispArray(m_pSS);
-  SDispFormat* Formats = NULL;
-  unsigned int i;
-  unsigned int numFormats = m_pRenderer->EnumDisplayFormats(NULL);
-  if (numFormats)
-  {
-    Formats = new SDispFormat[numFormats];
-    m_pRenderer->EnumDisplayFormats(Formats);
-  }
+	{
+		return pH->EndFunction();
+	}
+	CryLog("Enumerating display settings...");
+	SmartScriptObject pDispArray(m_pSS);
+	SDispFormat*      Formats = NULL;
+	unsigned int      i;
+	unsigned int      numFormats = m_pRenderer->EnumDisplayFormats(NULL);
+	if (numFormats)
+	{
+		Formats = new SDispFormat[numFormats];
+		m_pRenderer->EnumDisplayFormats(Formats);
+	}
 
-  for (i = 0; i < numFormats; i++)
-  {
-    SDispFormat* pForm = &Formats[i];
-    SmartScriptObject pDisp(m_pSS);
-    pDisp->SetValue("width", pForm->m_Width);
-    pDisp->SetValue("height", pForm->m_Height);
-    pDisp->SetValue("bpp", pForm->m_BPP);
-    pDispArray->SetAt(i + 1, pDisp);
-  }
+	for (i = 0; i < numFormats; i++)
+	{
+		SDispFormat*      pForm = &Formats[i];
+		SmartScriptObject pDisp(m_pSS);
+		pDisp->SetValue("width", pForm->m_Width);
+		pDisp->SetValue("height", pForm->m_Height);
+		pDisp->SetValue("bpp", pForm->m_BPP);
+		pDispArray->SetAt(i + 1, pDisp);
+	}
 
-  if (numFormats == 0)        // renderer is not doing his job
-  {
-    {
-      SmartScriptObject pDisp(m_pSS);
-      pDisp->SetValue("width", 640);
-      pDisp->SetValue("height", 480);
-      pDisp->SetValue("bpp", 32);
-      pDispArray->SetAt(1, pDisp);
-    }
-    {
-      SmartScriptObject pDisp(m_pSS);
-      pDisp->SetValue("width", 800);
-      pDisp->SetValue("height", 600);
-      pDisp->SetValue("bpp", 32);
-      pDispArray->SetAt(2, pDisp);
-    }
-    {
-      SmartScriptObject pDisp(m_pSS);
-      pDisp->SetValue("width", 1024);
-      pDisp->SetValue("height", 768);
-      pDisp->SetValue("bpp", 32);
-      pDispArray->SetAt(3, pDisp);
-    }
-  }
+	if (numFormats == 0) // renderer is not doing his job
+	{
+		{
+			SmartScriptObject pDisp(m_pSS);
+			pDisp->SetValue("width", 640);
+			pDisp->SetValue("height", 480);
+			pDisp->SetValue("bpp", 32);
+			pDispArray->SetAt(1, pDisp);
+		}
+		{
+			SmartScriptObject pDisp(m_pSS);
+			pDisp->SetValue("width", 800);
+			pDisp->SetValue("height", 600);
+			pDisp->SetValue("bpp", 32);
+			pDispArray->SetAt(2, pDisp);
+		}
+		{
+			SmartScriptObject pDisp(m_pSS);
+			pDisp->SetValue("width", 1024);
+			pDisp->SetValue("height", 768);
+			pDisp->SetValue("bpp", 32);
+			pDispArray->SetAt(3, pDisp);
+		}
+	}
 
-  if (Formats)
-    delete[] Formats;
-  return pH->EndFunction(pDispArray);
+	if (Formats)
+		delete[] Formats;
+	return pH->EndFunction(pDispArray);
 }
 
 int CScriptObjectSystem::ScreenShot(IFunctionHandler* pH)
 {
-  SCRIPT_CHECK_PARAMETERS(1);
-  const char* filename;
+	SCRIPT_CHECK_PARAMETERS(1);
+	const char* filename;
 
-  pH->GetParam(1, filename);
-  m_pRenderer->ScreenShot(filename);
-  return pH->EndFunction();
+	pH->GetParam(1, filename);
+	m_pRenderer->ScreenShot(filename);
+	return pH->EndFunction();
 }
 
 int CScriptObjectSystem::ClearConsole(IFunctionHandler* pH)
 {
-  m_pConsole->Clear();
-  return pH->EndFunction();
+	m_pConsole->Clear();
+	return pH->EndFunction();
 }
 
 int CScriptObjectSystem::ShowConsole(IFunctionHandler* pH)
 {
-  SCRIPT_CHECK_PARAMETERS(1);
-  int show;
+	SCRIPT_CHECK_PARAMETERS(1);
+	int show;
 
-  pH->GetParam(1, show);
-  m_pConsole->ShowConsole(show);
-  return pH->EndFunction();
+	pH->GetParam(1, show);
+	m_pConsole->ShowConsole(show);
+	return pH->EndFunction();
 }
 
 int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 {
-  SCRIPT_CHECK_PARAMETERS(6);
-	int id;
+	SCRIPT_CHECK_PARAMETERS(6);
+	int   id;
 	float xpos;
 	float ypos;
 	float w;
 	float h;
-	int blending_mode;
+	int   blending_mode;
 	pH->GetParams(id, xpos, ypos, w, h, blending_mode);
 	gEnv->pRenderer->DrawImage(xpos, ypos, w, h, id, 0, 0, 1, 1, 0, 1, 0, 1);
 	return pH->EndFunction();
@@ -206,7 +203,7 @@ int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
 #if 0
             CryLog("User ask load %s texture", name);
 #endif
-			int		  t			= gEnv->pRenderer->LoadTexture(name, 0, 0);
+			int       t         = gEnv->pRenderer->LoadTexture(name, 0, 0);
 			USER_DATA pUserData = m_pScriptSystem->CreateUserData((int)t, USER_DATA_TEXTURE);
 			return pH->EndFunction(pUserData);
 		}
@@ -282,9 +279,9 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
 		return pH->EndFunction();
 
 	SmartScriptObject pObj(m_pSS);
-	int				  k = 1;
+	int               k = 1;
 
-	const char* pszFolderName;
+	const char*       pszFolderName;
 	if (!pH->GetParam(1, pszFolderName))
 		return pH->EndFunction(*pObj);
 
@@ -295,7 +292,7 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
 
 	{
 		_finddata_t c_file;
-		intptr_t	hFile;
+		intptr_t    hFile;
 
 		if ((hFile = gEnv->pCryPak->FindFirst((string(pszFolderName) + "\\*.*").c_str(), &c_file)) == -1L)
 		{
@@ -341,9 +338,9 @@ int CScriptObjectSystem::ExecuteCommand(IFunctionHandler* pH)
 int CScriptObjectSystem::LogToConsole(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(1);
-	#if 0
+#if 0
 	LogString(pH, true);
-	#endif
+#endif
 
 	return pH->EndFunction();
 }
@@ -418,14 +415,14 @@ int CScriptObjectSystem::GetLocalOSTime(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(0);
 	//! Get time.
-#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE || CRY_PLATFORM_ORBIS
+	#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE || CRY_PLATFORM_ORBIS
 	time_t	   long_time = time(NULL);
 	struct tm* newtime	 = localtime(&long_time); /* Convert to local time. */
-#else
+	#else
 	__time64_t long_time;
 	_time64(&long_time);						   /* Get time as long integer. */
 	struct tm* newtime = _localtime64(&long_time); /* Convert to local time. */
-#endif
+	#endif
 
 	if (newtime)
 	{

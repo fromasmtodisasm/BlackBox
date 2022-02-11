@@ -8,10 +8,12 @@
 
 #define PARSERDRIVER_EXPORTS
 
-Driver::Driver() :
-    trace_parsing(false),
-    trace_scanning(false),
-    scanner(new Scanner(*this)), parser(*scanner, *this) {
+Driver::Driver()
+    : trace_parsing(false)
+    , trace_scanning(false)
+    , scanner(new Scanner(*this))
+    , parser(*scanner, *this)
+{
 }
 
 Driver::~Driver()
@@ -19,28 +21,27 @@ Driver::~Driver()
 	delete scanner;
 }
 
-
 IEffect* Driver::parse(const char* f)
 {
 	std::unique_ptr<CEffect> pEffect = std::make_unique<CEffect>(CEffect(PathUtil::GetFileName(f)));
-	currentEffect	= pEffect.get();
+	currentEffect                    = pEffect.get();
 	pEffect->m_Techniques.clear();
 	CommonCode.clear();
-    ScanBegin(f);
-    parser.set_debug_level(trace_parsing);
-    int res = parser.parse();
+	ScanBegin(f);
+	parser.set_debug_level(trace_parsing);
+	int res = parser.parse();
 	if (res == 0)
 	{
-		gEnv->pLog->Log("$3[FX] File %s passed", file.c_str());	
+		gEnv->pLog->Log("$3[FX] File %s passed", file.c_str());
 		pEffect->m_Code = std::move(scanner->shader);
 	}
 	else
 	{
 		pEffect.reset();
-    }
+	}
 
-    ScanEnd();
-    return pEffect.release();
+	ScanEnd();
+	return pEffect.release();
 }
 
 bool Driver::LoadEffectFromFile(IEffect* pEffect, const char* filename)
@@ -55,8 +56,8 @@ bool Driver::LoadEffect(IEffect* pEffect, const char* str)
 
 void Driver::ScanBegin(const char* _file)
 {
-	file = _file;	
-    location.initialize(&file);
+	file = _file;
+	location.initialize(&file);
 	scanner->set_debug(trace_scanning);
 	if (file.empty() || file == "-")
 	{
@@ -80,7 +81,7 @@ void Driver::ScanBegin(const char* _file)
 
 void Driver::ScanEnd()
 {
-    stream.close();
+	stream.close();
 }
 
 void Driver::Release()

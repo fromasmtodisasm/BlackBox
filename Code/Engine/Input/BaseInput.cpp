@@ -17,7 +17,14 @@ bool compareInputListener(const IInputEventListener* pListenerA, const IInputEve
 }
 
 CBaseInput::CBaseInput()
-	: m_pExclusiveListener(0), m_enableEventPosting(true), m_retriggering(false), m_hasFocus(false), m_modifiers(0), m_pCVars(new CInputCVars()), m_platformFlags(0), m_forceFeedbackDeviceIndex(EFF_INVALID_DEVICE_INDEX)
+    : m_pExclusiveListener(0)
+    , m_enableEventPosting(true)
+    , m_retriggering(false)
+    , m_hasFocus(false)
+    , m_modifiers(0)
+    , m_pCVars(new CInputCVars())
+    , m_platformFlags(0)
+    , m_forceFeedbackDeviceIndex(EFF_INVALID_DEVICE_INDEX)
 {
 	GetISystem()->GetISystemEventDispatcher()->RegisterListener(this, "CBaseInput");
 
@@ -74,12 +81,12 @@ void CBaseInput::Update(bool bFocus)
 
 	// send commit event after all input processing for this frame has finished
 	SInputEvent event;
-	event.modifiers	 = m_modifiers;
+	event.modifiers  = m_modifiers;
 	event.deviceType = eIDT_Unknown;
-	event.state		 = eIS_Changed;
-	event.value		 = 0;
-	event.keyName	 = "commit";
-	event.keyId		 = eKI_SYS_Commit;
+	event.state      = eIS_Changed;
+	event.value      = 0;
+	event.keyName    = "commit";
+	event.keyId      = eKI_SYS_Commit;
 	PostInputEvent(event);
 }
 
@@ -142,7 +149,7 @@ const char* CBaseInput::GetKeyName(const SInputEvent& event) const
 
 const char* CBaseInput::GetKeyName(EKeyId keyId) const
 {
-	TInputDevices::const_iterator iter	  = m_inputDevices.begin();
+	TInputDevices::const_iterator iter    = m_inputDevices.begin();
 	TInputDevices::const_iterator iterEnd = m_inputDevices.end();
 	for (; iter != iterEnd; ++iter)
 	{
@@ -204,7 +211,7 @@ SInputSymbol* CBaseInput::LookupSymbol(EInputDeviceType deviceType, int deviceIn
 	for (TInputDevices::iterator i = m_inputDevices.begin(); i != m_inputDevices.end(); ++i)
 	{
 		IInputDevice* pDevice = *i;
-		SInputSymbol* pSym	  = pDevice->LookupSymbol(keyId);
+		SInputSymbol* pSym    = pDevice->LookupSymbol(keyId);
 		if (pSym)
 			return pSym;
 	}
@@ -214,7 +221,7 @@ SInputSymbol* CBaseInput::LookupSymbol(EInputDeviceType deviceType, int deviceIn
 
 const SInputSymbol* CBaseInput::GetSymbolByName(const char* name) const
 {
-	TInputDevices::const_iterator iter	  = m_inputDevices.begin();
+	TInputDevices::const_iterator iter    = m_inputDevices.begin();
 	TInputDevices::const_iterator iterEnd = m_inputDevices.end();
 	for (; iter != iterEnd; ++iter)
 	{
@@ -284,7 +291,7 @@ void CBaseInput::RetriggerKeyState()
 	}
 
 	m_retriggering = true;
-	SInputEvent event;
+	SInputEvent  event;
 
 	// DARIO_NOTE: In this loop, m_holdSymbols size and content is changed so previous
 	// code was resulting in occasional index out of bounds.
@@ -298,9 +305,9 @@ void CBaseInput::RetriggerKeyState()
 	{
 		if (i < m_holdSymbols.size())
 		{
-			SInputSymbol* pSymbol = m_holdSymbols[i];
-			EInputState oldState  = pSymbol->state;
-			pSymbol->state		  = eIS_Pressed;
+			SInputSymbol* pSymbol  = m_holdSymbols[i];
+			EInputState   oldState = pSymbol->state;
+			pSymbol->state         = eIS_Pressed;
 			pSymbol->AssignTo(event, GetModifiers());
 			event.deviceIndex = pSymbol->deviceIndex;
 			PostInputEvent(event);
@@ -481,9 +488,9 @@ void CBaseInput::ForceFeedbackEvent(const SFFOutputEvent& event)
 		if ((*i)->GetDeviceType() == event.deviceType && (m_forceFeedbackDeviceIndex == (*i)->GetDeviceIndex()))
 		{
 			IFFParams params;
-			params.effectId		 = event.eventId;
+			params.effectId      = event.eventId;
 			params.timeInSeconds = event.timeInSeconds;
-			params.triggerData	 = event.triggerData;
+			params.triggerData   = event.triggerData;
 
 			switch (event.eventId)
 			{
@@ -494,8 +501,8 @@ void CBaseInput::ForceFeedbackEvent(const SFFOutputEvent& event)
 
 			case eFF_Rumble_Frame:
 				params.timeInSeconds = 0.0f;
-				params.strengthA	 = event.amplifierS;
-				params.strengthB	 = event.amplifierA;
+				params.strengthA     = event.amplifierS;
+				params.strengthB     = event.amplifierA;
 				break;
 			default:
 				break;
@@ -616,7 +623,7 @@ void CBaseInput::AddEventToHoldSymbols(const SInputEvent& event)
 			{
 				GetISystem()->GetILog()->Log("InputDebug: 0x%p AddEventToHoldSymbols Symbol %d %s, Event %s %s", this, event.pSymbol->keyId, event.pSymbol->name.c_str(), event.keyName.c_str(), event.state == eIS_Pressed ? "pressed" : "released");
 			}
-			event.pSymbol->state = eIS_Down;
+			event.pSymbol->state       = eIS_Down;
 			//cache device index in the hold symbol
 			event.pSymbol->deviceIndex = event.deviceIndex;
 			m_holdSymbols.push_back(event.pSymbol);
@@ -639,12 +646,12 @@ void CBaseInput::RemoveDeviceHoldSymbols(EInputDeviceType deviceType, uint8_t de
 			if (symbol->deviceType == deviceType && symbol->deviceIndex == deviceIndex)
 			{
 				SInputEvent releaseEvent;
-				releaseEvent.deviceType	 = deviceType;
+				releaseEvent.deviceType  = deviceType;
 				releaseEvent.deviceIndex = deviceIndex;
-				releaseEvent.state		 = eIS_Released;
-				releaseEvent.keyName	 = symbol->name;
-				releaseEvent.keyId		 = symbol->keyId;
-				releaseEvent.pSymbol	 = symbol;
+				releaseEvent.state       = eIS_Released;
+				releaseEvent.keyName     = symbol->name;
+				releaseEvent.keyId       = symbol->keyId;
+				releaseEvent.pSymbol     = symbol;
 
 				if (g_pInputCVars->i_debug)
 				{
@@ -668,9 +675,9 @@ bool CBaseInput::ShouldBlockInputEventPosting(const EKeyId keyId, const EInputDe
 #if CRY_PLATFORM_DURANGO
 	return false;
 #else
-	bool bBlocked							= false;
-	TInputBlockData::const_iterator iter	= m_inputBlockData.begin();
-	TInputBlockData::const_iterator iterEnd = m_inputBlockData.end();
+	bool                            bBlocked = false;
+	TInputBlockData::const_iterator iter     = m_inputBlockData.begin();
+	TInputBlockData::const_iterator iterEnd  = m_inputBlockData.end();
 	for (; iter != iterEnd; ++iter)
 	{
 		const SInputBlockData& curBlockingInput = *iter;
@@ -720,7 +727,7 @@ void CBaseInput::UpdateBlockingInputs()
 void CBaseInput::PostHoldEvents()
 {
 	FUNCTION_PROFILER(PROFILE_INPUT);
-	SInputEvent event;
+	SInputEvent  event;
 
 	// DARIO_NOTE: In this loop, m_holdSymbols size and content is changed so previous
 	// code was resulting in occasional index out of bounds.
@@ -812,10 +819,10 @@ void CBaseInput::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpa
 		ClearKeyState();
 	}
 	else if (
-		event == ESYSTEM_EVENT_CHANGE_FOCUS ||
-		event == ESYSTEM_EVENT_LEVEL_LOAD_START ||
-		event == ESYSTEM_EVENT_LEVEL_GAMEPLAY_START ||
-		event == ESYSTEM_EVENT_LEVEL_POST_UNLOAD)
+	    event == ESYSTEM_EVENT_CHANGE_FOCUS ||
+	    event == ESYSTEM_EVENT_LEVEL_LOAD_START ||
+	    event == ESYSTEM_EVENT_LEVEL_GAMEPLAY_START ||
+	    event == ESYSTEM_EVENT_LEVEL_POST_UNLOAD)
 	{
 		ClearKeyState();
 	}
@@ -832,10 +839,10 @@ bool CBaseInput::SetBlockingInput(const SInputBlockData& inputBlockData)
 	if (inputBlockData.keyId >= eKI_SYS_Commit)
 		return false;
 
-	bool bSet	= false;
-	bool bFound = false;
+	bool                      bSet    = false;
+	bool                      bFound  = false;
 
-	TInputBlockData::iterator iter	  = m_inputBlockData.begin();
+	TInputBlockData::iterator iter    = m_inputBlockData.begin();
 	TInputBlockData::iterator iterEnd = m_inputBlockData.end();
 	for (; iter != iterEnd; ++iter)
 	{
@@ -843,15 +850,15 @@ bool CBaseInput::SetBlockingInput(const SInputBlockData& inputBlockData)
 		if (curBlockingInputData.keyId == inputBlockData.keyId)
 		{
 			// Now match the deviceIndex if using it
-			if ((curBlockingInputData.bAllDeviceIndices && inputBlockData.bAllDeviceIndices) ||	   // All indices match
-				((!curBlockingInputData.bAllDeviceIndices && !inputBlockData.bAllDeviceIndices) && // Not all indices + deviceIndex matches
-				 (curBlockingInputData.deviceIndex == inputBlockData.deviceIndex)))
+			if ((curBlockingInputData.bAllDeviceIndices && inputBlockData.bAllDeviceIndices) ||    // All indices match
+			    ((!curBlockingInputData.bAllDeviceIndices && !inputBlockData.bAllDeviceIndices) && // Not all indices + deviceIndex matches
+			     (curBlockingInputData.deviceIndex == inputBlockData.deviceIndex)))
 			{
 				// It already exists, but only set if the specified time exceeds current time
 				if (curBlockingInputData.fBlockDuration < inputBlockData.fBlockDuration)
 				{
 					curBlockingInputData.fBlockDuration = inputBlockData.fBlockDuration;
-					bSet								= true;
+					bSet                                = true;
 				}
 				bFound = true;
 				break;
@@ -870,17 +877,17 @@ bool CBaseInput::SetBlockingInput(const SInputBlockData& inputBlockData)
 
 bool CBaseInput::RemoveBlockingInput(const SInputBlockData& inputBlockData)
 {
-	bool bRemoved = false;
+	bool                      bRemoved = false;
 
-	TInputBlockData::iterator iter	  = m_inputBlockData.begin();
-	TInputBlockData::iterator iterEnd = m_inputBlockData.end();
+	TInputBlockData::iterator iter     = m_inputBlockData.begin();
+	TInputBlockData::iterator iterEnd  = m_inputBlockData.end();
 	for (; iter != iterEnd; ++iter)
 	{
 		const SInputBlockData& curBlockingInputData = *iter;
 		// Now match the deviceIndex if using it
-		if ((curBlockingInputData.bAllDeviceIndices && inputBlockData.bAllDeviceIndices) ||	   // All indices match
-			((!curBlockingInputData.bAllDeviceIndices && !inputBlockData.bAllDeviceIndices) && // Not all indices + deviceIndex matches
-			 (curBlockingInputData.deviceIndex == inputBlockData.deviceIndex)))
+		if ((curBlockingInputData.bAllDeviceIndices && inputBlockData.bAllDeviceIndices) ||    // All indices match
+		    ((!curBlockingInputData.bAllDeviceIndices && !inputBlockData.bAllDeviceIndices) && // Not all indices + deviceIndex matches
+		     (curBlockingInputData.deviceIndex == inputBlockData.deviceIndex)))
 		{
 			m_inputBlockData.erase(iter);
 			bRemoved = true;
@@ -893,17 +900,17 @@ bool CBaseInput::RemoveBlockingInput(const SInputBlockData& inputBlockData)
 
 bool CBaseInput::HasBlockingInput(const SInputBlockData& inputBlockData) const
 {
-	bool bHasBlockingInput = false;
+	bool                            bHasBlockingInput = false;
 
-	TInputBlockData::const_iterator iter	= m_inputBlockData.begin();
-	TInputBlockData::const_iterator iterEnd = m_inputBlockData.end();
+	TInputBlockData::const_iterator iter              = m_inputBlockData.begin();
+	TInputBlockData::const_iterator iterEnd           = m_inputBlockData.end();
 	for (; iter != iterEnd; ++iter)
 	{
 		const SInputBlockData& curBlockingInputData = *iter;
 		// Now match the deviceIndex if using it
-		if ((curBlockingInputData.bAllDeviceIndices && inputBlockData.bAllDeviceIndices) ||	   // All indices match
-			((!curBlockingInputData.bAllDeviceIndices && !inputBlockData.bAllDeviceIndices) && // Not all indices + deviceIndex matches
-			 (curBlockingInputData.deviceIndex == inputBlockData.deviceIndex)))
+		if ((curBlockingInputData.bAllDeviceIndices && inputBlockData.bAllDeviceIndices) ||    // All indices match
+		    ((!curBlockingInputData.bAllDeviceIndices && !inputBlockData.bAllDeviceIndices) && // Not all indices + deviceIndex matches
+		     (curBlockingInputData.deviceIndex == inputBlockData.deviceIndex)))
 		{
 			bHasBlockingInput = true;
 			break;

@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //	File: Font.h
@@ -9,7 +9,7 @@
 //
 //	History:
 //	- Feb 2,2001: Created by Marco Corbetta
-//	- February 2005: Modified by Marco Corbetta for SDK release	
+//	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@
 #define FONT_H
 
 #if _MSC_VER > 1000
-# pragma once
+	#pragma once
 #endif
 
 #include <IRenderer.h>
@@ -27,49 +27,49 @@
 //////////////////////////////////////////////////////////////////////////
 class CXFont
 {
-public:	
-	CXFont( IRenderer *pRenderer )
+public:
+	CXFont(IRenderer* pRenderer)
 	{
-		m_pRenderer=pRenderer;
-		m_invfontsize=0;
-		m_charsize=0;
-		m_char_inc=0;
-		m_font_id=-1;
-		m_image=NULL;
+		m_pRenderer   = pRenderer;
+		m_invfontsize = 0;
+		m_charsize    = 0;
+		m_char_inc    = 0;
+		m_font_id     = -1;
+		m_image       = NULL;
 	}
 	virtual ~CXFont()
 	{
 		m_image = NULL;
 	}
-  virtual void Release()
-  {
-    delete this;
-  }
-	
-	void	SetImage(ITexPic *image)
+	virtual void Release()
 	{
-		m_image=image;	
+		delete this;
+	}
+
+	void SetImage(ITexPic* image)
+	{
+		m_image = image;
 		CalcCharSize();
 	}
-	
-	void	CalcCharSize()
+
+	void CalcCharSize()
 	{
 		if (m_image)
 		{
-			m_invfontsize=1.0f/(float)m_image->GetWidth();
-			m_charsize=(float)m_image->GetWidth()/16.0f;
-			m_char_inc=m_charsize*m_invfontsize;	
+			m_invfontsize = 1.0f / (float)m_image->GetWidth();
+			m_charsize    = (float)m_image->GetWidth() / 16.0f;
+			m_char_inc    = m_charsize * m_invfontsize;
 		}
 	}
 
 public:
-	float	m_invfontsize;
-	float	m_charsize;
-	float	m_char_inc;
-	int		m_font_id;
+	float      m_invfontsize;
+	float      m_charsize;
+	float      m_char_inc;
+	int        m_font_id;
 
-	ITexPic * m_image;
-	IRenderer *m_pRenderer;
+	ITexPic*   m_image;
+	IRenderer* m_pRenderer;
 };
 
 #endif

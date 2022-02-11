@@ -39,36 +39,36 @@ public:
 	CHTTPDownloader();
 	virtual ~CHTTPDownloader();
 
-	static void   InitializeTemplate(IScriptSystem *pSS);
+	static void    InitializeTemplate(IScriptSystem* pSS);
 
-	int           Create(ISystem* pISystem, CDownloadManager* pParent);
-	int           Download(const char* szURL, const char* szDestination);
-	void          Cancel();
-	int           GetState()             { return m_iState; };
-	int           GetFileSize() const    { return m_iFileSize; };
-	const string& GetURL() const         { return m_szURL; };
-	const string& GetDstFileName() const { return m_szDstFile; };
-	void          Release();
+	int            Create(ISystem* pISystem, CDownloadManager* pParent);
+	int            Download(const char* szURL, const char* szDestination);
+	void           Cancel();
+	int            GetState() { return m_iState; };
+	int            GetFileSize() const { return m_iFileSize; };
+	const string&  GetURL() const { return m_szURL; };
+	const string&  GetDstFileName() const { return m_szDstFile; };
+	void           Release();
 
-	int           Download(IFunctionHandler* pH);
-	int           Cancel(IFunctionHandler* pH);
-	int           Release(IFunctionHandler* pH);
+	int            Download(IFunctionHandler* pH);
+	int            Cancel(IFunctionHandler* pH);
+	int            Release(IFunctionHandler* pH);
 
-	int           GetURL(IFunctionHandler* pH);
-	int           GetFileSize(IFunctionHandler* pH);
-	int           GetFileName(IFunctionHandler* pH);
+	int            GetURL(IFunctionHandler* pH);
+	int            GetFileSize(IFunctionHandler* pH);
+	int            GetFileName(IFunctionHandler* pH);
 
-	void          OnError();
-	void          OnComplete();
-	void          OnCancel();
+	void           OnError();
+	void           OnComplete();
+	void           OnCancel();
 
 	IScriptObject* GetScriptObject() { return m_pScriptThis; };
-private:
 
-	static DWORD   DownloadProc(CHTTPDownloader* _this);
-	void           CreateDownloadThread();
-	DWORD          DoDownload();
-	void           PrepareBuffer();
+private:
+	static DWORD      DownloadProc(CHTTPDownloader* _this);
+	void              CreateDownloadThread();
+	DWORD             DoDownload();
+	void              PrepareBuffer();
 	//IScriptObject* GetScriptObject() { return m_pScriptThis; };
 
 	string            m_szURL;

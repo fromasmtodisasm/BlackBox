@@ -14,10 +14,10 @@
 #pragma comment(lib, "Ws2_32.lib")
 
 #ifdef USE_REMOTE_CONSOLE
-	//#include <CryGame/IGameFramework.h>
+    //#include <CryGame/IGameFramework.h>
 	#include <BlackBox/System/ConsoleRegistration.h>
-	//#include <../CryAction/ILevelSystem.h>
-	#if 0                       // currently no stroboscope support
+    //#include <../CryAction/ILevelSystem.h>
+	#if 0 // currently no stroboscope support
 		#include "Stroboscope/Stroboscope.h"
 		#include "ThreadInfo.h"
 	#endif
@@ -33,7 +33,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
 CRemoteConsole::CRemoteConsole()
-	//: m_listener(1)
+//: m_listener(1)
 {
 #ifdef USE_REMOTE_CONSOLE
 	m_pServer = new SRemoteServer;
@@ -152,7 +152,7 @@ void CRemoteConsole::Update()
 		case eCET_LogMessage:
 			CryLog(static_cast<SStringEvent<eCET_GameplayEvent>*>(pEvent.get())->GetData());
 			break;
-	#if 0              // currently no stroboscope support
+	#if 0 // currently no stroboscope support
 		case eCET_Strobo_GetThreads:
 			SendThreadData();
 			break;
@@ -171,7 +171,7 @@ void CRemoteConsole::Update()
 void CRemoteConsole::RegisterListener(IRemoteConsoleListener* pListener, const char* name)
 {
 #ifdef USE_REMOTE_CONSOLE
-//pListener, name
+	//pListener, name
 	m_listener.insert(TListener::value_type(name, pListener));
 //TListener::value_type
 #endif
@@ -182,11 +182,11 @@ void CRemoteConsole::UnregisterListener(IRemoteConsoleListener* pListener)
 {
 #ifdef USE_REMOTE_CONSOLE
 	if (auto it = std::find_if(
-			m_listener.begin(),
-			m_listener.end(),
-			[pListener](const TListener::value_type& arg) { return arg.second == pListener; })
-		;
-		 it != m_listener.end())
+	        m_listener.begin(),
+	        m_listener.end(),
+	        [pListener](const TListener::value_type& arg)
+	        { return arg.second == pListener; });
+	    it != m_listener.end())
 	{
 		m_listener.erase(it);
 	}
@@ -281,14 +281,15 @@ void SRemoteServer::StartServer()
 	StopServer();
 	m_bAcceptClients = true;
 
-#ifdef USE_THREAD_MANAGER
+	#ifdef USE_THREAD_MANAGER
 	if (!gEnv->pThreadManager->SpawnThread(this, SERVER_THREAD_NAME))
 	{
 		CryFatalError("Error spawning \"%s\" thread.", SERVER_THREAD_NAME);
 	}
-#else
-    main_loop = std::thread([this]{ThreadEntry();});
-#endif
+	#else
+	main_loop = std::thread([this]
+	                        { ThreadEntry(); });
+	#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,21 +298,21 @@ void SRemoteServer::StopServer()
 	if (m_bAcceptClients)
 	{
 		SignalStopWork();
-#ifdef USE_THREAD_MANAGER
+	#ifdef USE_THREAD_MANAGER
 		gEnv->pThreadManager->JoinThread(this, eJM_Join);
-#else
+	#else
 		main_loop.join();
-#endif
+	#endif
 	}
 
 	for (TClients::iterator it = m_clients.begin(); it != m_clients.end(); ++it)
 	{
 		it->pClient->SignalStopWork();
-#ifdef USE_THREAD_MANAGER
+	#ifdef USE_THREAD_MANAGER
 		gEnv->pThreadManager->JoinThread(it->pClient.get(), eJM_Join);
-#else
-	it->pClient.get()->main_loop.join();
-#endif
+	#else
+		it->pClient.get()->main_loop.join();
+	#endif
 	}
 	m_clients.clear();
 }
@@ -333,9 +334,9 @@ void SRemoteServer::SignalStopWork()
 /////////////////////////////////////////////////////////////////////////////////////////////
 void SRemoteServer::ThreadEntry()
 {
-    std::cout << "thread entry" << std::endl;
-	CRYSOCKET sClient;
-	CRYSOCKLEN_T iAddrSize;
+	std::cout << "thread entry" << std::endl;
+	CRYSOCKET      sClient;
+	CRYSOCKLEN_T   iAddrSize;
 	CRYSOCKADDR_IN local, client;
 
 	#ifdef BB_PLATFORM_WINAPI
@@ -354,11 +355,11 @@ void SRemoteServer::ThreadEntry()
 		return;
 	}
 
-	local.sin_addr.s_addr = htonl(INADDR_ANY);
-	local.sin_family = AF_INET;
+	local.sin_addr.s_addr                    = htonl(INADDR_ANY);
+	local.sin_family                         = AF_INET;
 
-	int port = DEFAULT_PORT;
-	int maxAttempts = MAX_BIND_ATTEMPTS;
+	int                port                  = DEFAULT_PORT;
+	int                maxAttempts           = MAX_BIND_ATTEMPTS;
 
 	// Get the port from the commandline if provided.
 	const ICmdLineArg* pRemoteConsolePortArg = gEnv->pSystem->GetICmdLine()->FindArg(ECmdLineArgType::eCLAT_Pre, "remoteConsolePort");
@@ -380,7 +381,7 @@ void SRemoteServer::ThreadEntry()
 	bool bindOk = false;
 	for (int i = 0; i < maxAttempts; ++i)
 	{
-		local.sin_port = htons(port + i);
+		local.sin_port   = htons(port + i);
 		const int result = Sock::bind(m_socket, (CRYSOCKADDR*)&local, sizeof(local));
 		if (Sock::TranslateSocketError(result) == Sock::eCSE_NO_ERROR)
 		{
@@ -398,7 +399,7 @@ void SRemoteServer::ThreadEntry()
 	Sock::listen(m_socket, 8);
 
 	CRYSOCKADDR_IN saIn;
-	CRYSOCKLEN_T slen = sizeof(saIn);
+	CRYSOCKLEN_T   slen = sizeof(saIn);
 	if (Sock::getsockname(m_socket, (CRYSOCKADDR*)&saIn, &slen) == 0)
 	{
 		CryLog("Remote console listening on: %d\n", ntohs(saIn.sin_port));
@@ -411,7 +412,7 @@ void SRemoteServer::ThreadEntry()
 	while (m_bAcceptClients)
 	{
 		iAddrSize = sizeof(client);
-		sClient = Sock::accept(m_socket, (CRYSOCKADDR*)&client, &iAddrSize);
+		sClient   = Sock::accept(m_socket, (CRYSOCKADDR*)&client, &iAddrSize);
 		if (!m_bAcceptClients || sClient == CRY_INVALID_SOCKET)
 		{
 			break;
@@ -476,7 +477,7 @@ bool SRemoteServer::WriteBuffer(SRemoteClient* pClient, char* buffer, size_t& si
 bool SRemoteServer::ReadBuffer(const char* buffer, size_t data)
 {
 	std::unique_ptr<IRemoteEvent> pEvent = SRemoteEventFactory::GetInst()->CreateEventFromBuffer(buffer, data);
-	const bool res = pEvent != nullptr;
+	const bool                    res    = pEvent != nullptr;
 	if (pEvent)
 	{
 		if (pEvent->GetType() != eCET_Noop)
@@ -496,33 +497,34 @@ bool SRemoteServer::ReadBuffer(const char* buffer, size_t data)
 void SRemoteClient::StartClient(CRYSOCKET socket)
 {
 	m_socket = socket;
-#ifdef USE_THREAD_MANAGER
+	#ifdef USE_THREAD_MANAGER
 	if (!gEnv->pThreadManager->SpawnThread(this, CLIENT_THREAD_NAME))
 	{
 		CryFatalError("Error spawning \"%s\" thread.", CLIENT_THREAD_NAME);
 	}
-#else
-	main_loop = std::thread([this]{ThreadEntry();});
-#endif
+	#else
+	main_loop = std::thread([this]
+	                        { ThreadEntry(); });
+	#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 void SRemoteClient::SignalStopWork()
 {
-	m_bRun = false;		
+	m_bRun = false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 void SRemoteClient::ThreadEntry()
 {
-	char szBuff[DEFAULT_BUFFER];
-	size_t size;
+	char                   szBuff[DEFAULT_BUFFER];
+	size_t                 size;
 	SNoDataEvent<eCET_Req> reqEvt;
 
-	std::vector<string> autoCompleteList;
+	std::vector<string>    autoCompleteList;
 	FillAutoCompleteList(autoCompleteList);
 
-	bool ok = true;
+	bool ok                   = true;
 	bool autoCompleteDoneSent = false;
 	while (ok && m_bRun)
 	{
@@ -577,8 +579,7 @@ bool SRemoteClient::RecvPackage(char* buffer, size_t& size)
 		if (ret <= 0 || ret == CRY_SOCKET_ERROR)
 			return false;
 		idx += ret;
-	}
-	while (buffer[idx - 1] != '\0');
+	} while (buffer[idx - 1] != '\0');
 	size = idx;
 	return true;
 }
@@ -604,9 +605,9 @@ bool SRemoteClient::SendPackage(const char* buffer, size_t size)
 void SRemoteClient::FillAutoCompleteList(std::vector<string>& list)
 {
 	std::vector<const char*> cmds;
-	size_t count = gEnv->pConsole->GetNumVars();
+	size_t                   count = gEnv->pConsole->GetNumVars();
 	cmds.resize(count);
-	/*count = */gEnv->pConsole->GetSortedVars(&cmds[0], count - 10);
+	/*count = */ gEnv->pConsole->GetSortedVars(&cmds[0], count - 10);
 	cmds.resize(count); // We might have less CVars than we were expecting (invisible ones, etc.)
 	for (size_t i = 0; i < count - 10; ++i)
 	{
@@ -675,8 +676,8 @@ std::unique_ptr<IRemoteEvent> SRemoteEventFactory::CreateEventFromBuffer(const c
 {
 	if (size > 1 && buffer[size - 1] == '\0')
 	{
-		EConsoleEventType type = EConsoleEventType(buffer[0] - '0');
-		TPrototypes::const_iterator it = m_prototypes.find(type);
+		EConsoleEventType           type = EConsoleEventType(buffer[0] - '0');
+		TPrototypes::const_iterator it   = m_prototypes.find(type);
 		if (it != m_prototypes.end())
 		{
 			return it->second->CreateFromBuffer(buffer + 1, size - 1);

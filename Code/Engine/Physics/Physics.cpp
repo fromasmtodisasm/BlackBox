@@ -2,7 +2,7 @@
 
 #include "PhysicalWorld.hpp"
 
-IPhysicalWorld *CreatePhysicalWorld(struct ISystem *pLog)
+IPhysicalWorld* CreatePhysicalWorld(struct ISystem* pLog)
 {
 	return new CPhysicalWorld(pLog);
 }

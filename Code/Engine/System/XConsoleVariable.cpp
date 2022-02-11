@@ -42,9 +42,9 @@ void CXConsoleVariableCVarGroup::OnLoadConfigurationEntry(const char* szKey, con
 		else
 		{
 			gEnv->pLog->LogError("[CVARS]: [MISSING] [%s] is not a registered console variable group", szGroup);
-#if LOG_CVAR_INFRACTIONS_CALLSTACK
+	#if LOG_CVAR_INFRACTIONS_CALLSTACK
 			gEnv->pSystem->debug_LogCallStack();
-#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
+	#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 			return;
 		}
 
@@ -199,13 +199,13 @@ void CXConsoleVariableCVarGroup::Set(const int i)
 		if (itCurrentGroup != m_CVarGroupStates.cend())
 			pCurrentGroup = itCurrentGroup->second;
 
-		#if 0
+	#if 0
 		if (TestCVars(pCurrentGroup))
 		{
 			// All cvars in this group match the current state - no further action is necessary
 			return;
 		}
-		#endif
+	#endif
 	}
 
 	char sTemp[128];
@@ -461,4 +461,3 @@ void CXConsoleVariableCVarGroup::ApplyCVars(const SCVarGroup& group, const SCVar
 	pConsole->SetProcessingGroup(wasProcessingGroup);
 }
 #endif
-

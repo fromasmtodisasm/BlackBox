@@ -36,3 +36,5 @@ Solutions/*
 #
 Code/Engine/Renderer/Shaders/Parser.output
 Thumbs.db
+/Data/Sounds
+/Engine/Textures

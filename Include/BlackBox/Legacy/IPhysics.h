@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //	File: IPhysics.h
@@ -9,7 +9,7 @@
 //
 //	History:
 //	- September 2001: File created by Anton Knyazyev
-//	- February 2005: Modified by Marco Corbetta for SDK release	
+//	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -28,15 +28,14 @@
 #endif
 #define vector_class Vec3_tpl
 
-
 #ifndef GAMECUBE
-#include <CrySizer.h>
+	#include <CrySizer.h>
 #endif
 
 #include "Cry_Math.h"
 #include "primitives.h"
 #include "physinterface.h"
 
-extern "C" CRYPHYSICS_API IPhysicalWorld *CreatePhysicalWorld(struct ISystem *pLog);
+extern "C" CRYPHYSICS_API IPhysicalWorld* CreatePhysicalWorld(struct ISystem* pLog);
 
 #endif

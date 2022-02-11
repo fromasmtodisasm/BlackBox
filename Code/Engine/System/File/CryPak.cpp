@@ -1,15 +1,15 @@
 #ifndef LINUX
-#	include <BlackBox/Core/Platform/Platform.hpp>
-#	include <BlackBox/Core/Platform/Windows.hpp>
-#	include "CryPak.hpp"
+	#include <BlackBox/Core/Platform/Platform.hpp>
+	#include <BlackBox/Core/Platform/Windows.hpp>
+	#include "CryPak.hpp"
 
-#	include <algorithm>
-#	include <cctype>
-#	include <cstdarg>
-#	include <string>
+	#include <algorithm>
+	#include <cctype>
+	#include <cstdarg>
+	#include <string>
 
 CCryPak::CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes)
-	: m_pLog(pLog)
+    : m_pLog(pLog)
 {
 }
 
@@ -30,10 +30,11 @@ void CCryPak::Release()
 
 bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	int	 err;
+	int err;
 	CryLog("$3Open Pack: %s", pName);
 	auto a = zip_open(pName, ZIP_RDONLY, &err);
-	if (!a) {
+	if (!a)
+	{
 		auto e = zip_get_error(a);
 		CryError("[ZIP] %s", e);
 		return false;
@@ -54,7 +55,6 @@ bool CCryPak::ClosePack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*
 
 bool CCryPak::OpenPacks(const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-
 	return false;
 }
 
@@ -73,8 +73,8 @@ void CCryPak::AddMod(const char* szMod)
 	std::string strPrepend = szMod;
 	strPrepend.replace(strPrepend.begin(), strPrepend.end(), g_cNativeSlash, g_cNonNativeSlash);
 	std::transform(strPrepend.begin(), strPrepend.end(), strPrepend.begin(),
-				   [](unsigned char c)
-				   { return std::tolower(c); });
+	               [](unsigned char c)
+	               { return std::tolower(c); });
 
 	std::vector<std::string>::iterator strit;
 	for (strit = m_arrMods.begin(); strit != m_arrMods.end(); ++strit)
@@ -91,8 +91,8 @@ void CCryPak::RemoveMod(const char* szMod)
 	std::string strPrepend = szMod;
 	strPrepend.replace(strPrepend.begin(), strPrepend.end(), g_cNativeSlash, g_cNonNativeSlash);
 	std::transform(strPrepend.begin(), strPrepend.end(), strPrepend.begin(),
-				   [](unsigned char c)
-				   { return std::tolower(c); });
+	               [](unsigned char c)
+	               { return std::tolower(c); });
 
 	std::vector<std::string>::iterator it;
 	for (it = m_arrMods.begin(); it != m_arrMods.end(); ++it)
@@ -117,11 +117,11 @@ void CCryPak::FreePakInfo(PakInfo*)
 
 FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags /* = 0*/)
 {
-	auto file = fopen( pName,mode );
+	auto file = fopen(pName, mode);
 	if (!file)
 	{
 		string adjustedName = m_DataRoot + pName;
-		file = fopen(adjustedName.data(), mode);
+		file                = fopen(adjustedName.data(), mode);
 	}
 	return file;
 }

@@ -9,9 +9,9 @@ LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 	static char msg[1024];
 
 	CryError(
-		"Code: %x\nAddress: 0x%p",
-		pExceptionPtrs->ExceptionRecord->ExceptionCode,
-		pExceptionPtrs->ExceptionRecord->ExceptionAddress);
+	    "Code: %x\nAddress: 0x%p",
+	    pExceptionPtrs->ExceptionRecord->ExceptionCode,
+	    pExceptionPtrs->ExceptionRecord->ExceptionAddress);
 	// Do something, for example generate error report
 	MessageBox(NULL, msg, "Exception", 0);
 	//..
@@ -23,16 +23,16 @@ LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
 ISystem* CreateSystemInterface(SSystemInitParams& startupParams)
 {
 	std::unique_ptr<CSystem> pSystem = std::make_unique<CSystem>(startupParams);
-	startupParams.pSystem			 = pSystem.get();
+	startupParams.pSystem            = pSystem.get();
 	ModuleInitISystem(pSystem.get(), "System");
 #if BB_PLATFORM_WINDOWS
 	SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
 #endif
 
 #if CRY_PLATFORM_DURANGO
-#	if !defined(_LIB)
+	#if !defined(_LIB)
 	m_env = pSystem->GetGlobalEnvironment();
-#	endif
+	#endif
 	m_env.pWindow = startupParams.hWnd;
 #endif
 	// the earliest point the system exists - w2e tell the callback
@@ -44,7 +44,7 @@ ISystem* CreateSystemInterface(SSystemInitParams& startupParams)
 		CryMessageBox("System initialization failed!", "Engine initialization failed!");
 		pSystem.release();
 		startupParams.pSystem = nullptr;
-		gEnv->pSystem		  = nullptr;
+		gEnv->pSystem         = nullptr;
 
 		return nullptr;
 	}

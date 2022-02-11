@@ -13,7 +13,7 @@
 
 void loadModel(string path);
 C3DEngine::C3DEngine(ISystem* pSystem, const char* szInterfaceVersion)
-	: m_pSystem(pSystem)
+    : m_pSystem(pSystem)
 {
 }
 
@@ -61,7 +61,7 @@ void C3DEngine::SetCamera(const CCamera& cam, bool bToTheScreen)
 	m_Camera = cam;
 }
 static float s_time = 0;
-void		 C3DEngine::Draw()
+void         C3DEngine::Draw()
 {
 	if (!m_Enabled)
 		return;
@@ -669,8 +669,8 @@ const char* C3DEngine::GetLevelFilePath(const char* szFileName)
 inline void PrintRightAlignedText(float posY, const char* szText, IFont* pFont = nullptr)
 {
 	SDrawTextInfo info;
-	float		  rightMargin = 20;
-	info.font				  = pFont;
+	float         rightMargin = 20;
+	info.font                 = pFont;
 #if 0
 		auto& color = info.color;
 		color[0]	= 1.0; //green
@@ -683,11 +683,11 @@ inline void PrintRightAlignedText(float posY, const char* szText, IFont* pFont =
 
 void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStepY)
 {
-	#if 1
+#if 1
 	float px = 20;
 	float py = fTextPosY;
 	auto  dy = fTextStepY;
-	dy		 = 15;
+	dy       = 15;
 
 	static IFont* pFont{};
 	if (!pFont)
@@ -697,7 +697,7 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	}
 	auto PRINT = [=, &py](float y, const char* szFormat, ...)
 	{
-		char	temp[256];
+		char    temp[256];
 		va_list arglist;
 		va_start(arglist, szFormat);
 		vsprintf(temp, szFormat, arglist);
@@ -713,23 +713,23 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	//PRINT(py, "Ver = 1.0.0.0");
 	//PRINT(py, "Polygons 0,000");
 	//PRINT(py, "...");
-	static float	   prevTime = 0;
-	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
-	auto const delta   = curTime - prevTime;
-	static float	   min		= std::numeric_limits<float>::max();
-	static float	   max		= 0;
+	static float prevTime = 0;
+	auto const   curTime  = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+	auto const   delta    = curTime - prevTime;
+	static float min      = std::numeric_limits<float>::max();
+	static float max      = 0;
 	if (delta < min) min = delta;
 	if (delta > max) max = delta;
 	if (max >= 500.f) max = 500.f;
 	if (min <= 0.f) min = 1.f;
-	prevTime					= curTime;
+	prevTime = curTime;
 	PRINT(py, "FPS %.2f ( %.2f.. %.2f) / 60", 1000.f / delta, 1000.f / min, 1000.f / max);
 	//PRINT(py, "ViewDist = 1024/0.0");
 	//PRINT(py, "Render path = ...");
 	if (gEnv->pSystem->IsDevMode())
 		PRINT(py, gEnv->IsEditor() ? "DevMode (Editor)" : "DevMode");
-	//PRINT(py, "Frame rate: %f\n                        Frame time: %f", gEnv->pTimer->GetFrameRate(), gEnv->pTimer->GetRealFrameTime());
-	#endif
+//PRINT(py, "Frame rate: %f\n                        Frame time: %f", gEnv->pTimer->GetFrameRate(), gEnv->pTimer->GetRealFrameTime());
+#endif
 
 #undef PRINT
 }

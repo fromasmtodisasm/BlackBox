@@ -8,34 +8,34 @@
 #define V_RETURN(cond) \
 	if (!(cond)) return;
 
-ID3D11DepthStencilState* CRenderAuxGeom::m_pDSStateZPrePass;
-ID3D11DepthStencilState* CRenderAuxGeom::m_pDSStateMesh;
-ID3D11DepthStencilState* m_pDSStateMeshCurrent;
+ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateZPrePass;
+ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateMesh;
+ID3D11DepthStencilState*          m_pDSStateMeshCurrent;
 
-_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateSolid{};
-_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateWire{};
-_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateForMeshCurrent{};
-_smart_ptr<ID3D11RasterizerState>	 g_pRasterizerStateForZPrePass{};
-_smart_ptr<ID3D11BlendState>		 m_pBlendState;
+_smart_ptr<ID3D11RasterizerState> g_pRasterizerStateSolid{};
+_smart_ptr<ID3D11RasterizerState> g_pRasterizerStateWire{};
+_smart_ptr<ID3D11RasterizerState> g_pRasterizerStateForMeshCurrent{};
+_smart_ptr<ID3D11RasterizerState> g_pRasterizerStateForZPrePass{};
+_smart_ptr<ID3D11BlendState>      m_pBlendState;
 
-int CV_r_DrawWirefame = 0;
-int CV_r_DisableZP = 0;
+int                               CV_r_DrawWirefame = 0;
+int                               CV_r_DisableZP    = 0;
 
 // auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
-auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_N_T2F;
+auto                              BB_VERTEX_FORMAT  = VERTEX_FORMAT_P3F_N_T2F;
 
-void CreateBlendState()
+void                              CreateBlendState()
 {
 	D3D11_BLEND_DESC BlendState;
 	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
 
-	BlendState.RenderTarget[0].BlendEnable			 = TRUE;
-	BlendState.RenderTarget[0].SrcBlend				 = D3D11_BLEND_SRC_ALPHA;
-	BlendState.RenderTarget[0].DestBlend			 = D3D11_BLEND_INV_SRC_ALPHA;
-	BlendState.RenderTarget[0].BlendOp				 = D3D11_BLEND_OP_ADD;
-	BlendState.RenderTarget[0].SrcBlendAlpha		 = D3D11_BLEND_ONE;
-	BlendState.RenderTarget[0].DestBlendAlpha		 = D3D11_BLEND_ZERO;
-	BlendState.RenderTarget[0].BlendOpAlpha			 = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].BlendEnable           = TRUE;
+	BlendState.RenderTarget[0].SrcBlend              = D3D11_BLEND_SRC_ALPHA;
+	BlendState.RenderTarget[0].DestBlend             = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendState.RenderTarget[0].BlendOp               = D3D11_BLEND_OP_ADD;
+	BlendState.RenderTarget[0].SrcBlendAlpha         = D3D11_BLEND_ONE;
+	BlendState.RenderTarget[0].DestBlendAlpha        = D3D11_BLEND_ZERO;
+	BlendState.RenderTarget[0].BlendOpAlpha          = D3D11_BLEND_OP_ADD;
 	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	GetDevice()->CreateBlendState(&BlendState, m_pBlendState.GetAddressOf());
@@ -54,26 +54,25 @@ struct CBChangesEveryFrame
 {
 	D3DXMATRIX World;
 	D3DXMATRIX MVP;
-	bool	   ApplyGrayScale;
+	bool       ApplyGrayScale;
 };
 
-D3DXMATRIX		   g_MVP;
-D3DXMATRIX		   g_World;
-D3DXMATRIX		   g_View;
-D3DXMATRIX		   g_Projection;
-D3DXMATRIX		   g_ViewProjection;
+D3DXMATRIX  g_MVP;
+D3DXMATRIX  g_World;
+D3DXMATRIX  g_View;
+D3DXMATRIX  g_Projection;
+D3DXMATRIX  g_ViewProjection;
 
 ID3DBuffer* g_pConstantBuffer;
-
 
 namespace
 {
 	inline uint32 PackColor(const UCol& col)
 	{
 		return (((uint8)(col.bcolor[0]) << 24) +
-				((uint8)(col.bcolor[1]) << 16) +
-				((uint8)(col.bcolor[2]) << 8) +
-				((uint8)(col.bcolor[3])));
+		        ((uint8)(col.bcolor[1]) << 16) +
+		        ((uint8)(col.bcolor[2]) << 8) +
+		        ((uint8)(col.bcolor[3])));
 	}
 } // namespace
 
@@ -85,33 +84,33 @@ HRESULT CRenderAuxGeom::InitCube()
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	// Create the constant buffer
-	bd.Usage		  = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth	  = Memory::AlignedSizeCB<CBChangesEveryFrame>::value;
-	bd.BindFlags	  = D3D11_BIND_CONSTANT_BUFFER;
+	bd.Usage          = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth      = Memory::AlignedSizeCB<CBChangesEveryFrame>::value;
+	bd.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
-	hr				  = GetDevice()->CreateBuffer(&bd, NULL, &g_pConstantBuffer);
+	hr                = GetDevice()->CreateBuffer(&bd, NULL, &g_pConstantBuffer);
 	if (FAILED(hr))
 		return hr;
 
 	// VERTEX_FORMAT_P3F_C4B_T2F
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}};
-	UINT numElements = sizeof(layout) / sizeof(layout[0]);
+	    {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	    {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	    {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}};
+	UINT                  numElements = sizeof(layout) / sizeof(layout[0]);
 
 	// Set up rasterizer
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroStruct(rasterizerDesc);
-	rasterizerDesc.CullMode				 = D3D11_CULL_BACK;
-	rasterizerDesc.FillMode				 = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode              = D3D11_CULL_BACK;
+	rasterizerDesc.FillMode              = D3D11_FILL_SOLID;
 	rasterizerDesc.FrontCounterClockwise = false;
-	rasterizerDesc.DepthBias			 = false;
-	rasterizerDesc.DepthBiasClamp		 = 0;
-	rasterizerDesc.SlopeScaledDepthBias	 = 0;
-	rasterizerDesc.DepthClipEnable		 = true;
-	rasterizerDesc.ScissorEnable		 = false;
-	rasterizerDesc.MultisampleEnable	 = false;
+	rasterizerDesc.DepthBias             = false;
+	rasterizerDesc.DepthBiasClamp        = 0;
+	rasterizerDesc.SlopeScaledDepthBias  = 0;
+	rasterizerDesc.DepthClipEnable       = true;
+	rasterizerDesc.ScissorEnable         = false;
+	rasterizerDesc.MultisampleEnable     = false;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
 	GetDevice()->CreateRasterizerState(&rasterizerDesc, g_pRasterizerStateSolid.GetAddressOf());
@@ -125,13 +124,13 @@ void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 {
 	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
 	CBChangesEveryFrame cb;
-	cb.World		  = DrawElement.transform;
-	cb.MVP		  = g_ViewProjection * cb.World;
+	cb.World = DrawElement.transform;
+	cb.MVP   = g_ViewProjection * cb.World;
 
 	m_ZPShader->Bind();
 	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
 	::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
-	auto ib			= DrawElement.m_Inices;
+	auto ib         = DrawElement.m_Inices;
 	auto numindices = 0;
 	if (ib)
 	{
@@ -144,19 +143,19 @@ void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 {
 	// Update our time
-	static DWORD dwTimeStart = 0;
-	DWORD		 dwTimeCur	 = GetTickCount();
+	static DWORD        dwTimeStart = 0;
+	DWORD               dwTimeCur   = GetTickCount();
 
 	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
 	CBChangesEveryFrame cb;
-	cb.World		  = DrawElement.transform;
-	cb.MVP		  = g_ViewProjection * cb.World;
+	cb.World = DrawElement.transform;
+	cb.MVP   = g_ViewProjection * cb.World;
 
 	m_IllumShader->Bind();
 	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
 	::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
 	gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
-	auto ib			= DrawElement.m_Inices;
+	auto ib         = DrawElement.m_Inices;
 	auto numindices = 0;
 	if (ib)
 	{
@@ -186,7 +185,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 	};
 
 	std::vector<BB_VERTEX> vertices(24);
-	auto				   get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16
+	auto                   get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16
 	{
 		int idx = 0;
 #if 0
@@ -278,7 +277,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 	m_BB_IndexBuffer = new SVertexStream;
 	gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements.data(), (3 * elements.size()));
 	///////////////////////////////////////////////////////////////////////////////
-	m_HardwareVB		= gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
+	m_HardwareVB        = gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb", 0);
 	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", 0)))
 	{
@@ -306,21 +305,20 @@ CRenderAuxGeom::CRenderAuxGeom()
 	D3D11_DEPTH_STENCIL_DESC desc;
 	ZeroStruct(desc);
 	// desc.BackFace
-	desc.DepthEnable	= true;
-	desc.StencilEnable	= false;
+	desc.DepthEnable    = true;
+	desc.StencilEnable  = false;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	desc.DepthFunc		= D3D11_COMPARISON_LESS;
+	desc.DepthFunc      = D3D11_COMPARISON_LESS;
 
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateZPrePass);
 
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	desc.DepthFunc		= D3D11_COMPARISON_EQUAL;
+	desc.DepthFunc      = D3D11_COMPARISON_EQUAL;
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateMesh);
 
 	m_ZPShader = (CShader*)gRenDev->Sh_Load("z.Main", 0, 0);
 	REGISTER_CVAR2("r_DrawWirefame", &CV_r_DrawWirefame, 0, 0, "[0/1] Draw in wireframe mode");
 	REGISTER_CVAR2("r_DisableZP", &CV_r_DisableZP, 0, 0, "[0/1] off/on zprepass");
-
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -338,9 +336,9 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 	// #unreferenced
 	// auto& shader = m_BoundingBoxShader;
 
-	const auto angle	 = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
-	const auto size		 = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
-	const auto center	 = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
+	const auto angle     = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
+	const auto size      = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
+	const auto center    = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
 	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
 	if (first_draw)
@@ -447,9 +445,9 @@ void CRenderAuxGeom::DrawAABBs()
 {
 	D3DPERF_BeginEvent(D3DC_Blue, L"DrawAABB");
 	{
-		auto m_Camera	 = gEnv->pSystem->GetViewCamera();
-		g_View			 = m_Camera.GetViewMatrix();
-		g_Projection	 = m_Camera.GetProjectionMatrix();
+		auto m_Camera    = gEnv->pSystem->GetViewCamera();
+		g_View           = m_Camera.GetViewMatrix();
+		g_Projection     = m_Camera.GetProjectionMatrix();
 		g_ViewProjection = g_Projection * g_View;
 		// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
 		// m_BoundingBoxShader->Bind();
@@ -461,7 +459,7 @@ void CRenderAuxGeom::DrawAABBs()
 		if (!m_BBVerts.empty())
 		{
 			gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
-			auto size	  = m_BBVerts.size() * 36;
+			auto size     = m_BBVerts.size() * 36;
 			m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
 			gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
 			DrawElement({m_BoundingBox, nullptr, glm::mat4(1), -1});
@@ -516,14 +514,14 @@ void CRenderAuxGeom::PushImage(const SRender2DImageDescription& image)
 {
 	auto& i = image;
 	gEnv->pRenderer->Draw2dImage(
-		i.x, i.y, i.w, i.h,
-		i.textureId,
-		i.uv[0].x, i.uv[0].y, i.uv[1].x, i.uv[1].y,
-		0,
-		i.color.r,
-		i.color.g,
-		i.color.b,
-		i.color.a);
+	    i.x, i.y, i.w, i.h,
+	    i.textureId,
+	    i.uv[0].x, i.uv[0].y, i.uv[1].x, i.uv[1].y,
+	    0,
+	    i.color.r,
+	    i.color.g,
+	    i.color.b,
+	    i.color.a);
 }
 
 void CRenderAuxGeom::DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2)
@@ -531,13 +529,13 @@ void CRenderAuxGeom::DrawTriangle(const Legacy::Vec3& v0, const UCol& colV0, con
 	SAuxVertex* pVertices(nullptr);
 	AddPrimitive(pVertices, 3, RenderPrimitive::TRIANGLES);
 
-	pVertices[0].xyz		  = v0;
+	pVertices[0].xyz          = v0;
 	pVertices[0].color.dcolor = PackColor(colV0);
 
-	pVertices[1].xyz		  = v1;
+	pVertices[1].xyz          = v1;
 	pVertices[1].color.dcolor = PackColor(colV1);
 
-	pVertices[2].xyz		  = v2;
+	pVertices[2].xyz          = v2;
 	pVertices[2].color.dcolor = PackColor(colV2);
 }
 
@@ -548,9 +546,9 @@ void CRenderAuxGeom::DrawLine(const Legacy::Vec3& v0, const UCol& colV0, const L
 		SAuxVertex* pVertices(nullptr);
 		AddPrimitive(pVertices, 2, RenderPrimitive::LINES);
 
-		pVertices[0].xyz		  = v0;
+		pVertices[0].xyz          = v0;
 		pVertices[0].color.dcolor = PackColor(colV0);
-		pVertices[1].xyz		  = v1;
+		pVertices[1].xyz          = v1;
 		pVertices[1].color.dcolor = PackColor(colV1);
 	}
 }
@@ -564,7 +562,7 @@ void CRenderAuxGeom::DrawLines(const Legacy::Vec3* v, uint32 numPoints, const UC
 		AddPrimitive(pVertices, numPoints, RenderPrimitive::LINE_STRIP);
 		for (size_t i = 0; i < numPoints; i++)
 		{
-			pVertices[i].xyz		  = v[i];
+			pVertices[i].xyz          = v[i];
 			pVertices[i].color.dcolor = PackColor(col);
 		}
 	}
@@ -577,7 +575,7 @@ void CRenderAuxGeom::AddPrimitive(SAuxVertex*& pVertices, uint32 numVertices, Re
 		m_auxPushBuffer.emplace_back(AuxPushBuffer::value_type(numVertices, primitive));
 	}
 	// get vertex ptr
-	AuxVertexBuffer&		   auxVertexBuffer(m_VB);
+	AuxVertexBuffer&           auxVertexBuffer(m_VB);
 	AuxVertexBuffer::size_type oldVBSize(auxVertexBuffer.size());
 	auxVertexBuffer.resize(oldVBSize + numVertices);
 	pVertices = &auxVertexBuffer[oldVBSize];
