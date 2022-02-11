@@ -212,7 +212,7 @@ foreach(src ${SOURCES})
 	file(INSTALL ${src} DESTINATION ${CMAKE_BINARY_DIR}/CopyIncludes/${REL})
 endforeach()
 
-CryFileContainer(Common SOLUTION_FOLDER "Engine")
+CryFileContainer(Common SOLUTION_FOLDER Common)
 
 
 macro(install_headers)
@@ -223,8 +223,7 @@ endmacro()
 
 install_headers(3DEngine)
 install_headers(Core EntitySystem)
-#install_headers(Game Input Legacy Math)
-install_headers(Input Legacy)
+install_headers(Game Input Legacy)#Math)
 install_headers(Memory Network)
 install_headers(Renderer ScriptSystem)
 install_headers(System Threading)
