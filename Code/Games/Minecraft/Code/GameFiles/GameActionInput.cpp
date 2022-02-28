@@ -1010,6 +1010,11 @@ void  CXGame::ResetInputMap()
   pMap->BindAction(ACTION_FIRE0, eKI_Mouse1);
   pMap->BindAction(ACTION_FIRE0, eKI_XI_ShoulderL);
 
+  //aimed mode/scoped mode (use zoom)
+  pMap->BindAction(ACTION_ZOOM_TOGGLE, eKI_Mouse2);
+  pMap->BindAction(ACTION_ZOOM_TOGGLE, eKI_XI_ShoulderR);
+
+
   //jump (outside common key bindings because space is reserved for hold the breath
   //in zoom mode)
   pMap->BindAction(ACTION_JUMP, eKI_Space);
@@ -1023,9 +1028,6 @@ void  CXGame::ResetInputMap()
 
   //binocular/motion tracker/listening device
   //(should not be enabled if already in zoom mode)
-
-  //aimed mode/scoped mode (use zoom)
-  pMap->BindAction(ACTION_ZOOM_TOGGLE, eKI_Mouse2);
 
   //drop weapon
   pMap->BindAction(ACTION_DROPWEAPON, eKI_J);
