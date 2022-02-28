@@ -40,11 +40,12 @@ bool CSound::IsLoaded()
 
 void CSound::Play(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true*/, bool bSetRatio/* = true*/)
 {
-	#ifdef SOUND_SAMPLE
-	auto channel = Mix_PlayChannel(-1, m_Sample, 0);
-	#else
-	auto channel = Mix_PlayMusic(Data.Music, 0);
-	#endif
+	//#ifdef SOUND_SAMPLE
+	auto channel = Mix_PlayChannel(-1, Data.Sample, 0);
+	Mix_Volume(channel, MIX_MAX_VOLUME / 4);
+	//#else
+	//auto channel = Mix_PlayMusic(Data.Music, 0);
+	//#endif
 	CryLog("[Sound] Playing at channel: %d", channel);
 }
 
@@ -226,10 +227,10 @@ CSound* CSound::Load(const char* path, int nFlags)
 	CSound*	   pSound{};
 	char buf[256];
 	sprintf(buf, "Data/%s", path);
-	if(nFlags & FLAG_SOUND_16BITS)
+	//if(nFlags & FLAG_SOUND_16BITS)
 		Data.Sample = Mix_LoadWAV(buf);
-	else
-		Data.Music = Mix_LoadMUS(buf);
+	//else
+//		Data.Music = Mix_LoadMUS(buf);
 	if (!Data.Sample)
 	{
 		CryError("Mix_LoadWA: %s", Mix_GetError());
