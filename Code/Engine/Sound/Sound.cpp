@@ -1,5 +1,6 @@
 
 #include "Sound.hpp"
+#include "SoundSystem.hpp"
 
 CSound::~CSound()
 {
@@ -41,12 +42,18 @@ bool CSound::IsLoaded()
 void CSound::Play(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true*/, bool bSetRatio/* = true*/)
 {
 	//#ifdef SOUND_SAMPLE
-	auto channel = Mix_PlayChannel(-1, Data.Sample, 0);
-	Mix_Volume(channel, MIX_MAX_VOLUME / 4);
-	//#else
-	//auto channel = Mix_PlayMusic(Data.Music, 0);
-	//#endif
-	CryLog("[Sound] Playing at channel: %d", channel);
+	if (nFlags & FLAG_SOUND_MUSIC)
+	{
+        m_nChannel = Mix_PlayMusic(Data.Music, -1);
+		m_Volume   = s_MusicVolume * MIX_MAX_VOLUME;
+	}
+	else
+	{
+        m_nChannel = Mix_PlayChannel(-1, Data.Sample, 0);
+		m_Volume   = s_SFXVolume * MIX_MAX_VOLUME;
+		SetVolume((int)m_Volume);
+	}
+	CryLog("[Sound] Playing at channel: %d", m_nChannel);
 }
 
 void CSound::PlayFadeUnderwater(float fVolumeScale/* = 1.0f*/, bool bForceActiveState/* = true*/, bool bSetRatio/* = true*/)
@@ -129,11 +136,20 @@ void CSound::SetScaleGroup(unsigned int nGroupBits)
 
 void CSound::SetVolume(int nVolume)
 {
+	m_Volume = (float)nVolume;
+	if (nFlags & FLAG_SOUND_MUSIC)
+	{
+        Mix_VolumeMusic(nVolume);
+	}
+	else
+	{
+        Mix_Volume(m_nChannel, nVolume);
+	}
 }
 
 int CSound::GetVolume()
 {
-	return 0;
+	return (int)m_Volume;
 }
 
 void CSound::SetPosition(const Legacy::Vec3& pos)
@@ -213,12 +229,10 @@ void CSound::SetSoundPriority(unsigned char nSoundPriority)
 
 void CSound::DeleteThis()
 {
-	if(nFlags & FLAG_SOUND_16BITS)
-		Mix_FreeChunk(Data.Sample);
-	else
-	{
+	if(nFlags & FLAG_SOUND_MUSIC)
 		Mix_FreeMusic(Data.Music);
-	}
+	else
+		Mix_FreeChunk(Data.Sample);
 }
 
 CSound* CSound::Load(const char* path, int nFlags)
@@ -227,10 +241,10 @@ CSound* CSound::Load(const char* path, int nFlags)
 	CSound*	   pSound{};
 	char buf[256];
 	sprintf(buf, "Data/%s", path);
-	//if(nFlags & FLAG_SOUND_16BITS)
+	if(nFlags & FLAG_SOUND_MUSIC)
+		Data.Music = Mix_LoadMUS(buf);
+	else
 		Data.Sample = Mix_LoadWAV(buf);
-	//else
-//		Data.Music = Mix_LoadMUS(buf);
 	if (!Data.Sample)
 	{
 		CryError("Mix_LoadWA: %s", Mix_GetError());
@@ -238,6 +252,11 @@ CSound* CSound::Load(const char* path, int nFlags)
 	else
 	{
 		pSound = new CSound(Data);
+		pSound->nFlags = nFlags;
 	}
 	return pSound;
+}
+
+void CSound::SetMusicVolume()
+{
 }

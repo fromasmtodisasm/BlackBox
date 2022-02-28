@@ -1,7 +1,8 @@
 #include <BlackBox\Core\smartptr.hpp>
+#include "SoundBase.hpp"
 //#define SOUND_SAMPLE
 
-class CSound : public ISound, _reference_target_t
+class CSound : public ISound, _reference_target_t, SSoundCvars
 {
 	virtual ~CSound();
   public:
@@ -62,10 +63,14 @@ class CSound : public ISound, _reference_target_t
 	virtual int			 GetLength() override;
 	virtual void		 SetSoundPriority(unsigned char nSoundPriority) override;
 
+	static void SetMusicVolume();
+
   public:
 	void DeleteThis();
 
 	static CSound* Load(const char* path, int nFlags);
 
-	int			   nFlags;
+	int	  nFlags;
+	int	  m_nChannel;
+	float m_Volume;
 };

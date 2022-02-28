@@ -1,13 +1,5 @@
-
+#include "SoundBase.hpp"
 class CSound;
-
-struct SSoundCvars
-{
-	int	  s_MusicEnable = 1;
-	int	  s_SoundEnable = 1;
-	float s_MusicVolume = 1.f;
-	float s_SFXVolume	= 1.f;
-};
 
 class CSoundSystem : 
 	public SSoundCvars
@@ -57,7 +49,8 @@ class CSoundSystem :
 	bool m_bAudioInited = false;
 	bool m_bMixerInited = false;
 
-	int	   m_AudioRate	   = 22050;
+	//int	   m_AudioRate	   = 22050;
+	int	   m_AudioRate	   = 44100;
 	Uint16 m_AudioFormat   = MIX_DEFAULT_FORMAT;
 	int	   m_AudioChannels = 2;
 	int	   m_AudioBuffers  = 4096;

@@ -280,6 +280,9 @@ void CXGame::InitConsoleCommands()
 		"\n"
 		"Usage: download \"http://google.com\" \"file/name/to/save\"\n"
 		"");
+
+	pConsole->AddCommand("sound_pause", [](IConsoleCmdArgs*)
+						 { static int trigger = 0; trigger = !(bool)trigger; gEnv->pSoundSystem->Pause(trigger); });
 }
 
 //extern float CameraRayLength = 40.f;

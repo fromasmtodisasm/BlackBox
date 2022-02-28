@@ -1,7 +1,13 @@
 #include "SoundSystem.hpp"
 #include "Sound.hpp"
 
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox\System\ConsoleRegistration.h>
+
+	int	  SSoundCvars::s_MusicEnable = 1;
+	int	  SSoundCvars::s_SoundEnable = 1;
+	float SSoundCvars::s_MusicVolume = 1.f;
+	float SSoundCvars::s_SFXVolume = 1.f;
 
 CSoundSystem::~CSoundSystem()
 {
@@ -85,7 +91,16 @@ void CSoundSystem::Silence()
 void CSoundSystem::Pause(bool bPause, bool bResetVolume)
 {
 	// -1 all channels
-	Mix_Pause(-1);
+	if (bPause)
+	{
+        Mix_Pause(-1);
+        Mix_PauseMusic();
+	}
+	else
+	{
+		Mix_Resume(-1);
+		Mix_ResumeMusic();
+	}
 }
 
 void CSoundSystem::Mute(bool bMute)
@@ -176,8 +191,17 @@ bool CSoundSystem::Init()
 	REGISTER_CVAR(s_MusicEnable, s_MusicEnable, 0, "Enable/Disable music [1/0]");
 	REGISTER_CVAR(s_SoundEnable, s_SoundEnable, 0, "Enable/Disable Sound [1/0]");
 
-	REGISTER_CVAR(s_MusicVolume, s_MusicVolume, 0, "Music volume [0..1]");
+	REGISTER_CVAR(s_MusicVolume, s_MusicVolume , VF_DUMPTODISK, "Music volume [0..1]");
 	REGISTER_CVAR(s_SFXVolume, s_SFXVolume, 0, "SFX volume [0..1]");
+
+	auto var  = gEnv->pConsole->GetCVar("s_MusicVolume");
+	var->AddOnChange([this] {
+        //s_SFXVolume * MIX_MAX_VOLUME
+        Mix_VolumeMusic(int(s_MusicVolume * MIX_MAX_VOLUME));
+		CryLog("Music Volume changed");
+    });
+
+
 
 
 	return true;
@@ -208,9 +232,11 @@ ISoundSystem* CreateSoundSystem(struct ISystem*, void* pInitData)
 	#else
 	//auto sound = AudioSystem->LoadSound("Sounds/MenuMusic_shortversion.wav", 0);
 	//auto sound = AudioSystem->LoadSound("Music/MENU/MenuMusic_shortversion_old.ogg", 0);
+
+	auto sound = AudioSystem->LoadSound("Music/Background/spirit-blossom.wav", FLAG_SOUND_MUSIC);
 	#endif
 
-	//sound->Play();
+	sound->Play();
 	return AudioSystem;
 }
 
