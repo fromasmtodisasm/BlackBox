@@ -571,12 +571,11 @@ endfunction()
 
 function(GameModule target)
 	prepare_project(${ARGN})
-	#if(OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
-	#	add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
-	#else()
-	#	add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
-	#endif()
+	if(OPTION_STATIC_LINKING AND NOT OPTION_STATIC_LINKING_WITH_GAME_AS_DLL)
+		add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
+	else()
 		add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
+	endif()
 	apply_compile_settings()
 	set(game_folder
 			${CMAKE_CURRENT_SOURCE_DIR}

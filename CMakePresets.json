@@ -77,7 +77,7 @@
         "CMAKE_SYSTEM_VERSION": "10",
         "OPTION_EDITOR": "OFF",
         "OPTION_STATIC_LINKING": "ON",
-        "OPTION_STATIC_LINKING_WITH_GAME_AS_DLL": "ON",
+        "OPTION_STATIC_LINKING_WITH_GAME_AS_DLL": "OFF",
         "QT_SDK_ROOT" : "C:",
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
         "USE_MSVC": "ON"
