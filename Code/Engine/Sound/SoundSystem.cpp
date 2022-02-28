@@ -233,7 +233,7 @@ ISoundSystem* CreateSoundSystem(struct ISystem*, void* pInitData)
 	//auto sound = AudioSystem->LoadSound("Sounds/MenuMusic_shortversion.wav", 0);
 	//auto sound = AudioSystem->LoadSound("Music/MENU/MenuMusic_shortversion_old.ogg", 0);
 
-	auto sound = AudioSystem->LoadSound("Music/Background/spirit-blossom.wav", FLAG_SOUND_MUSIC);
+	auto sound = AudioSystem->LoadSound("Music/Background/spirit-blossom.mp3", FLAG_SOUND_MUSIC);
 	#endif
 
 	sound->Play();
