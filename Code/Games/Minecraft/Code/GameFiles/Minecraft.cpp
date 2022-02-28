@@ -438,7 +438,7 @@ bool timingAction(float& prevTime, float interval)
 {
 	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
 	auto const delta   = curTime - prevTime;
-	CryLog("delta time: %f", delta);
+	//CryLog("delta time: %f", delta);
 	if (delta > interval)
 	{
 		prevTime = curTime;
