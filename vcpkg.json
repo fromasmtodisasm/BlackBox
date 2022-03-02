@@ -13,7 +13,13 @@
     "libzippp",
     "lua",
     "sdl2",
-    "sdl2-mixer",
+    {
+      "name": "sdl2-mixer",
+      "features": [
+        "mpg123",
+        "libvorbis"
+      ]
+    },
     "sdl2-net",
     "stb",
     "tinyxml2"

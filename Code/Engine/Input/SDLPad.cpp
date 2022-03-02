@@ -206,7 +206,9 @@ void CSDLPad::HandleAxisEvent(const SDL_JoyAxisEvent& axisEvt)
 
 	SInputSymbol* pSymbol = NULL;
 	SInputEvent   inputEvt;
+#if 0
 	CryLogAlways("CSDLPad - AXIS requested(%d) %d on Gamepad [%d]", axisEvt.axis, axisEvt.value, m_deviceNo);
+#endif
 	const int id = SDL_GAMEPAD_AXIS(axisEvt.axis);
 	pSymbol      = DevSpecIdToSymbol(id);
 	if (pSymbol)

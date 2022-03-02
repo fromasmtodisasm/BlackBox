@@ -354,6 +354,7 @@ void  CGame::ResetInputMap()
 
   //aimed mode/scoped mode (use zoom)
   pMap->BindAction(ACTION_ZOOM_TOGGLE, eKI_Mouse2);
+  pMap->BindAction(ACTION_ZOOM_TOGGLE, eKI_XI_ShoulderR);
 
   // rmb is used for binocular, night vision & thermal vision
   pMap->BindAction(ACTION_ITEM_1, eKI_T); //thermal vision

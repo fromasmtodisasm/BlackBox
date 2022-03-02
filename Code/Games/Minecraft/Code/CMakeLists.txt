@@ -153,7 +153,7 @@ add_sources(
 		Vehicle/XVehicleSystem.h
 )
 end_sources()
-GameModule(MineCRY FORCE_SHARED_WIN PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
+GameModule(MineCRY PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
 
 add_subdirectory(../thirdparty 3rdparty)
 

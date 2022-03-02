@@ -2,18 +2,16 @@ start_sources()
 sources_platform(ALL)
 add_sources(
 	"NoUberFile"
-	PROJECTS
-	Sound
-	SOURCE_GROUP
-	"Source Files"
-	"Sound.cpp"
-	"Sound.hpp"
-	"SoundSystem.hpp"
-	"SoundSystem.cpp"
-	"CListenerArea.hpp"
-	"CListenerArea.cpp"
-	"SoundDLL.cpp"
-	)
+	SOURCE_GROUP "Source Files"
+		"CListenerArea.cpp"
+		"CListenerArea.hpp"
+		"Sound.cpp"
+		"Sound.hpp"
+		"SoundBase.hpp"
+		"SoundDLL.cpp"
+		"SoundSystem.cpp"
+		"SoundSystem.hpp"
+)
 end_sources()
 
 EngineModule(Sound PCH "pch.hpp" SOLUTION_FOLDER  "Engine")
