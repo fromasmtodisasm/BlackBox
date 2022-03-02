@@ -4,6 +4,7 @@ enable_language(C)
 enable_language(CXX)
 
 set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Reset the configurations to what we need" FORCE)

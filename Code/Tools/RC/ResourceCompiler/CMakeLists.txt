@@ -7,6 +7,8 @@ add_sources("NoUberFile"
 		"ResourceCompiler.h"
 		"ResourceCompiler.cpp"
 		"ResourceCompilerPlugin.def"
+		"FileMapping.cpp"
+		"FileMapping.h"
 )
 end_sources()
 
