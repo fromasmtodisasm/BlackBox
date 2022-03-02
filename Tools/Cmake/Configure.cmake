@@ -146,4 +146,5 @@ endif()
 
 include("${TOOLS_CMAKE_DIR}/ClangFormat.cmake")
 include("${TOOLS_CMAKE_DIR}/Build.cmake")
+include(CPack)
 

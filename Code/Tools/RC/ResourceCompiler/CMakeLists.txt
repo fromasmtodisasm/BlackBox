@@ -1,0 +1,13 @@
+start_sources()
+sources_platform(ALL)
+add_sources("NoUberFile"
+	SOURCE_GROUP "Source Files"
+		"pch.hpp"
+		"resource.h"
+		"ResourceCompiler.h"
+		"ResourceCompiler.cpp"
+		"ResourceCompilerPlugin.def"
+)
+end_sources()
+
+CryResourceCompiler(ResourceCompiler PCH "pch.hpp" SOLUTION_FOLDER "RC")

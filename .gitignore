@@ -14,9 +14,11 @@ CMakeLists.txt.user*
 
 # Binary directories.
 /[Bb]in*/
+/Tools/rc/*
 
 # CMake
 cmake-build*
+build
 
 
 /vcpkg

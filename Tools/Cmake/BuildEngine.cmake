@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+option(OPTION_RC "Include RC in the build" ${WINDOWS})
 ###################################################
 include(GenerateExportHeader)
 ###################################################
