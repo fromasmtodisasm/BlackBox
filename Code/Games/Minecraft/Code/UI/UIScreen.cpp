@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: UIScreen.cpp
@@ -19,29 +19,30 @@
 
 _DECLARE_SCRIPTABLEEX(CUIScreen);
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIScreen::CUIScreen()
-: m_pUISystem(0), m_bActive(0)
+    : m_pUISystem(0)
+    , m_bActive(0)
 {
-	m_hOnInit=
-	m_hOnUpdate=
-	m_hOnRelease=
-	m_hOnActivate=
-	m_hOnDeactivate=0;
+	m_hOnInit =
+	    m_hOnUpdate =
+	        m_hOnRelease =
+	            m_hOnActivate =
+	                m_hOnDeactivate = 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIScreen::~CUIScreen()
 {
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::Release()
 {
 	return m_pUISystem->DestroyScreen(this);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::GetScriptFunctionPtrs()
 {
 	GetScriptObject()->GetValue("OnInit", m_hOnInit);
@@ -53,7 +54,7 @@ int CUIScreen::GetScriptFunctionPtrs()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::ReleaseScriptFunctionPtrs()
 {
 	m_pScriptSystem->ReleaseFunc(m_hOnInit);
@@ -63,8 +64,8 @@ int CUIScreen::ReleaseScriptFunctionPtrs()
 	m_hOnUpdate = 0;
 
 	m_pScriptSystem->ReleaseFunc(m_hOnRelease);
-	m_hOnRelease = 0;	
-	
+	m_hOnRelease = 0;
+
 	m_pScriptSystem->ReleaseFunc(m_hOnActivate);
 	m_hOnActivate = 0;
 
@@ -74,8 +75,8 @@ int CUIScreen::ReleaseScriptFunctionPtrs()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CUIScreen::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////
+void CUIScreen::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIScreen>::InitializeTemplate(pScriptSystem);
 
@@ -87,28 +88,28 @@ void CUIScreen::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIScreen, DelWidget);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::SetName(const string &szName)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::SetName(const string& szName)
 {
 	m_szName = szName;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-string &CUIScreen::GetName()
+//////////////////////////////////////////////////////////////////////
+string& CUIScreen::GetName()
 {
 	return m_szName;
 }
 
-////////////////////////////////////////////////////////////////////// 
-string  CUIScreen::GetClassName()
+//////////////////////////////////////////////////////////////////////
+string CUIScreen::GetClassName()
 {
 	return UICLASSNAME_SCREEN;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::AddWidget(CUIWidget *pWidget)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::AddWidget(CUIWidget* pWidget)
 {
 	CUIWidgetItor pItor = std::find(m_vWidgetList.begin(), m_vWidgetList.end(), pWidget);
 
@@ -124,10 +125,10 @@ int CUIScreen::AddWidget(CUIWidget *pWidget)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::AddWidget(const string &szName)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::AddWidget(const string& szName)
 {
-	CUIWidget *pWidget = m_pUISystem->GetWidget(szName);
+	CUIWidget* pWidget = m_pUISystem->GetWidget(szName);
 
 	if (pWidget)
 	{
@@ -137,8 +138,8 @@ int CUIScreen::AddWidget(const string &szName)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::DelWidget(CUIWidget *pWidget)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::DelWidget(CUIWidget* pWidget)
 {
 	for (CUIWidgetItor pItor = m_vWidgetList.begin(); pItor != m_vWidgetList.end(); pItor++)
 	{
@@ -153,14 +154,14 @@ int CUIScreen::DelWidget(CUIWidget *pWidget)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::DelWidget(int iIndex)
 {
 	return DelWidget(m_vWidgetList[iIndex]);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::DelWidget(const string &szName)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::DelWidget(const string& szName)
 {
 	for (CUIWidgetItor pItor = m_vWidgetList.begin(); pItor != m_vWidgetList.end(); pItor++)
 	{
@@ -176,20 +177,20 @@ int CUIScreen::DelWidget(const string &szName)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-CUIWidgetList *CUIScreen::GetWidgetList()
+//////////////////////////////////////////////////////////////////////
+CUIWidgetList* CUIScreen::GetWidgetList()
 {
 	return &m_vWidgetList;
 }
 
-////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUIScreen::GetWidget(int iIndex)
+//////////////////////////////////////////////////////////////////////
+CUIWidget* CUIScreen::GetWidget(int iIndex)
 {
 	return m_vWidgetList[iIndex];
 }
 
-////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUIScreen::GetWidget(const string &szName)
+//////////////////////////////////////////////////////////////////////
+CUIWidget* CUIScreen::GetWidget(const string& szName)
 {
 	for (CUIWidgetItor pItor = m_vWidgetList.begin(); pItor != m_vWidgetList.end(); ++pItor)
 	{
@@ -202,18 +203,18 @@ CUIWidget *CUIScreen::GetWidget(const string &szName)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int	CUIScreen::GetWidgetCount()
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::GetWidgetCount()
 {
 	return m_vWidgetList.size();
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::Release(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::Release(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Release, 0);
 
@@ -222,38 +223,37 @@ int CUIScreen::Release(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::GetName(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::GetName(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetName, 0);
 
 	return pH->EndFunction(GetName().c_str());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::GetWidgetCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::GetWidgetCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetWidgetCount, 0);
 
 	return pH->EndFunction(GetWidgetCount());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::GetWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::GetWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetWidget, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), GetWidget, 1, svtString, svtNumber);
 
-
-	CUIWidget *pWidget = 0;
+	CUIWidget* pWidget = 0;
 
 	if (pH->GetParamType(1) == svtString)
 	{
-		char *szValue;
+		char* szValue;
 
 		pH->GetParam(1, szValue);
 
-    pWidget = GetWidget(szValue);
+		pWidget = GetWidget(szValue);
 	}
 	else
 	{
@@ -272,17 +272,17 @@ int CUIScreen::GetWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::AddWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::AddWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), AddWidget, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), AddWidget, 1, svtString, svtObject);
 
-	CUIWidget *pWidget = 0;
+	CUIWidget* pWidget = 0;
 
 	if (pH->GetParamType(1) == svtString)
 	{
-		char *szName;
+		char* szName;
 
 		pH->GetParam(1, szName);
 
@@ -290,11 +290,11 @@ int CUIScreen::AddWidget(IFunctionHandler *pH)
 	}
 	else
 	{
-		IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+		IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 		pH->GetParam(1, pObject);
 
-		pWidget = (CUIWidget *)pObject->GetNativeData();
+		pWidget = (CUIWidget*)pObject->GetNativeData();
 
 		pObject->Release();
 	}
@@ -306,17 +306,17 @@ int CUIScreen::AddWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScreen::DelWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScreen::DelWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), DelWidget, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), DelWidget, 1, svtString, svtObject);
 
-	CUIWidget *pWidget = 0;
+	CUIWidget* pWidget = 0;
 
 	if (pH->GetParamType(1) == svtString)
 	{
-		char *szName;
+		char* szName;
 
 		pH->GetParam(1, szName);
 
@@ -324,11 +324,11 @@ int CUIScreen::DelWidget(IFunctionHandler *pH)
 	}
 	else
 	{
-		IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+		IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 		pH->GetParam(1, pObject);
 
-		pWidget = (CUIWidget *)pObject->GetNativeData();
+		pWidget = (CUIWidget*)pObject->GetNativeData();
 
 		pObject->Release();
 	}
@@ -340,12 +340,12 @@ int CUIScreen::DelWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::OnInit()
 {
 	GetScriptFunctionPtrs();
 
-	IScriptSystem		*pScriptSystem = m_pUISystem->GetIScriptSystem();
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
 	HSCRIPTFUNCTION pScriptFunction = m_hOnInit;
 
 	if (!pScriptFunction)
@@ -362,10 +362,10 @@ int CUIScreen::OnInit()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::OnUpdate()
 {
-	IScriptSystem		*pScriptSystem = m_pUISystem->GetIScriptSystem();
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
 	HSCRIPTFUNCTION pScriptFunction = m_hOnUpdate;
 
 	if (!pScriptFunction)
@@ -382,10 +382,10 @@ int CUIScreen::OnUpdate()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::OnRelease()
 {
-	IScriptSystem		*pScriptSystem = m_pUISystem->GetIScriptSystem();
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
 	HSCRIPTFUNCTION pScriptFunction = m_hOnRelease;
 
 	if (!pScriptFunction)
@@ -406,10 +406,10 @@ int CUIScreen::OnRelease()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::OnActivate()
 {
-	IScriptSystem		*pScriptSystem = m_pUISystem->GetIScriptSystem();
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
 	HSCRIPTFUNCTION pScriptFunction = m_hOnActivate;
 
 	if (!pScriptFunction)
@@ -426,10 +426,10 @@ int CUIScreen::OnActivate()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScreen::OnDeactivate()
 {
-	IScriptSystem		*pScriptSystem = m_pUISystem->GetIScriptSystem();
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
 	HSCRIPTFUNCTION pScriptFunction = m_hOnDeactivate;
 
 	if (!pScriptFunction)
@@ -444,4 +444,4 @@ int CUIScreen::OnDeactivate()
 	pScriptSystem->EndCall(iResult);
 
 	return iResult;
-} 
+}

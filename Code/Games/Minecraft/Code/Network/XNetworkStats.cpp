@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XNetworkStats.cpp
@@ -16,8 +16,8 @@
 //#include "xnetworkstats.h"
 #include <Network/XNetworkStats.hpp>
 
-#define MAX_ITEMS							30
-#define MAX_SUMGRAPHELEMENTS	1000
+#define MAX_ITEMS            30
+#define MAX_SUMGRAPHELEMENTS 1000
 
 //////////////////////////////////////////////////////////////////////////
 CXNetworkStats::CXNetworkStats()
@@ -28,7 +28,7 @@ CXNetworkStats::CXNetworkStats()
 	ResetGatherStats();
 	m_SumGraphGather.resize(MAX_SUMGRAPHELEMENTS);
 	m_SumGraphDraw.resize(MAX_SUMGRAPHELEMENTS);
-	m_dwResetCount=0;
+	m_dwResetCount = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,24 +43,25 @@ DWORD CXNetworkStats::GetResetCount() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXNetworkStats::Update( const CTimeValue &inCurrentTime )
+void CXNetworkStats::Update(const CTimeValue& inCurrentTime)
 {
-	if(m_LastTimeReset==CTimeValue())
-		m_LastTimeReset=inCurrentTime;
+	if (m_LastTimeReset == CTimeValue())
+		m_LastTimeReset = inCurrentTime;
 
-	CTimeValue RelTime=inCurrentTime-m_LastTimeReset;
-	CTimeValue sec,zero;
+	CTimeValue RelTime = inCurrentTime - m_LastTimeReset;
+	CTimeValue sec, zero;
 
 	// todo: improve CTimeValue interface
-	sec.SetSeconds(float(1));zero.SetSeconds(float(0));
+	sec.SetSeconds(float(1));
+	zero.SetSeconds(float(0));
 
-	if(RelTime>sec || RelTime<zero)		// after one sec or if timer was reseted
+	if (RelTime > sec || RelTime < zero) // after one sec or if timer was reseted
 	{
-		m_DrawStats=m_GatherStats;
-		m_SumGraphDraw = m_SumGraphGather;
+		m_DrawStats           = m_GatherStats;
+		m_SumGraphDraw        = m_SumGraphGather;
 		m_dwSumGraphDrawCount = m_dwSumGraphGatherCount;
 		ResetGatherStats();
-		m_LastTimeReset=inCurrentTime;
+		m_LastTimeReset = inCurrentTime;
 
 		m_dwResetCount++;
 	}
@@ -68,16 +69,16 @@ void CXNetworkStats::Update( const CTimeValue &inCurrentTime )
 
 //////////////////////////////////////////////////////////////////////////
 void CXNetworkStats::ResetDrawStats()
-{	
+{
 	std::vector<SCountSize>::iterator it;
 
-	for(it=m_DrawStats.begin();it!=m_DrawStats.end();it++)
+	for (it = m_DrawStats.begin(); it != m_DrawStats.end(); it++)
 	{
-		SCountSize &ref=*it;																
+		SCountSize& ref    = *it;
 
-		ref.m_dwRelCount=0;
-		ref.m_dwUnrelCount=0;
-		ref.m_SumBitSize=0;
+		ref.m_dwRelCount   = 0;
+		ref.m_dwUnrelCount = 0;
+		ref.m_SumBitSize   = 0;
 	}
 
 	for (std::vector<DWORD>::iterator dwit = m_SumGraphDraw.begin(); dwit != m_SumGraphDraw.end(); ++dwit)
@@ -90,16 +91,16 @@ void CXNetworkStats::ResetDrawStats()
 
 //////////////////////////////////////////////////////////////////////////
 void CXNetworkStats::ResetGatherStats()
-{	
+{
 	std::vector<SCountSize>::iterator it;
 
-	for(it=m_GatherStats.begin();it!=m_GatherStats.end();it++)
+	for (it = m_GatherStats.begin(); it != m_GatherStats.end(); it++)
 	{
-		SCountSize &ref=*it;																
+		SCountSize& ref    = *it;
 
-		ref.m_dwRelCount=0;
-		ref.m_dwUnrelCount=0;
-		ref.m_SumBitSize=0;
+		ref.m_dwRelCount   = 0;
+		ref.m_dwUnrelCount = 0;
+		ref.m_SumBitSize   = 0;
 	}
 
 	for (std::vector<DWORD>::iterator dwit = m_SumGraphGather.begin(); dwit != m_SumGraphGather.end(); ++dwit)
@@ -110,37 +111,37 @@ void CXNetworkStats::ResetGatherStats()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXNetworkStats::AddPacket( const DWORD indwItem, const size_t inBitSize, const bool inbReliable )
+void CXNetworkStats::AddPacket(const DWORD indwItem, const size_t inBitSize, const bool inbReliable)
 {
-	if(indwItem>=MAX_ITEMS)
+	if (indwItem >= MAX_ITEMS)
 	{
 		assert(0);
 		return;
 	}
 
-	SCountSize &ref=m_GatherStats[indwItem];
+	SCountSize& ref = m_GatherStats[indwItem];
 
-	if(inbReliable)
+	if (inbReliable)
 		ref.m_dwRelCount++;
-	 else
+	else
 		ref.m_dwUnrelCount++;
 
-	ref.m_SumBitSize+=inBitSize;
+	ref.m_SumBitSize += inBitSize;
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CXNetworkStats::GetNthUsedDrawIndex( const int iniN )
+int CXNetworkStats::GetNthUsedDrawIndex(const int iniN)
 {
 	std::vector<SCountSize>::iterator it;
 
-	int iUsed=0,i=0;
-	for(it=m_DrawStats.begin();it!=m_DrawStats.end();++it,i++)
+	int                               iUsed = 0, i = 0;
+	for (it = m_DrawStats.begin(); it != m_DrawStats.end(); ++it, i++)
 	{
-		SCountSize &ref=*it;																
+		SCountSize& ref = *it;
 
-		if(ref.m_SumBitSize==0)continue;
+		if (ref.m_SumBitSize == 0) continue;
 
-		if(iniN==iUsed)
+		if (iniN == iUsed)
 			return i;
 
 		iUsed++;
@@ -150,37 +151,37 @@ int CXNetworkStats::GetNthUsedDrawIndex( const int iniN )
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CXNetworkStats::GetStats( const int iniN, DWORD &outdwItem, DWORD &outRelCount, DWORD &outUnrelCount, size_t &outSumBitSize )
-{	
-	int iIndex=GetNthUsedDrawIndex(iniN);
+bool CXNetworkStats::GetStats(const int iniN, DWORD& outdwItem, DWORD& outRelCount, DWORD& outUnrelCount, size_t& outSumBitSize)
+{
+	int iIndex = GetNthUsedDrawIndex(iniN);
 
-	if(iIndex==-1)
+	if (iIndex == -1)
 		return false;
 
-	outdwItem=(DWORD)iIndex;
+	outdwItem       = (DWORD)iIndex;
 
-	SCountSize &ref=m_DrawStats[iIndex];
+	SCountSize& ref = m_DrawStats[iIndex];
 
-	outRelCount=ref.m_dwRelCount;
-	outUnrelCount=ref.m_dwUnrelCount;
-	outSumBitSize=ref.m_SumBitSize;
+	outRelCount     = ref.m_dwRelCount;
+	outUnrelCount   = ref.m_dwUnrelCount;
+	outSumBitSize   = ref.m_SumBitSize;
 	assert(outSumBitSize);
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXNetworkStats::AddToSumGraph( const DWORD inPos, const DWORD indwDelta )
+void CXNetworkStats::AddToSumGraph(const DWORD inPos, const DWORD indwDelta)
 {
-	assert(inPos<m_SumGraphDraw.size());
+	assert(inPos < m_SumGraphDraw.size());
 
 	m_SumGraphGather[inPos] += indwDelta;
 }
 
 //////////////////////////////////////////////////////////////////////////
-float CXNetworkStats::GetSumGraphValue( const DWORD inPos ) const
+float CXNetworkStats::GetSumGraphValue(const DWORD inPos) const
 {
-	assert(inPos<m_SumGraphDraw.size());
+	assert(inPos < m_SumGraphDraw.size());
 
 	return (float)(m_SumGraphDraw[inPos]);
 }

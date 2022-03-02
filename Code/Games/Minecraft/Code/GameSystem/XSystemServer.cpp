@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XSystemServer.cpp
@@ -20,18 +20,19 @@
 #include "WeaponSystemEx.h"
 
 #if 0
-#include "XVehicleSystem.h"
-#include "TagPoint.h"
+	#include "XVehicleSystem.h"
+	#include "TagPoint.h"
 
-#include <IAISystem.h>
-#include <ISound.h>
-#include <I3DEngine.h>
-#include <IMovieSystem.h>
+	#include <IAISystem.h>
+	#include <ISound.h>
+	#include <I3DEngine.h>
+	#include <IMovieSystem.h>
 #endif
 #include <ICryPak.h>
 
 //////////////////////////////////////////////////////////////////////
-CXSystemServer::CXSystemServer(CXServer *pXServer,CXGame *pGame, ILog *pLog):CXSystemBase(pGame, pLog)
+CXSystemServer::CXSystemServer(CXServer* pXServer, CXGame* pGame, ILog* pLog)
+    : CXSystemBase(pGame, pLog)
 {
 	m_pXServer = pXServer;
 	m_pEntitySystem->EnableServer(true);
@@ -50,16 +51,16 @@ void CXSystemServer::Release()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemServer::LoadLevel(const char *szLevelDir,const char *szMissionName, bool bEditor)
+bool CXSystemServer::LoadLevel(const char* szLevelDir, const char* szMissionName, bool bEditor)
 {
 	assert(!m_pGame->m_pServer->m_bIsLoadingLevel);
-	m_pGame->m_pServer->m_bIsLoadingLevel=true;
+	m_pGame->m_pServer->m_bIsLoadingLevel = true;
 
 	//////////////////////////////////////////////////////////////////////////
 	// MP Stuff.
 	//////////////////////////////////////////////////////////////////////////
 	m_mapTeams.clear();
-	AddTeam("spectators",0);
+	AddTeam("spectators", 0);
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +70,7 @@ bool CXSystemServer::LoadLevel(const char *szLevelDir,const char *szMissionName,
 	if (szMissionName)
 		missionInfo.sMissionName = szMissionName;
 	// [anton] make sure physical world has the most recent IsMultiplayer flag before loading
-	m_pSystem->GetIPhysicalWorld()->GetPhysVars()->bMultiplayer = m_pGame->IsMultiplayer() ? 1:0;
+	m_pSystem->GetIPhysicalWorld()->GetPhysVars()->bMultiplayer = m_pGame->IsMultiplayer() ? 1 : 0;
 
 	StartLoading(bEditor);
 
@@ -94,35 +95,35 @@ bool CXSystemServer::LoadLevel(const char *szLevelDir,const char *szMissionName,
 	}
 
 	m_pSystem->GetINetwork()->OnAfterServerLoadLevel(
-				m_pXServer->sv_name->GetString(),
-				m_pXServer->sv_maxplayers->GetIVal(),
-				m_pXServer->m_ServerInfos.nPort);
+	    m_pXServer->sv_name->GetString(),
+	    m_pXServer->sv_maxplayers->GetIVal(),
+	    m_pXServer->m_ServerInfos.nPort);
 
-	m_pGame->m_bMapLoadedFromCheckpoint=false;
-	m_pGame->m_pServer->m_bIsLoadingLevel=false;
+	m_pGame->m_bMapLoadedFromCheckpoint   = false;
+	m_pGame->m_pServer->m_bIsLoadingLevel = false;
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemServer::OnReadyToLoadLevel( SMissionInfo &missionInfo )
+void CXSystemServer::OnReadyToLoadLevel(SMissionInfo& missionInfo)
 {
-	IGameMods *pGameMods=m_pGame->GetModsInterface();
+	IGameMods* pGameMods = m_pGame->GetModsInterface();
 
-	assert(pGameMods);			// Game Init failed?
+	assert(pGameMods); // Game Init failed?
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 	// INIT SERVER GAME RULES.
 	m_pXServer->GetRules()->ShutDown();
 	m_pXServer->GetRules()->Init(m_pGame, m_pSystem->GetIConsole(), m_pGame->GetScriptSystem(), m_pLog);
-	m_pXServer->GetServerInfo();	// refill the server info structure
-	m_pXServer->m_ServerInfos.strMap = missionInfo.sLevelName;
-	m_pXServer->m_GameContext.strMapFolder = missionInfo.sLevelFolder;
-	m_pXServer->m_GameContext.strMission = missionInfo.sMissionName;
-	m_pXServer->m_GameContext.strGameType = m_pGame->g_GameType->GetString();
-	m_pXServer->m_GameContext.strMod = pGameMods->GetCurrentMod();
-	m_pXServer->m_GameContext.bInternetServer = (m_pXServer->m_ServerInfos.nServerFlags&SXServerInfos::FLAG_NET) != 0;
-	m_pXServer->m_GameContext.bForceNonDevMode= (m_pXServer->m_ServerInfos.nServerFlags&SXServerInfos::FLAG_CHEATS) == 0;
+	m_pXServer->GetServerInfo(); // refill the server info structure
+	m_pXServer->m_ServerInfos.strMap             = missionInfo.sLevelName;
+	m_pXServer->m_GameContext.strMapFolder       = missionInfo.sLevelFolder;
+	m_pXServer->m_GameContext.strMission         = missionInfo.sMissionName;
+	m_pXServer->m_GameContext.strGameType        = m_pGame->g_GameType->GetString();
+	m_pXServer->m_GameContext.strMod             = pGameMods->GetCurrentMod();
+	m_pXServer->m_GameContext.bInternetServer    = (m_pXServer->m_ServerInfos.nServerFlags & SXServerInfos::FLAG_NET) != 0;
+	m_pXServer->m_GameContext.bForceNonDevMode   = (m_pXServer->m_ServerInfos.nServerFlags & SXServerInfos::FLAG_CHEATS) == 0;
 	m_pXServer->m_GameContext.wLevelDataCheckSum = m_wCheckSum;
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -138,14 +139,14 @@ void CXSystemServer::OnReadyToLoadLevel( SMissionInfo &missionInfo )
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	m_pLog->Log( "Tell Clients about the mapchange ...." );
+	m_pLog->Log("Tell Clients about the mapchange ....");
 	CXServer::XSlotMap::iterator itor = m_pXServer->GetSlotsMap().begin();
-	while(itor != m_pXServer->GetSlotsMap().end())
+	while (itor != m_pXServer->GetSlotsMap().end())
 	{
-		CXServerSlot *slot=itor->second;
+		CXServerSlot* slot = itor->second;
 
-		m_pLog->Log("   name: '%s'",slot->GetName());
-	
+		m_pLog->Log("   name: '%s'", slot->GetName());
+
 		slot->ContextSetup();
 		slot->CleanupSnapshot();
 
@@ -158,10 +159,10 @@ void CXSystemServer::OnReadyToLoadLevel( SMissionInfo &missionInfo )
 }
 
 //////////////////////////////////////////////////////////////////////
-IEntity*	CXSystemServer::SpawnEntity(CEntityDesc &ed)
-{	
+IEntity* CXSystemServer::SpawnEntity(CEntityDesc& ed)
+{
 	IEntity* entity = m_pEntitySystem->SpawnEntity(ed);
-	
+
 	if (entity && m_pGame->IsMultiplayer())
 	{
 		entity->SetNeedUpdate(true);
@@ -180,46 +181,46 @@ void CXSystemServer::RemoveEntity(EntityId wID, bool bRemoveNow)
 //!delete all entities
 void CXSystemServer::DeleteAllEntities()
 {
-	#if 0
-#if !defined(LINUX)	
+#if 0
+	#if !defined(LINUX)	
 		IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
 		if (pMovieSystem)
 			pMovieSystem->Reset(false);
+	#endif
 #endif
-		#endif
-		m_pEntitySystem->Reset();
+	m_pEntitySystem->Reset();
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemServer::Disconnected(const char *szCause)
+void CXSystemServer::Disconnected(const char* szCause)
 {
-	// TODO	
-	int a=5;
+	// TODO
+	int a = 5;
 }
 
 //////////////////////////////////////////////////////////////////////
-void	CXSystemServer::BindEntity(EntityId idParent,EntityId idChild)
-{
-}
-
-//////////////////////////////////////////////////////////////////////
-void	CXSystemServer::UnbindEntity(EntityId idParent,EntityId idChild)
+void CXSystemServer::BindEntity(EntityId idParent, EntityId idChild)
 {
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemServer::LoadCharacter(IEntity* pEntity, const char *szModel)
+void CXSystemServer::UnbindEntity(EntityId idParent, EntityId idChild)
 {
-	// Timur[8/23/2001] 
-	ASSERT(pEntity);	
+}
+
+//////////////////////////////////////////////////////////////////////
+bool CXSystemServer::LoadCharacter(IEntity* pEntity, const char* szModel)
+{
+	// Timur[8/23/2001]
+	ASSERT(pEntity);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemServer::WriteTeams(CStream &stm)
+bool CXSystemServer::WriteTeams(CStream& stm)
 {
 	stm.Write((BYTE)m_mapTeams.size());
-	for (TeamsMapItor itor=m_mapTeams.begin();itor!=m_mapTeams.end();++itor)
+	for (TeamsMapItor itor = m_mapTeams.begin(); itor != m_mapTeams.end(); ++itor)
 	{
 		itor->second.Write(stm);
 	}
@@ -227,13 +228,13 @@ bool CXSystemServer::WriteTeams(CStream &stm)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemServer::AddRespawnPoint(ITagPoint *tp)
+void CXSystemServer::AddRespawnPoint(ITagPoint* tp)
 {
-	m_pGame->AddRespawnPoint( tp );
+	m_pGame->AddRespawnPoint(tp);
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemServer::OnSetVar(ICVar *pVar)
+void CXSystemServer::OnSetVar(ICVar* pVar)
 {
 	if (m_pXServer)
 		m_pXServer->SyncVariable(pVar);

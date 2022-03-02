@@ -5,16 +5,16 @@
 
 //////////////////////////////////////////////////////////////////////
 //! create the server
-bool CXGame::StartupServer(bool listen, const char *szName)
+bool CXGame::StartupServer(bool listen, const char* szName)
 {
 	m_pLog->Log("Creating the server");
 
-	ShutdownServer();	// to be sure
+	ShutdownServer(); // to be sure
 
 	int nPort = sv_port->GetIVal();
 
 	// set port and create server
-	if(!m_pServer)
+	if (!m_pServer)
 		m_pServer = new CXServer(this, nPort, szName, listen);
 
 	if (!m_pServer || !m_pServer->IsOK()) // Check if the server has been created
@@ -22,8 +22,8 @@ bool CXGame::StartupServer(bool listen, const char *szName)
 		// failed, lets try a different port
 		m_pLog->Log("Server creation failed ! Try with another port");
 		SAFE_DELETE(m_pServer);
-		m_pServer = new CXServer(this, nPort+1, szName, listen);
-		sv_port->Set(nPort+1);
+		m_pServer = new CXServer(this, nPort + 1, szName, listen);
+		sv_port->Set(nPort + 1);
 		if (!m_pServer || !m_pServer->IsOK()) // Check if the server has been created
 		{
 			SAFE_DELETE(m_pServer);
@@ -46,10 +46,10 @@ bool CXGame::StartupServer(bool listen, const char *szName)
 //! shutdown the server
 void CXGame::ShutdownServer()
 {
-	if(!m_pServer)
+	if (!m_pServer)
 		return;
 
-	if(!m_pServer->IsInDestruction())
+	if (!m_pServer->IsInDestruction())
 	{
 		m_pLog->Log("Shutdown CXServer");
 		SAFE_DELETE(m_pServer);
@@ -63,7 +63,7 @@ bool CXGame::StartupClient()
 {
 	m_pLog->Log("Creating the Client");
 
-	ShutdownClient();	// to be sure
+	ShutdownClient(); // to be sure
 
 	m_pClient = new CXClient;
 
@@ -87,9 +87,9 @@ bool CXGame::StartupLocalClient()
 {
 	m_pLog->Log("Creating the LocalClient");
 
-	m_pClient = new CXClient;	
+	m_pClient = new CXClient;
 
-	if (!m_pClient->Init(this,true)) // Check if the client has been created
+	if (!m_pClient->Init(this, true)) // Check if the client has been created
 	{
 		ShutdownClient();
 
@@ -106,7 +106,7 @@ bool CXGame::StartupLocalClient()
 //! shutdown the client
 void CXGame::ShutdownClient()
 {
-	if (!m_pClient) 
+	if (!m_pClient)
 		return;
 	m_pLog->Log("Disconnect the client");
 	m_pClient->XDisconnect("@ClientHasQuit");
@@ -114,20 +114,20 @@ void CXGame::ShutdownClient()
 
 	m_pClient->MarkForDestruct();
 	m_pClient->DestructIfMarked();
-	m_pClient=NULL;
+	m_pClient = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 bool CXGame::IsClient()
 {
-	return m_pClient!=NULL && !m_pClient->m_bSelfDestruct;
+	return m_pClient != NULL && !m_pClient->m_bSelfDestruct;
 }
 
 //////////////////////////////////////////////////////////////////////
 //! mark the client for deletion
 void CXGame::MarkClientForDestruct()
 {
-	if(m_pClient)
+	if (m_pClient)
 		m_pClient->MarkForDestruct();
 }
 
@@ -138,29 +138,29 @@ void CXGame::MarkClientForDestruct()
 	@param stmServerInfo stream sent by the server to identitfy himself
 	@param ping average lantency of the server response
 */
-void CXGame::OnServerFound(CIPAddress &ip, const string &szServerInfoString, int ping)
+void CXGame::OnServerFound(CIPAddress& ip, const string& szServerInfoString, int ping)
 {
 	SXServerInfos ServerInfos;
 
-	if(ServerInfos.Read(szServerInfoString))
+	if (ServerInfos.Read(szServerInfoString))
 	{
-		ServerInfos.IP = CIPAddress(ServerInfos.nPort,ip.GetAsString());		// get the game port from the packet
-		ServerInfos.nPing = ping;
+		ServerInfos.IP                 = CIPAddress(ServerInfos.nPort, ip.GetAsString()); // get the game port from the packet
+		ServerInfos.nPing              = ping;
 		m_ServersInfos[ServerInfos.IP] = ServerInfos;
-		TRACE("CXGame::OnServerFound %s[%s]==>%s",ServerInfos.strName.c_str(),ServerInfos.IP.GetAsString(true),ServerInfos.strMap.c_str());
+		TRACE("CXGame::OnServerFound %s[%s]==>%s", ServerInfos.strName.c_str(), ServerInfos.IP.GetAsString(true), ServerInfos.strMap.c_str());
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXGame::OnNETServerFound(const CIPAddress &ip, const string &szServerInfoString, int ping)
+void CXGame::OnNETServerFound(const CIPAddress& ip, const string& szServerInfoString, int ping)
 {
 	SXServerInfos ServerInfos;
 
-	bool bOk=ServerInfos.Read(szServerInfoString);
+	bool          bOk = ServerInfos.Read(szServerInfoString);
 
-	if(bOk || IsDevModeEnable())			// in DevMode we still wanna see these servers
+	if (bOk || IsDevModeEnable()) // in DevMode we still wanna see these servers
 	{
-		ServerInfos.IP = ip;
+		ServerInfos.IP    = ip;
 		ServerInfos.nPing = ping;
 
 		m_pScriptObjectGame->OnNETServerFound((CIPAddress&)ip, ServerInfos);
@@ -168,7 +168,7 @@ void CXGame::OnNETServerFound(const CIPAddress &ip, const string &szServerInfoSt
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXGame::OnNETServerTimeout(const CIPAddress &ip)
+void CXGame::OnNETServerTimeout(const CIPAddress& ip)
 {
 	m_pScriptObjectGame->OnNETServerTimeout((CIPAddress&)ip);
 }
@@ -180,8 +180,7 @@ void CXGame::OnNETServerTimeout(const CIPAddress &ip)
 void CXGame::RefreshServerList()
 {
 	m_ServersInfos.clear();
-	if(m_pServerSnooper)
+	if (m_pServerSnooper)
 		m_pServerSnooper->SearchForLANServers(GetCurrentTime());
 	TRACE("Refresh for lan");
 }
-

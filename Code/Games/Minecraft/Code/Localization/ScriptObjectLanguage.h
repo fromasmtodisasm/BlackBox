@@ -1,12 +1,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-// 
+//
 //	File: ScriptObjectLanguage.h
 //
-//  Description: 
+//  Description:
 //		Interface for the CScriptObjectLanguage class.
 //		This class implements all language-related script-functions.
 //
@@ -19,26 +19,26 @@
 //		IMPLEMENTATIONS NOTES:
 //		These function will never be called from C-Code. They're script-exclusive.
 //
-//	History: 
+//	History:
 //	- File Created by Marco Corbetta
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
 
 #if !defined(AFX_SCRIPTOBJECTLANGUAGE_H__A399B2EE_7076_4B23_9A77_0A2F7FEFFEAB__INCLUDED_)
-#define AFX_SCRIPTOBJECTLANGUAGE_H__A399B2EE_7076_4B23_9A77_0A2F7FEFFEAB__INCLUDED_
+	#define AFX_SCRIPTOBJECTLANGUAGE_H__A399B2EE_7076_4B23_9A77_0A2F7FEFFEAB__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+	#if _MSC_VER > 1000
+		#pragma once
+	#endif // _MSC_VER > 1000
 
-#include <BlackBox\ScriptSystem\_ScriptableEx.hpp>
+	#include <BlackBox\ScriptSystem\_ScriptableEx.hpp>
 
 class CStringTableMgr;
 
 //////////////////////////////////////////////////////////////////////
 class CScriptObjectLanguage :
-public _ScriptableEx<CScriptObjectLanguage>
+    public _ScriptableEx<CScriptObjectLanguage>
 {
 public:
 	//! constructor
@@ -46,21 +46,21 @@ public:
 	//! destructor
 	virtual ~CScriptObjectLanguage();
 	//!
-	void Init(IScriptSystem *pScriptSystem,CStringTableMgr *pMgr);
+	void        Init(IScriptSystem* pScriptSystem, CStringTableMgr* pMgr);
 	//!
-	void AddString(const char *s,int nID);
+	void        AddString(const char* s, int nID);
 
 	//! return -1 if string not found
-	int	GetStringID(const char *szKey);
+	int         GetStringID(const char* szKey);
 	//!
-	int LoadStringTable(IFunctionHandler *pH);
+	int         LoadStringTable(IFunctionHandler* pH);
 	//!
-	int GetEnglish(IFunctionHandler *pH);
+	int         GetEnglish(IFunctionHandler* pH);
 	//!
-	static void InitializeTemplate(IScriptSystem *pSS);
+	static void InitializeTemplate(IScriptSystem* pSS);
 
 private:
-	CStringTableMgr *						m_pMgr;			//!<
+	CStringTableMgr* m_pMgr; //!<
 };
 
 #endif // !defined(AFX_SCRIPTOBJECTLANGUAGE_H__A399B2EE_7076_4B23_9A77_0A2F7FEFFEAB__INCLUDED_)

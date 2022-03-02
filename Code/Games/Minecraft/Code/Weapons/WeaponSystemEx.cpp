@@ -1,13 +1,13 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: WeaponSystemEx.cpp
 //  Description: Implementation of the players weapon system.
 //
-//  History: 
+//  History:
 //  - May 2003: Created by Marco Koegler
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //	- October 2006: Modified by Marco Corbetta for SDK 1.4 release
@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////
 CWeaponSystemEx::CWeaponSystemEx()
 {
-	m_pScriptSystem					= NULL;
-	m_bRaiseScriptError			= true;
-	m_soWeaponClassesTable	= NULL;
-	m_soProjectileTable			= NULL;
-	m_pGame									= NULL;
+	m_pScriptSystem        = NULL;
+	m_bRaiseScriptError    = true;
+	m_soWeaponClassesTable = NULL;
+	m_soProjectileTable    = NULL;
+	m_pGame                = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -43,37 +43,45 @@ class CNameIterator : public INameIterator
 {
 public:
 	CNameIterator() { m_itPos = m_lNames.end(); };
-	~CNameIterator() { };
-	void AddNameString(const string strName) 
-	{ m_lNames.push_back(strName); MoveFirst(); };
+	~CNameIterator(){};
+	void AddNameString(const string strName)
+	{
+		m_lNames.push_back(strName);
+		MoveFirst();
+	};
 	// INameInterator Implementation
 	void Release() { delete this; };
 	void MoveFirst() { m_itPos = m_lNames.begin(); };
-	bool MoveNext() { 
-		if (m_itPos != m_lNames.end()) { 
-			m_itPos++; 
+	bool MoveNext()
+	{
+		if (m_itPos != m_lNames.end())
+		{
+			m_itPos++;
 			return true;
 		}
 		return false;
 	};
-	bool Get(char *pszBuffer, INT *pSize) { 
+	bool Get(char* pszBuffer, INT* pSize)
+	{
 		if (m_itPos == m_lNames.end())
 			return false;
-		if ((INT) (* m_itPos).length() >= *pSize) {
+		if ((INT)(*m_itPos).length() >= *pSize)
+		{
 			*pSize = -1;
 			return false;
 		}
-		strcpy(pszBuffer, (* m_itPos).c_str());
-		*pSize = (* m_itPos).length();
+		strcpy(pszBuffer, (*m_itPos).c_str());
+		*pSize = (*m_itPos).length();
 		return true;
 	}
+
 protected:
-	std::list<string> m_lNames;
+	std::list<string>           m_lNames;
 	std::list<string>::iterator m_itPos;
 };
 
 //////////////////////////////////////////////////////////////////////
-bool CWeaponSystemEx::AddWeaponClass(CWeaponClass *weaponClass)
+bool CWeaponSystemEx::AddWeaponClass(CWeaponClass* weaponClass)
 {
 	for (TWeaponClasses::const_iterator i = m_vWeaponClasses.begin(); i != m_vWeaponClasses.end(); ++i)
 	{
@@ -91,31 +99,31 @@ bool CWeaponSystemEx::AddWeaponClass(CWeaponClass *weaponClass)
 }
 
 //////////////////////////////////////////////////////////////////////
-INameIterator * CWeaponSystemEx::GetAvailableWeapons()
+INameIterator* CWeaponSystemEx::GetAvailableWeapons()
 {
-	CNameIterator *pIterator = new CNameIterator;
-	for (TWeaponClasses::iterator it=m_vWeaponClasses.begin(); it!=m_vWeaponClasses.end(); it++)
-		pIterator->AddNameString((* it)->GetName().c_str());
-	return (INameIterator *) pIterator;
+	CNameIterator* pIterator = new CNameIterator;
+	for (TWeaponClasses::iterator it = m_vWeaponClasses.begin(); it != m_vWeaponClasses.end(); it++)
+		pIterator->AddNameString((*it)->GetName().c_str());
+	return (INameIterator*)pIterator;
 }
 
 //////////////////////////////////////////////////////////////////////
-INameIterator * CWeaponSystemEx::GetAvailableProjectiles()
+INameIterator* CWeaponSystemEx::GetAvailableProjectiles()
 {
-	CNameIterator *pIterator = new CNameIterator;
-	for (TProjectileClasses::iterator it=m_vProjectileClasses.begin(); it!=m_vProjectileClasses.end(); it++)
-		pIterator->AddNameString((* it)->m_sName.c_str());
-	return (INameIterator *) pIterator;
+	CNameIterator* pIterator = new CNameIterator;
+	for (TProjectileClasses::iterator it = m_vProjectileClasses.begin(); it != m_vProjectileClasses.end(); it++)
+		pIterator->AddNameString((*it)->m_sName.c_str());
+	return (INameIterator*)pIterator;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CWeaponSystemEx::Init(CXGame *pGame, bool bRaiseError)
+bool CWeaponSystemEx::Init(CXGame* pGame, bool bRaiseError)
 {
 	Reset();
 
-	m_pGame = pGame;
-	m_pScriptSystem = m_pGame->GetScriptSystem();
-	m_sGameType = m_pGame->g_GameType->GetString();
+	m_pGame             = pGame;
+	m_pScriptSystem     = m_pGame->GetScriptSystem();
+	m_sGameType         = m_pGame->g_GameType->GetString();
 	m_bRaiseScriptError = bRaiseError;
 
 	// Add some global variables
@@ -141,19 +149,19 @@ bool CWeaponSystemEx::Init(CXGame *pGame, bool bRaiseError)
 
 	// iterate over all weapon classes
 	m_soWeaponClassesTable->BeginIteration();
-	while(m_soWeaponClassesTable->MoveNext())
+	while (m_soWeaponClassesTable->MoveNext())
 	{
 		// we assume that the WeaponParams table always contains 'key = subtable' pairs
 		assert(m_soWeaponClassesTable->GetCurrentType() == svtObject);
-		const char *sWeaponClassName;
+		const char* sWeaponClassName;
 
 		m_soWeaponClassesTable->GetCurrentKey(sWeaponClassName);
 
 		// create a new weapon class
-		CWeaponClass *pWeaponClass = new CWeaponClass(*this);
+		CWeaponClass* pWeaponClass = new CWeaponClass(*this);
 		if (pWeaponClass->Init(sWeaponClassName))
 		{
-			//TRACE("WeaponSystemEx: ADDING %s", sWeaponClassName);			
+			//TRACE("WeaponSystemEx: ADDING %s", sWeaponClassName);
 			AddWeaponClass(pWeaponClass);
 			// for multiplayer we always want to load all classes immediately (bug 5825)
 			if (GetGame()->IsMultiplayer())
@@ -178,31 +186,33 @@ bool CWeaponSystemEx::Init(CXGame *pGame, bool bRaiseError)
 
 	// iterate over all weapon classes
 	m_soProjectileTable->BeginIteration();
-	while(m_soProjectileTable->MoveNext())
+	while (m_soProjectileTable->MoveNext())
 	{
 		// we assume that the Projectiles table always contains 'key = subtable' pairs
 		assert(m_soProjectileTable->GetCurrentType() == svtObject);
-		const char *sProjectileName;
+		const char*        sProjectileName;
 
 		_SmartScriptObject soProjectile(m_pScriptSystem);
 		m_soProjectileTable->GetCurrentKey(sProjectileName);
 		m_soProjectileTable->GetCurrent(*soProjectile);
 
 		{
-			const char *model="";
-			bool bOk=soProjectile->GetValue("model",model);				assert(bOk);
+			const char* model = "";
+			bool        bOk   = soProjectile->GetValue("model", model);
+			assert(bOk);
 
-			if(!bOk)continue;
+			if (!bOk) continue;
 
-			IStatObj *pObj = GetGame()->GetSystem()->GetI3DEngine()->MakeObject(model);
+			IStatObj*             pObj   = GetGame()->GetSystem()->GetI3DEngine()->MakeObject(model);
 
-			IEntityClassRegistry *pReg=GetGame()->GetClassRegistry();
+			IEntityClassRegistry* pReg   = GetGame()->GetClassRegistry();
 
-			EntityClass *pClass = pReg->GetByClass(sProjectileName);					assert(pClass);
+			EntityClass*          pClass = pReg->GetByClass(sProjectileName);
+			assert(pClass);
 
 			if (pClass)
 			{
-				GetGame()->GetClassRegistry()->LoadRegistryEntry(pClass);			// load the associated script object
+				GetGame()->GetClassRegistry()->LoadRegistryEntry(pClass); // load the associated script object
 				m_vProjectileClasses.push_back(new CProjectileClass(pClass->ClassId, sProjectileName, pObj, *this));
 			}
 		}
@@ -213,7 +223,7 @@ bool CWeaponSystemEx::Init(CXGame *pGame, bool bRaiseError)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponSystemEx::AddProjectileClass( int classid )
+void CWeaponSystemEx::AddProjectileClass(int classid)
 {
 	// currently not needed
 }
@@ -221,17 +231,17 @@ void CWeaponSystemEx::AddProjectileClass( int classid )
 //////////////////////////////////////////////////////////////////////
 void CWeaponSystemEx::Reset()
 {
-	if(m_pGame && m_pGame->GetMyPlayer())
+	if (m_pGame && m_pGame->GetMyPlayer())
 	{
-		IEntityContainer *pCnt;
-		CPlayer *pPlayer = NULL;
+		IEntityContainer* pCnt;
+		CPlayer*          pPlayer = NULL;
 
-		pCnt=m_pGame->GetMyPlayer()->GetContainer();
+		pCnt                      = m_pGame->GetMyPlayer()->GetContainer();
 
-		if(pCnt)
+		if (pCnt)
 		{
-			pCnt->QueryContainerInterface(CIT_IPLAYER,(void **) &pPlayer);
-			if(pPlayer)
+			pCnt->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer);
+			if (pPlayer)
 			{
 				pPlayer->SelectWeapon(-1, false);
 			}
@@ -274,7 +284,7 @@ bool CWeaponSystemEx::ExecuteScript(const string& sScriptName)
 
 	{
 		string sFilename = "Scripts\\Default\\Entities\\" + sScriptName;
-		m_pGame->GetSystem()->GetILog()->Log("WEAPONEX : Loading %s",sFilename.c_str());
+		m_pGame->GetSystem()->GetILog()->Log("WEAPONEX : Loading %s", sFilename.c_str());
 		if (!m_pScriptSystem->ExecuteFile(sFilename.c_str(), true))
 		{
 			return false;
@@ -292,11 +302,11 @@ void CWeaponSystemEx::UnloadScript(const string& sScriptName)
 
 	string sFilename = "Scripts\\" + m_sGameType + "\\Entities\\" + sScriptName;
 
-	m_pGame->GetSystem()->GetILog()->Log("WEAPONEX : UNLoading %s",sFilename.c_str());	
+	m_pGame->GetSystem()->GetILog()->Log("WEAPONEX : UNLoading %s", sFilename.c_str());
 	m_pScriptSystem->UnloadScript(sFilename.c_str());
 
 	sFilename = "Scripts\\Default\\Entities\\" + sScriptName;
-	m_pGame->GetSystem()->GetILog()->Log("WEAPONEX : UNLoading %s",sFilename.c_str());
+	m_pGame->GetSystem()->GetILog()->Log("WEAPONEX : UNLoading %s", sFilename.c_str());
 
 	m_pScriptSystem->UnloadScript(sFilename.c_str());
 }
@@ -316,7 +326,7 @@ CWeaponClass* CWeaponSystemEx::GetWeaponClassByID(int ID) const
 //////////////////////////////////////////////////////////////////////
 int CWeaponSystemEx::GetWeaponClassIDByName(const string& name) const
 {
-	CWeaponClass *pWC = GetWeaponClassByName(name);
+	CWeaponClass* pWC = GetWeaponClassByName(name);
 
 	if (pWC)
 		return pWC->GetID();
@@ -362,7 +372,7 @@ unsigned CWeaponSystemEx::MemStats() const
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponSystemEx::Read(CStream &stm)
+void CWeaponSystemEx::Read(CStream& stm)
 {
 	// reset our internal state
 	Reset();
@@ -375,7 +385,7 @@ void CWeaponSystemEx::Read(CStream &stm)
 	// get weapon classes
 	for (int i = 0; i < n; ++i)
 	{
-		CWeaponClass *pWeaponClass = new CWeaponClass(*this);
+		CWeaponClass* pWeaponClass = new CWeaponClass(*this);
 		pWeaponClass->Read(stm);
 
 		AddWeaponClass(pWeaponClass);
@@ -383,7 +393,7 @@ void CWeaponSystemEx::Read(CStream &stm)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponSystemEx::Write(CStream &stm) const
+void CWeaponSystemEx::Write(CStream& stm) const
 {
 	assert(m_vWeaponClasses.size() <= 255);
 
@@ -403,7 +413,7 @@ bool CWeaponSystemEx::AddWeapon(const string& name)
 	{
 		if ((*i)->GetName() == name && !(*i)->IsLoaded())
 		{
-			if((*i)->Load())
+			if ((*i)->Load())
 			{
 				_SmartScriptObject cWeaponLoadedTable(m_pScriptSystem, true);
 
@@ -420,7 +430,7 @@ bool CWeaponSystemEx::AddWeapon(const string& name)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CWeaponSystemEx::IsLeftHanded ()
+bool CWeaponSystemEx::IsLeftHanded()
 {
 	return m_pGame->g_LeftHanded->GetIVal() != 0;
 }
@@ -428,7 +438,7 @@ bool CWeaponSystemEx::IsLeftHanded ()
 //////////////////////////////////////////////////////////////////////
 void CWeaponSystemEx::CacheObject(const string& name)
 {
-	IStatObj *pObject = GetGame()->GetSystem()->GetI3DEngine()->MakeObject(name.c_str());
+	IStatObj* pObject = GetGame()->GetSystem()->GetI3DEngine()->MakeObject(name.c_str());
 	if (pObject)
 	{
 		m_vCachedObjects.push_back(pObject);
@@ -436,9 +446,9 @@ void CWeaponSystemEx::CacheObject(const string& name)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CWeaponSystemEx::IsProjectileClass( const EntityClassId clsid )
+bool CWeaponSystemEx::IsProjectileClass(const EntityClassId clsid)
 {
-	for (unsigned int i=0;i<m_vProjectileClasses.size();i++)
+	for (unsigned int i = 0; i < m_vProjectileClasses.size(); i++)
 	{
 		if (m_vProjectileClasses[i]->m_ClassID == clsid)
 			return true;
@@ -458,14 +468,14 @@ CWeaponClass* CWeaponSystemEx::GetWeaponClass(unsigned int index) const
 //////////////////////////////////////////////////////////////////////
 void CWeaponSystemEx::RegisterScriptConstants() const
 {
-	// Add some global variables
-	#define SET_GLOBAL(name)\
-		m_pScriptSystem->SetGlobalValue(#name, name);
+// Add some global variables
+#define SET_GLOBAL(name) \
+	m_pScriptSystem->SetGlobalValue(#name, name);
 
 	SET_GLOBAL(FireMode_Instant);
 	SET_GLOBAL(FireMode_Projectile);
 	SET_GLOBAL(FireMode_Melee);
 	SET_GLOBAL(FireMode_EngineerTool);
 
-	#undef SET_GLOBAL
+#undef SET_GLOBAL
 }

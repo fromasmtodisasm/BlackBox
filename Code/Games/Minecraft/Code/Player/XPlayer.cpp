@@ -1,13 +1,13 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XEntityPlayer.cpp
 //  Description: Entity player class.
 //
-//  History: 
+//  History:
 //  - August 16, 2001: Created by Alberto Demichelis
 //	- 2001 - 2004: Modified by Kirill Bulatsev and many others
 //	- February 2005: Modified by Marco Corbetta for SDK release
@@ -32,43 +32,43 @@
 
 //////////////////////////////////////////////////////////////////////
 //! convert from degrees to radians and adjust the coordinate system
-inline Ang3 ConvertToRad( const Ang3& v )
+inline Ang3 ConvertToRad(const Ang3& v)
 {
 	Ang3 angles;
-	angles.x=DEG2RAD( v.z+180.0f);
-	angles.y=DEG2RAD(-v.x+90.0f);
-	angles.z=DEG2RAD( v.y);
-	return angles; 
+	angles.x = DEG2RAD(v.z + 180.0f);
+	angles.y = DEG2RAD(-v.x + 90.0f);
+	angles.z = DEG2RAD(v.y);
+	return angles;
 }
 
 //////////////////////////////////////////////////////////////////////
 //! convert a view angle from degrees to a normalized view-vector
-inline Vec3 ConvertToRadAngles( const Ang3& v )	
-{	
-	Vec3 vec=ConvertToRad(v);	
+inline Vec3 ConvertToRadAngles(const Ang3& v)
+{
+	Vec3 vec = ConvertToRad(v);
 
 	Vec3 dir;
-	dir.x=-sin_tpl(vec.y)*sin_tpl(vec.x);
-	dir.y= sin_tpl(vec.y)*cos_tpl(vec.x);
-	dir.z=-cos_tpl(vec.y);			
+	dir.x = -sin_tpl(vec.y) * sin_tpl(vec.x);
+	dir.y = sin_tpl(vec.y) * cos_tpl(vec.x);
+	dir.z = -cos_tpl(vec.y);
 	return dir;
-}	
+}
 //////////////////////////////////////////////////////////////////////
 //! Minimal time before player can be alive again.
-#define PLAYER_RESPAWN_TIME 1.0f
+#define PLAYER_RESPAWN_TIME       1.0f
 //! Minimal time before player can be respawned.
-#define PLAYER_DEATH_TIME 1.0f
+#define PLAYER_DEATH_TIME         1.0f
 
 //! Minimal time before player can change weapon.
 #define PLAYER_WEAPON_CHANGE_TIME 0.1f
 
 //////////////////////////////////////////////////////////////////////
-bool CheckIfNAN( const Legacy::Vec3& vPos )
+bool CheckIfNAN(const Legacy::Vec3& vPos)
 {
 	if (_isnan(vPos.x) || _isnan(vPos.y) || _isnan(vPos.z))
 	{
-		GameWarning( "NotANumber tried to be set for position of CPlayer" );
-		return  true;
+		GameWarning("NotANumber tried to be set for position of CPlayer");
+		return true;
 	}
 	return false;
 }
@@ -384,25 +384,25 @@ CPlayer::~CPlayer()
 {
 	//SwitchFlashLight( false );
 
-	ListOfPlayers::iterator	self = std::find(m_pGame->m_DeadPlayers.begin(), m_pGame->m_DeadPlayers.end(), this);
-	if(self!=m_pGame->m_DeadPlayers.end())
+	ListOfPlayers::iterator self = std::find(m_pGame->m_DeadPlayers.begin(), m_pGame->m_DeadPlayers.end(), this);
+	if (self != m_pGame->m_DeadPlayers.end())
 		m_pGame->m_DeadPlayers.erase(self);
 
-	m_pGame->m_XAreaMgr.ExitAllAreas( m_AreaUser );
+	m_pGame->m_XAreaMgr.ExitAllAreas(m_AreaUser);
 	// remove shared weapon
 	GetEntity()->GetCharInterface()->SetCharacter(1, 0);
 	SetEntity(0);
 
-	if(m_pScriptObject)
+	if (m_pScriptObject)
 		m_pScriptObject->Release();
-	m_pScriptObject=NULL;
-		
+	m_pScriptObject = NULL;
+
 	m_mapPlayerWeapons.clear();
 
 	if (m_pDynLight)
 	{
 		delete m_pDynLight;
-		m_pDynLight=NULL;
+		m_pDynLight = NULL;
 	}
 }
 
@@ -413,18 +413,18 @@ CPlayer::~CPlayer()
 bool CPlayer::Init()
 {
 	//@FIXME probably should be created in script.
-	m_pGame->m_pLog->Log("XEntityPlayer %d initialised\n", m_pEntity->GetId() );
+	m_pGame->m_pLog->Log("XEntityPlayer %d initialised\n", m_pEntity->GetId());
 
 	m_pEntity->GetScriptObject()->SetValue("type", "Player");
 
 	auto pObject = m_pEntity->GetAI();
 	if (pObject)
 	{
-		#if 0
+#if 0
 		IPuppet *pPuppet;
 		if (pObject->CanBeConvertedTo(AIStatObj_PUPPET, (void **) &pPuppet))
 			m_bIsAI = true;
-		#endif
+#endif
 	}
 
 	if (!m_bIsAI)
@@ -435,30 +435,30 @@ bool CPlayer::Init()
 	ICryCharInstance* pCharacter = m_pEntity->GetCharInterface()->GetCharacter(0);
 	if (pCharacter)
 	{
-		pCharacter->EnableLastIdleAnimationRestart(0,true);
+		pCharacter->EnableLastIdleAnimationRestart(0, true);
 		if (m_bIsAI)
-			pCharacter->EnableLastIdleAnimationRestart(3,true);
+			pCharacter->EnableLastIdleAnimationRestart(3, true);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Initialize Player Camera Fov.
 	//////////////////////////////////////////////////////////////////////////
-	IEntityCamera *pEntCamera = m_pGame->GetSystem()->GetIEntitySystem()->CreateEntityCamera();
+	IEntityCamera* pEntCamera = m_pGame->GetSystem()->GetIEntitySystem()->CreateEntityCamera();
 	m_pEntity->SetCamera(pEntCamera);
-	int rw = m_pGame->GetSystem()->GetIRenderer()->GetWidth();
-	int rh = m_pGame->GetSystem()->GetIRenderer()->GetHeight();
+	int   rw   = m_pGame->GetSystem()->GetIRenderer()->GetWidth();
+	int   rh   = m_pGame->GetSystem()->GetIRenderer()->GetHeight();
 	float fFOV = DEG2RAD(90.0f); // Initialize with 90 degree fov.
-	pEntCamera->SetFov(fFOV,rw,rh);
-	pEntCamera->GetCamera().Init(rw,rh,fFOV);
+	pEntCamera->SetFov(fFOV, rw, rh);
+	pEntCamera->GetCamera().Init(rw, rh, fFOV);
 	pEntCamera->GetCamera().Update();
 	//////////////////////////////////////////////////////////////////////////
 
-	Legacy::Vec3 default_offset(0,m_pGame->cl_ThirdPersonRange->GetFVal(),4);
+	Legacy::Vec3 default_offset(0, m_pGame->cl_ThirdPersonRange->GetFVal(), 4);
 	m_pEntity->GetCamera()->SetCameraOffset(default_offset);
 
 	// [kirill] need this to use only z component of entity angles (same as for drawing)
 	// when calculating BBox
-	GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
+	GetEntity()->SetFlags(ETY_FLAG_CALCBBOX_ZROTATE);
 
 	GoStand();
 
@@ -469,32 +469,32 @@ bool CPlayer::Init()
 /*!Called by the entity when the angles are changed.
 This notification is used to force the orientation of the player.
 */
-void CPlayer::OnSetAngles( const Legacy::Vec3 &ang )
+void CPlayer::OnSetAngles(const Legacy::Vec3& ang)
 {
-  // talk to Vladimir if you want to comment this code again
+	// talk to Vladimir if you want to comment this code again
 	//	if(m_pGame->m_pClient && !m_pVehicle)
 	//[kirill] need it in cars for autocentering
-	if(m_pGame->m_pClient)
-	{		
-		if(m_pGame->m_pClient->GetPlayerId()==m_pEntity->GetId())
+	if (m_pGame->m_pClient)
+	{
+		if (m_pGame->m_pClient->GetPlayerId() == m_pEntity->GetId())
 			m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(ang);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
 // set a certain shader for the current selected weapon
-void CPlayer::SetHeatVisionValues(int dwFlags,const char *szName,float fValue,float fFadingValue)
-{	
+void CPlayer::SetHeatVisionValues(int dwFlags, const char* szName, float fValue, float fFadingValue)
+{
 	if (dwFlags & BITMASK_WEAPON)
 	{
-		m_fHeatWeaponsDesiredValue=fValue;
-		m_fHeatWeaponsFadingSpeed=fFadingValue;
+		m_fHeatWeaponsDesiredValue = fValue;
+		m_fHeatWeaponsFadingSpeed  = fFadingValue;
 	}
 
 	if (dwFlags & BITMASK_PLAYER)
 	{
-		m_fHeatBodyDesiredValue=fValue;
-		m_fHeatBodyFadingSpeed=fFadingValue;		
+		m_fHeatBodyDesiredValue = fValue;
+		m_fHeatBodyFadingSpeed  = fFadingValue;
 	}
 }
 
@@ -503,31 +503,31 @@ void CPlayer::SetHeatVisionValues(int dwFlags,const char *szName,float fValue,fl
 */
 void CPlayer::InitWeapons()
 {
-//	ValidateHeap();
-	IEntitySystem *pEntitySystem = (IEntitySystem *) m_pGame->GetSystem()->GetIEntitySystem();
+	//	ValidateHeap();
+	IEntitySystem* pEntitySystem = (IEntitySystem*)m_pGame->GetSystem()->GetIEntitySystem();
 
 	SetWeapon(-1);
 	m_mapPlayerWeapons.clear();
 
-	for (int i=0;i<PLAYER_MAX_WEAPONS;i++)
-		m_vWeaponSlots[i]=0;
+	for (int i = 0; i < PLAYER_MAX_WEAPONS; i++)
+		m_vWeaponSlots[i] = 0;
 
 	// init weapon instances
 	unsigned int weaponCount = GetGame()->GetWeaponSystemEx()->GetNumWeaponClasses();
 
 	for (unsigned int i = 0; i < weaponCount; ++i)
 	{
-		CWeaponClass *pWC = GetGame()->GetWeaponSystemEx()->GetWeaponClass(i);
+		CWeaponClass* pWC = GetGame()->GetWeaponSystemEx()->GetWeaponClass(i);
 		assert(pWC);
 		WeaponInfo wi;
-		wi.fireTime = m_pTimer->GetCurrTime();
+		wi.fireTime     = m_pTimer->GetCurrTime();
 		wi.fireLastShot = 0;
-		wi.reloading = false;
-		wi.iFireMode = 0;
+		wi.reloading    = false;
+		wi.iFireMode    = 0;
 
-		assert(m_mapPlayerWeapons.count(pWC->GetID())==0);		// otherwise we produce memory leaks
+		assert(m_mapPlayerWeapons.count(pWC->GetID()) == 0); // otherwise we produce memory leaks
 
-		wi.owns = false;
+		wi.owns                          = false;
 		m_mapPlayerWeapons[pWC->GetID()] = wi;
 	}
 }
@@ -538,11 +538,11 @@ void CPlayer::SelectFirstWeapon()
 	if (!m_pGame->IsServer())
 		return;
 
-	int slot=0;
-	while(slot<PLAYER_MAX_WEAPONS && m_vWeaponSlots[slot]==0)
+	int slot = 0;
+	while (slot < PLAYER_MAX_WEAPONS && m_vWeaponSlots[slot] == 0)
 		slot++;
 
-	if(m_vWeaponSlots[slot]!=0)
+	if (m_vWeaponSlots[slot] != 0)
 		SelectWeapon(m_vWeaponSlots[slot]);
 }
 
@@ -552,9 +552,9 @@ void CPlayer::SelectFirstWeapon()
 //UPDATE HEAD ROTATION
 void CPlayer::UpdateRotateHead()
 {
-	FUNCTION_PROFILER( PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	#if 0
+#if 0
 	m_LegAngleVelMoving = m_pGame->pa_leg_velmoving->GetFVal();
 	m_LegAngleVelTimed = m_pGame->pa_leg_velidle->GetFVal();
 	m_LegAIdleTimeLimit = m_pGame->pa_leg_idletime->GetFVal();
@@ -645,36 +645,36 @@ void CPlayer::UpdateRotateHead()
 		m_LegAngleDesired = m_LegAngle;
 		m_LegDeltaAngle = 0.0f;
 	}
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 /*! Updates the player-container. Should be called every frame.
 */
-void CPlayer::UpdateDead( SPlayerUpdateContext &ctx )
+void CPlayer::UpdateDead(SPlayerUpdateContext& ctx)
 {
-	FUNCTION_PROFILER( PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	if (m_bIsAI && m_fDeathTimer>=0.0f )
+	if (m_bIsAI && m_fDeathTimer >= 0.0f)
 	{
 		m_fDeathTimer -= m_pTimer->GetFrameTime();
-		if(m_fDeathTimer <= 0.0f)
+		if (m_fDeathTimer <= 0.0f)
 		{
-			m_fDeathTimer = 0.0f;
+			m_fDeathTimer        = 0.0f;
 			int nRendererFrameID = m_pGame->GetSystem()->GetIRenderer()->GetFrameID();
-			if( nRendererFrameID - m_pEntity->GetDrawFrame() > 60*2 )
+			if (nRendererFrameID - m_pEntity->GetDrawFrame() > 60 * 2)
 			{
 				m_pEntity->Remove();
 				return;
 			}
 			// restart the timer
-			m_fDeathTimer=m_pGame->p_deathtime->GetFVal();
+			m_fDeathTimer = m_pGame->p_deathtime->GetFVal();
 		}
 	}
 
 	// don't check/update areas for AI's
-	if( !m_bIsAI )
-	{		
+	if (!m_bIsAI)
+	{
 		//UPDATE THE CAMERA
 		SetEyePosDead();
 		UpdateCamera();
@@ -697,9 +697,9 @@ void CPlayer::UpdateDead( SPlayerUpdateContext &ctx )
 */
 void CPlayer::Update()
 {
-	FUNCTION_PROFILER( PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	#if 0
+#if 0
 	bool bMyPlayer = IsMyPlayer();
 	bool bPlayerVisible = bMyPlayer || IsVisible();
 
@@ -928,13 +928,13 @@ void CPlayer::Update()
 	UpdateCharacterAnimations( ctx );
 	UpdateFireAnimations();
 	//	UpdateJumpAnimations();
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CPlayer::UpdatePhysics(float fDeltaTime)
 {
-	#if 0
+#if 0
 	m_fLastDeltaTime = fDeltaTime;
 
 	IPhysicalEntity *physEnt = m_pEntity->GetPhysics();	
@@ -1061,15 +1061,15 @@ void CPlayer::UpdatePhysics(float fDeltaTime)
 		m_WalkingTime = 0;
 
 	m_pGame->ConstrainToSandbox(GetEntity());
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 /*! Sets and loads the player-model.
 		@param model filename of the player-model
 */
-void CPlayer::SetPlayerModel( const string &model )
-{		
+void CPlayer::SetPlayerModel(const string& model)
+{
 	m_strModel = model;
 	if (m_nSelectedWeaponID == -1)
 		SelectWeapon(m_stats.weapon);
@@ -1082,13 +1082,13 @@ void CPlayer::SetPlayerModel( const string &model )
 		@param nWeaponIndex weapon-id to retrieve from (negative value will return info of current weapon)
 		@return WeaponInfo if the function succeeds, NULL otherwise
 */
-WeaponInfo & CPlayer::GetWeaponInfo(int nWeaponIndex /* = -1 */) 
+WeaponInfo& CPlayer::GetWeaponInfo(int nWeaponIndex /* = -1 */)
 {
-	if(nWeaponIndex == -1)
+	if (nWeaponIndex == -1)
 		nWeaponIndex = m_nSelectedWeaponID;
 
 	PlayerWeaponsItor wi = m_mapPlayerWeapons.find(nWeaponIndex);
-		
+
 	if (wi != m_mapPlayerWeapons.end())
 	{
 		return wi->second;
@@ -1110,16 +1110,16 @@ void CPlayer::GetCurrentWeaponParams(WeaponParams& wp)
 /*! Executes the processing commands
 		@param ProcessingCmd structure of commands to process
 */
-void CPlayer::ProcessCmd(unsigned int nPing,CXEntityProcessingCmd &ProcessingCmd)
+void CPlayer::ProcessCmd(unsigned int nPing, CXEntityProcessingCmd& ProcessingCmd)
 {
 	ProcessMovements(ProcessingCmd);
 
 	// client in MP processes fire event differently
-	// here the server relays the fire event to the client, but due to 
+	// here the server relays the fire event to the client, but due to
 	// heavier client-side simulation of firing (see XClient.cpp) we
 	// keep the state of our client-side calculation
-	bool bClientFire = false;
-	bool bPrevFiring = ProcessingCmd.CheckAction(ACTION_FIRE0);
+	bool bClientFire      = false;
+	bool bPrevFiring      = ProcessingCmd.CheckAction(ACTION_FIRE0);
 	bool bPrevFireGrenade = ProcessingCmd.CheckAction(ACTION_FIRE_GRENADE);
 
 	if (m_pGame->IsMultiplayer() && m_pGame->IsClient() && !m_pGame->IsServer() && IsMyPlayer())
@@ -1133,7 +1133,7 @@ void CPlayer::ProcessCmd(unsigned int nPing,CXEntityProcessingCmd &ProcessingCmd
 		if (m_stats.firing_grenade)
 			ProcessingCmd.AddAction(ACTION_FIRE_GRENADE);
 	}
-	
+
 	ProcessWeapons(ProcessingCmd);
 
 	if (bClientFire)
@@ -1150,12 +1150,11 @@ void CPlayer::ProcessCmd(unsigned int nPing,CXEntityProcessingCmd &ProcessingCmd
 
 //////////////////////////////////////////////////////////////////////
 //clamps angels to be within min-max range. Check fro special case when min>max -- for example min=350 max=40
-inline float	ClampAngle180( float min, float max, float angl )
+inline float ClampAngle180(float min, float max, float angl)
 {
-
-	if( angl>0 && angl<min ) 
+	if (angl > 0 && angl < min)
 		return min;
-	else if( angl<0 && angl>max )
+	else if (angl < 0 && angl > max)
 		return max;
 
 	return angl;
@@ -1165,14 +1164,14 @@ inline float	ClampAngle180( float min, float max, float angl )
 /*! Updates the orientation of the player
 		@param ProcessingCmd structure of commands to process
 */
-void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
+void CPlayer::ProcessAngles(CXEntityProcessingCmd& ProcessingCmd)
 {
 	if (IsMyPlayer() && !IsAlive())
 		return;
 
-	FUNCTION_PROFILER( PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	Legacy::Vec3 Angles=ProcessingCmd.GetDeltaAngles();
+	Legacy::Vec3 Angles = ProcessingCmd.GetDeltaAngles();
 
 	if (IsMyPlayer() && m_pVehicle && !m_bFirstPerson && !m_pMountedWeapon)
 	{
@@ -1184,64 +1183,64 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 		//		Angles.Set(0,0,180);
 	}
 
-	if(m_AngleLimitVFlag)
-	//check vertical limits	
+	if (m_AngleLimitVFlag)
+	//check vertical limits
 	{
-		Angles.x = ClampAngle(	Snap_s360(m_AngleLimitBase.x + m_MinVAngle),
-										Snap_s360(m_AngleLimitBase.x + m_MaxVAngle),
-										Snap_s360(Angles.x));
+		Angles.x = ClampAngle(Snap_s360(m_AngleLimitBase.x + m_MinVAngle),
+		                      Snap_s360(m_AngleLimitBase.x + m_MaxVAngle),
+		                      Snap_s360(Angles.x));
 		Angles.x = Snap_s180(Angles.x);
 	}
-	
+
 	//probably not the best way. If we will have angle restriction (like mounted weapon) in prone - have to chage it
-	if( m_CurStance == eProne )
+	if (m_CurStance == eProne)
 		m_AngleLimitBase = m_EnvTangent;
 
-	if(m_AngleLimitHFlag)
+	if (m_AngleLimitHFlag)
 	{
 		//check horizontal limits
 		bool bClamped = false;
-		
-		Angles.z = Snap_s180(Angles.z);
-		Angles.z = ClampAngle(	Snap_s360(m_AngleLimitBase.z + m_MinHAngle),
-										Snap_s360(m_AngleLimitBase.z + m_MaxHAngle),
-										Snap_s360(Angles.z),bClamped);
+
+		Angles.z      = Snap_s180(Angles.z);
+		Angles.z      = ClampAngle(Snap_s360(m_AngleLimitBase.z + m_MinHAngle),
+                              Snap_s360(m_AngleLimitBase.z + m_MaxHAngle),
+                              Snap_s360(Angles.z), bClamped);
 		if (m_bIsAI && bClamped)
-			m_pEntity->GetAI()->SetSignal(1,"RETURN_TO_NORMAL");
+			m_pEntity->GetAI()->SetSignal(1, "RETURN_TO_NORMAL");
 
 		Angles.z = Snap_s180(Angles.z);
 	}
 
-	// if at the mounted weapon - check for collisions coz player position is forced bu the weapon 
-	if( m_pMountedWeapon )
+	// if at the mounted weapon - check for collisions coz player position is forced bu the weapon
+	if (m_pMountedWeapon)
 	{
 		Legacy::Vec3 pos2check = m_pEntity->GetPos();
-		if(!CanStand( pos2check ) )
+		if (!CanStand(pos2check))
 		{
-			// this position is bad (collides with something) - restore prev pos/angles 			
+			// this position is bad (collides with something) - restore prev pos/angles
 			float diff = Snap_s180(Snap_s180(m_vSafeAngAtMountedWeapon.z) - Snap_s180(Angles.z));
-			Angles.z += diff*.31f;			
+			Angles.z += diff * .31f;
 		}
-		else if(CanStand( pos2check ) )
+		else if (CanStand(pos2check))
 		{
-			// this position is good (no intersetion/collisions) - remember it 
+			// this position is good (no intersetion/collisions) - remember it
 			m_vSafeAngAtMountedWeapon = m_pEntity->GetAngles();
 		}
 	}
 
 	ProcessingCmd.SetDeltaAngles(Angles);
-	if(IsMyPlayer())
+	if (IsMyPlayer())
 	{
 		float stanceRecoilModifier = 1.0f;
 
 		// process weapon specific recoil modifier based on stance
 		if (m_nSelectedWeaponID != -1)
 		{
-			CWeaponClass *pSelectedWeapon = GetSelectedWeapon();
+			CWeaponClass* pSelectedWeapon = GetSelectedWeapon();
 
-			WeaponParams wp;
+			WeaponParams  wp;
 			GetCurrentWeaponParams(wp);
-		
+
 			stanceRecoilModifier = wp.fRecoilModifierStanding;
 			if (m_CurStance == eCrouch)
 			{
@@ -1252,150 +1251,152 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 				stanceRecoilModifier = wp.fRecoilModifierProne;
 			}
 		}
-		Legacy::Vec3 vA=Angles;
-		
-		if((m_fRecoilXUp==0 && (m_fRecoilZUp==0)) && (m_fRecoilXDelta!=0)  )//blend back recoil 
+		Legacy::Vec3 vA = Angles;
+
+		if ((m_fRecoilXUp == 0 && (m_fRecoilZUp == 0)) && (m_fRecoilXDelta != 0)) //blend back recoil
 		{
-			float multiplier=m_stats.firing?m_pGame->w_recoil_speed_down*0.2f:m_pGame->w_recoil_speed_down;
-			float m=min(1,m_pTimer->GetFrameTime()*multiplier);
-			float xdiff=m_fRecoilXDelta>m_fRecoilX*m?m_fRecoilX*m:m_fRecoilXDelta;			
+			float multiplier = m_stats.firing ? m_pGame->w_recoil_speed_down * 0.2f : m_pGame->w_recoil_speed_down;
+			float m          = min(1, m_pTimer->GetFrameTime() * multiplier);
+			float xdiff      = m_fRecoilXDelta > m_fRecoilX * m ? m_fRecoilX * m : m_fRecoilXDelta;
 
 			xdiff *= stanceRecoilModifier;
 
-			if(m_fRecoilXDelta-xdiff<=0){
-				xdiff=m_fRecoilXDelta;
+			if (m_fRecoilXDelta - xdiff <= 0)
+			{
+				xdiff = m_fRecoilXDelta;
 			}
-			vA.x+=xdiff;
-			m_fRecoilXDelta-=xdiff;
-						
-			ProcessingCmd.SetDeltaAngles(vA);			
+			vA.x += xdiff;
+			m_fRecoilXDelta -= xdiff;
+
+			ProcessingCmd.SetDeltaAngles(vA);
 		}
 
 		//APPLY RECOIL
-		if((m_fRecoilXUp!=0 || m_fRecoilZUp!=0) )//apply recoil
-		{			
-			float deltatime=m_pTimer->GetFrameTime()*m_pGame->w_recoil_speed_up;		
-			float dx=m_fRecoilXUp>0?min(m_fRecoilXUp,m_fRecoilX*deltatime):max(m_fRecoilXUp,m_fRecoilX*deltatime);
-			float dz=m_fRecoilZUp>0?(float)min(m_fRecoilZUp,m_fRecoilZ*deltatime):(float)max(m_fRecoilZUp,-fabs(m_fRecoilZ*deltatime));
+		if ((m_fRecoilXUp != 0 || m_fRecoilZUp != 0)) //apply recoil
+		{
+			float deltatime = m_pTimer->GetFrameTime() * m_pGame->w_recoil_speed_up;
+			float dx        = m_fRecoilXUp > 0 ? min(m_fRecoilXUp, m_fRecoilX * deltatime) : max(m_fRecoilXUp, m_fRecoilX * deltatime);
+			float dz        = m_fRecoilZUp > 0 ? (float)min(m_fRecoilZUp, m_fRecoilZ * deltatime) : (float)max(m_fRecoilZUp, -fabs(m_fRecoilZ * deltatime));
 
-			if(m_fRecoilXDelta+dx>=m_pGame->w_recoil_max_degree){				
-				dx=m_fRecoilXUp;
-			}			
-			
-			m_fRecoilXUp-=dx;
-			if(m_fRecoilXUp<0)m_fRecoilXUp=0;
-			m_fRecoilZUp-=dz;
+			if (m_fRecoilXDelta + dx >= m_pGame->w_recoil_max_degree)
+			{
+				dx = m_fRecoilXUp;
+			}
+
+			m_fRecoilXUp -= dx;
+			if (m_fRecoilXUp < 0) m_fRecoilXUp = 0;
+			m_fRecoilZUp -= dz;
 
 			dx *= stanceRecoilModifier;
 			dz *= stanceRecoilModifier;
 
-			vA.x-=dx;
-			if(!m_pGame->w_recoil_vertical_only)
+			vA.x -= dx;
+			if (!m_pGame->w_recoil_vertical_only)
 			{
-				vA.z-=dz;
+				vA.z -= dz;
 			}
-			
-			m_fRecoilXDelta+=dx;
-			ProcessingCmd.SetDeltaAngles(vA);			
+
+			m_fRecoilXDelta += dx;
+			ProcessingCmd.SetDeltaAngles(vA);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
-		float fWaterPitch=m_pGame->p_waterbob_pitch->GetFVal();
-		float fWaterPitchSpeed=m_pGame->p_waterbob_pitchspeed->GetFVal();
-		float fWaterRoll=m_pGame->p_waterbob_roll->GetFVal();
-		float fWaterRollSpeed=m_pGame->p_waterbob_rollspeed->GetFVal();
-		float fWaterDepthWobble=m_pGame->p_waterbob_mindepth->GetFVal();
-		if (m_bEyesInWater)	// wobble camera if in water
+		float fWaterPitch       = m_pGame->p_waterbob_pitch->GetFVal();
+		float fWaterPitchSpeed  = m_pGame->p_waterbob_pitchspeed->GetFVal();
+		float fWaterRoll        = m_pGame->p_waterbob_roll->GetFVal();
+		float fWaterRollSpeed   = m_pGame->p_waterbob_rollspeed->GetFVal();
+		float fWaterDepthWobble = m_pGame->p_waterbob_mindepth->GetFVal();
+		if (m_bEyesInWater) // wobble camera if in water
 		{
-			float fWobbleScale=(m_stats.fInWater-fWaterDepthWobble);
-			if (fWobbleScale<0.0f)
-				fWobbleScale=0.0f;
-			if (fWobbleScale>1.0f)
-				fWobbleScale=1.0f;
-			float fFrameTime=m_pTimer->GetFrameTime();
-			m_walkParams.fWaterPitchPhase+=fWaterPitchSpeed*fFrameTime;
-			if (m_walkParams.fWaterPitchPhase>=1.0f)
-				m_walkParams.fWaterPitchPhase-=1.0f;
-			m_walkParams.fWaterRollPhase+=fWaterRollSpeed*fFrameTime;
-			if (m_walkParams.fWaterRollPhase>=1.0f)
-				m_walkParams.fWaterRollPhase-=1.0f;			
-			vA.x += fWobbleScale*fWaterPitch*cry_sinf(m_walkParams.fWaterPitchPhase*gf_PI*2.0f);
-			vA.y = (fWaterRoll *cry_sinf(m_walkParams.fWaterRollPhase *gf_PI*2.0f))*fWobbleScale;
+			float fWobbleScale = (m_stats.fInWater - fWaterDepthWobble);
+			if (fWobbleScale < 0.0f)
+				fWobbleScale = 0.0f;
+			if (fWobbleScale > 1.0f)
+				fWobbleScale = 1.0f;
+			float fFrameTime = m_pTimer->GetFrameTime();
+			m_walkParams.fWaterPitchPhase += fWaterPitchSpeed * fFrameTime;
+			if (m_walkParams.fWaterPitchPhase >= 1.0f)
+				m_walkParams.fWaterPitchPhase -= 1.0f;
+			m_walkParams.fWaterRollPhase += fWaterRollSpeed * fFrameTime;
+			if (m_walkParams.fWaterRollPhase >= 1.0f)
+				m_walkParams.fWaterRollPhase -= 1.0f;
+			vA.x += fWobbleScale * fWaterPitch * cry_sinf(m_walkParams.fWaterPitchPhase * gf_PI * 2.0f);
+			vA.y = (fWaterRoll * cry_sinf(m_walkParams.fWaterRollPhase * gf_PI * 2.0f)) * fWobbleScale;
 		}
 		else
-		{			
-			vA.y=0.0f;		
-			m_walkParams.fWaterPitchPhase=0.0f;
-			m_walkParams.fWaterRollPhase=0.0f;
+		{
+			vA.y                          = 0.0f;
+			m_walkParams.fWaterPitchPhase = 0.0f;
+			m_walkParams.fWaterRollPhase  = 0.0f;
 		}
 
-		ProcessingCmd.SetDeltaAngles(vA);		
+		ProcessingCmd.SetDeltaAngles(vA);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	if (!m_pRedirected)
-	{ 
+	{
+		m_pEntity->SetAngles(Angles, false, false);
+		m_vShake = Legacy::Vec3(0, 0, 0);
 
-		m_pEntity->SetAngles( Angles,false, false );
-		m_vShake=Legacy::Vec3(0,0,0);
-		
 		// so here goes wapon sway
-		if(m_Dynamics.gravity!=0.0f)		// only if there is gravity
+		if (m_Dynamics.gravity != 0.0f) // only if there is gravity
 		{
 			// add some swaying to the angles
-			m_vShake.x+=(cry_cosf(m_walkParams.swayOfs*15.9f+0.3f)*m_walkParams.swayAmp*0.1f+cry_sinf(m_walkParams.swayOfs*5.9f+0.0f)*m_walkParams.swayAmp*0.45f+cry_cosf(m_walkParams.swayOfs*0.95f+0.5f)*m_walkParams.swayAmp)*0.33333f;
-			m_vShake.z+=(cry_cosf(m_walkParams.swayOfs*14.9f+0.7f)*m_walkParams.swayAmp*0.12f+cry_sinf(m_walkParams.swayOfs*5.05f+0.6f)*m_walkParams.swayAmp*0.5f+cry_cosf(m_walkParams.swayOfs*1.0f+0.2f)*m_walkParams.swayAmp)*0.33333f;
-			m_walkParams.swayOfs+=m_walkParams.swayFreq*m_pTimer->GetFrameTime();
+			m_vShake.x += (cry_cosf(m_walkParams.swayOfs * 15.9f + 0.3f) * m_walkParams.swayAmp * 0.1f + cry_sinf(m_walkParams.swayOfs * 5.9f + 0.0f) * m_walkParams.swayAmp * 0.45f + cry_cosf(m_walkParams.swayOfs * 0.95f + 0.5f) * m_walkParams.swayAmp) * 0.33333f;
+			m_vShake.z += (cry_cosf(m_walkParams.swayOfs * 14.9f + 0.7f) * m_walkParams.swayAmp * 0.12f + cry_sinf(m_walkParams.swayOfs * 5.05f + 0.6f) * m_walkParams.swayAmp * 0.5f + cry_cosf(m_walkParams.swayOfs * 1.0f + 0.2f) * m_walkParams.swayAmp) * 0.33333f;
+			m_walkParams.swayOfs += m_walkParams.swayFreq * m_pTimer->GetFrameTime();
 		}
-		
+
 		// after explosion camera shacking - not when in vehicle
 		// when proning - align with terrain
-		if (IsAlive() && !m_pEntity->IsBound() )
+		if (IsAlive() && !m_pEntity->IsBound())
 		{
 			// add shaking
 			if (IsMyPlayer())
 			{
-				if((fabsf(m_walkParams.shakeDegree)>0.1f) && (m_walkParams.shakeTime>0.0f))
+				if ((fabsf(m_walkParams.shakeDegree) > 0.1f) && (m_walkParams.shakeTime > 0.0f))
 				{
 					m_walkParams.shakeOffset += m_walkParams.shakeFreq * m_pTimer->GetFrameTime();
 					m_walkParams.shakeElapsedTime += m_pTimer->GetFrameTime();
-					if (m_walkParams.shakeElapsedTime>m_walkParams.shakeTime)
+					if (m_walkParams.shakeElapsedTime > m_walkParams.shakeTime)
 					{
-						m_walkParams.shakeDegree=0.0f;
-					}else
+						m_walkParams.shakeDegree = 0.0f;
+					}
+					else
 					{
-						float fDeg = m_walkParams.shakeDegree * ( 1 - ( m_walkParams.shakeElapsedTime / m_walkParams.shakeTime ) );
-						float fSinOfs = cry_sinf(m_walkParams.shakeOffset * 6.283185307179586476925286766559f);
+						float    fDeg    = m_walkParams.shakeDegree * (1 - (m_walkParams.shakeElapsedTime / m_walkParams.shakeTime));
+						float    fSinOfs = cry_sinf(m_walkParams.shakeOffset * 6.283185307179586476925286766559f);
 
 						// make it shake on camera roll axis
 						// create the matrix here
 						Matrix44 matWorld;
 						matWorld.SetIdentity();
 
-						matWorld=Matrix44::CreateRotationZYX(-gf_DEGTORAD*m_vEyeAngles)*matWorld; //NOTE: angles in radians and negated 
+						matWorld            = Matrix44::CreateRotationZYX(-gf_DEGTORAD * m_vEyeAngles) * matWorld; //NOTE: angles in radians and negated
 
-						CryQuat cxquat = Quat( GetTransposed44(matWorld) );
+						CryQuat      cxquat = Quat(GetTransposed44(matWorld));
 
-						CryQuat rxquat;
-						Legacy::Vec3	shake( 0, fSinOfs * fDeg, 0 );
-						#if 0
+						CryQuat      rxquat;
+						Legacy::Vec3 shake(0, fSinOfs * fDeg, 0);
+#if 0
 						rxquat.SetRotationXYZ(DEG2RAD(shake));
 
 						CryQuat result = cxquat*rxquat;
 						Legacy::Vec3 finalangles = RAD2DEG(Ang3::GetAnglesXYZ(Matrix33(result)));
 						m_vShake += m_vEyeAngles - finalangles;
-						#endif
+#endif
 					}
 				}
 			}
 		}
 	}
-	else 
+	else
 	{
 		ProcessingCmd.SetDeltaAngles(Angles);
-		if (m_pRedirected)	// [marco] Kirill does this check make sense? - 
-												// this should never happen but it crashes with the helicopter
-			m_pRedirected->SetAngles(Angles);	
+		if (m_pRedirected) // [marco] Kirill does this check make sense? -
+		                   // this should never happen but it crashes with the helicopter
+			m_pRedirected->SetAngles(Angles);
 	}
 }
 
@@ -1403,11 +1404,11 @@ void CPlayer::ProcessAngles(CXEntityProcessingCmd &ProcessingCmd)
 /*! Updates the position and stats of the player
 		@param ProcessingCmd structure of commands to process
 */
-void CPlayer::ProcessMovements(CXEntityProcessingCmd &cmd, bool bScheduled)
+void CPlayer::ProcessMovements(CXEntityProcessingCmd& cmd, bool bScheduled)
 {
-	FUNCTION_PROFILER( PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	#if 0
+#if 0
 	IPhysicalEntity *pPhysEnt = (IPhysicalEntity *)m_pEntity->GetPhysics();
 
 	if(!pPhysEnt)
@@ -1712,11 +1713,11 @@ void CPlayer::ProcessMovements(CXEntityProcessingCmd &cmd, bool bScheduled)
 	Legacy::Vec3 tempangle = cmd.GetDeltaAngles();
 	Legacy::Vec3 dirangle = tempangle;
 	#if 0
-	dirangle=ConvertToRad(dirangle);	
+	dirangle=ConvertToRad(dirangle);
 	#endif
 
 	#pragma warning(push)
-	#pragma warning(disable: 4244)
+	#pragma warning(disable : 4244)
 	float m_pcos = cry_cosf(dirangle[YAW]);//*inputspeed;
 	float m_psin = cry_sinf(dirangle[YAW]);//*inputspeed;
 	
@@ -2082,17 +2083,16 @@ void CPlayer::ProcessMovements(CXEntityProcessingCmd &cmd, bool bScheduled)
 
 	if (nSlices>0 && pPhysEnt) // the last slice is teh 'server catch-up' slice, client doesn't have it
 		pPhysEnt->Step(pfSlices[nSlices-1]);
-	#endif
-
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 /*! Retrieves the currently selected weapon
 		@return selected weapon
-*/ 
+*/
 CWeaponClass* CPlayer::GetSelectedWeapon() const
 {
-	CWeaponClass *pSelectedWeapon = m_pGame->GetWeaponSystemEx()->GetWeaponClassByID(m_nSelectedWeaponID);
+	CWeaponClass* pSelectedWeapon = m_pGame->GetWeaponSystemEx()->GetWeaponClassByID(m_nSelectedWeaponID);
 
 	// make sure the weapon class (models, scripts, etc..) is loaded ...
 	if (pSelectedWeapon && !pSelectedWeapon->IsLoaded())
@@ -2161,15 +2161,15 @@ void CPlayer::SelectPrevWeapon()
 		@param ProcessingCmd structure of commands to process
 */
 #endif
-void CPlayer::ProcessWeapons(CXEntityProcessingCmd &cmd)
-{	
-	// do not allow to use weapons and move when underwater or in a water volume, and 
-	// he is actively swimming			
+void CPlayer::ProcessWeapons(CXEntityProcessingCmd& cmd)
+{
+	// do not allow to use weapons and move when underwater or in a water volume, and
+	// he is actively swimming
 
-	if(!IsMyPlayer())
-		m_walkParams.fCurrLean=cmd.GetLeaning();
+	if (!IsMyPlayer())
+		m_walkParams.fCurrLean = cmd.GetLeaning();
 
-	#if 0
+#if 0
 	if (cmd.CheckAction(ACTION_NEXT_WEAPON) && (!m_stats.lock_weapon))
 	{
 		SelectNextWeapon();		
@@ -2317,93 +2317,109 @@ void CPlayer::ProcessWeapons(CXEntityProcessingCmd &cmd)
 	}
 
 	if (m_bWriteOccured) m_bWriteOccured = false;
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CPlayer::FireGrenade(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, IEntity *pIShooter)
+void CPlayer::FireGrenade(const Legacy::Vec3& origin, const Legacy::Vec3& angles, IEntity* pIShooter)
 {
 	_SmartScriptObject pTable(m_pScriptSystem);
 
-	m_ssoHitPosVec	 = origin;
-	m_ssoHitNormVec	 = angles; //angles;
-	Legacy::Vec3 dir = angles;
-	dir				 = Legacy::to(ConvertToRadAngles(Legacy::from(dir)));	
-	 
-	// projectiles (grenades, for ex) should inherit player's velocity	
-	m_ssoHitDirVec=dir; //+(m_walkParams.dir.normalize()*(m_stats.fVel*0.125f));		
-	float fWaterLevel=m_p3DEngine->GetWaterLevel(m_pEntity);
-	pTable->SetValue("pos",m_ssoHitPosVec);
-	pTable->SetValue("angles",m_ssoHitNormVec);
-	pTable->SetValue("dir",m_ssoHitDirVec);
+	m_ssoHitPosVec    = origin;
+	m_ssoHitNormVec   = angles; //angles;
+	Legacy::Vec3 dir  = angles;
+	dir               = Legacy::to(ConvertToRadAngles(Legacy::from(dir)));
 
-	pTable->SetValue("lifetime",3000);
+	// projectiles (grenades, for ex) should inherit player's velocity
+	m_ssoHitDirVec    = dir; //+(m_walkParams.dir.normalize()*(m_stats.fVel*0.125f));
+	float fWaterLevel = m_p3DEngine->GetWaterLevel(m_pEntity);
+	pTable->SetValue("pos", m_ssoHitPosVec);
+	pTable->SetValue("angles", m_ssoHitNormVec);
+	pTable->SetValue("dir", m_ssoHitDirVec);
 
-	if(m_nSelectedWeaponID != -1 && m_stats.firing && !(m_stats.grenadetype!= 1 && m_stats.numofgrenades <= 0))
+	pTable->SetValue("lifetime", 3000);
+
+	if (m_nSelectedWeaponID != -1 && m_stats.firing && !(m_stats.grenadetype != 1 && m_stats.numofgrenades <= 0))
 		GetSelectedWeapon()->ScriptOnStopFiring(m_pEntity);
 
-	if (fWaterLevel>origin.z)
-		pTable->SetValue("underwater",0);
+	if (fWaterLevel > origin.z)
+		pTable->SetValue("underwater", 0);
 	else
 		pTable->SetToNull("underwater");
 	m_pEntity->SendScriptEvent(ScriptEvent_FireGrenade, *pTable);
-	if(m_pMountedWeapon)	// stop fire animation on mounted weapon
-		m_pMountedWeapon->SendScriptEvent(ScriptEvent_Fire,0);
+	if (m_pMountedWeapon) // stop fire animation on mounted weapon
+		m_pMountedWeapon->SendScriptEvent(ScriptEvent_Fire, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CPlayer::SetFiring(bool bIsFiring)
 {
-	eFireType lastft=m_stats.FiringType;
+	eFireType lastft = m_stats.FiringType;
 	if (/*m_pSelectedWeapon &&*/ bIsFiring && IsAlive() && !m_stats.onLadder)
 	{
 		switch (m_stats.FiringType)
 		{
-		case ePressing: m_stats.FiringType=eHolding; break;
-		case eHolding: m_stats.FiringType=eHolding; break;
-		case eReleasing: m_stats.FiringType=ePressing; break;
-		case eNotFiring: m_stats.FiringType=ePressing; break;
-		default: m_stats.FiringType=eNotFiring;
+		case ePressing:
+			m_stats.FiringType = eHolding;
+			break;
+		case eHolding:
+			m_stats.FiringType = eHolding;
+			break;
+		case eReleasing:
+			m_stats.FiringType = ePressing;
+			break;
+		case eNotFiring:
+			m_stats.FiringType = ePressing;
+			break;
+		default:
+			m_stats.FiringType = eNotFiring;
 		}
-		
 	}
-	else 
+	else
 	{
 		switch (m_stats.FiringType)
 		{
-		case ePressing: m_stats.FiringType=eNotFiring; break;
-		case eHolding: m_stats.FiringType=eReleasing; break;
-		case eReleasing: m_stats.FiringType=eNotFiring; break;
-		case eNotFiring: m_stats.FiringType=eNotFiring; break;
-		default: m_stats.FiringType=eNotFiring;
+		case ePressing:
+			m_stats.FiringType = eNotFiring;
+			break;
+		case eHolding:
+			m_stats.FiringType = eReleasing;
+			break;
+		case eReleasing:
+			m_stats.FiringType = eNotFiring;
+			break;
+		case eNotFiring:
+			m_stats.FiringType = eNotFiring;
+			break;
+		default:
+			m_stats.FiringType = eNotFiring;
 		}
-		
 	}
-	m_stats.LastFiringType=lastft;
+	m_stats.LastFiringType = lastft;
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CPlayer::DrawThirdPersonWeapon(bool bDraw)
 {
-	ICryCharInstance *character = m_pEntity->GetCharInterface()->GetCharacter(PLAYER_MODEL_IDX);
+	ICryCharInstance* character = m_pEntity->GetCharInterface()->GetCharacter(PLAYER_MODEL_IDX);
 	if (character && m_nSelectedWeaponID != -1)
 	{
-		WeaponInfo &wi = GetWeaponInfo();
+		WeaponInfo& wi = GetWeaponInfo();
 
-		if(bDraw)
+		if (bDraw)
 		{
 			CWeaponClass* pSelectedWeapon = GetSelectedWeapon();
-			
-			string sBone = pSelectedWeapon->GetBindBone();
+
+			string        sBone           = pSelectedWeapon->GetBindBone();
 			if (!sBone.empty())
 			{
-				wi.hBindInfo = character->AttachObjectToBone( pSelectedWeapon->GetObject(), sBone.c_str() );
+				wi.hBindInfo = character->AttachObjectToBone(pSelectedWeapon->GetObject(), sBone.c_str());
 			}
 		}
 		else
 		{
 			wi.DetachBindingHandles(character);
-			character->AttachObjectToBone(NULL,NULL);
+			character->AttachObjectToBone(NULL, NULL);
 		}
 	}
 }
@@ -2411,35 +2427,35 @@ void CPlayer::DrawThirdPersonWeapon(bool bDraw)
 /*! Selects a weapon the player should hold
 		@param weapon id of weapon to set
 */
-bool CPlayer::SelectWeapon( int weapon, bool bCheckForAvailability )
+bool CPlayer::SelectWeapon(int weapon, bool bCheckForAvailability)
 {
 	PlayerWeaponsItor wi;
 
-	// if it's shooter from the vehicle - can't select weapons
-	#if 0
+// if it's shooter from the vehicle - can't select weapons
+#if 0
 	if (m_nSelectedWeaponID>0 && m_pVehicle && m_pVehicle->GetWeaponUser()==this)
-	#endif
-		return false;
+#endif
+	return false;
 	if (m_stats.onLadder)
 		return false;
 
-	if ((wi = m_mapPlayerWeapons.find(weapon)) == m_mapPlayerWeapons.end()  && weapon != -1) 
+	if ((wi = m_mapPlayerWeapons.find(weapon)) == m_mapPlayerWeapons.end() && weapon != -1)
 		return false;
 
 	if (bCheckForAvailability && weapon != -1)
 	{
-		if ((* wi).second.owns == false)
+		if ((*wi).second.owns == false)
 			return false;
 	}
 
-	m_pEntity->SendScriptEvent(ScriptEvent_SelectWeapon,0);
+	m_pEntity->SendScriptEvent(ScriptEvent_SelectWeapon, 0);
 	// deselect old weapon, if selected
-	if (m_nSelectedWeaponID != -1 && (weapon!=m_stats.weapon))
+	if (m_nSelectedWeaponID != -1 && (weapon != m_stats.weapon))
 	{
 		// unbind the entity from the player
-		WeaponInfo &info=GetWeaponInfo();
+		WeaponInfo& info = GetWeaponInfo();
 
-		info.iFireMode=m_stats.firemode;
+		info.iFireMode   = m_stats.firemode;
 		_SmartScriptObject cOnUpdateParam(m_pScriptSystem);
 		cOnUpdateParam->SetValue("shooter", m_pEntity->GetScriptObject());
 		GetSelectedWeapon()->ScriptOnDeactivate(m_pEntity);
@@ -2450,15 +2466,15 @@ bool CPlayer::SelectWeapon( int weapon, bool bCheckForAvailability )
 	// call OnActivate when the weapon changes
 	if (m_nSelectedWeaponID != -1 && (weapon != m_stats.weapon))
 	{
-		WeaponInfo &info=GetWeaponInfo();
-		m_stats.firemode=info.iFireMode;
+		WeaponInfo& info      = GetWeaponInfo();
+		m_stats.firemode      = info.iFireMode;
 		m_bWaitForFireRelease = true;
 		GetSelectedWeapon()->ScriptOnActivate(m_pEntity);
 
 		// make sure that the firemode is correct on script side
 		_SmartScriptObject pObj(m_pScriptSystem);
-		pObj->SetValue( "firemode", m_stats.firemode);
-		pObj->SetValue( "ignoreammo", true);
+		pObj->SetValue("firemode", m_stats.firemode);
+		pObj->SetValue("ignoreammo", true);
 
 		bool bCanSwitch;
 		m_pEntity->SendScriptEvent(ScriptEvent_FireModeChange, *pObj, &bCanSwitch);
@@ -2468,42 +2484,41 @@ bool CPlayer::SelectWeapon( int weapon, bool bCheckForAvailability )
 			GetSelectedWeapon()->GetCharacter()->ForceUpdate();
 	}
 	m_stats.weapon = m_nSelectedWeaponID;
-	
+
 	return true;
 }
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SetWeapon(int iClsID)
 {
-
 	// check if we want to select the weapon we are holding
-	if(iClsID == m_nSelectedWeaponID)
+	if (iClsID == m_nSelectedWeaponID)
 		return;
 
 	// we want to hide the currently selected weapon
-	if(m_nSelectedWeaponID != -1)
+	if (m_nSelectedWeaponID != -1)
 	{
-		if (m_stats.LastFiringType!=eNotFiring)
+		if (m_stats.LastFiringType != eNotFiring)
 			GetSelectedWeapon()->ScriptOnStopFiring(m_pEntity);
 
 		SetWeaponPositionState(WEAPON_POS_UNDEFINED);
 
 		if (IsMyPlayer())
 		{
-			ICryCharInstance *pChar = GetEntity()->GetCharInterface()->GetCharacter(1);
+			ICryCharInstance* pChar = GetEntity()->GetCharInterface()->GetCharacter(1);
 			if (pChar)
 				pChar->DetachAll();
 
-			GetEntity()->DrawCharacter(1,0);
+			GetEntity()->DrawCharacter(1, 0);
 			GetEntity()->ResetAnimations(1);
 		}
 	}
 
 	// here we actually set the new weapon
-	m_nSelectedWeaponID = iClsID;
+	m_nSelectedWeaponID           = iClsID;
 	// returns the newly selected weapon!!!
 	CWeaponClass* pSelectedWeapon = GetSelectedWeapon();
 
-	if(pSelectedWeapon)
+	if (pSelectedWeapon)
 	{
 		// attach to bone for third person view
 		HoldWeapon();
@@ -2513,7 +2528,9 @@ void CPlayer::SetWeapon(int iClsID)
 
 		m_pScriptObject->SetValue("weapon", pSelectedWeapon->GetScriptObject());
 		m_pScriptObject->SetValue("weaponid", m_nSelectedWeaponID);
-	}	else	{
+	}
+	else
+	{
 		GetEntity()->GetCharInterface()->SetCharacter(1, 0);
 		m_pScriptObject->SetToNull("weapon");
 		m_pScriptObject->SetToNull("weaponid");
@@ -2582,7 +2599,7 @@ void CPlayer::GetFirePosAngles(Legacy::Vec3& firePos, Legacy::Vec3& fireAngles)
 				fireAngles = m_pEntity->GetAngles();
 		}
 	}
-	#endif
+#endif
 }
 #if 0
 
@@ -3930,8 +3947,8 @@ void CPlayer::Respawn()
 */
 bool CPlayer::IsMyPlayer() const
 {
-	if(!m_pGame->m_pClient) return false;
-	return (m_pEntity->GetId()==m_pGame->m_pClient->GetPlayerId());
+	if (!m_pGame->m_pClient) return false;
+	return (m_pEntity->GetId() == m_pGame->m_pClient->GetPlayerId());
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3949,72 +3966,72 @@ bool CPlayer::IsFirstPerson() const
 		@param cs state of the entity per serverslot
 		@return true if the function succeeds, false otherwise
 */
-bool CPlayer::Write( CStream &stream,EntityCloneState *cs)
+bool CPlayer::Write(CStream& stream, EntityCloneState* cs)
 {
-	bool bLocalHostEntity=true;
+	bool bLocalHostEntity = true;
 
-	if(cs)
-    bLocalHostEntity=cs->m_bLocalplayer;
+	if (cs)
+		bLocalHostEntity = cs->m_bLocalplayer;
 
 	WRITE_COOKIE(stream);
 
-  stream.Write(bLocalHostEntity);
+	stream.Write(bLocalHostEntity);
 
-	if(bLocalHostEntity)
+	if (bLocalHostEntity)
 	{
-		assert(m_stats.health>=0);
-		if(m_stats.health>255)
+		assert(m_stats.health >= 0);
+		if (m_stats.health > 255)
 		{
-			GameWarning(" Player health=%d is bigger than 255 (name %s). Change properties", m_stats.health,m_pEntity->GetName());
+			GameWarning(" Player health=%d is bigger than 255 (name %s). Change properties", m_stats.health, m_pEntity->GetName());
 			m_stats.health = 255;
 		}
 
-		assert(m_stats.armor>=0);
-		assert(m_stats.armor<=255);
-		if(m_stats.numofgrenades<0)
+		assert(m_stats.armor >= 0);
+		assert(m_stats.armor <= 255);
+		if (m_stats.numofgrenades < 0)
 		{
-			GameWarning(" Player numofgrenades=%d is less than 0 (name %s). Change properties", m_stats.numofgrenades,m_pEntity->GetName());
+			GameWarning(" Player numofgrenades=%d is less than 0 (name %s). Change properties", m_stats.numofgrenades, m_pEntity->GetName());
 			m_stats.numofgrenades = 0;
 		}
-		if(m_stats.numofgrenades>255)
+		if (m_stats.numofgrenades > 255)
 		{
-			GameWarning(" Player numofgrenades=%d is bigger than 255 (name %s). Change properties", m_stats.numofgrenades,m_pEntity->GetName());
+			GameWarning(" Player numofgrenades=%d is bigger than 255 (name %s). Change properties", m_stats.numofgrenades, m_pEntity->GetName());
 			m_stats.numofgrenades = 255;
 		}
 
-		assert(m_stats.stamina>=0 && m_stats.stamina<255);
-		stream.WritePkd( (BYTE)m_stats.stamina );
+		assert(m_stats.stamina >= 0 && m_stats.stamina < 255);
+		stream.WritePkd((BYTE)m_stats.stamina);
 
-		stream.WritePkd( (BYTE)m_stats.health );
-		stream.WritePkd( (BYTE)m_stats.armor );
+		stream.WritePkd((BYTE)m_stats.health);
+		stream.WritePkd((BYTE)m_stats.armor);
 
-		if((unsigned int)(m_stats.ammo_in_clip)>1023)
+		if ((unsigned int)(m_stats.ammo_in_clip) > 1023)
 		{
-			m_pGame->GetSystem()->GetILog()->LogError("Ammo in clip (%d) is more than 1023, Value will not be restored correctly",m_stats.ammo_in_clip);
-			if(m_stats.ammo_in_clip>0)
-				m_stats.ammo_in_clip=1023;
+			m_pGame->GetSystem()->GetILog()->LogError("Ammo in clip (%d) is more than 1023, Value will not be restored correctly", m_stats.ammo_in_clip);
+			if (m_stats.ammo_in_clip > 0)
+				m_stats.ammo_in_clip = 1023;
 		}
 
-		stream.WriteNumberInBits(m_stats.ammo_in_clip,10);
-		
-		if((unsigned int)(m_stats.ammo)>1023)
+		stream.WriteNumberInBits(m_stats.ammo_in_clip, 10);
+
+		if ((unsigned int)(m_stats.ammo) > 1023)
 		{
-			m_pGame->GetSystem()->GetILog()->LogError("Ammo (%d) is more than 1023, Value will not be restored correctly",m_stats.ammo);
-			if(m_stats.ammo>0)
-				m_stats.ammo=1023;
+			m_pGame->GetSystem()->GetILog()->LogError("Ammo (%d) is more than 1023, Value will not be restored correctly", m_stats.ammo);
+			if (m_stats.ammo > 0)
+				m_stats.ammo = 1023;
 		}
 
-		stream.WriteNumberInBits(m_stats.ammo,10);
+		stream.WriteNumberInBits(m_stats.ammo, 10);
 		stream.WritePkd((BYTE)m_stats.numofgrenades);
 		stream.WriteNumberInBits(m_stats.grenadetype, 4);
 		stream.Write(m_stats.holding_breath);
-		for(int i=0;i<sizeof(m_vWeaponSlots)/sizeof(int);i++)
+		for (int i = 0; i < sizeof(m_vWeaponSlots) / sizeof(int); i++)
 		{
-			stream.Write(m_vWeaponSlots[i]!=0);
-			if(m_vWeaponSlots[i]!=0)
+			stream.Write(m_vWeaponSlots[i] != 0);
+			if (m_vWeaponSlots[i] != 0)
 			{
-				assert(m_vWeaponSlots[i]>=0);
-				assert(m_vWeaponSlots[i]<=255);
+				assert(m_vWeaponSlots[i] >= 0);
+				assert(m_vWeaponSlots[i] <= 255);
 
 				stream.WritePkd((BYTE)m_vWeaponSlots[i]);
 			}
@@ -4022,56 +4039,55 @@ bool CPlayer::Write( CStream &stream,EntityCloneState *cs)
 	}
 	else
 	{
-		stream.Write((bool)(m_stats.ammo_in_clip!=0));
-		stream.Write((bool)(m_stats.ammo!=0));
+		stream.Write((bool)(m_stats.ammo_in_clip != 0));
+		stream.Write((bool)(m_stats.ammo != 0));
 
-		stream.Write( m_stats.firing );
-		stream.Write(m_walkParams.fCurrLean!=0);
-		if(m_walkParams.fCurrLean!=0)
+		stream.Write(m_stats.firing);
+		stream.Write(m_walkParams.fCurrLean != 0);
+		if (m_walkParams.fCurrLean != 0)
 		{
-			stream.Write(m_walkParams.fCurrLean>0); //sign
-			stream.WritePkd(((BYTE)(fabs(m_walkParams.fCurrLean)/(1.0f/255))));
+			stream.Write(m_walkParams.fCurrLean > 0); //sign
+			stream.WritePkd(((BYTE)(fabs(m_walkParams.fCurrLean) / (1.0f / 255))));
 		}
-
 	}
 	WRITE_COOKIE(stream);
 
 	bool bSendFireGrenade = m_stats.firing_grenade;
 
-	if((m_stats.grenadetype != 1 && m_stats.numofgrenades<=0))
+	if ((m_stats.grenadetype != 1 && m_stats.numofgrenades <= 0))
 		bSendFireGrenade = false;
 
 	stream.Write(bSendFireGrenade);
 	// [kirill]
-	// this is needed to be able to keep PrevWeapon when doing quicksave/quickload 
-	// while on ladder - so when player gets out of ladder after QuickLoad he has 
+	// this is needed to be able to keep PrevWeapon when doing quicksave/quickload
+	// while on ladder - so when player gets out of ladder after QuickLoad he has
 	// correct weapon
 	//[filippo]
 	//in MP we need to send always the right "m_stats.weapon" value, otherwise the ladders would not works correctly.
-	if( m_stats.onLadder && !m_pGame->IsMultiplayer())
+	if (m_stats.onLadder && !m_pGame->IsMultiplayer())
 		stream.WritePkd((BYTE)m_PrevWeaponID);
 	else
 		stream.WritePkd((BYTE)m_stats.weapon);
 	stream.WritePkd((BYTE)m_stats.firemode);
-	stream.WriteNumberInBits((unsigned int)m_CurStance,3);
-	stream.Write( m_stats.jumping );
+	stream.WriteNumberInBits((unsigned int)m_CurStance, 3);
+	stream.Write(m_stats.jumping);
 
 	// sync player random seed value to the clients
 	{
-		bool bSyncToClients=m_SynchedRandomSeed.GetSynchToClientsS();
+		bool bSyncToClients = m_SynchedRandomSeed.GetSynchToClientsS();
 		stream.Write(bSyncToClients);
 
-		if(bSyncToClients)
+		if (bSyncToClients)
 			stream.Write(m_SynchedRandomSeed.GetStartRandomSeedS());
 	}
 
-	stream.Write( m_stats.reloading );
+	stream.Write(m_stats.reloading);
 
-	BYTE acc=(BYTE)(m_stats.firing?m_stats.last_accuracy:m_stats.accuracy/(1.f/255.f));
+	BYTE acc = (BYTE)(m_stats.firing ? m_stats.last_accuracy : m_stats.accuracy / (1.f / 255.f));
 	stream.WritePkd(acc);
 	WRITE_COOKIE(stream);
 
-	if (m_pRedirected && m_pRedirected->GetId()<50000)
+	if (m_pRedirected && m_pRedirected->GetId() < 50000)
 	{
 		stream.Write(true);
 		stream.Write(m_pRedirected->GetId());
@@ -4091,9 +4107,9 @@ bool CPlayer::Write( CStream &stream,EntityCloneState *cs)
 		@param stream stream to read from
 		@return true if the function succeeds, false otherwise
 */
-bool CPlayer::Read( CStream &stream )
+bool CPlayer::Read(CStream& stream)
 {
-	#if 0
+#if 0
 	unsigned short dirty = 0;
 	PlayerStats &stats=m_stats;
 	BYTE health,armor,weapon,firemode,staminaBuff;	
@@ -4278,51 +4294,51 @@ bool CPlayer::Read( CStream &stream )
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CPlayer::Save( CStream &stream)
+bool CPlayer::Save(CStream& stream)
 {
 	EntityCloneState cs;
 
-	cs.m_bSyncYAngle = false;
-	cs.m_bOffSync = false;
+	cs.m_bSyncYAngle  = false;
+	cs.m_bOffSync     = false;
 	cs.m_bLocalplayer = true;
 
 	//[PETAR] Serialize flashlight for singleplayer
 	stream.Write(m_bLightOn);
-	bool bRet=Write(stream,&cs);
+	bool bRet = Write(stream, &cs);
 
 	ASSERT(bRet);
-	
+
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CPlayer::Load( CStream &stream)
+bool CPlayer::Load(CStream& stream)
 {
-	#if 0
+#if 0
 	bool bPrevLightStatus;
 	stream.Read(bPrevLightStatus);
 	if (bPrevLightStatus!=m_bLightOn)
 		SwitchFlashLight(bPrevLightStatus);
-	#endif
+#endif
 	return Read(stream);
 }
 
 //////////////////////////////////////////////////////////////////////
 // these two functions save and load the player state which is NOT already saved using read/write
-bool CPlayer::SaveGame(CStream &stm)
+bool CPlayer::SaveGame(CStream& stm)
 {
-	for(PlayerWeaponsItor itor=m_mapPlayerWeapons.begin(); itor!=m_mapPlayerWeapons.end(); ++itor)
+	for (PlayerWeaponsItor itor = m_mapPlayerWeapons.begin(); itor != m_mapPlayerWeapons.end(); ++itor)
 	{
-		WeaponInfo &wi = itor->second;
-    if(wi.owns)
-    {
+		WeaponInfo& wi = itor->second;
+		if (wi.owns)
+		{
 			stm.Write(itor->first);
-			ASSERT(itor->first>=0 && itor->first<50);
+			ASSERT(itor->first >= 0 && itor->first < 50);
 			stm.Write(wi.iFireMode);
-    }
+		}
 	}
 	stm.Write((int)0);
-	for(int i=0;i<sizeof(m_vWeaponSlots)/sizeof(int);i++)
+	for (int i = 0; i < sizeof(m_vWeaponSlots) / sizeof(int); i++)
 	{
 		stm.Write(m_vWeaponSlots[i]);
 	}
@@ -4333,7 +4349,7 @@ bool CPlayer::SaveGame(CStream &stm)
 };
 
 //////////////////////////////////////////////////////////////////////
-bool CPlayer::LoadGame(CStream &stm)
+bool CPlayer::LoadGame(CStream& stm)
 {
 	RemoveAllWeapons();
 
@@ -4343,34 +4359,33 @@ bool CPlayer::LoadGame(CStream &stm)
 	if (!m_bIsAI)
 		DeselectWeapon();
 
-	for(int cl = 0; (stm.Read(cl),cl); )
-  {
-    WeaponInfo &wi = m_mapPlayerWeapons[cl];
-    wi.owns = true;
-    stm.Read(wi.iFireMode);
-  }
-	for(int i=0;i<sizeof(m_vWeaponSlots)/sizeof(int);i++)
+	for (int cl = 0; (stm.Read(cl), cl);)
+	{
+		WeaponInfo& wi = m_mapPlayerWeapons[cl];
+		wi.owns        = true;
+		stm.Read(wi.iFireMode);
+	}
+	for (int i = 0; i < sizeof(m_vWeaponSlots) / sizeof(int); i++)
 	{
 		stm.Read(m_vWeaponSlots[i]);
 	}
 
 	Load(stm);
 
-
-	#if 0
+#if 0
 	SelectWeapon(m_stats.weapon);
-	#endif
+#endif
 
 	if (m_nSelectedWeaponID != -1)
 	{
-		WeaponInfo &wi = GetWeaponInfo();
+		WeaponInfo&   wi              = GetWeaponInfo();
 
-		CWeaponClass *pSelectedWeapon = GetSelectedWeapon();
+		CWeaponClass* pSelectedWeapon = GetSelectedWeapon();
 		pSelectedWeapon->ScriptOnStopFiring(m_pEntity);
 
 		_SmartScriptObject pObj(m_pScriptSystem);
-		pObj->SetValue( "firemode", m_stats.firemode);
-		pObj->SetValue( "ignoreammo", true);
+		pObj->SetValue("firemode", m_stats.firemode);
+		pObj->SetValue("ignoreammo", true);
 
 		bool bCanSwitch;
 		m_pEntity->SendScriptEvent(ScriptEvent_FireModeChange, *pObj, &bCanSwitch);
@@ -4378,7 +4393,7 @@ bool CPlayer::LoadGame(CStream &stm)
 		wi.iFireMode = m_stats.firemode;
 	}
 
-	#if 0
+#if 0
 	if (m_bIsAI)
 	{
 		IPuppet *pPuppet=0;
@@ -4387,24 +4402,24 @@ bool CPlayer::LoadGame(CStream &stm)
 			if (pPuppet->GetPuppetParameters().m_bSpecial)
 			  m_stats.health = nStartHealth;
 		}
-	}	
-	#endif
+	}
+#endif
 
 	return true;
 };
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::SetScriptObject(IScriptObject *pObject)
+void CPlayer::SetScriptObject(IScriptObject* pObject)
 {
-	m_pScriptObject=pObject;
-	m_pUpdateAnimation=NULL;
+	m_pScriptObject    = pObject;
+	m_pUpdateAnimation = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 /*! Retrieves the ScriptObject of this container
 		@return pointer to the ScriptObject
 */
-IScriptObject *CPlayer::GetScriptObject()
+IScriptObject* CPlayer::GetScriptObject()
 {
 	return m_pScriptObject;
 }
@@ -4432,51 +4447,64 @@ int CPlayer::MakeWeaponAvailable(int nWeaponID, bool bAvailable)
 		TRACE("ERROR: Trying to make invalid weapon ID %i available", nWeaponID);
 		return -1;
 	}
-	bool bWasOwning=(* it).second.owns;
-	
-	(* it).second.owns = bAvailable;	
+	bool bWasOwning   = (*it).second.owns;
 
-	int slot=0;
-	if(bAvailable && (!bWasOwning))
+	(*it).second.owns = bAvailable;
+
+	int slot          = 0;
+	if (bAvailable && (!bWasOwning))
 	{
-		(* it).second.iFireMode = 0;
-		slot=0;
-		while(slot<PLAYER_MAX_WEAPONS){if(m_vWeaponSlots[slot]==nWeaponID)return slot;slot++;}
-		slot=0;
-		while(slot<PLAYER_MAX_WEAPONS && m_vWeaponSlots[slot]!=0) slot++;
-
-		if(slot<PLAYER_MAX_WEAPONS && m_vWeaponSlots[slot]==0)
+		(*it).second.iFireMode = 0;
+		slot                   = 0;
+		while (slot < PLAYER_MAX_WEAPONS)
 		{
-			m_vWeaponSlots[slot]=nWeaponID;
+			if (m_vWeaponSlots[slot] == nWeaponID) return slot;
+			slot++;
+		}
+		slot = 0;
+		while (slot < PLAYER_MAX_WEAPONS && m_vWeaponSlots[slot] != 0) slot++;
+
+		if (slot < PLAYER_MAX_WEAPONS && m_vWeaponSlots[slot] == 0)
+		{
+			m_vWeaponSlots[slot] = nWeaponID;
 			return slot;
 		}
-	}else if(!bAvailable && (bWasOwning))
+	}
+	else if (!bAvailable && (bWasOwning))
 	{
-		while(slot<PLAYER_MAX_WEAPONS){if(m_vWeaponSlots[slot]==nWeaponID){m_vWeaponSlots[slot]=0;return -1;} slot;slot++;}
+		while (slot < PLAYER_MAX_WEAPONS)
+		{
+			if (m_vWeaponSlots[slot] == nWeaponID)
+			{
+				m_vWeaponSlots[slot] = 0;
+				return -1;
+			}
+			slot;
+			slot++;
+		}
 	}
 	return -1;
 }
 
 //////////////////////////////////////////////////////////////////////
-CWeaponClass *CPlayer::DeselectWeapon()
+CWeaponClass* CPlayer::DeselectWeapon()
 {
-
 	if (m_nSelectedWeaponID != -1)
 	{
-			CWeaponClass *pSelectedWeapon = GetSelectedWeapon();
-			//this script event is called only for the local client
-			if(IsMyPlayer() || m_pGame->IsMultiplayer())
-			{
-				pSelectedWeapon->ScriptOnDeactivate(m_pEntity);
-			}
+		CWeaponClass* pSelectedWeapon = GetSelectedWeapon();
+		//this script event is called only for the local client
+		if (IsMyPlayer() || m_pGame->IsMultiplayer())
+		{
+			pSelectedWeapon->ScriptOnDeactivate(m_pEntity);
+		}
 
-			// detach from bone ?
-			if (!pSelectedWeapon->GetBindBone().empty())
-				m_pEntity->DetachObjectToBone(pSelectedWeapon->GetBindBone().c_str());
+		// detach from bone ?
+		if (!pSelectedWeapon->GetBindBone().empty())
+			m_pEntity->DetachObjectToBone(pSelectedWeapon->GetBindBone().c_str());
 
-			SetWeapon(-1);
-			
-			return pSelectedWeapon;
+		SetWeapon(-1);
+
+		return pSelectedWeapon;
 	}
 	return 0;
 }
@@ -4492,21 +4520,21 @@ void CPlayer::RedirectInputToEntity(EntityId id, int angleDelta)
 	{
 		if (m_pRedirected)
 			m_pRedirected = NULL;
-		if(IsMyPlayer())
+		if (IsMyPlayer())
 			m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0.0f, 0.0f, 0.0f));
 	}
 	else
 	{
-		IEntity *pEntity = m_pGame->GetSystem()->GetIEntitySystem()->GetEntity(id);
+		IEntity* pEntity = m_pGame->GetSystem()->GetIEntitySystem()->GetEntity(id);
 		if (pEntity)
 		{
 			m_pRedirected = pEntity;
 			//[PETAR]
 			//    m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(pEntity->GetAngles());
 			//[KIRILL] make turret point in right direction /statmounted - ONLY for local player
-			if(IsMyPlayer())
+			if (IsMyPlayer())
 			{
-				if(angleDelta>=0)
+				if (angleDelta >= 0)
 					m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(Legacy::Vec3(0.0f, 0.0f, (float)angleDelta));
 				else
 					m_pGame->m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(pEntity->GetAngles(1));
@@ -4516,23 +4544,22 @@ void CPlayer::RedirectInputToEntity(EntityId id, int angleDelta)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CPlayer::QueryContainerInterface(ContainerInterfaceType desired_interface, void **ppInterface )
+bool CPlayer::QueryContainerInterface(ContainerInterfaceType desired_interface, void** ppInterface)
 {
-
 	if (desired_interface == CIT_IPLAYER)
 	{
-		*ppInterface = (void *) this;
+		*ppInterface = (void*)this;
 		return true;
 	}
 	else
 	{
 		*ppInterface = 0;
 		return false;
-	}		
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
-IEntity * CPlayer::GetRedirected()
+IEntity* CPlayer::GetRedirected()
 {
 	return m_pRedirected;
 }
@@ -4556,7 +4583,7 @@ void CPlayer::GetCameraOffset(Legacy::Vec3& Offset)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::UpdateDrawAngles( )
+void CPlayer::UpdateDrawAngles()
 {
 #if 0
 	ICryCharInstance *pChar = m_pEntity->GetCharInterface()->GetCharacter(0);
@@ -4614,14 +4641,14 @@ void CPlayer::UpdateDrawAngles( )
 	m_vCharacterAngles = m_vCurEntAngle;
 #endif
 }
- 
+
 //////////////////////////////////////////////////////////////////////
 /*!drawn the player
 	called by the engine when the player has to be drawn
 */
-void CPlayer::OnDraw(const SRendParams & _RendParams)
+void CPlayer::OnDraw(const SRendParams& _RendParams)
 {
-	#if 0
+#if 0
 	//return;
 
 	OnDrawMountedWeapon( _RendParams );
@@ -4706,14 +4733,14 @@ void CPlayer::OnDraw(const SRendParams & _RendParams)
 	}
 	else
 		pChar->Draw(RendParams,m_pEntity->GetPos());
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
 */
-void CPlayer::SetAnimationRefSpeedRunRelaxed(const float fwd, const float side, const float back )
+void CPlayer::SetAnimationRefSpeedRunRelaxed(const float fwd, const float side, const float back)
 {
 	m_AniSpeedRunRelaxed[0] = fwd;
 	m_AniSpeedRunRelaxed[1] = side;
@@ -4724,7 +4751,7 @@ void CPlayer::SetAnimationRefSpeedRunRelaxed(const float fwd, const float side, 
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
 */
-void CPlayer::SetAnimationRefSpeedWalkRelaxed(const float fwd, const float side, const float back )
+void CPlayer::SetAnimationRefSpeedWalkRelaxed(const float fwd, const float side, const float back)
 {
 	m_AniSpeedWalkRelaxed[0] = fwd;
 	m_AniSpeedWalkRelaxed[1] = side;
@@ -4735,7 +4762,7 @@ void CPlayer::SetAnimationRefSpeedWalkRelaxed(const float fwd, const float side,
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
 */
-void CPlayer::SetAnimationRefSpeedWalk(const float fwd, const float side, const float back )
+void CPlayer::SetAnimationRefSpeedWalk(const float fwd, const float side, const float back)
 {
 	m_AniSpeedWalk[0] = fwd;
 	m_AniSpeedWalk[1] = side;
@@ -4745,7 +4772,7 @@ void CPlayer::SetAnimationRefSpeedWalk(const float fwd, const float side, const 
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
 */
-void CPlayer::SetAnimationRefSpeedXRun(const float fwd, const float side, const float back )
+void CPlayer::SetAnimationRefSpeedXRun(const float fwd, const float side, const float back)
 {
 	m_AniSpeedXRun[0] = fwd;
 	m_AniSpeedXRun[1] = side;
@@ -4756,7 +4783,7 @@ void CPlayer::SetAnimationRefSpeedXRun(const float fwd, const float side, const 
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
 */
-void CPlayer::SetAnimationRefSpeedRun(const float fwd, const float side, const float back )
+void CPlayer::SetAnimationRefSpeedRun(const float fwd, const float side, const float back)
 {
 	m_AniSpeedRun[0] = fwd;
 	m_AniSpeedRun[1] = side;
@@ -4767,7 +4794,7 @@ void CPlayer::SetAnimationRefSpeedRun(const float fwd, const float side, const f
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
 */
-void CPlayer::SetAnimationRefSpeedXWalk(const float fwd, const float side, const float back )
+void CPlayer::SetAnimationRefSpeedXWalk(const float fwd, const float side, const float back)
 {
 	m_AniSpeedXWalk[0] = fwd;
 	m_AniSpeedXWalk[1] = side;
@@ -4778,7 +4805,7 @@ void CPlayer::SetAnimationRefSpeedXWalk(const float fwd, const float side, const
 /*!sets the animation speed of the player - used to scale animation playback speed 
 	depending on actuall movement speed (to awoid skeiting)
 */
-void CPlayer::SetAnimationRefSpeedCrouch(const float fwd, const float side, const float back )
+void CPlayer::SetAnimationRefSpeedCrouch(const float fwd, const float side, const float back)
 {
 	m_AniSpeedCrouch[0] = fwd;
 	m_AniSpeedCrouch[1] = side;
@@ -4792,9 +4819,9 @@ void CPlayer::SetAnimationRefSpeedCrouch(const float fwd, const float side, cons
 void CPlayer::SetRunSpeed(const float speed)
 {
 	m_RunSpeed = speed;
-	if(!m_bIsAI)
+	if (!m_bIsAI)
 		m_pGame->p_speed_run->Set(m_RunSpeed);
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the walk speed of the player
@@ -4803,10 +4830,10 @@ void CPlayer::SetRunSpeed(const float speed)
 void CPlayer::SetWalkSpeed(const float speed)
 {
 	m_WalkSpeed = speed;
-	if(!m_bIsAI)
-//	if(IsMyPlayer())
+	if (!m_bIsAI)
+		//	if(IsMyPlayer())
 		m_pGame->p_speed_walk->Set(m_WalkSpeed);
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the walk speed of the player when is croching
@@ -4815,10 +4842,10 @@ void CPlayer::SetWalkSpeed(const float speed)
 void CPlayer::SetCrouchSpeed(const float speed)
 {
 	m_CrouchSpeed = speed;
-	if(!m_bIsAI)
-//	if(IsMyPlayer())
+	if (!m_bIsAI)
+		//	if(IsMyPlayer())
 		m_pGame->p_speed_crouch->Set(m_CrouchSpeed);
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the walk speed of the player when is proning
@@ -4827,9 +4854,9 @@ void CPlayer::SetCrouchSpeed(const float speed)
 void CPlayer::SetProneSpeed(const float speed)
 {
 	m_ProneSpeed = speed;
-	if(!m_bIsAI)
+	if (!m_bIsAI)
 		m_pGame->p_speed_prone->Set(m_ProneSpeed);
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the walk speed of the player when is proning
@@ -4838,7 +4865,7 @@ void CPlayer::SetProneSpeed(const float speed)
 void CPlayer::SetSwimSpeed(const float speed)
 {
 	m_SwimSpeed = speed;
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the camera bob
@@ -4849,8 +4876,8 @@ void CPlayer::SetSwimSpeed(const float speed)
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SetCameraBob(const float pitch, const float roll, const float length)
 {
-	m_walkParams.runRoll = roll;
-	m_walkParams.runPitch = pitch;
+	m_walkParams.runRoll    = roll;
+	m_walkParams.runPitch   = pitch;
 	m_walkParams.stepLength = length;
 
 	if (!m_bIsAI)
@@ -4859,7 +4886,7 @@ void CPlayer::SetCameraBob(const float pitch, const float roll, const float leng
 		m_pGame->p_bob_roll->Set(m_walkParams.runRoll);
 		m_pGame->p_bob_length->Set(m_walkParams.stepLength);
 	}
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the weapon bob
@@ -4869,7 +4896,7 @@ void CPlayer::SetWeaponBob(const float ampl)
 	m_walkParams.weaponCycle = ampl;
 	if (!m_bIsAI)
 		m_pGame->p_bob_weapon->Set(m_walkParams.weaponCycle);
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the amount of force applied to the player when he jump
@@ -4880,7 +4907,7 @@ void CPlayer::SetJumpForce(const float force)
 	m_JumpForce = force;
 	if (!m_bIsAI)
 		m_pGame->p_jump_force->Set(m_JumpForce);
-}	
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!set the player's lean angle
@@ -4890,11 +4917,11 @@ void CPlayer::SetLean(const float lean)
 {
 	m_LeanDegree = lean;
 
-//[KIRILL]	this console variable makes lean global - it has to be player's per-instance property
-// to fix bug in MP with leaning
-//	if (!m_bIsAI)
-//		m_pGame->p_lean->Set(m_LeanDegree);
-}	
+	//[KIRILL]	this console variable makes lean global - it has to be player's per-instance property
+	// to fix bug in MP with leaning
+	//	if (!m_bIsAI)
+	//		m_pGame->p_lean->Set(m_LeanDegree);
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the player dimension in stealth mode
@@ -4903,17 +4930,17 @@ void CPlayer::SetLean(const float lean)
 */
 void CPlayer::SetDimStealth(const pe_player_dimensions* const pDim)
 {
-	if(!pDim)
+	if (!pDim)
 	{
-		m_PlayerDimStealth.heightEye = (m_PlayerDimNormal.heightEye + m_PlayerDimCrouch.heightEye)*.5f;
-		m_PlayerDimStealth.heightCollider = (m_PlayerDimNormal.heightCollider + m_PlayerDimCrouch.heightCollider)*.5f;
-		m_PlayerDimStealth.sizeCollider = (m_PlayerDimNormal.sizeCollider+m_PlayerDimCrouch.sizeCollider)*.5f;
+		m_PlayerDimStealth.heightEye      = (m_PlayerDimNormal.heightEye + m_PlayerDimCrouch.heightEye) * .5f;
+		m_PlayerDimStealth.heightCollider = (m_PlayerDimNormal.heightCollider + m_PlayerDimCrouch.heightCollider) * .5f;
+		m_PlayerDimStealth.sizeCollider   = (m_PlayerDimNormal.sizeCollider + m_PlayerDimCrouch.sizeCollider) * .5f;
 		return;
 	}
 	m_PlayerDimStealth = *pDim;
-	m_CurStance = eNone;
-	GoStand( );
-}	
+	m_CurStance        = eNone;
+	GoStand();
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the player dimension in normal(standing) mode
@@ -4922,18 +4949,18 @@ void CPlayer::SetDimStealth(const pe_player_dimensions* const pDim)
 */
 void CPlayer::SetDimNormal(const pe_player_dimensions* const pDim)
 {
-	if(!pDim)
+	if (!pDim)
 	{
-		m_PlayerDimNormal.heightEye = 1.7f;
+		m_PlayerDimNormal.heightEye      = 1.7f;
 		m_PlayerDimNormal.heightCollider = 1.1f;
-		m_PlayerDimNormal.sizeCollider.Set(0.4f,0.4f,0.7f);
+		m_PlayerDimNormal.sizeCollider.Set(0.4f, 0.4f, 0.7f);
 		return;
 	}
 	m_PlayerDimNormal = *pDim;
 	SetDimStealth();
 	m_CurStance = eNone;
-	GoStand( );
-}	
+	GoStand();
+}
 
 //////////////////////////////////////////////////////////////////////
 /*!sets the player dimension in crouch mode
@@ -4942,17 +4969,17 @@ void CPlayer::SetDimNormal(const pe_player_dimensions* const pDim)
 */
 void CPlayer::SetDimCrouch(const pe_player_dimensions* const pDim)
 {
-	if(!pDim)
+	if (!pDim)
 	{
-		m_PlayerDimCrouch.heightEye = 1.0f;
+		m_PlayerDimCrouch.heightEye      = 1.0f;
 		m_PlayerDimCrouch.heightCollider = 0.6f;
-		m_PlayerDimCrouch.sizeCollider.Set(0.4f,0.4f,0.5f);
+		m_PlayerDimCrouch.sizeCollider.Set(0.4f, 0.4f, 0.5f);
 		return;
 	}
 	m_PlayerDimCrouch = *pDim;
 	SetDimStealth();
 	m_CurStance = eNone;
-	GoStand( );
+	GoStand();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -4962,29 +4989,29 @@ void CPlayer::SetDimCrouch(const pe_player_dimensions* const pDim)
 */
 void CPlayer::SetDimProne(const pe_player_dimensions* const pDim)
 {
-	if(!pDim)
+	if (!pDim)
 	{
-		m_PlayerDimProne.heightEye = 0.5f;
+		m_PlayerDimProne.heightEye      = 0.5f;
 		m_PlayerDimProne.heightCollider = 0.3f;
-		m_PlayerDimProne.sizeCollider.Set(0.4f,0.4f,0.2f);
+		m_PlayerDimProne.sizeCollider.Set(0.4f, 0.4f, 0.2f);
 		return;
 	}
-	m_PlayerDimProne = *pDim;
-	m_PlayerDimSwim = m_PlayerDimProne;
+	m_PlayerDimProne               = *pDim;
+	m_PlayerDimSwim                = m_PlayerDimProne;
 	m_PlayerDimSwim.sizeCollider.z = .55f;
 	m_PlayerDimSwim.heightCollider = .75f;
-	m_PlayerDimSwim.heightEye = .70f;
-	m_CurStance = eNone;
-	GoStand( );
+	m_PlayerDimSwim.heightEye      = .70f;
+	m_CurStance                    = eNone;
+	GoStand();
 }
 
 //////////////////////////////////////////////////////////////////////////
-int CPlayer::GetBoneHitZone( int boneIdx ) const
+int CPlayer::GetBoneHitZone(int boneIdx) const
 {
-	return  m_pEntity->GetBoneHitZone(boneIdx);
+	return m_pEntity->GetBoneHitZone(boneIdx);
 }
 //////////////////////////////////////////////////////////////////////////
-Legacy::Vec3 CPlayer::CalcTangentOnEnviroment( const Legacy::Vec3	&angle )
+Legacy::Vec3 CPlayer::CalcTangentOnEnviroment(const Legacy::Vec3& angle)
 {
 	Vec3 forward = Legacy::from(angle);
 	Vec3 tangent = forward;
@@ -4995,9 +5022,9 @@ Legacy::Vec3 CPlayer::CalcTangentOnEnviroment( const Legacy::Vec3	&angle )
 
 	Vec3 normal = Legacy::from(m_vProneEnvNormal);
 
-	forward = ConvertToRadAngles(forward);
-	forward = normal.Cross(forward);
-	forward = forward.Cross(normal);
+	forward     = ConvertToRadAngles(forward);
+	forward     = normal.Cross(forward);
+	forward     = forward.Cross(normal);
 
 	forward.Normalize();
 	normal.Normalize();
@@ -5011,7 +5038,7 @@ Legacy::Vec3 CPlayer::CalcTangentOnEnviroment( const Legacy::Vec3	&angle )
 	matrix3x3RMf& mtrx((matrix3x3RMf&)(*(float*)vA));
 	mtrx.Transpose();
 
-	tangent = Ang3::GetAnglesXYZ(mtrx);
+	tangent     = Ang3::GetAnglesXYZ(mtrx);
 
 	Ang3 angles = tangent;
 	angles.Rad2Deg();
@@ -5024,26 +5051,26 @@ Legacy::Vec3 CPlayer::CalcTangentOnEnviroment( const Legacy::Vec3	&angle )
 //! returns arm damage in percent 100 - (arm_health/max_arm_health)*100
 int CPlayer::GetArmDamage(void) const
 {
-//TRACE("ARM damage %d", 100 - ((float)m_stats.armHealth/(float)m_stats.maxArmHealth)*100.0f);
-	return 100 - (int)(((float)m_stats.armHealth/(float)m_stats.maxArmHealth)*100.0f);
+	//TRACE("ARM damage %d", 100 - ((float)m_stats.armHealth/(float)m_stats.maxArmHealth)*100.0f);
+	return 100 - (int)(((float)m_stats.armHealth / (float)m_stats.maxArmHealth) * 100.0f);
 }
 
 //////////////////////////////////////////////////////////////////////
 //! returns leg damage in percent 100 - (leg_health/max_leg_health)*100
 int CPlayer::GetLegDamage(void) const
 {
-	return 100 - (int)((m_stats.legHealth/m_stats.maxLegHealth)*100.0f);
+	return 100 - (int)((m_stats.legHealth / m_stats.maxLegHealth) * 100.0f);
 }
 
 //////////////////////////////////////////////////////////////////////
 //!return true if the player is colliding with something
-bool CPlayer::HasCollided( )
+bool CPlayer::HasCollided()
 {
-	IPhysicalEntity *pent = m_pEntity->GetPhysics();
-	if(!pent)
+	IPhysicalEntity* pent = m_pEntity->GetPhysics();
+	if (!pent)
 		return false;
 
-	if (pent->GetType()==PE_LIVING)
+	if (pent->GetType() == PE_LIVING)
 	{
 		// Create a new status object.  The fields are initialized for us
 		pe_status_living status;
@@ -5055,37 +5082,38 @@ bool CPlayer::HasCollided( )
 
 		return false;
 	}
-	else 
+	else
 	{
 		pe_status_dynamics sd;
 		pent->GetStatus(&sd);
-		float fMassTot=sd.mass, fMassColl=0;
-		int nColls,i,j;
+		float                fMassTot = sd.mass, fMassColl = 0;
+		int                  nColls, i, j;
 
-		coll_history_item	item[8];
+		coll_history_item    item[8];
 		pe_status_collisions sc;
 		sc.pHistory = item;
-		sc.len = 8;
-		sc.age = 0.5f;
-		nColls = pent->GetStatus(&sc);
-		for(i=0; i<nColls; i++) 
+		sc.len      = 8;
+		sc.age      = 0.5f;
+		nColls      = pent->GetStatus(&sc);
+		for (i = 0; i < nColls; i++)
 		{
-			for(j=0;j<i && item[j].partid[0]!=item[i].partid[0];j++);
-			if (j==i) 
+			for (j = 0; j < i && item[j].partid[0] != item[i].partid[0]; j++)
+				;
+			if (j == i)
 			{
 				sd.partid = item[i].partid[0];
 				pent->GetStatus(&sd);
 				fMassColl += sd.mass;
 			}
 		}
-		return fMassColl>fMassTot*0.3f;
+		return fMassColl > fMassTot * 0.3f;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::StartDie( const Legacy::Vec3& hitImpuls, const Legacy::Vec3 hitPoint, int hitpartid, const int deathType )
+void CPlayer::StartDie(const Legacy::Vec3& hitImpuls, const Legacy::Vec3 hitPoint, int hitpartid, const int deathType)
 {
-	#if 0
+#if 0
 	if(!m_pGame->IsMultiplayer())
 	{
 		float	deathTimer=m_pGame->p_deathtime->GetFVal();
@@ -5145,7 +5173,7 @@ void CPlayer::StartDie( const Legacy::Vec3& hitImpuls, const Legacy::Vec3 hitPoi
 	m_pEntity->EnableAI(false);
 
 	m_pEntity->KillTimer();
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -5158,14 +5186,14 @@ void CPlayer::StartDie( const Legacy::Vec3& hitImpuls, const Legacy::Vec3 hitPoi
 		swimming_inertia
 */
 //////////////////////////////////////////////////////////////////////
-void CPlayer::SetDynamics(const PlayerDynamics *pDyn)
+void CPlayer::SetDynamics(const PlayerDynamics* pDyn)
 {
-	if (pDyn->air_control!=1E10f) m_Dynamics.air_control = pDyn->air_control;
-	if (pDyn->gravity!=1E10f) m_Dynamics.gravity = pDyn->gravity;
-	if (pDyn->swimming_gravity!=1E10f) m_Dynamics.swimming_gravity = pDyn->swimming_gravity;
-	if (pDyn->inertia!=1E10f) m_Dynamics.inertia = pDyn->inertia;
-	if (pDyn->swimming_inertia!=1E10f) m_Dynamics.swimming_inertia = pDyn->swimming_inertia;
-	if (pDyn->jump_gravity!=1E10f) m_Dynamics.jump_gravity = pDyn->jump_gravity;
+	if (pDyn->air_control != 1E10f) m_Dynamics.air_control = pDyn->air_control;
+	if (pDyn->gravity != 1E10f) m_Dynamics.gravity = pDyn->gravity;
+	if (pDyn->swimming_gravity != 1E10f) m_Dynamics.swimming_gravity = pDyn->swimming_gravity;
+	if (pDyn->inertia != 1E10f) m_Dynamics.inertia = pDyn->inertia;
+	if (pDyn->swimming_inertia != 1E10f) m_Dynamics.swimming_inertia = pDyn->swimming_inertia;
+	if (pDyn->jump_gravity != 1E10f) m_Dynamics.jump_gravity = pDyn->jump_gravity;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -5173,83 +5201,82 @@ void CPlayer::RemoveAllWeapons()
 {
 	// Takes away the owns flag of all weapons in the player's weapon map
 	PlayerWeaponsItor it;
-	for (it=m_mapPlayerWeapons.begin(); it!=m_mapPlayerWeapons.end(); it++)
-		(* it).second.owns = false;
+	for (it = m_mapPlayerWeapons.begin(); it != m_mapPlayerWeapons.end(); it++)
+		(*it).second.owns = false;
 }
 //////////////////////////////////////////////////////////////////////
 //	returns true if can stand in given position
-bool	CPlayer::CanStand( const Legacy::Vec3& pos)
+bool CPlayer::CanStand(const Legacy::Vec3& pos)
 {
-	bool result=true;
-	IPhysicalEntity*	phys = m_pEntity->GetPhysics();
+	bool               result = true;
+	IPhysicalEntity*   phys   = m_pEntity->GetPhysics();
 
 	pe_player_dynamics pd;
 	phys->GetParams(&pd);
 	bool bActive = pd.bActive;
-	m_pEntity->ActivatePhysics( true );
+	m_pEntity->ActivatePhysics(true);
 
-	Legacy::Vec3 curPos=m_pEntity->GetPos();
+	Legacy::Vec3  curPos = m_pEntity->GetPos();
 	pe_params_pos ppos;
 	ppos.pos = Legacy::from(pos);
 	phys->SetParams(&ppos);
 
-	if(!phys->SetParams( &m_PlayerDimCrouch ))
-		result=false;
-	if(result && !phys->SetParams( &m_PlayerDimNormal ))
-		result=false;
+	if (!phys->SetParams(&m_PlayerDimCrouch))
+		result = false;
+	if (result && !phys->SetParams(&m_PlayerDimNormal))
+		result = false;
 
 	// restore active/position
-	m_pEntity->ActivatePhysics( bActive );
+	m_pEntity->ActivatePhysics(bActive);
 	ppos.pos = Legacy::from(curPos);
 	phys->SetParams(&ppos);
-	phys->SetParams( &m_PlayerDimNormal );
+	phys->SetParams(&m_PlayerDimNormal);
 
 	return result;
 }
 
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise return false
-bool	CPlayer::GoStand(bool ignoreSpam)
+bool CPlayer::GoStand(bool ignoreSpam)
 {
 	//prevent prone-standing position spamming
 	if (!ignoreSpam && m_fLastProneTime > m_pTimer->GetCurrTime())
 		return false;
 
-	IPhysicalEntity*	phys = m_pEntity->GetPhysics();
- 	if ( phys && m_CurStance != eStand )		//m_currDimensions!=eDimNormal)	
+	IPhysicalEntity* phys = m_pEntity->GetPhysics();
+	if (phys && m_CurStance != eStand) //m_currDimensions!=eDimNormal)
 	{
 		// Use normal physics dimensions.
-		if( m_CurStance == eProne )
-			m_pEntity->SetPhysAngles( Legacy::Vec3(0,0,0) );			// reset angle if proning
+		if (m_CurStance == eProne)
+			m_pEntity->SetPhysAngles(Legacy::Vec3(0, 0, 0)); // reset angle if proning
 
-
-		if(phys->SetParams( &m_PlayerDimNormal ))
+		if (phys->SetParams(&m_PlayerDimNormal))
 		{
-			#if 0
+#if 0
 			//InitCameraTransition( PCM_CASUAL ,true );
 			m_AngleLimitBase.Set(0,0,0);
 			if(m_pEntity->GetAI())
 			{
 				m_pEntity->GetAI()->SetEyeHeight(m_PlayerDimNormal.heightEye);
 			}
-			#endif
+#endif
 			m_currDimensions = eDimNormal;
-			m_PrevStance = m_CurStance;
-			m_CurStance = eStand;
+			m_PrevStance     = m_CurStance;
+			m_CurStance      = eStand;
 
-			m_stats.aim = false;
-			m_stats.crouch = false;
-			m_stats.prone = false;
+			m_stats.aim      = false;
+			m_stats.crouch   = false;
+			m_stats.prone    = false;
 			// [kirill] need this to use only z component of entity angles (same as for drawing)
 			// when calculating BBox
-			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
+			GetEntity()->SetFlags(ETY_FLAG_CALCBBOX_ZROTATE);
 
 #if defined(LINUX64)
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, 0);
 #else
 			m_pEntity->SendScriptEvent(ScriptEvent_StanceChange, NULL);
 #endif
-			m_bStayCrouch = false;
+			m_bStayCrouch    = false;
 
 			m_fLastProneTime = m_pTimer->GetCurrTime() + 0.5f;
 
@@ -5257,12 +5284,12 @@ bool	CPlayer::GoStand(bool ignoreSpam)
 		}
 
 		// could not change - restore angle
-		if( m_CurStance == eProne )			
-			m_pEntity->SetPhysAngles( m_EnvTangent );					
+		if (m_CurStance == eProne)
+			m_pEntity->SetPhysAngles(m_EnvTangent);
 
 		return false;
 	}
-	else		// was standing already
+	else // was standing already
 		m_PrevStance = eStand;
 
 	m_bStayCrouch = false;
@@ -5271,35 +5298,35 @@ bool	CPlayer::GoStand(bool ignoreSpam)
 }
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise return false
-bool	CPlayer::GoStealth( )
+bool CPlayer::GoStealth()
 {
-	IPhysicalEntity*	phys = m_pEntity->GetPhysics();
-	if ( phys && m_CurStance != eStealth )		//m_currDimensions!=eDimStealth)
+	IPhysicalEntity* phys = m_pEntity->GetPhysics();
+	if (phys && m_CurStance != eStealth) //m_currDimensions!=eDimStealth)
 	{
-		if( m_CurStance == eProne )
-			m_pEntity->SetPhysAngles( Legacy::Vec3(0,0,0) );			// reset angle if proning
+		if (m_CurStance == eProne)
+			m_pEntity->SetPhysAngles(Legacy::Vec3(0, 0, 0)); // reset angle if proning
 
 		// Use stealth physics dimensions.
-		if(phys->SetParams( &m_PlayerDimStealth ))	//if can stealth here
+		if (phys->SetParams(&m_PlayerDimStealth)) //if can stealth here
 		{
-			#if 0
+#if 0
 			//InitCameraTransition( PCM_CASUAL );
 			m_AngleLimitBase.Set(0,0,0);
 			if(m_pEntity->GetAI())
 			{
 				m_pEntity->GetAI()->SetEyeHeight(m_PlayerDimStealth.heightEye);
 			}
-			#endif
+#endif
 			m_currDimensions = eDimStealth;
-			m_PrevStance = m_CurStance;
-			m_CurStance = eStealth;
+			m_PrevStance     = m_CurStance;
+			m_CurStance      = eStealth;
 
-			m_stats.aim = false;
-			m_stats.crouch = false;
-			m_stats.prone = false;
+			m_stats.aim      = false;
+			m_stats.crouch   = false;
+			m_stats.prone    = false;
 			// [kirill] need this to use only z component of entity angles (same as for drawing)
 			// when calculating BBox
-			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
+			GetEntity()->SetFlags(ETY_FLAG_CALCBBOX_ZROTATE);
 
 			m_Running = false;
 #if defined(LINUX64)
@@ -5311,8 +5338,8 @@ bool	CPlayer::GoStealth( )
 		}
 
 		// could not change - restore angle if proning
-		if( m_CurStance == eProne )			
-			m_pEntity->SetPhysAngles( m_EnvTangent );					
+		if (m_CurStance == eProne)
+			m_pEntity->SetPhysAngles(m_EnvTangent);
 		return false;
 	}
 	return true;
@@ -5320,41 +5347,41 @@ bool	CPlayer::GoStealth( )
 
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise return false
-bool	CPlayer::GoCrouch( )
+bool CPlayer::GoCrouch()
 {
 	//	don't go to crouch mode if using mounted weapon
-	if(m_pMountedWeapon)
+	if (m_pMountedWeapon)
 		return false;
 	// don't change stance in water
-	if( m_bSwimming )
+	if (m_bSwimming)
 		return false;
 
-	IPhysicalEntity*	phys = m_pEntity->GetPhysics();
-	if ( phys && m_CurStance != eCrouch	)		//m_currDimensions!=eDimCrouch)
+	IPhysicalEntity* phys = m_pEntity->GetPhysics();
+	if (phys && m_CurStance != eCrouch) //m_currDimensions!=eDimCrouch)
 	{
-		if( m_CurStance == eProne )
-			m_pEntity->SetPhysAngles( Legacy::Vec3(0,0,0) );			// reset angle if proning
+		if (m_CurStance == eProne)
+			m_pEntity->SetPhysAngles(Legacy::Vec3(0, 0, 0)); // reset angle if proning
 
 		// Use crouching physics dimensions.
-		if(phys->SetParams( &m_PlayerDimCrouch ))
+		if (phys->SetParams(&m_PlayerDimCrouch))
 		{
 			//InitCameraTransition( PCM_CASUAL, true );
 			//m_AngleLimitBase.Set(0,0,0);
-			m_AngleLimitBase = Legacy::Vec3(0,0,0);
-			if(m_pEntity->GetAI())
+			m_AngleLimitBase = Legacy::Vec3(0, 0, 0);
+			if (m_pEntity->GetAI())
 			{
 				m_pEntity->GetAI()->SetEyeHeight(m_PlayerDimCrouch.heightEye);
 			}
 			m_currDimensions = eDimCrouch;
-			m_PrevStance = m_CurStance;
-			m_CurStance = eCrouch;
+			m_PrevStance     = m_CurStance;
+			m_CurStance      = eCrouch;
 
-			m_stats.aim = false;
-			m_stats.crouch = true;
-			m_stats.prone = false;
+			m_stats.aim      = false;
+			m_stats.crouch   = true;
+			m_stats.prone    = false;
 			// [kirill] need this to use only z component of entity angles (same as for drawing)
 			// when calculating BBox
-			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
+			GetEntity()->SetFlags(ETY_FLAG_CALCBBOX_ZROTATE);
 
 			m_Running = false;
 #if defined(LINUX64)
@@ -5365,8 +5392,8 @@ bool	CPlayer::GoCrouch( )
 			return true;
 		}
 		// could not change - restore angle if proning
-		if( m_CurStance == eProne )			
-			m_pEntity->SetPhysAngles( m_EnvTangent );					
+		if (m_CurStance == eProne)
+			m_pEntity->SetPhysAngles(m_EnvTangent);
 		return false;
 	}
 	return true;
@@ -5374,51 +5401,51 @@ bool	CPlayer::GoCrouch( )
 
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise returns false
-bool	CPlayer::GoProne( )
+bool CPlayer::GoProne()
 {
-	IPhysicalEntity*	phys = m_pEntity->GetPhysics();
+	IPhysicalEntity* phys = m_pEntity->GetPhysics();
 
-	if(!CanProne(false))
+	if (!CanProne(false))
 		return false;
 
-	if ( phys && m_CurStance != eProne)				//!=eDimProne)
+	if (phys && m_CurStance != eProne) //!=eDimProne)
 	{
 		// Use proning physics dimensions.
 		// if can't change dimentions at current position - put player little up
 		// and try again
-		if(!phys->SetParams( &m_PlayerDimProne ))
+		if (!phys->SetParams(&m_PlayerDimProne))
 		{
 			Legacy::Vec3 pos = m_pEntity->GetPos();
 			pos.z += .5f;
-			m_pEntity->SetPos( pos );
-			if(!phys->SetParams( &m_PlayerDimProne ))
+			m_pEntity->SetPos(pos);
+			if (!phys->SetParams(&m_PlayerDimProne))
 			{
 				// restore position
 				pos.z -= .5f;
-				m_pEntity->SetPos( pos );
+				m_pEntity->SetPos(pos);
 				return false;
 			}
 		}
 
-		Legacy::Vec3	ang = m_pEntity->GetAngles();
-		m_EnvTangent = CalcTangentOnEnviroment( m_pEntity->GetAngles() );
-		m_pEntity->SetPhysAngles( m_EnvTangent );			// set angels for phisics (body is flat on surfece tangent space)
+		Legacy::Vec3 ang = m_pEntity->GetAngles();
+		m_EnvTangent     = CalcTangentOnEnviroment(m_pEntity->GetAngles());
+		m_pEntity->SetPhysAngles(m_EnvTangent); // set angels for phisics (body is flat on surfece tangent space)
 
 		//InitCameraTransition( PCM_CASUAL, true );
-		if(m_pEntity->GetAI())
+		if (m_pEntity->GetAI())
 		{
 			m_pEntity->GetAI()->SetEyeHeight(m_PlayerDimProne.heightEye);
 		}
 		m_currDimensions = eDimProne;
-		m_PrevStance = m_CurStance;
-		m_CurStance = eProne;
+		m_PrevStance     = m_CurStance;
+		m_CurStance      = eProne;
 
-		m_stats.aim = false;
-		m_stats.crouch = false;
-		m_stats.prone = true;
+		m_stats.aim      = false;
+		m_stats.crouch   = false;
+		m_stats.prone    = true;
 		// [kirill] when in prone - use all the rotations (same as for drawing)
 		// when calculating BBox
-		GetEntity()->ClearFlags( ETY_FLAG_CALCBBOX_ZROTATE );
+		GetEntity()->ClearFlags(ETY_FLAG_CALCBBOX_ZROTATE);
 
 		m_Running = false;
 #if defined(LINUX64)
@@ -5428,7 +5455,7 @@ bool	CPlayer::GoProne( )
 #endif
 	}
 
-	m_bStayCrouch = false;
+	m_bStayCrouch    = false;
 
 	m_fLastProneTime = m_pTimer->GetCurrTime() + 0.5f;
 
@@ -5437,35 +5464,34 @@ bool	CPlayer::GoProne( )
 
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise returns false
-bool	CPlayer::GoSwim( )
+bool CPlayer::GoSwim()
 {
-	IPhysicalEntity*	phys = m_pEntity->GetPhysics();
+	IPhysicalEntity* phys = m_pEntity->GetPhysics();
 
-	if ( phys && m_CurStance != eSwim)				//!=eDimProne)
+	if (phys && m_CurStance != eSwim) //!=eDimProne)
 	{
 		// Use proning physics dimensions for swimming.
-		if(phys->SetParams( &m_PlayerDimSwim ))
+		if (phys->SetParams(&m_PlayerDimSwim))
 		{
-
-			#if 0
+#if 0
 			InitCameraTransition( PCM_CASUAL, true );
 			m_AngleLimitBase.Set(0,0,0);
-			#endif
-			if(m_pEntity->GetAI())
+#endif
+			if (m_pEntity->GetAI())
 			{
 				m_pEntity->GetAI()->SetEyeHeight(m_PlayerDimProne.heightEye);
 			}
 			m_currDimensions = eDimProne;
-			m_PrevStance = m_CurStance;
-			m_CurStance = eSwim;
+			m_PrevStance     = m_CurStance;
+			m_CurStance      = eSwim;
 
-			m_stats.aim = false;
-			m_stats.crouch = false;
-			m_stats.prone = false;
-			m_stats.prone = false;
+			m_stats.aim      = false;
+			m_stats.crouch   = false;
+			m_stats.prone    = false;
+			m_stats.prone    = false;
 			// [kirill] need this to use only z component of entity angles (same as for drawing)
 			// when calculating BBox
-			GetEntity()->SetFlags( ETY_FLAG_CALCBBOX_ZROTATE );
+			GetEntity()->SetFlags(ETY_FLAG_CALCBBOX_ZROTATE);
 
 			m_Running = false;
 #if defined(LINUX64)
@@ -5487,12 +5513,12 @@ bool	CPlayer::GoSwim( )
 
 //////////////////////////////////////////////////////////////////////
 //	returns true if slope angle is ok to be in prone (not too steep) AND not falling/jumping
-bool	CPlayer::CanProne(bool ignoreSpam)
+bool CPlayer::CanProne(bool ignoreSpam)
 {
-	float	slopeProneLimit=.7f;
+	float slopeProneLimit = .7f;
 
 	//	don't go to prone mode if using mounted weapon
-	if(m_pMountedWeapon)
+	if (m_pMountedWeapon)
 		return false;
 
 	//prevent prone-standing position spamming
@@ -5500,87 +5526,87 @@ bool	CPlayer::CanProne(bool ignoreSpam)
 		return false;
 
 	//	don't go to prone mode if falling/jumping
-	if(m_FlyTime>.5f && m_CurStance!=eSwim)
+	if (m_FlyTime > .5f && m_CurStance != eSwim)
 		return false;
 
-	if(!m_pEntity->GetPhysics())
+	if (!m_pEntity->GetPhysics())
 		return false;
 
 	pe_status_living pStat;
 	m_pEntity->GetPhysics()->GetStatus(&pStat);
-	#if 0
+#if 0
 	m_vProneEnvNormal = (Legacy::Vec3)pStat.groundSlope;
-	#endif
-	ray_hit hit;
-	Legacy::Vec3 pos=m_pEntity->GetPos();
-	int hitCount=0;		
-	float fHitCount=1.0f;
-	if( m_vProneEnvNormal.z>slopeProneLimit )
+#endif
+	ray_hit      hit;
+	Legacy::Vec3 pos       = m_pEntity->GetPos();
+	int          hitCount  = 0;
+	float        fHitCount = 1.0f;
+	if (m_vProneEnvNormal.z > slopeProneLimit)
 		++hitCount;
 
 	pos.z += .3f;
 	pos.x += .1f;
-	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection( Legacy::from(pos), vectorf(0,0,-1.5f), 
-		ent_all-ent_independent, rwi_stop_at_pierceable | geom_colltype_player<<rwi_colltype_bit,&hit,
-		1, GetEntity()->GetPhysics()))
+	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection(Legacy::from(pos), vectorf(0, 0, -1.5f),
+	                                                                    ent_all - ent_independent, rwi_stop_at_pierceable | geom_colltype_player << rwi_colltype_bit, &hit,
+	                                                                    1, GetEntity()->GetPhysics()))
 	{
 		m_vProneEnvNormal += Legacy::to(hit.n);
 		++fHitCount;
-		if( hit.n.z>slopeProneLimit )
+		if (hit.n.z > slopeProneLimit)
 			++hitCount;
 	}
 	pos.x -= .2f;
-	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection( Legacy::from(pos), vectorf(0,0,-1.5f), 
-		ent_all-ent_independent, rwi_stop_at_pierceable | geom_colltype_player<<rwi_colltype_bit,&hit,
-		1, GetEntity()->GetPhysics()))
+	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection(Legacy::from(pos), vectorf(0, 0, -1.5f),
+	                                                                    ent_all - ent_independent, rwi_stop_at_pierceable | geom_colltype_player << rwi_colltype_bit, &hit,
+	                                                                    1, GetEntity()->GetPhysics()))
 	{
 		m_vProneEnvNormal += Legacy::to(hit.n);
 		++fHitCount;
-		if( hit.n.z>slopeProneLimit )
+		if (hit.n.z > slopeProneLimit)
 			++hitCount;
 	}
 	pos.x += .1f;
 	pos.y += .1f;
-	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection( Legacy::from(pos), vectorf(0,0,-1.5f), 
-		ent_all-ent_independent, rwi_stop_at_pierceable | geom_colltype_player<<rwi_colltype_bit,&hit,
-		1, GetEntity()->GetPhysics()))
+	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection(Legacy::from(pos), vectorf(0, 0, -1.5f),
+	                                                                    ent_all - ent_independent, rwi_stop_at_pierceable | geom_colltype_player << rwi_colltype_bit, &hit,
+	                                                                    1, GetEntity()->GetPhysics()))
 	{
 		m_vProneEnvNormal += Legacy::to(hit.n);
 		++fHitCount;
-		if( hit.n.z>slopeProneLimit )
+		if (hit.n.z > slopeProneLimit)
 			++hitCount;
 	}
 	pos.y -= .2f;
-	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection( Legacy::from(pos), vectorf(0,0,-1.5f), 
-		ent_all-ent_independent, rwi_stop_at_pierceable | geom_colltype_player<<rwi_colltype_bit,&hit,
-		1, GetEntity()->GetPhysics()))
+	if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection(Legacy::from(pos), vectorf(0, 0, -1.5f),
+	                                                                    ent_all - ent_independent, rwi_stop_at_pierceable | geom_colltype_player << rwi_colltype_bit, &hit,
+	                                                                    1, GetEntity()->GetPhysics()))
 	{
 		m_vProneEnvNormal += Legacy::to(hit.n);
 		++fHitCount;
-		if( hit.n.z>slopeProneLimit )
+		if (hit.n.z > slopeProneLimit)
 			++hitCount;
 	}
 
 	// there are no points with allowed slope around - can't prone here
-	if( hitCount<1 )
+	if (hitCount < 1)
 		return false;
 
-	m_vProneEnvNormal = m_vProneEnvNormal/fHitCount;
+	m_vProneEnvNormal        = m_vProneEnvNormal / fHitCount;
 
 	// can't prone when standing on boat/car
-	IPhysicalEntity *physEnt = m_pEntity->GetPhysics();
+	IPhysicalEntity* physEnt = m_pEntity->GetPhysics();
 	if (physEnt)
 	{
 		pe_status_living status;
 		if (physEnt->GetStatus(&status))
 		{
-			if(status.pGroundCollider)
+			if (status.pGroundCollider)
 			{
-				IEntity* pEnt=(IEntity*)status.pGroundCollider->GetForeignData();
-				if(pEnt && pEnt->GetContainer())
+				IEntity* pEnt = (IEntity*)status.pGroundCollider->GetForeignData();
+				if (pEnt && pEnt->GetContainer())
 				{
 					CVehicle* pVehicleBelow;
-					if(pEnt->GetContainer()->QueryContainerInterface(CIT_IVEHICLE,(void**)&pVehicleBelow))
+					if (pEnt->GetContainer()->QueryContainerInterface(CIT_IVEHICLE, (void**)&pVehicleBelow))
 					{
 						return false;
 					}
@@ -5594,65 +5620,65 @@ bool	CPlayer::CanProne(bool ignoreSpam)
 
 //////////////////////////////////////////////////////////////////////
 //	returns true if switch to stance or already in stance, otherwise return false
-bool	CPlayer::GoRelaxed( )
+bool CPlayer::GoRelaxed()
 {
-	if(!GoStand())
+	if (!GoStand())
 	{
 		return false;
 	}
 
 	m_PrevStance = m_CurStance;
-	m_CurStance = eRelaxed;
+	m_CurStance  = eRelaxed;
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool	CPlayer::RestorePrevStence()
+bool CPlayer::RestorePrevStence()
 {
-	switch( m_PrevStance )
+	switch (m_PrevStance)
 	{
-		case eStand:
-		case eSwim:
-			return GoStand();
-		case eStealth:
-			return GoStealth();
-		case eCrouch:
-			return GoCrouch();
-		case eProne:
-			return GoProne();
+	case eStand:
+	case eSwim:
+		return GoStand();
+	case eStealth:
+		return GoStealth();
+	case eCrouch:
+		return GoCrouch();
+	case eProne:
+		return GoProne();
 	}
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
-//	for debug/test purposes - 
-void	CPlayer::StartFire()
+//	for debug/test purposes -
+void CPlayer::StartFire()
 {
-	Legacy::Vec3	pos = m_pEntity->GetPos();	
+	Legacy::Vec3 pos = m_pEntity->GetPos();
 }
 
 //////////////////////////////////////////////////////////////////////
 Legacy::Vec3 CPlayer::CalcSoundPos()
 {
-	IEntityCamera *pEC;
-	if (IsMyPlayer() && (pEC=m_pEntity->GetCamera()))
+	IEntityCamera* pEC;
+	if (IsMyPlayer() && (pEC = m_pEntity->GetCamera()))
 	{
-		CCamera &cam=pEC->GetCamera();
-		Legacy::Vec3 vPos=cam.GetPos();
-		#if 0
+		CCamera&     cam  = pEC->GetCamera();
+		Legacy::Vec3 vPos = cam.GetPos();
+#if 0
 		vPos+=cam.m_vOffset;
-		#endif
-		Legacy::Vec3 vAngles=cam.GetAngles();
-		Legacy::Vec3 vTrans=vPos-cam.GetPos();
-		Matrix44 vRot;
-		vRot.SetIdentity();		
+#endif
+		Legacy::Vec3 vAngles = cam.GetAngles();
+		Legacy::Vec3 vTrans  = vPos - cam.GetPos();
+		Matrix44     vRot;
+		vRot.SetIdentity();
 		//rotate the matrix ingnoring the Y rotation
-		//vRot.RotateMatrix(Legacy::Vec3(vAngles.x,0,vAngles.z));		
-		vRot=Matrix44::CreateRotationZYX(-Legacy::from(Legacy::Vec3(vAngles.x,0,vAngles.z))*gf_DEGTORAD)*vRot; //NOTE: angles in radians and negated 
-		vPos=Legacy::to(vRot.TransformPointOLD(Legacy::from(vTrans)));
+		//vRot.RotateMatrix(Legacy::Vec3(vAngles.x,0,vAngles.z));
+		vRot = Matrix44::CreateRotationZYX(-Legacy::from(Legacy::Vec3(vAngles.x, 0, vAngles.z)) * gf_DEGTORAD) * vRot; //NOTE: angles in radians and negated
+		vPos = Legacy::to(vRot.TransformPointOLD(Legacy::from(vTrans)));
 		//translate back
-		vPos+=cam.GetPos();
+		vPos += cam.GetPos();
 		return vPos;
 	}
 	return m_pEntity->GetPos();
@@ -5660,39 +5686,41 @@ Legacy::Vec3 CPlayer::CalcSoundPos()
 
 //////////////////////////////////////////////////////////////////////
 //	calculates vertical and horizontal speed to make player jump on dist and height
-void CPlayer::CalcJumpSpeed( float dist, float height, float &horV, float &vertV  )
+void CPlayer::CalcJumpSpeed(float dist, float height, float& horV, float& vertV)
 {
-	assert(height>=0.0f);
-	//	vz = srtq(2*g*h) 
-	//	vx = len*g/(2*vz) 
+	assert(height >= 0.0f);
+	//	vz = srtq(2*g*h)
+	//	vx = len*g/(2*vz)
 	float fGravity;
 
 	//we are using a different gravity for jump? use it to calculate jump speeds.
-	if (m_Dynamics.jump_gravity!=1E10)
+	if (m_Dynamics.jump_gravity != 1E10)
 		fGravity = m_Dynamics.jump_gravity;
 	else
 		fGravity = m_Dynamics.gravity;
 
 	fGravity *= m_pGame->p_gravity_modifier->GetFVal();
 
-	vertV = cry_sqrtf( 2.0f*fGravity*height );
+	vertV = cry_sqrtf(2.0f * fGravity * height);
 
-	if(height!=0.0f) horV=(dist*cry_sqrtf(fGravity)) / (2*cry_sqrtf(2*height));
-		else horV=0.0f;
+	if (height != 0.0f)
+		horV = (dist * cry_sqrtf(fGravity)) / (2 * cry_sqrtf(2 * height));
+	else
+		horV = 0.0f;
 }
 
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SetViewMode(bool bThirdPerson)
 {
-	if(!IsMyPlayer())
+	if (!IsMyPlayer())
 		return;
 
-	if( !bThirdPerson )
+	if (!bThirdPerson)
 	{
 		m_pEntity->DrawCharacter(0, 0);
 		m_pEntity->NeedsUpdateCharacter(0, true);
 	}
-	else 
+	else
 	{
 		if (m_stats.bModelHidden)
 			m_pEntity->DrawCharacter(0, 0);
@@ -5837,17 +5865,17 @@ void CPlayer::HoldWeapon(void)
 //////////////////////////////////////////////////////////////////////
 void CPlayer::SetWeaponPositionState(EWeaponPositionState weaponPositionState)
 {
-	assert (IsHeapValid());
+	assert(IsHeapValid());
 
 	// attach to bone ?
 	if (m_nSelectedWeaponID != -1 && m_weaponPositionState != weaponPositionState)
 	{
 		CWeaponClass* pSelectedWeapon = GetSelectedWeapon();
-		m_weaponPositionState = weaponPositionState;
-		ICryCharInstance *character = m_pEntity->GetCharInterface()->GetCharacter(PLAYER_MODEL_IDX);
-		WeaponInfo &wi = GetWeaponInfo();
+		m_weaponPositionState         = weaponPositionState;
+		ICryCharInstance* character   = m_pEntity->GetCharInterface()->GetCharacter(PLAYER_MODEL_IDX);
+		WeaponInfo&       wi          = GetWeaponInfo();
 
-		assert (IsHeapValid());
+		assert(IsHeapValid());
 		if (character)
 		{
 			wi.DetachBindingHandles(character);
@@ -5859,14 +5887,14 @@ void CPlayer::SetWeaponPositionState(EWeaponPositionState weaponPositionState)
 			if (!sBone.empty())
 			{
 				if (weaponPositionState == WEAPON_POS_HOLSTER)
-					sBone+="02";
-				wi.hBindInfo = character->AttachObjectToBone( pSelectedWeapon->GetObject(), sBone.c_str() );
+					sBone += "02";
+				wi.hBindInfo    = character->AttachObjectToBone(pSelectedWeapon->GetObject(), sBone.c_str());
 
 				// if there is an auxilary weapon bone, attach to that as well
 				string sAuxBone = "aux_" + sBone;
-				if (character->GetModel()->GetBoneByName(sAuxBone.c_str())>=0)
+				if (character->GetModel()->GetBoneByName(sAuxBone.c_str()) >= 0)
 				{
-					wi.hAuxBindInfo = character->AttachObjectToBone( pSelectedWeapon->GetObject(), sAuxBone.c_str() );
+					wi.hAuxBindInfo = character->AttachObjectToBone(pSelectedWeapon->GetObject(), sAuxBone.c_str());
 				}
 			}
 			else
@@ -5878,18 +5906,18 @@ void CPlayer::SetWeaponPositionState(EWeaponPositionState weaponPositionState)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::SetBlendTime(const char *sAniName, float fBlendTime)
+void CPlayer::SetBlendTime(const char* sAniName, float fBlendTime)
 {
-	if(strlen(sAniName)<3)	// it has to be some name
+	if (strlen(sAniName) < 3) // it has to be some name
 		return;
 	m_AniBlendTimes[sAniName] = fBlendTime;
 }
 
 //////////////////////////////////////////////////////////////////////
-void	CPlayer::GetBlendTime(const char *sAniName, float&fBlendTime)
+void CPlayer::GetBlendTime(const char* sAniName, float& fBlendTime)
 {
-	BlendTimesMap::iterator curAni=m_AniBlendTimes.find(sAniName);
-	if( curAni == m_AniBlendTimes.end() )
+	BlendTimesMap::iterator curAni = m_AniBlendTimes.find(sAniName);
+	if (curAni == m_AniBlendTimes.end())
 		return;
 	fBlendTime = (curAni->second);
 }
@@ -5968,42 +5996,42 @@ void	CPlayer::UpdateCollisionDamage( )
 #endif
 
 //////////////////////////////////////////////////////////////////////
-void	CPlayer::SetSpeedMult( float run, float crouch, float prone, float xrun, float xwalk, float rrun, float rwalk )
+void CPlayer::SetSpeedMult(float run, float crouch, float prone, float xrun, float xwalk, float rrun, float rwalk)
 {
-	m_RunSpeedScale			= run;
-	m_CrouchSpeedScale	= crouch;
-	m_ProneSpeedScale		= prone;
-	m_XRunSpeedScale		= xrun;		// stealth
-	m_XWalkSpeedScale		= xwalk;	
-	m_RRunSpeedScale		= rrun;		// relaxed
-	m_RWalkSpeedScale		= rwalk;
+	m_RunSpeedScale    = run;
+	m_CrouchSpeedScale = crouch;
+	m_ProneSpeedScale  = prone;
+	m_XRunSpeedScale   = xrun; // stealth
+	m_XWalkSpeedScale  = xwalk;
+	m_RRunSpeedScale   = rrun; // relaxed
+	m_RWalkSpeedScale  = rwalk;
 }
 
 //////////////////////////////////////////////////////////////////////
-void	CPlayer::OnDrawMountedWeapon( const SRendParams & RendParams )
+void CPlayer::OnDrawMountedWeapon(const SRendParams& RendParams)
 {
-	if(m_nSelectedWeaponID == -1)
+	if (m_nSelectedWeaponID == -1)
 		return;
 
 	// if the localplayer is using the mounted weapon, only then do we disable the first person weapon drawing
-	if( m_pMountedWeapon && IsMyPlayer())
+	if (m_pMountedWeapon && IsMyPlayer())
 	{
-		m_pMountedWeapon->DrawObject(0,ETY_DRAW_NORMAL);
-		m_pMountedWeapon->DrawCharacter(0,ETY_DRAW_NORMAL);
+		m_pMountedWeapon->DrawObject(0, ETY_DRAW_NORMAL);
+		m_pMountedWeapon->DrawCharacter(0, ETY_DRAW_NORMAL);
 
 		Legacy::Vec3 apos, aang;
-		GetFirePosAngles( apos, aang );
+		GetFirePosAngles(apos, aang);
 
-		apos = m_pMountedWeapon->GetAngles(1);	
-		m_pMountedWeapon->SetAngles( aang, false, false, true );
+		apos = m_pMountedWeapon->GetAngles(1);
+		m_pMountedWeapon->SetAngles(aang, false, false, true);
 
 		m_pMountedWeapon->ForceCharacterUpdate(0);
 		m_pMountedWeapon->DrawEntity(RendParams);
 
-		m_pMountedWeapon->SetAngles( apos );
-		m_pMountedWeapon->DrawObject(0,ETY_DRAW_NONE);		// we don't want to draw it (already drawn by player)
-		m_pMountedWeapon->DrawCharacter(0,ETY_DRAW_NONE);
-		m_pMountedWeapon->NeedsUpdateCharacter( 0, true);	// but we want to update animation for it
+		m_pMountedWeapon->SetAngles(apos);
+		m_pMountedWeapon->DrawObject(0, ETY_DRAW_NONE); // we don't want to draw it (already drawn by player)
+		m_pMountedWeapon->DrawCharacter(0, ETY_DRAW_NONE);
+		m_pMountedWeapon->NeedsUpdateCharacter(0, true); // but we want to update animation for it
 
 		GetEntity()->DrawCharacter(1, ETY_DRAW_NONE);
 	}
@@ -6011,44 +6039,44 @@ void	CPlayer::OnDrawMountedWeapon( const SRendParams & RendParams )
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::UpdateCharacterAnimationsMounted( SPlayerUpdateContext &ctx )
+void CPlayer::UpdateCharacterAnimationsMounted(SPlayerUpdateContext& ctx)
 {
-	FUNCTION_PROFILER(PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	m_pEntity->SetAnimationSpeed( 1.0f );
-	if( m_pVehicle )	// mounted weapon on vehicle - don't do any animation
+	m_pEntity->SetAnimationSpeed(1.0f);
+	if (m_pVehicle) // mounted weapon on vehicle - don't do any animation
 		return;
 
-	float	diff = m_pEntity->GetAngles().z - m_vPrevMntPos.z;
-	float	vel = diff/m_pTimer->GetFrameTime();
+	float  diff = m_pEntity->GetAngles().z - m_vPrevMntPos.z;
+	float  vel  = diff / m_pTimer->GetFrameTime();
 
-	string	aniName;
+	string aniName;
 
-	if( fabsf(vel)<60.6f )
+	if (fabsf(vel) < 60.6f)
 		aniName = "mount_fwd";
-	else 
+	else
 	{
-		if( diff<0 )
-			aniName = "mount_left";//"arotateright";
+		if (diff < 0)
+			aniName = "mount_left"; //"arotateright";
 		else
-			aniName = "mount_right";//"arotateleft";
+			aniName = "mount_right"; //"arotateleft";
 	}
 
 	m_RunningTime += m_pTimer->GetFrameTime();
-	if(m_sPrevAniName != aniName)
+	if (m_sPrevAniName != aniName)
 	{
-		if(aniName == "mount_fwd")
+		if (aniName == "mount_fwd")
 		{
-			if( m_MntWeaponStandTime>.3f )
+			if (m_MntWeaponStandTime > .3f)
 			{
-				if(m_pEntity->StartAnimation(0, aniName.c_str(), 0, .25f ))
+				if (m_pEntity->StartAnimation(0, aniName.c_str(), 0, .25f))
 					m_sPrevAniName = aniName;
 			}
 			m_MntWeaponStandTime += m_pTimer->GetFrameTime();
 		}
 		else
 		{
-			if(m_pEntity->StartAnimation(0, aniName.c_str(), 0, .25f ))
+			if (m_pEntity->StartAnimation(0, aniName.c_str(), 0, .25f))
 				m_sPrevAniName = aniName;
 			m_MntWeaponStandTime = 0.0f;
 		}
@@ -6058,14 +6086,14 @@ void CPlayer::UpdateCharacterAnimationsMounted( SPlayerUpdateContext &ctx )
 }
 
 //////////////////////////////////////////////////////////////////////
-void	CPlayer::GiveBinoculars(bool val)
+void CPlayer::GiveBinoculars(bool val)
 {
 	if (m_stats.has_binoculars == val)
 		return;
 
 	m_stats.has_binoculars = val;
 
-	// FIXME ... if the binoculars are taken away, then we should reset the viewlayer (must be done 
+	// FIXME ... if the binoculars are taken away, then we should reset the viewlayer (must be done
 	// on the script side
 }
 
@@ -6073,77 +6101,77 @@ void	CPlayer::GiveBinoculars(bool val)
 void CPlayer::PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime)
 {
 	int nRecursionLevel = (int)m_pGame->GetSystem()->GetIRenderer()->EF_Query(EFQ_RecurseLevel) - 1;
-	if(m_bFirstPerson && !nRecursionLevel && m_stats.drawfpweapon	&& m_nSelectedWeaponID != -1)
+	if (m_bFirstPerson && !nRecursionLevel && m_stats.drawfpweapon && m_nSelectedWeaponID != -1)
 		return;
 
-	ICryCharInstance *pChar = m_pEntity->GetCharInterface()->GetCharacter(0);
+	ICryCharInstance* pChar = m_pEntity->GetCharInterface()->GetCharacter(0);
 	if (!pChar)
 		return;
 
 	if (!(pChar->GetFlags() & CS_FLAG_DRAW_MODEL) && !nRecursionLevel)
 		return;
 
-	#if 0
+#if 0
 	float fDist = fPrevPortalDistance + vPrevPortalPos.GetDistance(m_pEntity->GetPos());
 	pChar->PreloadResources(fDist, 1.f, 0);
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
-void	CPlayer::SetStaminaTable( const StaminaTable& stTable )
+void CPlayer::SetStaminaTable(const StaminaTable& stTable)
 {
 	m_StaminaTable = stTable;
 }
 
 //////////////////////////////////////////////////////////////////////
-void	CPlayer::UpdateStamina( float dTime )
+void CPlayer::UpdateStamina(float dTime)
 {
 	// stamina (for sprint run) update
 	// update breath (blue bar)
-	if(m_stats.underwater>0.0f)			//we are under water - decrease breath level
+	if (m_stats.underwater > 0.0f) //we are under water - decrease breath level
 	{
-		if(m_stats.stamina>0)		// if there is some stamina - 
+		if (m_stats.stamina > 0) // if there is some stamina -
 		{
-			if((m_stats.stamina-=dTime*m_StaminaTable.BreathDecoyUnderwater)<0)
+			if ((m_stats.stamina -= dTime * m_StaminaTable.BreathDecoyUnderwater) < 0)
 				m_stats.stamina = 0;
 		}
 	}
-	else if( m_stats.holding_breath )	// we are sniping/holding breath - decrease breath level
+	else if (m_stats.holding_breath) // we are sniping/holding breath - decrease breath level
 	{
-		if((m_stats.stamina-=dTime*m_StaminaTable.BreathDecoyAim)<1.0f)
+		if ((m_stats.stamina -= dTime * m_StaminaTable.BreathDecoyAim) < 1.0f)
 			m_stats.stamina = 1.0f;
 	}
 	// update stamina (yellow bar)
-	else if( m_Sprinting )
+	else if (m_Sprinting)
 	{
-		if((m_stats.stamina -= dTime*m_StaminaTable.DecoyRun)<1.0f)
+		if ((m_stats.stamina -= dTime * m_StaminaTable.DecoyRun) < 1.0f)
 			m_stats.stamina = 1.0f;
 	}
 	// restore stamina - player is resting
-	else if(m_stats.stamina<100 && (!m_stats.flying || m_bSwimming&&m_stats.underwater<=0.0f ))
+	else if (m_stats.stamina < 100 && (!m_stats.flying || m_bSwimming && m_stats.underwater <= 0.0f))
 	{
-		if(m_Running)
-			m_stats.stamina += dTime*m_StaminaTable.RestoreRun;
+		if (m_Running)
+			m_stats.stamina += dTime * m_StaminaTable.RestoreRun;
 		else
-			m_stats.stamina += dTime*m_StaminaTable.RestoreWalk;
-		if(m_stats.stamina>100)
+			m_stats.stamina += dTime * m_StaminaTable.RestoreWalk;
+		if (m_stats.stamina > 100)
 			m_stats.stamina = 100;
 	}
-	// to indicate stamina on HUD 
-	m_StaminaTable.StaminaHUD = m_stats.stamina*0.01f;
+	// to indicate stamina on HUD
+	m_StaminaTable.StaminaHUD = m_stats.stamina * 0.01f;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CPlayer::IsVisible() const
 {
-	if(m_pGame->IsServer() && m_pGame->IsMultiplayer())
+	if (m_pGame->IsServer() && m_pGame->IsMultiplayer())
 		return true;
 
 	if (m_pEntity)
 	{
 		// If was rendered recently.
 		int nCurrRenderFrame = (int)m_pGame->GetSystem()->GetIRenderer()->GetFrameID();
-		if (abs(nCurrRenderFrame-m_pEntity->GetDrawFrame(0)) < 3)
+		if (abs(nCurrRenderFrame - m_pEntity->GetDrawFrame(0)) < 3)
 			return true;
 	}
 	return false;
@@ -6152,82 +6180,82 @@ bool CPlayer::IsVisible() const
 //////////////////////////////////////////////////////////////////////////
 void CPlayer::UpdateSwimState(bool bAlive)
 {
-	FUNCTION_PROFILER( PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 	// check if the player goes underwater.
 	//if (m_p3DEngine->GetWaterLevel(&m_vEyePos)>m_vEyePos.z)
-	float fWaterLevel=m_p3DEngine->GetWaterLevel(m_pEntity);
-	m_stats.fInWater=fWaterLevel-m_pEntity->GetPos().z;
-	if (m_stats.fInWater<0.0f)
-		m_stats.fInWater=0.0f;
-	Legacy::Vec3 vPos=m_vEyePos;
+	float fWaterLevel = m_p3DEngine->GetWaterLevel(m_pEntity);
+	m_stats.fInWater  = fWaterLevel - m_pEntity->GetPos().z;
+	if (m_stats.fInWater < 0.0f)
+		m_stats.fInWater = 0.0f;
+	Legacy::Vec3 vPos = m_vEyePos;
 	if (!bAlive && !IsMyPlayer())
-	{		
+	{
 		SetEyePosBone();
-		vPos=m_vEyePos;	
+		vPos = m_vEyePos;
 	}
-	
-	if (fWaterLevel>vPos.z)
+
+	if (fWaterLevel > vPos.z)
 	{
 		// if that is the case, start the EAX underwater effect
 		// plus increase the underwater time
-		m_stats.underwater+=m_pTimer->GetFrameTime();
+		m_stats.underwater += m_pTimer->GetFrameTime();
 		if (!m_bIsAI)
-			if(m_pGame->GetSystem()->GetISoundSystem())
-				 m_pGame->GetSystem()->GetISoundSystem()->SetEaxListenerEnvironment(EAX_PRESET_UNDERWATER); 
+			if (m_pGame->GetSystem()->GetISoundSystem())
+				m_pGame->GetSystem()->GetISoundSystem()->SetEaxListenerEnvironment(EAX_PRESET_UNDERWATER);
 
 		// also call the script function to play the water splash sounds and
 		// other stuff if this is the first time it goes underwater
 		if (!m_bEyesInWater)
 		{
-			m_pEntity->SendScriptEvent(ScriptEvent_EnterWater,0);
-			m_bEyesInWater=true;
-		}		
+			m_pEntity->SendScriptEvent(ScriptEvent_EnterWater, 0);
+			m_bEyesInWater = true;
+		}
 	}
 	else
 	{
 		// remove EAX underwater, if he was in the water before
-		if ((m_stats.underwater>0.001f) && (!m_bIsAI)) // epsilon
-      if(m_pGame->GetSystem()->GetISoundSystem())
-			  m_pGame->GetSystem()->GetISoundSystem()->SetEaxListenerEnvironment(EAX_PRESET_OFF);
-		m_stats.underwater=0.0f;
-		m_bEyesInWater=false;
+		if ((m_stats.underwater > 0.001f) && (!m_bIsAI)) // epsilon
+			if (m_pGame->GetSystem()->GetISoundSystem())
+				m_pGame->GetSystem()->GetISoundSystem()->SetEaxListenerEnvironment(EAX_PRESET_OFF);
+		m_stats.underwater = 0.0f;
+		m_bEyesInWater     = false;
 	}
 	m_stats.fKWater = 0;
 	// no need for anymore checks if dead - only eyesInWater updated
-	if(!IsAlive())
+	if (!IsAlive())
 	{
 		m_bSwimming = false;
 		return;
 	}
 	// ladder is priority to swim
-	if(m_stats.onLadder)
+	if (m_stats.onLadder)
 	{
 		m_bSwimming = false;
 		return;
 	}
 
 	// in vehicle is priority to swim
-	if(m_pVehicle)
+	if (m_pVehicle)
 	{
 		m_bSwimming = false;
 		return;
 	}
 
 	// not in water
-	if(fWaterLevel < -500)
+	if (fWaterLevel < -500)
 	{
 		m_bSwimming = false;
 		return;
 	}
-	
+
 	// to use value depending on current stance
-	float	depthOffset;// = GetEntity()->GetCamera()->GetCamOffset().z;
+	float depthOffset; // = GetEntity()->GetCamera()->GetCamOffset().z;
 	//AIs don't have camera offset - use fixed value (could use eyeHeight)
-	if( m_bIsAI )
+	if (m_bIsAI)
 		depthOffset = 1.5f;
 	else
 	{
-		switch( m_CurStance )
+		switch (m_CurStance)
 		{
 		case eProne:
 		case eSwim:
@@ -6241,105 +6269,105 @@ void CPlayer::UpdateSwimState(bool bAlive)
 	}
 	//check if we are standing on something
 	pe_status_living status;
-	IPhysicalEntity *physEnt = m_pEntity->GetPhysics();	
+	IPhysicalEntity* physEnt = m_pEntity->GetPhysics();
 	if (!physEnt || !physEnt->GetStatus(&status))
 	{
-		GameWarning( "Bad Phyics Entity for Player %s",m_pEntity->GetName() );
+		GameWarning("Bad Phyics Entity for Player %s", m_pEntity->GetName());
 		return;
 	}
 	if (status.pGroundCollider)
 	{
-		if( status.groundHeight+depthOffset > fWaterLevel )
+		if (status.groundHeight + depthOffset > fWaterLevel)
 		{
 			m_bSwimming = false;
 			return;
 		}
 	}
-	
-	if(m_pEntity->GetEntityVisArea()==0)	// if outdoors - check how deep we are
+
+	if (m_pEntity->GetEntityVisArea() == 0) // if outdoors - check how deep we are
 	{
-		Legacy::Vec3 rPos = m_pEntity->GetPos();
-		bool bChanged = false;
-		if(_isnan(rPos.x))
+		Legacy::Vec3 rPos     = m_pEntity->GetPos();
+		bool         bChanged = false;
+		if (_isnan(rPos.x))
 		{
 			bChanged = true;
-			rPos.x = 0;
+			rPos.x   = 0;
 		}
-		if(_isnan(rPos.y))
+		if (_isnan(rPos.y))
 		{
 			bChanged = true;
-			rPos.y = 0;
+			rPos.y   = 0;
 		}
-		if(_isnan(rPos.z))
+		if (_isnan(rPos.z))
 		{
 			bChanged = true;
-			rPos.z = 0;
+			rPos.z   = 0;
 		}
-		if(bChanged)
+		if (bChanged)
 			m_pEntity->SetPos(rPos);
 
-	float fTerrainLevel=m_p3DEngine->GetTerrainElevation(m_pEntity->GetPos().x, m_pEntity->GetPos().y);
+		float fTerrainLevel = m_p3DEngine->GetTerrainElevation(m_pEntity->GetPos().x, m_pEntity->GetPos().y);
 
-		if(fWaterLevel - fTerrainLevel < depthOffset )//1.5f) 
+		if (fWaterLevel - fTerrainLevel < depthOffset) //1.5f)
 		{
 			m_bSwimming = false;
 			return;
 		}
 	}
-	//	else 
-		if(fWaterLevel - m_pEntity->GetPos().z < depthOffset )//1.5f) // check if it's deep enough to sweem
+	//	else
+	if (fWaterLevel - m_pEntity->GetPos().z < depthOffset) //1.5f) // check if it's deep enough to sweem
 	{
-	auto pos = m_pEntity->GetPos();
-	pos.z = fWaterLevel;
-	ray_hit hit;
+		auto pos = m_pEntity->GetPos();
+		pos.z    = fWaterLevel;
+		ray_hit hit;
 
-	#if 0
+#if 0
 		if (m_pGame->GetSystem()->GetIPhysicalWorld()->RayWorldIntersection( vector3f{pos.x, pos.y, pos.z}, vectorf(0,0,-1.5f), ent_all,
 			rwi_stop_at_pierceable,&hit,1, GetEntity()->GetPhysics()))
 		{
 			m_bSwimming = false;
 			return;
 		}
-		#endif
+#endif
 	}
-	m_stats.fKWater = min(1.0f,m_stats.fInWater*(1.0f/.60f));
-	m_bSwimming = m_stats.fKWater>0.0f;
-	m_stats.fKWater*=m_stats.fKWater;
+	m_stats.fKWater = min(1.0f, m_stats.fInWater * (1.0f / .60f));
+	m_bSwimming     = m_stats.fKWater > 0.0f;
+	m_stats.fKWater *= m_stats.fKWater;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::DampInputVector(vectorf &vec ,float speed ,float stopspeed ,bool only2d ,bool linear)
+void CPlayer::DampInputVector(vectorf& vec, float speed, float stopspeed, bool only2d, bool linear)
 {
-	if (speed<=0.0f)
+	if (speed <= 0.0f)
 		return;
 
-	float spd = speed;
+	float spd   = speed;
 	float saveZ = vec.z;
 
-	if (only2d) 
+	if (only2d)
 		vec.z = 0;
 
 	float goallen = vec.len();
 
-	if (goallen<0.001f)	
+	if (goallen < 0.001f)
 		spd = stopspeed;
 
 	vectorf delta = vec - m_vLastMotionDir;
 
-	if (linear)//if linear cap the delta to "ai_smoothvel"
+	if (linear) //if linear cap the delta to "ai_smoothvel"
 	{
 		float deltalen = delta.len();
 
-		if (deltalen>spd) 
-			delta = delta * (deltalen==0?0.001f:1.0f/deltalen) * spd;
+		if (deltalen > spd)
+			delta = delta * (deltalen == 0 ? 0.001f : 1.0f / deltalen) * spd;
 	}
 
-	float dt = m_fLastDeltaTime;//m_pTimer->GetFrameTime();//m_pGame->GetSystem()->GetITimer()->GetFrameTime();
+	float dt = m_fLastDeltaTime; //m_pTimer->GetFrameTime();//m_pGame->GetSystem()->GetITimer()->GetFrameTime();
 
-	vec = m_vLastMotionDir + delta*min(dt*spd,1.0f);
+	vec      = m_vLastMotionDir + delta * min(dt * spd, 1.0f);
 
-	if (vec.len()<0.001f) 
-		vec.Set(0,0,0);
+	if (vec.len() < 0.001f)
+		vec.Set(0, 0, 0);
 
 	m_vLastMotionDir = vec;
 
@@ -6348,11 +6376,11 @@ void CPlayer::DampInputVector(vectorf &vec ,float speed ,float stopspeed ,bool o
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::SaveAIState(CStream & stm, CScriptObjectStream & scriptStream)
+void CPlayer::SaveAIState(CStream& stm, CScriptObjectStream& scriptStream)
 {
-	IScriptSystem *pScriptSystem = m_pGame->GetSystem()->GetIScriptSystem();
-	HSCRIPTFUNCTION	saveOverallFunction=NULL;
-	if( m_pEntity->GetScriptObject() && m_pEntity->GetScriptObject()->GetValue("OnSaveOverall", saveOverallFunction) )
+	IScriptSystem*  pScriptSystem       = m_pGame->GetSystem()->GetIScriptSystem();
+	HSCRIPTFUNCTION saveOverallFunction = NULL;
+	if (m_pEntity->GetScriptObject() && m_pEntity->GetScriptObject()->GetValue("OnSaveOverall", saveOverallFunction))
 	{
 		pScriptSystem->BeginCall(saveOverallFunction);
 		pScriptSystem->PushFuncParam(m_pEntity->GetScriptObject());
@@ -6364,26 +6392,26 @@ void CPlayer::SaveAIState(CStream & stm, CScriptObjectStream & scriptStream)
 		return;
 
 	auto pObject = m_pEntity->GetAI();
-		
-    pObject->Save(stm);
-	IPipeUser *pUser =0;
+
+	pObject->Save(stm);
+	IPipeUser* pUser   = 0;
 
 	// save weapon state
-	int nGunOut = 0;
-	m_pEntity->GetScriptObject()->GetValue("AI_GunOut",nGunOut);
+	int        nGunOut = 0;
+	m_pEntity->GetScriptObject()->GetValue("AI_GunOut", nGunOut);
 	stm.Write(nGunOut);
 
-	ICryCharInstance *pCharacter = m_pEntity->GetCharInterface()->GetCharacter(0);
-	bool bAnimWritten = false;
+	ICryCharInstance* pCharacter   = m_pEntity->GetCharInterface()->GetCharacter(0);
+	bool              bAnimWritten = false;
 	if (pCharacter)
 	{
 		int nAnimID = pCharacter->GetCurrentAnimation(3);
-		if (nAnimID>=0)
+		if (nAnimID >= 0)
 		{
-			ICryCharModel *pModel =  pCharacter->GetModel();
+			ICryCharModel* pModel = pCharacter->GetModel();
 			if (pModel)
 			{
-				const char *szAnimName = pModel->GetAnimationSet()->GetName(nAnimID);
+				const char* szAnimName = pModel->GetAnimationSet()->GetName(nAnimID);
 				stm.Write(szAnimName);
 				bAnimWritten = true;
 			}
@@ -6393,30 +6421,30 @@ void CPlayer::SaveAIState(CStream & stm, CScriptObjectStream & scriptStream)
 		stm.Write("NA");
 
 	// save any conversation that this guy may be in
-	_SmartScriptObject pCurrentConversation(m_pScriptSystem,true);
-	if (m_pEntity->GetScriptObject()->GetValue("CurrentConversation",pCurrentConversation))
+	_SmartScriptObject pCurrentConversation(m_pScriptSystem, true);
+	if (m_pEntity->GetScriptObject()->GetValue("CurrentConversation", pCurrentConversation))
 	{
-		const char *szName;
-		pCurrentConversation->GetValue("NAME",szName);
+		const char* szName;
+		pCurrentConversation->GetValue("NAME", szName);
 		stm.Write(szName);
-		int iProgress,conv_id;
-		pCurrentConversation->GetValue("CONV_ID",conv_id);
+		int iProgress, conv_id;
+		pCurrentConversation->GetValue("CONV_ID", conv_id);
 		stm.Write(conv_id);
-		pCurrentConversation->GetValue("Progress",iProgress);
+		pCurrentConversation->GetValue("Progress", iProgress);
 		stm.Write(iProgress);
 
 		// save all the actors in the conversation
-		_SmartScriptObject pActors(m_pScriptSystem,true);
-		pCurrentConversation->GetValue("Actor",pActors);
-		int i=1;
+		_SmartScriptObject pActors(m_pScriptSystem, true);
+		pCurrentConversation->GetValue("Actor", pActors);
+		int i = 1;
 		stm.Write(pActors->Count());
-		while (i<=pActors->Count())
+		while (i <= pActors->Count())
 		{
-			_SmartScriptObject pActorEntity(m_pScriptSystem,true);
-			if (pActors->GetAt(i,pActorEntity))
+			_SmartScriptObject pActorEntity(m_pScriptSystem, true);
+			if (pActors->GetAt(i, pActorEntity))
 			{
 				int Actor_ID;
-				pActorEntity->GetValue("id",Actor_ID);
+				pActorEntity->GetValue("id", Actor_ID);
 				stm.Write(Actor_ID);
 			}
 			i++;
@@ -6427,11 +6455,11 @@ void CPlayer::SaveAIState(CStream & stm, CScriptObjectStream & scriptStream)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::LoadAIState(CStream & stm, CScriptObjectStream & scriptStream)
+void CPlayer::LoadAIState(CStream& stm, CScriptObjectStream& scriptStream)
 {
-	IScriptSystem *pScriptSystem = m_pGame->GetSystem()->GetIScriptSystem();
-	HSCRIPTFUNCTION	loadOverallFunction=NULL;
-	if( m_pEntity->GetScriptObject() && m_pEntity->GetScriptObject()->GetValue("OnLoadOverall", loadOverallFunction) )
+	IScriptSystem*  pScriptSystem       = m_pGame->GetSystem()->GetIScriptSystem();
+	HSCRIPTFUNCTION loadOverallFunction = NULL;
+	if (m_pEntity->GetScriptObject() && m_pEntity->GetScriptObject()->GetValue("OnLoadOverall", loadOverallFunction))
 	{
 		pScriptSystem->BeginCall(loadOverallFunction);
 		pScriptSystem->PushFuncParam(m_pEntity->GetScriptObject());
@@ -6445,47 +6473,47 @@ void CPlayer::LoadAIState(CStream & stm, CScriptObjectStream & scriptStream)
 	auto pObject = m_pEntity->GetAI();
 	pObject->Load(stm);
 
-	int nGunOut=0;
+	int nGunOut = 0;
 	stm.Read(nGunOut);
 	if (nGunOut)
 	{
 		SetWeaponPositionState(WEAPON_POS_HOLD);
-		m_pEntity->GetScriptObject()->SetValue("AI_GunOut",1);
+		m_pEntity->GetScriptObject()->SetValue("AI_GunOut", 1);
 
-		m_pScriptSystem->BeginCall("BasicAI","MakeAlerted");
+		m_pScriptSystem->BeginCall("BasicAI", "MakeAlerted");
 		m_pScriptSystem->PushFuncParam(m_pEntity->GetScriptObject());
 		m_pScriptSystem->EndCall();
 	}
 
 	char str[255];
-	stm.Read(str,255);
+	stm.Read(str, 255);
 
-	if (stricmp(str,"NA"))
+	if (stricmp(str, "NA"))
 	{
-		ICryCharInstance *pCharacter = m_pEntity->GetCharInterface()->GetCharacter(0);
+		ICryCharInstance* pCharacter = m_pEntity->GetCharInterface()->GetCharacter(0);
 		if (pCharacter)
 		{
 			CryCharAnimationParams ccap;
-			ccap.fBlendInTime = 0;
+			ccap.fBlendInTime  = 0;
 			ccap.fBlendOutTime = 0;
-			ccap.nLayerID = 3;
-			pCharacter->StartAnimation(str,ccap);
+			ccap.nLayerID      = 3;
+			pCharacter->StartAnimation(str, ccap);
 		}
 	}
 
-	stm.Read(str,255);
-	if (stricmp(str,"NA"))
+	stm.Read(str, 255);
+	if (stricmp(str, "NA"))
 	{
-		_SmartScriptObject pCurrentConversation(m_pScriptSystem,true);
-		if (!m_pEntity->GetScriptObject()->GetValue("CurrentConversation",pCurrentConversation))
+		_SmartScriptObject pCurrentConversation(m_pScriptSystem, true);
+		if (!m_pEntity->GetScriptObject()->GetValue("CurrentConversation", pCurrentConversation))
 		{
 			// get the saved conversation
 			int conv_id;
 			stm.Read(conv_id);
-			_SmartScriptObject pNewConversation(m_pScriptSystem,true);
-			_SmartScriptObject pConvManager(m_pScriptSystem,true);
-			m_pScriptSystem->GetGlobalValue("AI_ConvManager",pConvManager);
-			m_pScriptSystem->BeginCall("AI_ConvManager","GetSpecificConversation");
+			_SmartScriptObject pNewConversation(m_pScriptSystem, true);
+			_SmartScriptObject pConvManager(m_pScriptSystem, true);
+			m_pScriptSystem->GetGlobalValue("AI_ConvManager", pConvManager);
+			m_pScriptSystem->BeginCall("AI_ConvManager", "GetSpecificConversation");
 			m_pScriptSystem->PushFuncParam(pConvManager);
 			m_pScriptSystem->PushFuncParam(str);
 			m_pScriptSystem->PushFuncParam(conv_id);
@@ -6494,48 +6522,46 @@ void CPlayer::LoadAIState(CStream & stm, CScriptObjectStream & scriptStream)
 			// remember how far we were
 			stm.Read(conv_id);
 			// go back one line
-			if (conv_id>0)
+			if (conv_id > 0)
 				conv_id--;
-			pNewConversation->SetValue("Progress",conv_id);
+			pNewConversation->SetValue("Progress", conv_id);
 
 			// now loop through all the actors and make them join this conversation
-			int nrActors,curr_actor=0;
+			int nrActors, curr_actor = 0;
 			stm.Read(nrActors);
-			while (curr_actor<nrActors)
+			while (curr_actor < nrActors)
 			{
 				int ActorID;
 				stm.Read(ActorID);
 
 				// get the entity
-				IEntity *pActorEntity = m_pGame->GetSystem()->GetIEntitySystem()->GetEntity(ActorID);
+				IEntity* pActorEntity = m_pGame->GetSystem()->GetIEntitySystem()->GetEntity(ActorID);
 				if (pActorEntity)
 				{
-					IScriptObject *pActorScriptObject = pActorEntity->GetScriptObject();
-					pActorScriptObject->SetValue("CurrentConversation",pNewConversation);
+					IScriptObject* pActorScriptObject = pActorEntity->GetScriptObject();
+					pActorScriptObject->SetValue("CurrentConversation", pNewConversation);
 					unsigned int funcHandle;
-					pNewConversation->GetValue("Join",funcHandle);
+					pNewConversation->GetValue("Join", funcHandle);
 					m_pScriptSystem->BeginCall(funcHandle);
 					m_pScriptSystem->PushFuncParam(pNewConversation);
 					m_pScriptSystem->PushFuncParam(pActorEntity->GetScriptObject());
 					m_pScriptSystem->EndCall();
-
 				}
 				curr_actor++;
 			}
 
 			// if joined is equal to amount of participants, continue the conversation
-			int iJoined,iParticipants;
-			pNewConversation->GetValue("Joined",iJoined);
-			pNewConversation->GetValue("Participants",iParticipants);
+			int iJoined, iParticipants;
+			pNewConversation->GetValue("Joined", iJoined);
+			pNewConversation->GetValue("Participants", iParticipants);
 			if (iJoined == iParticipants)
 			{
-					unsigned int funcHandle;
-					pNewConversation->GetValue("Continue",funcHandle);
-					m_pScriptSystem->BeginCall(funcHandle);
-					m_pScriptSystem->PushFuncParam(pNewConversation);
-					m_pScriptSystem->EndCall();
+				unsigned int funcHandle;
+				pNewConversation->GetValue("Continue", funcHandle);
+				m_pScriptSystem->BeginCall(funcHandle);
+				m_pScriptSystem->PushFuncParam(pNewConversation);
+				m_pScriptSystem->EndCall();
 			}
-
 		}
 		else
 		{
@@ -6550,9 +6576,8 @@ void CPlayer::LoadAIState(CStream & stm, CScriptObjectStream & scriptStream)
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////
-void CPlayer::LoadAIState_RELEASE(CStream & stm)
+void CPlayer::LoadAIState_RELEASE(CStream& stm)
 {
 	if (!m_bIsAI)
 		return;
@@ -6561,59 +6586,58 @@ void CPlayer::LoadAIState_RELEASE(CStream & stm)
 	//AIStatObj Load is empty in release version
 	//	pObject->Load(stm);
 
-	int nGunOut=0;
+	int  nGunOut = 0;
 	stm.Read(nGunOut);
 	if (nGunOut)
 	{
 		SetWeaponPositionState(WEAPON_POS_HOLD);
-		m_pEntity->GetScriptObject()->SetValue("AI_GunOut",1);
+		m_pEntity->GetScriptObject()->SetValue("AI_GunOut", 1);
 
-		m_pScriptSystem->BeginCall("BasicAI","MakeAlerted");
+		m_pScriptSystem->BeginCall("BasicAI", "MakeAlerted");
 		m_pScriptSystem->PushFuncParam(m_pEntity->GetScriptObject());
 		m_pScriptSystem->EndCall();
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::LoadAIState_PATCH_1(CStream & stm)
+void CPlayer::LoadAIState_PATCH_1(CStream& stm)
 {
-
 	if (!m_bIsAI)
 		return;
 
 	auto pObject = m_pEntity->GetAI();
 	pObject->Load_PATCH_1(stm);
 
-	int nGunOut=0;
+	int nGunOut = 0;
 	stm.Read(nGunOut);
 	if (nGunOut)
 	{
 		SetWeaponPositionState(WEAPON_POS_HOLD);
-		m_pEntity->GetScriptObject()->SetValue("AI_GunOut",1);
+		m_pEntity->GetScriptObject()->SetValue("AI_GunOut", 1);
 
-		m_pScriptSystem->BeginCall("BasicAI","MakeAlerted");
+		m_pScriptSystem->BeginCall("BasicAI", "MakeAlerted");
 		m_pScriptSystem->PushFuncParam(m_pEntity->GetScriptObject());
 		m_pScriptSystem->EndCall();
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CPlayer::OnEntityNetworkUpdate( const EntityId &idViewerEntity, const Legacy::Vec3 &v3dViewer, uint32 &inoutPriority, 
-	EntityCloneState &inoutCloneState) const
+void CPlayer::OnEntityNetworkUpdate(const EntityId& idViewerEntity, const Legacy::Vec3& v3dViewer, uint32& inoutPriority,
+                                    EntityCloneState& inoutCloneState) const
 {
-	inoutPriority+=100000;
+	inoutPriority += 100000;
 
-	if(m_stats.moving)
-		inoutPriority+=10000;
+	if (m_stats.moving)
+		inoutPriority += 10000;
 
-	if(m_stats.firing)
-		inoutPriority+=20000;
+	if (m_stats.firing)
+		inoutPriority += 20000;
 
-	inoutCloneState.m_bSyncYAngle=false;
+	inoutCloneState.m_bSyncYAngle = false;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CPlayer::LoadGame_PATCH_1(CStream &stm)
+bool CPlayer::LoadGame_PATCH_1(CStream& stm)
 {
 	RemoveAllWeapons();
 
@@ -6623,32 +6647,31 @@ bool CPlayer::LoadGame_PATCH_1(CStream &stm)
 	if (!m_bIsAI)
 		DeselectWeapon();
 
-	for(int cl = 0; (stm.Read(cl),cl); )
+	for (int cl = 0; (stm.Read(cl), cl);)
 	{
-		WeaponInfo &wi = m_mapPlayerWeapons[cl];
-		wi.owns = true;
+		WeaponInfo& wi = m_mapPlayerWeapons[cl];
+		wi.owns        = true;
 		stm.Read(wi.iFireMode);
 	}
-	for(int i=0;i<sizeof(m_vWeaponSlots)/sizeof(int);i++)
+	for (int i = 0; i < sizeof(m_vWeaponSlots) / sizeof(int); i++)
 	{
 		stm.Read(m_vWeaponSlots[i]);
 	}
 
 	Load_PATCH_1(stm);
 
-
 	SelectWeapon(m_stats.weapon);
 
 	if (m_nSelectedWeaponID != -1)
 	{
-		WeaponInfo &wi = GetWeaponInfo();
+		WeaponInfo&   wi              = GetWeaponInfo();
 
-		CWeaponClass *pSelectedWeapon = GetSelectedWeapon();
+		CWeaponClass* pSelectedWeapon = GetSelectedWeapon();
 		pSelectedWeapon->ScriptOnStopFiring(m_pEntity);
 
 		_SmartScriptObject pObj(m_pScriptSystem);
-		pObj->SetValue( "firemode", m_stats.firemode);
-		pObj->SetValue( "ignoreammo", true);
+		pObj->SetValue("firemode", m_stats.firemode);
+		pObj->SetValue("ignoreammo", true);
 
 		bool bCanSwitch;
 		m_pEntity->SendScriptEvent(ScriptEvent_FireModeChange, *pObj, &bCanSwitch);
@@ -6656,7 +6679,7 @@ bool CPlayer::LoadGame_PATCH_1(CStream &stm)
 		wi.iFireMode = m_stats.firemode;
 	}
 
-	#if 0
+#if 0
 	if (m_bIsAI)
 	{
 		IPuppet *pPuppet=0;
@@ -6665,14 +6688,14 @@ bool CPlayer::LoadGame_PATCH_1(CStream &stm)
 			if (pPuppet->GetPuppetParameters().m_bSpecial)
 				m_stats.health = nStartHealth;
 		}
-	}	
-	#endif
+	}
+#endif
 
 	return true;
 };
 
 //////////////////////////////////////////////////////////////////////
-bool CPlayer::Load_PATCH_1( CStream &stream)
+bool CPlayer::Load_PATCH_1(CStream& stream)
 {
 	return Read_PATCH_1(stream);
 }
@@ -6682,9 +6705,9 @@ bool CPlayer::Load_PATCH_1( CStream &stream)
 @param stream stream to read from
 @return true if the function succeeds, false otherwise
 */
-bool CPlayer::Read_PATCH_1( CStream &stream )
+bool CPlayer::Read_PATCH_1(CStream& stream)
 {
-	#if 0
+#if 0
 	unsigned short dirty = 0;
 	PlayerStats &stats=m_stats;	
 	BYTE health,armor,weapon,firemode,staminaBuff;	
@@ -6869,6 +6892,6 @@ bool CPlayer::Read_PATCH_1( CStream &stream )
 
 	stream.Read(m_bFirstPersonLoaded);
 
-	#endif
+#endif
 	return true;
 }

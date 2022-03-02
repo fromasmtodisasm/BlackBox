@@ -1,11 +1,11 @@
 #if 0
-#ifdef _WIN32
-#include <process.h>
-#endif
+	#ifdef _WIN32
+		#include <process.h>
+	#endif
 
 bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)
 {
-#ifdef _WIN32
+	#ifdef _WIN32
   //DWORD res;
   STARTUPINFO         si;
   PROCESS_INFORMATION pi;
@@ -34,9 +34,9 @@ bool MyExec(char* FileName, LPSTR cmd, HANDLE* handle)
     *handle = pi.hProcess;
     return true;
   }
-#else
+	#else
   return false;
-#endif
+	#endif
 }
 
 class BaseGameCommand : public BaseCommand
@@ -278,9 +278,9 @@ class ExecCommand : public BaseGameCommand, public IWorkerCommand
   IWorld* m_World;
   IConsole* console;
   int wait_cnt = 0;
-#ifdef _WIN32
+	#ifdef _WIN32
   HANDLE process;
-#endif
+	#endif
 public:
   ExecCommand(CXGame* game);
 private:
@@ -311,12 +311,12 @@ private:
           args += "\"" + wstr_to_str(cd.get(i)) + "\" ";
         }
       }
-#ifdef _WIN32
+	#ifdef _WIN32
       if (MyExec(const_cast<char*>(wstr_to_str(command).c_str()), const_cast<char*>(args.c_str()), &process))
       {
         console->AddWorkerCommand(this);
       }
-#endif
+	#endif
     }
     return false;
   }
@@ -324,7 +324,7 @@ private:
   // Унаследовано через IWorkerCommand
   virtual bool OnUpdate() override
   {
-#ifdef _WIN32
+	#ifdef _WIN32
     auto res = WaitForSingleObject(process, 0);
     if (res == WAIT_OBJECT_0)
     {
@@ -334,7 +334,7 @@ private:
     if ((wait_cnt % 60) == 0)
       console->PrintLine("wait");
     wait_cnt++;
-#endif
+	#endif
     return false;
   }
 };

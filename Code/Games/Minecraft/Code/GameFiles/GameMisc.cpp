@@ -1,19 +1,19 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-//	
+//
 //	File: GameMisc.cpp
 //  Description: Implements miscellaneuos game functions
-// 
+//
 //	History:
 //	- File created by Marco Corbetta
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h" 
+#include "stdafx.h"
 
 //#include "Game.h"
 //#include "XNetwork.h"
@@ -29,8 +29,8 @@
 #include "UISystem.h"
 #include "ScriptObjectUI.h"
 #if 0
-#include "ScriptObjectBoids.h"
-#include "Flock.h" 
+	#include "ScriptObjectBoids.h"
+	#include "Flock.h"
 #endif
 #include "WeaponClass.h"
 //#include "ScriptObjectRenderer.h"
@@ -43,7 +43,7 @@ void CXGame::EnableUIOverlay(bool bEnable, bool bExclusiveInput)
 	{
 		m_bUIOverlay = bEnable;
 
-		#if 0
+#if 0
 		if ((bExclusiveInput) && (!m_bUIExclusiveInput))
 		{
 			m_pIActionMapManager->Disable();
@@ -58,7 +58,7 @@ void CXGame::EnableUIOverlay(bool bEnable, bool bExclusiveInput)
 
 			m_bUIExclusiveInput = 0;
 		}
-		#endif
+#endif
 	}
 }
 
@@ -91,7 +91,7 @@ bool CXGame::IsSoundPotentiallyHearable(Vec3d &SoundPos, float fClipRadius)
 //! Retrieve the server-rules.
 CXServerRules* CXGame::GetRules() const
 {
-	if (m_pServer) 
+	if (m_pServer)
 		return m_pServer->GetRules();
 	// if not server.
 	return 0;
@@ -100,7 +100,7 @@ CXServerRules* CXGame::GetRules() const
 //////////////////////////////////////////////////////////////////////
 //!Force the view camera of the player
 //!(NOTE: this function is here because the editor needs it here)
-void CXGame::SetViewAngles(const Legacy::Vec3 &angles)
+void CXGame::SetViewAngles(const Legacy::Vec3& angles)
 {
 	if (m_pClient)
 		m_pClient->m_PlayerProcessingCmd.SetDeltaAngles(angles);
@@ -108,7 +108,7 @@ void CXGame::SetViewAngles(const Legacy::Vec3 &angles)
 
 //////////////////////////////////////////////////////////////////////
 //! Retrieve the local player-entity
-IEntity *CXGame::GetMyPlayer()
+IEntity* CXGame::GetMyPlayer()
 {
 	if (m_pClient)
 		return m_pClient->m_pISystem->GetLocalPlayer();
@@ -117,12 +117,12 @@ IEntity *CXGame::GetMyPlayer()
 
 //////////////////////////////////////////////////////////////////////////
 //! Selects the current UI (hud etc.)
-void CXGame::SetCurrentUI(CUIHud *pUI)
+void CXGame::SetCurrentUI(CUIHud* pUI)
 {
-	if (pUI!=m_pCurrentUI)  // new ui has been selected
+	if (pUI != m_pCurrentUI) // new ui has been selected
 	{
 		// shutdown the old one
-		if (m_pCurrentUI) 
+		if (m_pCurrentUI)
 			m_pCurrentUI->ShutDown();
 		// init the new one
 		m_pCurrentUI = pUI;
@@ -136,41 +136,44 @@ void CXGame::SetViewMode(bool bThirdPerson)
 {
 	if (GetMyPlayer())
 	{
-		CPlayer *pPlayer;
-		if (GetMyPlayer()->GetContainer()->QueryContainerInterface(CIT_IPLAYER,(void**)&pPlayer))
+		CPlayer* pPlayer;
+		if (GetMyPlayer()->GetContainer()->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer))
 		{
 			// prevent player from going into third person mode when he is aiming
 			if (pPlayer->m_stats.aiming)
 				return;
-			
+
 			// disable third person view when not in vehicle AND not in devmode
-			if(!IsDevModeEnable() && bThirdPerson && !pPlayer->GetVehicle())
+			if (!IsDevModeEnable() && bThirdPerson && !pPlayer->GetVehicle())
 				return;
 
 			pPlayer->m_bFirstPerson = !bThirdPerson;
 			// don't hide player - need to call CPlayer::OnDraw always for mounted weapons
 			// use pPlayer->m_bFirstPerson to avoid drawing player
-			pPlayer->GetEntity()->DrawCharacter(0,ETY_DRAW_NORMAL);
+			pPlayer->GetEntity()->DrawCharacter(0, ETY_DRAW_NORMAL);
 			pPlayer->SetViewMode(bThirdPerson);
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXGame::HideLocalPlayer( bool hide,bool bEditor )
+void CXGame::HideLocalPlayer(bool hide, bool bEditor)
 {
 	m_bHideLocalPlayer = hide;
 	if (GetMyPlayer())
 	{
-		CPlayer *pPlayer;
-		if (GetMyPlayer()->GetContainer()->QueryContainerInterface(CIT_IPLAYER,(void**)&pPlayer))
+		CPlayer* pPlayer;
+		if (GetMyPlayer()->GetContainer()->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer))
 		{
 			// [Marco K] weapons are now drawn through the player Entity
-			if(pPlayer->GetSelectedWeapon()){
-				if(hide){
+			if (pPlayer->GetSelectedWeapon())
+			{
+				if (hide)
+				{
 					pPlayer->GetEntity()->DrawCharacter(1, 0);
 				}
-				else{
+				else
+				{
 					pPlayer->GetEntity()->DrawCharacter(1, CS_FLAG_DRAW_NEAR);
 				}
 			}
@@ -183,17 +186,17 @@ void CXGame::HideLocalPlayer( bool hide,bool bEditor )
 				{
 					// Force player position on physics if it was desynched.
 					auto pos = pPlayer->GetEntity()->GetPos();
-					pPlayer->GetEntity()->SetPos(pos+Legacy::Vec3(0,0,0.1f)); // Force change of position.
+					pPlayer->GetEntity()->SetPos(pos + Legacy::Vec3(0, 0, 0.1f)); // Force change of position.
 					pPlayer->GetEntity()->SetPos(pos);
 				}
 			}
 			// hide actual player
-			if(hide)
+			if (hide)
 			{
-				pPlayer->GetEntity()->DrawCharacter(0,0);
+				pPlayer->GetEntity()->DrawCharacter(0, 0);
 			}
-			else 
-				pPlayer->SetViewMode(!pPlayer->IsFirstPerson());							
+			else
+				pPlayer->SetViewMode(!pPlayer->IsFirstPerson());
 		}
 	}
 }
@@ -206,22 +209,22 @@ void CXGame::ReloadScripts()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXGame::OnSetVar(ICVar *pVar)
+void CXGame::OnSetVar(ICVar* pVar)
 {
-	IXSystem *pS=GetXSystem();
+	IXSystem* pS = GetXSystem();
 	if (pS && IsMultiplayer())
 		pS->OnSetVar(pVar);
 }
 
 // FIXME: put all these parameters into a structure
 //////////////////////////////////////////////////////////////////////////
-void CXGame::CreateExplosion(const Legacy::Vec3& pos,float fDamage,float rmin,float rmax,float radius,float fImpulsivePressure,
-														 float fShakeFactor,float fDeafnessRadius,float fDeafnessTime,
-														 float fImpactForceMul,float fImpactForceMulFinal,float fImpactForceMulFinalTorso,
-														 float rMinOcc,int nOccRes,int nOccGrow, IEntity *pShooter, int shooterSSID, IEntity *pWeapon, 
-														 float fTerrainDefSize,int nTerrainDecalId, bool bScheduled)
+void CXGame::CreateExplosion(const Legacy::Vec3& pos, float fDamage, float rmin, float rmax, float radius, float fImpulsivePressure,
+                             float fShakeFactor, float fDeafnessRadius, float fDeafnessTime,
+                             float fImpactForceMul, float fImpactForceMulFinal, float fImpactForceMulFinalTorso,
+                             float rMinOcc, int nOccRes, int nOccGrow, IEntity* pShooter, int shooterSSID, IEntity* pWeapon,
+                             float fTerrainDefSize, int nTerrainDecalId, bool bScheduled)
 {
-	#if 0
+#if 0
 	if (!bScheduled && IsMultiplayer() && UseFixedStep())
 	{
 		if (IsServer())
@@ -396,13 +399,13 @@ void CXGame::CreateExplosion(const Legacy::Vec3& pos,float fDamage,float rmin,fl
 		Vec3d vHitDir = (pShooter->GetPos() - pos).GetNormalized();
 		m_pSystem->GetI3DEngine()->OnExplosion(pos,vHitDir,fTerrainDefSize,nTerrainDecalId,bDeform);
 	}
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool CXGame::GoreOn() const
 {
-	return (g_Gore->GetIVal()==2);
+	return (g_Gore->GetIVal() == 2);
 }
 
 #if 0
@@ -416,24 +419,24 @@ IBitStream *CXGame::GetIBitStream()
 }
 #endif
 //////////////////////////////////////////////////////////////////////////
-bool CXGame::ExecuteScript(const char *sPath,bool bForceReload)
+bool CXGame::ExecuteScript(const char* sPath, bool bForceReload)
 {
-	string temp=sPath;
+	string            temp = sPath;
 	string::size_type n;
-	n=temp.find("$GT$");
-	if(n!=string::npos)
+	n = temp.find("$GT$");
+	if (n != string::npos)
 	{
-		temp.replace(n,4,g_GameType->GetString());
-		if(!m_pScriptSystem->ExecuteFile(temp.c_str(),false,bForceReload))
+		temp.replace(n, 4, g_GameType->GetString());
+		if (!m_pScriptSystem->ExecuteFile(temp.c_str(), false, bForceReload))
 		{
-			temp=sPath;
-			temp.replace(n,4,"Default");
-			return m_pScriptSystem->ExecuteFile(temp.c_str(),true,bForceReload);
+			temp = sPath;
+			temp.replace(n, 4, "Default");
+			return m_pScriptSystem->ExecuteFile(temp.c_str(), true, bForceReload);
 		}
 		return true;
 	}
 	// no special path
-	return m_pScriptSystem->ExecuteFile(sPath,true);
+	return m_pScriptSystem->ExecuteFile(sPath, true);
 }
 
 #if 0
@@ -453,7 +456,7 @@ void CXGame::OnCollectUserData(INT_PTR nValue,int nCookie)		//AMD Port
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-int CXGame::AddTimer(IScriptObject *pTable,unsigned int nStartTimer,unsigned int nTimer,IScriptObject *pUserData,bool bUpdateDuringPause)
+int CXGame::AddTimer(IScriptObject* pTable, unsigned int nStartTimer, unsigned int nTimer, IScriptObject* pUserData, bool bUpdateDuringPause)
 {
-	return (m_pScriptTimerMgr->AddTimer(pTable,nStartTimer,nTimer,pUserData,bUpdateDuringPause));
+	return (m_pScriptTimerMgr->AddTimer(pTable, nStartTimer, nTimer, pUserData, bUpdateDuringPause));
 }

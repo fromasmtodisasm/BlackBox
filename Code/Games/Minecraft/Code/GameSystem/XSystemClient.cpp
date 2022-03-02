@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XSystemClient.cpp
@@ -20,14 +20,15 @@
 #include "BlackBox/3DEngine/I3DEngine.hpp"
 #include "UIHud.h"
 #if 0
-#include <ISound.h>
-#include <IMovieSystem.h>
-#include <IConsole.h>
+	#include <ISound.h>
+	#include <IMovieSystem.h>
+	#include <IConsole.h>
 #endif
 #include <ICryPak.h>
 
 //////////////////////////////////////////////////////////////////////
-CXSystemClient::CXSystemClient(CXGame *pGame,ILog *pLog):CXSystemBase(pGame,pLog)
+CXSystemClient::CXSystemClient(CXGame* pGame, ILog* pLog)
+    : CXSystemBase(pGame, pLog)
 {
 	m_pEntitySystem->EnableClient(true);
 }
@@ -45,7 +46,7 @@ void CXSystemClient::Release()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemClient::LoadLevel(const char *szLevelDir,const char *szMissionName, bool bEditor)
+bool CXSystemClient::LoadLevel(const char* szLevelDir, const char* szMissionName, bool bEditor)
 {
 	SMissionInfo missionInfo;
 	missionInfo.bEditor = bEditor;
@@ -62,15 +63,15 @@ bool CXSystemClient::LoadLevel(const char *szLevelDir,const char *szMissionName,
 	}
 
 	EndLoading(bEditor);
-	m_pGame->m_bMapLoadedFromCheckpoint=false;
+	m_pGame->m_bMapLoadedFromCheckpoint = false;
 
 	return (true);
 }
 
 //////////////////////////////////////////////////////////////////////
-IEntity*	CXSystemClient::SpawnEntity(CEntityDesc &ed)
+IEntity* CXSystemClient::SpawnEntity(CEntityDesc& ed)
 {
-	IEntity *pE=m_pEntitySystem->SpawnEntity(ed);
+	IEntity* pE = m_pEntitySystem->SpawnEntity(ed);
 	//reset the pos to 0 0 0 because the server doesn't send the pos into the description
 	//pE->SetPos( Vec3d(0.0f, 0.0f, 0.0f) );
 	if (pE && pE->GetPhysics())
@@ -79,7 +80,7 @@ IEntity*	CXSystemClient::SpawnEntity(CEntityDesc &ed)
 		pf.flagsOR = pef_monitor_impulses;
 		pE->GetPhysics()->SetParams(&pf);
 	}
-		
+
 	return pE;
 }
 
@@ -92,31 +93,32 @@ void CXSystemClient::RemoveEntity(EntityId wID, bool bRemoveNow)
 //////////////////////////////////////////////////////////////////////
 void CXSystemClient::DeleteAllEntities()
 {
-	#if 0
-#if !defined(LINUX)	
+#if 0
+	#if !defined(LINUX)	
 	IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
 	if (pMovieSystem)
 		pMovieSystem->Reset(false);
-#endif
 	#endif
+#endif
 	m_pEntitySystem->Reset();
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemClient::Disconnected(const char *szCause)
+void CXSystemClient::Disconnected(const char* szCause)
 {
-	if(!szCause) szCause = "NULL ERROR";
+	if (!szCause) szCause = "NULL ERROR";
 	TRACE("Client Disconnected");
 	TRACE(szCause);
-	m_pLog->LogToConsole("Client Disconnected %s",szCause);
+	m_pLog->LogToConsole("Client Disconnected %s", szCause);
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemClient::SetVariable(const char *sName,const char *sValue)
+void CXSystemClient::SetVariable(const char* sName, const char* sValue)
 {
-	ICVar *pCVar=m_pConsole->GetCVar(sName);
-	if(pCVar){
-		m_pLog->LogToConsole("SETTING %s=%s",sName,sValue);
+	ICVar* pCVar = m_pConsole->GetCVar(sName);
+	if (pCVar)
+	{
+		m_pLog->LogToConsole("SETTING %s=%s", sName, sValue);
 		pCVar->Set(sValue);
 	}
 }

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XSnapshot.h
@@ -30,7 +30,7 @@ class CStream;
 #include <BlackBox/EntitySystem/EntityDesc.hpp>
 
 typedef std::list<CNetEntityInfo> NetEntityList;
-typedef NetEntityList::iterator NetEntityListItor;
+typedef NetEntityList::iterator   NetEntityListItor;
 
 //////////////////////////////////////////////////////////////////////
 class CXSnapshot
@@ -41,47 +41,46 @@ public:
 	//! destructor
 	~CXSnapshot();
 
-	void Init(CXServer *pServer,CXServerSlot *pServerSlot);
-	
-	void SetSendPerSecond(int nSendPerSecond); // 0 mean 25 per second
-	int GetSendPerSecond();
+	void            Init(CXServer* pServer, CXServerSlot* pServerSlot);
+
+	void            SetSendPerSecond(int nSendPerSecond); // 0 mean 25 per second
+	int             GetSendPerSecond();
 
 	inline CStream& GetReliableStream() { return m_stmReliable; }
 	inline CStream& GetUnreliableStream() { return m_stmUnreliable; }
 
-	void AddEntity(IEntity *pEntity);
-	bool RemoveEntity(IEntity *pEntity);
+	void            AddEntity(IEntity* pEntity);
+	bool            RemoveEntity(IEntity* pEntity);
 
-	void SetClientBitsPerSecond(unsigned int rate);
+	void            SetClientBitsPerSecond(unsigned int rate);
 
-	void BuildAndSendSnapshot();
-	void Cleanup()
+	void            BuildAndSendSnapshot();
+	void            Cleanup()
 	{
 		m_lstNetEntities.clear();
 	}
 
 	//! \return absolute time when BuildAndSendSnapshot was called
-	float GetLastUpdate() const;
+	float         GetLastUpdate() const;
 
-	unsigned int			m_nMaxSnapshotBitSize;		//!< in bits, used for statistics only
-	unsigned int			m_nLastSnapshotBitSize;		//!< in bits, used for statistics only
-	NetEntityList			m_lstNetEntities;					//!<
+	unsigned int  m_nMaxSnapshotBitSize;  //!< in bits, used for statistics only
+	unsigned int  m_nLastSnapshotBitSize; //!< in bits, used for statistics only
+	NetEntityList m_lstNetEntities;       //!<
 
-private: 
+private:
+	void            Reset();
 
-	void Reset();
-
-	CXServer *				m_pServer;								//!<
-	CXServerSlot *		m_pServerSlot;						//!<
-	IXSystem *				m_pISystem;								//!<
-	ITimer *					m_pTimer;									//!<
-	IPhysicalWorld *	m_pPhysicalWorld;					//!<
-	int								m_nSendPerSecond;					//!<
-	float							m_fLastUpdate;						//!< absolute timer
-	CStream						m_stmReliable;						//!<
-	CStream						m_stmUnreliable;					//!<
-	unsigned int			m_clientMaxBitsPerSecond;	//!<
-	int								m_iCarryOverBps;					//!< in bits per second (negative or prositive)
+	CXServer*       m_pServer;                //!<
+	CXServerSlot*   m_pServerSlot;            //!<
+	IXSystem*       m_pISystem;               //!<
+	ITimer*         m_pTimer;                 //!<
+	IPhysicalWorld* m_pPhysicalWorld;         //!<
+	int             m_nSendPerSecond;         //!<
+	float           m_fLastUpdate;            //!< absolute timer
+	CStream         m_stmReliable;            //!<
+	CStream         m_stmUnreliable;          //!<
+	unsigned int    m_clientMaxBitsPerSecond; //!<
+	int             m_iCarryOverBps;          //!< in bits per second (negative or prositive)
 };
 
 #endif

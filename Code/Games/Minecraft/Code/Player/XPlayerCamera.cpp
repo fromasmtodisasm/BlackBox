@@ -1,14 +1,14 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XPlayerCamera.cpp
 //  Description: Entity Camera class.
 //
 //  History:
-//  - August 16, 2001: Created by Petar and Alberto 
+//  - August 16, 2001: Created by Petar and Alberto
 //	- October 21,2002: Created by splitting Xplayer.cpp in multiple files
 //	- Taken over by Anton Knyazyev
 //	- February 2005: Modified by Marco Corbetta for SDK release
@@ -26,8 +26,8 @@
 /*! Updates the lean angles 
 */
 void CPlayer::UpdateLean()
-{ 
-	#if 0
+{
+#if 0
 	IEntityCamera *camera = m_pEntity->GetCamera();
 	if (!camera)
 		return;
@@ -114,13 +114,13 @@ void CPlayer::UpdateLean()
 
 	float fAngle=m_walkParams.fCurrLean*m_LeanDegree;
 	m_vEyeAngles.y+=fAngle;
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 Legacy::Vec3 CPlayer::CalcLeanOffset(float leanAngle)
 {
-	#if 0
+#if 0
 	IEntityCamera *camera = m_pEntity->GetCamera();
 	if (!camera)
 		return Vec3d(0,0,0);
@@ -183,21 +183,21 @@ Legacy::Vec3 CPlayer::CalcLeanOffset(float leanAngle)
 	LeanOffset.z -= fabsf(leanAngle*m_pGame->p_lean_offset->GetFVal())*.36f;
 
 	return NormalPos+LeanOffset;
-	#endif
+#endif
 	return {};
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CPlayer::IsLeaning( )
+bool CPlayer::IsLeaning()
 {
-	return (m_walkParams.leanEnd!=m_walkParams.leanStart) || (m_walkParams.leanFactor);
+	return (m_walkParams.leanEnd != m_walkParams.leanStart) || (m_walkParams.leanFactor);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Updates the camera associated with the player
 void CPlayer::UpdateCamera()
-{	
-	#if 0
+{
+#if 0
 	IEntityCamera *camera = m_pEntity->GetCamera();
 	if (!camera)
 		return;
@@ -240,7 +240,7 @@ void CPlayer::UpdateCamera()
 		else  
 		if (!m_bFirstPerson)
 		{
-			#if 0
+	#if 0
 			//third person camera
 			Vec3 pos,angles;
 			pos = m_pEntity->GetPos();
@@ -295,7 +295,7 @@ void CPlayer::UpdateCamera()
 				if (pChar)
 					pChar->SetAnimationSpeed(1.0f);
 			}
-			#endif
+	#endif
 		}
 		else
 		{
@@ -316,14 +316,14 @@ void CPlayer::UpdateCamera()
 
 	if (camera)
 		camera->Update();
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 // sets players EYE position (camera for fpv)
 void CPlayer::SetEyePos()
 {
-	if( m_pGame->p_HeadCamera->GetIVal())
+	if (m_pGame->p_HeadCamera->GetIVal())
 		SetEyePosBone();
 	else
 		SetEyePosOffset();
@@ -337,21 +337,19 @@ void CPlayer::SetEyePosDead()
 		return;
 	SetEyePosBone();
 	m_vEyePos.z += .3f;
-	CryQuat qt=m_pBoneHead->GetParentWQuat();
-	Matrix33	mat(qt);
-	Vec3 ang=RAD2DEG(Ang3::GetAnglesXYZ( mat ));
-	m_vEyeAngles.x = -ang.x; 
-	m_vEyeAngles.y = ang.z; 
-	m_vEyeAngles.z = ang.y; 
+	CryQuat  qt = m_pBoneHead->GetParentWQuat();
+	Matrix33 mat(qt);
+	Vec3     ang   = RAD2DEG(Ang3::GetAnglesXYZ(mat));
+	m_vEyeAngles.x = -ang.x;
+	m_vEyeAngles.y = ang.z;
+	m_vEyeAngles.z = ang.y;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // sets players EYE position on head bone (camera for fpv)
 void CPlayer::SetEyePosBone()
 {
-
-	#if 0
+#if 0
 	if (!m_pBoneHead)
 		return;
 
@@ -362,23 +360,23 @@ void CPlayer::SetEyePosBone()
 	
 	bPos = mat.TransformPointOLD(bPos);
 	m_vEyePos = bPos + m_pEntity->GetPos();
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 // sets players EYE position (camera for fpv)
 void CPlayer::SetEyePosOffset()
 {
-	IEntityCamera *camera = m_pEntity->GetCamera();
+	IEntityCamera* camera = m_pEntity->GetCamera();
 	if (!camera)
 		return;
-	m_vEyePos = CalcLeanOffset(m_walkParams.fCurrLean/*m_walkParams.leanCur*/);
+	m_vEyePos = CalcLeanOffset(m_walkParams.fCurrLean /*m_walkParams.leanCur*/);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Updates the first person view (eg. shaking of camera while walking)
 void CPlayer::UpdateFirstPersonView()
-{	
+{
 #if 0
 	IEntityCamera *camera = m_pEntity->GetCamera();
 
@@ -580,18 +578,18 @@ void CPlayer::UpdateFirstPersonView()
 
 //////////////////////////////////////////////////////////////////////////
 //so not to do GetBoneByName every frame
-bool CPlayer::UpdateBonesPtrs( )
+bool CPlayer::UpdateBonesPtrs()
 {
-	ICryCharInstance *pChar = m_pEntity->GetCharInterface()->GetCharacter(0);
+	ICryCharInstance* pChar = m_pEntity->GetCharInterface()->GetCharacter(0);
 
 	if (pChar && pChar != m_pLastUsedCharacter)
 	{
 		m_pLastUsedCharacter = pChar;
-		m_pBoneHead = pChar->GetBoneByName("Bip01 Head"); // find bone in the list of bones;
-		m_pBoneNeck = pChar->GetBoneByName("Bip01 Neck"); // find bone in the list of bones		
-		m_pBoneSpine = pChar->GetBoneByName("Bip01 Spine"); // find bone in the list of bones		
-		m_pBoneSpine1 = pChar->GetBoneByName("Bip01 Spine1"); // find bone in the list of bones		
-		m_pBoneSpine2 = pChar->GetBoneByName("Bip01 Spine2"); // find bone in the list of bones		
+		m_pBoneHead          = pChar->GetBoneByName("Bip01 Head");   // find bone in the list of bones;
+		m_pBoneNeck          = pChar->GetBoneByName("Bip01 Neck");   // find bone in the list of bones
+		m_pBoneSpine         = pChar->GetBoneByName("Bip01 Spine");  // find bone in the list of bones
+		m_pBoneSpine1        = pChar->GetBoneByName("Bip01 Spine1"); // find bone in the list of bones
+		m_pBoneSpine2        = pChar->GetBoneByName("Bip01 Spine2"); // find bone in the list of bones
 		return true;
 	}
 	return false;
@@ -602,19 +600,17 @@ bool CPlayer::UpdateBonesPtrs( )
 		@param nWeaponIndex weapon-id to retrieve from
 		@return WeaponInfo if the function succeeds, NULL otherwise
 */
-void CPlayer::UpdateThirdPersonView( )
+void CPlayer::UpdateThirdPersonView()
 {
-
-	if(m_nSelectedWeaponID != -1 && IsMyPlayer())
+	if (m_nSelectedWeaponID != -1 && IsMyPlayer())
 	{
-		GetEntity()->DrawCharacter(1,0);
+		GetEntity()->DrawCharacter(1, 0);
 		GetEntity()->ResetAnimations(1);
 	}
 
-
-	m_pEntity->SetRndFlags(ERF_RECVSHADOWMAPS|ERF_RECVSHADOWMAPS_ACTIVE, false);
+	m_pEntity->SetRndFlags(ERF_RECVSHADOWMAPS | ERF_RECVSHADOWMAPS_ACTIVE, false);
 	m_pEntity->SetRndFlags(ERF_FIRST_PERSON_CAMERA_OWNER, false);
-	
-	if(IsMyPlayer())
+
+	if (IsMyPlayer())
 		m_pEntity->SetRndFlags(ERF_CASTSHADOWMAPS | ERF_CASTSHADOWVOLUME, true);
 }

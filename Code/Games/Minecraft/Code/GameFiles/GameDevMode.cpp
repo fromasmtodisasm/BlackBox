@@ -25,18 +25,18 @@ void CXGame::DevModeUpdate()
 #ifdef WIN32
 	m_currentLevelFolder = ".";
 
-#	if 0
+	#if 0
   m_pTimeDemoRecorder->Update();
 
   if (m_pSystem->GetIRenderer()->GetHWND() != ::GetActiveWindow())
     return;
-#	endif
+	#endif
 
 	// Check if special development keys were pressed.
-	bool bCtrl	= (GetAsyncKeyState(VK_CONTROL) & (1 << 15)) != 0;
+	bool bCtrl  = (GetAsyncKeyState(VK_CONTROL) & (1 << 15)) != 0;
 	bool bShift = (GetAsyncKeyState(VK_SHIFT) & (1 << 15)) != 0;
 
-	int key = 0;
+	int  key    = 0;
 	for (int i = 0; i < 8; i++)
 	{
 		if (GetAsyncKeyState(VK_F1 + i) & 1)
@@ -51,12 +51,12 @@ void CXGame::DevModeUpdate()
 	{
 		if (GetAsyncKeyState(VK_F9) & 1)
 		{
-			key	  = 1;
+			key   = 1;
 			bCtrl = true;
 		}
 		else if (GetAsyncKeyState(VK_F10) & 1)
 		{
-			key	   = 1;
+			key    = 1;
 			bShift = true;
 		}
 	}
@@ -75,12 +75,12 @@ void CXGame::DevModeUpdate()
 		}
 	}
 
-	bool bCancel	  = GetAsyncKeyState(VK_CANCEL) & 1;
+	bool bCancel      = GetAsyncKeyState(VK_CANCEL) & 1;
 	bool bTimeDemoKey = GetAsyncKeyState(VK_SNAPSHOT) & 1;
 
 	if (bCancel)
 	{
-#	if 0
+	#if 0
     if (m_pTimeDemoRecorder->IsRecording())
     {
       // Stop and save
@@ -92,12 +92,12 @@ void CXGame::DevModeUpdate()
       // Stop playing.
       StopDemoPlay();
     }
-#	endif
+	#endif
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Time demo on/off
 	//////////////////////////////////////////////////////////////////////////
-#	if 0
+	#if 0
   if (bCtrl && bTimeDemoKey)
   {
     if (!m_pTimeDemoRecorder->IsRecording())
@@ -114,7 +114,7 @@ void CXGame::DevModeUpdate()
       StartDemoPlay(g_timedemo_file->GetString());
     }
   }
-#	endif
+	#endif
 #endif
 }
 
@@ -149,13 +149,13 @@ void CXGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* 
 			float x = 0, y = 0, z = 0, ax = 0, ay = 0, az = 0;
 			fscanf(f, "%f,%f,%f,%f,%f,%f\n", &x, &y, &z, &ax, &ay, &az);
 			tagLocations[i] = Legacy::Vec3(x, y, z);
-			tagAngles[i]	= Legacy::Vec3(ax, ay, az);
+			tagAngles[i]    = Legacy::Vec3(ax, ay, az);
 		}
 		fclose(f);
 	}
 
 	tagLocations[index] = m_pSystem->GetViewCamera().GetPos();
-	tagAngles[index]	= m_pSystem->GetViewCamera().GetAngles();
+	tagAngles[index]    = m_pSystem->GetViewCamera().GetAngles();
 	SetFileAttributes(filename.c_str(), 0);
 
 	f = fopen(filename.c_str(), "wt"); // Dont change this to CryPak
@@ -164,8 +164,8 @@ void CXGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* 
 		for (int i = 0; i < 12; i++)
 		{
 			fprintf(f, "%f,%f,%f,%f,%f,%f\n",
-					tagLocations[i].x, tagLocations[i].y, tagLocations[i].z,
-					tagAngles[i].x, tagAngles[i].y, tagAngles[i].z);
+			        tagLocations[i].x, tagLocations[i].y, tagLocations[i].z,
+			        tagAngles[i].x, tagAngles[i].y, tagAngles[i].z);
 		}
 		fprintf(f, "%s\n", desc);
 		fclose(f);
@@ -175,7 +175,7 @@ void CXGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* 
 		GameWarning("Cannot overwrite Tag point file %s not found (Check if read-only)", filename.c_str());
 	}
 
-#	if 0
+	#if 0
   if (sTagName && strlen(sTagName) > 0)
   {
     //////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ void CXGame::DevMode_SavePlayerPos(int index, const char* sTagName, const char* 
     filename = m_currentLevelFolder + "/" + sTagName + ".grp";
     root->saveToFile(filename.c_str());
   }
-#	endif
+	#endif
 #endif
 }
 
@@ -206,11 +206,11 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 #ifdef WIN32
 	if (index < 0 && index > 11)
 		return;
-#	if 0
+	#if 0
   IEntity* pPlayer = GetMyPlayer();
   if (!pPlayer)
     return;
-#	endif
+	#endif
 
 	if (!IsDevModeEnable())
 		return;
@@ -220,7 +220,7 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 	memset(tagAngles, 0, sizeof(tagAngles));
 	memset(tagLocations, 0, sizeof(tagLocations));
 
-	char desc[1024];
+	char   desc[1024];
 	string filename = m_currentLevelFolder + "/tags.txt";
 	if (sTagName)
 		filename = m_currentLevelFolder + "/" + sTagName + ".tagpoint";
@@ -234,7 +234,7 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 			float x = 0, y = 0, z = 0, ax = 0, ay = 0, az = 0;
 			fscanf(f, "%f,%f,%f,%f,%f,%f,%s\n", &x, &y, &z, &ax, &ay, &az, desc);
 			tagLocations[i] = Legacy::Vec3(x, y, z);
-			tagAngles[i]	= Legacy::Vec3(ax, ay, az);
+			tagAngles[i]    = Legacy::Vec3(ax, ay, az);
 		}
 		fscanf(f, "%s\n", desc);
 		if (strlen(desc) > 0)
@@ -248,18 +248,18 @@ void CXGame::DevMode_LoadPlayerPos(int index, const char* sTagName)
 
 	Legacy::Vec3 p = tagLocations[index];
 	Legacy::Vec3 a = tagAngles[index];
-#	if 0
+	#if 0
   if (!p.IsZero())
   {
     m_pSystem->GetViewCamera().SetPos(p);
     pPlayer->SetPos(p);
   }
-#	else
+	#else
 	if (p != Legacy::Vec3(0.f))
 	{
 		m_pSystem->GetViewCamera().SetPos(p);
 	}
-#	endif
+	#endif
 	if (a != Legacy::Vec3(0.f))
 	{
 		m_pSystem->GetViewCamera().SetAngles(a);

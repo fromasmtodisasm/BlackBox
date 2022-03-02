@@ -1,10 +1,10 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: UIButton.h  
+//  File: UIButton.h
 //  Description: UI buttons handling
 //
 //  History:
@@ -15,15 +15,13 @@
 
 #pragma once
 
-
-#define UICLASSNAME_BUTTON			"UIButton"
+#define UICLASSNAME_BUTTON "UIButton"
 #include "UIWidget.h"
 class CUISystem;
 
 //////////////////////////////////////////////////////////////////////////
-class CUIButton : public CUIWidget,
-	public _ScriptableEx<CUIButton>
-{	
+class CUIButton : public CUIWidget, public _ScriptableEx<CUIButton>
+{
 	UI_WIDGET(CUIButton)
 
 public:
@@ -32,47 +30,46 @@ public:
 
 	std::string GetClassName();
 
-	LRESULT Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam);	//AMD Port
-	int Draw(int iPass);
+	LRESULT     Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam); //AMD Port
+	int         Draw(int iPass);
 
-	int SetText(const std::wstring &szText);
+	int         SetText(const std::wstring& szText);
 
-	static void InitializeTemplate(IScriptSystem *pScriptSystem);
+	static void InitializeTemplate(IScriptSystem* pScriptSystem);
 
-	////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////
 	// Script Functions
-	////////////////////////////////////////////////////////////////////// 
-	int SetText(IFunctionHandler *pH);
-	int GetText(IFunctionHandler *pH);
+	//////////////////////////////////////////////////////////////////////
+	int         SetText(IFunctionHandler* pH);
+	int         GetText(IFunctionHandler* pH);
 
-	int GetState(IFunctionHandler *pH);
-	int SetState(IFunctionHandler *pH);
+	int         GetState(IFunctionHandler* pH);
+	int         SetState(IFunctionHandler* pH);
 
-	int SetVAlign(IFunctionHandler *pH);
-	int GetVAlign(IFunctionHandler *pH);
+	int         SetVAlign(IFunctionHandler* pH);
+	int         GetVAlign(IFunctionHandler* pH);
 
-	int SetHAlign(IFunctionHandler *pH);
-	int GetHAlign(IFunctionHandler *pH);
+	int         SetHAlign(IFunctionHandler* pH);
+	int         GetHAlign(IFunctionHandler* pH);
 
-	int SetTexture(IFunctionHandler *pH);
-	int GetTexture(IFunctionHandler *pH);
+	int         SetTexture(IFunctionHandler* pH);
+	int         GetTexture(IFunctionHandler* pH);
 
-	int SetDownTexture(IFunctionHandler *pH);
-	int GetDownTexture(IFunctionHandler *pH);
+	int         SetDownTexture(IFunctionHandler* pH);
+	int         GetDownTexture(IFunctionHandler* pH);
 
-	int SetOverTexture(IFunctionHandler *pH);
-	int GetOverTexture(IFunctionHandler *pH);
+	int         SetOverTexture(IFunctionHandler* pH);
+	int         GetOverTexture(IFunctionHandler* pH);
 
-	int SetOverState(IFunctionHandler *pH);
+	int         SetOverState(IFunctionHandler* pH);
 
 private:
+	std::wstring  m_szText;
+	int           m_iHAlignment;
+	int           m_iVAlignment;
 
-	std::wstring					m_szText;
-	int							m_iHAlignment;
-	int							m_iVAlignment;
+	int           m_iState;
+	bool          m_bKeepOver;
 
-	int							m_iState;
-	bool						m_bKeepOver;
-
-	UISkinTexture		m_pTexture;
+	UISkinTexture m_pTexture;
 };

@@ -1,11 +1,11 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-//	
+//
 //	File: GameMovieUser.h
-//  Description:	Give access to movie functions from within the game. 
+//  Description:	Give access to movie functions from within the game.
 //	Interface for movie-system implemented by user for advanced function-support.
 //
 //	History:
@@ -21,33 +21,34 @@
 class CMovieUser : public IMovieUser, public ISoundEventListener
 {
 private:
-	CXGame *m_pGame;
-public: 
-	CMovieUser(CXGame *pGame)
+	CXGame* m_pGame;
+
+public:
+	CMovieUser(CXGame* pGame)
 	{
 		m_InCutSceneCounter = 0;
-		m_wPrevClientId = 0;
-		m_pGame=pGame;
-		m_fPrevMusicVolume=0;
+		m_wPrevClientId     = 0;
+		m_pGame             = pGame;
+		m_fPrevMusicVolume  = 0;
 	}
 
 	// interface IMovieUser
-	void SetActiveCamera(const SCameraParams &Params);
-	void BeginCutScene(unsigned long dwFlags,bool bResetFX);
+	void SetActiveCamera(const SCameraParams& Params);
+	void BeginCutScene(unsigned long dwFlags, bool bResetFX);
 	void EndCutScene();
-	void SendGlobalEvent(const char *pszEvent);
-	void PlaySubtitles( ISound *pSound );
+	void SendGlobalEvent(const char* pszEvent);
+	void PlaySubtitles(ISound* pSound);
 
 	// Implements ISoundEventListener.
-	void OnSoundEvent( ESoundCallbackEvent event,ISound *pSound );
+	void OnSoundEvent(ESoundCallbackEvent event, ISound* pSound);
 
 private:
-	void ResetCutSceneParams();
+	void  ResetCutSceneParams();
 
-	int m_InCutSceneCounter;
-	int m_wPrevClientId;
+	int   m_InCutSceneCounter;
+	int   m_wPrevClientId;
 	Vec3d m_vPrevClientPos;
-	bool m_bSoundsPaused;
+	bool  m_bSoundsPaused;
 	float m_fPrevMusicVolume;
 };
 

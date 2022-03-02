@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XSystemDummy.h
@@ -16,7 +16,7 @@
 #ifndef GAME_XSYSTEMDUMMY_H
 #define GAME_XSYSTEMDUMMY_H
 #if _MSC_VER > 1000
-# pragma once
+	#pragma once
 #endif
 
 #include "XSystemBase.h"
@@ -27,25 +27,24 @@
 class CXSystemDummy : public CXSystemBase
 {
 public:
-	CXSystemDummy(CXGame *pGame,ILog *pLog);
+	CXSystemDummy(CXGame* pGame, ILog* pLog);
 	virtual ~CXSystemDummy();
 
 	//// IXSystem ///////////////////////////////
-	void		Release();
-	bool		LoadLevel(const char *szLevelDir,const char *szMissionName, bool bEditor=false);
-	IEntity*	SpawnEntity(class CEntityDesc &ed);
-	void		RemoveEntity(EntityId wID, bool bRemoveNow = false);
-	void		DeleteAllEntities();
-	void		Disconnected(const char *szCause);
-	void		SetMyPlayer(EntityId wID);
-	virtual int	AddTeam(string sTeamName, int nTeamId) { return -1; }
+	void        Release();
+	bool        LoadLevel(const char* szLevelDir, const char* szMissionName, bool bEditor = false);
+	IEntity*    SpawnEntity(class CEntityDesc& ed);
+	void        RemoveEntity(EntityId wID, bool bRemoveNow = false);
+	void        DeleteAllEntities();
+	void        Disconnected(const char* szCause);
+	void        SetMyPlayer(EntityId wID);
+	virtual int AddTeam(string sTeamName, int nTeamId) { return -1; }
 	virtual int AddTeam(const char* sTeam, int nTeamId = -1) { return -1; }
-	void		RemoveTeam(int nTeamId) {}
-	void		SetTeamScore(int nTeamId, short nScore) {}
-	void		OnSpawn(IEntity *ent, CEntityDesc & ed){};
-	void		OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity ){};
-	bool		WriteTeams(CStream &stm){return true;}
-
+	void        RemoveTeam(int nTeamId) {}
+	void        SetTeamScore(int nTeamId, short nScore) {}
+	void        OnSpawn(IEntity* ent, CEntityDesc& ed){};
+	void        OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity){};
+	bool        WriteTeams(CStream& stm) { return true; }
 };
 
 #endif // GAME_XSYSTEMDUMMY_H

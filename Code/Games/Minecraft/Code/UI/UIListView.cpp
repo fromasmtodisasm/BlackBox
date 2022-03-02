@@ -1,10 +1,10 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: UIListView.cpp  
+//  File: UIListView.cpp
 //  Description: A list view
 //
 //  History:
@@ -24,67 +24,67 @@
 
 //FIXME: remove it
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+	#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+	#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 _DECLARE_SCRIPTABLEEX(CUIListView);
-CUIListView *CUIListView::m_pStaticThis = 0;
+CUIListView* CUIListView::m_pStaticThis = 0;
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIListView::CUIListView()
-: m_fHeaderHeight(16.0f),
-	m_fItemHeight(18.0f),
-	m_fVerticalOffset(0),
-	m_fHorizontalOffset(0),
-	m_bVerticalScrollBar(0),
-	m_bHorizontalScrollBar(0),
-	m_iSortOrder(UISORT_ASCENDING),
-	m_iSortColumn(0),
-	m_iNewIndex(1),
-	m_bColumnSelect(0),
-	m_iSelectedColumn(0),
-	m_bNeedSort(0),
-	m_pVScroll(0),
-	m_pHScroll(0),
-	m_fCellSpacing(0.0f),
-	m_fCellPadding(0.0f),
-	m_fTotalWidth(0.0f),
-	m_fTotalHeight(0.0f),
-	m_fColumnTextSpacing(0),
-	m_cSelectionColor(0.0f, 0.0f, 0.8f, 0.8f),
-	m_iNoSort(0),
-	m_cSortByColor(0.0f, 0.0f, 0.85f, 1.0f),
-	m_cSortByTextColor(1.0f, 1.0f, 1.0f, 1.0f)
+    : m_fHeaderHeight(16.0f)
+    , m_fItemHeight(18.0f)
+    , m_fVerticalOffset(0)
+    , m_fHorizontalOffset(0)
+    , m_bVerticalScrollBar(0)
+    , m_bHorizontalScrollBar(0)
+    , m_iSortOrder(UISORT_ASCENDING)
+    , m_iSortColumn(0)
+    , m_iNewIndex(1)
+    , m_bColumnSelect(0)
+    , m_iSelectedColumn(0)
+    , m_bNeedSort(0)
+    , m_pVScroll(0)
+    , m_pHScroll(0)
+    , m_fCellSpacing(0.0f)
+    , m_fCellPadding(0.0f)
+    , m_fTotalWidth(0.0f)
+    , m_fTotalHeight(0.0f)
+    , m_fColumnTextSpacing(0)
+    , m_cSelectionColor(0.0f, 0.0f, 0.8f, 0.8f)
+    , m_iNoSort(0)
+    , m_cSortByColor(0.0f, 0.0f, 0.85f, 1.0f)
+    , m_cSortByTextColor(1.0f, 1.0f, 1.0f, 1.0f)
 {
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIListView::~CUIListView()
 {
 	Clear();
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 string CUIListView::GetClassName()
 {
 	return UICLASSNAME_LISTVIEW;
 }
 
-////////////////////////////////////////////////////////////////////// 
-LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	//AMD Port
+//////////////////////////////////////////////////////////////////////
+LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
 	if (iMessage == UIM_DRAW)
 	{
-		m_pHScroll = (CUIScrollBar *)GetChild("hscrollbar");
-		m_pVScroll = (CUIScrollBar *)GetChild("vscrollbar");
+		m_pHScroll       = (CUIScrollBar*)GetChild("hscrollbar");
+		m_pVScroll       = (CUIScrollBar*)GetChild("vscrollbar");
 
 		UIRect pListRect = GetListRect(1);
 
-		bool bVScroll = 0, bHScroll = 0;
+		bool   bVScroll = 0, bHScroll = 0;
 
 		// check if we need an horizontal scrollbar
 		m_fTotalWidth = 0.0f;
@@ -97,8 +97,8 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		m_fTotalWidth -= m_fCellSpacing;
 		m_fTotalHeight = m_vItemList.size() * (m_fItemHeight + m_fCellSpacing);
 
-		bVScroll = (m_fTotalHeight > pListRect.fHeight - GetHeaderRect().fHeight - m_fCellSpacing);
-		bHScroll = (m_fTotalWidth > pListRect.fWidth);
+		bVScroll       = (m_fTotalHeight > pListRect.fHeight - GetHeaderRect().fHeight - m_fCellSpacing);
+		bHScroll       = (m_fTotalWidth > pListRect.fWidth);
 
 		if (bHScroll)
 		{
@@ -116,7 +116,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		}
 		else if (m_bHorizontalScrollBar)
 		{
-			m_fHorizontalOffset = 0;
+			m_fHorizontalOffset    = 0;
 			m_bHorizontalScrollBar = 0;
 
 			m_pHScroll->SetValue(0.0f);
@@ -140,25 +140,24 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		else if (m_bVerticalScrollBar)
 		{
 			m_bVerticalScrollBar = 0;
-			m_fVerticalOffset = 0;
+			m_fVerticalOffset    = 0;
 
 			m_pVScroll->SetValue(0.0f);
 		}
-
 
 		// so we can calculate the scrollbar rects accurately
 		pListRect = GetListRect(0);
 
 		if (m_bVerticalScrollBar)
 		{
-			UIRect pVScrollRect;
+			UIRect   pVScrollRect;
 			UIBorder pBorder;
-			
+
 			m_pVScroll->GetBorder(&pBorder);
 
-			pVScrollRect.fLeft = m_pUISystem->AdjustWidth(pBorder.fSize) + pListRect.fLeft + pListRect.fWidth - m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
-			pVScrollRect.fTop = pListRect.fTop;
-			pVScrollRect.fWidth = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
+			pVScrollRect.fLeft   = m_pUISystem->AdjustWidth(pBorder.fSize) + pListRect.fLeft + pListRect.fWidth - m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
+			pVScrollRect.fTop    = pListRect.fTop;
+			pVScrollRect.fWidth  = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
 			pVScrollRect.fHeight = pListRect.fHeight - (bHScroll ? m_pUISystem->GetWidgetRect(m_pHScroll).fHeight : 0);
 
 			if ((m_fHeaderHeight > 0.125f) && (m_vColumnList.size()))
@@ -180,7 +179,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				if (m_pVScroll = (CUIScrollBar *)GetChild("vscrollbar"))
+				if (m_pVScroll = (CUIScrollBar*)GetChild("vscrollbar"))
 				{
 					m_pVScroll->SetFlags(m_pVScroll->GetFlags() & ~UIFLAG_VISIBLE);
 				}
@@ -189,20 +188,20 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 
 		if (m_bHorizontalScrollBar)
 		{
-			UIRect pHScrollRect;
+			UIRect   pHScrollRect;
 			UIBorder pBorder;
 
 			m_pHScroll->GetBorder(&pBorder);
 
-			pHScrollRect.fLeft = pListRect.fLeft;
-			pHScrollRect.fTop = m_pUISystem->AdjustHeight(pBorder.fSize) + pListRect.fTop + pListRect.fHeight - m_pUISystem->GetWidgetRect(m_pHScroll).fHeight;
-			pHScrollRect.fWidth = pListRect.fWidth - (bVScroll ? m_pUISystem->GetWidgetRect(m_pVScroll).fWidth : 0);
+			pHScrollRect.fLeft   = pListRect.fLeft;
+			pHScrollRect.fTop    = m_pUISystem->AdjustHeight(pBorder.fSize) + pListRect.fTop + pListRect.fHeight - m_pUISystem->GetWidgetRect(m_pHScroll).fHeight;
+			pHScrollRect.fWidth  = pListRect.fWidth - (bVScroll ? m_pUISystem->GetWidgetRect(m_pVScroll).fWidth : 0);
 			pHScrollRect.fHeight = m_pUISystem->GetWidgetRect(m_pHScroll).fHeight;
 
 			assert(m_pHScroll);
 
 			m_pHScroll->SetRect(pHScrollRect, 1);
-			
+
 			m_pHScroll->SetStep(max((pListRect.fWidth * 0.1f) / (m_fTotalWidth - pListRect.fWidth), 0.05f));
 		}
 		else
@@ -213,7 +212,7 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				if (m_pHScroll = (CUIScrollBar *)GetChild("hscrollbar"))
+				if (m_pHScroll = (CUIScrollBar*)GetChild("hscrollbar"))
 				{
 					m_pHScroll->SetFlags(m_pHScroll->GetFlags() & ~UIFLAG_VISIBLE);
 				}
@@ -227,372 +226,371 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 	{
 	case UIM_KEYUP:
 	case UIM_KEYPRESSED:
+	{
+		switch (lParam)
 		{
-			switch(lParam)
+		case Legacy::XKEY_PAGE_DOWN:
+		case Legacy::XKEY_MWHEEL_DOWN:
+		{
+			if (m_pVScroll)
 			{
-			case Legacy::XKEY_PAGE_DOWN:
-			case Legacy::XKEY_MWHEEL_DOWN:
-				{
-					if (m_pVScroll)
-					{
-						// scroll 3 items down
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
-					}
-				}
-				break;
-			case Legacy::XKEY_PAGE_UP:
-			case Legacy::XKEY_MWHEEL_UP:
-				{
-					if (m_pVScroll)
-					{
-						// scroll 3 items up
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
-						m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
-					}
-				}
-				break;
-			case Legacy::XKEY_SPACE:
-			case Legacy::XKEY_RETURN:
-			case Legacy::XKEY_NUMPADENTER:
-				{
-					OnCommand();
-				}
-				break;
-			case Legacy::XKEY_LEFT:
-			case Legacy::XKEY_RIGHT:
-				{
-					if (!m_bColumnSelect)
-					{
-						if (m_pHScroll)
-						{
-							m_pUISystem->SendMessage(m_pHScroll, UIM_KEYDOWN, 0, lParam);
-						}
-					}
-					else
-					{
-						if (lParam == Legacy::XKEY_LEFT)
-						{
-							int it = m_iSelectedColumn;
-
-							do
-							{
-								--it;
-							} while(it && !m_vColumnList[it].bSelectable);
-
-							if ((it >= 0) && m_vColumnList[it].bSelectable)
-							{
-								m_iSelectedColumn = it;
-							}
-						}
-						else
-						{
-							int it = m_iSelectedColumn;
-
-							do
-							{
-								++it;
-							} while((it < m_vColumnList.size()) && !m_vColumnList[it].bSelectable);
-
-							if ((it < m_vColumnList.size()) && (m_vColumnList[it].bSelectable))
-							{
-								m_iSelectedColumn = it;
-							}
-						}
-					}
-				}
-				break;
-			case Legacy::XKEY_DOWN:
-				{
-					if (m_vSelectionList.empty())
-					{
-						for (CUIListItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
-						{
-							if ((*it)->bSelectable)
-							{
-								SelectIndex((*it)->iIndex);
-								OnChanged();
-
-								if (!m_vSelectionList.empty())
-								{
-									ScrollTo(m_vSelectionList[0]);
-								}
-
-								break;
-							}
-						}
-					}
-					else
-					{
-						// get first selected
-						int iSelected = *(m_vSelectionList.end()-1);
-						int iPosition = 0;
-
-						for (CUIListItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
-						{
-							if ((*it)->iIndex == iSelected)
-							{
-								do
-								{
-									++it;
-									++iPosition;
-								} while(it != m_vItemList.end() && !(*it)->bSelectable);
-
-								if (it != m_vItemList.end())
-								{
-									ClearSelection();
-									SelectIndex((*it)->iIndex);
-									OnChanged();
-
-									if (!m_vSelectionList.empty())
-									{
-										ScrollTo(m_vSelectionList[0]);
-									}
-								}
-
-								break;
-							}
-							++iPosition;
-						}
-					}
-				}
-				break;
-			case Legacy::XKEY_UP:
-				{
-					if (m_vSelectionList.empty())
-					{
-						for (CUIListItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
-						{
-							if ((*it)->bSelectable)
-							{
-								SelectIndex((*it)->iIndex);
-								OnChanged();
-
-								if (!m_vSelectionList.empty())
-								{
-									ScrollTo(m_vSelectionList[0]);
-								}
-
-								break;
-							}
-						}
-					}
-					else
-					{
-						// get first selected
-						int iSelected = *(m_vSelectionList.end()-1);
-						int iPosition = 0;
-
-						for (CUIListItemList::reverse_iterator rit = m_vItemList.rbegin(); rit != m_vItemList.rend(); ++rit)
-						{
-							if ((*rit)->iIndex == iSelected)
-							{
-								do
-								{
-									++rit;
-									++iPosition;
-								} while(rit != m_vItemList.rend() && !(*rit)->bSelectable);
-
-								if (rit != m_vItemList.rend())
-								{
-									ClearSelection();
-									SelectIndex((*rit)->iIndex);
-									OnChanged();
-
-									if (!m_vSelectionList.empty())
-									{
-										ScrollTo(m_vSelectionList[0]);
-									}
-								}
-
-								break;
-							}
-							++iPosition;
-						}
-					}
-				}
-				break;
+				// scroll 3 items down
+				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
+				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
+				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
 			}
 		}
 		break;
-	case UIM_LBUTTONUP:
+		case Legacy::XKEY_PAGE_UP:
+		case Legacy::XKEY_MWHEEL_UP:
 		{
-			// change sort method when you  click a column header
-			if (m_vColumnList.size())
+			if (m_pVScroll)
 			{
-				float fX = UIM_GET_X_FLOAT(wParam);
-				float fY = UIM_GET_Y_FLOAT(wParam);
-
-				UIRect pHeaderRect = GetHeaderRect();
-
-				if (m_pUISystem->PointInRect(pHeaderRect, fX, fY) && !m_iNoSort)
-				{
-					int iColumn = FindColumnAt(fX, fY);
-
-					if (iColumn > -1)
-					{
-						if (iColumn == m_iSortColumn)
-						{
-							if (m_iSortOrder == UISORT_ASCENDING)
-							{
-								m_iSortOrder = UISORT_DESCENDING;
-							}
-							else
-							{
-								m_iSortOrder = UISORT_ASCENDING;
-							}
-						}
-						else
-						{
-							m_iSortOrder = UISORT_ASCENDING;
-							m_iSortColumn = iColumn;
-						}
-
-						Sort();
-					}
-				}
+				// scroll 3 items up
+				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
+				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
+				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
 			}
 		}
 		break;
-	case UIM_LBUTTONDOWN:
+		case Legacy::XKEY_SPACE:
+		case Legacy::XKEY_RETURN:
+		case Legacy::XKEY_NUMPADENTER:
 		{
-			float fX = UIM_GET_X_FLOAT(wParam);
-			float fY = UIM_GET_Y_FLOAT(wParam);
-
-			UIListItem *pItem = 0;
-			CUIListItemItor pItor;
-
-			UIRect pListRect = GetListRect();
-
-			if (!m_vColumnList.empty())
+			OnCommand();
+		}
+		break;
+		case Legacy::XKEY_LEFT:
+		case Legacy::XKEY_RIGHT:
+		{
+			if (!m_bColumnSelect)
 			{
-				pListRect.fTop += GetHeaderRect().fHeight + m_fCellSpacing;
-
-				if (!m_pUISystem->PointInRect(pListRect, fX, fY))
+				if (m_pHScroll)
 				{
-					break;
+					m_pUISystem->SendMessage(m_pHScroll, UIM_KEYDOWN, 0, lParam);
 				}
 			}
-
-			int iColumn = 0;
-			int iIndex = FindItemAt(fX, fY, &pItem, &iColumn, &pItor);
-
-			if (iIndex > -1 && (!m_bColumnSelect || (m_bColumnSelect && m_vColumnList[iColumn].bSelectable)))
+			else
 			{
-				m_iSelectedColumn = iColumn;
-
-				UIListItem *pSelectedItem = GetItem(iIndex);
-
-				assert(pItem);
-
-				if (!pItem->bSelectable)
+				if (lParam == Legacy::XKEY_LEFT)
 				{
-					ClearSelection();
-					OnChanged();
+					int it = m_iSelectedColumn;
 
-					break;
-				}
-				else if (GetStyle() & UISTYLE_MULTISELECTION)
-				{
-					if ((m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL)) || (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL)))
+					do
 					{
-						
-						SelectIndex(iIndex);
+						--it;
+					} while (it && !m_vColumnList[it].bSelectable);
 
-						m_pSelectionStart = pItor;
-
-						OnChanged();
-					}
-					else if ((m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT)) || (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT)))
+					if ((it >= 0) && m_vColumnList[it].bSelectable)
 					{
-						if ((GetSelectionCount() > 0) && (pItor != m_pSelectionStart))
-						{
-							if (m_pSelectionStart > pItor)
-							{
-								while (m_pSelectionStart != pItor)
-								{
-									SelectIndex((*pItor)->iIndex);
-
-									pItor++;
-								}
-
-								OnChanged();
-							}
-							else
-							{
-								while (m_pSelectionStart != pItor)
-								{
-									SelectIndex((*pItor)->iIndex);
-
-									pItor--;
-								}
-
-								OnChanged();
-							}
-						}
-						else
-						{
-							SelectIndex(iIndex);
-
-							m_pSelectionStart = pItor;
-
-							OnChanged();
-						}
+						m_iSelectedColumn = it;
 					}
 				}
 				else
 				{
-					ClearSelection();
+					int it = m_iSelectedColumn;
 
+					do
+					{
+						++it;
+					} while ((it < m_vColumnList.size()) && !m_vColumnList[it].bSelectable);
+
+					if ((it < m_vColumnList.size()) && (m_vColumnList[it].bSelectable))
+					{
+						m_iSelectedColumn = it;
+					}
+				}
+			}
+		}
+		break;
+		case Legacy::XKEY_DOWN:
+		{
+			if (m_vSelectionList.empty())
+			{
+				for (CUIListItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
+				{
+					if ((*it)->bSelectable)
+					{
+						SelectIndex((*it)->iIndex);
+						OnChanged();
+
+						if (!m_vSelectionList.empty())
+						{
+							ScrollTo(m_vSelectionList[0]);
+						}
+
+						break;
+					}
+				}
+			}
+			else
+			{
+				// get first selected
+				int iSelected = *(m_vSelectionList.end() - 1);
+				int iPosition = 0;
+
+				for (CUIListItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
+				{
+					if ((*it)->iIndex == iSelected)
+					{
+						do
+						{
+							++it;
+							++iPosition;
+						} while (it != m_vItemList.end() && !(*it)->bSelectable);
+
+						if (it != m_vItemList.end())
+						{
+							ClearSelection();
+							SelectIndex((*it)->iIndex);
+							OnChanged();
+
+							if (!m_vSelectionList.empty())
+							{
+								ScrollTo(m_vSelectionList[0]);
+							}
+						}
+
+						break;
+					}
+					++iPosition;
+				}
+			}
+		}
+		break;
+		case Legacy::XKEY_UP:
+		{
+			if (m_vSelectionList.empty())
+			{
+				for (CUIListItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
+				{
+					if ((*it)->bSelectable)
+					{
+						SelectIndex((*it)->iIndex);
+						OnChanged();
+
+						if (!m_vSelectionList.empty())
+						{
+							ScrollTo(m_vSelectionList[0]);
+						}
+
+						break;
+					}
+				}
+			}
+			else
+			{
+				// get first selected
+				int iSelected = *(m_vSelectionList.end() - 1);
+				int iPosition = 0;
+
+				for (CUIListItemList::reverse_iterator rit = m_vItemList.rbegin(); rit != m_vItemList.rend(); ++rit)
+				{
+					if ((*rit)->iIndex == iSelected)
+					{
+						do
+						{
+							++rit;
+							++iPosition;
+						} while (rit != m_vItemList.rend() && !(*rit)->bSelectable);
+
+						if (rit != m_vItemList.rend())
+						{
+							ClearSelection();
+							SelectIndex((*rit)->iIndex);
+							OnChanged();
+
+							if (!m_vSelectionList.empty())
+							{
+								ScrollTo(m_vSelectionList[0]);
+							}
+						}
+
+						break;
+					}
+					++iPosition;
+				}
+			}
+		}
+		break;
+		}
+	}
+	break;
+	case UIM_LBUTTONUP:
+	{
+		// change sort method when you  click a column header
+		if (m_vColumnList.size())
+		{
+			float  fX          = UIM_GET_X_FLOAT(wParam);
+			float  fY          = UIM_GET_Y_FLOAT(wParam);
+
+			UIRect pHeaderRect = GetHeaderRect();
+
+			if (m_pUISystem->PointInRect(pHeaderRect, fX, fY) && !m_iNoSort)
+			{
+				int iColumn = FindColumnAt(fX, fY);
+
+				if (iColumn > -1)
+				{
+					if (iColumn == m_iSortColumn)
+					{
+						if (m_iSortOrder == UISORT_ASCENDING)
+						{
+							m_iSortOrder = UISORT_DESCENDING;
+						}
+						else
+						{
+							m_iSortOrder = UISORT_ASCENDING;
+						}
+					}
+					else
+					{
+						m_iSortOrder  = UISORT_ASCENDING;
+						m_iSortColumn = iColumn;
+					}
+
+					Sort();
+				}
+			}
+		}
+	}
+	break;
+	case UIM_LBUTTONDOWN:
+	{
+		float           fX    = UIM_GET_X_FLOAT(wParam);
+		float           fY    = UIM_GET_Y_FLOAT(wParam);
+
+		UIListItem*     pItem = 0;
+		CUIListItemItor pItor;
+
+		UIRect          pListRect = GetListRect();
+
+		if (!m_vColumnList.empty())
+		{
+			pListRect.fTop += GetHeaderRect().fHeight + m_fCellSpacing;
+
+			if (!m_pUISystem->PointInRect(pListRect, fX, fY))
+			{
+				break;
+			}
+		}
+
+		int iColumn = 0;
+		int iIndex  = FindItemAt(fX, fY, &pItem, &iColumn, &pItor);
+
+		if (iIndex > -1 && (!m_bColumnSelect || (m_bColumnSelect && m_vColumnList[iColumn].bSelectable)))
+		{
+			m_iSelectedColumn         = iColumn;
+
+			UIListItem* pSelectedItem = GetItem(iIndex);
+
+			assert(pItem);
+
+			if (!pItem->bSelectable)
+			{
+				ClearSelection();
+				OnChanged();
+
+				break;
+			}
+			else if (GetStyle() & UISTYLE_MULTISELECTION)
+			{
+				if ((m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL)) || (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL)))
+				{
 					SelectIndex(iIndex);
 
 					m_pSelectionStart = pItor;
 
 					OnChanged();
 				}
+				else if ((m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT)) || (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT)))
+				{
+					if ((GetSelectionCount() > 0) && (pItor != m_pSelectionStart))
+					{
+						if (m_pSelectionStart > pItor)
+						{
+							while (m_pSelectionStart != pItor)
+							{
+								SelectIndex((*pItor)->iIndex);
+
+								pItor++;
+							}
+
+							OnChanged();
+						}
+						else
+						{
+							while (m_pSelectionStart != pItor)
+							{
+								SelectIndex((*pItor)->iIndex);
+
+								pItor--;
+							}
+
+							OnChanged();
+						}
+					}
+					else
+					{
+						SelectIndex(iIndex);
+
+						m_pSelectionStart = pItor;
+
+						OnChanged();
+					}
+				}
 			}
 			else
 			{
 				ClearSelection();
+
+				SelectIndex(iIndex);
+
+				m_pSelectionStart = pItor;
+
 				OnChanged();
 			}
 		}
-		break;
-	case UIM_LBUTTONDBLCLICK:
+		else
 		{
-			float fX = UIM_GET_X_FLOAT(wParam);
-			float fY = UIM_GET_Y_FLOAT(wParam);
+			ClearSelection();
+			OnChanged();
+		}
+	}
+	break;
+	case UIM_LBUTTONDBLCLICK:
+	{
+		float           fX    = UIM_GET_X_FLOAT(wParam);
+		float           fY    = UIM_GET_Y_FLOAT(wParam);
 
-      UIListItem *pItem = 0;
-			CUIListItemItor pItor;
+		UIListItem*     pItem = 0;
+		CUIListItemItor pItor;
 
-			UIRect pListRect = GetListRect();
+		UIRect          pListRect = GetListRect();
 
-			if (!m_vColumnList.empty())
+		if (!m_vColumnList.empty())
+		{
+			pListRect.fTop += GetHeaderRect().fHeight + m_fCellSpacing;
+
+			if (!m_pUISystem->PointInRect(pListRect, fX, fY))
 			{
-				pListRect.fTop += GetHeaderRect().fHeight + m_fCellSpacing;
-
-				if (!m_pUISystem->PointInRect(pListRect, fX, fY))
-				{
-					break;
-				}
-			}
-
-			int iIndex = FindItemAt(fX, fY, &pItem, 0, &pItor);
-
-			if (iIndex > -1)
-			{
-				OnCommand();
+				break;
 			}
 		}
+
+		int iIndex = FindItemAt(fX, fY, &pItem, 0, &pItor);
+
+		if (iIndex > -1)
+		{
+			OnCommand();
+		}
+	}
 	}
 
 	return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::Draw(int iPass)
 {
 	if (iPass != 0)
@@ -664,26 +662,26 @@ int CUIListView::Draw(int iPass)
 	{
 		m_fHorizontalOffset = 0.0f;
 	}
-	
+
 	if (m_bVerticalScrollBar)
 	{
 		float fVisibleHeight = pListRect.fHeight - GetHeaderRect().fHeight - m_fCellSpacing;
 
-		m_fVerticalOffset = -(m_fTotalHeight - fVisibleHeight) * m_pVScroll->GetValue();
+		m_fVerticalOffset    = -(m_fTotalHeight - fVisibleHeight) * m_pVScroll->GetValue();
 	}
 	else
 	{
 		m_fVerticalOffset = 0.0f;
 	}
-	
+
 	// get the font
-	IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont*       pFont   = m_pUISystem->GetIFont(m_pFont);
 
-	float fX = pAbsoluteRect.fLeft + m_fHorizontalOffset;
-	float fY = pAbsoluteRect.fTop + m_fVerticalOffset + GetHeaderRect().fHeight + m_fCellSpacing;
-	float fHeight = (pAbsoluteRect.fHeight) + (pAbsoluteRect.fTop - fY);
+	float         fX      = pAbsoluteRect.fLeft + m_fHorizontalOffset;
+	float         fY      = pAbsoluteRect.fTop + m_fVerticalOffset + GetHeaderRect().fHeight + m_fCellSpacing;
+	float         fHeight = (pAbsoluteRect.fHeight) + (pAbsoluteRect.fTop - fY);
 
-	UIListColumn *pColumn;
+	UIListColumn* pColumn;
 
 	// if we have columns, draw them
 	if (m_vColumnList.size())
@@ -737,8 +735,8 @@ int CUIListView::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CUIListView::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////
+void CUIListView::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIListView>::InitializeTemplate(pScriptSystem);
 
@@ -786,8 +784,8 @@ void CUIListView::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIListView, ClearItemImage);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::FindItemAt(float fX, float fY, UIListItem **pItem, int *iSubItem, CUIListItemItor *pItemItor)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::FindItemAt(float fX, float fY, UIListItem** pItem, int* iSubItem, CUIListItemItor* pItemItor)
 {
 	UIRect pListRect = GetListRect();
 	UIRect pItemRect(pListRect.fLeft, pListRect.fTop + m_fVerticalOffset + GetHeaderRect().fHeight + m_fCellSpacing, pListRect.fWidth, m_fItemHeight);
@@ -831,11 +829,11 @@ int CUIListView::FindItemAt(float fX, float fY, UIListItem **pItem, int *iSubIte
 		pItemRect.fTop += m_fItemHeight + m_fCellSpacing;
 	}
 
-	return -1;	
+	return -1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::FindColumnAt(float fX, float fY, UIListColumn **pColumn)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::FindColumnAt(float fX, float fY, UIListColumn** pColumn)
 {
 	float fListX = m_fHorizontalOffset;
 
@@ -860,17 +858,17 @@ int CUIListView::FindColumnAt(float fX, float fY, UIListColumn **pColumn)
 	return -1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::ScrollTo(int iItem)
 {
-	UIListItem *pItem = GetItem(iItem);
+	UIListItem* pItem = GetItem(iItem);
 
 	if (!iItem)
 	{
 		return 0;
 	}
 
-	for(;;)
+	for (;;)
 	{
 		UIRect pListRect = GetListRect();
 		UIRect pItemRect(pListRect.fLeft, pListRect.fTop + m_fVerticalOffset + GetHeaderRect().fHeight + m_fCellSpacing, pListRect.fWidth, m_fItemHeight);
@@ -917,7 +915,7 @@ int CUIListView::ScrollTo(int iItem)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::ClearSelection()
 {
 	m_vSelectionList.clear();
@@ -925,10 +923,10 @@ int CUIListView::ClearSelection()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::SelectIndex(int iItemIndex)
 {
-	UIListItem *pItem = GetItem(iItemIndex);
+	UIListItem* pItem = GetItem(iItemIndex);
 
 	if (pItem && pItem->bSelectable)
 	{
@@ -936,11 +934,11 @@ int CUIListView::SelectIndex(int iItemIndex)
 
 		return 1;
 	}
-	    
+
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::DeselectIndex(int iItemIndex)
 {
 	for (std::vector<int>::iterator pItor = m_vSelectionList.begin(); pItor != m_vSelectionList.end(); ++pItor)
@@ -956,16 +954,16 @@ int CUIListView::DeselectIndex(int iItemIndex)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 bool CUIListView::IsSelectedIndex(int iItemIndex)
 {
 	return std::find(m_vSelectionList.begin(), m_vSelectionList.end(), iItemIndex) != m_vSelectionList.end();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::Select(const wstring &szItemText)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::Select(const wstring& szItemText)
 {
-	UIListItem *pItem = GetItem(szItemText);
+	UIListItem* pItem = GetItem(szItemText);
 
 	if (pItem && pItem->bSelectable)
 	{
@@ -975,10 +973,10 @@ int CUIListView::Select(const wstring &szItemText)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::Deselect(const wstring &szItemText)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::Deselect(const wstring& szItemText)
 {
-	UIListItem *pItem = GetItem(szItemText);
+	UIListItem* pItem = GetItem(szItemText);
 
 	if (pItem)
 	{
@@ -988,10 +986,10 @@ int CUIListView::Deselect(const wstring &szItemText)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-bool CUIListView::IsSelected(const wstring &szItemText)
+//////////////////////////////////////////////////////////////////////
+bool CUIListView::IsSelected(const wstring& szItemText)
 {
-	UIListItem *pItem = GetItem(szItemText);
+	UIListItem* pItem = GetItem(szItemText);
 
 	if (pItem)
 	{
@@ -1001,20 +999,20 @@ bool CUIListView::IsSelected(const wstring &szItemText)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::GetSelectionCount()
 {
 	return m_vSelectionList.size();
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::GetItemCount()
 {
 	return m_vItemList.size();
 }
 
-////////////////////////////////////////////////////////////////////// 
-UIListItem *CUIListView::GetItem(int iIndex, CUIListItemItor *pItemItor)
+//////////////////////////////////////////////////////////////////////
+UIListItem* CUIListView::GetItem(int iIndex, CUIListItemItor* pItemItor)
 {
 	for (CUIListItemItor pItor = m_vItemList.begin(); pItor != m_vItemList.end(); ++pItor)
 	{
@@ -1032,8 +1030,8 @@ UIListItem *CUIListView::GetItem(int iIndex, CUIListItemItor *pItemItor)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-UIListItem *CUIListView::GetItem(const wstring &szText, CUIListItemItor *pItemItor)
+//////////////////////////////////////////////////////////////////////
+UIListItem* CUIListView::GetItem(const wstring& szText, CUIListItemItor* pItemItor)
 {
 	for (CUIListItemItor pItor = m_vItemList.begin(); pItor != m_vItemList.end(); ++pItor)
 	{
@@ -1051,25 +1049,24 @@ UIListItem *CUIListView::GetItem(const wstring &szText, CUIListItemItor *pItemIt
 	return 0;
 }
 
-
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddItem(const wstring &szText)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddItem(const wstring& szText)
 {
-	UIListItem *pItem = new UIListItem;
+	UIListItem*   pItem = new UIListItem;
 
-	UIListSubItem	pSubItem;
+	UIListSubItem pSubItem;
 
 	if (!szText.empty())
 	{
-		if ((szText[0] == '$') && (szText.size() > 1) && (szText[szText.size()-1] == '$'))
+		if ((szText[0] == '$') && (szText.size() > 1) && (szText[szText.size() - 1] == '$'))
 		{
-			pSubItem.szText = wstring(&szText[1], &szText[szText.size()-1]);
+			pSubItem.szText    = wstring(&szText[1], &szText[szText.size() - 1]);
 
 			pItem->bSelectable = false;
 		}
 		else
 		{
-			pSubItem.szText = wstring(&szText[1], &szText[szText.size()-1]);
+			pSubItem.szText    = wstring(&szText[1], &szText[szText.size() - 1]);
 
 			pItem->bSelectable = true;
 		}
@@ -1089,10 +1086,10 @@ int CUIListView::AddItem(const wstring &szText)
 	return pItem->iIndex;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddItem(const std::vector<wstring> &vszText)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddItem(const std::vector<wstring>& vszText)
 {
-	UIListItem *pItem = new UIListItem;
+	UIListItem*   pItem = new UIListItem;
 
 	UIListSubItem pSubItem;
 
@@ -1104,9 +1101,9 @@ int CUIListView::AddItem(const std::vector<wstring> &vszText)
 
 			if (!szAux.empty())
 			{
-				if ((szAux[0] == '$') && (szAux.size() > 1) && (szAux[szAux.size()-1] == '$'))
+				if ((szAux[0] == '$') && (szAux.size() > 1) && (szAux[szAux.size() - 1] == '$'))
 				{
-					pSubItem.szText = wstring(&szAux[1], &szAux[szAux.size()-1]);
+					pSubItem.szText    = wstring(&szAux[1], &szAux[szAux.size() - 1]);
 
 					pItem->bSelectable = false;
 				}
@@ -1114,7 +1111,7 @@ int CUIListView::AddItem(const std::vector<wstring> &vszText)
 				{
 					pItem->bSelectable = true;
 
-					pSubItem.szText = *pItor;
+					pSubItem.szText    = *pItor;
 				}
 			}
 			else
@@ -1138,29 +1135,29 @@ int CUIListView::AddItem(const std::vector<wstring> &vszText)
 	return pItem->iIndex;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::InsertItem(int iPosition, const wstring &szText)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::InsertItem(int iPosition, const wstring& szText)
 {
 	if (iPosition < 0 || iPosition > (int)m_vItemList.size())
 	{
 		return 0;
 	}
 
-	UIListItem *pItem = new UIListItem;
+	UIListItem*   pItem = new UIListItem;
 
 	UIListSubItem pSubItem;
 
 	if (!szText.empty())
 	{
-		if ((szText[0] == '$') && (szText.size() > 1) && (szText[szText.size()-1] == '$'))
+		if ((szText[0] == '$') && (szText.size() > 1) && (szText[szText.size() - 1] == '$'))
 		{
-			pSubItem.szText = wstring(&szText[1], &szText[szText.size()-1]);
+			pSubItem.szText    = wstring(&szText[1], &szText[szText.size() - 1]);
 
 			pItem->bSelectable = false;
 		}
 		else
 		{
-			pSubItem.szText = szText;
+			pSubItem.szText    = szText;
 
 			pItem->bSelectable = true;
 		}
@@ -1180,15 +1177,15 @@ int CUIListView::InsertItem(int iPosition, const wstring &szText)
 	return pItem->iIndex;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::InsertItem(int iPosition, const std::vector<wstring> &vszText)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::InsertItem(int iPosition, const std::vector<wstring>& vszText)
 {
 	if (iPosition < 0 || iPosition > (int)m_vItemList.size())
 	{
 		return 0;
 	}
 
-	UIListItem *pItem = new UIListItem;
+	UIListItem*   pItem = new UIListItem;
 
 	UIListSubItem pSubItem;
 
@@ -1200,14 +1197,14 @@ int CUIListView::InsertItem(int iPosition, const std::vector<wstring> &vszText)
 
 			if (!szAux.empty())
 			{
-				if ((szAux[0] == '$') && (szAux.size() > 1) && (szAux[szAux.size()-1] == '$'))
+				if ((szAux[0] == '$') && (szAux.size() > 1) && (szAux[szAux.size() - 1] == '$'))
 				{
-					pSubItem.szText = wstring(&szAux[1], &szAux[szAux.size()-1]);
+					pSubItem.szText    = wstring(&szAux[1], &szAux[szAux.size() - 1]);
 					pItem->bSelectable = false;
 				}
 				else
 				{
-					pSubItem.szText = *pItor;
+					pSubItem.szText    = *pItor;
 					pItem->bSelectable = true;
 				}
 			}
@@ -1233,10 +1230,10 @@ int CUIListView::InsertItem(int iPosition, const std::vector<wstring> &vszText)
 	return pItem->iIndex;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddSubItem(int iItemIndex, const wstring &szText)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddSubItem(int iItemIndex, const wstring& szText)
 {
-	if (UIListItem *pItem = GetItem(iItemIndex))
+	if (UIListItem* pItem = GetItem(iItemIndex))
 	{
 		UIListSubItem pSubItem;
 
@@ -1245,11 +1242,11 @@ int CUIListView::AddSubItem(int iItemIndex, const wstring &szText)
 	}
 
 	m_bNeedSort = 1;
-    
+
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::RemoveItem(int iItemIndex)
 {
 	for (CUIListItemItor pItor = m_vItemList.begin(); pItor != m_vItemList.end(); ++pItor)
@@ -1271,10 +1268,10 @@ int CUIListView::RemoveItem(int iItemIndex)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::RemoveSubItem(int iItemIndex, int iSubItemIndex)
 {
-	UIListItem *pItem = GetItem(iItemIndex);
+	UIListItem* pItem = GetItem(iItemIndex);
 
 	if (!pItem)
 	{
@@ -1295,27 +1292,27 @@ int CUIListView::RemoveSubItem(int iItemIndex, int iSubItemIndex)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddColumn(const wstring &szLabel, float fWidth, int iHTextAlignment, const color4f &cHeaderColor, const color4f &cBodyColor, const UISkinTexture &pHeaderTexture, bool bNumeric, bool bSelectable, bool bImageSort)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddColumn(const wstring& szLabel, float fWidth, int iHTextAlignment, const color4f& cHeaderColor, const color4f& cBodyColor, const UISkinTexture& pHeaderTexture, bool bNumeric, bool bSelectable, bool bImageSort)
 {
 	UIListColumn pColumn;
 
-	pColumn.szLabel = szLabel;
-	pColumn.fWidth = fWidth;
+	pColumn.szLabel         = szLabel;
+	pColumn.fWidth          = fWidth;
 	pColumn.iHTextAlignment = iHTextAlignment;
-	pColumn.cHeaderColor = cHeaderColor;
-	pColumn.cBodyColor = cBodyColor;
-	pColumn.pHeaderTexture = pHeaderTexture;
-	pColumn.bNumeric = bNumeric;
-	pColumn.bSelectable = bSelectable;
-	pColumn.bImageSort = bImageSort;
+	pColumn.cHeaderColor    = cHeaderColor;
+	pColumn.cBodyColor      = cBodyColor;
+	pColumn.pHeaderTexture  = pHeaderTexture;
+	pColumn.bNumeric        = bNumeric;
+	pColumn.bSelectable     = bSelectable;
+	pColumn.bImageSort      = bImageSort;
 
 	m_vColumnList.push_back(pColumn);
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::RemoveColumn(int iColumnIndex)
 {
 	int i = 0;
@@ -1332,7 +1329,7 @@ int CUIListView::RemoveColumn(int iColumnIndex)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::ClearColumns()
 {
 	m_vColumnList.clear();
@@ -1341,7 +1338,7 @@ int CUIListView::ClearColumns()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::Clear()
 {
 	m_bNeedSort = 0;
@@ -1359,7 +1356,7 @@ int CUIListView::Clear()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::Sort()
 {
 	m_pStaticThis = this;
@@ -1367,41 +1364,41 @@ int CUIListView::Sort()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIListView::SortEx(int iSortOrder, int iSortColumn)
 {
-	int iOldSortOrder = m_iSortOrder;
+	int iOldSortOrder  = m_iSortOrder;
 	int iOldSortColumn = m_iSortColumn;
-	m_iSortOrder = iSortOrder;
-	m_iSortColumn = iSortColumn;
+	m_iSortOrder       = iSortOrder;
+	m_iSortColumn      = iSortColumn;
 
-	m_pStaticThis = this;
+	m_pStaticThis      = this;
 
 	std::sort(m_vItemList.begin(), m_vItemList.end(), SortCallback);
 
-	m_iSortOrder = iOldSortOrder;
+	m_iSortOrder  = iOldSortOrder;
 	m_iSortColumn = iOldSortColumn;
 
-	m_bNeedSort = 0;
+	m_bNeedSort   = 0;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIRect pListRect, float fX, float fY, IFFont *pFont)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::DrawListColumn(int iIndex, const UIRect& pColumnRect, const UIRect pListRect, float fX, float fY, IFFont* pFont)
 {
-	UIRect pItemRect(fX, fY, pColumnRect.fWidth, m_fItemHeight);
-	UIRect pRect = pListRect;
+	UIRect  pItemRect(fX, fY, pColumnRect.fWidth, m_fItemHeight);
+	UIRect  pRect      = pListRect;
 	color4f cItemColor = m_cColor;
 
-	int iAlignment = UIALIGN_LEFT;
+	int     iAlignment = UIALIGN_LEFT;
 
 	if (!m_vColumnList.empty())
 	{
-		UIListColumn *pColumn = &m_vColumnList[iIndex];
+		UIListColumn* pColumn = &m_vColumnList[iIndex];
 		assert(pColumn);
 
-		cItemColor = m_cColor;
+		cItemColor         = m_cColor;
 
 		// set the boundaries for the
 		UIRect pHeaderRect = GetHeaderRect();
@@ -1409,7 +1406,7 @@ int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIR
 		m_pUISystem->GetAbsoluteXY(&pHeaderRect.fLeft, &pHeaderRect.fTop, pHeaderRect.fLeft, pHeaderRect.fTop, this);
 		m_pUISystem->SetScissor(&pHeaderRect);
 
-		pHeaderRect = UIRect(fX, pColumnRect.fTop, pColumnRect.fWidth, GetHeaderRect().fHeight);
+		pHeaderRect          = UIRect(fX, pColumnRect.fTop, pColumnRect.fWidth, GetHeaderRect().fHeight);
 
 		color4f cHeaderColor = pColumn->cHeaderColor;
 
@@ -1418,7 +1415,7 @@ int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIR
 			cHeaderColor = m_cSortByColor;
 			pFont->SetColor(m_cSortByTextColor);
 		}
-		
+
 		// draw the header
 		if (pColumn->pHeaderTexture.iTextureID > -1)
 		{
@@ -1447,7 +1444,7 @@ int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIR
 		m_pUISystem->DrawQuad(pBodyRect, pColumn->cBodyColor);
 	}
 
-	UIListItem	*pItem;
+	UIListItem* pItem;
 
 	for (CUIListItemItor pItor = m_vItemList.begin(); pItor != m_vItemList.end(); ++pItor)
 	{
@@ -1486,12 +1483,12 @@ int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIR
 		{
 			UIRect pCellRect(pItemRect);
 
-			int iImageIndex = pItem->vSubItem[iIndex].iImageIndex;
+			int    iImageIndex = pItem->vSubItem[iIndex].iImageIndex;
 
 			if (iImageIndex >= 1 && iImageIndex <= m_vImageList.size())
 			{
-				UIRect			pImgRect;
-				UIListImage	*pImage = &m_vImageList[iImageIndex-1];
+				UIRect       pImgRect;
+				UIListImage* pImage = &m_vImageList[iImageIndex - 1];
 
 				switch (iAlignment)
 				{
@@ -1506,8 +1503,8 @@ int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIR
 					break;
 				}
 
-				pImgRect.fTop = pCellRect.fTop + (pCellRect.fHeight - pImage->fHeight) * 0.5f;
-				pImgRect.fWidth = pImage->fWidth;
+				pImgRect.fTop    = pCellRect.fTop + (pCellRect.fHeight - pImage->fHeight) * 0.5f;
+				pImgRect.fWidth  = pImage->fWidth;
 				pImgRect.fHeight = pImage->fHeight;
 
 				m_pUISystem->DrawImage(pImgRect, (int)pImage->iTextureID, pImage->vTexCoord, color4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -1523,7 +1520,7 @@ int CUIListView::DrawListColumn(int iIndex, const UIRect &pColumnRect, const UIR
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 UIRect CUIListView::GetHeaderRect()
 {
 	UIRect pListRect(GetListRect());
@@ -1540,7 +1537,7 @@ UIRect CUIListView::GetHeaderRect()
 	return pListRect;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 UIRect CUIListView::GetListRect(bool bScrollBars)
 {
 	UIRect pListRect(0, 0, m_pRect.fWidth, m_pRect.fHeight);
@@ -1567,7 +1564,7 @@ UIRect CUIListView::GetListRect(bool bScrollBars)
 	return pListRect;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 UIRect CUIListView::GetColumnRect(int iColumnIndex)
 {
 	UIRect pColumnRect(GetListRect());
@@ -1578,9 +1575,9 @@ UIRect CUIListView::GetColumnRect(int iColumnIndex)
 	}
 	else
 	{
-		float fX = pColumnRect.fLeft + m_fHorizontalOffset;
+		float         fX      = pColumnRect.fLeft + m_fHorizontalOffset;
 
-		UIListColumn *pColumn = &m_vColumnList[0];
+		UIListColumn* pColumn = &m_vColumnList[0];
 
 		for (int i = 0; i < iColumnIndex; i++)
 		{
@@ -1589,15 +1586,15 @@ UIRect CUIListView::GetColumnRect(int iColumnIndex)
 			fX += pColumn->fWidth + m_fCellSpacing;
 		}
 
-		pColumnRect.fLeft = fX;
+		pColumnRect.fLeft  = fX;
 		pColumnRect.fWidth = pColumn->fWidth;
 
 		return pColumnRect;
 	}
 }
 
-////////////////////////////////////////////////////////////////////// 
-bool CUIListView::SortCallback(const UIListItem *pOne, const UIListItem *pTwo)
+//////////////////////////////////////////////////////////////////////
+bool CUIListView::SortCallback(const UIListItem* pOne, const UIListItem* pTwo)
 {
 	wstring szOne;
 	wstring szTwo;
@@ -1652,61 +1649,60 @@ bool CUIListView::SortCallback(const UIListItem *pOne, const UIListItem *pTwo)
 	return true;
 }
 
-
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::SetCellPadding(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::SetCellPadding(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetCellPadding, m_fCellPadding);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetCellPadding(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetCellPadding(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetCellPadding, m_fCellPadding);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::SetCellSpacing(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::SetCellSpacing(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetCellSpacing, m_fCellSpacing);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetCellSpacing(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetCellSpacing(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetCellSpacing, m_fCellSpacing);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::SetItemHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::SetItemHeight(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetItemHeight, m_fItemHeight);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetItemHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetItemHeight(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetItemHeight, m_fItemHeight);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::SetHeaderHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::SetHeaderHeight(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetHeaderHeight, m_fHeaderHeight);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetHeaderHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetHeaderHeight(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), SetHeaderHeight, m_fHeaderHeight);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::FindItemAt(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::FindItemAt(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), FindItemAt, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), FindItemAt, 1, svtNumber);
@@ -1720,8 +1716,8 @@ int CUIListView::FindItemAt(IFunctionHandler *pH)
 	return pH->EndFunction(FindItemAt(fX, fY));
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::FindColumnAt(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::FindColumnAt(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), FindColumnAt, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), FindColumnAt, 1, svtNumber);
@@ -1735,8 +1731,8 @@ int CUIListView::FindColumnAt(IFunctionHandler *pH)
 	return pH->EndFunction(FindColumnAt(fX, fY));
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::ClearSelection(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::ClearSelection(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), ClearSelection, 0);
 
@@ -1745,8 +1741,8 @@ int CUIListView::ClearSelection(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::SelectIndex(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::SelectIndex(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SelectIndex, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SelectIndex, 1, svtNumber);
@@ -1760,8 +1756,8 @@ int CUIListView::SelectIndex(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::DeselectIndex(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::DeselectIndex(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), DeselectIndex, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), DeselectIndex, 1, svtNumber);
@@ -1775,8 +1771,8 @@ int CUIListView::DeselectIndex(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::IsSelectedIndex(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::IsSelectedIndex(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), IsSelectedIndex, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), IsSelectedIndex, 1, svtNumber);
@@ -1788,8 +1784,8 @@ int CUIListView::IsSelectedIndex(IFunctionHandler *pH)
 	return pH->EndFunction(IsSelectedIndex(iItemIndex));
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::Select(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::Select(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Select, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), Select, 1, svtString);
@@ -1803,8 +1799,8 @@ int CUIListView::Select(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::Deselect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::Deselect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Deselect, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), Deselect, 1, svtString);
@@ -1818,8 +1814,8 @@ int CUIListView::Deselect(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::IsSelected(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::IsSelected(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), IsSelected, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), IsSelected, 1, svtString);
@@ -1831,21 +1827,21 @@ int CUIListView::IsSelected(IFunctionHandler *pH)
 	return pH->EndFunction(IsSelected(szItemText));
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetSelectionCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetSelectionCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetSelectionCount, 0);
 
 	return pH->EndFunction(GetSelectionCount());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetSelection(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetSelection(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetSelection, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), GetSelection, 1, svtNumber);
 
-	int	iSelectedIndex = 0;
+	int iSelectedIndex = 0;
 
 	pH->GetParam(1, iSelectedIndex);
 
@@ -1857,16 +1853,16 @@ int CUIListView::GetSelection(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetSelectedColumn(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetSelectedColumn(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetSelectedColumn, 0);
 
 	return pH->EndFunction((int)m_iSelectedColumn);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetItem(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetItem, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), GetItem, 1, svtNumber);
@@ -1875,25 +1871,25 @@ int CUIListView::GetItem(IFunctionHandler *pH)
 
 	pH->GetParam(1, iItemIndex);
 
-	UIListItem *pItem = GetItem(iItemIndex);
+	UIListItem* pItem = GetItem(iItemIndex);
 
-	char szString[1024];
+	char        szString[1024];
 
 	m_pUISystem->ConvertToString(szString, pItem->vSubItem[0].szText, 1023);
 
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetItemCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetItemCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetItemCount, 0);
 
 	return pH->EndFunction(GetItemCount());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetSubItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetSubItem(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetSubItem, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), GetSubItem, 1, svtNumber);
@@ -1904,7 +1900,7 @@ int CUIListView::GetSubItem(IFunctionHandler *pH)
 	pH->GetParam(1, iItemIndex);
 	pH->GetParam(2, iSubItemIndex);
 
-	UIListItem *pItem = GetItem(iItemIndex);
+	UIListItem* pItem = GetItem(iItemIndex);
 
 	if (iSubItemIndex >= (int)pItem->vSubItem.size())
 	{
@@ -1912,30 +1908,29 @@ int CUIListView::GetSubItem(IFunctionHandler *pH)
 	}
 
 	char szString[1024];
-	
+
 	m_pUISystem->ConvertToString(szString, pItem->vSubItem[iSubItemIndex].szText, 1023);
 
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::GetSubItemCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::GetSubItemCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetSubItemCount, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), GetSubItemCount, 1, svtNumber);
 
 	int iItemIndex;
 
-
 	pH->GetParam(1, iItemIndex);
 
-	UIListItem *pItem = GetItem(iItemIndex);
+	UIListItem* pItem = GetItem(iItemIndex);
 
 	return pH->EndFunction(int(pItem->vSubItem.size() - 1));
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddItem(IFunctionHandler* pH)
 {
 	if (pH->GetParamCount() < 1)
 	{
@@ -1944,9 +1939,9 @@ int CUIListView::AddItem(IFunctionHandler *pH)
 
 	std::vector<wstring> vszText;
 
-	int iParamCount = pH->GetParamCount();
+	int                  iParamCount = pH->GetParamCount();
 
-	wstring szDummy = L"";
+	wstring              szDummy     = L"";
 
 	for (int i = 1; i <= iParamCount; i++)
 	{
@@ -1961,22 +1956,22 @@ int CUIListView::AddItem(IFunctionHandler *pH)
 
 		if (pH->GetParamType(i) != svtNull)
 		{
-			m_pUISystem->ConvertToWString(vszText[i-1], pH, i);
+			m_pUISystem->ConvertToWString(vszText[i - 1], pH, i);
 		}
 	}
 
 	return pH->EndFunction(AddItem(vszText));
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddSubItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddSubItem(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), AddSubItem, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddSubItem, 1, svtNumber);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), AddSubItem, 2, svtNumber, svtString);
-	
-	wstring	szText;
-	int				iItemIndex;
+
+	wstring szText;
+	int     iItemIndex;
 
 	pH->GetParam(1, iItemIndex);
 	m_pUISystem->ConvertToWString(szText, pH, 2);
@@ -1986,8 +1981,8 @@ int CUIListView::AddSubItem(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::InsertItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::InsertItem(IFunctionHandler* pH)
 {
 	if (pH->GetParamCount() < 1)
 	{
@@ -2002,9 +1997,9 @@ int CUIListView::InsertItem(IFunctionHandler *pH)
 
 	std::vector<wstring> vszText;
 
-	int iParamCount = pH->GetParamCount();
+	int                  iParamCount = pH->GetParamCount();
 
-	wstring szDummy;
+	wstring              szDummy;
 
 	for (int i = 2; i <= iParamCount; i++)
 	{
@@ -2012,14 +2007,14 @@ int CUIListView::InsertItem(IFunctionHandler *pH)
 
 		vszText.push_back(szDummy);
 
-		m_pUISystem->ConvertToWString(vszText[i-2], pH, i);
+		m_pUISystem->ConvertToWString(vszText[i - 2], pH, i);
 	}
 
 	return pH->EndFunction(InsertItem(iPosition, vszText));
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::RemoveItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::RemoveItem(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), RemoveItem, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), RemoveItem, 1, svtNumber);
@@ -2033,26 +2028,26 @@ int CUIListView::RemoveItem(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::RemoveSubItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::RemoveSubItem(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), RemoveSubItem, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), RemoveSubItem, 1, svtNumber);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), RemoveSubItem, 2, svtNumber);
-	
-	int				iItemIndex;
-	int				iSubItemIndex;
+
+	int iItemIndex;
+	int iSubItemIndex;
 
 	pH->GetParam(1, iItemIndex);
 	pH->GetParam(1, iSubItemIndex);
 
 	RemoveSubItem(iItemIndex, iSubItemIndex);
-	
+
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddColumn(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddColumn(IFunctionHandler* pH)
 {
 	if (pH->GetParamCount() < 2)
 	{
@@ -2066,17 +2061,17 @@ int CUIListView::AddColumn(IFunctionHandler *pH)
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), AddColumn, 1, svtString, svtNumber);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddColumn, 2, svtNumber);
 
-	wstring				szText;
-	float					fWidth;
-	int						iAlign = UIALIGN_LEFT;
-	color4f				cHeaderColor = m_cColor;
-	color4f				cBodyColor = m_cColor;
-	UISkinTexture	pTexture;
-	bool					bNumeric = false;
-	bool					bSelectable = true;
-	bool					bImageSort = false;
-	char					*szValue;
-	
+	wstring       szText;
+	float         fWidth;
+	int           iAlign       = UIALIGN_LEFT;
+	color4f       cHeaderColor = m_cColor;
+	color4f       cBodyColor   = m_cColor;
+	UISkinTexture pTexture;
+	bool          bNumeric    = false;
+	bool          bSelectable = true;
+	bool          bImageSort  = false;
+	char*         szValue;
+
 	if (pH->GetParamCount() > 9)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddColumn, 10, svtNumber);
@@ -2125,7 +2120,7 @@ int CUIListView::AddColumn(IFunctionHandler *pH)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddColumn, 5, svtString);
 
-		char *szColor;
+		char* szColor;
 
 		pH->GetParam(5, szColor);
 
@@ -2136,7 +2131,7 @@ int CUIListView::AddColumn(IFunctionHandler *pH)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddColumn, 4, svtString);
 
-		char *szColor;
+		char* szColor;
 
 		pH->GetParam(4, szColor);
 
@@ -2152,14 +2147,14 @@ int CUIListView::AddColumn(IFunctionHandler *pH)
 
 	pH->GetParam(2, fWidth);
 	m_pUISystem->ConvertToWString(szText, pH, 1);
-	
+
 	AddColumn(szText, fWidth, iAlign, cHeaderColor, cBodyColor, pTexture, bNumeric, bSelectable, bImageSort);
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::RemoveColumn(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::RemoveColumn(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), RemoveColumn, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), RemoveColumn, 1, svtNumber);
@@ -2173,18 +2168,18 @@ int CUIListView::RemoveColumn(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::ClearColumns(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::ClearColumns(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), ClearColumns, 0);
-	
+
 	ClearColumns();
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::Clear(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::Clear(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Clear, 0);
 
@@ -2193,16 +2188,16 @@ int CUIListView::Clear(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::Sort(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::Sort(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Sort, 0);
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::SortEx(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::SortEx(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SortEx, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SortEx, 1, svtNumber);
@@ -2218,16 +2213,16 @@ int CUIListView::SortEx(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddImage(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddImage(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, GetName().c_str(), AddImage, 3, 4);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), AddImage, 1, svtUserData, svtNull);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddImage, 2, svtNumber);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddImage, 3, svtNumber);
 
-	char				*szTexRect = 0;
-	UIListImage	pListImage;
+	char*       szTexRect = 0;
+	UIListImage pListImage;
 
 	if (pH->GetParamCount() == 4)
 	{
@@ -2250,8 +2245,8 @@ int CUIListView::AddImage(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::AddImageList(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::AddImageList(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), AddImageList, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddImageList, 1, svtObject);
@@ -2275,18 +2270,18 @@ int CUIListView::AddImageList(IFunctionHandler *pH)
 
 		UIListImage pListImage;
 
-		int iCookie = 0;
+		int         iCookie = 0;
 
 		if (!pImage->GetAtUD(1, (USER_DATA&)pListImage.iTextureID, iCookie) ||
-				!pImage->GetAt(2, pListImage.fWidth) ||
-				!pImage->GetAt(3, pListImage.fHeight))
+		    !pImage->GetAt(2, pListImage.fWidth) ||
+		    !pImage->GetAt(3, pListImage.fHeight))
 		{
 			m_pUISystem->GetISystem()->GetILog()->Log("$4Warning:$1 Invalid image specification (%d) adding to listview(%s).", i, GetName().c_str());
 
 			continue;
 		}
 
-		char *szTexRect = 0;
+		char* szTexRect = 0;
 
 		pImage->GetAt(4, szTexRect);
 
@@ -2298,8 +2293,8 @@ int CUIListView::AddImageList(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::ClearImageList(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::ClearImageList(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), ClearImageList, 0);
 
@@ -2308,16 +2303,16 @@ int CUIListView::ClearImageList(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::SetItemImage(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::SetItemImage(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, GetName().c_str(), SetItemImage, 2, 3);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetItemImage, 1, svtNumber);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetItemImage, 2, svtNumber);
 
 	int iImageIndex = -1;
-	int iItem = 0;
-	int iSubItem = 0;
+	int iItem       = 0;
+	int iSubItem    = 0;
 
 	if (pH->GetParamCount() == 3)
 	{
@@ -2329,7 +2324,7 @@ int CUIListView::SetItemImage(IFunctionHandler *pH)
 	pH->GetParam(1, iImageIndex);
 	pH->GetParam(2, iItem);
 
-	UIListItem *pItem = GetItem(iItem);
+	UIListItem* pItem = GetItem(iItem);
 
 	if (pItem)
 	{
@@ -2339,13 +2334,13 @@ int CUIListView::SetItemImage(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIListView::ClearItemImage(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIListView::ClearItemImage(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, GetName().c_str(), SetItemImage, 1, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetItemImage, 1, svtNumber);
 
-	int iItem = 0;
+	int iItem    = 0;
 	int iSubItem = 0;
 
 	if (pH->GetParamCount() == 2)
@@ -2357,7 +2352,7 @@ int CUIListView::ClearItemImage(IFunctionHandler *pH)
 
 	pH->GetParam(1, iItem);
 
-	UIListItem *pItem = GetItem(iItem);
+	UIListItem* pItem = GetItem(iItem);
 
 	if (pItem)
 	{
@@ -2366,4 +2361,3 @@ int CUIListView::ClearItemImage(IFunctionHandler *pH)
 
 	return pH->EndFunction(1);
 }
- 

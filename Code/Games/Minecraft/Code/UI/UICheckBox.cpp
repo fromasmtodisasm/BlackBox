@@ -1,10 +1,10 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: UICheckBox.cpp  
+//  File: UICheckBox.cpp
 //  Description: UI CheckBox control
 //
 //  History:
@@ -21,37 +21,37 @@ _DECLARE_SCRIPTABLEEX(CUICheckBox)
 
 //FIXME: remove it
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+	#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+	#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 //////////////////////////////////////////////////////////////////////////
 CUICheckBox::CUICheckBox()
-: m_iState(0),
-	m_fLeftSpacing(0),
-	m_fRightSpacing(0),
-	m_iVAlignment(UIALIGN_MIDDLE),
-	m_iHAlignment(UIALIGN_CENTER),
-	m_cCheckColor(0.8f, 0.8f, 0.8f, 0.8f)
+    : m_iState(0)
+    , m_fLeftSpacing(0)
+    , m_fRightSpacing(0)
+    , m_iVAlignment(UIALIGN_MIDDLE)
+    , m_iHAlignment(UIALIGN_CENTER)
+    , m_cCheckColor(0.8f, 0.8f, 0.8f, 0.8f)
 {
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 CUICheckBox::~CUICheckBox()
 {
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 string CUICheckBox::GetClassName()
 {
 	return UICLASSNAME_CHECKBOX;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-LRESULT CUICheckBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	//AMD Port
+//////////////////////////////////////////////////////////////////////////
+LRESULT CUICheckBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
 	switch (iMessage)
 	{
@@ -74,22 +74,22 @@ LRESULT CUICheckBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 
 		break;
 	case UIM_LBUTTONUP:
+	{
+		if (m_pUISystem->PointInRect(GetBorderedRect(), UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam)))
 		{
-			if (m_pUISystem->PointInRect(GetBorderedRect(), UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam)))
+			if (m_iState & UISTATE_CHECKED)
 			{
-				if (m_iState & UISTATE_CHECKED)
-				{
-					m_iState &= ~UISTATE_CHECKED;
-				}
-				else
-				{
-					m_iState |= UISTATE_CHECKED;
-				}
-
-				OnChanged();
+				m_iState &= ~UISTATE_CHECKED;
 			}
+			else
+			{
+				m_iState |= UISTATE_CHECKED;
+			}
+
+			OnChanged();
 		}
-		break;
+	}
+	break;
 	case UIM_MOUSEOVER:
 
 		m_iState |= UISTATE_OVER;
@@ -102,7 +102,7 @@ LRESULT CUICheckBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 	return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUICheckBox::Draw(int iPass)
 {
 	if (iPass != 0)
@@ -154,9 +154,9 @@ int CUICheckBox::Draw(int iPass)
 			{
 				UIFont pCrossFont = m_pFont;
 
-				pCrossFont.fSize = pAbsoluteRect.fHeight * 1.125f;
+				pCrossFont.fSize  = pAbsoluteRect.fHeight * 1.125f;
 
-				IFFont *pFont = m_pUISystem->GetIFont(pCrossFont);
+				IFFont* pFont     = m_pUISystem->GetIFont(pCrossFont);
 
 				m_pUISystem->DrawText(pAbsoluteRect, UIALIGN_CENTER, UIALIGN_MIDDLE, pFont, L"X");
 			}
@@ -166,7 +166,7 @@ int CUICheckBox::Draw(int iPass)
 	if ((m_iState & UISTATE_CHECKED) && (m_pTexture.iDownTextureID == -1))
 	{
 		UIRect pCheckRect;
-		
+
 		m_pUISystem->AdjustRect(&pCheckRect, pAbsoluteRect, 2.0f);
 
 		m_pUISystem->DrawQuad(pCheckRect, m_cCheckColor);
@@ -174,12 +174,12 @@ int CUICheckBox::Draw(int iPass)
 
 	if (!m_szText.empty())
 	{
-		UIRect pTextRect = UIRect(pAbsoluteRect.fLeft+m_fLeftSpacing, pAbsoluteRect.fTop, pAbsoluteRect.fWidth-m_fLeftSpacing-m_fRightSpacing, pAbsoluteRect.fHeight);
+		UIRect pTextRect = UIRect(pAbsoluteRect.fLeft + m_fLeftSpacing, pAbsoluteRect.fTop, pAbsoluteRect.fWidth - m_fLeftSpacing - m_fRightSpacing, pAbsoluteRect.fHeight);
 
 		m_pUISystem->AdjustRect(&pTextRect, pTextRect, UI_DEFAULT_TEXT_BORDER_SIZE);
 		m_pUISystem->SetScissor(&pTextRect);
 
-		IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+		IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
 		m_pUISystem->DrawText(pTextRect, m_iHAlignment, m_iVAlignment, pFont, m_szText.c_str());
 	}
@@ -204,8 +204,8 @@ int CUICheckBox::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-void CUICheckBox::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////////
+void CUICheckBox::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUICheckBox>::InitializeTemplate(pScriptSystem);
 
@@ -219,15 +219,15 @@ void CUICheckBox::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUICheckBox, GetChecked);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUICheckBox::SetText(const wstring &szwString)
+//////////////////////////////////////////////////////////////////////////
+int CUICheckBox::SetText(const wstring& szwString)
 {
 	m_szText = szwString;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 UIRect CUICheckBox::GetBorderedRect()
 {
 	UIRect pRect(0, 0, m_pRect.fWidth, m_pRect.fHeight);
@@ -241,10 +241,10 @@ UIRect CUICheckBox::GetBorderedRect()
 	return pRect;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////////// 
-int CUICheckBox::SetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUICheckBox::SetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetText, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), SetText, 1, svtString, svtNumber);
@@ -256,16 +256,16 @@ int CUICheckBox::SetText(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUICheckBox::GetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUICheckBox::GetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetText, 0);
 
-	char szString[1024] = {0,0};
+	char   szString[1024] = {0, 0};
 
-	size_t iSize = min(m_szText.size(), sizeof(szString)-1);
-	
-	size_t i = 0;
+	size_t iSize          = min(m_szText.size(), sizeof(szString) - 1);
+
+	size_t i              = 0;
 	for (; i < iSize; i++)
 	{
 		szString[i] = (char)m_szText[i];
@@ -275,8 +275,8 @@ int CUICheckBox::GetText(IFunctionHandler *pH)
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUICheckBox::SetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUICheckBox::SetTexture(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, GetName().c_str(), SetTexture, 1, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetTexture, 1, svtUserData);
@@ -288,7 +288,7 @@ int CUICheckBox::SetTexture(IFunctionHandler *pH)
 
 	if (pH->GetParamCount() == 2)
 	{
-		const char *szTexRect = "";
+		const char* szTexRect = "";
 
 		pH->GetParam(2, szTexRect);
 
@@ -298,20 +298,20 @@ int CUICheckBox::SetTexture(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUICheckBox::GetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUICheckBox::GetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUICheckBox::SetChecked(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUICheckBox::SetChecked(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetChecked, 1);
 
-	int iValue=0;
+	int iValue = 0;
 
-	if(pH->GetParamType(1)==svtNumber)
+	if (pH->GetParamType(1) == svtNumber)
 		pH->GetParam(1, iValue);
 
 	if (iValue != 0)
@@ -326,8 +326,8 @@ int CUICheckBox::SetChecked(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUICheckBox::GetChecked(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUICheckBox::GetChecked(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetChecked, 0);
 

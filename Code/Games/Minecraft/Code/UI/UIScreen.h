@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: UIScreen.h
@@ -15,7 +15,7 @@
 
 #pragma once
 
-#define UICLASSNAME_SCREEN	"UIScreen"
+#define UICLASSNAME_SCREEN "UIScreen"
 
 #include "UIWidget.h"
 
@@ -25,61 +25,59 @@ class CUIScreen : public _ScriptableEx<CUIScreen>
 	friend class CUISystem;
 
 public:
-
 	CUIScreen();
 	~CUIScreen();
 
-	int Release();
-	int GetScriptFunctionPtrs();
-	int ReleaseScriptFunctionPtrs();
+	int            Release();
+	int            GetScriptFunctionPtrs();
+	int            ReleaseScriptFunctionPtrs();
 
-	static void InitializeTemplate(IScriptSystem *pScriptSystem);
+	static void    InitializeTemplate(IScriptSystem* pScriptSystem);
 
-	int SetName(const string &szName);
-	string &GetName();
+	int            SetName(const string& szName);
+	string&        GetName();
 
-	string GetClassName();
+	string         GetClassName();
 
-	int AddWidget(CUIWidget *pWidget);
-	int AddWidget(const string &szName);
-	int DelWidget(CUIWidget *pWidget);
-	int DelWidget(int iIndex);
-	int DelWidget(const string &szName);
+	int            AddWidget(CUIWidget* pWidget);
+	int            AddWidget(const string& szName);
+	int            DelWidget(CUIWidget* pWidget);
+	int            DelWidget(int iIndex);
+	int            DelWidget(const string& szName);
 
-	CUIWidgetList *GetWidgetList();
-	CUIWidget *GetWidget(int iIndex);
-	CUIWidget *GetWidget(const string &szName);
-	int	GetWidgetCount();
+	CUIWidgetList* GetWidgetList();
+	CUIWidget*     GetWidget(int iIndex);
+	CUIWidget*     GetWidget(const string& szName);
+	int            GetWidgetCount();
 
-	int Activate();
-	int Deactivate();
+	int            Activate();
+	int            Deactivate();
 
-	int OnInit();
-	int OnUpdate();
-	int OnRelease();
-	int OnActivate();
-	int OnDeactivate();
+	int            OnInit();
+	int            OnUpdate();
+	int            OnRelease();
+	int            OnActivate();
+	int            OnDeactivate();
 
 	//////////////////////////////////////////////////////////////////////
 	// Script Functions
 	//////////////////////////////////////////////////////////////////////
 
-	int Release(IFunctionHandler *pH);
+	int            Release(IFunctionHandler* pH);
 
-	int GetName(IFunctionHandler *pH);
+	int            GetName(IFunctionHandler* pH);
 
-	int GetWidgetCount(IFunctionHandler *pH);
-	int GetWidget(IFunctionHandler *pH);
-	int AddWidget(IFunctionHandler *pH);
-	int DelWidget(IFunctionHandler *pH);
+	int            GetWidgetCount(IFunctionHandler* pH);
+	int            GetWidget(IFunctionHandler* pH);
+	int            AddWidget(IFunctionHandler* pH);
+	int            DelWidget(IFunctionHandler* pH);
 
 private:
+	string          m_szName;
 
-	string			m_szName;
-
-	CUISystem				*m_pUISystem;
-	CUIWidgetList		m_vWidgetList;
-	bool						m_bActive;
+	CUISystem*      m_pUISystem;
+	CUIWidgetList   m_vWidgetList;
+	bool            m_bActive;
 
 	HSCRIPTFUNCTION m_hOnInit;
 	HSCRIPTFUNCTION m_hOnUpdate;

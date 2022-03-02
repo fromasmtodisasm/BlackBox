@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XServerRules.cpp
@@ -22,10 +22,10 @@
 //////////////////////////////////////////////////////////////////////
 CXServerRules::CXServerRules()
 {
-	m_init=false;	
-	m_pScriptSystem=NULL;
-	m_pGameRulesObj=NULL;
-	m_pGame=NULL;
+	m_init          = false;
+	m_pScriptSystem = NULL;
+	m_pGameRulesObj = NULL;
+	m_pGame         = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -35,17 +35,17 @@ CXServerRules::~CXServerRules()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXServerRules::ChangeGameRules( const char *inszGameType )
+bool CXServerRules::ChangeGameRules(const char* inszGameType)
 {
 	assert(inszGameType);
 	char filename[512];
 
-	sprintf(filename,"Scripts\\%s\\GameRules.lua",inszGameType);
+	sprintf(filename, "Scripts\\%s\\GameRules.lua", inszGameType);
 
 	m_pScriptSystem->SetGlobalToNull("GameRules");
 	//Never force Lua GC, m_pScriptSystem->ForceGarbageCollection();
 
-	if(m_pScriptSystem->ExecuteFile(filename,true,true))
+	if (m_pScriptSystem->ExecuteFile(filename, true, true))
 	{
 		/*  deactivated because it's not needed right now
 		m_pScriptSystem->BeginCall("OnAfterLoadGameRules");
@@ -58,18 +58,17 @@ bool CXServerRules::ChangeGameRules( const char *inszGameType )
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////
-bool CXServerRules::Init(CXGame *pGame, IConsole *pConsole,IScriptSystem *pScriptSystem, ILog *pLog)
+bool CXServerRules::Init(CXGame* pGame, IConsole* pConsole, IScriptSystem* pScriptSystem, ILog* pLog)
 {
-	if(m_init)
+	if (m_init)
 		return true;
-	m_pGame=pGame;
-	m_pConsole=pConsole;
+	m_pGame         = pGame;
+	m_pConsole      = pConsole;
 
-	m_pScriptSystem=pScriptSystem;
+	m_pScriptSystem = pScriptSystem;
 
-	if(!ChangeGameRules(m_pGame->g_GameType->GetString()))
+	if (!ChangeGameRules(m_pGame->g_GameType->GetString()))
 	{
 		if (pLog)
 		{
@@ -78,24 +77,24 @@ bool CXServerRules::Init(CXGame *pGame, IConsole *pConsole,IScriptSystem *pScrip
 			pLog->Log(sMessage);
 		}
 
-		if(!ChangeGameRules("Default"))
+		if (!ChangeGameRules("Default"))
 		{
 			//m_pConsole->Log( "Cannot load script %s",filename );
 			return (false);
 		}
 	}
-	
-  //initialize rules
-	m_pGameRulesObj=m_pScriptSystem->CreateEmptyObject();
-	
-	if(!m_pScriptSystem->GetGlobalValue("GameRules",m_pGameRulesObj))
+
+	//initialize rules
+	m_pGameRulesObj = m_pScriptSystem->CreateEmptyObject();
+
+	if (!m_pScriptSystem->GetGlobalValue("GameRules", m_pGameRulesObj))
 		return false;
 
-	m_pScriptSystem->BeginCall("GameRules","OnInit");
+	m_pScriptSystem->BeginCall("GameRules", "OnInit");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->EndCall();
-	
-	m_init=true;
+
+	m_init = true;
 
 	return true;
 }
@@ -103,29 +102,28 @@ bool CXServerRules::Init(CXGame *pGame, IConsole *pConsole,IScriptSystem *pScrip
 //////////////////////////////////////////////////////////////////////
 void CXServerRules::Update()
 {
-	FUNCTION_PROFILER( PROFILE_GAME );
-	if(m_pGameRulesObj==NULL)
+	FUNCTION_PROFILER(PROFILE_GAME);
+	if (m_pGameRulesObj == NULL)
 		return;
-	m_pScriptSystem->BeginCall("GameRules","OnUpdate");
+	m_pScriptSystem->BeginCall("GameRules", "OnUpdate");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->EndCall();
-
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXServerRules::ShutDown()
 {
-	if(!m_init)
+	if (!m_init)
 		return;
-	m_pScriptSystem->BeginCall("GameRules","OnShutdown");
+	m_pScriptSystem->BeginCall("GameRules", "OnShutdown");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->EndCall();
 
-	m_init=false;
+	m_init = false;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::CallVote(CScriptObjectServerSlot &sss, char *command, char *arg1)
+void CXServerRules::CallVote(CScriptObjectServerSlot& sss, char* command, char* arg1)
 {
 	m_pScriptSystem->BeginCall("GameRules", "OnCallVote");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
@@ -136,7 +134,7 @@ void CXServerRules::CallVote(CScriptObjectServerSlot &sss, char *command, char *
 };
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::Vote(CScriptObjectServerSlot &sss, int vote)
+void CXServerRules::Vote(CScriptObjectServerSlot& sss, int vote)
 {
 	m_pScriptSystem->BeginCall("GameRules", "OnVote");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
@@ -146,7 +144,7 @@ void CXServerRules::Vote(CScriptObjectServerSlot &sss, int vote)
 };
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::Kill(CScriptObjectServerSlot &sss)
+void CXServerRules::Kill(CScriptObjectServerSlot& sss)
 {
 	m_pScriptSystem->BeginCall("GameRules", "OnKill");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
@@ -157,118 +155,118 @@ void CXServerRules::Kill(CScriptObjectServerSlot &sss)
 //////////////////////////////////////////////////////////////////////
 void CXServerRules::MapChanged()
 {
-  m_pScriptSystem->BeginCall("GameRules", "OnMapChange");
+	m_pScriptSystem->BeginCall("GameRules", "OnMapChange");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->EndCall();
 };
 
 //////////////////////////////////////////////////////////////////////
-const char *CXServerRules::GetGameType()
+const char* CXServerRules::GetGameType()
 {
-	if(!m_init)
+	if (!m_init)
 		return 0;
 
-  auto md = m_pGame->g_GameType->GetString();
-  
-  HSCRIPTFUNCTION fun = m_pScriptSystem->GetFunctionPtr("GameRules", "ModeDesc");
-  if(fun)
-  {
-      m_pScriptSystem->BeginCall(fun);
-	    m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
-	    m_pScriptSystem->EndCall(md);
-			m_pScriptSystem->ReleaseFunc(fun);
+	auto            md  = m_pGame->g_GameType->GetString();
+
+	HSCRIPTFUNCTION fun = m_pScriptSystem->GetFunctionPtr("GameRules", "ModeDesc");
+	if (fun)
+	{
+		m_pScriptSystem->BeginCall(fun);
+		m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
+		m_pScriptSystem->EndCall(md);
+		m_pScriptSystem->ReleaseFunc(fun);
 	};
-	
+
 	return md;
 };
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::PrintEnterGameMessage(const char *playername,int color)
+void CXServerRules::PrintEnterGameMessage(const char* playername, int color)
 {
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::OnHitObject( const SWeaponHit &hit )
+void CXServerRules::OnHitObject(const SWeaponHit& hit)
 {
-	_SmartScriptObject pObj(m_pScriptSystem);
-	CScriptObjectVector oPos(m_pScriptSystem),oNormal(m_pScriptSystem),oDir(m_pScriptSystem);
-	oPos=hit.pos;
-	oNormal=hit.normal;
-	oDir=hit.dir;
+	_SmartScriptObject  pObj(m_pScriptSystem);
+	CScriptObjectVector oPos(m_pScriptSystem), oNormal(m_pScriptSystem), oDir(m_pScriptSystem);
+	oPos    = hit.pos;
+	oNormal = hit.normal;
+	oDir    = hit.dir;
 
-	pObj->SetValue("pos",*oPos);
-	pObj->SetValue("normal",*oNormal);
-	pObj->SetValue("dir",*oDir);
-	pObj->SetValue("damage",hit.damage);
-	pObj->SetValue("target",hit.target->GetScriptObject());
-	pObj->SetValue("shooter",hit.target->GetScriptObject());
-	pObj->SetValue("weapon",hit.weapon);
-	pObj->SetValue("projectile",hit.projectile->GetScriptObject());
+	pObj->SetValue("pos", *oPos);
+	pObj->SetValue("normal", *oNormal);
+	pObj->SetValue("dir", *oDir);
+	pObj->SetValue("damage", hit.damage);
+	pObj->SetValue("target", hit.target->GetScriptObject());
+	pObj->SetValue("shooter", hit.target->GetScriptObject());
+	pObj->SetValue("weapon", hit.weapon);
+	pObj->SetValue("projectile", hit.projectile->GetScriptObject());
 
-	m_pScriptSystem->BeginCall("GameRules","OnHitObject");
+	m_pScriptSystem->BeginCall("GameRules", "OnHitObject");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(*pObj);
 	m_pScriptSystem->EndCall();
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::OnHitPlayer( const SWeaponHit &hit )
+void CXServerRules::OnHitPlayer(const SWeaponHit& hit)
 {
-	_SmartScriptObject pObj(m_pScriptSystem);
-	CScriptObjectVector oPos(m_pScriptSystem),oNormal(m_pScriptSystem),oDir(m_pScriptSystem);
-	oPos=hit.pos;
-	oNormal=hit.normal;
-	oDir=hit.dir;
+	_SmartScriptObject  pObj(m_pScriptSystem);
+	CScriptObjectVector oPos(m_pScriptSystem), oNormal(m_pScriptSystem), oDir(m_pScriptSystem);
+	oPos    = hit.pos;
+	oNormal = hit.normal;
+	oDir    = hit.dir;
 
-	pObj->SetValue("pos",*oPos);
-	pObj->SetValue("normal",*oNormal);
-	pObj->SetValue("dir",*oDir);
-	pObj->SetValue("damage",hit.damage);
-	pObj->SetValue("target",hit.target->GetScriptObject());
-	pObj->SetValue("shooter",hit.target->GetScriptObject());
-	pObj->SetValue("weapon",hit.weapon);
-	pObj->SetValue("projectile",hit.projectile->GetScriptObject());
+	pObj->SetValue("pos", *oPos);
+	pObj->SetValue("normal", *oNormal);
+	pObj->SetValue("dir", *oDir);
+	pObj->SetValue("damage", hit.damage);
+	pObj->SetValue("target", hit.target->GetScriptObject());
+	pObj->SetValue("shooter", hit.target->GetScriptObject());
+	pObj->SetValue("weapon", hit.weapon);
+	pObj->SetValue("projectile", hit.projectile->GetScriptObject());
 
-	m_pScriptSystem->BeginCall("GameRules","OnHitPlayer");
+	m_pScriptSystem->BeginCall("GameRules", "OnHitPlayer");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(*pObj);
 	m_pScriptSystem->EndCall();
 }
-  
+
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::OnPlayerRespawn( IEntity *player )
+void CXServerRules::OnPlayerRespawn(IEntity* player)
 {
-	m_pScriptSystem->BeginCall("GameRules","OnPlayerRespawn");
+	m_pScriptSystem->BeginCall("GameRules", "OnPlayerRespawn");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(player->GetScriptObject());
 	m_pScriptSystem->EndCall();
 }
 
 //////////////////////////////////////////////////////////////////////
-int CXServerRules::OnClientConnect(IScriptObject *pSS,int nRequestedClassID)
+int CXServerRules::OnClientConnect(IScriptObject* pSS, int nRequestedClassID)
 {
 	int nNewClassID;
-	m_pScriptSystem->BeginCall("GameRules","OnClientConnect");
+	m_pScriptSystem->BeginCall("GameRules", "OnClientConnect");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(pSS);
 	m_pScriptSystem->PushFuncParam(nRequestedClassID);
 	m_pScriptSystem->EndCall(nNewClassID);
-  return nNewClassID;
+	return nNewClassID;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::OnClientDisconnect( IScriptObject *pSS )
+void CXServerRules::OnClientDisconnect(IScriptObject* pSS)
 {
-	m_pScriptSystem->BeginCall("GameRules","OnClientDisconnect");
+	m_pScriptSystem->BeginCall("GameRules", "OnClientDisconnect");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(pSS);
 	m_pScriptSystem->EndCall();
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::OnClientRequestRespawn( IScriptObject *pSS, const EntityClassId nRequestedClassID)
+void CXServerRules::OnClientRequestRespawn(IScriptObject* pSS, const EntityClassId nRequestedClassID)
 {
-	m_pScriptSystem->BeginCall("GameRules","OnClientRequestRespawn");
+	m_pScriptSystem->BeginCall("GameRules", "OnClientRequestRespawn");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(pSS);
 	m_pScriptSystem->PushFuncParam(nRequestedClassID);
@@ -278,9 +276,9 @@ void CXServerRules::OnClientRequestRespawn( IScriptObject *pSS, const EntityClas
 //////////////////////////////////////////////////////////////////////
 void CXServerRules::SetGameStuffScript(string sName)
 {
-	m_sGameStuffScript=sName;
+	m_sGameStuffScript = sName;
 }
-	
+
 //////////////////////////////////////////////////////////////////////
 string CXServerRules::GetGameStuffScript()
 {
@@ -288,68 +286,68 @@ string CXServerRules::GetGameStuffScript()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::OnClientMsgText(EntityId sender, TextMessage &tm)
+void CXServerRules::OnClientMsgText(EntityId sender, TextMessage& tm)
 {
-	const char *szMessageType=0;
+	const char* szMessageType = 0;
 
-	// Modified by Márcio	
+	// Modified by Márcio
 	// TODO:
-	// 
+	//
 	// - add some kind of flood protection here
-	// - add a cvar to enable logging of text messages		
+	// - add a cvar to enable logging of text messages
 	switch (tm.cMessageType)
 	{
-		case CMD_SAY:	
-			szMessageType="say";
-			if(m_pGame->GetXSystem()->GetEntityTeam(sender) == SPECTATORS_TEAM)
-			{
-				tm.uiTarget = SPECTATORS_TEAM;
+	case CMD_SAY:
+		szMessageType = "say";
+		if (m_pGame->GetXSystem()->GetEntityTeam(sender) == SPECTATORS_TEAM)
+		{
+			tm.uiTarget = SPECTATORS_TEAM;
 
-				SendTeamTextMessage(sender, tm);
-			}
-			else SendWorldTextMessage(sender, tm);			
-			break;
-
-		case CMD_SAY_TEAM:
-			szMessageType="sayteam";
 			SendTeamTextMessage(sender, tm);
-			break;
+		}
+		else
+			SendWorldTextMessage(sender, tm);
+		break;
 
-		case CMD_SAY_ONE:
-			szMessageType="sayone";
+	case CMD_SAY_TEAM:
+		szMessageType = "sayteam";
+		SendTeamTextMessage(sender, tm);
+		break;
 
-			if (m_pGame->GetXSystem()->GetEntityTeam(sender) == SPECTATORS_TEAM)
-				if (m_pGame->GetXSystem()->GetEntityTeam(tm.uiTarget) != SPECTATORS_TEAM)
-					return;
+	case CMD_SAY_ONE:
+		szMessageType = "sayone";
 
-			SendEntityTextMessage(sender, tm);
-			break;
+		if (m_pGame->GetXSystem()->GetEntityTeam(sender) == SPECTATORS_TEAM)
+			if (m_pGame->GetXSystem()->GetEntityTeam(tm.uiTarget) != SPECTATORS_TEAM)
+				return;
+
+		SendEntityTextMessage(sender, tm);
+		break;
 	}
 
 	assert(szMessageType);
 
-	if(szMessageType)
+	if (szMessageType)
 	{
-		string sTarget="all";
-		IEntity *pSender = m_pGame->GetXSystem()->GetEntity(tm.uiSender);
+		string   sTarget = "all";
+		IEntity* pSender = m_pGame->GetXSystem()->GetEntity(tm.uiSender);
 
-		if(tm.cMessageType==CMD_SAY_ONE)		// sayone
+		if (tm.cMessageType == CMD_SAY_ONE) // sayone
 		{
-			IEntity *pTarget = m_pGame->GetXSystem()->GetEntity(tm.uiTarget);
+			IEntity* pTarget = m_pGame->GetXSystem()->GetEntity(tm.uiTarget);
 
-			if(pTarget)
-				sTarget=pTarget->GetName();
+			if (pTarget)
+				sTarget = pTarget->GetName();
 		}
-		else
-		if(tm.cMessageType==CMD_SAY_TEAM)		// sayteam
+		else if (tm.cMessageType == CMD_SAY_TEAM) // sayteam
 		{
 			char szTeamName[256];
 
-			if(m_pGame->GetXSystem()->GetTeamName(tm.uiTarget,szTeamName))
-				sTarget=szTeamName;
+			if (m_pGame->GetXSystem()->GetTeamName(tm.uiTarget, szTeamName))
+				sTarget = szTeamName;
 		}
 
-		if(pSender)
+		if (pSender)
 		{
 			// callback to script (e.g. to save chats to file)
 			_SmartScriptObject pMultiplayerUtils(m_pScriptSystem, true);
@@ -368,36 +366,36 @@ void CXServerRules::OnClientMsgText(EntityId sender, TextMessage &tm)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::SendWorldTextMessage(EntityId sender, TextMessage &tm)
+void CXServerRules::SendWorldTextMessage(EntityId sender, TextMessage& tm)
 {
 	if (!m_pGame)
 		return;
-	CXServer::XSlotMap &mapXSlots=m_pGame->GetServer()->GetSlotsMap();
-	for (CXServer::XSlotMap::iterator It=mapXSlots.begin();It!=mapXSlots.end();++It)
+	CXServer::XSlotMap& mapXSlots = m_pGame->GetServer()->GetSlotsMap();
+	for (CXServer::XSlotMap::iterator It = mapXSlots.begin(); It != mapXSlots.end(); ++It)
 	{
-		CXServerSlot *pSlot=It->second;
+		CXServerSlot* pSlot = It->second;
 		if (!pSlot->IsReady())
 			continue;
-		pSlot->SendTextMessage(tm,false);
+		pSlot->SendTextMessage(tm, false);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::SendEntityTextMessage(EntityId sender, TextMessage &tm)
+void CXServerRules::SendEntityTextMessage(EntityId sender, TextMessage& tm)
 {
 	if (!m_pGame)
 		return;
 
-	CXServer::XSlotMap &mapXSlots=m_pGame->GetServer()->GetSlotsMap();
+	CXServer::XSlotMap& mapXSlots   = m_pGame->GetServer()->GetSlotsMap();
 
-	bool bSent = false;
-	CXServerSlot *pSenderSlot = 0;
+	bool                bSent       = false;
+	CXServerSlot*       pSenderSlot = 0;
 
 	// check for the entity slot
 	// also check for the sender slot
-	for (CXServer::XSlotMap::iterator It=mapXSlots.begin();It!=mapXSlots.end();++It)
+	for (CXServer::XSlotMap::iterator It = mapXSlots.begin(); It != mapXSlots.end(); ++It)
 	{
-		CXServerSlot *pSlot=It->second;
+		CXServerSlot* pSlot = It->second;
 
 		if (!pSlot->IsReady())
 			continue;
@@ -426,41 +424,41 @@ void CXServerRules::SendEntityTextMessage(EntityId sender, TextMessage &tm)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::SendTeamTextMessage(EntityId sender, TextMessage &tm)
+void CXServerRules::SendTeamTextMessage(EntityId sender, TextMessage& tm)
 {
 	if (!m_pGame)
 		return;
-		
-	CXServer::XSlotMap &mapXSlots=m_pGame->GetServer()->GetSlotsMap();
-	IXSystem *pSys=m_pGame->GetServer()->m_pISystem;
 
-	for (CXServer::XSlotMap::iterator It=mapXSlots.begin();It!=mapXSlots.end();++It)
+	CXServer::XSlotMap& mapXSlots = m_pGame->GetServer()->GetSlotsMap();
+	IXSystem*           pSys      = m_pGame->GetServer()->m_pISystem;
+
+	for (CXServer::XSlotMap::iterator It = mapXSlots.begin(); It != mapXSlots.end(); ++It)
 	{
-		CXServerSlot *pSlot=It->second;
+		CXServerSlot* pSlot = It->second;
 		if (!pSlot->IsReady())
 			continue;
-		if(pSys->GetEntityTeam(pSlot->GetPlayerId())!=tm.uiTarget)
+		if (pSys->GetEntityTeam(pSlot->GetPlayerId()) != tm.uiTarget)
 			continue;
-		
-		pSlot->SendTextMessage(tm,false);
+
+		pSlot->SendTextMessage(tm, false);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-int CXServerRules::OnClientMsgJoinTeamRequest(CXServerSlot *pSS,BYTE nTeamId,const char *sClass)
+int CXServerRules::OnClientMsgJoinTeamRequest(CXServerSlot* pSS, BYTE nTeamId, const char* sClass)
 {
-	EntityId sender =pSS->GetPlayerId();
-	char sTeamName[256];
-	if(m_pGame->GetServer()->m_pISystem->GetEntityTeam(sender)==nTeamId)
+	EntityId sender = pSS->GetPlayerId();
+	char     sTeamName[256];
+	if (m_pGame->GetServer()->m_pISystem->GetEntityTeam(sender) == nTeamId)
 		return TEAM_HAS_NOT_CHANGED;
-	
-	if(!m_pGame->GetServer()->m_pISystem->GetTeamName(nTeamId,sTeamName))
+
+	if (!m_pGame->GetServer()->m_pISystem->GetTeamName(nTeamId, sTeamName))
 	{
 		NET_TRACE("<<NET>>THE TEAM DOESNT EXISTS\n");
 		return TEAM_HAS_NOT_CHANGED;
 	}
 	//pTeam->AddEntity(sender);
-	m_pScriptSystem->BeginCall("GameRules","OnClientJoinTeamRequest");
+	m_pScriptSystem->BeginCall("GameRules", "OnClientJoinTeamRequest");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(pSS->GetScriptObject());
 	m_pScriptSystem->PushFuncParam(sTeamName);
@@ -470,9 +468,9 @@ int CXServerRules::OnClientMsgJoinTeamRequest(CXServerSlot *pSS,BYTE nTeamId,con
 }
 
 //////////////////////////////////////////////////////////////////////
-int CXServerRules::OnClientCmd(CXServerSlot *pSS,const char *sCmd)
+int CXServerRules::OnClientCmd(CXServerSlot* pSS, const char* sCmd)
 {
-	m_pScriptSystem->BeginCall("GameRules","OnClientCmd");
+	m_pScriptSystem->BeginCall("GameRules", "OnClientCmd");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(pSS->GetScriptObject());
 	m_pScriptSystem->PushFuncParam(sCmd);
@@ -481,9 +479,9 @@ int CXServerRules::OnClientCmd(CXServerSlot *pSS,const char *sCmd)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServerRules::OnSpectatorSwitchModeRequest(IEntity *spec)
+void CXServerRules::OnSpectatorSwitchModeRequest(IEntity* spec)
 {
-	m_pScriptSystem->BeginCall("GameRules","OnSpectatorSwitchModeRequest");
+	m_pScriptSystem->BeginCall("GameRules", "OnSpectatorSwitchModeRequest");
 	m_pScriptSystem->PushFuncParam(m_pGameRulesObj);
 	m_pScriptSystem->PushFuncParam(spec->GetScriptObject());
 	m_pScriptSystem->EndCall();
@@ -501,4 +499,3 @@ void CXServerRules::OnAfterLoad()
 		m_pScriptSystem->EndCall();
 	}
 }
-

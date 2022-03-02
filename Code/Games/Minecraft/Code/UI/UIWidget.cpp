@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: UIWidget.cpp
@@ -19,51 +19,51 @@
 #include "UIScreen.h"
 #include <algorithm>
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIWidget::CUIWidget()
-: m_iFlags(UIFLAG_DEFAULT),
-	m_iStyle(0),
-	m_pUISystem(0),
-	m_pScreen(0),
-	m_bMoving(0),
-  m_cColor(color4f(1.0, 1.0f, 1.0f, 1.0f)),
-	m_iMouseCursor(-1),
-	m_iTabStop(0),
-	m_cGreyedColor(0.3f, 0.3f, 0.3f, 0.5f),
-	m_iGreyedBlend(0)
+    : m_iFlags(UIFLAG_DEFAULT)
+    , m_iStyle(0)
+    , m_pUISystem(0)
+    , m_pScreen(0)
+    , m_bMoving(0)
+    , m_cColor(color4f(1.0, 1.0f, 1.0f, 1.0f))
+    , m_iMouseCursor(-1)
+    , m_iTabStop(0)
+    , m_cGreyedColor(0.3f, 0.3f, 0.3f, 0.5f)
+    , m_iGreyedBlend(0)
 {
 	m_vVisibleWidgetList.reserve(16);
 	m_vVisibleWidgetList.resize(0);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetName(const std::string &szName)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetName(const std::string& szName)
 {
 	m_szName = szName;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-std::string &CUIWidget::GetName()
+//////////////////////////////////////////////////////////////////////
+std::string& CUIWidget::GetName()
 {
 	return m_szName;
 }
 
-////////////////////////////////////////////////////////////////////// 
-CUIWidgetList *CUIWidget::GetChildList()
+//////////////////////////////////////////////////////////////////////
+CUIWidgetList* CUIWidget::GetChildList()
 {
 	return &m_pChildList;
 }
 
-////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUIWidget::GetChild(int iIndex)
+//////////////////////////////////////////////////////////////////////
+CUIWidget* CUIWidget::GetChild(int iIndex)
 {
 	return m_pChildList[iIndex];
 }
 
-////////////////////////////////////////////////////////////////////// 
-CUIWidget *CUIWidget::GetChild(const std::string &szName)
+//////////////////////////////////////////////////////////////////////
+CUIWidget* CUIWidget::GetChild(const std::string& szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -76,14 +76,14 @@ CUIWidget *CUIWidget::GetChild(const std::string &szName)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::GetChildCount()
 {
 	return m_pChildList.size();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::AddChild(CUIWidget *pWidget)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::AddChild(CUIWidget* pWidget)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -98,8 +98,8 @@ int CUIWidget::AddChild(CUIWidget *pWidget)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::DelChild(CUIWidget *pWidget)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::DelChild(CUIWidget* pWidget)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -114,14 +114,14 @@ int CUIWidget::DelChild(CUIWidget *pWidget)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::DelChild(int iIndex)
 {
 	return DelChild(m_pChildList[iIndex]);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::DelChild(const std::string &szName)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::DelChild(const std::string& szName)
 {
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
@@ -136,13 +136,13 @@ int CUIWidget::DelChild(const std::string &szName)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::GetFlags()
 {
 	return m_iFlags;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::SetFlags(int iFlags)
 {
 	m_iFlags = iFlags;
@@ -150,13 +150,13 @@ int CUIWidget::SetFlags(int iFlags)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::GetStyle()
 {
 	return m_iStyle;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::SetStyle(int iStyle)
 {
 	m_iStyle = iStyle;
@@ -164,8 +164,8 @@ int CUIWidget::SetStyle(int iStyle)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetRect(UIRect *pRect)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetRect(UIRect* pRect)
 {
 	if (m_pParent)
 	{
@@ -174,17 +174,17 @@ int CUIWidget::GetRect(UIRect *pRect)
 	else
 	{
 		pRect->fLeft = m_pRect.fLeft;
-		pRect->fTop = m_pRect.fTop;
+		pRect->fTop  = m_pRect.fTop;
 	}
-	
-	pRect->fWidth = m_pRect.fWidth;
+
+	pRect->fWidth  = m_pRect.fWidth;
 	pRect->fHeight = m_pRect.fHeight;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetRect(const UIRect &pRect, bool bRelative)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetRect(const UIRect& pRect, bool bRelative)
 {
 	if ((bRelative) || (!m_pParent))
 	{
@@ -193,36 +193,36 @@ int CUIWidget::SetRect(const UIRect &pRect, bool bRelative)
 	else
 	{
 		m_pUISystem->GetRelativeXY(&m_pRect.fLeft, &m_pRect.fTop, pRect.fLeft, pRect.fTop, m_pParent);
-		m_pRect.fWidth = pRect.fWidth;
+		m_pRect.fWidth  = pRect.fWidth;
 		m_pRect.fHeight = pRect.fHeight;
 	}
-	
+
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetBorder(UIBorder *pBorder)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetBorder(UIBorder* pBorder)
 {
 	memcpy(pBorder, &m_pBorder, sizeof(UIBorder));
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetBorder(const UIBorder &pBorder)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetBorder(const UIBorder& pBorder)
 {
 	memcpy(&m_pBorder, &pBorder, sizeof(UIBorder));
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::GetZ()
 {
 	return m_iZ;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::SetZ(int iZ)
 {
 	if (m_iZ != iZ)
@@ -235,13 +235,13 @@ int CUIWidget::SetZ(int iZ)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::GetTabStop()
 {
 	return m_iTabStop;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::SetTabStop(int iTabStop)
 {
 	m_iTabStop = iTabStop;
@@ -251,22 +251,22 @@ int CUIWidget::SetTabStop(int iTabStop)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetToolTip(const float fX, const float fY, std::wstring &szwToolTip)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetToolTip(const float fX, const float fY, std::wstring& szwToolTip)
 {
 	szwToolTip = m_szwToolTip;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::Release()
 {
 	CUIWidgetItor pItor = m_pChildList.begin();
 
 	while (GetChildCount())
 	{
-		GetChild(GetChildCount()-1)->Release();
+		GetChild(GetChildCount() - 1)->Release();
 	}
 
 	if (m_pParent)
@@ -279,15 +279,15 @@ int CUIWidget::Release()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Normal Events
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 int CUIWidget::OnInit()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -302,7 +302,7 @@ int CUIWidget::OnInit()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -326,11 +326,11 @@ int CUIWidget::OnInit()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnRelease()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -345,7 +345,7 @@ int CUIWidget::OnRelease()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -369,15 +369,15 @@ int CUIWidget::OnRelease()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Keyboard Events
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 int CUIWidget::OnKeyDown(int iKeyCode)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -392,7 +392,7 @@ int CUIWidget::OnKeyDown(int iKeyCode)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -417,11 +417,11 @@ int CUIWidget::OnKeyDown(int iKeyCode)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnKeyUp(int iKeyCode)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -436,7 +436,7 @@ int CUIWidget::OnKeyUp(int iKeyCode)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -461,11 +461,11 @@ int CUIWidget::OnKeyUp(int iKeyCode)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnKeyPressed(int iKeyCode)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -480,7 +480,7 @@ int CUIWidget::OnKeyPressed(int iKeyCode)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -505,15 +505,15 @@ int CUIWidget::OnKeyPressed(int iKeyCode)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Mouse Events
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseEnter()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -528,7 +528,7 @@ int CUIWidget::OnMouseEnter()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -552,11 +552,11 @@ int CUIWidget::OnMouseEnter()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseLeave()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -571,7 +571,7 @@ int CUIWidget::OnMouseLeave()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -595,11 +595,11 @@ int CUIWidget::OnMouseLeave()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseDown(int iKeyCode, float fX, float fY)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -614,7 +614,7 @@ int CUIWidget::OnMouseDown(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -641,11 +641,11 @@ int CUIWidget::OnMouseDown(int iKeyCode, float fX, float fY)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseUp(int iKeyCode, float fX, float fY)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -660,7 +660,7 @@ int CUIWidget::OnMouseUp(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -687,11 +687,11 @@ int CUIWidget::OnMouseUp(int iKeyCode, float fX, float fY)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseClick(int iKeyCode, float fX, float fY)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -706,7 +706,7 @@ int CUIWidget::OnMouseClick(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -733,11 +733,11 @@ int CUIWidget::OnMouseClick(int iKeyCode, float fX, float fY)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseDblClick(int iKeyCode, float fX, float fY)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -752,7 +752,7 @@ int CUIWidget::OnMouseDblClick(int iKeyCode, float fX, float fY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -779,11 +779,11 @@ int CUIWidget::OnMouseDblClick(int iKeyCode, float fX, float fY)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseOver(float fNewX, float fNewY, float fOldX, float fOldY)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -798,7 +798,7 @@ int CUIWidget::OnMouseOver(float fNewX, float fNewY, float fOldX, float fOldY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -826,11 +826,11 @@ int CUIWidget::OnMouseOver(float fNewX, float fNewY, float fOldX, float fOldY)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMouseMove(float fNewX, float fNewY, float fOldX, float fOldY)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -845,7 +845,7 @@ int CUIWidget::OnMouseMove(float fNewX, float fNewY, float fOldX, float fOldY)
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -873,11 +873,11 @@ int CUIWidget::OnMouseMove(float fNewX, float fNewY, float fOldX, float fOldY)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnGotFocus()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -892,7 +892,7 @@ int CUIWidget::OnGotFocus()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -916,11 +916,11 @@ int CUIWidget::OnGotFocus()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnLostFocus()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -935,7 +935,7 @@ int CUIWidget::OnLostFocus()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -959,11 +959,11 @@ int CUIWidget::OnLostFocus()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnSized()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -978,7 +978,7 @@ int CUIWidget::OnSized()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -1002,11 +1002,11 @@ int CUIWidget::OnSized()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnMoved()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -1021,7 +1021,7 @@ int CUIWidget::OnMoved()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -1045,11 +1045,11 @@ int CUIWidget::OnMoved()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnChanged()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -1064,7 +1064,7 @@ int CUIWidget::OnChanged()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -1088,11 +1088,11 @@ int CUIWidget::OnChanged()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIWidget::OnCommand()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem*  pScriptSystem   = m_pUISystem->GetIScriptSystem();
+	IScriptObject*  pScriptObject   = m_pUISystem->GetWidgetScriptObject(this);
 	HSCRIPTFUNCTION pScriptFunction = 0;
 
 	if (!pScriptObject)
@@ -1107,7 +1107,7 @@ int CUIWidget::OnCommand()
 			return 1;
 		}
 
-		_SmartScriptObject	pSkinScriptObject(pScriptSystem, true);
+		_SmartScriptObject pSkinScriptObject(pScriptSystem, true);
 
 		if (!pScriptObject->GetValue("skin", pSkinScriptObject))
 		{
@@ -1148,7 +1148,7 @@ int CUIWidget::DrawChildren()
 	// draw first pass and gater the visible widgets
 	for (CUIWidgetItor pItor = m_pChildList.begin(); pItor != m_pChildList.end(); pItor++)
 	{
-		CUIWidget *pWidget = *pItor;
+		CUIWidget* pWidget = *pItor;
 
 		if (pWidget->GetFlags() & UIFLAG_VISIBLE)
 		{
@@ -1163,7 +1163,7 @@ int CUIWidget::DrawChildren()
 	{
 		for (CUIWidgetItor pItor = m_vVisibleWidgetList.begin(); pItor != m_vVisibleWidgetList.end(); pItor++)
 		{
-			CUIWidget *pWidget = *pItor;
+			CUIWidget* pWidget = *pItor;
 
 			m_pUISystem->SendMessage(pWidget, UIM_DRAW, i, 0);
 		}
@@ -1174,18 +1174,18 @@ int CUIWidget::DrawChildren()
 
 //////////////////////////////////////////////////////////////////////
 // Common Script Functions
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetName(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetName(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetName, 0);
 
 	return pH->EndFunction(GetName().c_str());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetScreen(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetScreen(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetScreen, 0);
 
@@ -1197,25 +1197,25 @@ int CUIWidget::GetScreen(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetChildCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetChildCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetChildCount, 0);
 
 	return pH->EndFunction(GetChildCount());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetChild(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetChild(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetChild, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetChild, 1, svtString, svtNumber);
 
-	CUIWidget *pWidget = 0;
+	CUIWidget* pWidget = 0;
 
 	if (pH->GetParamType(1) == svtString)
 	{
-		char *szName;
+		char* szName;
 
 		pH->GetParam(1, szName);
 
@@ -1243,23 +1243,23 @@ int CUIWidget::GetChild(IFunctionHandler *pH)
 	}
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::Release(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::Release(IFunctionHandler* pH)
 {
 	Release();
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetRect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetRect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetRect, 1, 4);
 
 	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == svtString))
 	{
 		UIRect pRect;
-		char *szRect;
+		char*  szRect;
 
 		pH->GetParam(1, szRect);
 
@@ -1289,8 +1289,8 @@ int CUIWidget::SetRect(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetRect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetRect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetRect, 0);
 
@@ -1301,61 +1301,61 @@ int CUIWidget::GetRect(IFunctionHandler *pH)
 	return pH->EndFunction(szRect);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetBorderColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetBorderColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetFontColor, m_pBorder.cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetBorderColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetBorderColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetBorderColor, m_pBorder.cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetBorderSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetBorderSize(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetBorderSize, m_pBorder.fSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetBorderSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetBorderSize(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetBorderSize, m_pBorder.fSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetBorderStyle(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetBorderStyle(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetBorderStyle, m_pBorder.iStyle);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetBorderStyle(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetBorderStyle(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetBorderStyle, m_pBorder.iStyle);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetFontName(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetFontName(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetFontName, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetFontName, 1, svtString);
 
-	char *szFontName;
+	char* szFontName;
 
 	pH->GetParam(1, szFontName);
 
@@ -1364,21 +1364,21 @@ int CUIWidget::SetFontName(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetFontName(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetFontName(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetFontName, 0);
 
 	return pH->EndFunction(m_pFont.szFaceName.c_str());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetFontEffect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetFontEffect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetFontEffect, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetFontEffect, 1, svtString);
 
-	char *szFontEffect;
+	char* szFontEffect;
 
 	pH->GetParam(1, szFontEffect);
 
@@ -1387,52 +1387,52 @@ int CUIWidget::SetFontEffect(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetFontEffect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetFontEffect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetFontEffect, 0);
 
 	return pH->EndFunction(m_pFont.szEffectName.c_str());
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetFontColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetFontColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetFontColor, m_pFont.cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetFontColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetFontColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetFontColor, m_pFont.cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetFontSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetFontSize(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetFontSize, m_pFont.fSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetFontSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetFontSize(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetFontSize, m_pFont.fSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetMouseCursor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetMouseCursor(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetMouseCursor, m_iMouseCursor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetMouseCursor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetMouseCursor(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetMouseCursor, m_iMouseCursor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetToolTip(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetToolTip(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetToolTip, 0);
 
@@ -1441,26 +1441,26 @@ int CUIWidget::SetToolTip(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetGreyedColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetGreyedColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetGreyedColor, m_cGreyedColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetGreyedColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetGreyedColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetGreyedColor, m_cGreyedColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::SetGreyedBlend(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::SetGreyedBlend(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), SetGreyedBlend, m_iGreyedBlend);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIWidget::GetGreyedBlend(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIWidget::GetGreyedBlend(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), GetName().c_str(), GetGreyedBlend, m_iGreyedBlend);
 }

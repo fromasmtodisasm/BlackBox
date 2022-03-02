@@ -1,11 +1,11 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: UICheckBox.cpp  
-//  Description: UI EditoBox 
+//  File: UICheckBox.cpp
+//  Description: UI EditoBox
 //
 //  History:
 //  - [20/6/2003]: File created by Márcio Martins
@@ -19,56 +19,56 @@
 
 _DECLARE_SCRIPTABLEEX(CUIEditBox);
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Control and Shift Modifier Checking
-////////////////////////////////////////////////////////////////////// 
-#define CONTROLDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL))
-#define SHIFTDOWN	(m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT))
+//////////////////////////////////////////////////////////////////////
+#define CONTROLDOWN (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LCONTROL) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RCONTROL))
+#define SHIFTDOWN   (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT))
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIEditBox::CUIEditBox()
-: m_iHAlignment(UIALIGN_LEFT),
-	m_iVAlignment(UIALIGN_MIDDLE),
-  m_cCursorColor(color4f(0.0f, 0.0f, 0.0f, 1.0f)),
-	m_iSelectionStart(0),
-	m_iSelectionCount(0),
-	m_iCursorPos(0),
-	m_fLeftSpacing(0),
-	m_fRightSpacing(0),
-	m_bMouseSelecting(0),
-	m_bMouseSelectingAll(0),
-	m_iMouseSelectionStart(0),
-  m_cSelectionColor(0.0f, 0.0f, 0.8f, 0.8f),
-	m_iPathSafe(0),
-  m_iNameSafe(0),
-	m_iUbiSafe(0),
-  m_iNumeric(0),
-  m_iMaxLength(0)
+    : m_iHAlignment(UIALIGN_LEFT)
+    , m_iVAlignment(UIALIGN_MIDDLE)
+    , m_cCursorColor(color4f(0.0f, 0.0f, 0.0f, 1.0f))
+    , m_iSelectionStart(0)
+    , m_iSelectionCount(0)
+    , m_iCursorPos(0)
+    , m_fLeftSpacing(0)
+    , m_fRightSpacing(0)
+    , m_bMouseSelecting(0)
+    , m_bMouseSelectingAll(0)
+    , m_iMouseSelectionStart(0)
+    , m_cSelectionColor(0.0f, 0.0f, 0.8f, 0.8f)
+    , m_iPathSafe(0)
+    , m_iNameSafe(0)
+    , m_iUbiSafe(0)
+    , m_iNumeric(0)
+    , m_iMaxLength(0)
 {
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIEditBox::~CUIEditBox()
 {
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 string CUIEditBox::GetClassName()
 {
 	return UICLASSNAME_EDITBOX;
 }
 
-////////////////////////////////////////////////////////////////////// 
-LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)		//AMD Port
+//////////////////////////////////////////////////////////////////////
+LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
 	switch (iMessage)
 	{
 	case UIM_LBUTTONDBLCLICK:
-		{
-			m_bMouseSelectingAll = 1;
-			m_iSelectionStart = 0;
-			m_iSelectionCount = m_szText.size();
-		}
+	{
+		m_bMouseSelectingAll = 1;
+		m_iSelectionStart    = 0;
+		m_iSelectionCount    = m_szText.size();
+	}
 		return 1;
 	case UIM_KEYUP:
 		if ((lParam == Legacy::XKEY_RETURN) || (lParam == Legacy::XKEY_NUMPADENTER))
@@ -77,55 +77,55 @@ LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	
 		}
 		return 1;
 	case UIM_KEYDOWN:
-		return ProcessInput(iMessage, (int)lParam, (char *)wParam);
+		return ProcessInput(iMessage, (int)lParam, (char*)wParam);
 	case UIM_LBUTTONDOWN:
+	{
+		if (m_bMouseSelectingAll)
 		{
-			if (m_bMouseSelectingAll)
-			{
-				break;
-			}
+			break;
+		}
 
-			IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
-			UIRect pTextRect = GetTextRect();
+		IFFont* pFont           = m_pUISystem->GetIFont(m_pFont);
+		UIRect  pTextRect       = GetTextRect();
 
-			int iCursorPosition = GetCursorPosition(UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam), pTextRect, pFont);
+		int     iCursorPosition = GetCursorPosition(UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam), pTextRect, pFont);
 
-			if (iCursorPosition == -1)
+		if (iCursorPosition == -1)
+		{
+			iCursorPosition = m_iCursorPos;
+		}
+
+		if (!m_iSelectionCount && (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT)))
+		{
+			m_iSelectionStart = min(m_iCursorPos, iCursorPosition);
+			m_iSelectionCount = abs(iCursorPosition - m_iCursorPos);
+		}
+		else if (!m_bMouseSelecting)
+		{
+			m_iMouseSelectionStart = iCursorPosition;
+			m_iSelectionStart      = iCursorPosition;
+			m_iSelectionCount      = 0;
+			m_bMouseSelecting      = 1;
+		}
+		else
+		{
+			m_iSelectionCount = abs(m_iMouseSelectionStart - iCursorPosition);
+
+			if (iCursorPosition <= m_iMouseSelectionStart)
 			{
-					iCursorPosition = m_iCursorPos;
-			}
-	
-			if (!m_iSelectionCount && (m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_LSHIFT) || m_pUISystem->GetIInput()->KeyDown(Legacy::XKEY_RSHIFT)))
-			{
-				m_iSelectionStart = min(m_iCursorPos, iCursorPosition);
-				m_iSelectionCount = abs(iCursorPosition - m_iCursorPos);
-			}
-			else if (!m_bMouseSelecting)
-			{
-				m_iMouseSelectionStart = iCursorPosition;
 				m_iSelectionStart = iCursorPosition;
-				m_iSelectionCount = 0;
-				m_bMouseSelecting = 1;
 			}
-			else
-			{
-				m_iSelectionCount = abs(m_iMouseSelectionStart - iCursorPosition);
-
-				if (iCursorPosition <= m_iMouseSelectionStart)
-				{
-					m_iSelectionStart = iCursorPosition;
-				}
-			}
-
-			m_iCursorPos = iCursorPosition;
 		}
-		break;
+
+		m_iCursorPos = iCursorPosition;
+	}
+	break;
 	case UIM_MOUSEUP:
-		{
-			m_bMouseSelectingAll = 0;
-			m_bMouseSelecting = 0;
-		}
-		break;
+	{
+		m_bMouseSelectingAll = 0;
+		m_bMouseSelecting    = 0;
+	}
+	break;
 	default:
 		break;
 	}
@@ -133,7 +133,7 @@ LRESULT CUIEditBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	
 	return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::Draw(int iPass)
 {
 	if (iPass != 0)
@@ -147,7 +147,6 @@ int CUIEditBox::Draw(int iPass)
 	UIRect pAbsoluteRect(m_pRect);
 
 	m_pUISystem->GetAbsoluteXY(&pAbsoluteRect.fLeft, &pAbsoluteRect.fTop, m_pRect.fLeft, m_pRect.fTop, m_pParent);
-
 
 	// if transparent, draw only the clipped text
 	if ((GetStyle() & UISTYLE_TRANSPARENT) == 0)
@@ -185,14 +184,14 @@ int CUIEditBox::Draw(int iPass)
 	}
 
 	// get the font with the correct properties set
-	IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont* pFont     = m_pUISystem->GetIFont(m_pFont);
 
 	// get the text rectangle
-	UIRect pTextRect = UIRect(pAbsoluteRect.fLeft+m_fLeftSpacing, pAbsoluteRect.fTop, pAbsoluteRect.fWidth-m_fLeftSpacing-m_fRightSpacing, pAbsoluteRect.fHeight);
+	UIRect  pTextRect = UIRect(pAbsoluteRect.fLeft + m_fLeftSpacing, pAbsoluteRect.fTop, pAbsoluteRect.fWidth - m_fLeftSpacing - m_fRightSpacing, pAbsoluteRect.fHeight);
 
 	m_pUISystem->AdjustRect(&pTextRect, pTextRect, UI_DEFAULT_TEXT_BORDER_SIZE);
 	m_pUISystem->SetScissor(&pTextRect);
- 
+
 	// if we have text, draw it
 	if (!m_szText.empty())
 	{
@@ -206,8 +205,8 @@ int CUIEditBox::Draw(int iPass)
 		{
 			wchar_t szPassword[256] = {L'*'};
 
-			int iSize = min(m_szText.size(), 255);
-			szPassword[iSize] = 0;
+			int     iSize           = min(m_szText.size(), 255);
+			szPassword[iSize]       = 0;
 
 			for (int i = 1; i < iSize; i++)
 			{
@@ -259,8 +258,8 @@ int CUIEditBox::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CUIEditBox::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////
+void CUIEditBox::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIEditBox>::InitializeTemplate(pScriptSystem);
 
@@ -300,23 +299,23 @@ void CUIEditBox::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIEditBox, SetPassword);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::Cut()
 {
 	if (m_iSelectionCount < 1)
 	{
 		return 0;
 	}
-	
+
 	m_szText.erase(m_iSelectionStart, m_iSelectionCount);
-	m_iCursorPos = m_iSelectionStart;
+	m_iCursorPos      = m_iSelectionStart;
 
 	m_iSelectionStart = m_iSelectionCount = 0;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::CopyToClipboard()
 {
 #if !defined(LINUX)
@@ -324,15 +323,15 @@ int CUIEditBox::CopyToClipboard()
 	{
 		return 0;
 	}
-	
+
 	if (!OpenClipboard(0))
 	{
 		return 0;
 	}
 
 	HGLOBAL hGlobal;
-	LPVOID	pGlobal;
-	int		iTextSize = m_szText.size();
+	LPVOID  pGlobal;
+	int     iTextSize = m_szText.size();
 
 	if (GetSelectedCount())
 	{
@@ -340,10 +339,10 @@ int CUIEditBox::CopyToClipboard()
 	}
 
 	hGlobal = GlobalAlloc(GHND, (iTextSize + 1) * sizeof(wchar_t));
-	pGlobal = GlobalLock (hGlobal);
+	pGlobal = GlobalLock(hGlobal);
 
 	memcpy(pGlobal, &m_szText.c_str()[GetSelectionStart()], iTextSize * sizeof(wchar_t));
-	((short *)pGlobal)[iTextSize] = 0;
+	((short*)pGlobal)[iTextSize] = 0;
 
 	GlobalUnlock(hGlobal);
 
@@ -356,7 +355,7 @@ int CUIEditBox::CopyToClipboard()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::CutToClipboard()
 {
 	if (CopyToClipboard())
@@ -367,13 +366,13 @@ int CUIEditBox::CutToClipboard()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::PasteFromClipboard()
 {
 #if !defined(LINUX)
-	HGLOBAL	hGlobal;
-	LPVOID	pGlobal;
-	bool	bUnicode = true;
+	HGLOBAL hGlobal;
+	LPVOID  pGlobal;
+	bool    bUnicode = true;
 
 	if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
 	{
@@ -406,13 +405,12 @@ int CUIEditBox::PasteFromClipboard()
 
 	if (bUnicode)
 	{
-		wchar_t *pString = (wchar_t *)pGlobal;
-		wchar_t pWString[2048];
-		wchar_t *p = pWString;
+		wchar_t* pString = (wchar_t*)pGlobal;
+		wchar_t  pWString[2048];
+		wchar_t* p       = pWString;
 
+		int      iLength = 0;
 
-		int iLength = 0;
-		
 		for (int i = 0; (pString[i] != '\n') && (pString[i] != '\r') && (pString[i] != '\0'); i++)
 		{
 			if (CheckChar(pString[i]))
@@ -428,21 +426,21 @@ int CUIEditBox::PasteFromClipboard()
 		{
 			iLength = min(iLength, (m_iMaxLength - (int)m_szText.size()));
 		}
-		
+
 		m_szText.insert(m_iCursorPos, pWString, iLength);
-	
+
 		m_iCursorPos += iLength;
 	}
 	else
 	{
-		char *pString = (char *)pGlobal;
-		wchar_t pWString[2048];
-		wchar_t *p = pWString;
+		char*    pString = (char*)pGlobal;
+		wchar_t  pWString[2048];
+		wchar_t* p       = pWString;
 
 		// convert char to wchar_t
 
-		int i = 0;
-		int iLength = 0;
+		int      i       = 0;
+		int      iLength = 0;
 		for (; pString[i] != 0; i++)
 		{
 			if ((pString[i] == '\n') || (pString[i] == '\r'))
@@ -455,7 +453,7 @@ int CUIEditBox::PasteFromClipboard()
 				++iLength;
 				*p++ = (unsigned char)pString[i];
 			}
-		}		
+		}
 
 		*p = 0;
 
@@ -477,24 +475,24 @@ int CUIEditBox::PasteFromClipboard()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::GetSelectionStart()
 {
 	return m_iSelectionStart;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::GetSelectedCount()
 {
 	return m_iSelectionCount;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetText(const wstring &szText)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetText(const wstring& szText)
 {
 	m_szText.resize(0);
 
-	const wchar_t *pString = szText.c_str();
+	const wchar_t* pString = szText.c_str();
 
 	for (int i = 0; (pString[i] != '\n') && (pString[i] != '\r') && (pString[i] != '\0'); i++)
 	{
@@ -514,73 +512,72 @@ int CUIEditBox::SetText(const wstring &szText)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetText(wstring &szText)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetText(wstring& szText)
 {
 	szText = m_szText;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetText(string &szText)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetText(string& szText)
 {
 	m_pUISystem->ConvertToString(szText, m_szText);
 
 	return 1;
 }
- 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::DrawCursor(const UIRect &pTextRect, IFFont *pFont, float fX, float fY, float fHeight)
+
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::DrawCursor(const UIRect& pTextRect, IFFont* pFont, float fX, float fY, float fHeight)
 {
-	#if 0
+#if 0
 	m_pUISystem->GetIRenderer()->SetMaterialColor(m_cCursorColor.v[0], m_cCursorColor.v[1], m_cCursorColor.v[2], m_cCursorColor.v[3]);
 	m_pUISystem->GetIRenderer()->Draw2dLine(fX, fY, fX, fY + fHeight);
 
 	return 1;
-	#else
+#else
 	NOT_IMPLEMENTED_V;
-	#endif
+#endif
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::DrawSelection(int iStart, int iCount, IFFont *pFont, const UIRect &pTextRect)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::DrawSelection(int iStart, int iCount, IFFont* pFont, const UIRect& pTextRect)
 {
 	wstring pSelectedStr;
 	wstring pPreSelectionStr;
 
-	float fX, fY;
+	float   fX, fY;
 
 	if (m_iStyle & UISTYLE_PASSWORD)
 	{
 		wstring szwPassword;
-		int i = m_szText.size();
+		int     i = m_szText.size();
 
 		szwPassword.reserve(i);
-		while(--i >= 0)
+		while (--i >= 0)
 			szwPassword.insert(0, L"*");
 
 		m_pUISystem->GetAlignedTextXY(&fX, &fY, pFont, pTextRect, szwPassword.c_str(), m_iHAlignment, m_iVAlignment);
 
-		pSelectedStr = szwPassword.substr(iStart, iCount);
+		pSelectedStr     = szwPassword.substr(iStart, iCount);
 		pPreSelectionStr = szwPassword.substr(0, iStart);
 	}
 	else
 	{
 		m_pUISystem->GetAlignedTextXY(&fX, &fY, pFont, pTextRect, m_szText.c_str(), m_iHAlignment, m_iVAlignment);
 
-		pSelectedStr = m_szText.substr(iStart, iCount);
+		pSelectedStr     = m_szText.substr(iStart, iCount);
 		pPreSelectionStr = m_szText.substr(0, iStart);
 	}
 
 	// get text sizes
 	vector2f vPreSelectionSize = pFont->GetTextSizeW(pPreSelectionStr.c_str());
-	vector2f vSelectionSize = pFont->GetTextSizeW(pSelectedStr.c_str());
+	vector2f vSelectionSize    = pFont->GetTextSizeW(pSelectedStr.c_str());
 
-	#if 1
+#if 1
 	float fRcpScaleX = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordX(1);
 	float fRcpScaleY = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordY(1);
-
 
 	vPreSelectionSize.x *= fRcpScaleX;
 	vPreSelectionSize.y *= fRcpScaleY;
@@ -589,18 +586,18 @@ int CUIEditBox::DrawSelection(int iStart, int iCount, IFFont *pFont, const UIRec
 	vSelectionSize.y *= fRcpScaleY;
 
 	fX += vPreSelectionSize.x;
-		
+
 	UIRect pRect(fX, fY, (float)vSelectionSize.x, (float)vSelectionSize.y);
 
 	m_pUISystem->DrawQuad(pRect, m_cSelectionColor);
 
 	return 1;
-	#else
+#else
 	NOT_IMPLEMENTED_V;
-	#endif
+#endif
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::SelectLeft()
 {
 	int iOldCursor = m_iCursorPos;
@@ -633,7 +630,7 @@ int CUIEditBox::SelectLeft()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::SelectRight()
 {
 	int iOldCursor = m_iCursorPos;
@@ -666,7 +663,7 @@ int CUIEditBox::SelectRight()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::Backspace()
 {
 	if (m_iSelectionCount)
@@ -680,14 +677,14 @@ int CUIEditBox::Backspace()
 	{
 		if ((m_iCursorPos - 1 > 0) && ((m_iStyle & UISTYLE_PASSWORD) == 0))
 		{
-			if (m_szText[m_iCursorPos-2] == '$')
+			if (m_szText[m_iCursorPos - 2] == '$')
 			{
-				m_szText.erase(m_iCursorPos-1, 1);
+				m_szText.erase(m_iCursorPos - 1, 1);
 				m_iCursorPos--;
 			}
 		}
-		
-		m_szText.erase(m_iCursorPos-1, 1);
+
+		m_szText.erase(m_iCursorPos - 1, 1);
 
 		m_iCursorPos--;
 
@@ -708,9 +705,9 @@ int CUIEditBox::Delete()
 	{
 		if (m_iCursorPos < (int)m_szText.size())
 		{
-			if ((m_szText[m_iCursorPos] == '$') && (m_iCursorPos < (int)m_szText.size()-1) && ((m_iStyle & UISTYLE_PASSWORD) == 0))
+			if ((m_szText[m_iCursorPos] == '$') && (m_iCursorPos < (int)m_szText.size() - 1) && ((m_iStyle & UISTYLE_PASSWORD) == 0))
 			{
-				m_szText.erase(m_iCursorPos, 1);				
+				m_szText.erase(m_iCursorPos, 1);
 			}
 			m_szText.erase(m_iCursorPos, 1);
 
@@ -721,12 +718,12 @@ int CUIEditBox::Delete()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::Left()
 {
 	if ((m_iCursorPos > 1) && ((m_iStyle & UISTYLE_PASSWORD) == 0))
 	{
-		if (m_szText[m_iCursorPos-2] == '$')
+		if (m_szText[m_iCursorPos - 2] == '$')
 		{
 			m_iCursorPos -= 2;
 		}
@@ -743,7 +740,7 @@ int CUIEditBox::Left()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::Right()
 {
 	if ((m_iCursorPos + 1 < (int)m_szText.size()) && ((m_iStyle & UISTYLE_PASSWORD) == 0))
@@ -765,7 +762,7 @@ int CUIEditBox::Right()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::InsertChar(wchar_t cChar)
 {
 	if (((m_iMaxLength) && ((int)m_szText.size() < m_iMaxLength)) || (!m_iMaxLength))
@@ -780,8 +777,8 @@ int CUIEditBox::InsertChar(wchar_t cChar)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyName)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char* szKeyName)
 {
 	bool bProcess = 1;
 	// selection stuff
@@ -789,7 +786,7 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 	{
 		if (SHIFTDOWN)
 		{
-			switch(iKeyCode)
+			switch (iKeyCode)
 			{
 			case Legacy::XKEY_LEFT:
 				SelectLeft();
@@ -800,7 +797,7 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 			case Legacy::XKEY_HOME:
 				m_iSelectionStart = 0;
 				m_iSelectionCount = m_iCursorPos;
-				m_iCursorPos = 0;
+				m_iCursorPos      = 0;
 				break;
 			case Legacy::XKEY_END:
 				if (!m_iSelectionCount)
@@ -809,7 +806,7 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 				}
 
 				m_iSelectionCount = m_szText.size() - m_iSelectionStart;
-				m_iCursorPos = (int)m_szText.size();
+				m_iCursorPos      = (int)m_szText.size();
 				break;
 			case Legacy::XKEY_INSERT:
 				PasteFromClipboard();
@@ -868,13 +865,13 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 			Delete();
 			break;
 		case Legacy::XKEY_HOME:
-			m_iCursorPos = 0;
+			m_iCursorPos      = 0;
 			m_iSelectionCount = 0;
 			m_iSelectionStart = 0;
 			m_bMouseSelecting = 0;
 			break;
 		case Legacy::XKEY_END:
-			m_iCursorPos = (int)m_szText.size();
+			m_iCursorPos      = (int)m_szText.size();
 			m_iSelectionCount = 0;
 			m_iSelectionStart = 0;
 			m_bMouseSelecting = 0;
@@ -898,19 +895,19 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 			//InsertChar((iKeyCode == Legacy::XKEY_SPACE ? L' ' : (unsigned char)*szKeyName));
 			if (iKeyCode == Legacy::XKEY_SPACE)
 			{
-				InsertChar( L' ' );
+				InsertChar(L' ');
 			}
 			else
 			{
 				wchar_t szwStr[256];
-				int iLength = strlen(szKeyName);
+				int     iLength = strlen(szKeyName);
 #if defined(LINUX)
 				mbstowcs(szwStr, szKeyName, iLength);
 				szwStr[iLength] = 0;
 #else
 				MultiByteToWideChar(CP_ACP, 0, szKeyName, -1, szwStr, 256);
 #endif
-				InsertChar(szwStr[0] );
+				InsertChar(szwStr[0]);
 			}
 		}
 	}
@@ -918,7 +915,7 @@ int CUIEditBox::ProcessInput(unsigned int iMessage, int iKeyCode, char *szKeyNam
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIEditBox::CheckChar(wchar_t cChar)
 {
 	char cAsciiChar = (char)cChar;
@@ -959,7 +956,7 @@ int CUIEditBox::CheckChar(wchar_t cChar)
 
 	if (m_iPathSafe)
 	{
-		switch(cChar)
+		switch (cChar)
 		{
 			// chars that windows does not allow
 		case '\\':
@@ -981,13 +978,13 @@ int CUIEditBox::CheckChar(wchar_t cChar)
 
 	if (m_iNameSafe)
 	{
-		switch(cChar)
+		switch (cChar)
 		{
-			// chars that may cause problems with our game
-			case '@':
-			case '#':
-			case '%':
-				return 0;
+		// chars that may cause problems with our game
+		case '@':
+		case '#':
+		case '%':
+			return 0;
 		}
 	}
 
@@ -1008,8 +1005,8 @@ int CUIEditBox::CheckChar(wchar_t cChar)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetCursorCoord(float *fX, float *fY, float *fHeight, const UIRect &pTextRect, IFFont *pFont)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetCursorCoord(float* fX, float* fY, float* fHeight, const UIRect& pTextRect, IFFont* pFont)
 {
 	m_pUISystem->GetAlignedTextXY(fX, fY, pFont, pTextRect, m_szText.c_str(), m_iHAlignment, m_iVAlignment);
 
@@ -1018,10 +1015,10 @@ int CUIEditBox::GetCursorCoord(float *fX, float *fY, float *fHeight, const UIRec
 	if (m_iStyle & UISTYLE_PASSWORD)
 	{
 		wstring szwPassword;
-		int i = m_iCursorPos;
+		int     i = m_iCursorPos;
 
 		szwPassword.reserve(i);
-		while(--i >= 0)
+		while (--i >= 0)
 			szwPassword.insert(0, L"*");
 
 		vTextSize = pFont->GetTextSizeW(szwPassword.c_str());
@@ -1032,12 +1029,11 @@ int CUIEditBox::GetCursorCoord(float *fX, float *fY, float *fHeight, const UIRec
 		vTextSize = pFont->GetTextSizeW(pStr.c_str());
 	}
 
-	
 #if 0
 	vTextSize.x /= m_pUISystem->GetIRenderer()->ScaleCoordX(1.0f);
 	vTextSize.y /= m_pUISystem->GetIRenderer()->ScaleCoordY(1.0f);
 #else
-		NOT_IMPLEMENTED_V;
+	NOT_IMPLEMENTED_V;
 #endif
 
 	*fX += vTextSize.x;
@@ -1046,8 +1042,8 @@ int CUIEditBox::GetCursorCoord(float *fX, float *fY, float *fHeight, const UIRec
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetCursorPosition(float fAtX, float fAtY, const UIRect &pTextRect, IFFont *pFont)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetCursorPosition(float fAtX, float fAtY, const UIRect& pTextRect, IFFont* pFont)
 {
 	if (m_pUISystem->PointInRect(pTextRect, fAtX, fAtY))
 	{
@@ -1093,22 +1089,23 @@ int CUIEditBox::GetCursorPosition(float fAtX, float fAtY, const UIRect &pTextRec
 	return -1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetStringLength(const wchar_t *pString)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetStringLength(const wchar_t* pString)
 {
 	int iStringSize = 0;
 
-	for (; pString[iStringSize] != 0; iStringSize++);
+	for (; pString[iStringSize] != 0; iStringSize++)
+		;
 
 	return iStringSize;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetText, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), SetText, 1, svtString, svtNumber);
@@ -1116,14 +1113,14 @@ int CUIEditBox::SetText(IFunctionHandler *pH)
 	wstring szText;
 
 	m_pUISystem->ConvertToWString(szText, pH, 1);
-	
+
 	SetText(szText);
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetText, 0);
 
@@ -1132,24 +1129,24 @@ int CUIEditBox::GetText(IFunctionHandler *pH)
 		return pH->EndFunctionNull();
 	}
 
-	char	szString[1024] = {0,0};
+	char szString[1024] = {0, 0};
 	m_pUISystem->ConvertToString(szString, m_szText, 1024);
 
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::Clear(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::Clear(IFunctionHandler* pH)
 {
 	m_szText.clear();
 
-	m_iCursorPos = 0;
+	m_iCursorPos      = 0;
 	m_iSelectionCount = 0;
 	m_iSelectionStart = 0;
 
 	return pH->EndFunctionNull();
 }
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 UIRect CUIEditBox::GetTextRect()
 {
 	UIRect pTextRect(0, 0, m_pRect.fWidth, m_pRect.fHeight);
@@ -1167,74 +1164,74 @@ UIRect CUIEditBox::GetTextRect()
 	return pTextRect;
 }
 
-//////////////////////////////////////////////////////////////////////  
-int CUIEditBox::SetMaxLength(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetMaxLength(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetMaxLength, m_iMaxLength);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetMaxLength(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetMaxLength(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetMaxLength, m_iMaxLength);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetTextLength(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetTextLength(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetTextLength, int(m_szText.size()));
 }
 
 //////////////////////////////////////////////////////////////////////
-int CUIEditBox::SetVAlign(IFunctionHandler *pH)
+int CUIEditBox::SetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetVAlign, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetVAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetVAlign, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetHAlign, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetHAlign, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetSelectionStart(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetSelectionStart(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), SetSelectionStart, m_iSelectionStart);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetSelectionStart(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetSelectionStart(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), GetSelectionStart, m_iSelectionStart);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetSelectionCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetSelectionCount(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), SetSelectionCount, m_iSelectionCount);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetSelectionCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetSelectionCount(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), GetSelectionCount, m_iSelectionCount);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SelectAll(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SelectAll(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SelectAll, 0);
 
@@ -1244,8 +1241,8 @@ int CUIEditBox::SelectAll(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::DeselectAll(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::DeselectAll(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), DeselectAll, 0);
 
@@ -1255,20 +1252,20 @@ int CUIEditBox::DeselectAll(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetCursorPosition(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetCursorPosition(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), GetCursorPosition, m_iCursorPos);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetCursorPosition(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetCursorPosition(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetCursorPosition, m_iCursorPos);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::Cut(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::Cut(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Cut, 0);
 
@@ -1277,8 +1274,8 @@ int CUIEditBox::Cut(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::CopyToClipboard(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::CopyToClipboard(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), CopyToClipboard, 0);
 
@@ -1287,8 +1284,8 @@ int CUIEditBox::CopyToClipboard(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::CutToClipboard(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::CutToClipboard(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), CutToClipboard, 0);
 
@@ -1297,8 +1294,8 @@ int CUIEditBox::CutToClipboard(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::PasteFromClipboard(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::PasteFromClipboard(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), PasteFromClipboard, 0);
 
@@ -1307,56 +1304,56 @@ int CUIEditBox::PasteFromClipboard(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetCursorColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetCursorColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetCursorColor, m_cCursorColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::GetCursorColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::GetCursorColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetCursorColor, m_cCursorColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetNumeric(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetNumeric(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetNumeric, m_iNumeric);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetPathSafe(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetPathSafe(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetPathSafe, m_iPathSafe);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetNameSafe(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetNameSafe(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetNameSafe, m_iNameSafe);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetUbiSafe(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetUbiSafe(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetUbiSafe, m_iUbiSafe);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetPassword(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetPassword(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetPassword, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetPassword, 1, svtNumber);
@@ -1377,13 +1374,13 @@ int CUIEditBox::SetPassword(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetAllow(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetAllow(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetAllow, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetAllow, 1, svtString);
 
-	char *szAllow = 0;
+	char* szAllow = 0;
 
 	if (pH->GetParam(1, szAllow))
 	{
@@ -1393,13 +1390,13 @@ int CUIEditBox::SetAllow(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIEditBox::SetDisallow(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIEditBox::SetDisallow(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetDisallow, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetDisallow, 1, svtString);
 
-	char *szDisallow = 0;
+	char* szDisallow = 0;
 
 	if (pH->GetParam(1, szDisallow))
 	{

@@ -26,7 +26,7 @@ struct STagFileEntry
 	//Ang3 ang;
 };
 
-class CDevMode : public IInputEventListener//, public IRemoteConsoleListener
+class CDevMode : public IInputEventListener //, public IRemoteConsoleListener
 {
 public:
 	CDevMode();
@@ -46,8 +46,8 @@ public:
 	//void GetMemoryUsage(ICrySizer* s) { s->Add(*this); }
 
 private:
-	bool m_bSlowDownGameSpeed;
-	bool m_bHUD;
+	bool                       m_bSlowDownGameSpeed;
+	bool                       m_bHUD;
 	std::vector<STagFileEntry> LoadTagFile();
 	void                       SaveTagFile(const std::vector<STagFileEntry>&);
 	string                     TagFileName();

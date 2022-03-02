@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: UIVideoPanel.cpp
@@ -18,11 +18,11 @@
 #include "UISystem.h"
 
 #if !defined(NOT_USE_DIVX_SDK)
-#include "UIDivX_Video.h"
+	#include "UIDivX_Video.h"
 #endif
 
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
-#pragma comment(lib, "binkw32.lib")
+	#pragma comment(lib, "binkw32.lib")
 #endif
 
 _DECLARE_SCRIPTABLEEX(CUIVideoPanel)
@@ -30,30 +30,37 @@ _DECLARE_SCRIPTABLEEX(CUIVideoPanel)
 //////////////////////////////////////////////////////////////////////
 static bool g_bBinkInit = 0;
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIVideoPanel::CUIVideoPanel()
-:
+    :
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
-	m_hBink(0),
+    m_hBink(0)
+    ,
 #endif
-	m_bLooping(1), m_bPlaying(0), m_bPaused(0), m_iTextureID(-1), m_pSwapBuffer(0), m_szVideoFile(""), m_bKeepAspect(1)
+    m_bLooping(1)
+    , m_bPlaying(0)
+    , m_bPaused(0)
+    , m_iTextureID(-1)
+    , m_pSwapBuffer(0)
+    , m_szVideoFile("")
+    , m_bKeepAspect(1)
 {
-	m_DivX_Active=0;
+	m_DivX_Active = 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIVideoPanel::~CUIVideoPanel()
 {
 	ReleaseVideo();
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 string CUIVideoPanel::GetClassName()
 {
 	return UICLASSNAME_VIDEOPANEL;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::InitBink()
 {
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
@@ -69,7 +76,7 @@ int CUIVideoPanel::InitBink()
 
 		if (!BinkSoundUseWaveOut())
 		{
-			char *szError = BinkGetError();
+			char* szError = BinkGetError();
 			m_pUISystem->GetISystem()->GetILog()->Log("$4Bink Error$1: %s", szError);
 			m_pUISystem->GetISystem()->GetILog()->Log("  No sound will be played!");
 		}
@@ -80,23 +87,23 @@ int CUIVideoPanel::InitBink()
 	return 1;
 }
 
-
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::LoadVideo(const string &szFileName, bool bSound)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::LoadVideo(const string& szFileName, bool bSound)
 {
-	
 #if !defined(WIN64) && !defined(NOT_USE_BINK_SDK)
-	m_DivX_Active=1; // FIXME - activate DivX
-	//check if a BINK-file exists 
-	HBINK hBink = BinkOpen(szFileName.c_str(), BINKSNDTRACK);
-	if (hBink) {
-		m_DivX_Active=0; //deactivate DivX
+	m_DivX_Active = 1; // FIXME - activate DivX
+	//check if a BINK-file exists
+	HBINK hBink   = BinkOpen(szFileName.c_str(), BINKSNDTRACK);
+	if (hBink)
+	{
+		m_DivX_Active = 0; //deactivate DivX
 		BinkClose(hBink);
 	}
 #endif
-#if !defined(NOT_USE_DIVX_SDK)	
-	if (m_DivX_Active){
-		m_DivX_Active = g_DivXPlayer.Load_DivX( this, szFileName );
+#if !defined(NOT_USE_DIVX_SDK)
+	if (m_DivX_Active)
+	{
+		m_DivX_Active = g_DivXPlayer.Load_DivX(this, szFileName);
 		return m_DivX_Active;
 	}
 #endif
@@ -147,23 +154,23 @@ int CUIVideoPanel::LoadVideo(const string &szFileName, bool bSound)
 	// load bink file
 	if (stricmp(szFileName.c_str(), "binklogo") == 0)
 	{
-		m_hBink = BinkOpen((const char *)BinkLogoAddress(), BINKFROMMEMORY | BINKSNDTRACK);
+		m_hBink = BinkOpen((const char*)BinkLogoAddress(), BINKFROMMEMORY | BINKSNDTRACK);
 	}
 	else
 	{
 		// check for a MOD first
-		const char *szPrefix=NULL;
-		IGameMods *pMods=m_pUISystem->GetISystem()->GetIGame()->GetModsInterface();
-		if (pMods)		
-			szPrefix=pMods->GetModPath(szFileName.c_str());
-				
-		if(szPrefix)
+		const char* szPrefix = NULL;
+		IGameMods*  pMods    = m_pUISystem->GetISystem()->GetIGame()->GetModsInterface();
+		if (pMods)
+			szPrefix = pMods->GetModPath(szFileName.c_str());
+
+		if (szPrefix)
 		{
 			m_hBink = BinkOpen(szPrefix, BINKSNDTRACK);
 		}
 
 		// try in the original folder
-		if(!m_hBink)
+		if (!m_hBink)
 		{
 			m_hBink = BinkOpen(szFileName.c_str(), BINKSNDTRACK);
 		}
@@ -171,7 +178,7 @@ int CUIVideoPanel::LoadVideo(const string &szFileName, bool bSound)
 
 	if (!m_hBink)
 	{
-		char *szError = BinkGetError();
+		char* szError = BinkGetError();
 
 		OnError(szError);
 
@@ -195,12 +202,12 @@ int CUIVideoPanel::LoadVideo(const string &szFileName, bool bSound)
 
 	// create texture for blitting
 
-  // WORKAROUND: NVidia driver bug during playing of video file
-  // Solution: Never remove video texture (non-power-of-two)
-  if (m_hBink->Width==640 && m_hBink->Height==480)
-	  m_iTextureID = 	m_pUISystem->GetIRenderer()->DownLoadToVideoMemory((unsigned char *)m_pSwapBuffer, m_hBink->Width, m_hBink->Height, eTF_0888, eTF_0888, 0, 0, FILTER_LINEAR, 0, "$VideoPanel", FT_DYNAMIC);
-  else
-    m_iTextureID = 	m_pUISystem->GetIRenderer()->DownLoadToVideoMemory((unsigned char *)m_pSwapBuffer, m_hBink->Width, m_hBink->Height, eTF_0888, eTF_0888, 0, 0, FILTER_LINEAR, 0, NULL, FT_DYNAMIC);
+	// WORKAROUND: NVidia driver bug during playing of video file
+	// Solution: Never remove video texture (non-power-of-two)
+	if (m_hBink->Width == 640 && m_hBink->Height == 480)
+		m_iTextureID = m_pUISystem->GetIRenderer()->DownLoadToVideoMemory((unsigned char*)m_pSwapBuffer, m_hBink->Width, m_hBink->Height, eTF_0888, eTF_0888, 0, 0, FILTER_LINEAR, 0, "$VideoPanel", FT_DYNAMIC);
+	else
+		m_iTextureID = m_pUISystem->GetIRenderer()->DownLoadToVideoMemory((unsigned char*)m_pSwapBuffer, m_hBink->Width, m_hBink->Height, eTF_0888, eTF_0888, 0, 0, FILTER_LINEAR, 0, NULL, FT_DYNAMIC);
 
 	if (m_iTextureID == -1)
 	{
@@ -211,7 +218,7 @@ int CUIVideoPanel::LoadVideo(const string &szFileName, bool bSound)
 
 		BinkClose(m_hBink);
 		m_hBink = 0;
-		
+
 		OnError("");
 
 		return 0;
@@ -226,13 +233,13 @@ int CUIVideoPanel::LoadVideo(const string &szFileName, bool bSound)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-LRESULT CUIVideoPanel::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	//AMD Port
+//////////////////////////////////////////////////////////////////////
+LRESULT CUIVideoPanel::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
-
-	FUNCTION_PROFILER( PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 #if !defined(NOT_USE_DIVX_SDK)
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		g_DivXPlayer.Update_DivX(this);
 		return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 	}
@@ -248,7 +255,7 @@ LRESULT CUIVideoPanel::Update(unsigned int iMessage, WPARAM wParam, LPARAM lPara
 			{
 				{
 					FRAME_PROFILER("CUIVideoPanel::Update:BinkDoFrame", m_pUISystem->GetISystem(), PROFILE_GAME);
-					BinkDoFrame(m_hBink);		
+					BinkDoFrame(m_hBink);
 				}
 
 				if ((m_iTextureID > -1) && (m_pSwapBuffer))
@@ -260,7 +267,7 @@ LRESULT CUIVideoPanel::Update(unsigned int iMessage, WPARAM wParam, LPARAM lPara
 
 					{
 						FRAME_PROFILER("Renderer::UpdateTextureInVideoMemory", m_pUISystem->GetISystem(), PROFILE_GAME);
-						m_pUISystem->GetIRenderer()->UpdateTextureInVideoMemory(m_iTextureID, (unsigned char *)m_pSwapBuffer, 0, 0, m_hBink->Width, m_hBink->Height, eTF_8888);
+						m_pUISystem->GetIRenderer()->UpdateTextureInVideoMemory(m_iTextureID, (unsigned char*)m_pSwapBuffer, 0, 0, m_hBink->Width, m_hBink->Height, eTF_8888);
 					}
 				}
 
@@ -291,15 +298,15 @@ LRESULT CUIVideoPanel::Update(unsigned int iMessage, WPARAM wParam, LPARAM lPara
 	return 0;
 }
 
-
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::Play()
 {
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		m_bPlaying = 1;
-		m_bPaused = 0;
+		m_bPaused  = 0;
 		return 1;
-	}	
+	}
 
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
 	if (!m_hBink)
@@ -316,8 +323,8 @@ int CUIVideoPanel::Play()
 	}
 
 	BinkPause(m_hBink, 0);
- 	m_bPlaying = 1;
-	m_bPaused = 0;
+	m_bPlaying = 1;
+	m_bPaused  = 0;
 	return 1;
 #else
 	return 0;
@@ -326,13 +333,14 @@ int CUIVideoPanel::Play()
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::Stop()
 {
 #if !defined(NOT_USE_DIVX_SDK)
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		g_DivXPlayer.StopSound();
-		m_bPaused = 0;
+		m_bPaused  = 0;
 		m_bPlaying = 0;
 		return 1;
 	}
@@ -344,21 +352,22 @@ int CUIVideoPanel::Stop()
 	}
 	BinkPause(m_hBink, 1);
 	BinkClose(m_hBink);
-	m_hBink = 0;
-	m_bPaused = 0;
+	m_hBink    = 0;
+	m_bPaused  = 0;
 	m_bPlaying = 0;
 	return 1;
 #endif
 
-	m_bPaused = 0;
+	m_bPaused  = 0;
 	m_bPlaying = 0;
-	return 1;	
+	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::ReleaseVideo()
 {
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		return 1;
 	}
 
@@ -374,7 +383,7 @@ int CUIVideoPanel::ReleaseVideo()
 		m_iTextureID = -1;
 	}
 
-	m_hBink = 0;
+	m_hBink       = 0;
 	m_szVideoFile = "";
 
 	if (m_pSwapBuffer)
@@ -390,13 +399,13 @@ int CUIVideoPanel::ReleaseVideo()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::Pause(bool bPause)
 {
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		return 1;
 	}
-
 
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
 	if (!m_hBink)
@@ -428,10 +437,11 @@ int CUIVideoPanel::Pause(bool bPause)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::IsPlaying()
 {
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		return (m_bPlaying ? 1 : 0);
 	}
 
@@ -448,10 +458,11 @@ int CUIVideoPanel::IsPlaying()
 	return (0);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::IsPaused()
 {
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		return (m_bPaused ? 1 : 0);
 	}
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
@@ -467,11 +478,11 @@ int CUIVideoPanel::IsPaused()
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::SetVolume(int iTrackID, float fVolume)
 {
-
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		return 1;
 	}
 
@@ -499,7 +510,8 @@ int CUIVideoPanel::SetVolume(int iTrackID, float fVolume)
 //////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::SetPan(int iTrackID, float fPan)
 {
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		return 1;
 	}
 
@@ -527,15 +539,17 @@ int CUIVideoPanel::SetPan(int iTrackID, float fPan)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::SetFrameRate(int iFrameRate)
 {
-	if (m_DivX_Active){
+	if (m_DivX_Active)
+	{
 		return 1;
 	}
 
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
-	if (!m_hBink)	{
+	if (!m_hBink)
+	{
 		return 0;
 	}
 
@@ -549,7 +563,7 @@ int CUIVideoPanel::SetFrameRate(int iFrameRate)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::Draw(int iPass)
 {
 	if (iPass != 0)
@@ -588,7 +602,7 @@ int CUIVideoPanel::Draw(int iPass)
 	// video
 	if (m_iTextureID > -1)
 	{
-		float fWidth = pAbsoluteRect.fWidth;
+		float fWidth  = pAbsoluteRect.fWidth;
 		float fHeight = pAbsoluteRect.fHeight;
 
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
@@ -624,9 +638,9 @@ int CUIVideoPanel::Draw(int iPass)
 
 		UIRect pRect;
 
-		pRect.fLeft = pAbsoluteRect.fLeft + (pAbsoluteRect.fWidth - fWidth) * 0.5f;
-		pRect.fTop = pAbsoluteRect.fTop + (pAbsoluteRect.fHeight - fHeight) * 0.5f;
-		pRect.fWidth = fWidth;
+		pRect.fLeft   = pAbsoluteRect.fLeft + (pAbsoluteRect.fWidth - fWidth) * 0.5f;
+		pRect.fTop    = pAbsoluteRect.fTop + (pAbsoluteRect.fHeight - fHeight) * 0.5f;
+		pRect.fWidth  = fWidth;
 		pRect.fHeight = fHeight;
 
 		if (m_bKeepAspect)
@@ -663,7 +677,7 @@ int CUIVideoPanel::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::EnableVideo(bool bEnable)
 {
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
@@ -680,7 +694,7 @@ int CUIVideoPanel::EnableVideo(bool bEnable)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::EnableAudio(bool bEnable)
 {
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
@@ -698,8 +712,8 @@ int CUIVideoPanel::EnableAudio(bool bEnable)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CUIVideoPanel::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////
+void CUIVideoPanel::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIVideoPanel>::InitializeTemplate(pScriptSystem);
 
@@ -719,11 +733,11 @@ void CUIVideoPanel::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIVideoPanel, EnableAudio);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::OnError(const char *szError)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::OnError(const char* szError)
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem* pScriptSystem = m_pUISystem->GetIScriptSystem();
+	IScriptObject* pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
 
 	if (!pScriptObject)
 	{
@@ -752,11 +766,11 @@ int CUIVideoPanel::OnError(const char *szError)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIVideoPanel::OnFinished()
 {
-	IScriptSystem *pScriptSystem = m_pUISystem->GetIScriptSystem();
-	IScriptObject *pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
+	IScriptSystem* pScriptSystem = m_pUISystem->GetIScriptSystem();
+	IScriptObject* pScriptObject = m_pUISystem->GetWidgetScriptObject(this);
 
 	if (!pScriptObject)
 	{
@@ -784,8 +798,8 @@ int CUIVideoPanel::OnFinished()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::LoadVideo(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::LoadVideo(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, GetName().c_str(), LoadVideo, 1, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), LoadVideo, 1, svtString);
@@ -794,9 +808,9 @@ int CUIVideoPanel::LoadVideo(IFunctionHandler *pH)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), LoadVideo, 2, svtNumber);
 	}
-	
-	char *pszFileName;
-	int iSound = 0;
+
+	char* pszFileName;
+	int   iSound = 0;
 
 	pH->GetParam(1, pszFileName);
 
@@ -813,8 +827,8 @@ int CUIVideoPanel::LoadVideo(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::ReleaseVideo(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::ReleaseVideo(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), ReleaseVideo, 0);
 
@@ -823,8 +837,8 @@ int CUIVideoPanel::ReleaseVideo(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::Play(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::Play(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Play, 0);
 
@@ -833,8 +847,8 @@ int CUIVideoPanel::Play(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::Stop(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::Stop(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Stop, 0);
 
@@ -843,8 +857,8 @@ int CUIVideoPanel::Stop(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::Pause(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::Pause(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Pause, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), Pause, 1, svtNumber);
@@ -858,8 +872,8 @@ int CUIVideoPanel::Pause(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::IsPlaying(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::IsPlaying(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), IsPlaying, 0);
 
@@ -873,8 +887,8 @@ int CUIVideoPanel::IsPlaying(IFunctionHandler *pH)
 	}
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::IsPaused(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::IsPaused(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), IsPaused, 0);
 
@@ -888,8 +902,8 @@ int CUIVideoPanel::IsPaused(IFunctionHandler *pH)
 	}
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::SetVolume(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::SetVolume(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetVolume, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetVolume, 1, svtNumber);
@@ -907,7 +921,7 @@ int CUIVideoPanel::SetVolume(IFunctionHandler *pH)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CUIVideoPanel::SetPan(IFunctionHandler *pH)
+int CUIVideoPanel::SetPan(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetPan, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetPan, 1, svtNumber);
@@ -924,8 +938,8 @@ int CUIVideoPanel::SetPan(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::SetFrameRate(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::SetFrameRate(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetFrameRate, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetFrameRate, 1, svtNumber);
@@ -939,8 +953,8 @@ int CUIVideoPanel::SetFrameRate(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::EnableVideo(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::EnableVideo(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), EnableVideo, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), EnableVideo, 1, svtNumber);
@@ -954,8 +968,8 @@ int CUIVideoPanel::EnableVideo(IFunctionHandler *pH)
 	return pH->EndFunction(1);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIVideoPanel::EnableAudio(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIVideoPanel::EnableAudio(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), EnableAudio, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), EnableAudio, 1, svtNumber);
@@ -965,6 +979,6 @@ int CUIVideoPanel::EnableAudio(IFunctionHandler *pH)
 	pH->GetParam(1, iEnable);
 
 	EnableAudio(iEnable != 0);
-	
+
 	return pH->EndFunction(1);
 }

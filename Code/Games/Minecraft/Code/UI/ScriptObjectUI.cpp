@@ -1,10 +1,10 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: ScriptObjectUI.cpp  
+//  File: ScriptObjectUI.cpp
 //  Description: Make UI functions available from script as UI:Func(param)
 //
 //  History:
@@ -29,13 +29,13 @@
 _DECLARE_SCRIPTABLEEX(CScriptObjectUI);
 
 //////////////////////////////////////////////////////////////////////////
-int CScriptObjectUI::Create(CUISystem *pUISystem)
+int CScriptObjectUI::Create(CUISystem* pUISystem)
 {
-	m_pUISystem = pUISystem;
-	m_pLog = pUISystem->GetISystem()->GetILog();
+	m_pUISystem                  = pUISystem;
+	m_pLog                       = pUISystem->GetISystem()->GetILog();
 
-	IScriptSystem *pScriptSystem = pUISystem->GetIScriptSystem();
-	
+	IScriptSystem* pScriptSystem = pUISystem->GetIScriptSystem();
+
 	pScriptSystem->SetGlobalToNull("UI");
 
 	InitGlobal(pScriptSystem, "UI", this);
@@ -46,15 +46,15 @@ int CScriptObjectUI::Create(CUISystem *pUISystem)
 //////////////////////////////////////////////////////////////////////////
 int CScriptObjectUI::GetScriptFunctionPtrs()
 {
-	m_hCanRenderGame		= m_pScriptSystem->GetFunctionPtr("UI", "CanRenderGame");
-	m_hCanSwitch				= m_pScriptSystem->GetFunctionPtr("UI", "CanSwitch");
-	m_hOnSwitch					= m_pScriptSystem->GetFunctionPtr("UI", "OnSwitch");
-	m_hOnInit						= m_pScriptSystem->GetFunctionPtr("UI", "OnInit");
-	m_hOnRelease				= m_pScriptSystem->GetFunctionPtr("UI", "OnRelease");
-	m_hOnUpdate					= m_pScriptSystem->GetFunctionPtr("UI", "OnUpdate");
-	m_hOnDrawBackground = m_pScriptSystem->GetFunctionPtr("UI", "OnDrawBackground");
-	m_hOnDrawMouseCursor= m_pScriptSystem->GetFunctionPtr("UI", "OnDrawMouseCursor");
-	m_hOnIdle						= m_pScriptSystem->GetFunctionPtr("UI", "OnIdle");
+	m_hCanRenderGame     = m_pScriptSystem->GetFunctionPtr("UI", "CanRenderGame");
+	m_hCanSwitch         = m_pScriptSystem->GetFunctionPtr("UI", "CanSwitch");
+	m_hOnSwitch          = m_pScriptSystem->GetFunctionPtr("UI", "OnSwitch");
+	m_hOnInit            = m_pScriptSystem->GetFunctionPtr("UI", "OnInit");
+	m_hOnRelease         = m_pScriptSystem->GetFunctionPtr("UI", "OnRelease");
+	m_hOnUpdate          = m_pScriptSystem->GetFunctionPtr("UI", "OnUpdate");
+	m_hOnDrawBackground  = m_pScriptSystem->GetFunctionPtr("UI", "OnDrawBackground");
+	m_hOnDrawMouseCursor = m_pScriptSystem->GetFunctionPtr("UI", "OnDrawMouseCursor");
+	m_hOnIdle            = m_pScriptSystem->GetFunctionPtr("UI", "OnIdle");
 
 	return 1;
 }
@@ -93,15 +93,15 @@ int CScriptObjectUI::ReleaseScriptFunctionPtrs()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CScriptObjectUI::InitializeTemplate(IScriptSystem *pScriptSystem)
+void CScriptObjectUI::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CScriptObjectUI>::InitializeTemplate(pScriptSystem);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, Release);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, Reload);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetWidget);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetWidgetCount);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ShowWidget);
@@ -111,11 +111,11 @@ void CScriptObjectUI::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, DisableWidget);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, IsWidgetEnabled);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SendMessage);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, BroadcastMessage);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetBackground);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetBackground);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetBackgroundColor);
@@ -124,7 +124,7 @@ void CScriptObjectUI::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, HideBackground);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, IsBackgroundVisible);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetMouseXY);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetMouseXY);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetMouseCursor);
@@ -138,49 +138,49 @@ void CScriptObjectUI::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, HideMouseCursor);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, IsMouseCursorVisible);
 
-	////////////////////////////////////////////////////////////////////////// 
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipColor);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipColor);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipBorderColor);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipBorderColor);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipBorderSize);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipBorderSize);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipBorderStyle);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipBorderStyle);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontName);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontName);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontEffect);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontEffect);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontColor);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontColor);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontSize);\
-	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontSize);\
+	//////////////////////////////////////////////////////////////////////////
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipColor);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipColor);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipBorderColor);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipBorderColor);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipBorderSize);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipBorderSize);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipBorderStyle);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipBorderStyle);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontName);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontName);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontEffect);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontEffect);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontColor);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontColor);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetToolTipFontSize);
+	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetToolTipFontSize);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, CaptureMouse);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ReleaseMouse);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractRed);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractGreen);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractBlue);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractAlpha);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractLeft);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractTop);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractWidth);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ExtractHeight);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetMouseX);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetMouseY);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetTopMostWidget);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetTopMostWidget);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetFocus);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetFocus);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, SetFocusScreen);
@@ -191,10 +191,10 @@ void CScriptObjectUI::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, NextTabStop);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, PrevTabStop);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, CreateObjectFromTable);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, CreateScreenFromTable);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetScreenCount);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, GetScreen);
@@ -206,12 +206,12 @@ void CScriptObjectUI::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, ActivateAllScreens);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, IsScreenActive);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, Disable);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, Enable);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, IsEnabled);
 
-	////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CScriptObjectUI, StopAllVideo);
 
 	// intialize the script constants
@@ -219,7 +219,7 @@ void CScriptObjectUI::InitializeTemplate(IScriptSystem *pScriptSystem)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CScriptObjectUI::InitializeConstants(IScriptSystem *pScriptSystem)
+void CScriptObjectUI::InitializeConstants(IScriptSystem* pScriptSystem)
 {
 	REGISTER_SCRIPT_CONSTANT(pScriptSystem, UIFLAG_VISIBLE);
 	REGISTER_SCRIPT_CONSTANT(pScriptSystem, UIFLAG_ENABLED);
@@ -268,8 +268,8 @@ void CScriptObjectUI::InitializeConstants(IScriptSystem *pScriptSystem)
 int CScriptObjectUI::Release()
 {
 	m_pUISystem->Release();
-	m_pUISystem =0 ;
-	m_pLog = 0;
+	m_pUISystem = 0;
+	m_pLog      = 0;
 
 	return 1;
 }
@@ -337,7 +337,7 @@ int CScriptObjectUI::CanSwitch(bool bIn)
 	return (bResult ? 1 : 0);
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CScriptObjectUI::OnInit()
 {
 	GetScriptFunctionPtrs();
@@ -358,7 +358,7 @@ int CScriptObjectUI::OnInit()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CScriptObjectUI::OnRelease()
 {
 	HSCRIPTFUNCTION pScriptFunction = m_hOnRelease;
@@ -380,7 +380,7 @@ int CScriptObjectUI::OnRelease()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CScriptObjectUI::OnUpdate()
 {
 	HSCRIPTFUNCTION pScriptFunction = m_hOnUpdate;
@@ -399,7 +399,7 @@ int CScriptObjectUI::OnUpdate()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CScriptObjectUI::OnDrawBackground()
 {
 	HSCRIPTFUNCTION pScriptFunction = m_hOnDrawBackground;
@@ -418,7 +418,7 @@ int CScriptObjectUI::OnDrawBackground()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CScriptObjectUI::OnDrawMouseCursor()
 {
 	HSCRIPTFUNCTION pScriptFunction = m_hOnDrawMouseCursor;
@@ -437,7 +437,7 @@ int CScriptObjectUI::OnDrawMouseCursor()
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CScriptObjectUI::OnIdle(float fIdleTime)
 {
 	HSCRIPTFUNCTION pScriptFunction = m_hOnIdle;
@@ -457,20 +457,20 @@ int CScriptObjectUI::OnIdle(float fIdleTime)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::Release(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::Release(IFunctionHandler* pH)
 {
 	Release();
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::Reload(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::Reload(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", Reload, 0, 1);
 
@@ -488,20 +488,20 @@ int CScriptObjectUI::Reload(IFunctionHandler *pH)
 	{
 		m_pUISystem->Reload(0);
 	}
-	
+
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", GetWidget, 1, 2);
 
-	char *szWidgetName = 0;
-	char *szScreenName = 0;
+	char*      szWidgetName = 0;
+	char*      szScreenName = 0;
 
-	CUIScreen *pScreen = 0;
-	CUIWidget *pWidget = 0;
+	CUIScreen* pScreen      = 0;
+	CUIWidget* pWidget      = 0;
 
 	if (pH->GetParamCount() >= 1)
 	{
@@ -520,11 +520,11 @@ int CScriptObjectUI::GetWidget(IFunctionHandler *pH)
 		}
 		else
 		{
-			IScriptObject *pObj = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObj = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(2, pObj);
 
-			pScreen = (CUIScreen *)pObj->GetNativeData();
+			pScreen = (CUIScreen*)pObj->GetNativeData();
 
 			pObj->Release();
 		}
@@ -551,22 +551,22 @@ int CScriptObjectUI::GetWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetWidgetCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetWidgetCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetWidgetCount, 0);
 
 	return pH->EndFunction(m_pUISystem->GetWidgetCount());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ShowWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ShowWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", ShowWidget, 1, 2);
 
-	CUIWidget *pWidget = 0;
-	char			*szWidgetName = 0;
-	char			*szScreenName = 0;
+	CUIWidget* pWidget      = 0;
+	char*      szWidgetName = 0;
+	char*      szScreenName = 0;
 
 	if (pH->GetParamCount() == 1)
 	{
@@ -574,11 +574,11 @@ int CScriptObjectUI::ShowWidget(IFunctionHandler *pH)
 
 		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
-			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(1, pObject);
 
-			pWidget = (CUIWidget *)pObject->GetNativeData();
+			pWidget = (CUIWidget*)pObject->GetNativeData();
 
 			pObject->Release();
 		}
@@ -615,14 +615,14 @@ int CScriptObjectUI::ShowWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::HideWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::HideWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", HideWidget, 1, 2);
 
-	CUIWidget *pWidget = 0;
-	char			*szWidgetName = 0;
-	char			*szScreenName = 0;
+	CUIWidget* pWidget      = 0;
+	char*      szWidgetName = 0;
+	char*      szScreenName = 0;
 
 	if (pH->GetParamCount() == 1)
 	{
@@ -630,11 +630,11 @@ int CScriptObjectUI::HideWidget(IFunctionHandler *pH)
 
 		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
-			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(1, pObject);
 
-			pWidget = (CUIWidget *)pObject->GetNativeData();
+			pWidget = (CUIWidget*)pObject->GetNativeData();
 
 			pObject->Release();
 		}
@@ -671,14 +671,14 @@ int CScriptObjectUI::HideWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::IsWidgetVisible(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::IsWidgetVisible(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", IsWidgetVisible, 1, 2);
 
-	CUIWidget *pWidget = 0;
-	char			*szWidgetName = 0;
-	char			*szScreenName = 0;
+	CUIWidget* pWidget      = 0;
+	char*      szWidgetName = 0;
+	char*      szScreenName = 0;
 
 	if (pH->GetParamCount() == 1)
 	{
@@ -686,11 +686,11 @@ int CScriptObjectUI::IsWidgetVisible(IFunctionHandler *pH)
 
 		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
-			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(1, pObject);
 
-			pWidget = (CUIWidget *)pObject->GetNativeData();
+			pWidget = (CUIWidget*)pObject->GetNativeData();
 
 			pObject->Release();
 		}
@@ -727,14 +727,14 @@ int CScriptObjectUI::IsWidgetVisible(IFunctionHandler *pH)
 	return pH->EndFunction(false);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::EnableWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::EnableWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", EnableWidget, 1, 2);
 
-	CUIWidget *pWidget = 0;
-	char			*szWidgetName = 0;
-	char			*szScreenName = 0;
+	CUIWidget* pWidget      = 0;
+	char*      szWidgetName = 0;
+	char*      szScreenName = 0;
 
 	if (pH->GetParamCount() == 1)
 	{
@@ -742,11 +742,11 @@ int CScriptObjectUI::EnableWidget(IFunctionHandler *pH)
 
 		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
-			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(1, pObject);
 
-			pWidget = (CUIWidget *)pObject->GetNativeData();
+			pWidget = (CUIWidget*)pObject->GetNativeData();
 
 			pObject->Release();
 		}
@@ -783,14 +783,14 @@ int CScriptObjectUI::EnableWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::DisableWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::DisableWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", DisableWidget, 1, 2);
 
-	CUIWidget *pWidget = 0;
-	char			*szWidgetName = 0;
-	char			*szScreenName = 0;
+	CUIWidget* pWidget      = 0;
+	char*      szWidgetName = 0;
+	char*      szScreenName = 0;
 
 	if (pH->GetParamCount() == 1)
 	{
@@ -798,11 +798,11 @@ int CScriptObjectUI::DisableWidget(IFunctionHandler *pH)
 
 		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
-			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(1, pObject);
 
-			pWidget = (CUIWidget *)pObject->GetNativeData();
+			pWidget = (CUIWidget*)pObject->GetNativeData();
 
 			pObject->Release();
 		}
@@ -839,14 +839,14 @@ int CScriptObjectUI::DisableWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::IsWidgetEnabled(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::IsWidgetEnabled(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", IsWidgetEnabled, 1, 2);
 
-	CUIWidget *pWidget = 0;
-	char			*szWidgetName = 0;
-	char			*szScreenName = 0;
+	CUIWidget* pWidget      = 0;
+	char*      szWidgetName = 0;
+	char*      szScreenName = 0;
 
 	if (pH->GetParamCount() == 1)
 	{
@@ -854,11 +854,11 @@ int CScriptObjectUI::IsWidgetEnabled(IFunctionHandler *pH)
 
 		if (pH->GetParamType(1) == ScriptVarType::Object)
 		{
-			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(1, pObject);
 
-			pWidget = (CUIWidget *)pObject->GetNativeData();
+			pWidget = (CUIWidget*)pObject->GetNativeData();
 
 			pObject->Release();
 		}
@@ -895,8 +895,8 @@ int CScriptObjectUI::IsWidgetEnabled(IFunctionHandler *pH)
 	return pH->EndFunction(false);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SendMessage(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SendMessage(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SendMessage, 4);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SendMessage, 1, ScriptVarType::String, ScriptVarType::Object);
@@ -904,23 +904,23 @@ int CScriptObjectUI::SendMessage(IFunctionHandler *pH)
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 3, ScriptVarType::Number);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SendMessage, 4, ScriptVarType::Number);
 
-	CUIWidget *pWidget = 0;
+	CUIWidget* pWidget = 0;
 
 	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
-		char *szWidget;
+		char* szWidget;
 
 		pH->GetParam(1, szWidget);
 
 		pWidget = m_pUISystem->GetWidget(szWidget);
 	}
-	else 
+	else
 	{
-		IScriptObject *pWidgetObject = 0;
+		IScriptObject* pWidgetObject = 0;
 
 		pH->GetParam(1, pWidgetObject);
 
-		pWidget = (CUIWidget *)pWidgetObject->GetNativeData();
+		pWidget = (CUIWidget*)pWidgetObject->GetNativeData();
 	}
 
 	if (!pWidget)
@@ -940,8 +940,8 @@ int CScriptObjectUI::SendMessage(IFunctionHandler *pH)
 	return pH->EndFunction((int)m_pUISystem->SendMessage(pWidget, iMessage, wParam, lParam));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::BroadcastMessage(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::BroadcastMessage(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", BroadcastMessage, 3);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", BroadcastMessage, 1, ScriptVarType::Number);
@@ -959,13 +959,13 @@ int CScriptObjectUI::BroadcastMessage(IFunctionHandler *pH)
 	return pH->EndFunction((int)m_pUISystem->BroadcastMessage(iMessage, wParam, lParam));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetBackground(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetBackground(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetBackground, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetBackground, 1, ScriptVarType::UserData);
 
-	int iCookie = 0;
+	int     iCookie    = 0;
 	INT_PTR iTextureID = -1;
 
 	pH->GetParamUDVal(1, iTextureID, iCookie);
@@ -975,8 +975,8 @@ int CScriptObjectUI::SetBackground(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetBackground(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetBackground(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetBackground, 0);
 
@@ -985,15 +985,15 @@ int CScriptObjectUI::GetBackground(IFunctionHandler *pH)
 	return pH->EndFunction(pUserData);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetBackgroundColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetBackgroundColor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetBackgroundColor, 1, 4);
 
 	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == ScriptVarType::String))
 	{
 		color4f cColor;
-		char *szColor;
+		char*   szColor;
 
 		pH->GetParam(1, szColor);
 
@@ -1005,7 +1005,7 @@ int CScriptObjectUI::SetBackgroundColor(IFunctionHandler *pH)
 	{
 		color4f cColor;
 
-		int iColor;
+		int     iColor;
 
 		pH->GetParam(1, iColor);
 		cColor.v[0] = iColor * (1.0f / 255.0f);
@@ -1026,12 +1026,12 @@ int CScriptObjectUI::SetBackgroundColor(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetBackgroundColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetBackgroundColor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetBackgroundColor, 0);
 
-	char szColor[24];
+	char    szColor[24];
 	color4f cColor;
 
 	m_pUISystem->GetBackgroundColor(&cColor);
@@ -1040,8 +1040,8 @@ int CScriptObjectUI::GetBackgroundColor(IFunctionHandler *pH)
 	return pH->EndFunction(szColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ShowBackground(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ShowBackground(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ShowBackground, 0);
 
@@ -1050,8 +1050,8 @@ int CScriptObjectUI::ShowBackground(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::HideBackground(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::HideBackground(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ShowBackground, 0);
 
@@ -1060,16 +1060,16 @@ int CScriptObjectUI::HideBackground(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::IsBackgroundVisible(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::IsBackgroundVisible(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", IsBackgroundVisible, 0);
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetMouseXY(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetMouseXY(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseXY, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseXY, 1, ScriptVarType::Number);
@@ -1086,8 +1086,8 @@ int CScriptObjectUI::SetMouseXY(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetMouseXY(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetMouseXY(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetMouseXY, 0);
 
@@ -1096,13 +1096,13 @@ int CScriptObjectUI::GetMouseXY(IFunctionHandler *pH)
 	return pH->EndFunction(vMouseXY.x, vMouseXY.y);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetMouseCursor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetMouseCursor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseCursor, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursor, 1, ScriptVarType::UserData);
 
-	int iCookie = 0;
+	int     iCookie    = 0;
 	INT_PTR iTextureID = -1;
 
 	pH->GetParamUDVal(1, iTextureID, iCookie);
@@ -1112,8 +1112,8 @@ int CScriptObjectUI::SetMouseCursor(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetMouseCursor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetMouseCursor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseCursor, 0);
 
@@ -1122,15 +1122,15 @@ int CScriptObjectUI::GetMouseCursor(IFunctionHandler *pH)
 	return pH->EndFunction(pUserData);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetMouseCursorColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetMouseCursorColor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetMouseColorColor, 1, 4);
 
 	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == ScriptVarType::String))
 	{
 		color4f cColor;
-		char *szColor;
+		char*   szColor;
 
 		pH->GetParam(1, szColor);
 
@@ -1142,7 +1142,7 @@ int CScriptObjectUI::SetMouseCursorColor(IFunctionHandler *pH)
 	{
 		color4f cColor;
 
-		int iColor;
+		int     iColor;
 
 		pH->GetParam(1, iColor);
 		cColor.v[0] = iColor * (1.0f / 255.0f);
@@ -1165,10 +1165,10 @@ int CScriptObjectUI::SetMouseCursorColor(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetMouseCursorColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetMouseCursorColor(IFunctionHandler* pH)
 {
-	char szColor[64];
+	char    szColor[64];
 	color4f cColor;
 
 	m_pUISystem->GetMouseCursorColor(&cColor);
@@ -1177,8 +1177,8 @@ int CScriptObjectUI::GetMouseCursorColor(IFunctionHandler *pH)
 	return pH->EndFunction(szColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetMouseCursorSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetMouseCursorSize(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetMouseCursorSize, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetMouseCursorSize, 1, ScriptVarType::Number);
@@ -1194,8 +1194,8 @@ int CScriptObjectUI::SetMouseCursorSize(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetMouseCursorWidth(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetMouseCursorWidth(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetMouseCursorWidth, 0);
 
@@ -1206,8 +1206,8 @@ int CScriptObjectUI::GetMouseCursorWidth(IFunctionHandler *pH)
 	return pH->EndFunction(fWidth);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetMouseCursorHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetMouseCursorHeight(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetMouseCursorHeight, 0);
 
@@ -1218,8 +1218,8 @@ int CScriptObjectUI::GetMouseCursorHeight(IFunctionHandler *pH)
 	return pH->EndFunction(fHeight);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ShowMouseCursor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ShowMouseCursor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ShowMouseCursor, 0);
 
@@ -1228,8 +1228,8 @@ int CScriptObjectUI::ShowMouseCursor(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::HideMouseCursor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::HideMouseCursor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", HideMouseCursor, 0);
 
@@ -1238,23 +1238,23 @@ int CScriptObjectUI::HideMouseCursor(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::IsMouseCursorVisible(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::IsMouseCursorVisible(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", IsMouseCursorVisible, 0);
 
 	return pH->EndFunction(m_pUISystem->IsMouseCursorVisible());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetGreyedColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetGreyedColor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetGreyedColor, 1, 4);
 
 	if ((pH->GetParamCount() == 1) && (pH->GetParamType(1) == ScriptVarType::String))
 	{
 		color4f cColor;
-		char *szColor;
+		char*   szColor;
 
 		pH->GetParam(1, szColor);
 
@@ -1266,7 +1266,7 @@ int CScriptObjectUI::SetGreyedColor(IFunctionHandler *pH)
 	{
 		color4f cColor;
 
-		int iColor;
+		int     iColor;
 
 		pH->GetParam(1, iColor);
 		cColor.v[0] = iColor * (1.0f / 255.0f);
@@ -1287,11 +1287,11 @@ int CScriptObjectUI::SetGreyedColor(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetGreyedColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetGreyedColor(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetGreyedColor, 0);
-	char szColor[24];
+	char    szColor[24];
 	color4f cColor;
 
 	m_pUISystem->GetGreyedColor(&cColor);
@@ -1300,17 +1300,17 @@ int CScriptObjectUI::GetGreyedColor(IFunctionHandler *pH)
 	return pH->EndFunction(szColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::CaptureMouse(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::CaptureMouse(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ReleaseMouse, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ReleaseMouse, 1, ScriptVarType::Object, ScriptVarType::String);
 
-	CUIWidget *pWidget = 0;
+	CUIWidget* pWidget = 0;
 
 	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
-		char *szWidget;
+		char* szWidget;
 
 		pH->GetParam(1, szWidget);
 
@@ -1318,11 +1318,11 @@ int CScriptObjectUI::CaptureMouse(IFunctionHandler *pH)
 	}
 	else
 	{
-		IScriptObject *pWidgetObject = 0;
+		IScriptObject* pWidgetObject = 0;
 
 		pH->GetParam(1, pWidgetObject);
 
-		pWidget = (CUIWidget *)pWidgetObject->GetNativeData();
+		pWidget = (CUIWidget*)pWidgetObject->GetNativeData();
 	}
 
 	if (!pWidget)
@@ -1333,21 +1333,21 @@ int CScriptObjectUI::CaptureMouse(IFunctionHandler *pH)
 	return pH->EndFunction(m_pUISystem->CaptureMouse(pWidget));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ReleaseMouse(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ReleaseMouse(IFunctionHandler* pH)
 {
 	m_pUISystem->ReleaseMouse();
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractRed(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractRed(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractRed, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractRed, 1, ScriptVarType::String);
 
-	char *szColor;
+	char*   szColor;
 	color4f cColor;
 
 	pH->GetParam(1, szColor);
@@ -1357,13 +1357,13 @@ int CScriptObjectUI::ExtractRed(IFunctionHandler *pH)
 	return pH->EndFunction((int)(cColor.v[0] * 255));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractGreen(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractGreen(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractGreen, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractGreen, 1, ScriptVarType::String);
 
-	char *szColor;
+	char*   szColor;
 	color4f cColor;
 
 	pH->GetParam(1, szColor);
@@ -1373,13 +1373,13 @@ int CScriptObjectUI::ExtractGreen(IFunctionHandler *pH)
 	return pH->EndFunction((int)(cColor.v[1] * 255));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractBlue(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractBlue(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractBlue, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractBlue, 1, ScriptVarType::String);
 
-	char *szColor;
+	char*   szColor;
 	color4f cColor;
 
 	pH->GetParam(1, szColor);
@@ -1389,13 +1389,13 @@ int CScriptObjectUI::ExtractBlue(IFunctionHandler *pH)
 	return pH->EndFunction((int)(cColor.v[2] * 255));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractAlpha(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractAlpha(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractAlpha, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractAlpha, 1, ScriptVarType::String);
 
-	char *szColor;
+	char*   szColor;
 	color4f cColor;
 
 	pH->GetParam(1, szColor);
@@ -1405,13 +1405,13 @@ int CScriptObjectUI::ExtractAlpha(IFunctionHandler *pH)
 	return pH->EndFunction((int)(cColor.v[3] * 255));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractLeft(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractLeft(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractLeft, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractLeft, 1, ScriptVarType::String);
 
-	char *szRect;
+	char*  szRect;
 	UIRect pRect;
 
 	pH->GetParam(1, szRect);
@@ -1421,13 +1421,13 @@ int CScriptObjectUI::ExtractLeft(IFunctionHandler *pH)
 	return pH->EndFunction(pRect.fLeft);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractTop(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractTop(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractTop, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractTop, 1, ScriptVarType::String);
 
-	char *szRect;
+	char*  szRect;
 	UIRect pRect;
 
 	pH->GetParam(1, szRect);
@@ -1437,13 +1437,13 @@ int CScriptObjectUI::ExtractTop(IFunctionHandler *pH)
 	return pH->EndFunction(pRect.fTop);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractWidth(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractWidth(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractWidth, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractWidth, 1, ScriptVarType::String);
 
-	char *szRect;
+	char*  szRect;
 	UIRect pRect;
 
 	pH->GetParam(1, szRect);
@@ -1453,13 +1453,13 @@ int CScriptObjectUI::ExtractWidth(IFunctionHandler *pH)
 	return pH->EndFunction(pRect.fWidth);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ExtractHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ExtractHeight(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ExtractHeight, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", ExtractHeight, 1, ScriptVarType::String);
 
-	char *szRect;
+	char*  szRect;
 	UIRect pRect;
 
 	pH->GetParam(1, szRect);
@@ -1469,8 +1469,8 @@ int CScriptObjectUI::ExtractHeight(IFunctionHandler *pH)
 	return pH->EndFunction(pRect.fHeight);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetMouseX(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetMouseX(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetMouseX, 0);
 
@@ -1479,8 +1479,8 @@ int CScriptObjectUI::GetMouseX(IFunctionHandler *pH)
 	return pH->EndFunction(vXY.x);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetMouseY(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetMouseY(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetMouseY, 0);
 
@@ -1489,17 +1489,17 @@ int CScriptObjectUI::GetMouseY(IFunctionHandler *pH)
 	return pH->EndFunction(vXY.y);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetTopMostWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetTopMostWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", SetTopMostWidget, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetTopMostWidget, 1, ScriptVarType::String, ScriptVarType::Object);
 
-	CUIWidget *pWidget;
+	CUIWidget* pWidget;
 
 	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
-		char *szWidgetName;
+		char* szWidgetName;
 
 		pH->GetParam(1, szWidgetName);
 
@@ -1507,11 +1507,11 @@ int CScriptObjectUI::SetTopMostWidget(IFunctionHandler *pH)
 	}
 	else if (pH->GetParamType(1) == ScriptVarType::Object)
 	{
-		IScriptObject *pScriptObject = 0;
+		IScriptObject* pScriptObject = 0;
 
 		pH->GetParam(1, pScriptObject);
 
-		pWidget = (CUIWidget *)pScriptObject->GetNativeData();
+		pWidget = (CUIWidget*)pScriptObject->GetNativeData();
 	}
 
 	if (pWidget)
@@ -1522,30 +1522,30 @@ int CScriptObjectUI::SetTopMostWidget(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetTopMostWidget(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetTopMostWidget(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetTopMostWidget, 0);
 
 	return pH->EndFunction(m_pUISystem->GetWidgetScriptObject(m_pUISystem->GetFocus()));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetFocus(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetFocus(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetFocus, 1, 2);
 
-	CUIWidget *pWidget;
+	CUIWidget* pWidget;
 
 	if (pH->GetParamCount() == 1)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetFocus, 1, ScriptVarType::Object);
 
-		IScriptObject *pScriptObject = m_pScriptSystem->CreateEmptyObject();
+		IScriptObject* pScriptObject = m_pScriptSystem->CreateEmptyObject();
 
 		pH->GetParam(1, pScriptObject);
 
-		pWidget = (CUIWidget *)pScriptObject->GetNativeData();
+		pWidget = (CUIWidget*)pScriptObject->GetNativeData();
 
 		pScriptObject->Release();
 	}
@@ -1554,18 +1554,18 @@ int CScriptObjectUI::SetFocus(IFunctionHandler *pH)
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", SetFocus, 1, ScriptVarType::String);
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetFocus, 2, ScriptVarType::String, ScriptVarType::Object);
 
-		char *szWidgetName;
-		char *szScreenName;
+		char* szWidgetName;
+		char* szScreenName;
 
 		pH->GetParam(1, szWidgetName);
 
 		if (pH->GetParamType(2) == ScriptVarType::Object)
 		{
-			IScriptObject *pScriptObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pScriptObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(2, pScriptObject);
 
-			CUIScreen *pScreen = (CUIScreen *)pScriptObject->GetNativeData();
+			CUIScreen* pScreen = (CUIScreen*)pScriptObject->GetNativeData();
 
 			pScriptObject->Release();
 
@@ -1584,12 +1584,12 @@ int CScriptObjectUI::SetFocus(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetFocus(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetFocus(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetFocus, 0);
 
-	CUIWidget *pFocus = m_pUISystem->GetFocus();
+	CUIWidget* pFocus = m_pUISystem->GetFocus();
 
 	if (!pFocus)
 	{
@@ -1599,8 +1599,8 @@ int CScriptObjectUI::GetFocus(IFunctionHandler *pH)
 	return pH->EndFunction(m_pUISystem->GetWidgetScriptObject(pFocus));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetFocusScreen(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetFocusScreen(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", SetFocusScreen, 1, 0);
 
@@ -1608,14 +1608,14 @@ int CScriptObjectUI::SetFocusScreen(IFunctionHandler *pH)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", SetFocusScreen, 1, ScriptVarType::String, ScriptVarType::Object);
 	}
-	
-	CUIScreen *pScreen = 0;
+
+	CUIScreen* pScreen = 0;
 
 	if (pH->GetParamCount())
 	{
 		if (pH->GetParamType(1) == ScriptVarType::String)
 		{
-			char *szName;
+			char* szName;
 
 			pH->GetParam(1, szName);
 
@@ -1631,11 +1631,11 @@ int CScriptObjectUI::SetFocusScreen(IFunctionHandler *pH)
 		}
 		else
 		{
-			IScriptObject *pObj = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObj = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(1, pObj);
 
-			pScreen = (CUIScreen *)pObj->GetNativeData();
+			pScreen = (CUIScreen*)pObj->GetNativeData();
 
 			if (!pScreen)
 			{
@@ -1649,16 +1649,16 @@ int CScriptObjectUI::SetFocusScreen(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetFocusScreen(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetFocusScreen(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetFocusScreen, 0);
 
 	return pH->EndFunction(m_pUISystem->GetFocusScreen()->GetScriptObject());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::FirstTabStop(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::FirstTabStop(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", FirstTabStop, 0);
 
@@ -1667,7 +1667,7 @@ int CScriptObjectUI::FirstTabStop(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-int CScriptObjectUI::LastTabStop(IFunctionHandler *pH)
+int CScriptObjectUI::LastTabStop(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", LastTabStop, 0);
 
@@ -1676,7 +1676,7 @@ int CScriptObjectUI::LastTabStop(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-int CScriptObjectUI::NextTabStop(IFunctionHandler *pH)
+int CScriptObjectUI::NextTabStop(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", NextTabStop, 0);
 
@@ -1685,7 +1685,7 @@ int CScriptObjectUI::NextTabStop(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-int CScriptObjectUI::PrevTabStop(IFunctionHandler *pH)
+int CScriptObjectUI::PrevTabStop(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", PrevTabStop, 0);
 
@@ -1694,14 +1694,14 @@ int CScriptObjectUI::PrevTabStop(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::CreateObjectFromTable(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::CreateObjectFromTable(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT2(m_pScriptSystem, "UI", CreateStatic, 2, 3);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateStatic, 1, ScriptVarType::String);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateStatic, 2, ScriptVarType::Object);
 
-	CUIScreen *pScreen = 0;
+	CUIScreen* pScreen = 0;
 
 	if (pH->GetParamCount() == 3)
 	{
@@ -1709,17 +1709,17 @@ int CScriptObjectUI::CreateObjectFromTable(IFunctionHandler *pH)
 
 		if (pH->GetParamType(3) == ScriptVarType::Object)
 		{
-			IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();
+			IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
 
 			pH->GetParam(3, pObject);
 
-			pScreen = (CUIScreen *)pObject->GetNativeData();
+			pScreen = (CUIScreen*)pObject->GetNativeData();
 
 			pObject->Release();
 		}
 		else
 		{
-			char *szScreenName = 0;
+			char* szScreenName = 0;
 
 			pH->GetParam(3, szScreenName);
 
@@ -1730,14 +1730,14 @@ int CScriptObjectUI::CreateObjectFromTable(IFunctionHandler *pH)
 		}
 	}
 
-	char *szName = 0;
-	IScriptObject *pScriptObject = m_pScriptSystem->CreateEmptyObject();
+	char*          szName        = 0;
+	IScriptObject* pScriptObject = m_pScriptSystem->CreateEmptyObject();
 
 	pH->GetParam(1, szName);
 	pH->GetParam(2, pScriptObject);
 
-	CUIWidget *pWidget;
-	
+	CUIWidget* pWidget;
+
 	// create the widget
 	if (!m_pUISystem->CreateObjectFromTable(&pWidget, 0, pScreen, pScriptObject, szName))
 	{
@@ -1747,20 +1747,21 @@ int CScriptObjectUI::CreateObjectFromTable(IFunctionHandler *pH)
 	return pH->EndFunction(m_pUISystem->GetWidgetScriptObject(pWidget));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::CreateScreenFromTable(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::CreateScreenFromTable(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", CreateScreenFromTable, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateScreenFromTable, 1, ScriptVarType::String);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, "UI", CreateScreenFromTable, 2, ScriptVarType::Object);
 
-	char *szName;
-	IScriptObject *pObject = m_pScriptSystem->CreateEmptyObject();;
+	char*          szName;
+	IScriptObject* pObject = m_pScriptSystem->CreateEmptyObject();
+	;
 
 	pH->GetParam(1, szName);
 	pH->GetParam(2, pObject);
 
-	CUIScreen *pScreen;
+	CUIScreen* pScreen;
 
 	if (!m_pUISystem->CreateScreenFromTable(&pScreen, szName, pObject))
 	{
@@ -1776,25 +1777,25 @@ int CScriptObjectUI::CreateScreenFromTable(IFunctionHandler *pH)
 	return pH->EndFunction(pScreen->GetScriptObject());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetScreenCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetScreenCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetScreenCount, 0);
 
 	return pH->EndFunction(m_pUISystem->GetScreenCount());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetScreen(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetScreen(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetScreen, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", GetScreen, 1, ScriptVarType::String, ScriptVarType::Number);
 
-	CUIScreen *pScreen = 0;
+	CUIScreen* pScreen = 0;
 
 	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
-		char *szName;
+		char* szName;
 
 		pH->GetParam(1, szName);
 
@@ -1827,17 +1828,17 @@ int CScriptObjectUI::GetScreen(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ActivateScreen(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ActivateScreen(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ActivateScreen, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", ActivateScreen, 1, ScriptVarType::String, ScriptVarType::Object);
 
-	CUIScreen *pScreen = 0;
+	CUIScreen* pScreen = 0;
 
 	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
-		char *szName;
+		char* szName;
 
 		pH->GetParam(1, szName);
 
@@ -1850,11 +1851,11 @@ int CScriptObjectUI::ActivateScreen(IFunctionHandler *pH)
 	}
 	else
 	{
-		IScriptObject *pObj = m_pScriptSystem->CreateEmptyObject();
+		IScriptObject* pObj = m_pScriptSystem->CreateEmptyObject();
 
 		pH->GetParam(1, pObj);
 
-		pScreen = (CUIScreen *)pObj->GetNativeData();
+		pScreen = (CUIScreen*)pObj->GetNativeData();
 
 		if (!pScreen)
 		{
@@ -1870,17 +1871,17 @@ int CScriptObjectUI::ActivateScreen(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::DeactivateScreen(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::DeactivateScreen(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", DeactivateScreen, 1);
-		CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", DeactivateScreen, 1, ScriptVarType::String, ScriptVarType::Object);
+	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", DeactivateScreen, 1, ScriptVarType::String, ScriptVarType::Object);
 
-	CUIScreen *pScreen = 0;
+	CUIScreen* pScreen = 0;
 
 	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
-		char *szName;
+		char* szName;
 
 		pH->GetParam(1, szName);
 
@@ -1893,11 +1894,11 @@ int CScriptObjectUI::DeactivateScreen(IFunctionHandler *pH)
 	}
 	else
 	{
-		IScriptObject *pObj = m_pScriptSystem->CreateEmptyObject();
+		IScriptObject* pObj = m_pScriptSystem->CreateEmptyObject();
 
 		pH->GetParam(1, pObj);
 
-		pScreen = (CUIScreen *)pObj->GetNativeData();
+		pScreen = (CUIScreen*)pObj->GetNativeData();
 
 		if (!pScreen)
 		{
@@ -1913,17 +1914,17 @@ int CScriptObjectUI::DeactivateScreen(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::IsScreenActive(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::IsScreenActive(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", IsScreenActive, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, "UI", IsScreenActive, 1, ScriptVarType::String, ScriptVarType::Object);
 
-	CUIScreen *pScreen = 0;
+	CUIScreen* pScreen = 0;
 
 	if (pH->GetParamType(1) == ScriptVarType::String)
 	{
-		char *szName;
+		char* szName;
 
 		pH->GetParam(1, szName);
 
@@ -1936,11 +1937,11 @@ int CScriptObjectUI::IsScreenActive(IFunctionHandler *pH)
 	}
 	else
 	{
-		IScriptObject *pObj = m_pScriptSystem->CreateEmptyObject();
+		IScriptObject* pObj = m_pScriptSystem->CreateEmptyObject();
 
 		pH->GetParam(1, pObj);
 
-		pScreen = (CUIScreen *)pObj->GetNativeData();
+		pScreen = (CUIScreen*)pObj->GetNativeData();
 
 		if (!pScreen)
 		{
@@ -1956,16 +1957,16 @@ int CScriptObjectUI::IsScreenActive(IFunctionHandler *pH)
 	return pH->EndFunction(false);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetActiveScreenCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetActiveScreenCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", GetActiveScreenCount, 0);
 
 	return pH->EndFunction(m_pUISystem->GetActiveScreenCount());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::DeactivateAllScreens(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::DeactivateAllScreens(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", DeactivateAllScreens, 0);
 
@@ -1974,8 +1975,8 @@ int CScriptObjectUI::DeactivateAllScreens(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::ActivateAllScreens(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::ActivateAllScreens(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, "UI", ActivateAllScreens, 0);
 
@@ -1984,91 +1985,91 @@ int CScriptObjectUI::ActivateAllScreens(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::Enable(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::Enable(IFunctionHandler* pH)
 {
 	m_pUISystem->Enable();
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::Disable(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::Disable(IFunctionHandler* pH)
 {
 	m_pUISystem->Disable();
 
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::IsEnabled(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::IsEnabled(IFunctionHandler* pH)
 {
 	return pH->EndFunction(m_pUISystem->IsEnabled());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::StopAllVideo(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::StopAllVideo(IFunctionHandler* pH)
 {
 	m_pUISystem->StopAllVideo();
 
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipColor, m_pUISystem->m_cToolTipColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipColor, m_pUISystem->m_cToolTipColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipBorderColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipBorderColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontColor, m_pUISystem->m_pToolTipBorder.cColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipBorderColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipBorderColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipBorderColor, m_pUISystem->m_pToolTipBorder.cColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipBorderSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipBorderSize(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipBorderSize, m_pUISystem->m_pToolTipBorder.fSize);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipBorderSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipBorderSize(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipBorderSize, m_pUISystem->m_pToolTipBorder.fSize);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipBorderStyle(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipBorderStyle(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipBorderStyle, m_pUISystem->m_pToolTipBorder.iStyle);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipBorderStyle(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipBorderStyle(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipBorderStyle, m_pUISystem->m_pToolTipBorder.iStyle);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipFontName(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipFontName(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontName, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontName, 1, ScriptVarType::String);
 
-	char *szFontName;
+	char* szFontName;
 
 	pH->GetParam(1, szFontName);
 
@@ -2077,21 +2078,21 @@ int CScriptObjectUI::SetToolTipFontName(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipFontName(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipFontName(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipFontName, 0);
 
 	return pH->EndFunction(m_pUISystem->m_pToolTipFont.szFaceName.c_str());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipFontEffect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipFontEffect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontEffect, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontEffect, 1, ScriptVarType::String);
 
-	const char *szFontEffect;
+	const char* szFontEffect;
 
 	pH->GetParam(1, szFontEffect);
 
@@ -2100,34 +2101,34 @@ int CScriptObjectUI::SetToolTipFontEffect(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipFontEffect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipFontEffect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipFontEffect, 0);
 
 	return pH->EndFunction(m_pUISystem->m_pToolTipFont.szEffectName.c_str());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipFontColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipFontColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontColor, m_pUISystem->m_pToolTipFont.cColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipFontColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipFontColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipFontColor, m_pUISystem->m_pToolTipFont.cColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::SetToolTipFontSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::SetToolTipFontSize(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", SetToolTipFontSize, m_pUISystem->m_pToolTipFont.fSize);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CScriptObjectUI::GetToolTipFontSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectUI::GetToolTipFontSize(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pUISystem->GetIScriptSystem(), "UI", GetToolTipFontSize, m_pUISystem->m_pToolTipFont.fSize);
 }

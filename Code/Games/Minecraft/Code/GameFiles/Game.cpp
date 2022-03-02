@@ -26,11 +26,10 @@
 
 //#include "CMovieUser.h"
 #if 1
-#define EDITOR_IMPLEMENT_LOAD_LEVEL
+	#define EDITOR_IMPLEMENT_LOAD_LEVEL
 #else
-#undef EDITOR_IMPLEMENT_LOAD_LEVEL
+	#undef EDITOR_IMPLEMENT_LOAD_LEVEL
 #endif
-
 
 #include <Client/Client.hpp>
 #include <thread>
@@ -39,37 +38,35 @@
 #include "UIHud.h"
 #include "IngameDialog.h"
 #ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
-#include "Minecraft.h"
+	#include "Minecraft.h"
 #endif
 
 static int g_FontSize = 32;
 #define MEASURETIME(str) \
-/* CryLog("[MEASURETIME] %s", str)*/
+	/* CryLog("[MEASURETIME] %s", str)*/
 
 #ifdef USE_GUI
-#	include <imgui.h>
-#	include <imgui_internal.h>
+	#include <imgui.h>
+	#include <imgui_internal.h>
 #endif
 
 static CXGame* gGame;
 
-
 #ifdef WIN32
-#	include <tchar.h>
-#	include <winioctl.h>
+	#include <tchar.h>
+	#include <winioctl.h>
 
 typedef std::basic_string<TCHAR> tstring;
-typedef std::vector<TCHAR>		 tvector;
+typedef std::vector<TCHAR>       tvector;
 #endif
 
 using namespace std::literals;
 
-
-int render_camera = 0;
+int         render_camera  = 0;
 
 static bool menuOnTopLevel = false;
-const char*		mods_str[]	   = {"$0BlackBox", "$1WightBox", "$9GreyBox"};
-int			selected_mod	   = 0;
+const char* mods_str[]     = {"$0BlackBox", "$1WightBox", "$9GreyBox"};
+int         selected_mod   = 0;
 
 std::string vec_to_string(Legacy::Vec3 vec)
 {
@@ -80,7 +77,7 @@ std::string vec_to_string(Legacy::Vec3 vec)
 }
 
 static Legacy::IVec4 currentQuad{};
-static bool	 mouseClicked{};
+static bool          mouseClicked{};
 
 #ifdef USE_GUI
 namespace ImGui
@@ -119,22 +116,22 @@ namespace
 	enum EAchievements
 	{
 		TEST_ACHIEVEMENT_1_0 = 0,
-#	if 0
+	#if 0
 		ACH_WIN_100_GAMES = 1,
 		ACH_TRAVEL_FAR_ACCUM = 2,
 		ACH_TRAVEL_FAR_SINGLE = 3,
-#	endif
+	#endif
 	};
 
 	// массив достижений, содержащий данные о достижениях и их состоянии
 	Achievement_t g_Achievements[] =
-		{
-			_ACH_ID(TEST_ACHIEVEMENT_1_0, "10 Hits To Box"),
-#	if 0
+	    {
+	        _ACH_ID(TEST_ACHIEVEMENT_1_0, "10 Hits To Box"),
+	#if 0
 		_ACH_ID( ACH_WIN_100_GAMES, "Champion" ),
 		_ACH_ID( ACH_TRAVEL_FAR_ACCUM, "Interstellar" ),
 		_ACH_ID( ACH_TRAVEL_FAR_SINGLE, "Orbiter" ),
-#	endif
+	#endif
 	};
 
 	// глобальный доступ к объекту Achievements
@@ -142,47 +139,43 @@ namespace
 #endif
 } // namespace
 
-int g_bRenderGame = true;
-
-
-
+int   g_bRenderGame = true;
 
 World g_World;
 
-bool AABB::IsIntersectBox(const AABB& b) const
+bool  AABB::IsIntersectBox(const AABB& b) const
 {
-		// Check for intersection on X axis.
-		if ((min.x > b.max.x) || (b.min.x > max.x))
-			return false;
-		// Check for intersection on Y axis.
-		if ((min.y > b.max.y) || (b.min.y > max.y))
-			return false;
-		// Check for intersection on Z axis.
-		if ((min.z > b.max.z) || (b.min.z > max.z))
-			return false;
-		// Boxes overlap in all 3 axises.
-		return true;
+	// Check for intersection on X axis.
+	if ((min.x > b.max.x) || (b.min.x > max.x))
+		return false;
+	// Check for intersection on Y axis.
+	if ((min.y > b.max.y) || (b.min.y > max.y))
+		return false;
+	// Check for intersection on Z axis.
+	if ((min.z > b.max.z) || (b.min.z > max.z))
+		return false;
+	// Boxes overlap in all 3 axises.
+	return true;
 }
-
 
 bool AABB::IsCollideBox(const AABB& b) const
 {
-		// Check for intersection on X axis.
-		if ((min.x >= b.max.x) || (b.min.x >= max.x))
-			return false;
-		// Check for intersection on Y axis.
-		if ((min.y >= b.max.y) || (b.min.y >= max.y))
-			return false;
-		// Check for intersection on Z axis.
-		if ((min.z >= b.max.z) || (b.min.z >= max.z))
-			return false;
-		// Boxes overlap in all 3 axises.
-		return true;
+	// Check for intersection on X axis.
+	if ((min.x >= b.max.x) || (b.min.x >= max.x))
+		return false;
+	// Check for intersection on Y axis.
+	if ((min.y >= b.max.y) || (b.min.y >= max.y))
+		return false;
+	// Check for intersection on Z axis.
+	if ((min.z >= b.max.z) || (b.min.z >= max.z))
+		return false;
+	// Boxes overlap in all 3 axises.
+	return true;
 }
 
 void LoadHistory()
 {
-	std::ifstream	   is("history.txt");
+	std::ifstream      is("history.txt");
 	std::stack<string> history;
 	if (is.is_open())
 	{
@@ -204,7 +197,7 @@ void LoadHistory()
 
 void SaveHistory()
 {
-	std::ofstream	   is("history.txt");
+	std::ofstream      is("history.txt");
 	std::stack<string> history;
 	if (is.is_open())
 	{
@@ -225,41 +218,40 @@ void SaveHistory()
 class CTagPointManager : public ITagPointManager
 {
 public:
-	CTagPointManager( IGame *pGame )  { m_pGame = (CXGame*) pGame; };
-	virtual ~CTagPointManager() {};
+	CTagPointManager(IGame* pGame) { m_pGame = (CXGame*)pGame; };
+	virtual ~CTagPointManager(){};
 
 	// This function creates a tag point in the game world
-	virtual ITagPoint *CreateTagPoint(const string &name, const Legacy::Vec3 &pos, const Legacy::Vec3 &angles) 
+	virtual ITagPoint* CreateTagPoint(const string& name, const Legacy::Vec3& pos, const Legacy::Vec3& angles)
 	{
-		return m_pGame->CreateTagPoint( name, pos, angles );
+		return m_pGame->CreateTagPoint(name, pos, angles);
 	};
 
 	// Retrieves a tag point by name
-	virtual ITagPoint *GetTagPoint(const string &name)
+	virtual ITagPoint* GetTagPoint(const string& name)
 	{
-		return m_pGame->GetTagPoint( name );
+		return m_pGame->GetTagPoint(name);
 	}
 
 	// Deletes a tag point from the game
-	virtual void RemoveTagPoint(ITagPoint *pPoint)
+	virtual void RemoveTagPoint(ITagPoint* pPoint)
 	{
-		m_pGame->RemoveTagPoint( pPoint );
+		m_pGame->RemoveTagPoint(pPoint);
 	}
 
-	virtual void AddRespawnPoint(ITagPoint *pPoint)
+	virtual void AddRespawnPoint(ITagPoint* pPoint)
 	{
-		m_pGame->AddRespawnPoint( pPoint );
+		m_pGame->AddRespawnPoint(pPoint);
 	}
 
-	virtual void RemoveRespawnPoint(ITagPoint *pPoint)
+	virtual void RemoveRespawnPoint(ITagPoint* pPoint)
 	{
-		m_pGame->RemoveRespawnPoint( pPoint );
+		m_pGame->RemoveRespawnPoint(pPoint);
 	}
 
 private:
-	CXGame *m_pGame;
+	CXGame* m_pGame;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // CXGame
@@ -269,58 +261,58 @@ CXGame::CXGame()
 {
 	m_pTimeDemoRecorder = NULL;
 	m_pScriptObjectGame = NULL;
-	m_pScriptTimerMgr = NULL;
-	m_pScriptSystem = NULL;
-	m_pServer = NULL;
-	m_pClient = NULL;
-	m_pLog = NULL;
-	m_pServerSnooper = NULL;
+	m_pScriptTimerMgr   = NULL;
+	m_pScriptSystem     = NULL;
+	m_pServer           = NULL;
+	m_pClient           = NULL;
+	m_pLog              = NULL;
+	m_pServerSnooper    = NULL;
 	m_pNETServerSnooper = 0;
-	m_pRConSystem = 0;
-	m_pWeaponSystemEx = NULL;
+	m_pRConSystem       = 0;
+	m_pWeaponSystemEx   = NULL;
 	m_mapTagPoints.clear();
-	m_bMenuInitialized = false;
-	m_pCurrentUI = 0;	
-	m_pIActionMapManager=NULL;
-	m_pIngameDialogMgr = new CIngameDialogMgr();
-	m_pUISystem = 0;
-	mp_model = 0;
+	m_bMenuInitialized   = false;
+	m_pCurrentUI         = 0;
+	m_pIActionMapManager = NULL;
+	m_pIngameDialogMgr   = new CIngameDialogMgr();
+	m_pUISystem          = 0;
+	mp_model             = 0;
 #if !defined(LINUX)
 	// to avoid all references to movie user in this file
 	m_pMovieUser = new CMovieUser(this);
 #endif
-	m_nPlayerIconTexId = -1;
-	m_nVehicleIconTexId = -1;
+	m_nPlayerIconTexId   = -1;
+	m_nVehicleIconTexId  = -1;
 	m_nBuildingIconTexId = -1;
-	m_nUnknownIconTexId = -1;
-	m_bMenuOverlay = false;
-	m_bUIOverlay = false;
-	m_bUIExclusiveInput = false;
-	m_bHideLocalPlayer = false;
-	m_pCVarCheatMode=NULL;
+	m_nUnknownIconTexId  = -1;
+	m_bMenuOverlay       = false;
+	m_bUIOverlay         = false;
+	m_bUIExclusiveInput  = false;
+	m_bHideLocalPlayer   = false;
+	m_pCVarCheatMode     = NULL;
 
-	m_fTimeGran=m_fFixedStep=m_fTimeGran2FixedStep=m_frFixedStep = 0;
-	m_iFixedStep2TimeGran = 0;
-	g_language=0;
-	g_playerprofile=0;
-	g_serverprofile=0;
+	m_fTimeGran = m_fFixedStep = m_fTimeGran2FixedStep = m_frFixedStep = 0;
+	m_iFixedStep2TimeGran                                              = 0;
+	g_language                                                         = 0;
+	g_playerprofile                                                    = 0;
+	g_serverprofile                                                    = 0;
 
-	m_tPlayerPersistentData.m_bDataSaved=false;
-	m_fFadingStartTime=-1.0f;
-	cv_game_physics_quality=NULL;
-	m_bMapLoadedFromCheckpoint=false;
-	m_bSynchronizing = false;
+	m_tPlayerPersistentData.m_bDataSaved                               = false;
+	m_fFadingStartTime                                                 = -1.0f;
+	cv_game_physics_quality                                            = NULL;
+	m_bMapLoadedFromCheckpoint                                         = false;
+	m_bSynchronizing                                                   = false;
 
 	//m_fTimeToSaveThumbnail = 0;
-	m_pGameMods = NULL;
-	m_bLastDoLateSwitch = 0;
-	m_bLastCDAuthentication = 0;
-	m_bAllowQuicksave = true;
+	m_pGameMods                                                        = NULL;
+	m_bLastDoLateSwitch                                                = 0;
+	m_bLastCDAuthentication                                            = 0;
+	m_bAllowQuicksave                                                  = true;
 
-	m_sGameName = "FarCry";
-	m_pTagPointManager = new CTagPointManager( this );
-	m_nDEBUG_TIMING = 0;
-	m_fDEBUG_STARTTIMER = 0;
+	m_sGameName                                                        = "FarCry";
+	m_pTagPointManager                                                 = new CTagPointManager(this);
+	m_nDEBUG_TIMING                                                    = 0;
+	m_fDEBUG_STARTTIMER                                                = 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -333,17 +325,17 @@ CXGame::~CXGame()
 
 	if (m_pIngameDialogMgr)
 		delete m_pIngameDialogMgr;
-	m_pIngameDialogMgr=NULL;
+	m_pIngameDialogMgr = NULL;
 
 #if !defined(LINUX)
 	if (m_pMovieUser)
 	{
 		if (m_pSystem)
 		{
-			IMovieSystem *pMovieSystem=m_pSystem->GetIMovieSystem();
+			IMovieSystem* pMovieSystem = m_pSystem->GetIMovieSystem();
 			if (pMovieSystem)
 			{
-				if (pMovieSystem->GetUser()==m_pMovieUser)
+				if (pMovieSystem->GetUser() == m_pMovieUser)
 					pMovieSystem->SetUser(NULL);
 			}
 		}
@@ -457,13 +449,13 @@ CXGame::~CXGame()
 
 	SAFE_RELEASE(pl_JumpNegativeImpulse);
 
-	if (m_pRenderer && (m_nPlayerIconTexId>=0))
+	if (m_pRenderer && (m_nPlayerIconTexId >= 0))
 		m_pRenderer->RemoveTexture(m_nPlayerIconTexId);
-	if (m_pRenderer && (m_nVehicleIconTexId>=0))
+	if (m_pRenderer && (m_nVehicleIconTexId >= 0))
 		m_pRenderer->RemoveTexture(m_nVehicleIconTexId);
-	if (m_pRenderer && (m_nBuildingIconTexId>=0))
+	if (m_pRenderer && (m_nBuildingIconTexId >= 0))
 		m_pRenderer->RemoveTexture(m_nBuildingIconTexId);
-	if (m_pRenderer && (m_nUnknownIconTexId>=0))
+	if (m_pRenderer && (m_nUnknownIconTexId >= 0))
 		m_pRenderer->RemoveTexture(m_nUnknownIconTexId);
 
 	SAFE_DELETE(m_pUIHud);
@@ -515,8 +507,8 @@ CXGame::~CXGame()
 bool CXGame::InitClassRegistry()
 {
 	m_EntityClassRegistry.Init(m_pSystem);
-	CPlayerSystem*	 pPlayerSystem	 = GetPlayerSystem();
-	CVehicleSystem*	 pVehicleSystem	 = GetVehicleSystem();
+	CPlayerSystem*   pPlayerSystem   = GetPlayerSystem();
+	CVehicleSystem*  pVehicleSystem  = GetVehicleSystem();
 	CWeaponSystemEx* pWeaponSystemEx = GetWeaponSystemEx(); // m10
 
 	assert(pPlayerSystem);
@@ -532,8 +524,8 @@ bool CXGame::InitClassRegistry()
 		entCls = m_EntityClassRegistry.Next();
 		if (entCls)
 		{
-			const char*	  entity_type = entCls->strGameType.c_str();
-			EntityClassId ClassId	  = entCls->ClassId;
+			const char*   entity_type = entCls->strGameType.c_str();
+			EntityClassId ClassId     = entCls->ClassId;
 			if (strcmp("Player", entity_type) == 0)
 				pPlayerSystem->AddPlayerClass(ClassId);
 
@@ -542,10 +534,10 @@ bool CXGame::InitClassRegistry()
 
 			if (strcmp("Projectile", entity_type) == 0)
 			{
-				// cannot be loaded at that point - other scripts must be loaded before
-				#if 0
+// cannot be loaded at that point - other scripts must be loaded before
+#if 0
 				pWeaponSystemEx->AddProjectileClass(ClassId);
-				#endif
+#endif
 			}
 		}
 	} while (entCls);
@@ -669,34 +661,34 @@ void CXGame::Reset()
 //////////////////////////////////////////////////////////////////////
 IXSystem* CXGame::GetXSystem()
 {
-	#if 1
+#if 1
 	return m_pServer ? m_pServer->m_pISystem : m_pClient ? m_pClient->m_pISystem
-														 : NULL;
-	#else
+	                                                     : NULL;
+#else
 	NOT_IMPLEMENTED_V;
-	#endif
+#endif
 }
 
 bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
-	gGame = this;
+	gGame              = this;
 	// Setup the system and 3D Engine pointers
-	m_pSystem = pSystem;
+	m_pSystem          = pSystem;
 
-	m_pGameMods = new CGameMods(this);
+	m_pGameMods        = new CGameMods(this);
 
 	m_bDedicatedServer = bDedicatedSrv;
 	m_XAreaMgr.Init(pSystem);
-	m_bEditor = bInEditor;
+	m_bEditor                 = bInEditor;
 
-	m_bRelaunch				  = false;
-	m_bMovieSystemPaused	  = false;
+	m_bRelaunch               = false;
+	m_bMovieSystemPaused      = false;
 	m_bIsLoadingLevelFromFile = false;
 
-	m_bOK		 = false;
-	m_bUpdateRet = true;
-	m_pClient	 = NULL;
-	m_pServer	 = NULL;
+	m_bOK                     = false;
+	m_bUpdateRet              = true;
+	m_pClient                 = NULL;
+	m_pServer                 = NULL;
 
 	m_pSystem->GetILog()->Log("Game Initialization");
 #if !defined(LINUX)
@@ -707,11 +699,11 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	if (!m_pTimeDemoRecorder)
 		m_pTimeDemoRecorder = new CTimeDemoRecorder(pSystem);
 
-	m_pUIHud		= NULL;
-	m_pNetwork		= m_pSystem->GetINetwork();
-	m_pLog			= m_pSystem->GetILog();
-	m_p3DEngine		= m_pSystem->GetI3DEngine();
-	m_pRenderer		= m_pSystem->GetIRenderer();
+	m_pUIHud        = NULL;
+	m_pNetwork      = m_pSystem->GetINetwork();
+	m_pLog          = m_pSystem->GetILog();
+	m_p3DEngine     = m_pSystem->GetI3DEngine();
+	m_pRenderer     = m_pSystem->GetIRenderer();
 	m_pScriptSystem = pSystem->GetIScriptSystem();
 	m_pEntitySystem = m_pSystem->GetIEntitySystem();
 
@@ -720,13 +712,13 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 
 	// init subsystems
 #ifndef _XBOX
-	m_pServerSnooper	= m_pNetwork->CreateServerSnooper(this);
+	m_pServerSnooper    = m_pNetwork->CreateServerSnooper(this);
 	m_pNETServerSnooper = m_pNetwork->CreateNETServerSnooper(this);
-	m_pRConSystem		= m_pNetwork->CreateRConSystem();
+	m_pRConSystem       = m_pNetwork->CreateRConSystem();
 #endif
 	m_pWeaponSystemEx = new CWeaponSystemEx();
 	m_pVehicleSystem  = new CVehicleSystem();
-	m_pPlayerSystem	  = new CPlayerSystem();
+	m_pPlayerSystem   = new CPlayerSystem();
 #if 0
 	m_pFlockManager	  = new CFlockManager(m_pSystem);
 #endif
@@ -803,7 +795,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	{
 		CryFatalError("Cannot load downloadtest script");
 	}
-	
 
 	// initialize the surface-manager
 	m_XSurfaceMgr.Init(m_pScriptSystem, m_p3DEngine, GetSystem()->GetIPhysicalWorld());
@@ -887,17 +878,17 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 #endif
 
 	DevModeInit();
-	m_bOK				 = true;
+	m_bOK                = true;
 	e_deformable_terrain = NULL;
 
-	#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
+#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
 	if (!m_bDedicatedServer)
 	{
 		minecraft = new Minecraft;
 		minecraft->init();
 		minePlayer = &minecraft->player;
 	}
-	#endif
+#endif
 	return (true);
 }
 
@@ -922,7 +913,7 @@ bool CXGame::Update()
 	if (!m_nDEBUG_TIMING)
 	{
 		m_fDEBUG_STARTTIMER = m_pSystem->GetITimer()->GetAsyncCurTime();
-		m_nDEBUG_TIMING = 1;
+		m_nDEBUG_TIMING     = 1;
 	}
 	if (!m_bEditor)
 	{
@@ -941,8 +932,7 @@ bool CXGame::Update()
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
-	bool bRenderFrame = ((!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || true) || m_bMenuOverlay || m_bUIOverlay) 
-											&& g_Render->GetIVal() != 0;
+	bool bRenderFrame = ((!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || true) || m_bMenuOverlay || m_bUIOverlay) && g_Render->GetIVal() != 0;
 	//////////////////////////////////////////////////////////////////////////
 	// Start Profiling frame
 	m_pSystem->GetIProfileSystem()->StartFrame();
@@ -962,17 +952,17 @@ bool CXGame::Update()
 #endif
 	}
 
-	PhysicsVars* pVars	   = m_pSystem->GetIPhysicalWorld()->GetPhysVars();
-	float		 fTimeGran = pVars->timeGranularity, fFixedStep = g_MP_fixed_timestep->GetFVal();
+	PhysicsVars* pVars     = m_pSystem->GetIPhysicalWorld()->GetPhysVars();
+	float        fTimeGran = pVars->timeGranularity, fFixedStep = g_MP_fixed_timestep->GetFVal();
 	if (fTimeGran != m_fTimeGran || fFixedStep != m_fFixedStep)
 	{
-		m_fTimeGran	 = fTimeGran;
+		m_fTimeGran  = fTimeGran;
 		m_fFixedStep = fFixedStep;
 		if (fFixedStep > 0)
 		{
 			m_fTimeGran2FixedStep = fTimeGran / fFixedStep;
 			m_iFixedStep2TimeGran = (int)(fFixedStep / fTimeGran + 0.5f);
-			m_frFixedStep		  = 1.0f / fFixedStep;
+			m_frFixedStep         = 1.0f / fFixedStep;
 		}
 		else
 			m_iFixedStep2TimeGran = 0;
@@ -981,7 +971,7 @@ bool CXGame::Update()
 	pVars->bMultiplayer = IsMultiplayer() ? 1 : 0;
 
 	//check what is the current process
-	IProcess* pProcess = m_pSystem->GetIProcess();
+	IProcess* pProcess  = m_pSystem->GetIProcess();
 	if (!pProcess)
 		return false;
 
@@ -1225,42 +1215,42 @@ bool CXGame::Update()
 	m_pSystem->GetIProfileSystem()->EndFrame();
 	//////////////////////////////////////////////////////////////////////////
 
-	#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
+#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
 	minecraft->update();
-	#endif
+#endif
 	return (m_bUpdateRet);
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXGame::UpdateDuringLoading()
 {
-	if(m_pServer)
+	if (m_pServer)
 		m_pServer->UpdateXServerNetwork();
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CXGame::ParseLevelName(const char *szMsg,char *szLevelName,char *szMissionName)
-{	
-	const char *szPtr=szMsg;
-	char *szDest;
+bool CXGame::ParseLevelName(const char* szMsg, char* szLevelName, char* szMissionName)
+{
+	const char* szPtr = szMsg;
+	char*       szDest;
 
 	// get level & mission-name
-	szPtr=szMsg+11; //skip "StartLevel "
+	szPtr = szMsg + 11; //skip "StartLevel "
 	//find the level name
-	memset(szLevelName,0,32);
-	szDest=szLevelName;
-	while ((*szPtr) && (*szPtr!=' '))		
-		*szDest++=*szPtr++;		
+	memset(szLevelName, 0, 32);
+	szDest = szLevelName;
+	while ((*szPtr) && (*szPtr != ' '))
+		*szDest++ = *szPtr++;
 
 	//find the mission name
-	memset(szMissionName,0,32);
+	memset(szMissionName, 0, 32);
 
 	if (*szPtr) //if not eos
 	{
 		szPtr++; //skip space
-		szDest=szMissionName;			
-		while (*szPtr)		
-			*szDest++=*szPtr++;					
+		szDest = szMissionName;
+		while (*szPtr)
+			*szDest++ = *szPtr++;
 	}
 
 	return (true);
@@ -1292,24 +1282,24 @@ bool CXGame::Run(bool& bRelaunch)
 
 //////////////////////////////////////////////////////////////////////
 #if !defined(_XBOX) && !defined(PS2) && !defined(LINUX)
-#if 0
-#include <Mmsystem.h> // error C2371: 'APIENTRY': redefinition; different basic types
-#include ".\game.h"
-#endif
-#pragma comment (lib , "Winmm.lib")
+	#if 0
+		#include <Mmsystem.h> // error C2371: 'APIENTRY': redefinition; different basic types
+		#include ".\game.h"
+	#endif
+	#pragma comment(lib, "Winmm.lib")
 #else
-#define GetCurrentTime() ((unsigned int)(GetSystem()->GetITimer()->GetCurrTime() * 1000.f))
+	#define GetCurrentTime() ((unsigned int)(GetSystem()->GetITimer()->GetCurrTime() * 1000.f))
 #endif
 
 //////////////////////////////////////////////////////////////////////
-bool CXGame::IsInPause(IProcess *pProcess)
+bool CXGame::IsInPause(IProcess* pProcess)
 {
 	bool bPause = (m_bMenuOverlay && (!IsMultiplayer()));
-	//check if the game is in pause or in menu mode
-	#if 0
+//check if the game is in pause or in menu mode
+#if 0
 	if ((pProcess->GetFlags() & PROC_MENU) && !IsMultiplayer())
 		bPause=true;
-	#endif
+#endif
 
 	return (bPause);
 }
@@ -1317,51 +1307,49 @@ bool CXGame::IsInPause(IProcess *pProcess)
 //////////////////////////////////////////////////////////////////////////
 void CXGame::InitVehicleCvars()
 {
-	IConsole *pConsole = m_pSystem->GetIConsole();
-	
+	IConsole* pConsole       = m_pSystem->GetIConsole();
+
 	//Dumprot	 9000.4
 	//Dumpv		 1500.4
 	//Turn		12000.0
 	//Speedv		35000.0
 	//Speedturnmin	       5.0
 
-	b_dump = pConsole->CreateVariable("b_dump","2000.4",0,"This variable is not used.");
-	b_dumpRot = pConsole->CreateVariable("b_dumprot","9000.4",0,"This variable is not used.");
-	b_dumpV = pConsole->CreateVariable("b_dumpv","1500.4",0,"This variable is not used.");
-	b_dumpVH = pConsole->CreateVariable("b_dumpvh","10000.4",0,"This variable is not used.");
-	b_stand = pConsole->CreateVariable("b_stand","10000.5",0,"This variable is not used.");
-	b_turn = pConsole->CreateVariable("b_turn","12000.0",0,"This variable is not used.");
-	b_tilt = pConsole->CreateVariable("b_tilt","2.0",0,"This variable is not used.");
-	b_speedV = pConsole->CreateVariable("b_speedv","35000.0",0,"This variable is not used.");
-	b_accelerationV = pConsole->CreateVariable("b_accelerationv","100000.0",0,"This variable is not used.");
-	b_speedMinTurn = pConsole->CreateVariable("b_speedminturn","5.0",0,"This variable is not used.");
-	b_float = pConsole->CreateVariable("b_float","7",0,"This variable is not used.");
-	b_wscale = pConsole->CreateVariable("b_wscale","2.1",0,"This variable is not used.");
-	b_wscalew = pConsole->CreateVariable("b_wscalew","2.1",0,"This variable is not used.");
-	b_wmomentum = pConsole->CreateVariable("b_wmomentum","500.5",0,"This variable is not used.");
-	
-	b_camera = pConsole->CreateVariable("b_camera","0",0,"This variable is not used.");
+	b_dump                   = pConsole->CreateVariable("b_dump", "2000.4", 0, "This variable is not used.");
+	b_dumpRot                = pConsole->CreateVariable("b_dumprot", "9000.4", 0, "This variable is not used.");
+	b_dumpV                  = pConsole->CreateVariable("b_dumpv", "1500.4", 0, "This variable is not used.");
+	b_dumpVH                 = pConsole->CreateVariable("b_dumpvh", "10000.4", 0, "This variable is not used.");
+	b_stand                  = pConsole->CreateVariable("b_stand", "10000.5", 0, "This variable is not used.");
+	b_turn                   = pConsole->CreateVariable("b_turn", "12000.0", 0, "This variable is not used.");
+	b_tilt                   = pConsole->CreateVariable("b_tilt", "2.0", 0, "This variable is not used.");
+	b_speedV                 = pConsole->CreateVariable("b_speedv", "35000.0", 0, "This variable is not used.");
+	b_accelerationV          = pConsole->CreateVariable("b_accelerationv", "100000.0", 0, "This variable is not used.");
+	b_speedMinTurn           = pConsole->CreateVariable("b_speedminturn", "5.0", 0, "This variable is not used.");
+	b_float                  = pConsole->CreateVariable("b_float", "7", 0, "This variable is not used.");
+	b_wscale                 = pConsole->CreateVariable("b_wscale", "2.1", 0, "This variable is not used.");
+	b_wscalew                = pConsole->CreateVariable("b_wscalew", "2.1", 0, "This variable is not used.");
+	b_wmomentum              = pConsole->CreateVariable("b_wmomentum", "500.5", 0, "This variable is not used.");
 
-	p_CameraSmoothTime = pConsole->CreateVariable("p_camerasmoothtime",".6",0,"when entering/leaving vehicles.");
-	p_CameraSmoothScale = pConsole->CreateVariable("p_camerasmoothscale","5",0,"when driving vehicles.");
-	p_CameraSmoothVLimit = pConsole->CreateVariable("p_camerasmoothvlimit","20",0,"camera transition scale to vehicle speed when leaving moving vehicles.");
+	b_camera                 = pConsole->CreateVariable("b_camera", "0", 0, "This variable is not used.");
 
-	p_LeaveVehicleImpuls = pConsole->CreateVariable("p_leavevehicleimpuls","20",0,"impilse scale to vehicle speed when leaving moving vehicles.");
-	p_LeaveVehicleBrake = pConsole->CreateVariable("p_leavevehiclebrake","10",0,"speed thrashold to have breaks on when driver is out");
-	p_LeaveVehicleBrakeDelay = pConsole->CreateVariable("p_leavevehiclebrakedelay","2",0,"delay before wehicle stops after driver out is out");
+	p_CameraSmoothTime       = pConsole->CreateVariable("p_camerasmoothtime", ".6", 0, "when entering/leaving vehicles.");
+	p_CameraSmoothScale      = pConsole->CreateVariable("p_camerasmoothscale", "5", 0, "when driving vehicles.");
+	p_CameraSmoothVLimit     = pConsole->CreateVariable("p_camerasmoothvlimit", "20", 0, "camera transition scale to vehicle speed when leaving moving vehicles.");
 
-	p_AutoCenterDelay = pConsole->CreateVariable("p_autocenterdelay","30",0,"idle time before force autoCenter");
-	p_AutoCenterSpeed = pConsole->CreateVariable("p_autocenterspeed","20",0,"speed of autoCentering - inverted (the bigger - the slower)");
+	p_LeaveVehicleImpuls     = pConsole->CreateVariable("p_leavevehicleimpuls", "20", 0, "impilse scale to vehicle speed when leaving moving vehicles.");
+	p_LeaveVehicleBrake      = pConsole->CreateVariable("p_leavevehiclebrake", "10", 0, "speed thrashold to have breaks on when driver is out");
+	p_LeaveVehicleBrakeDelay = pConsole->CreateVariable("p_leavevehiclebrakedelay", "2", 0, "delay before wehicle stops after driver out is out");
+
+	p_AutoCenterDelay        = pConsole->CreateVariable("p_autocenterdelay", "30", 0, "idle time before force autoCenter");
+	p_AutoCenterSpeed        = pConsole->CreateVariable("p_autocenterspeed", "20", 0, "speed of autoCentering - inverted (the bigger - the slower)");
 
 	// show bboxes for static objects below helicopter
-	h_drawbelow = pConsole->CreateVariable("h_drawbelow","0",0,
-		"Toggles bounding boxes below helicopters.\n"
-		"Usage: h_drawbelow [0/1]\n"
-		"Default is 0 (off). Set 1 to display the bounding\n"
-		"boxes of obstacles currently below a helicopter.");
+	h_drawbelow              = pConsole->CreateVariable("h_drawbelow", "0", 0,
+                                           "Toggles bounding boxes below helicopters.\n"
+                                           "Usage: h_drawbelow [0/1]\n"
+                                           "Default is 0 (off). Set 1 to display the bounding\n"
+                                           "boxes of obstacles currently below a helicopter.");
 }
-
-
 
 bool CXGame::LoadScene(std::string name)
 {
@@ -1380,9 +1368,9 @@ bool CXGame::LoadScene(std::string name)
 				//player->setGame(this);
 				//this->SetPlayer(player);
 			}
-			#if 0
+#if 0
 			m_pClient->OnLoadScene();
-			#endif
+#endif
 		}
 		return true;
 	}
@@ -1399,14 +1387,14 @@ void CXGame::SaveScene(std::string name, std::string as)
 {
 	// TODO: Fix it
 	// Need implement custom save file format to save needed state
-#if 0
+	#if 0
   std::string& path = name;
   if (gEnv->pRenderer->GetISceneManager()->exist(path))
   {
 	auto scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this);
 	scene->save(as.c_str());
   }
-#endif
+	#endif
 }
 #endif
 IGAME_API IGame* CreateGameInstance()
@@ -1418,10 +1406,10 @@ IGAME_API IGame* CreateGameInstance()
 //////////////////////////////////////////////////////////////////////////
 void CXGame::GotoMenu(bool bTriggerOnSwitch)
 {
-	if(m_bEditor)
+	if (m_bEditor)
 		return;
 
-	if(!m_pUISystem)			// e.g. dedicated server
+	if (!m_pUISystem) // e.g. dedicated server
 		return;
 
 	if (!IsInMenu())
@@ -1472,11 +1460,11 @@ void CXGame::MenuOn()
 	//FIXME:
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
-		#if 0
+#if 0
 		m_pSystem->GetIInput()->AddEventListener(m_pUISystem);
-		#else
+#else
 		GetLegacyInput()->AddEventListener(m_pUISystem);
-		#endif
+#endif
 		m_pSystem->GetIInput()->ClearKeyState();
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(1);
 	}
@@ -1518,11 +1506,11 @@ void CXGame::MenuOff()
 	//FIXME:
 	if (m_pUISystem && m_pUISystem->IsEnabled())
 	{
-		#if 0
+#if 0
 		m_pSystem->GetIInput()->RemoveEventListener(m_pUISystem);
-		#else
+#else
 		GetLegacyInput()->RemoveEventListener(m_pUISystem);
-		#endif
+#endif
 		m_pSystem->GetIInput()->ClearKeyState();
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(0);
 
@@ -1653,7 +1641,7 @@ void CXGame::ProcessPMessages(const char* szMsg)
 	}
 	else if (stricmp(szMsg, "Relaunch") == 0) // relaunch message
 	{
-		m_bRelaunch	 = true;
+		m_bRelaunch  = true;
 		m_bUpdateRet = false;
 		return;
 	}
@@ -1697,7 +1685,7 @@ void CXGame::ProcessPMessages(const char* szMsg)
 
 				return;
 			}
-            CryError("g_NoMenu disabled");
+			CryError("g_NoMenu disabled");
 
 			MenuOn();
 		}
@@ -1726,17 +1714,17 @@ void CXGame::GetMemoryStatistics(ICrySizer* pSizer)
 	//pSizer->AddObject(&m_XDemoMgr, sizeof(m_XDemoMgr));
 
 	const auto tpItr = m_mapTagPoints.begin();
-	for (const auto &tpItr : m_mapTagPoints)
+	for (const auto& tpItr : m_mapTagPoints)
 	{
 		size += (tpItr.first).capacity();
 		size += (tpItr.second)->MemStats();
 	}
 	pSizer->AddObject(&m_mapTagPoints, size);
-	//pSizer->AddObject(&m_XSurfaceMgr, m_XSurfaceMgr.MemStat());
-	#if 0
+//pSizer->AddObject(&m_XSurfaceMgr, m_XSurfaceMgr.MemStat());
+#if 0
 	if (m_pServer)
 		pSizer->AddObject(m_pServer, m_pServer->MemStats());
-	#endif
+#endif
 	if (m_pClient)
 		pSizer->AddObject(m_pClient, sizeof(*m_pClient));
 
@@ -1763,8 +1751,8 @@ void CXGame::GetMemoryStatistics(ICrySizer* pSizer)
 	//if (m_pWeaponSystemEx)
 	//	pSizer->AddObject(m_pWeaponSystemEx, m_pWeaponSystemEx->MemStats());
 
-	size			= 0;
-	#if 0
+	size = 0;
+#if 0
 	IEntityIt* eItr = m_pSystem->GetIEntitySystem()->GetEntityIterator();
 	IEntity*   ent;
 	while ((ent = eItr->Next()) != NULL)
@@ -1781,16 +1769,15 @@ void CXGame::GetMemoryStatistics(ICrySizer* pSizer)
 	}
 
 	pSizer->AddObject("players from entSystem", size);
-	#endif
-
+#endif
 }
 
 #if 0
 bool CXGame::SteamInit()
 {
-#ifndef USE_STEAM
+	#ifndef USE_STEAM
 	return true;
-#else
+	#else
 
 	// инициализируем Steam
 	bool bRet = SteamAPI_Init();
@@ -1812,7 +1799,7 @@ bool CXGame::SteamInit()
 
 	gEnv->pLog->Log("steam api init: %d", bRet);
 	return bRet;
-#endif // !USE_STEAM
+	#endif // !USE_STEAM
 }
 #endif
 Legacy::IInput* GetLegacyInput()
@@ -1829,7 +1816,7 @@ Legacy::IInput* GetLegacyInput()
 	@param listen allow external clients to connect
 */
 //////////////////////////////////////////////////////////////////////////
-void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szMissionName, bool listen)
+void CXGame::LoadLevelCS(bool keepclient, const char* szMapName, const char* szMissionName, bool listen)
 {
 	// need to reset timers as well
 	m_pScriptTimerMgr->Reset();
@@ -1842,18 +1829,18 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 
 		m_pSystem->GetILog()->Log("UISystem: Enabled 3D Engine!");
 	}
-#if !defined(LINUX)	
+#if !defined(LINUX)
 	if (m_pSystem->GetIMovieSystem())
-		m_pSystem->GetIMovieSystem()->StopAllCutScenes();	
-#endif		
-	bool bDedicated=GetSystem()->IsDedicated();
+		m_pSystem->GetIMovieSystem()->StopAllCutScenes();
+#endif
+	bool                 bDedicated  = GetSystem()->IsDedicated();
 
-	string strGameType = g_GameType->GetString();
+	string               strGameType = g_GameType->GetString();
 
 	AutoSuspendTimeQuota AutoSuspender(GetSystem()->GetStreamEngine());
 
-	assert( szMissionName != 0 );
-	
+	assert(szMissionName != 0);
+
 	string sLevelFolder = szMapName;
 	if (sLevelFolder.find('\\') == string::npos && sLevelFolder.find('/') == string::npos)
 	{
@@ -1863,11 +1850,11 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 
 	IConsole* pConsole = GetSystem()->GetIConsole();
 	//IInput *pInput=GetSystem()->GetIInput();					// might be 0 (e.g. dedicated server)
-	auto pInput = GetLegacyInput(); // might be 0 (e.g. dedicated server)
+	auto      pInput   = GetLegacyInput(); // might be 0 (e.g. dedicated server)
 
-	if(pInput)
+	if (pInput)
 		pInput->SetMouseExclusive(false);
-		
+
 	if (!IsMultiplayer())
 	{
 		m_pSystem->GetIConsole()->Clear();
@@ -1878,7 +1865,7 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 
 		m_pSystem->GetIConsole()->SetLoadingImage(sLoadingScreenTexture.c_str());
 		m_pSystem->GetIConsole()->ResetProgressBar(0x7fffffff);
-		m_pSystem->GetILog()->UpdateLoadingScreen("");	// just to draw the console
+		m_pSystem->GetILog()->UpdateLoadingScreen(""); // just to draw the console
 	}
 
 	if (m_pClient && !keepclient)
@@ -1887,10 +1874,10 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 	}
 
 	// start server
-	if((!m_pServer || !keepclient) && !StartupServer(listen))
+	if ((!m_pServer || !keepclient) && !StartupServer(listen))
 	{
-		m_pLog->LogToConsole("Unable to load the level %s,%s [startup server failed]", sLevelFolder.c_str(),szMissionName);
-		if(pInput)
+		m_pLog->LogToConsole("Unable to load the level %s,%s [startup server failed]", sLevelFolder.c_str(), szMissionName);
+		if (pInput)
 			pInput->SetMouseExclusive(true);
 		LoadingError("@LoadLevelError");
 		return;
@@ -1899,34 +1886,34 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 	bool bNeedClient = !bDedicated && ((keepclient && !m_pClient) || !keepclient);
 
 	// create local client(must be before the level is loaded)
-	if(bNeedClient)
+	if (bNeedClient)
 	{
-		if(!StartupLocalClient())
+		if (!StartupLocalClient())
 		{
-			m_pLog->LogToConsole("Unable to load the level %s,mission %s [startup client failed]", sLevelFolder.c_str(),szMissionName);
-			if(pInput)
+			m_pLog->LogToConsole("Unable to load the level %s,mission %s [startup client failed]", sLevelFolder.c_str(), szMissionName);
+			if (pInput)
 				pInput->SetMouseExclusive(true);
 			LoadingError("@LoadLevelError");
 			return;
 		}
 	}
 
-	const char *szMission = szMissionName;
+	const char* szMission = szMissionName;
 	if (!*szMissionName)
-		szMission=strGameType.c_str();
+		szMission = strGameType.c_str();
 
-	// [KIRILL] lets reset - they will be spawned anyway
-	#if 0
+// [KIRILL] lets reset - they will be spawned anyway
+#if 0
 	m_pSystem->GetAISystem()->Reset();
-	#endif
-	
+#endif
+
 	// refresh the current server info for incoming queries during loading
 	m_pServer->GetServerInfo();
 
 	// load the level
-	if(!m_pServer->m_pISystem->LoadLevel( sLevelFolder.c_str(),szMission,false))
+	if (!m_pServer->m_pISystem->LoadLevel(sLevelFolder.c_str(), szMission, false))
 	{
-		m_pLog->LogToConsole("Unable to load the level %s,mission %s \n", sLevelFolder.c_str(),szMissionName);
+		m_pLog->LogToConsole("Unable to load the level %s,mission %s \n", sLevelFolder.c_str(), szMissionName);
 		if (pInput)
 			pInput->SetMouseExclusive(true);
 		LoadingError("@LoadLevelError");
@@ -1934,40 +1921,40 @@ void CXGame::LoadLevelCS(bool keepclient, const char *szMapName, const char *szM
 	}
 
 	// start and connect a local client
-	if(bNeedClient)
+	if (bNeedClient)
 	{
-		if(m_pClient)
-		{			
-			if (IsMultiplayer() && m_pServer->m_pIServer->GetServerType()!=eMPST_LAN)
-     			m_pClient->XConnect("127.0.0.1",false,true);
+		if (m_pClient)
+		{
+			if (IsMultiplayer() && m_pServer->m_pIServer->GetServerType() != eMPST_LAN)
+				m_pClient->XConnect("127.0.0.1", false, true);
 			else
 				m_pClient->XConnect("127.0.0.1");
 		}
 	}
-	
-	if(m_pClient)
-    m_pClient->OnMapChanged();
-	if(m_pServer)
-    m_pServer->OnMapChanged(); 
-	if(pInput)
+
+	if (m_pClient)
+		m_pClient->OnMapChanged();
+	if (m_pServer)
+		m_pServer->OnMapChanged();
+	if (pInput)
 		pInput->SetMouseExclusive(true);
 	AllowQuicksave(true);
 };
 
 //////////////////////////////////////////////////////////////////////////
-bool CXGame::GetLevelMissions( const char *szLevelDir,std::vector<string> &missions )
+bool CXGame::GetLevelMissions(const char* szLevelDir, std::vector<string>& missions)
 {
 	string sLevelPath = szLevelDir;
-	
-	if (!szLevelDir || sLevelPath.empty())	
+
+	if (!szLevelDir || sLevelPath.empty())
 		return false;
 
-	string sEPath = sLevelPath+string("/levelinfo.xml");
-	string sPaks = sLevelPath + "/*.pak";	
+	string sEPath = sLevelPath + string("/levelinfo.xml");
+	string sPaks  = sLevelPath + "/*.pak";
 	OpenPacks(sPaks.c_str()); //[marco] do not call system->openpack
 
 	bool bResult = false;
-	#if 0
+#if 0
 	XmlNodeRef root = GetSystem()->LoadXmlFile( sEPath.c_str() );
 	if (root)
 	{
@@ -1988,12 +1975,11 @@ bool CXGame::GetLevelMissions( const char *szLevelDir,std::vector<string> &missi
 			}
 		}
 	}
-	#endif
-	
+#endif
+
 	ClosePacks(sPaks.c_str());
 	return bResult;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool CXGame::IsMultiplayer()
@@ -2002,10 +1988,10 @@ bool CXGame::IsMultiplayer()
 	if (m_bEditor)
 		return false;
 
-	bool bServer=IsServer();
-	bool bClient=IsClient();
+	bool bServer = IsServer();
+	bool bClient = IsClient();
 
-	if(!bServer && !bClient)
+	if (!bServer && !bClient)
 		return false;
 
 	return !bServer || !bClient || m_pServer->m_bListen;
@@ -2033,7 +2019,7 @@ bool CXGame::GetCDPath(string& szCDPath)
 				// get volume name
 				tvector cdVolumeName(MAX_VOLUME_ID_SIZE + 1);
 				if (FALSE != GetVolumeInformation(&rawDriveLetters[i],
-												  &cdVolumeName[0], (DWORD)cdVolumeName.size(), 0, 0, 0, 0, 0))
+				                                  &cdVolumeName[0], (DWORD)cdVolumeName.size(), 0, 0, 0, 0, 0))
 				{
 					// check volume name to verify it's Far Cry's game cd/dvd
 					tstring cdVolumeLabel(&cdVolumeName[0]);
@@ -2042,7 +2028,7 @@ bool CXGame::GetCDPath(string& szCDPath)
 					{
 						// found Far Cry's game cd/dvd, copy information and bail out
 						szCDPath = &rawDriveLetters[i];
-						bRet	 = true;
+						bRet     = true;
 						break;
 					}
 				}

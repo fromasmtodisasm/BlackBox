@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XVehicleSystem.cpp
@@ -26,7 +26,7 @@ CVehicleSystem::~CVehicleSystem()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CVehicleSystem::AddVehicleClass( const EntityClassId classid)
+void CVehicleSystem::AddVehicleClass(const EntityClassId classid)
 {
 	m_vVehicleClasses.push_back(classid);
 }
@@ -34,5 +34,5 @@ void CVehicleSystem::AddVehicleClass( const EntityClassId classid)
 //////////////////////////////////////////////////////////////////////
 bool CVehicleSystem::IsVehicleClass(const EntityClassId classid)
 {
-	return ( m_vVehicleClasses.end() != std::find(m_vVehicleClasses.begin(),m_vVehicleClasses.end(), classid) );
+	return (m_vVehicleClasses.end() != std::find(m_vVehicleClasses.begin(), m_vVehicleClasses.end(), classid));
 }

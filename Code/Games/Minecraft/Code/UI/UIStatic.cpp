@@ -1,11 +1,11 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: UIStatic.cpp
-//  Description: A Static Control 
+//  Description: A Static Control
 //
 //  History:
 //  - [3/6/2003]: File created by Márcio Martins
@@ -23,221 +23,221 @@ _DECLARE_SCRIPTABLEEX(CUIStatic)
 
 //FIXME: remove it
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+	#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+	#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIStatic::CUIStatic()
-: m_fVerticalOffset(0),
-	m_fHorizontalOffset(0),
-	m_bVerticalScrollBar(0),
-	m_bHorizontalScrollBar(0),
-  m_pHScroll(0),
-	m_pVScroll(0),
-	m_iHAlignment(UIALIGN_LEFT),
-	m_iVAlignment(UIALIGN_MIDDLE),
-  m_fTotalWidth(0.0f),
-	m_fTotalHeight(0.0f),
-	m_fLineHeight(0),
-	m_fLineSpacing(0.0f),
-	m_pModel(0),
-  m_fAngle(0),
-	m_fCameraDistance(4.0f),
-	m_fCameraFov(35.0f * gf_PI / 180.0f),
-	m_fModelRotation(0.1f),
-  m_fLightDistance(50.0f),
-	m_fModelRotationAcc(1.0f),
-	m_fMouseMultiplier(1.0f),
-	m_iMaxLines(100),
-  m_fLeftSpacing(0.0f),
-	m_fRightSpacing(0.0f)
+    : m_fVerticalOffset(0)
+    , m_fHorizontalOffset(0)
+    , m_bVerticalScrollBar(0)
+    , m_bHorizontalScrollBar(0)
+    , m_pHScroll(0)
+    , m_pVScroll(0)
+    , m_iHAlignment(UIALIGN_LEFT)
+    , m_iVAlignment(UIALIGN_MIDDLE)
+    , m_fTotalWidth(0.0f)
+    , m_fTotalHeight(0.0f)
+    , m_fLineHeight(0)
+    , m_fLineSpacing(0.0f)
+    , m_pModel(0)
+    , m_fAngle(0)
+    , m_fCameraDistance(4.0f)
+    , m_fCameraFov(35.0f * gf_PI / 180.0f)
+    , m_fModelRotation(0.1f)
+    , m_fLightDistance(50.0f)
+    , m_fModelRotationAcc(1.0f)
+    , m_fMouseMultiplier(1.0f)
+    , m_iMaxLines(100)
+    , m_fLeftSpacing(0.0f)
+    , m_fRightSpacing(0.0f)
 {
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIStatic::~CUIStatic()
 {
 	ReleaseModel();
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 string CUIStatic::GetClassName()
 {
 	return UICLASSNAME_STATIC;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::SetStyle(int iStyle)
 {
 	return CUIWidget::SetStyle(iStyle);
 }
 
-////////////////////////////////////////////////////////////////////// 
-LRESULT CUIStatic::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	//AMD Port
+//////////////////////////////////////////////////////////////////////
+LRESULT CUIStatic::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
-	switch(iMessage)
+	switch (iMessage)
 	{
 	case UIM_DRAW:
+	{
+		if (m_iStyle & UISTYLE_MULTILINE)
 		{
-			if (m_iStyle & UISTYLE_MULTILINE)
+			m_pVScroll        = (CUIScrollBar*)GetChild("vscrollbar");
+			m_pHScroll        = (CUIScrollBar*)GetChild("hscrollbar");
+
+			IFFont* pFont     = m_pUISystem->GetIFont(m_pFont);
+
+			// get the rect where we are allowed to draw
+			UIRect  pTextRect = GetTextRect(1);
+			UIRect  pRect     = GetTextRect(0);
+
+			bool    bVScroll = 0, bHScroll = 0;
+
+			// get the total height
+			m_fTotalHeight = GetTextHeight();
+			m_fTotalWidth  = GetTextWidth();
+
+			// check if we need scrollbars
+			bVScroll       = (m_fTotalHeight > pTextRect.fHeight);
+			bHScroll       = (m_fTotalWidth > pTextRect.fWidth);
+
+			if (bHScroll && !m_pHScroll)
 			{
-				m_pVScroll = (CUIScrollBar *)GetChild("vscrollbar");
-				m_pHScroll = (CUIScrollBar *)GetChild("hscrollbar");
+				m_pUISystem->CreateScrollBar(&m_pHScroll, this, "hscrollbar", UIRect(0, 0, 0, 16.0f), UIFLAG_ENABLED, 0, UISCROLLBARTYPE_HORIZONTAL);
+			}
 
-				IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+			if (bVScroll && !m_pVScroll)
+			{
+				m_pUISystem->CreateScrollBar(&m_pVScroll, this, "vscrollbar", UIRect(0, 0, 16.0f, 0.0f), UIFLAG_ENABLED, 0, UISCROLLBARTYPE_VERTICAL);
+			}
 
-				// get the rect where we are allowed to draw
-				UIRect pTextRect = GetTextRect(1);
-				UIRect pRect = GetTextRect(0);
+			// set the bar rects and values
+			if (bVScroll && !m_bVerticalScrollBar)
+			{
+				m_bVerticalScrollBar = 1;
 
-				bool bVScroll = 0, bHScroll = 0;
+				m_pVScroll->SetFlags(m_pVScroll->GetFlags() | UIFLAG_VISIBLE);
 
-				// get the total height
-				m_fTotalHeight = GetTextHeight();
-				m_fTotalWidth = GetTextWidth();
-
-				// check if we need scrollbars
-				bVScroll = (m_fTotalHeight > pTextRect.fHeight);
-				bHScroll = (m_fTotalWidth > pTextRect.fWidth);
-
-				if (bHScroll && !m_pHScroll)
+				if (m_iVAlignment == UIALIGN_BOTTOM)
 				{
-					m_pUISystem->CreateScrollBar(&m_pHScroll, this, "hscrollbar", UIRect(0, 0, 0, 16.0f), UIFLAG_ENABLED, 0, UISCROLLBARTYPE_HORIZONTAL);
+					m_pVScroll->SetValue(1.0f);
 				}
-
-				if (bVScroll && !m_pVScroll)
+				else if (m_iVAlignment == UIALIGN_MIDDLE)
 				{
-					m_pUISystem->CreateScrollBar(&m_pVScroll, this, "vscrollbar", UIRect(0, 0, 16.0f, 0.0f), UIFLAG_ENABLED, 0, UISCROLLBARTYPE_VERTICAL);
-				}
-
-				// set the bar rects and values
-				if (bVScroll && !m_bVerticalScrollBar)
-				{
-					m_bVerticalScrollBar = 1;
-
-					m_pVScroll->SetFlags(m_pVScroll->GetFlags() | UIFLAG_VISIBLE);
-
-					if (m_iVAlignment == UIALIGN_BOTTOM)
-					{
-						m_pVScroll->SetValue(1.0f);
-					}
-					else if (m_iVAlignment == UIALIGN_MIDDLE)
-					{
-						m_pVScroll->SetValue(0.5f);
-					}
-					else
-					{
-						m_pVScroll->SetValue(0.0f);
-					}
-
-					GetLineListMetrics();
-				}
-				else if (!bVScroll && m_bVerticalScrollBar)
-				{
-					m_bVerticalScrollBar = 0;
-				}
-
-				// check if we need an horizontal scrollbar
-				if (bHScroll && !m_bHorizontalScrollBar)
-				{
-					m_bHorizontalScrollBar = 1;
-
-					m_pHScroll->SetFlags(m_pHScroll->GetFlags() | UIFLAG_VISIBLE);
-
-					if (m_iHAlignment == UIALIGN_RIGHT)
-					{
-						m_pHScroll->SetValue(1.0f);
-					}
-					else if (m_iHAlignment == UIALIGN_CENTER)
-					{
-						m_pHScroll->SetValue(0.5f);
-					}
-					else
-					{
-						m_pHScroll->SetValue(0.0f);
-					}
-				}
-				else if (!bHScroll && m_bHorizontalScrollBar)
-				{
-					m_bHorizontalScrollBar = 0;
-				}
-
-				// convert pRect to relative coordinates
-				m_pUISystem->GetRelativeXY(&pRect.fLeft, &pRect.fTop, pRect.fLeft, pRect.fTop, this);
-
-				// set step sizes and rects
-				if (m_bVerticalScrollBar)
-				{
-					UIRect pVScrollRect;
-
-					pVScrollRect.fLeft = pRect.fLeft + pRect.fWidth - m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
-					pVScrollRect.fTop = pRect.fTop;
-					pVScrollRect.fWidth = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
-					pVScrollRect.fHeight = pRect.fHeight - (m_bHorizontalScrollBar ? m_pUISystem->GetWidgetRect(m_pHScroll).fHeight : 0);
-
-					m_pVScroll->SetRect(pVScrollRect, 1);
-					m_pVScroll->SetStep(m_fLineHeight / (m_fTotalHeight - pTextRect.fHeight));
+					m_pVScroll->SetValue(0.5f);
 				}
 				else
 				{
-					m_fVerticalOffset = 0;
-
-					if (m_pVScroll)
-					{
-						m_pVScroll->SetFlags(m_pVScroll->GetFlags() & ~UIFLAG_VISIBLE);
-					}
+					m_pVScroll->SetValue(0.0f);
 				}
 
-				if (m_bHorizontalScrollBar)
+				GetLineListMetrics();
+			}
+			else if (!bVScroll && m_bVerticalScrollBar)
+			{
+				m_bVerticalScrollBar = 0;
+			}
+
+			// check if we need an horizontal scrollbar
+			if (bHScroll && !m_bHorizontalScrollBar)
+			{
+				m_bHorizontalScrollBar = 1;
+
+				m_pHScroll->SetFlags(m_pHScroll->GetFlags() | UIFLAG_VISIBLE);
+
+				if (m_iHAlignment == UIALIGN_RIGHT)
 				{
-					UIRect pHScrollRect;
-
-					pHScrollRect.fLeft = pRect.fLeft;
-					pHScrollRect.fTop = pRect.fTop + pRect.fHeight - m_pUISystem->GetWidgetRect(m_pHScroll).fHeight;
-					pHScrollRect.fWidth = pRect.fWidth - (m_bVerticalScrollBar ? m_pUISystem->GetWidgetRect(m_pVScroll).fWidth : 0);
-					pHScrollRect.fHeight = m_pUISystem->GetWidgetRect(m_pHScroll).fHeight;
-
-					m_pHScroll->SetRect(pHScrollRect, 1);
-					m_pHScroll->SetStep((m_fTotalWidth - pTextRect.fWidth) / m_fTotalWidth);
+					m_pHScroll->SetValue(1.0f);
+				}
+				else if (m_iHAlignment == UIALIGN_CENTER)
+				{
+					m_pHScroll->SetValue(0.5f);
 				}
 				else
 				{
-					m_fHorizontalOffset = 0;
+					m_pHScroll->SetValue(0.0f);
+				}
+			}
+			else if (!bHScroll && m_bHorizontalScrollBar)
+			{
+				m_bHorizontalScrollBar = 0;
+			}
 
-					if (m_pHScroll)
-					{
-						m_pHScroll->SetFlags(m_pHScroll->GetFlags() & ~UIFLAG_VISIBLE);
-					}
+			// convert pRect to relative coordinates
+			m_pUISystem->GetRelativeXY(&pRect.fLeft, &pRect.fTop, pRect.fLeft, pRect.fTop, this);
+
+			// set step sizes and rects
+			if (m_bVerticalScrollBar)
+			{
+				UIRect pVScrollRect;
+
+				pVScrollRect.fLeft   = pRect.fLeft + pRect.fWidth - m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
+				pVScrollRect.fTop    = pRect.fTop;
+				pVScrollRect.fWidth  = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
+				pVScrollRect.fHeight = pRect.fHeight - (m_bHorizontalScrollBar ? m_pUISystem->GetWidgetRect(m_pHScroll).fHeight : 0);
+
+				m_pVScroll->SetRect(pVScrollRect, 1);
+				m_pVScroll->SetStep(m_fLineHeight / (m_fTotalHeight - pTextRect.fHeight));
+			}
+			else
+			{
+				m_fVerticalOffset = 0;
+
+				if (m_pVScroll)
+				{
+					m_pVScroll->SetFlags(m_pVScroll->GetFlags() & ~UIFLAG_VISIBLE);
+				}
+			}
+
+			if (m_bHorizontalScrollBar)
+			{
+				UIRect pHScrollRect;
+
+				pHScrollRect.fLeft   = pRect.fLeft;
+				pHScrollRect.fTop    = pRect.fTop + pRect.fHeight - m_pUISystem->GetWidgetRect(m_pHScroll).fHeight;
+				pHScrollRect.fWidth  = pRect.fWidth - (m_bVerticalScrollBar ? m_pUISystem->GetWidgetRect(m_pVScroll).fWidth : 0);
+				pHScrollRect.fHeight = m_pUISystem->GetWidgetRect(m_pHScroll).fHeight;
+
+				m_pHScroll->SetRect(pHScrollRect, 1);
+				m_pHScroll->SetStep((m_fTotalWidth - pTextRect.fWidth) / m_fTotalWidth);
+			}
+			else
+			{
+				m_fHorizontalOffset = 0;
+
+				if (m_pHScroll)
+				{
+					m_pHScroll->SetFlags(m_pHScroll->GetFlags() & ~UIFLAG_VISIBLE);
 				}
 			}
 		}
-		break;
+	}
+	break;
 	case UIM_LBUTTONDBLCLICK:
-		{
-			OnCommand();
-		}
-		break;
+	{
+		OnCommand();
+	}
+	break;
 	case UIM_LBUTTONDOWN:
-		{
-			m_fModelRotationAcc = 0.0f;
-		}
-		break;
+	{
+		m_fModelRotationAcc = 0.0f;
+	}
+	break;
 	case UIM_MOUSEUP:
-		{
-			m_fModelRotationAcc = 1.0f;
-		}
+	{
+		m_fModelRotationAcc = 1.0f;
+	}
 	case UIM_MOUSEMOVE:
+	{
+		if (m_fModelRotationAcc == 0.0f)
 		{
-			if (m_fModelRotationAcc == 0.0f)
-			{
-				m_fAngle += (UIM_GET_X_FLOAT(lParam) - UIM_GET_X_FLOAT(wParam)) * m_fMouseMultiplier;
-			}
+			m_fAngle += (UIM_GET_X_FLOAT(lParam) - UIM_GET_X_FLOAT(wParam)) * m_fMouseMultiplier;
 		}
-		break;
+	}
+	break;
 	default:
 		break;
 	}
@@ -245,7 +245,7 @@ LRESULT CUIStatic::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	/
 	return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::Draw(int iPass)
 {
 	if (iPass != 0)
@@ -299,7 +299,7 @@ int CUIStatic::Draw(int iPass)
 	// draw the model if there is one
 	if (m_pModel)
 	{
-		#if 0
+#if 0
 		IRenderer *pRenderer = m_pUISystem->GetIRenderer();
 
 		// because we clear the z-buffer here we cannot have more than one
@@ -367,10 +367,10 @@ int CUIStatic::Draw(int iPass)
 		pRenderer->EF_EndEf3D(SHDF_SORT);
 
 		// restore old settings
-		pRenderer->SetViewport(iViewportX, iViewportY, iViewportW, iViewportH);	
-		#else
+		pRenderer->SetViewport(iViewportX, iViewportY, iViewportW, iViewportH);
+#else
 		NOT_IMPLEMENTED_V;
-		#endif
+#endif
 	}
 
 	// adjust the rect with the scrollbar sizes
@@ -433,13 +433,13 @@ int CUIStatic::Draw(int iPass)
 	{
 		m_fHorizontalOffset = 0.0f;
 	}
-	
+
 	// get the font
-	IFFont *pFont = pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont* pFont = pFont = m_pUISystem->GetIFont(m_pFont);
 
 	if (!m_vLines.empty())
 	{
-		IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+		IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
 		m_pUISystem->SetScissor(&pAbsoluteRect);
 
@@ -468,9 +468,9 @@ int CUIStatic::Draw(int iPass)
 
 			for (std::vector<UIStaticLine>::iterator pItor = m_vLines.begin(); pItor != m_vLines.end(); ++pItor)
 			{
-				UIStaticLine &pLine = *pItor;
+				UIStaticLine& pLine = *pItor;
 
-				pLineRect.fHeight = m_fLineHeight;
+				pLineRect.fHeight   = m_fLineHeight;
 
 				// check if the line is below the rect
 				// if so, we stop drawing, because there is no way the following will be visible
@@ -489,22 +489,22 @@ int CUIStatic::Draw(int iPass)
 
 				if (m_iStyle & UISTYLE_WORDWRAP)
 				{
-					wchar_t *szBaseString = (wchar_t *)pLine.szText.c_str();
-					wchar_t *szString = szBaseString;
-					wchar_t cSave;
-					int		iIndex;
+					wchar_t* szBaseString = (wchar_t*)pLine.szText.c_str();
+					wchar_t* szString     = szBaseString;
+					wchar_t  cSave;
+					int      iIndex;
 
 					for (int i = 0; i < pLine.iWrapCount; i++)
 					{
-						iIndex = pLine.iWrapIndex[i];
-						cSave = szBaseString[iIndex];
+						iIndex               = pLine.iWrapIndex[i];
+						cSave                = szBaseString[iIndex];
 						szBaseString[iIndex] = 0;
 
 						// draw the text
 						m_pUISystem->DrawText(pLineRect, m_iHAlignment, UIALIGN_MIDDLE, pFont, szString);
 
 						szBaseString[iIndex] = cSave;
-						szString = szBaseString + iIndex;
+						szString             = szBaseString + iIndex;
 
 						pLineRect.fTop += m_fLineHeight;
 					}
@@ -550,8 +550,8 @@ int CUIStatic::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetText(const wstring &szText)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetText(const wstring& szText)
 {
 	if (m_vLines.empty())
 	{
@@ -566,14 +566,14 @@ int CUIStatic::SetText(const wstring &szText)
 		m_vLines[0].szText = szText;
 	}
 
-	IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
 	GetLineMetrics(&m_vLines[0], pFont);
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::SetVAlign(int iAlign)
 {
 	m_iVAlignment = iAlign;
@@ -581,13 +581,13 @@ int CUIStatic::SetVAlign(int iAlign)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::GetVAlign()
 {
 	return m_iVAlignment;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::SetHAlign(int iAlign)
 {
 	m_iHAlignment = iAlign;
@@ -595,26 +595,26 @@ int CUIStatic::SetHAlign(int iAlign)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::GetHAlign()
 {
 	return m_iHAlignment;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::LoadModel(const string &szModelName)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::LoadModel(const string& szModelName)
 {
 	if (m_pModel)
 	{
 		ReleaseModel();
 	}
-	m_pModel = m_pUISystem->GetISystem()->GetIAnimationSystem()->MakeCharacter(szModelName.c_str());
+	m_pModel      = m_pUISystem->GetISystem()->GetIAnimationSystem()->MakeCharacter(szModelName.c_str());
 	m_szModelName = szModelName;
 
 	return (m_pModel ? 1 : 0);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::ReleaseModel()
 {
 	if (m_pModel)
@@ -627,20 +627,20 @@ int CUIStatic::ReleaseModel()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::StartAnimation(const string &szAnimationName)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::StartAnimation(const string& szAnimationName)
 {
 	if (m_pModel)
 	{
 		// [PETAR] StartAnimation2 is obsolete - old call provided here as reference
-        //if (m_pModel->StartAnimation2(szAnimationName.c_str(), 0.0f, 0.0f, 1, 1, 1))
+		//if (m_pModel->StartAnimation2(szAnimationName.c_str(), 0.0f, 0.0f, 1, 1, 1))
 
 		CryCharAnimationParams ccap;
 		ccap.fBlendInTime = ccap.fBlendOutTime = 0.f;
-		ccap.nLayerID = 1;
-		ccap.nFlags = ccap.FLAGS_SYNCHRONIZE_WITH_LAYER_0;
+		ccap.nLayerID                          = 1;
+		ccap.nFlags                            = ccap.FLAGS_SYNCHRONIZE_WITH_LAYER_0;
 
-		if (m_pModel->StartAnimation(szAnimationName.c_str(),ccap))
+		if (m_pModel->StartAnimation(szAnimationName.c_str(), ccap))
 		{
 			m_pModel->Update();
 
@@ -657,8 +657,8 @@ int CUIStatic::StartAnimation(const string &szAnimationName)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CUIStatic::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////
+void CUIStatic::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIStatic>::InitializeTemplate(pScriptSystem);
 
@@ -684,11 +684,10 @@ void CUIStatic::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIStatic, SetShaderFloat);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIStatic, SetShader);
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIStatic, SetSecondShader);
-
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetLineMetrics(UIStaticLine *pLine, IFFont *pFont)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetLineMetrics(UIStaticLine* pLine, IFFont* pFont)
 {
 	// get string metrics
 	vector2f vStringSize = pFont->GetTextSizeW(pLine->szText.c_str());
@@ -696,16 +695,16 @@ int CUIStatic::GetLineMetrics(UIStaticLine *pLine, IFFont *pFont)
 	vStringSize.x /= m_pUISystem->GetIRenderer()->ScaleCoordX(1);
 	vStringSize.y /= m_pUISystem->GetIRenderer()->ScaleCoordY(1);
 
-	m_fLineHeight = m_fLineSpacing + vStringSize.y;
+	m_fLineHeight       = m_fLineSpacing + vStringSize.y;
 
 	float fAllowedWidth = GetTextRect(1).fWidth - UI_DEFAULT_LINE_WIDTH_ADDITION;
-	float fStringWidth = vStringSize.x;
+	float fStringWidth  = vStringSize.x;
 
 	// if the string is short or wordwrap not enabled, don't do anything
 	if ((fStringWidth < fAllowedWidth) || ((m_iStyle & UISTYLE_WORDWRAP) == 0))
 	{
-		pLine->fWidth = fStringWidth + UI_DEFAULT_LINE_WIDTH_ADDITION;
-		pLine->fHeight = m_fLineHeight;
+		pLine->fWidth     = fStringWidth + UI_DEFAULT_LINE_WIDTH_ADDITION;
+		pLine->fHeight    = m_fLineHeight;
 		pLine->fWrapWidth = fStringWidth;
 		pLine->iWrapCount = 0;
 
@@ -715,25 +714,25 @@ int CUIStatic::GetLineMetrics(UIStaticLine *pLine, IFFont *pFont)
 	// otherwise...
 	// clear the wrap points
 	memset(pLine->iWrapIndex, 0, sizeof(int) * UI_DEFAULT_MAX_WRAP_INDICES);
-	pLine->iWrapCount = 0;
-	pLine->fWrapWidth = 0.0f;
+	pLine->iWrapCount          = 0;
+	pLine->fWrapWidth          = 0.0f;
 
 	// start with one line height
-	pLine->fHeight = m_fLineHeight;
+	pLine->fHeight             = m_fLineHeight;
 
-	int		iLastSpace = -1;
-	float	fLastSpaceWidth = 0.0f;
+	int      iLastSpace        = -1;
+	float    fLastSpaceWidth   = 0.0f;
 
-	float fCurrentCharWidth = 0.0f;
-	float fCurrentLineWidth = 0.0f;
-	float fBiggestLineWidth = 0.0f;
-	float fWidthSum = 0.0f;
+	float    fCurrentCharWidth = 0.0f;
+	float    fCurrentLineWidth = 0.0f;
+	float    fBiggestLineWidth = 0.0f;
+	float    fWidthSum         = 0.0f;
 
-	int			iCurrentChar = 0;
-	wchar_t		*pChar = (wchar_t *)pLine->szText.c_str();
-	wchar_t		szChar[2] = {0, 0};
+	int      iCurrentChar      = 0;
+	wchar_t* pChar             = (wchar_t*)pLine->szText.c_str();
+	wchar_t  szChar[2]         = {0, 0};
 
-	while(szChar[0] = *pChar++)
+	while (szChar[0] = *pChar++)
 	{
 		// ignore color codes
 		if (szChar[0] == L'$')
@@ -754,13 +753,14 @@ int CUIStatic::GetLineMetrics(UIStaticLine *pLine, IFFont *pFont)
 		}
 
 		// get char width and sum it to the line width
-		fCurrentCharWidth = pFont->GetTextSizeW(szChar).x / m_pUISystem->GetIRenderer()->ScaleCoordX(1);;
+		fCurrentCharWidth = pFont->GetTextSizeW(szChar).x / m_pUISystem->GetIRenderer()->ScaleCoordX(1);
+		;
 
 		// keep track of spaces
 		// they are good for spliting the string :D
 		if (szChar[0] == L' ')
 		{
-			iLastSpace = iCurrentChar;
+			iLastSpace      = iCurrentChar;
 			fLastSpaceWidth = fCurrentLineWidth + fCurrentCharWidth;
 		}
 
@@ -802,7 +802,7 @@ int CUIStatic::GetLineMetrics(UIStaticLine *pLine, IFFont *pFont)
 			}
 
 			fLastSpaceWidth = 0;
-			iLastSpace = 0;
+			iLastSpace      = 0;
 		}
 		else
 		{
@@ -817,12 +817,13 @@ int CUIStatic::GetLineMetrics(UIStaticLine *pLine, IFFont *pFont)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIStatic::GetLineListMetrics()
 {
-	IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
-	m_fLineHeight = m_fLineSpacing + pFont->GetTextSizeW(L"I_").y / m_pUISystem->GetIRenderer()->ScaleCoordY(1);;
+	m_fLineHeight = m_fLineSpacing + pFont->GetTextSizeW(L"I_").y / m_pUISystem->GetIRenderer()->ScaleCoordY(1);
+	;
 
 	for (std::vector<UIStaticLine>::iterator pItor = m_vLines.begin(); pItor != m_vLines.end(); ++pItor)
 	{
@@ -832,8 +833,8 @@ int CUIStatic::GetLineListMetrics()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-float CUIStatic::GetLineWidth(UIStaticLine *pLine)
+//////////////////////////////////////////////////////////////////////
+float CUIStatic::GetLineWidth(UIStaticLine* pLine)
 {
 	if (m_iStyle & UISTYLE_WORDWRAP)
 	{
@@ -843,8 +844,8 @@ float CUIStatic::GetLineWidth(UIStaticLine *pLine)
 	return pLine->fWidth;
 }
 
-////////////////////////////////////////////////////////////////////// 
-float CUIStatic::GetLineHeight(UIStaticLine *pLine)
+//////////////////////////////////////////////////////////////////////
+float CUIStatic::GetLineHeight(UIStaticLine* pLine)
 {
 	if (m_iStyle & UISTYLE_WORDWRAP)
 	{
@@ -854,7 +855,7 @@ float CUIStatic::GetLineHeight(UIStaticLine *pLine)
 	return m_fLineHeight;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 float CUIStatic::GetTextWidth()
 {
 	float fTextWidth = 0.0f;
@@ -883,7 +884,7 @@ float CUIStatic::GetTextWidth()
 	return fTextWidth;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 float CUIStatic::GetTextHeight()
 {
 	float fTextHeight = 0.0f;
@@ -896,7 +897,7 @@ float CUIStatic::GetTextHeight()
 	return fTextHeight;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 UIRect CUIStatic::GetTextRect(bool bScrollBars)
 {
 	UIRect pTextRect(m_pRect);
@@ -926,12 +927,12 @@ UIRect CUIStatic::GetTextRect(bool bScrollBars)
 	return pTextRect;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetFontName(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetFontName(IFunctionHandler* pH)
 {
 	int iResult = CUIWidget::SetFontName(pH);
 
@@ -940,8 +941,8 @@ int CUIStatic::SetFontName(IFunctionHandler *pH)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetFontSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetFontSize(IFunctionHandler* pH)
 {
 	int iResult = CUIWidget::SetFontSize(pH);
 
@@ -950,13 +951,13 @@ int CUIStatic::SetFontSize(IFunctionHandler *pH)
 	return iResult;
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetText, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), SetText, 1, svtString, svtNumber);
 
-	IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
 	if (m_vLines.empty())
 	{
@@ -980,8 +981,8 @@ int CUIStatic::SetText(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetText, 0);
 
@@ -990,11 +991,11 @@ int CUIStatic::GetText(IFunctionHandler *pH)
 		return pH->EndFunctionNull();
 	}
 
-	char	szString[1024] = {0,0};
-	int		iStringSize = min(m_vLines[0].szText.size(), 1023);
-	wchar_t *pChar = (wchar_t *)m_vLines[0].szText.c_str();
+	char     szString[1024] = {0, 0};
+	int      iStringSize    = min(m_vLines[0].szText.size(), 1023);
+	wchar_t* pChar          = (wchar_t*)m_vLines[0].szText.c_str();
 
-	int i = 0;
+	int      i              = 0;
 	while (*pChar)
 	{
 		szString[i++] = (char)*pChar++;
@@ -1004,8 +1005,8 @@ int CUIStatic::GetText(IFunctionHandler *pH)
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::Clear(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::Clear(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Clear, 0);
 
@@ -1014,15 +1015,15 @@ int CUIStatic::Clear(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetLine(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetLine(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetLine, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetLine, 1, svtNumber);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetLine, 2, svtString);
 
-	char			*szLine;
-	int				iLine;
+	char* szLine;
+	int   iLine;
 
 	pH->GetParam(1, iLine);
 	pH->GetParam(2, szLine);
@@ -1035,14 +1036,14 @@ int CUIStatic::SetLine(IFunctionHandler *pH)
 	}
 	else if (iLine == (int)m_vLines.size())
 	{
-		UIStaticLine	pLine;
+		UIStaticLine pLine;
 
 		m_pUISystem->ConvertToWString(pLine.szText, szLine);
 
 		m_vLines.push_back(pLine);
 	}
 
-	IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
 	GetLineMetrics(&m_vLines[iLine], pFont);
 
@@ -1055,38 +1056,38 @@ int CUIStatic::SetLine(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::AddLine(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::AddLine(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), AddLine, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddLine, 1, svtString);
 
-	char			*szLine;
-	wstring	szWLine;
+	char*   szLine;
+	wstring szWLine;
 
 	pH->GetParam(1, szLine);
 
-	UIStaticLine	pLine;
+	UIStaticLine pLine;
 
 	m_pUISystem->ConvertToWString(pLine.szText, szLine);
 
 	m_vLines.push_back(pLine);
 
-	IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+	IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
-	GetLineMetrics(&(*(m_vLines.end()-1)), pFont);
+	GetLineMetrics(&(*(m_vLines.end() - 1)), pFont);
 
 	// don't grow the buffer past our maxlines
 	while ((int)m_vLines.size() >= m_iMaxLines)
 	{
 		m_vLines.erase(m_vLines.begin());
 	}
- 
+
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetLine(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetLine(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetLine, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), GetLine, 1, svtNumber);
@@ -1095,15 +1096,14 @@ int CUIStatic::GetLine(IFunctionHandler *pH)
 
 	pH->GetParam(1, iLine);
 
-	char szString[1024] = {0,0};
+	char szString[1024] = {0, 0};
 
 	if (iLine < (int)m_vLines.size())
 	{
-		
-		int		iStringSize = min(m_vLines[iLine].szText.size(), 1023);
-		wchar_t *pChar = (wchar_t *)m_vLines[iLine].szText.c_str();
+		int      iStringSize = min(m_vLines[iLine].szText.size(), 1023);
+		wchar_t* pChar       = (wchar_t*)m_vLines[iLine].szText.c_str();
 
-		int i = 0;
+		int      i           = 0;
 		while (*pChar)
 		{
 			szString[i++] = (char)*pChar++;
@@ -1114,8 +1114,8 @@ int CUIStatic::GetLine(IFunctionHandler *pH)
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetLineCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetLineCount(IFunctionHandler* pH)
 {
 	if (m_iStyle & UISTYLE_MULTILINE)
 	{
@@ -1127,44 +1127,44 @@ int CUIStatic::GetLineCount(IFunctionHandler *pH)
 	}
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetVAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetVAlign, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetVAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetVAlign, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetHAlign, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetHAlign, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetHScrollBar(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetHScrollBar(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetHScrollBar, 0);
 
@@ -1176,8 +1176,8 @@ int CUIStatic::GetHScrollBar(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::GetVScrollBar(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::GetVScrollBar(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetVScrollBar, 0);
 
@@ -1189,13 +1189,13 @@ int CUIStatic::GetVScrollBar(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::LoadModel(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::LoadModel(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), LoadModel, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), LoadModel, 1, svtString);
 
-	char *szModelName;
+	char* szModelName;
 
 	pH->GetParam(1, szModelName);
 
@@ -1214,8 +1214,8 @@ int CUIStatic::LoadModel(IFunctionHandler *pH)
 	}
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::ReleaseModel(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::ReleaseModel(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), ReleaseModel, 0);
 
@@ -1224,8 +1224,8 @@ int CUIStatic::ReleaseModel(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetView(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetView(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetView, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetView, 1, svtNumber);
@@ -1251,15 +1251,15 @@ int CUIStatic::SetView(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetAnimation(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetAnimation(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetAnimation, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetAnimation, 1, svtString);
 
 	if (m_pModel)
 	{
-		char *szAnimName;
+		char* szAnimName;
 
 		if (pH->GetParam(1, szAnimName))
 		{
@@ -1270,15 +1270,15 @@ int CUIStatic::SetAnimation(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetShaderFloat(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetShaderFloat(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetShaderFloat, 2);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetShaderFloat, 1, svtString);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetShaderFloat, 2, svtNumber);
 
-	char *szShaderName = 0;
-	float fValue = 0.0f;
+	char* szShaderName = 0;
+	float fValue       = 0.0f;
 
 	pH->GetParam(1, szShaderName);
 	pH->GetParam(2, fValue);
@@ -1291,13 +1291,13 @@ int CUIStatic::SetShaderFloat(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetShader(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetShader(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetShader, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetShader, 1, svtString);
 
-	char *szShaderName = 0;
+	char* szShaderName = 0;
 
 	pH->GetParam(1, szShaderName);
 
@@ -1309,13 +1309,13 @@ int CUIStatic::SetShader(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIStatic::SetSecondShader(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIStatic::SetSecondShader(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetSecondShader, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetSecondShader, 1, svtString);
 
-	char *szShaderName = 0;
+	char* szShaderName = 0;
 
 	pH->GetParam(1, szShaderName);
 

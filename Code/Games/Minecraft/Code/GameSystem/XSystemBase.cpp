@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XSystemBase.cpp
@@ -19,19 +19,19 @@
 #include "GameFiles/PlayerSystem.h"
 #include "WeaponSystemEx.h"
 #if 0
-#include "XVehicleSystem.h"
-#include "ScriptObjects/ScriptObjectPlayer.h"
-#include "ScriptObjects/ScriptObjectSpectator.h"			// ScriptObjectSpectator
-#include "ScriptObjects/ScriptObjectAdvCamSystem.h"		// ScriptObjectAdvCamSystem
-#include "ScriptObjects/ScriptObjectVehicle.h"
+	#include "XVehicleSystem.h"
+	#include "ScriptObjects/ScriptObjectPlayer.h"
+	#include "ScriptObjects/ScriptObjectSpectator.h"    // ScriptObjectSpectator
+	#include "ScriptObjects/ScriptObjectAdvCamSystem.h" // ScriptObjectAdvCamSystem
+	#include "ScriptObjects/ScriptObjectVehicle.h"
 #endif
 #include "UISystem.h"
 #include "XPlayer.h"
 #if 0
-#include "XVehicle.h"
-#include "Spectator.h"									// CSpectator
-#include "AdvCamSystem.h"								// CAdvCamSystem
-#include <IXMLDOM.h>
+	#include "XVehicle.h"
+	#include "Spectator.h"    // CSpectator
+	#include "AdvCamSystem.h" // CAdvCamSystem
+	#include <IXMLDOM.h>
 #endif
 #include <IAISystem.h>
 #include <IAgent.h>
@@ -39,40 +39,39 @@
 #include <BlackBox/3DEngine/I3DEngine.hpp>
 #include <BlackBox/System/File/ICryPak.hpp>
 #if 0
-#include <IMovieSystem.h>
-#include "ScriptObjectSynched2DTable.h"	// CScriptObjectSynched2DTable
-#include "Synched2DTable.h"							// CSynched2DTable
+	#include <IMovieSystem.h>
+	#include "ScriptObjectSynched2DTable.h" // CScriptObjectSynched2DTable
+	#include "Synched2DTable.h"             // CSynched2DTable
 #endif
 
-
 //////////////////////////////////////////////////////////////////////
-void CXSystemBase::SMissionInfo::SetLevelFolder( const char *szLevelDir )
+void CXSystemBase::SMissionInfo::SetLevelFolder(const char* szLevelDir)
 {
 	sLevelFolder = szLevelDir;
-	std::replace( sLevelFolder.begin(),sLevelFolder.end(),'\\','/' );
+	std::replace(sLevelFolder.begin(), sLevelFolder.end(), '\\', '/');
 	int pos = sLevelFolder.rfind('/');
 	if (pos >= 0)
 	{
-		sLevelName = sLevelFolder.substr(pos+1);
+		sLevelName = sLevelFolder.substr(pos + 1);
 	}
 	else
-    sLevelName = sLevelFolder;
+		sLevelName = sLevelFolder;
 }
 
 //////////////////////////////////////////////////////////////////////
-CXSystemBase::CXSystemBase(CXGame *pGame,ILog *pLog)
+CXSystemBase::CXSystemBase(CXGame* pGame, ILog* pLog)
 {
-	m_pGame = pGame;
-	m_pSystem = pGame->GetSystem();
-	m_pLog = pLog;
-	m_pEntitySystem = (IEntitySystem *)m_pSystem->GetIEntitySystem();
-	m_pConsole = m_pSystem->GetIConsole();
+	m_pGame         = pGame;
+	m_pSystem       = pGame->GetSystem();
+	m_pLog          = pLog;
+	m_pEntitySystem = (IEntitySystem*)m_pSystem->GetIEntitySystem();
+	m_pConsole      = m_pSystem->GetIConsole();
 }
 
 //////////////////////////////////////////////////////////////////////
 CXSystemBase::~CXSystemBase()
 {
-	m_pGame = NULL;
+	m_pGame         = NULL;
 	m_pEntitySystem = NULL;
 }
 
@@ -83,13 +82,13 @@ IEntity* CXSystemBase::GetEntity(WORD wID)
 }
 
 //////////////////////////////////////////////////////////////////////
-IEntity*	CXSystemBase::GetEntity(const char *sEntity)
+IEntity* CXSystemBase::GetEntity(const char* sEntity)
 {
 	return m_pEntitySystem->GetEntity(sEntity);
 }
 
 //////////////////////////////////////////////////////////////////////
-IEntityIt *CXSystemBase::GetEntities()
+IEntityIt* CXSystemBase::GetEntities()
 {
 	return m_pEntitySystem->GetEntityIterator();
 }
@@ -102,9 +101,9 @@ bool CXSystemBase::EntityExists(WORD id)
 
 //////////////////////////////////////////////////////////////////////
 //!get the local player entity
-IEntity *CXSystemBase::GetLocalPlayer()
+IEntity* CXSystemBase::GetLocalPlayer()
 {
-	if(m_pGame->IsClient())
+	if (m_pGame->IsClient())
 	{
 		EntityId nID = m_pGame->m_pClient->GetPlayerId();
 		return m_pEntitySystem->GetEntity(nID);
@@ -113,32 +112,32 @@ IEntity *CXSystemBase::GetLocalPlayer()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemBase::InitRegistry(const char *szLevelDir)
+void CXSystemBase::InitRegistry(const char* szLevelDir)
 {
-	CPlayerSystem *pPlayerSystem = m_pGame->GetPlayerSystem();
-	CVehicleSystem *pVehicleSystem = m_pGame->GetVehicleSystem();
-	CWeaponSystemEx *pWeaponSystemEx = m_pGame->GetWeaponSystemEx();	// m10
+	CPlayerSystem*        pPlayerSystem        = m_pGame->GetPlayerSystem();
+	CVehicleSystem*       pVehicleSystem       = m_pGame->GetVehicleSystem();
+	CWeaponSystemEx*      pWeaponSystemEx      = m_pGame->GetWeaponSystemEx(); // m10
 
-	IEntityClassRegistry *pEntityClassRegistry = m_pGame->GetClassRegistry();
+	IEntityClassRegistry* pEntityClassRegistry = m_pGame->GetClassRegistry();
 
 	// Enumerate entity classes.
-	EntityClass *entCls = NULL;
+	EntityClass*          entCls               = NULL;
 	pEntityClassRegistry->MoveFirst();
 	do {
 		entCls = pEntityClassRegistry->Next();
 		if (entCls)
 		{
-			const char* entity_type = entCls->strGameType.c_str();
-			EntityClassId ClassId = entCls->ClassId;
-			if(strcmp("Player",entity_type)==0)
+			const char*   entity_type = entCls->strGameType.c_str();
+			EntityClassId ClassId     = entCls->ClassId;
+			if (strcmp("Player", entity_type) == 0)
 				pPlayerSystem->AddPlayerClass(ClassId);
 
-			#if 0
+#if 0
 			if(strcmp("Vehicle",entity_type)==0)
 				pVehicleSystem->AddVehicleClass(ClassId);
-			#endif
+#endif
 
-			if(strcmp("Projectile",entity_type)==0)
+			if (strcmp("Projectile", entity_type) == 0)
 			{
 				// cannot be loaded at that point - other scripts must be loaded before
 				pWeaponSystemEx->AddProjectileClass(ClassId);
@@ -149,19 +148,19 @@ void CXSystemBase::InitRegistry(const char *szLevelDir)
 
 //////////////////////////////////////////////////////////////////////
 // let's load the language table for this mission
-bool CXSystemBase::LoadLanguageTable(const char *szLevelDir,const char *szMissionName)
+bool CXSystemBase::LoadLanguageTable(const char* szLevelDir, const char* szMissionName)
 {
 	char szLanguageFile[512];
 	if (!szMissionName || !m_pGame)
 		return (false);
-	
-	sprintf(szLanguageFile,"%s.xml",szLevelDir );
 
-	return (m_pGame->m_StringTableMgr.LoadStringTable(szLanguageFile));		
+	sprintf(szLanguageFile, "%s.xml", szLevelDir);
+
+	return (m_pGame->m_StringTableMgr.LoadStringTable(szLanguageFile));
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemBase::LoadLevelEntities( SMissionInfo &missionInfo  )
+bool CXSystemBase::LoadLevelEntities(SMissionInfo& missionInfo)
 {
 	bool bSpawn = true;
 
@@ -173,7 +172,7 @@ bool CXSystemBase::LoadLevelEntities( SMissionInfo &missionInfo  )
 	// is missing it will erroneuosly reuse the previous mission script!
 	m_pGame->GetScriptSystem()->SetGlobalToNull("Mission");
 
-	#if 0
+#if 0
 	XDOM::IXMLDOMNodePtr pScriptName = missionInfo.pMissionXML->getAttribute("Script");						
 	if (pScriptName)
 	{		
@@ -199,7 +198,7 @@ bool CXSystemBase::LoadLevelEntities( SMissionInfo &missionInfo  )
 		while((pEnt=pEntities->Next())!=NULL)
 			pEnt->PostLoad();		
 	}
-	#endif
+#endif
 
 	return true;
 }
@@ -1253,9 +1252,9 @@ void CXSystemBase::SetEntityEvents( IEntity *entity,XDOM::IXMLDOMNodeList* pEven
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::StartLoading(bool bEditor)
 {
-	IConsole *pConsole=m_pConsole;
-	IRenderer *pRenderer=m_pSystem->GetIRenderer();
-	m_pPrevConsoleImg=pConsole->GetImage();
+	IConsole*  pConsole  = m_pConsole;
+	IRenderer* pRenderer = m_pSystem->GetIRenderer();
+	m_pPrevConsoleImg    = pConsole->GetImage();
 
 	pConsole->StaticBackground(true);
 
@@ -1267,10 +1266,10 @@ void CXSystemBase::StartLoading(bool bEditor)
 	if (m_pSystem->GetIMusicSystem())
 		m_pSystem->GetIMusicSystem()->Silence();
 	//////////////////////////////////////////////////////////////////////////
-	
+
 	if (!bEditor)
 	{
-		if(m_pSystem->GetISoundSystem())
+		if (m_pSystem->GetISoundSystem())
 			m_pSystem->GetISoundSystem()->Mute(true);
 
 		m_pGame->DeleteMessage("Switch"); // no switching during loading
@@ -1280,62 +1279,61 @@ void CXSystemBase::StartLoading(bool bEditor)
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::EndLoading(bool bEditor)
 {
-	IConsole *pConsole=m_pConsole;
-	IRenderer *pRenderer=m_pSystem->GetIRenderer();
+	IConsole*  pConsole  = m_pConsole;
+	IRenderer* pRenderer = m_pSystem->GetIRenderer();
 
-	if (m_pPrevConsoleImg && m_pPrevConsoleImg!=pConsole->GetImage())
-		pConsole->SetImage(m_pPrevConsoleImg,true);
+	if (m_pPrevConsoleImg && m_pPrevConsoleImg != pConsole->GetImage())
+		pConsole->SetImage(m_pPrevConsoleImg, true);
 
 	pConsole->StaticBackground(false);
 
-	#if 0
+#if 0
 	if (!bEditor)
 		if(m_pSystem->GetISoundSystem())
 			m_pSystem->GetISoundSystem()->Mute(false);
-	#endif
+#endif
 
-	#if 0
+#if 0
 	  pRenderer->PostLoad();
-	  #endif
-	if(!bEditor)
+#endif
+	if (!bEditor)
 	{
-		m_pEntitySystem->SetPrecacheResourcesMode( true );
-		#if 0
+		m_pEntitySystem->SetPrecacheResourcesMode(true);
+#if 0
 		m_pSystem->GetI3DEngine()->OnLevelLoaded();
-		#endif
-		m_pEntitySystem->SetPrecacheResourcesMode( false );
+#endif
+		m_pEntitySystem->SetPrecacheResourcesMode(false);
 	}
 
-	#if 0
+#if 0
 	m_pSystem->GetITimer()->Reset();	// reset timer (cause problems?)
 
 	m_pSystem->GetITimer()->Update();	// refresh frametime - because the former frame was used for loading
 	m_pSystem->UpdateScriptSink();		// update _time and _frametime
-	#endif
+#endif
 
 	// Reset system Camera, (This camera will not render anything until set to correct values)
-	m_pSystem->GetViewCamera().SetPos( Legacy::Vec3(0,0,0) );
-	m_pSystem->GetViewCamera().SetAngle( Legacy::Vec3(0,0,0) );
+	m_pSystem->GetViewCamera().SetPos(Legacy::Vec3(0, 0, 0));
+	m_pSystem->GetViewCamera().SetAngle(Legacy::Vec3(0, 0, 0));
 
 	//will be removed from script
 	//pRenderer->RemoveTexture(m_pLoadingImg);
-	m_pLoadingImg=NULL;
+	m_pLoadingImg = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::BindChildren()
 {
-	for(std::map< int, int >::const_iterator	itr=m_ChildParentMap.begin(); itr!=m_ChildParentMap.end(); itr++)
+	for (std::map<int, int>::const_iterator itr = m_ChildParentMap.begin(); itr != m_ChildParentMap.end(); itr++)
 	{
-		IEntity*	parent =(IEntity *) CXSystemBase::GetEntity(itr->second);
+		IEntity* parent = (IEntity*)CXSystemBase::GetEntity(itr->second);
 		if (!parent)
 			continue;
 		// [kirill] need to keep the piosition - it's actually relative position
-		IEntity*	child =(IEntity *) CXSystemBase::GetEntity(itr->first);
-		auto	pos = child->GetPos();
+		IEntity* child = (IEntity*)CXSystemBase::GetEntity(itr->first);
+		auto     pos   = child->GetPos();
 		parent->Bind(itr->first);
-		child->SetPos( pos, false );
-
+		child->SetPos(pos, false);
 	}
 }
 #if 0
@@ -1414,29 +1412,29 @@ void CXSystemBase::GetMission( XDOM::IXMLDOMDocument *doc,const char *sRequested
 //////////////////////////////////////////////////////////////////////
 // Do common things for Client and Server when loading a new level.
 //////////////////////////////////////////////////////////////////////
-bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
+bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 {
-	#if 0
+#if 0
 	// Start time of level loading.
 	CTimeValue time0 = m_pSystem->GetITimer()->GetCurrTimePrecise();
-	#endif
+#endif
 	AutoSuspendTimeQuota AutoSuspender(m_pSystem->GetStreamEngine());
-		
-	string sPreviousLevelFolder = m_pGame->m_currentLevelFolder;
-	m_pGame->m_currentLevel = missionInfo.sLevelName;
-	m_pGame->m_currentMission = missionInfo.sMissionName;
-	m_pGame->m_currentLevelFolder = missionInfo.sLevelFolder;
+
+	string               sPreviousLevelFolder = m_pGame->m_currentLevelFolder;
+	m_pGame->m_currentLevel                   = missionInfo.sLevelName;
+	m_pGame->m_currentMission                 = missionInfo.sMissionName;
+	m_pGame->m_currentLevelFolder             = missionInfo.sLevelFolder;
 
 	// Make level loading image. (ex: Levels\Training\loadscreen_training.dds)
-	string sLoadingScreenTexture = missionInfo.sLevelFolder + "/loadscreen_" + missionInfo.sLevelName + ".dds";
+	string sLoadingScreenTexture              = missionInfo.sLevelFolder + "/loadscreen_" + missionInfo.sLevelName + ".dds";
 
 	m_pSystem->GetIConsole()->Clear();
 	m_pSystem->GetIConsole()->SetScrollMax(600);
 	m_pSystem->GetIConsole()->ShowConsole(true);
 
-	m_pSystem->GetIConsole()->SetLoadingImage( sLoadingScreenTexture.c_str() );
+	m_pSystem->GetIConsole()->SetLoadingImage(sLoadingScreenTexture.c_str());
 	m_pSystem->GetIConsole()->ResetProgressBar(0x7fffffff);
-	m_pSystem->GetILog()->UpdateLoadingScreen("");	// just to draw the console
+	m_pSystem->GetILog()->UpdateLoadingScreen(""); // just to draw the console
 
 	if (missionInfo.bEditor)
 	{
@@ -1448,19 +1446,19 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 		}
 		m_pGame->Reset();
 
-		OnReadyToLoadLevel( missionInfo );
-		
+		OnReadyToLoadLevel(missionInfo);
+
 		//////////////////////////////////////////////////////////////////////////
 		// Start loading common stuff.
 		//////////////////////////////////////////////////////////////////////////
 
 		//init the entity registry
-		InitRegistry( missionInfo.sLevelName.c_str() );
-		LoadLanguageTable( missionInfo.sLevelName.c_str(),missionInfo.sMissionName.c_str() );
+		InitRegistry(missionInfo.sLevelName.c_str());
+		LoadLanguageTable(missionInfo.sLevelName.c_str(), missionInfo.sMissionName.c_str());
 
-		///////////////////////////////////////////////////////////////////////////////////////
-		// INITIALIZE AI SYSTEM
-		#if 0
+///////////////////////////////////////////////////////////////////////////////////////
+// INITIALIZE AI SYSTEM
+#if 0
 		IAISystem *pAISystem = m_pSystem->GetAISystem();	
 		if (pAISystem)
 		{
@@ -1479,7 +1477,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 				m_pGame->cv_game_Health->GetFVal()
 				);
 		}
-		#endif
+#endif
 
 		// Init Weapon system.
 		if (m_pGame->GetWeaponSystemEx())
@@ -1490,17 +1488,17 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 
 	// Open Paks for this level.
 	string sPaks = missionInfo.sLevelFolder + "/*.pak";
-	// Open Pak file for this level. 
+	// Open Pak file for this level.
 	if (!m_pGame->OpenPacks(sPaks.c_str()))
-	if (!m_pSystem->GetIPak()->OpenPacks( sPaks.c_str() ))
-	{
-		// Pak1 not found.
-		CryWarning( VALIDATOR_MODULE_GAME,VALIDATOR_WARNING,"Level Packs %s Not Found",sPaks.c_str() );
-		// try to open from the mod folder, if any
-	}
+		if (!m_pSystem->GetIPak()->OpenPacks(sPaks.c_str()))
+		{
+			// Pak1 not found.
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_WARNING, "Level Packs %s Not Found", sPaks.c_str());
+			// try to open from the mod folder, if any
+		}
 
 	string sEPath = missionInfo.sLevelFolder + "/LevelData.xml";
-	#if 0
+#if 0
 	missionInfo.pLevelDataXML = m_pSystem->CreateXMLDocument();
 	if(!missionInfo.pLevelDataXML->load(sEPath.c_str()))
 	{
@@ -1527,7 +1525,7 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	missionInfo.m_dwLevelDataCheckSum = missionInfo.pLevelDataXML->getCheckSum();
 	missionInfo.m_dwMissionCheckSum = missionInfo.pMissionXML->getCheckSum();
 	m_wCheckSum = missionInfo.m_dwLevelDataCheckSum + missionInfo.m_dwMissionCheckSum;
-	#endif
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Reset console.
@@ -1539,20 +1537,20 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	unsigned int dwProgressBarRange = missionInfo.dwProgressBarRange;
 	if (missionInfo.bEditor)
 	{
-		if (dwProgressBarRange > 50) 
+		if (dwProgressBarRange > 50)
 			dwProgressBarRange -= 50; // Editor uses ~50 not level cgfs.
 	}
 	else
-	{	
+	{
 		// Simple adjustment: add 15% of loading screen to compensate for the time needed at the end of loading
-		dwProgressBarRange+=(int)((float)(dwProgressBarRange)*0.15f);
+		dwProgressBarRange += (int)((float)(dwProgressBarRange)*0.15f);
 	}
 
 	m_pSystem->GetIConsole()->ResetProgressBar(dwProgressBarRange);
 	m_pSystem->GetIConsole()->TickProgressBar();
 
 	//////////////////////////////////////////////////////////////////////////
-	if (m_pGame->m_pClient && m_pSystem->GetIProcess()->GetFlags()!=PROC_3DENGINE)
+	if (m_pGame->m_pClient && m_pSystem->GetIProcess()->GetFlags() != PROC_3DENGINE)
 	{
 		m_pSystem->SetIProcess(m_pGame->m_p3DEngine);
 		m_pSystem->GetIProcess()->SetFlags(PROC_3DENGINE);
@@ -1563,17 +1561,17 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	//////////////////////////////////////////////////////////////////////////
 	m_pGame->Reset();
 
-	m_pLog->Log("missionInfo.sLevelFolder=%s",missionInfo.sLevelFolder.c_str());		// debug
-	OnReadyToLoadLevel( missionInfo );
-	
-	//////////////////////////////////////////////////////////////////////////
-	// Start loading common stuff.
-	//////////////////////////////////////////////////////////////////////////
-	//load the materials names
-	#if 0
+	m_pLog->Log("missionInfo.sLevelFolder=%s", missionInfo.sLevelFolder.c_str()); // debug
+	OnReadyToLoadLevel(missionInfo);
+
+//////////////////////////////////////////////////////////////////////////
+// Start loading common stuff.
+//////////////////////////////////////////////////////////////////////////
+//load the materials names
+#if 0
 	if(!LoadMaterials(missionInfo.pLevelDataXML))
 		return false;
-	#endif
+#endif
 
 	// reload the previously unloaded models since the materials are now reloaded
 	if (m_pGame->m_pUISystem)
@@ -1582,13 +1580,13 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	}
 
 	//init the entity registry
-	InitRegistry( missionInfo.sLevelName.c_str() );
-	LoadLanguageTable( missionInfo.sLevelName.c_str(),missionInfo.sMissionName.c_str() );
+	InitRegistry(missionInfo.sLevelName.c_str());
+	LoadLanguageTable(missionInfo.sLevelName.c_str(), missionInfo.sMissionName.c_str());
 
 	//////////////////////////////////////////////////////////////////////////
 	// Start by loading a level in 3D Engine.
 	//////////////////////////////////////////////////////////////////////////
-	if (!m_pGame->m_p3DEngine->LoadLevel( missionInfo.sLevelFolder.c_str(),missionInfo.sMissionName.c_str() ))
+	if (!m_pGame->m_p3DEngine->LoadLevel(missionInfo.sLevelFolder.c_str(), missionInfo.sMissionName.c_str()))
 	{
 		return false;
 	}
@@ -1596,60 +1594,59 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 
 	//////////////////////////////////////////////////////////////////////
 	// INITIALIZE AI SYSTEM
-	IAISystem *pAISystem = m_pSystem->GetAISystem();	
+	IAISystem* pAISystem = m_pSystem->GetAISystem();
 	if (pAISystem)
 	{
-		pAISystem->Init(m_pSystem, missionInfo.sLevelName.c_str(), missionInfo.sMissionName.c_str() );
-		IScriptSystem *pScriptSystem = m_pGame->GetScriptSystem();
+		pAISystem->Init(m_pSystem, missionInfo.sLevelName.c_str(), missionInfo.sMissionName.c_str());
+		IScriptSystem* pScriptSystem = m_pGame->GetScriptSystem();
 		if (!pScriptSystem->ExecuteFile("Scripts/AI/aiconfig.lua"))
 		{
-			GameWarning( "[AISYSTEM] Cannot load AI CONFIGURATION FILE" );
+			GameWarning("[AISYSTEM] Cannot load AI CONFIGURATION FILE");
 		}
 		//////////////////////////////////////////////////////////////////////////
 		// Initialize AI Autobalance.
 		//////////////////////////////////////////////////////////////////////////
 		pAISystem->GetAutoBalanceInterface()->SetMultipliers(
-			m_pGame->cv_game_Accuracy->GetFVal(),
-			m_pGame->cv_game_Aggression->GetFVal(),
-			m_pGame->cv_game_Health->GetFVal()
-			);
+		    m_pGame->cv_game_Accuracy->GetFVal(),
+		    m_pGame->cv_game_Aggression->GetFVal(),
+		    m_pGame->cv_game_Health->GetFVal());
 	}
 
-	// Init Weapon system.
-	#if 0
+// Init Weapon system.
+#if 0
 	if (m_pGame->GetWeaponSystemEx())
 		m_pGame->GetWeaponSystemEx()->Init(m_pGame, false);
-	#endif
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load Movie Data.
 	//////////////////////////////////////////////////////////////////////////
 	string sMovieDataXml = missionInfo.sLevelFolder + "/moviedata.xml";
 	if (m_pSystem->GetIMovieSystem())
-		m_pSystem->GetIMovieSystem()->Load( sMovieDataXml.c_str(),missionInfo.sMissionName.c_str() );
+		m_pSystem->GetIMovieSystem()->Load(sMovieDataXml.c_str(), missionInfo.sMissionName.c_str());
 	//////////////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load level entities.
 	//////////////////////////////////////////////////////////////////////////
 	//load the entities from leveldata.xml
-	if (!LoadLevelEntities( missionInfo ))
+	if (!LoadLevelEntities(missionInfo))
 	{
 		return false;
 	}
 
-	#if 0
+#if 0
 	//////////////////////////////////////////////////////////////////////////
 	// Triangulation must be loaded after loading of entities.
 	//////////////////////////////////////////////////////////////////////////
 	if (pAISystem)
 		pAISystem->LoadTriangulation( missionInfo.sLevelFolder.c_str(),missionInfo.sMissionName.c_str() );
-	#endif
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load Level Music.
 	//////////////////////////////////////////////////////////////////////////
-	LoadMusic( missionInfo );
+	LoadMusic(missionInfo);
 
 	// Set global console variable to current level.
 	m_pGame->g_LevelName->Set(missionInfo.sLevelName.c_str());
@@ -1657,37 +1654,37 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 	//////////////////////////////////////////////////////////////////////////
 	// Close paks opened before, for previous level.
 	//////////////////////////////////////////////////////////////////////////
-	if (stricmp(sPreviousLevelFolder.c_str(),missionInfo.sLevelFolder.c_str()) != 0)
-	{ 
+	if (stricmp(sPreviousLevelFolder.c_str(), missionInfo.sLevelFolder.c_str()) != 0)
+	{
 		if (!sPreviousLevelFolder.empty())
-		{		
+		{
 			//m_pLog->Log("PREVIOUSLEVEL:%s,missionlevelfolder=%s,%s",sPreviousLevelFolder.c_str(),missionInfo.sLevelFolder.c_str());
 			string sClosePaks = sPreviousLevelFolder + "/*.pak";
 			// Open Pak file for this level.
 			//m_pSystem->GetIPak()->ClosePacks( sClosePaks.c_str() );
-			m_pGame->ClosePacks( sClosePaks.c_str() );		
+			m_pGame->ClosePacks(sClosePaks.c_str());
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
 
 	if (m_pGame->IsMultiplayer())
-		AddMPProtectedFiles( missionInfo );
+		AddMPProtectedFiles(missionInfo);
 
 	// get the progress bar to the end...
 	for (int i = 0; i < (int)(dwProgressBarRange); i++)
 		m_pConsole->TickProgressBar();
 
-	//////////////////////////////////////////////////////////////////////////
-	// Log to file level loading time.
-	//////////////////////////////////////////////////////////////////////////
-	#if 0
+//////////////////////////////////////////////////////////////////////////
+// Log to file level loading time.
+//////////////////////////////////////////////////////////////////////////
+#if 0
 	CTimeValue timeLoad = m_pSystem->GetITimer()->GetCurrTimePrecise() - time0;
 	// Log level load times.
 	m_pLog->LogToFile( "\001 Level %s loaded in %.3f seconds",missionInfo.sLevelName.c_str(),timeLoad.GetSeconds() );
-	#endif
+#endif
 	//////////////////////////////////////////////////////////////////////////
 
-	m_pGame->GetSystem()->GetIEntitySystem()->PauseTimers(false,true);	
+	m_pGame->GetSystem()->GetIEntitySystem()->PauseTimers(false, true);
 
 	return true;
 }
@@ -1695,9 +1692,9 @@ bool CXSystemBase::LoadLevelCommon( SMissionInfo &missionInfo )
 #endif
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemBase::LoadMusic( SMissionInfo &musicInfo )
+void CXSystemBase::LoadMusic(SMissionInfo& musicInfo)
 {
-	#if 0
+#if 0
 	// First load music from local file if it is exist.
 	IMusicSystem *pMusicSystem = GetISystem()->GetIMusicSystem();
 
@@ -1755,149 +1752,148 @@ void CXSystemBase::LoadMusic( SMissionInfo &musicInfo )
 		}
 	}
 	pMusicSystem->Pause(false);
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 class CTableClone : public IScriptObjectDumpSink
 {
 public:
-	CTableClone(IScriptSystem *pScriptSystem,IScriptObject *pDest,IScriptObject *pSrc)
+	CTableClone(IScriptSystem* pScriptSystem, IScriptObject* pDest, IScriptObject* pSrc)
 	{
-		m_pScriptSystem=pScriptSystem;
-		m_pDest=pDest;
-		m_pSrc=pSrc;
+		m_pScriptSystem = pScriptSystem;
+		m_pDest         = pDest;
+		m_pSrc          = pSrc;
 		m_pDest->Clone(m_pSrc);
 	}
-	void OnElementFound(int nIdx,ScriptVarType type){/*ignore non string indexed values*/};
-	void OnElementFound(const char *sName,ScriptVarType type)
+	void OnElementFound(int nIdx, ScriptVarType type){/*ignore non string indexed values*/};
+	void OnElementFound(const char* sName, ScriptVarType type)
 	{
-		if(type==svtObject)
+		if (type == svtObject)
 		{
-			_SmartScriptObject pT(m_pScriptSystem,true);
-			if(m_pSrc->GetValue(sName,pT))
+			_SmartScriptObject pT(m_pScriptSystem, true);
+			if (m_pSrc->GetValue(sName, pT))
 			{
 				_SmartScriptObject pNew(m_pScriptSystem);
 				pNew->Clone(pT);
-				m_pDest->SetValue(sName,(IScriptObject *)pNew);
+				m_pDest->SetValue(sName, (IScriptObject*)pNew);
 			}
 		}
 	}
-	IScriptObject *m_pDest;
-	IScriptObject *m_pSrc;
-	IScriptSystem *m_pScriptSystem;
+	IScriptObject* m_pDest;
+	IScriptObject* m_pSrc;
+	IScriptSystem* m_pScriptSystem;
 };
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemBase::OnSpawn(IEntity *ent, CEntityDesc & ed)
+void CXSystemBase::OnSpawn(IEntity* ent, CEntityDesc& ed)
 {
-	ILog *pLog=m_pLog;
-	if (pLog->GetVerbosityLevel()>5)
-		pLog->Log("Spawning entity classname=%s,name=%s,type=%d,id=%d",ed.className.c_str(),ed.name.c_str(),(int)ed.ClassId,ed.id);
+	ILog* pLog = m_pLog;
+	if (pLog->GetVerbosityLevel() > 5)
+		pLog->Log("Spawning entity classname=%s,name=%s,type=%d,id=%d", ed.className.c_str(), ed.name.c_str(), (int)ed.ClassId, ed.id);
 
-	EntityClass *pClass=m_pGame->GetClassRegistry()->GetByClassId(ent->GetClassId());
+	EntityClass* pClass = m_pGame->GetClassRegistry()->GetByClassId(ent->GetClassId());
 	if (!pClass)
 	{
-		GameWarning( "Trying to spawn entity from an unknown class : %d",(int)ent->GetClassId() );
+		GameWarning("Trying to spawn entity from an unknown class : %d", (int)ent->GetClassId());
 		return;
 	}
 
 	if (!pClass->strClassName.c_str())
 	{
-		GameWarning( "This entity class has no script TABLE defined : %d",(int)ent->GetClassId());
+		GameWarning("This entity class has no script TABLE defined : %d", (int)ent->GetClassId());
 		return;
 	}
 
 	ent->SetClassName(pClass->strClassName.c_str());
-	
-	#if 0
+
+#if 0
 	m_pSystem->CreateEntityScriptBinding(ent);
-	#endif
+#endif
 
 	// property table stuff
 	// first clone the property table
 	ASSERT(ent->GetScriptObject());
 	{
 		_SmartScriptObject pProperties(m_pGame->GetScriptSystem());
-		_SmartScriptObject pTemp(m_pGame->GetScriptSystem(),true);
-		if (ent->GetScriptObject()->GetValue("Properties",*pTemp))
+		_SmartScriptObject pTemp(m_pGame->GetScriptSystem(), true);
+		if (ent->GetScriptObject()->GetValue("Properties", *pTemp))
 		{
-			CTableClone tc(m_pGame->GetScriptSystem(),pProperties,pTemp);
+			CTableClone tc(m_pGame->GetScriptSystem(), pProperties, pTemp);
 			pTemp->Dump(&tc);
-			ent->GetScriptObject()->SetValue("Properties",*pProperties);
+			ent->GetScriptObject()->SetValue("Properties", *pProperties);
 		}
 
 		_SmartScriptObject pPropertiesInstance(m_pGame->GetScriptSystem());
-		if (ent->GetScriptObject()->GetValue("PropertiesInstance",*pTemp))
+		if (ent->GetScriptObject()->GetValue("PropertiesInstance", *pTemp))
 		{
-			CTableClone tc(m_pGame->GetScriptSystem(),pPropertiesInstance,pTemp);
+			CTableClone tc(m_pGame->GetScriptSystem(), pPropertiesInstance, pTemp);
 			pTemp->Dump(&tc);
-			ent->GetScriptObject()->SetValue("PropertiesInstance",*pPropertiesInstance);
+			ent->GetScriptObject()->SetValue("PropertiesInstance", *pPropertiesInstance);
 		}
 	}
 
-	#if 0
+#if 0
 	// then just parse out the properties
 	if (ed.pUserData)
 	{
 		SetEntityProperties(ent, (XDOM::IXMLDOMNode*) ed.pUserData);
 	}
-	#endif
-	
+#endif
+
 	// FIXME [Alberto]
-	if(ed.pProperties)
+	if (ed.pProperties)
 	{
-		ent->GetScriptObject()->SetValue("Properties",ed.pProperties);
+		ent->GetScriptObject()->SetValue("Properties", ed.pProperties);
 	}
-	if(ed.pPropertiesInstance)
+	if (ed.pPropertiesInstance)
 	{
-		ent->GetScriptObject()->SetValue("PropertiesInstance",ed.pPropertiesInstance);
+		ent->GetScriptObject()->SetValue("PropertiesInstance", ed.pPropertiesInstance);
 	}
 
 	//SET THE entity_type/////////////////////////////////
 	if (m_pGame->GetPlayerSystem()->IsPlayerClass(ent->GetClassId()))
 	{
-		ent->GetScriptObject()->SetValue("entity_type","player");
+		ent->GetScriptObject()->SetValue("entity_type", "player");
 		m_setPlayerEntities.insert(EntitiesSetItor::value_type(ent->GetId()));
 	}
-	#if 0
+#if 0
 	else if (m_pGame->GetVehicleSystem()->IsVehicleClass(ent->GetClassId()))  
 	{
 		ent->GetScriptObject()->SetValue("entity_type","vehicle");
 	}
-	#endif
-	else if (ent->GetClassId()==SPECTATOR_CLASS_ID)  
+#endif
+	else if (ent->GetClassId() == SPECTATOR_CLASS_ID)
 	{
-		ent->GetScriptObject()->SetValue("entity_type","spectator");
+		ent->GetScriptObject()->SetValue("entity_type", "spectator");
 	}
-	else if (ent->GetClassId()==ADVCAMSYSTEM_CLASS_ID)  
+	else if (ent->GetClassId() == ADVCAMSYSTEM_CLASS_ID)
 	{
-		ent->GetScriptObject()->SetValue("entity_type","advcamsystem");
+		ent->GetScriptObject()->SetValue("entity_type", "advcamsystem");
 	}
-	else if (ent->GetClassId()==SYNCHED2DTABLE_CLASS_ID)  
+	else if (ent->GetClassId() == SYNCHED2DTABLE_CLASS_ID)
 	{
-		ent->GetScriptObject()->SetValue("entity_type","synched2dtable");
+		ent->GetScriptObject()->SetValue("entity_type", "synched2dtable");
 	}
-	else 
+	else
 	{
-		ent->GetScriptObject()->SetValue("entity_type","basic");
+		ent->GetScriptObject()->SetValue("entity_type", "basic");
 	}
 }
 #if 0
 #endif
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemBase::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
+void CXSystemBase::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
 {
-
-	ILog *pLog=m_pLog;
-	if (pLog->GetVerbosityLevel()>5)
+	ILog* pLog = m_pLog;
+	if (pLog->GetVerbosityLevel() > 5)
 	{
 		//Timur, Excessive log.
-		pLog->Log("Spawning container for entity classname=%s,name=%s,type=%d,id=%d,model=%s",ed.className.c_str(),ed.name.c_str(),(int)ed.ClassId,ed.id,ed.sModel.c_str());
+		pLog->Log("Spawning container for entity classname=%s,name=%s,type=%d,id=%d,model=%s", ed.className.c_str(), ed.name.c_str(), (int)ed.ClassId, ed.id, ed.sModel.c_str());
 	}
 
-	#if 0
+#if 0
 	if (ed.ClassId==SPECTATOR_CLASS_ID)
 	{
 		//		if (pLog->GetVerbosityLevel()>5)
@@ -2012,73 +2008,73 @@ void CXSystemBase::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
 		pSynched2DTable->SetScriptObject(pSSynched2DTable->GetScriptObject());
 		pEntity->SetContainer(pSynched2DTable);
 	}
-	#endif
+#endif
 }
 #if 0
 #endif
 #include <GameFiles\PlayerSystem.h>
 //////////////////////////////////////////////////////////////////////
-void CXSystemBase::OnRemove(IEntity *ent)
+void CXSystemBase::OnRemove(IEntity* ent)
 {
 	if (m_pGame->GetPlayerSystem()->IsPlayerClass(ent->GetClassId()))
 	{
-		EntitiesSetItor It=m_setPlayerEntities.find(ent->GetId());
-		if (It!=m_setPlayerEntities.end())
+		EntitiesSetItor It = m_setPlayerEntities.find(ent->GetId());
+		if (It != m_setPlayerEntities.end())
 			m_setPlayerEntities.erase(It);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemBase::AddMPProtectedFiles( SMissionInfo &missionInfo )
+void CXSystemBase::AddMPProtectedFiles(SMissionInfo& missionInfo)
 {
 	// Add protected files to defence wall.
-	INetwork *pNetwork = m_pSystem->GetINetwork();
+	INetwork* pNetwork = m_pSystem->GetINetwork();
 	if (pNetwork)
 	{
 		pNetwork->ClearProtectedFiles();
 		// Files to be protected for this level.
 
-		pNetwork->AddProtectedFile( string(missionInfo.sLevelFolder+"/LevelData.xml").c_str() );
-		pNetwork->AddProtectedFile( missionInfo.sMissionFilename.c_str() );
+		pNetwork->AddProtectedFile(string(missionInfo.sLevelFolder + "/LevelData.xml").c_str());
+		pNetwork->AddProtectedFile(missionInfo.sMissionFilename.c_str());
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
 int CXSystemBase::GetTeamScore(int nTeamId)
 {
-	TeamsMapItor itor=m_mapTeams.find(nTeamId);
-	return ((itor!=m_mapTeams.end())?itor->second.nScore:-1);
+	TeamsMapItor itor = m_mapTeams.find(nTeamId);
+	return ((itor != m_mapTeams.end()) ? itor->second.nScore : -1);
 }
 
 //////////////////////////////////////////////////////////////////////
 int CXSystemBase::GetTeamFlags(int nTeamId)
 {
-	TeamsMapItor itor=m_mapTeams.find(nTeamId);
-	return ((itor!=m_mapTeams.end())?itor->second.nFlags:-1);
+	TeamsMapItor itor = m_mapTeams.find(nTeamId);
+	return ((itor != m_mapTeams.end()) ? itor->second.nFlags : -1);
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemBase::GetTeamName(int nTeamId,char *ret)
+bool CXSystemBase::GetTeamName(int nTeamId, char* ret)
 {
-	TeamsMapItor itor=m_mapTeams.find(nTeamId);
-	if(itor!=m_mapTeams.end())
+	TeamsMapItor itor = m_mapTeams.find(nTeamId);
+	if (itor != m_mapTeams.end())
 	{
 		assert(ret);
-		assert(itor->second.sName.size()<256);
-		strcpy(ret,itor->second.sName.c_str());
+		assert(itor->second.sName.size() < 256);
+		strcpy(ret, itor->second.sName.c_str());
 		return true;
 	}
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
-int	CXSystemBase::GetEntityTeam(int nEntity)
+int CXSystemBase::GetEntityTeam(int nEntity)
 {
 	EntitiesSetItor eitr;
-	for(TeamsMapItor itor=m_mapTeams.begin();itor!=m_mapTeams.end();++itor)
+	for (TeamsMapItor itor = m_mapTeams.begin(); itor != m_mapTeams.end(); ++itor)
 	{
-		eitr=itor->second.m_setEntities.find(nEntity);
-		if(eitr!=itor->second.m_setEntities.end())
+		eitr = itor->second.m_setEntities.find(nEntity);
+		if (eitr != itor->second.m_setEntities.end())
 		{
 			return itor->second.nID;
 		}
@@ -2087,11 +2083,11 @@ int	CXSystemBase::GetEntityTeam(int nEntity)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CXSystemBase::GetTeamId(const char *name)
+int CXSystemBase::GetTeamId(const char* name)
 {
-	for(TeamsMapItor itor=m_mapTeams.begin();itor!=m_mapTeams.end();++itor)
+	for (TeamsMapItor itor = m_mapTeams.begin(); itor != m_mapTeams.end(); ++itor)
 	{
-		if(itor->second.sName==name)
+		if (itor->second.sName == name)
 		{
 			return itor->second.nID;
 		}
@@ -2102,8 +2098,8 @@ int CXSystemBase::GetTeamId(const char *name)
 //////////////////////////////////////////////////////////////////////
 int CXSystemBase::GetTeamMembersCount(int nTeamId)
 {
-	TeamsMapItor itor=m_mapTeams.find(nTeamId);
-	if(itor!=m_mapTeams.end())
+	TeamsMapItor itor = m_mapTeams.find(nTeamId);
+	if (itor != m_mapTeams.end())
 	{
 		return itor->second.m_setEntities.size();
 	}
@@ -2111,36 +2107,36 @@ int CXSystemBase::GetTeamMembersCount(int nTeamId)
 }
 
 //////////////////////////////////////////////////////////////////////
-int CXSystemBase::AddTeam(const char *sTeam, int nTeamId)
+int CXSystemBase::AddTeam(const char* sTeam, int nTeamId)
 {
-	if(nTeamId==-1) //generate a new team id
+	if (nTeamId == -1) //generate a new team id
 	{
 		TeamsMapItor itor;
-		for(int i=1;i<MAXTEAMS;i++)
+		for (int i = 1; i < MAXTEAMS; i++)
 		{
-			if(m_mapTeams.find(i)==m_mapTeams.end())
+			if (m_mapTeams.find(i) == m_mapTeams.end())
 			{
-				nTeamId=i;
+				nTeamId = i;
 				break;
 			}
 		}
 	}
-	Team t(nTeamId,sTeam,0,0);
-	m_mapTeams.insert(TeamsMapItor::value_type(nTeamId,t));
+	Team t(nTeamId, sTeam, 0, 0);
+	m_mapTeams.insert(TeamsMapItor::value_type(nTeamId, t));
 	return nTeamId;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemBase::ReadTeams(CStream &stm)
+bool CXSystemBase::ReadTeams(CStream& stm)
 {
 	BYTE nteams;
 	m_mapTeams.clear();
 	stm.Read(nteams);
 	Team t;
-	for(int i=0;i<nteams;i++)
+	for (int i = 0; i < nteams; i++)
 	{
 		t.Read(stm);
-		m_mapTeams.insert(TeamsMapItor::value_type(t.nID,t));
+		m_mapTeams.insert(TeamsMapItor::value_type(t.nID, t));
 	}
 	return true;
 }
@@ -2149,35 +2145,34 @@ bool CXSystemBase::ReadTeams(CStream &stm)
 void CXSystemBase::SetTeam(EntityId nEntId, int nTeamId)
 {
 	TeamsMapItor itor;
-	if (nTeamId==0xff)
+	if (nTeamId == 0xff)
 	{
 		//CTeam *pTeam=m_pGame->GetTeamManager()->GetEntityTeam(nEntId);
-		itor=m_mapTeams.begin();
-		while(itor!=m_mapTeams.end())
+		itor = m_mapTeams.begin();
+		while (itor != m_mapTeams.end())
 		{
-
 			itor->second.m_setEntities.erase(nEntId);
 			++itor;
 		}
 		//TRACE("WARNING: Team not found while synchronizing teams (Remove from team) !");
 		return;
-	}else
+	}
+	else
 	{
-		TeamsMapItor itor=m_mapTeams.find(nTeamId);
-		if(itor==m_mapTeams.end())
+		TeamsMapItor itor = m_mapTeams.find(nTeamId);
+		if (itor == m_mapTeams.end())
 		{
 			TRACE("WARNING: Team not found while synchronizing scores !");
 			return;
 		}
 		itor->second.m_setEntities.insert(nEntId);
-
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::RemoveTeam(int nTeamId)
 {
-	if (nTeamId==0xff)
+	if (nTeamId == 0xff)
 	{
 		//m_pGame->GetTeamManager()->RemoveAllTeams();
 		m_mapTeams.clear();
@@ -2192,36 +2187,36 @@ void CXSystemBase::RemoveTeam(int nTeamId)
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SetTeamScore(int nTeamId, short nScore)
 {
-	TeamsMapItor itor=m_mapTeams.find(nTeamId);
-	if(itor==m_mapTeams.end())
+	TeamsMapItor itor = m_mapTeams.find(nTeamId);
+	if (itor == m_mapTeams.end())
 	{
 		TRACE("WARNING: Team not found while synchronizing scores !");
 		return;
 	}
-	itor->second.nScore=nScore;
+	itor->second.nScore = nScore;
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SetTeamFlags(int nTeamId, int nFlags)
 {
-	TeamsMapItor itor=m_mapTeams.find(nTeamId);
-	if(itor==m_mapTeams.end())
+	TeamsMapItor itor = m_mapTeams.find(nTeamId);
+	if (itor == m_mapTeams.end())
 	{
 		TRACE("WARNING: Team not found while synchronizing flags !");
 		return;
 	}
-	itor->second.nFlags=nFlags;
+	itor->second.nFlags = nFlags;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool Team::Write(CStream &stm)
+bool Team::Write(CStream& stm)
 {
 	stm.Write((BYTE)nID);
 	stm.Write((short)nScore);
 	stm.Write((short)nFlags);
 	stm.Write(sName);
 	stm.Write((BYTE)m_setEntities.size());
-	for(EntitiesSetItor itor=m_setEntities.begin();itor!=m_setEntities.end();++itor)
+	for (EntitiesSetItor itor = m_setEntities.begin(); itor != m_setEntities.end(); ++itor)
 	{
 		stm.Write((unsigned short)(*itor));
 	}
@@ -2229,25 +2224,24 @@ bool Team::Write(CStream &stm)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool Team::Read(CStream &stm)
+bool Team::Read(CStream& stm)
 {
 	m_setEntities.clear();
-	BYTE t;
+	BYTE  t;
 	short s;
 	stm.Read(t);
-	nID=t;
+	nID = t;
 	stm.Read(s);
-	nScore=s;
+	nScore = s;
 	stm.Read(s);
-	nFlags=s;
+	nFlags = s;
 	stm.Read(sName);
 	stm.Read(t);
 	unsigned short eid;
-	for(int i=0;i<t;i++)
+	for (int i = 0; i < t; i++)
 	{
 		stm.Read(eid);
 		m_setEntities.insert(eid);
 	}
 	return true;
 }
-

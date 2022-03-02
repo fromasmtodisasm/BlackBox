@@ -11,11 +11,10 @@ enum class Movement
 	LEFT,
 	RIGHT
 };
-class CCameraController : public IInputEventListener
-	, public IHardwareMouseEventListener
+class CCameraController : public IInputEventListener, public IHardwareMouseEventListener
 {
-  public:
-  public:
+public:
+public:
 	~CCameraController()
 	{
 		for (int i = 0; i < m_Camera.size(); i++)
@@ -25,29 +24,29 @@ class CCameraController : public IInputEventListener
 	}
 	CCameraController() = default;
 	CCameraController(CCamera* pCamera)
-		: m_Camera{pCamera}
+	    : m_Camera{pCamera}
 	{
 		gEnv->pSystem->GetIHardwareMouse()->AddListener(this);
 	}
 
 	std::vector<CCamera*> m_Camera;
-	size_t				  m_CurrentCamera = 0;
-	size_t				  m_RenderCamera  = 0;
+	size_t                m_CurrentCamera = 0;
+	size_t                m_RenderCamera  = 0;
 	//CCamera::Mode mode = CCamera::Mode::FPS;
 
 	// Inherited via IInputEventListener
-	virtual bool OnInputEvent(const SInputEvent& event) override
+	virtual bool          OnInputEvent(const SInputEvent& event) override
 	{
 		if (gEnv->pConsole->IsOpened())
 			return false;
 		bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
-		bool rotated	  = false;
+		bool rotated      = false;
 		//if (event.pSymbol != nullptr)
-		rotated = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY; // || event.pSymbol->type == SInputSymbol::EType::Axis;
+		rotated           = event.keyId == eKI_MouseX || event.keyId == eKI_MouseY; // || event.pSymbol->type == SInputSymbol::EType::Axis;
 
 		////////////////////////
-		bool keyPressed	 = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
-		bool keyReleased = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
+		bool keyPressed   = event.deviceType == eIDT_Keyboard && event.state == eIS_Pressed;
+		bool keyReleased  = event.deviceType == eIDT_Keyboard && event.state == eIS_Released;
 		// #unreferenced
 		//bool control	 = event.modifiers & eMM_Ctrl;
 		// #unreferenced
@@ -200,18 +199,18 @@ class CCameraController : public IInputEventListener
 		m_CurrentCamera = n;
 	}
 
-  public:
-	Legacy::Vec3	 velocity = Legacy::Vec3(10);
+public:
+	Legacy::Vec3     velocity = Legacy::Vec3(10);
 	std::set<EKeyId> m_keys;
-	Legacy::Vec2	 delta;
-	float			 MovementSpeed;
-	const float		 SCROLL_SPEED	 = 2.0f;
-	const float		 MOUSE_SPEED	 = 1.5f;
-	const float		 MOUSE_SENSIVITY = 0.05f;
+	Legacy::Vec2     delta;
+	float            MovementSpeed;
+	const float      SCROLL_SPEED    = 2.0f;
+	const float      MOUSE_SPEED     = 1.5f;
+	const float      MOUSE_SENSIVITY = 0.05f;
 
 	// Inherited via IHardwareMouseEventListener
 
-	void OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent, int wheelDelta = 0)
+	void             OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent, int wheelDelta = 0)
 	{
 		if (eHardwareMouseEvent == HARDWAREMOUSEEVENT_WHEEL)
 		{

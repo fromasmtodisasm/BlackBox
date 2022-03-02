@@ -2,23 +2,23 @@
 #include <Client/Client.hpp>
 #include <algorithm>
 
-#define YAW (0)
+#define YAW   (0)
 #define PITCH (1)
-#define ROLL (0)
+#define ROLL  (0)
 
 #include "../GameFiles/Minecraft.h"
 
 std::vector<Legacy::Vec3> lineBuffer;
 
-float gGravity = 9.8f;
-int	  interval = 9000;
+float                     gGravity     = 9.8f;
+int                       interval     = 9000;
 
-int intervalLeft = interval;
+int                       intervalLeft = interval;
 
 CClient::CClient(CXGame* pGame)
-	: m_pGame(pGame)
-	, m_CameraController()
-	, m_IntersectionState()
+    : m_pGame(pGame)
+    , m_CameraController()
+    , m_IntersectionState()
 {
 	gEnv->pRenderer->RegisterCallbackClient(this);
 
@@ -28,10 +28,10 @@ CClient::CClient(CXGame* pGame)
 	};
 
 	REGISTER_COMMAND(
-		"cl_clear_lines", [](IConsoleCmdArgs*)
-		{ lineBuffer.clear(); },
-		0,
-		"");
+	    "cl_clear_lines", [](IConsoleCmdArgs*)
+	    { lineBuffer.clear(); },
+	    0,
+	    "");
 	REGISTER_CVAR2("cl_gravity", &gGravity, 9.8f, 0, "");
 
 #if 1
@@ -56,23 +56,23 @@ void CClient::Update()
 	}
 
 	const float FloorLevel = (float)g_World.height + 3;
-//	auto		CamPos	   = Legacy::Vec3(m_CameraController.CurrentCamera()->GetPos());
-//
-//	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
-//	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
-//	if ((CamPos.x <= -(float)g_World.size_x / 2) || (CamPos.x >= (float)g_World.size_x / 2))
-//	{
-//		if ((CamPos.z <= -(float)g_World.size_z / 2) || (CamPos.z >= (float)g_World.size_z / 2))
-//		{
-//		}
-//	}
-//	CamPos.y = max(CamPos.y, FloorLevel);
-//
-//	m_CameraController.CurrentCamera()->SetPos(CamPos);
+	//	auto		CamPos	   = Legacy::Vec3(m_CameraController.CurrentCamera()->GetPos());
+	//
+	//	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
+	//	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
+	//	if ((CamPos.x <= -(float)g_World.size_x / 2) || (CamPos.x >= (float)g_World.size_x / 2))
+	//	{
+	//		if ((CamPos.z <= -(float)g_World.size_z / 2) || (CamPos.z >= (float)g_World.size_z / 2))
+	//		{
+	//		}
+	//	}
+	//	CamPos.y = max(CamPos.y, FloorLevel);
+	//
+	//	m_CameraController.CurrentCamera()->SetPos(CamPos);
 
-	auto frame_time	 = gEnv->pTimer->GetRealFrameTime();
-	m_CurrentFrameID = gEnv->pRenderer->GetFrameID();
-	m_NumHitsInFrame = 0;
+	auto        frame_time = gEnv->pTimer->GetRealFrameTime();
+	m_CurrentFrameID       = gEnv->pRenderer->GetFrameID();
+	m_NumHitsInFrame       = 0;
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
 		m_CameraController.ProcessKeyboard(Movement::LEFT, frame_time, m_PlayerProcessingCmd.GetMoveLeft());
@@ -106,14 +106,14 @@ void CClient::Update()
 
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_JUMP))
 	{
-		auto pos = m_CameraController.CurrentCamera()->GetPos();
+		auto pos      = m_CameraController.CurrentCamera()->GetPos();
 		//if (CamPos.y <= FloorLevel) m_CamSpeed = 5.f;
 		m_JumpPressed = true;
 		//m_CameraController.CurrentCamera()->SetPos(pos + Legacy::Vec3(0, 0.01,0));
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_FIRE0))
 	{
-		auto& lpp							= m_IntersectionState.m_LastPickedPos;
+		auto& lpp                           = m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
 		m_pGame->minePlayer->destroyBlockOnCursor();
 
@@ -126,7 +126,7 @@ void CClient::Update()
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_ZOOM_TOGGLE))
 	{
-		auto& lpp							= m_IntersectionState.m_LastPickedPos;
+		auto& lpp                           = m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
 		m_pGame->minePlayer->placeBlockOnCursor();
 		gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
@@ -138,11 +138,11 @@ void CClient::Update()
 	}
 
 	{
-		float pickDistance = 1000;
-		const float interval	 = 300;
+		float       pickDistance = 1000;
+		const float interval     = 300;
 
-		glm::ivec3 pos, side;
-		if (m_pGame->minePlayer->blockSideOnCursor(pos,side, pickDistance))
+		glm::ivec3  pos, side;
+		if (m_pGame->minePlayer->blockSideOnCursor(pos, side, pickDistance))
 		{
 			static IFont* font{};
 			if (!font)
@@ -191,18 +191,18 @@ bool CClient::Init()
 
 	srand(static_cast<unsigned int>(time(0)));
 
-	Legacy::Vec3 left		= Legacy::Vec3(-40, -40, -40);
-	Legacy::Vec3 right		= Legacy::Vec3(40, 40, 40);
-	auto		 create_obj = [&]() -> auto
+	Legacy::Vec3 left       = Legacy::Vec3(-40, -40, -40);
+	Legacy::Vec3 right      = Legacy::Vec3(40, 40, 40);
+	auto         create_obj = [&]() -> auto
 	{
 		const auto rand_pos = RandomVector(left, right);
 		return TestObject(
-			rand_pos, {5, 5, 5}, Legacy::Vec4(RandomVector(Legacy::Vec3(-5), Legacy::Vec3(10)), 1.f));
+		    rand_pos, {5, 5, 5}, Legacy::Vec4(RandomVector(Legacy::Vec3(-5), Legacy::Vec3(10)), 1.f));
 	};
 	for (int i = 0; i < 10; i++)
 	{
 		m_testObjects.emplace_back(
-			create_obj());
+		    create_obj());
 	}
 
 	//auto CameraBox = TestObject(AABB({16, 0, 0}, {21, 5, 5}), Legacy::Vec4(4, 10, 40, 255));
@@ -382,13 +382,13 @@ void CClient::TriggerScreenshot(float fValue, XActivationEvent ae)
 
 void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 {
-	auto mode								 = m_CameraController.CurrentCamera()->mode;
+	auto mode                                = m_CameraController.CurrentCamera()->mode;
 	m_CameraController.CurrentCamera()->mode = mode == CCamera::Mode::FLY ? CCamera::Mode::FPS : CCamera::Mode::FLY;
 }
 
 void CClient::OnLoadScene()
 {
-	auto cam  = new CCamera(Legacy::Vec3(0,40,0));
+	auto cam  = new CCamera(Legacy::Vec3(0, 40, 0));
 	cam->mode = CCamera::Mode::FLY;
 	m_CameraController.AddCamera(cam);
 	//m_CameraController.AddCamera(new CCamera(/*Legacy::Vec3(10,10,10)*/));
@@ -406,9 +406,9 @@ void CClient::DrawAux()
 		render->DrawTriangle(p3, col, p4, col, p1, col);
 	};
 	const UCol col(255, 255, 255, 255);
-	auto	   render = gEnv->pRenderer->GetIRenderAuxGeom();
+	auto       render = gEnv->pRenderer->GetIRenderAuxGeom();
 	render->DrawLine(
-		{-10, 10, -5}, col, {10, 10, -5}, col);
+	    {-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 40, y = 0, z = -40;
 	{
 		const UCol col1(50, 125, 0, 100);
@@ -425,7 +425,7 @@ void CClient::DrawAux()
 		else
 		{
 			render->DrawAABB(
-				object.m_AABB.min, object.m_AABB.max, selected_color);
+			    object.m_AABB.min, object.m_AABB.max, selected_color);
 		}
 		object.m_Intersected = false;
 		_idx++;
@@ -444,11 +444,11 @@ void CClient::DrawAux()
 
 	Ray ray;
 
-	ray.origin	  = m_CameraController.RenderCamera()->transform.position;
+	ray.origin    = m_CameraController.RenderCamera()->transform.position;
 	ray.direction = m_CameraController.RenderCamera()->Front;
 
 	render->DrawLine(
-		ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
+	    ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
 
 	DrawAxis(render, Legacy::Vec3(40));
 	size_t ch_w = 20;
@@ -469,17 +469,17 @@ void CClient::DrawAxis(IRenderAuxGeom* render, Legacy::Vec3 axis)
 		{
 			const UCol c = Legacy::Vec3(1, 0, 0);
 			render->DrawLine(
-				{-a.x, 0, 0}, c, {a.x, 0, 0}, c);
+			    {-a.x, 0, 0}, c, {a.x, 0, 0}, c);
 		}
 		{
 			const UCol c = Legacy::Vec3(0, 1, 0);
 			render->DrawLine(
-				{0, -a.y, 0}, c, {0, a.y, 0}, c);
+			    {0, -a.y, 0}, c, {0, a.y, 0}, c);
 		}
 		{
 			const UCol c = Legacy::Vec3(0, 0, 1);
 			render->DrawLine(
-				{0, 0, -a.z}, c, {0, 0, a.z}, c);
+			    {0, 0, -a.z}, c, {0, 0, a.z}, c);
 		}
 	}
 }
@@ -497,17 +497,17 @@ void CClient::IntersectionByRayCasting()
 {
 	auto& start = m_IntersectionState.ray.start;
 	gEnv->pRenderer->UnProjectFromScreen(
-		m_IntersectionState.mx, m_IntersectionState.my, 0, &start.x, &start.y, &start.z);
+	    m_IntersectionState.mx, m_IntersectionState.my, 0, &start.x, &start.y, &start.z);
 	auto& end = m_IntersectionState.ray.end;
 	gEnv->pRenderer->UnProjectFromScreen(
-		m_IntersectionState.mx, m_IntersectionState.my, 1, &end.x, &end.y, &end.z);
+	    m_IntersectionState.mx, m_IntersectionState.my, 1, &end.x, &end.y, &end.z);
 
 	float tMin = HUGE_VALF;
-	Ray	  eyeRay;
+	Ray   eyeRay;
 
 	//m_CameraController.RenderCamera()->type = CCamera::Type::Ortho;
-	eyeRay.origin	 = m_CameraController.RenderCamera()->GetPos();
-	eyeRay.direction = glm::normalize(end - start);
+	eyeRay.origin      = m_CameraController.RenderCamera()->GetPos();
+	eyeRay.direction   = glm::normalize(end - start);
 
 	const auto lastPos = m_IntersectionState.m_LastPickedPos;
 	for (size_t i = 0; i < m_testObjects.size(); i++)
@@ -517,12 +517,12 @@ void CClient::IntersectionByRayCasting()
 			continue;
 		if (tMinMax.x < tMinMax.y && tMinMax.x < tMin)
 		{
-			m_IntersectionState.picked			 = m_testObjects.begin() + i;
-			tMin								 = tMinMax.x;
-			m_IntersectionState.m_LastPickedPos	 = eyeRay.origin + eyeRay.direction * tMin;
+			m_IntersectionState.picked           = m_testObjects.begin() + i;
+			tMin                                 = tMinMax.x;
+			m_IntersectionState.m_LastPickedPos  = eyeRay.origin + eyeRay.direction * tMin;
 			m_IntersectionState.m_CurrentDistant = glm::distance(eyeRay.origin, m_IntersectionState.m_LastPickedPos);
 
-			auto num_hits = gEnv->pConsole->GetCVar("st_achivements_numHits");
+			auto num_hits                        = gEnv->pConsole->GetCVar("st_achivements_numHits");
 
 			{
 				auto nh = num_hits->GetIVal();

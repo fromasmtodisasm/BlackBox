@@ -3,10 +3,9 @@
 #include <Server/XServerSlot.hpp>
 #include <Server/XSystemServer.h>
 
-
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XServer.cpp
@@ -28,7 +27,7 @@
 
 #include "XPlayer.h"
 #if 0
-#include "Spectator.h"
+	#include "Spectator.h"
 #endif
 #include "XVehicleSystem.h"
 //#include "PlayerSystem.h"
@@ -43,19 +42,20 @@
 	#include "WinBase.h"
 #endif
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////
-void CXServer::OnSpawnContainer( CEntityDesc &ed,IEntity *pEntity )
+void CXServer::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
 {
-	m_pISystem->OnSpawnContainer(ed,pEntity);
+	m_pISystem->OnSpawnContainer(ed, pEntity);
 }
 
 //////////////////////////////////////////////////////////////////////
-const char *CXServer::GetMsgName( XSERVERMSG inValue )
+const char* CXServer::GetMsgName(XSERVERMSG inValue)
 {
-	switch(inValue)
+	switch (inValue)
 	{
-#define ADDNAME(name) case XSERVERMSG_##name:	return(#name);
+#define ADDNAME(name)       \
+	case XSERVERMSG_##name: \
+		return (#name);
 		ADDNAME(UPDATEENTITY)
 		ADDNAME(ADDENTITY)
 		ADDNAME(REMOVEENTITY)
@@ -81,34 +81,35 @@ const char *CXServer::GetMsgName( XSERVERMSG inValue )
 		ADDNAME(EVENTSCHEDULE)
 		ADDNAME(UNIDENTIFIED)
 #undef ADDNAME
-		default: assert(0);
+	default:
+		assert(0);
 	}
 
 	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::OnSpawn(IEntity *ent, CEntityDesc & ed )
+void CXServer::OnSpawn(IEntity* ent, CEntityDesc& ed)
 {
-	m_pISystem->OnSpawn(ent,ed);
+	m_pISystem->OnSpawn(ent, ed);
 
-	bool bSend = true;
-	
-	bSend=!m_bIsLoadingLevel;		// during loading we don't sync entities
+	bool bSend           = true;
+
+	bSend                = !m_bIsLoadingLevel; // during loading we don't sync entities
 
 	XSlotMap::iterator i = m_mapXSlots.begin();
-	while(i != m_mapXSlots.end())
+	while (i != m_mapXSlots.end())
 	{
-		i->second->OnSpawnEntity(ed,ent,bSend);
+		i->second->OnSpawnEntity(ed, ent, bSend);
 		++i;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::OnRemove(IEntity *ent)
+void CXServer::OnRemove(IEntity* ent)
 {
 	XSlotMap::iterator i = m_mapXSlots.begin();
-	while(i != m_mapXSlots.end())
+	while (i != m_mapXSlots.end())
 	{
 		//TRACE("CXServer::OnRemove [%d]",ent->GetId());
 		i->second->OnRemoveEntity(ent);
@@ -125,91 +126,92 @@ unsigned int CXServer::GetMaxUpdateRate() const
 }
 
 //////////////////////////////////////////////////////////////////////
-CXServer::CXServer(CXGame *pGame, WORD nPort, const char *szName, bool listen)
+CXServer::CXServer(CXGame* pGame, WORD nPort, const char* szName, bool listen)
 {
 	assert(pGame);
 
-	m_pGame = pGame;
-	m_pTimer = pGame->m_pSystem->GetITimer(); 
-	IConsole *pConsole=m_pGame->GetSystem()->GetIConsole();			assert(pConsole);
+	m_pGame            = pGame;
+	m_pTimer           = pGame->m_pSystem->GetITimer();
+	IConsole* pConsole = m_pGame->GetSystem()->GetIConsole();
+	assert(pConsole);
 
-	sv_name = pConsole->GetCVar("sv_name");
-	
-	sv_password = pConsole->GetCVar("sv_password");
-	sv_maxplayers = pConsole->GetCVar("sv_maxplayers");
-	sv_maxupdaterate = pConsole->GetCVar("sv_maxupdaterate");
+	sv_name                 = pConsole->GetCVar("sv_name");
 
-	sv_maxrate = pConsole->GetCVar("sv_maxrate");
-	sv_maxrate_lan = pConsole->GetCVar("sv_maxrate_lan");
+	sv_password             = pConsole->GetCVar("sv_password");
+	sv_maxplayers           = pConsole->GetCVar("sv_maxplayers");
+	sv_maxupdaterate        = pConsole->GetCVar("sv_maxupdaterate");
 
-	sv_netstats = pConsole->GetCVar("sv_netstats");
+	sv_maxrate              = pConsole->GetCVar("sv_maxrate");
+	sv_maxrate_lan          = pConsole->GetCVar("sv_maxrate_lan");
+
+	sv_netstats             = pConsole->GetCVar("sv_netstats");
 	sv_max_scheduling_delay = pConsole->GetCVar("sv_max_scheduling_delay");
 	sv_min_scheduling_delay = pConsole->GetCVar("sv_min_scheduling_delay");
-	m_bIsLoadingLevel=false;
+	m_bIsLoadingLevel       = false;
 
-  m_bListen = listen;
-    
+	m_bListen               = listen;
+
 	m_mapXSlots.clear();
-	
-	float	timeout = m_pGame->sv_timeout->GetFVal()*1000;
+
+	float timeout = m_pGame->sv_timeout->GetFVal() * 1000;
 
 	// create the entity system sink
 	m_pGame->GetSystem()->GetIEntitySystem()->SetSink(this);
 
 	// create the system interface
-	m_pISystem = new CXSystemServer(this,m_pGame,m_pGame->m_pLog);
+	m_pISystem = new CXSystemServer(this, m_pGame, m_pGame->m_pLog);
 
-	#if 0
+#if 0
 	// get this info before we set the server
 	m_pGame->GetSystem()->SetForceNonDevMode(!m_pGame->IsDevModeEnable());
-	#endif
+#endif
 
-	INetwork *pNet=pGame->m_pSystem->GetINetwork();
+	INetwork* pNet = pGame->m_pSystem->GetINetwork();
 	pNet->SetUBIGameServerIP(NULL);
 
 	// fill m_ServerInfo structure
 	GetServerInfo();
 
 	// create the server
-	m_pIServer = m_pGame->CreateServer(this,nPort,m_bListen);
+	m_pIServer = m_pGame->CreateServer(this, nPort, m_bListen);
 	if (!m_pIServer)
 	{
-			m_pGame->m_pLog->Log("!!---------Server creation failed---------!!");
-			m_bOK = false;
-			return;
+		m_pGame->m_pLog->Log("!!---------Server creation failed---------!!");
+		m_bOK = false;
+		return;
 	}
 	else
 		m_bOK = true;
-  
+
 	m_pIServer->SetSecuritySink(this);
-	m_pIServer->SetVariable(cnvDataStreamTimeout,(unsigned int)timeout);
-	
-	m_ServerInfos.nPort = nPort;
-	m_ServerInfos.VersionInfo = GetISystem()->GetFileVersion();
+	m_pIServer->SetVariable(cnvDataStreamTimeout, (unsigned int)timeout);
+
+	m_ServerInfos.nPort            = nPort;
+	m_ServerInfos.VersionInfo      = GetISystem()->GetFileVersion();
 
 	// initialise the game context
 	m_GameContext.dwNetworkVersion = NETWORK_FORMAT_VERSION;
-	m_GameContext.strMission = "";
+	m_GameContext.strMission       = "";
 
-	m_ScriptObjectServer.Create(m_pGame->GetScriptSystem(),m_pISystem,m_pGame);
+	m_ScriptObjectServer.Create(m_pGame->GetScriptSystem(), m_pISystem, m_pGame);
 	m_ScriptObjectServer.SetServer(this);
-	m_bInDestruction=false;
+	m_bInDestruction = false;
 
 	LoadBanList();
 
-	IScriptSystem *pScriptSystem = GetISystem()->GetIScriptSystem();
+	IScriptSystem* pScriptSystem = GetISystem()->GetIScriptSystem();
 	assert(pScriptSystem);
 
 	_SmartScriptObject pMapCycle(pScriptSystem);
 	pScriptSystem->GetGlobalValue("MapCycle", pMapCycle);
 
-	if (((IScriptObject *)pMapCycle) != 0)
+	if (((IScriptObject*)pMapCycle) != 0)
 	{
 		HSCRIPTFUNCTION pfnInit = 0;
 		if (pMapCycle->GetValue("Init", pfnInit))
-		{			
+		{
 			pScriptSystem->BeginCall(pfnInit);
-			pScriptSystem->PushFuncParam((IScriptObject *)pMapCycle);
+			pScriptSystem->PushFuncParam((IScriptObject*)pMapCycle);
 			pScriptSystem->EndCall();
 
 			pScriptSystem->ReleaseFunc(pfnInit);
@@ -220,12 +222,12 @@ CXServer::CXServer(CXGame *pGame, WORD nPort, const char *szName, bool listen)
 //////////////////////////////////////////////////////////////////////
 unsigned CXServer::MemStats()
 {
-	unsigned size = sizeof *this;
+	unsigned           size = sizeof *this;
 
-	XSlotMap::iterator itr=m_mapXSlots.begin();
+	XSlotMap::iterator itr  = m_mapXSlots.begin();
 
-	for(; itr!=m_mapXSlots.end(); itr++)
-		size += (itr->second)->MemStats() + sizeof (CXServerSlot*);	
+	for (; itr != m_mapXSlots.end(); itr++)
+		size += (itr->second)->MemStats() + sizeof(CXServerSlot*);
 
 	return size;
 }
@@ -233,14 +235,13 @@ unsigned CXServer::MemStats()
 //////////////////////////////////////////////////////////////////////
 CXServer::~CXServer()
 {
-
 	// ClearSlots should remove all players later anyway
 	//	if (m_pGame->m_pUbiSoftClient)
 	//	{
 	//		m_pGame->m_pUbiSoftClient->Server_RemoveAllPlayers();
 	//	}
 
-	m_bInDestruction=true;
+	m_bInDestruction = true;
 
 	// update the network, to process any pending disconnect
 	UpdateXServerNetwork();
@@ -250,7 +251,7 @@ CXServer::~CXServer()
 
 	// delele the entity system sink
 	m_pGame->GetSystem()->GetIEntitySystem()->RemoveSink(this);
-	
+
 	// remove the slots which are still connected
 	ClearSlots();
 
@@ -259,21 +260,21 @@ CXServer::~CXServer()
 
 	// shut down server game rules. (correct place)
 	// m_ServerRules.ShutDown();
-	m_pGame->GetScriptSystem()->SetGlobalToNull("GameRules");		// workaround to minimize risk
-	
+	m_pGame->GetScriptSystem()->SetGlobalToNull("GameRules"); // workaround to minimize risk
+
 	// release the IServer interface
 	SAFE_RELEASE(m_pIServer);
 
 	// release the system interface
 	SAFE_RELEASE(m_pISystem);
 
-	if(m_pGame->GetScriptSystem())
+	if (m_pGame->GetScriptSystem())
 	{
 		m_pGame->GetScriptSystem()->SetGlobalToNull("Server");
 		//Never force Lua GC, m_pScriptSystem->ForceGarbageCollection();
 	}
 
-	m_pGame = NULL;	
+	m_pGame = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -283,9 +284,9 @@ bool CXServer::IsInDestruction() const
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::DrawNetStats(IRenderer *pRenderer)
+void CXServer::DrawNetStats(IRenderer* pRenderer)
 {
-	#if 0
+#if 0
 	if (!pRenderer)
 		return;
 
@@ -316,7 +317,7 @@ void CXServer::DrawNetStats(IRenderer *pRenderer)
 			fOutgoingKbPerSec, fOutgoingKbPerSec+fPacketSize*nOutgoingPacketsPerSec, nOutgoingPacketsPerSec);
 
 		// just for internal testing purposes
-#ifndef REDUCED_FOR_PUBLIC_RELEASE
+	#ifndef REDUCED_FOR_PUBLIC_RELEASE
 		y+=3;
 		pRenderer->TextToScreen(0,(float)y,"Subpackets produced (might not be sent):");
 
@@ -343,7 +344,7 @@ void CXServer::DrawNetStats(IRenderer *pRenderer)
 		if(bNewDataArrived)
 			m_pGame->m_pLog->Log("-------<netstats end>");
 
-#endif
+	#endif
 	}
 
 	const float fX = 10.0f;
@@ -407,14 +408,14 @@ void CXServer::DrawNetStats(IRenderer *pRenderer)
 
 		pRenderer->Set2DMode(0, 0, 0);
 	}
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXServer::CreateServerSlot(IServerSlot *pIServerSlot)
+bool CXServer::CreateServerSlot(IServerSlot* pIServerSlot)
 {
 	// check if there are too many players
-	if((int)(m_mapXSlots.size())>=sv_maxplayers->GetIVal())
+	if ((int)(m_mapXSlots.size()) >= sv_maxplayers->GetIVal())
 	{
 		// if this is not a dedicated server and
 		// we have less than one slot, it means that our local client cannot connect
@@ -431,35 +432,61 @@ bool CXServer::CreateServerSlot(IServerSlot *pIServerSlot)
 		}
 	}
 
-	CXServerSlot *pSlot = new CXServerSlot(this,pIServerSlot);
+	CXServerSlot* pSlot = new CXServerSlot(this, pIServerSlot);
 	NET_TRACE("<<NET>>REGISTERING SERVER SLOT");
 	RegisterSlot(pSlot);
 	return true;
-	 
 }
 
 //////////////////////////////////////////////////////////////////////
-#define ADDSTRING(c, s)	{ (c) += s; c.push_back('\0'); }
-#define ADDBOOL(c, b)	{ (c).push_back(b ? '\1' : '\0'); }
-#define ADDCHAR(c, ch)	{ (c).push_back((char)ch); }
+#define ADDSTRING(c, s)    \
+	{                      \
+		(c) += s;          \
+		c.push_back('\0'); \
+	}
+#define ADDBOOL(c, b)                   \
+	{                                   \
+		(c).push_back(b ? '\1' : '\0'); \
+	}
+#define ADDCHAR(c, ch)           \
+	{                            \
+		(c).push_back((char)ch); \
+	}
 #if defined(WIN64)
-	#define ADDINT(c, i)	{ char t=(char)(i & 0x000000FF);c+=t;t=(char)((i&0x0000FF00)>>8);c+=t;t=(char)((i&0x00FF0000)>>16);c+=t;t=(char)((i&0xFF000000)>>24);c+=t;}
+	#define ADDINT(c, i)                        \
+		{                                       \
+			char t = (char)(i & 0x000000FF);    \
+			c += t;                             \
+			t = (char)((i & 0x0000FF00) >> 8);  \
+			c += t;                             \
+			t = (char)((i & 0x00FF0000) >> 16); \
+			c += t;                             \
+			t = (char)((i & 0xFF000000) >> 24); \
+			c += t;                             \
+		}
 #else
-	#define ADDINT(c, i)	{ for(int j=0;j<4;j++) (c).push_back(((char *)&(i))[j]); }
+	#define ADDINT(c, i)                                                 \
+		{                                                                \
+			for (int j = 0; j < 4; j++) (c).push_back(((char*)&(i))[j]); \
+		}
 #endif
-#define ADDRULE(c, name, value)	(c) += name; (c).push_back('\0'); (c) += value; (c).push_back('\0');
+#define ADDRULE(c, name, value) \
+	(c) += name;                \
+	(c).push_back('\0');        \
+	(c) += value;               \
+	(c).push_back('\0');
 
-////////////////////////////////////////////////////////////////////// 
-bool CXServer::GetServerInfoStatus(string &szServerStatus)
+//////////////////////////////////////////////////////////////////////
+bool CXServer::GetServerInfoStatus(string& szServerStatus)
 {
 	if (!GetServerInfo())
 		return false;
 
-	int nPort = m_ServerInfos.nPort;
-	
+	int  nPort = m_ServerInfos.nPort;
+
 	char szVersion[128];
 	m_ServerInfos.VersionInfo.ToString(szVersion);
-  
+
 	ADDINT(szServerStatus, nPort);
 	ADDCHAR(szServerStatus, m_ServerInfos.nComputerType);
 	ADDSTRING(szServerStatus, szVersion);
@@ -477,53 +504,53 @@ bool CXServer::GetServerInfoStatus(string &szServerStatus)
 	return true;
 }
 
-////////////////////////////////////////////////////////////////////// 
-bool CXServer::GetServerInfoStatus(string &szName, string &szGameType, string &szMap, string &szVersion, bool *pbPassword, int *piPlayers, int *piMaxPlayers)
+//////////////////////////////////////////////////////////////////////
+bool CXServer::GetServerInfoStatus(string& szName, string& szGameType, string& szMap, string& szVersion, bool* pbPassword, int* piPlayers, int* piMaxPlayers)
 {
 	if (!GetServerInfo())
 		return false;
 
-	szName = m_ServerInfos.strName;
+	szName     = m_ServerInfos.strName;
 	szGameType = m_ServerInfos.strGameType;
-	szMap = m_ServerInfos.strMap;
+	szMap      = m_ServerInfos.strMap;
 	char szLocalVersion[128];
 	m_ServerInfos.VersionInfo.ToString(szLocalVersion);
-	szVersion = szLocalVersion;
-	*pbPassword = (m_ServerInfos.nServerFlags & SXServerInfos::FLAG_PASSWORD);
-	*piPlayers = m_ServerInfos.nPlayers;
+	szVersion     = szLocalVersion;
+	*pbPassword   = (m_ServerInfos.nServerFlags & SXServerInfos::FLAG_PASSWORD);
+	*piPlayers    = m_ServerInfos.nPlayers;
 	*piMaxPlayers = m_ServerInfos.nMaxPlayers;
 
 	return true;
 }
 
-////////////////////////////////////////////////////////////////////// 
-bool CXServer::GetServerInfoRules(string &szServerRules)
+//////////////////////////////////////////////////////////////////////
+bool CXServer::GetServerInfoRules(string& szServerRules)
 {
-	IScriptSystem *pSS = GetISystem()->GetIScriptSystem();
+	IScriptSystem*     pSS = GetISystem()->GetIScriptSystem();
 
 	_SmartScriptObject QueryHandler(pSS, 1);
 
-	if (!pSS->GetGlobalValue("QueryHandler", (IScriptObject *)QueryHandler))
+	if (!pSS->GetGlobalValue("QueryHandler", (IScriptObject*)QueryHandler))
 	{
 		return false;
 	}
 
 	_SmartScriptObject ServerRules(pSS, 1);
 	pSS->BeginCall("QueryHandler", "GetServerRules");
-	pSS->PushFuncParam((IScriptObject *)QueryHandler);
-	pSS->EndCall((IScriptObject *&)ServerRules);
+	pSS->PushFuncParam((IScriptObject*)QueryHandler);
+	pSS->EndCall((IScriptObject*&)ServerRules);
 
-	int nPos = szServerRules.size();
+	int nPos   = szServerRules.size();
 	int nRules = 0;
 
 	for (int i = 1; i <= ServerRules->Count(); i++)
 	{
 		_SmartScriptObject Rule(pSS, 1);
 
-		if (ServerRules->GetAt(i, (IScriptObject *)Rule))
+		if (ServerRules->GetAt(i, (IScriptObject*)Rule))
 		{
-			char *szRuleName = 0;
-			char *szRuleValue = 0;
+			char* szRuleName  = 0;
+			char* szRuleValue = 0;
 
 			Rule->GetAt(1, szRuleName);
 			Rule->GetAt(2, szRuleValue);
@@ -541,47 +568,47 @@ bool CXServer::GetServerInfoRules(string &szServerRules)
 	return true;
 }
 
-////////////////////////////////////////////////////////////////////// 
-bool CXServer::GetServerInfoPlayers(string *vszStrings[4], int &nStrings)
+//////////////////////////////////////////////////////////////////////
+bool CXServer::GetServerInfoPlayers(string* vszStrings[4], int& nStrings)
 {
-	IScriptSystem *pSS = GetISystem()->GetIScriptSystem();
+	IScriptSystem*     pSS = GetISystem()->GetIScriptSystem();
 
 	_SmartScriptObject QueryHandler(pSS, 1);
 
-	if (!pSS->GetGlobalValue("QueryHandler", (IScriptObject *)QueryHandler))
+	if (!pSS->GetGlobalValue("QueryHandler", (IScriptObject*)QueryHandler))
 	{
 		return false;
 	}
 
 	_SmartScriptObject PlayerStats(pSS, 1);
 	pSS->BeginCall("QueryHandler", "GetPlayerStats");
-	pSS->PushFuncParam((IScriptObject *)QueryHandler);
-	pSS->EndCall((IScriptObject *&)PlayerStats);
+	pSS->PushFuncParam((IScriptObject*)QueryHandler);
+	pSS->EndCall((IScriptObject*&)PlayerStats);
 
-	string	szPlayer;
-	string	vszRString[6];
-	string	*pszCurrent = &vszRString[0];
-	int			iCurrentPos = pszCurrent->size();
-	int			nPlayers = 0;
-	
-	nStrings = 1;
+	string  szPlayer;
+	string  vszRString[6];
+	string* pszCurrent  = &vszRString[0];
+	int     iCurrentPos = pszCurrent->size();
+	int     nPlayers    = 0;
+
+	nStrings            = 1;
 
 	for (int i = 1; i <= PlayerStats->Count(); i++)
 	{
 		_SmartScriptObject Player(pSS, 1);
 
-		if (PlayerStats->GetAt(i, (IScriptObject *)Player))
+		if (PlayerStats->GetAt(i, (IScriptObject*)Player))
 		{
-			char *szName = 0;
-			char *szTeam = 0;
-			char *szSkin = 0;
-			int	 iScore = 0;
-			int	 iPing = 0;
-			int  iTime = 0;
+			char* szName = 0;
+			char* szTeam = 0;
+			char* szSkin = 0;
+			int   iScore = 0;
+			int   iPing  = 0;
+			int   iTime  = 0;
 
-			Player->GetValue("Name", (const char* &)szName);
-			Player->GetValue("Team", (const char* &)szTeam);
-			Player->GetValue("Skin", (const char* &)szSkin);
+			Player->GetValue("Name", (const char*&)szName);
+			Player->GetValue("Team", (const char*&)szTeam);
+			Player->GetValue("Skin", (const char*&)szSkin);
 			Player->GetValue("Score", iScore);
 			Player->GetValue("Ping", iPing);
 			Player->GetValue("Time", iTime);
@@ -610,7 +637,7 @@ bool CXServer::GetServerInfoPlayers(string *vszStrings[4], int &nStrings)
 					nStrings = SERVER_QUERY_MAX_PACKETS;
 					break;
 				}
-				
+
 				nPlayers = 0;
 			}
 
@@ -624,7 +651,7 @@ bool CXServer::GetServerInfoPlayers(string *vszStrings[4], int &nStrings)
 
 	for (int i = 0; i < nStrings; i++)
 	{
-		char n = i+1;
+		char n = i + 1;
 
 		ADDCHAR(*vszStrings[i], n);
 		ADDCHAR(*vszStrings[i], nStrings);
@@ -642,29 +669,29 @@ bool CXServer::GetServerInfoPlayers(string *vszStrings[4], int &nStrings)
 //////////////////////////////////////////////////////////////////////
 bool CXServer::GetServerInfo()
 {
-	const char *szGameType = m_ServerRules.GetGameType();
+	const char* szGameType = m_ServerRules.GetGameType();
 
-	if(!szGameType)
+	if (!szGameType)
 		return false;
 
-	IGameMods *pGameMods=m_pGame->GetModsInterface();
+	IGameMods* pGameMods = m_pGame->GetModsInterface();
 
-	if(!pGameMods)
-		return false;			// Game Init failed?
+	if (!pGameMods)
+		return false; // Game Init failed?
 
-  m_ServerInfos.strName = sv_name->GetString();
-  m_ServerInfos.strGameType = szGameType;
-	m_ServerInfos.strMod = pGameMods->GetCurrentMod();
-  m_ServerInfos.nPlayers = GetNumPlayers();
-  m_ServerInfos.nMaxPlayers = sv_maxplayers->GetIVal(); 
+	m_ServerInfos.strName      = sv_name->GetString();
+	m_ServerInfos.strGameType  = szGameType;
+	m_ServerInfos.strMod       = pGameMods->GetCurrentMod();
+	m_ServerInfos.nPlayers     = GetNumPlayers();
+	m_ServerInfos.nMaxPlayers  = sv_maxplayers->GetIVal();
 	m_ServerInfos.nServerFlags = 0;
 
 	if (sv_password->GetString() && (strlen(sv_password->GetString()) > 0))
 	{
 		m_ServerInfos.nServerFlags |= SXServerInfos::FLAG_PASSWORD;
 	}
-	
-	if(m_pIServer->GetServerType()!=eMPST_LAN)
+
+	if (m_pIServer->GetServerType() != eMPST_LAN)
 	{
 		m_ServerInfos.nServerFlags |= SXServerInfos::FLAG_NET;
 	}
@@ -674,25 +701,25 @@ bool CXServer::GetServerInfo()
 		m_ServerInfos.nServerFlags |= SXServerInfos::FLAG_CHEATS;
 	}
 
-	ICVar *pPunkBusterVar = GetISystem()->GetIConsole()->GetCVar("sv_punkbuster");
+	ICVar* pPunkBusterVar = GetISystem()->GetIConsole()->GetCVar("sv_punkbuster");
 	if (pPunkBusterVar && pPunkBusterVar->GetIVal() != 0)
 	{
 		m_ServerInfos.nServerFlags |= SXServerInfos::FLAG_PUNKBUSTER;
 	}
-	
+
 	m_ServerInfos.nComputerType = 0;
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXServer::ProcessXMLInfoRequest( const char *sRequest,const char *sRespone,int nResponseMaxLength )
+bool CXServer::ProcessXMLInfoRequest(const char* sRequest, const char* sRespone, int nResponseMaxLength)
 {
-	#if 0
+#if 0
 	XmlNodeRef reqNode = GetISystem()->LoadXmlFromString( sRequest );
 	if (!reqNode)
 		return false;
-	#endif
+#endif
 
 	if (strlen(sRespone) > 0)
 		return true;
@@ -700,10 +727,10 @@ bool CXServer::ProcessXMLInfoRequest( const char *sRequest,const char *sRespone,
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::RegisterSlot(CXServerSlot *pSlot)
+void CXServer::RegisterSlot(CXServerSlot* pSlot)
 {
-	NET_TRACE("<<NET>>CXServer::RegisterSlot %d",pSlot->GetID());
-	m_mapXSlots.insert(XSlotMap::iterator::value_type(pSlot->GetID(),pSlot));
+	NET_TRACE("<<NET>>CXServer::RegisterSlot %d", pSlot->GetID());
+	m_mapXSlots.insert(XSlotMap::iterator::value_type(pSlot->GetID(), pSlot));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -717,11 +744,11 @@ void CXServer::ClearSlots()
 {
 	XSlotMap::iterator itor;
 
-	 //Disconnect all slots
+	//Disconnect all slots
 	itor = m_mapXSlots.begin();
-	while(itor != m_mapXSlots.end())
+	while (itor != m_mapXSlots.end())
 	{
-		CXServerSlot *pSlot=itor->second;
+		CXServerSlot* pSlot = itor->second;
 
 		if (m_pGame->IsMultiplayer() && !pSlot->IsLocalHost())
 			pSlot->Disconnect("@ServerShutdown");
@@ -733,7 +760,7 @@ void CXServer::ClearSlots()
 	UpdateXServerNetwork();
 
 	itor = m_mapXSlots.begin();
-	while(itor != m_mapXSlots.end())
+	while (itor != m_mapXSlots.end())
 	{
 		delete itor->second;
 		++itor;
@@ -746,20 +773,20 @@ void CXServer::Update()
 {
 	// limit sv_maxplayers
 	{
-		if(sv_maxplayers->GetIVal()>MAXPLAYERS_LIMIT)
+		if (sv_maxplayers->GetIVal() > MAXPLAYERS_LIMIT)
 			sv_maxplayers->Set(MAXPLAYERS_LIMIT);
 
-		int iPlayerCount=GetNumPlayers();
+		int iPlayerCount = GetNumPlayers();
 
-		if(sv_maxplayers->GetIVal()<iPlayerCount)
+		if (sv_maxplayers->GetIVal() < iPlayerCount)
 			sv_maxplayers->Set(iPlayerCount);
 	}
 
 	// kick "excess" players
 	// if this is a dedicated server, minimum can be 0, if we are not, minimum must be, so that our local client is not kicked
-	while(m_mapXSlots.size() > (int)(max(sv_maxplayers->GetIVal(), (m_pGame->m_pSystem->IsDedicated() ? 0 : 1))))
+	while (m_mapXSlots.size() > (int)(max(sv_maxplayers->GetIVal(), (m_pGame->m_pSystem->IsDedicated() ? 0 : 1))))
 	{
-		CXServerSlot *pSlot = (m_mapXSlots.rbegin()->second);
+		CXServerSlot* pSlot = (m_mapXSlots.rbegin()->second);
 
 		if (!pSlot->IsLocalHost())
 		{
@@ -769,22 +796,23 @@ void CXServer::Update()
 
 	// update server rules.
 	m_ServerRules.Update();
-	if(!m_pIServer) return;
+	if (!m_pIServer) return;
 	UpdateXServerNetwork();
-	float time = m_pTimer->GetCurrTime();
-	bool sendevents=m_pGame->UseFixedStep() && m_pGame->HasScheduledEvents(); 
+	float              time       = m_pTimer->GetCurrTime();
+	bool               sendevents = m_pGame->UseFixedStep() && m_pGame->HasScheduledEvents();
 	// Garbage collection and update of the slots
-	XSlotMap::iterator i = m_mapXSlots.begin();
-	while(i != m_mapXSlots.end())
+	XSlotMap::iterator i          = m_mapXSlots.begin();
+	while (i != m_mapXSlots.end())
 	{
-		CXServerSlot *pSlot = i->second;
+		CXServerSlot* pSlot = i->second;
 
-		if(pSlot->IsXServerSlotGarbage())
+		if (pSlot->IsXServerSlotGarbage())
 		{
 			delete pSlot;
-			XSlotMap::iterator inext = i; inext++;
+			XSlotMap::iterator inext = i;
+			inext++;
 			m_mapXSlots.erase(i);
-			i = inext;			
+			i = inext;
 		}
 		else
 		{
@@ -792,17 +820,17 @@ void CXServer::Update()
 
 			float fRelTime = time - pSlot->m_Snapshot.GetLastUpdate();
 
-			bool sendsnap = m_pGame->IsMultiplayer() && (fRelTime)>(1.f/pSlot->m_Snapshot.GetSendPerSecond());
+			bool  sendsnap = m_pGame->IsMultiplayer() && (fRelTime) > (1.f / pSlot->m_Snapshot.GetSendPerSecond());
 
-			if(fRelTime<0)						// timer was reseted
+			if (fRelTime < 0) // timer was reseted
 			{
-				fRelTime=0;
-				sendsnap=true; 
+				fRelTime = 0;
+				sendsnap = true;
 			}
 
-			pSlot->Update(sendsnap,sendevents&&sendsnap);
+			pSlot->Update(sendsnap, sendevents && sendsnap);
 			++i;
-		}		
+		}
 	}
 
 	//incrementing the random seed
@@ -810,46 +838,46 @@ void CXServer::Update()
 
 	UpdateXServerNetwork(); // [Anton] if we formed a snapshot - then send it now
 
-	#if 0
+#if 0
 	//SNAPSHOT UPDATE
 	m_NetStats.Update(m_pTimer->GetCurrTimePrecise());		// keep statistics for one sec
 	m_NetStats.AddToUpdateCount(1);
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXServer::UpdateXServerNetwork()
 {
-	FUNCTION_PROFILER( PROFILE_GAME );
-	if(m_pIServer)
+	FUNCTION_PROFILER(PROFILE_GAME);
+	if (m_pIServer)
 		m_pIServer->Update(GetCurrentTime());
 };
 
 //////////////////////////////////////////////////////////////////////
 // return the current context
-bool CXServer::GetContext(SXGameContext &ctxOut)
+bool CXServer::GetContext(SXGameContext& ctxOut)
 {
 	ctxOut = m_GameContext;
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::AddRespawnPoint(ITagPoint *pPoint)
+void CXServer::AddRespawnPoint(ITagPoint* pPoint)
 {
-	m_pGame->m_pLog->Log("CXServer::AddRespawnPoint '%s'",pPoint->GetName());
+	m_pGame->m_pLog->Log("CXServer::AddRespawnPoint '%s'", pPoint->GetName());
 
-	m_vRespawnPoints.insert(RespawnPointMap::iterator::value_type(pPoint->GetName(),pPoint));
-	m_CurRespawnPoint=m_vRespawnPoints.begin();
+	m_vRespawnPoints.insert(RespawnPointMap::iterator::value_type(pPoint->GetName(), pPoint));
+	m_CurRespawnPoint = m_vRespawnPoints.begin();
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::RemoveRespawnPoint(ITagPoint *pPoint)
+void CXServer::RemoveRespawnPoint(ITagPoint* pPoint)
 {
-	RespawnPointMap::iterator itor=m_vRespawnPoints.begin();
+	RespawnPointMap::iterator itor = m_vRespawnPoints.begin();
 
-	while(itor!=m_vRespawnPoints.end())
+	while (itor != m_vRespawnPoints.end())
 	{
-		if((itor->second)==pPoint)
+		if ((itor->second) == pPoint)
 		{
 			m_vRespawnPoints.erase(itor);
 			return;
@@ -862,25 +890,24 @@ void CXServer::RemoveRespawnPoint(ITagPoint *pPoint)
 // get a specific respawn point
 ITagPoint* CXServer::GetFirstRespawnPoint()
 {
-	if(m_vRespawnPoints.empty())
+	if (m_vRespawnPoints.empty())
 		return NULL;
 
-	m_CurRespawnPoint=m_vRespawnPoints.begin();
+	m_CurRespawnPoint = m_vRespawnPoints.begin();
 
 	return m_CurRespawnPoint->second;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 // get a specific respawn point
 ITagPoint* CXServer::GetNextRespawnPoint()
 {
-	if(m_vRespawnPoints.empty())
+	if (m_vRespawnPoints.empty())
 		return NULL;
 
 	++m_CurRespawnPoint;
 
-	if(m_CurRespawnPoint==m_vRespawnPoints.end())
+	if (m_CurRespawnPoint == m_vRespawnPoints.end())
 		return 0;
 
 	return m_CurRespawnPoint->second;
@@ -890,14 +917,14 @@ ITagPoint* CXServer::GetNextRespawnPoint()
 // get a specific respawn point
 ITagPoint* CXServer::GetPrevRespawnPoint()
 {
-	if(m_vRespawnPoints.empty())
+	if (m_vRespawnPoints.empty())
 		return NULL;
 
-	RespawnPointMap::reverse_iterator	revCurRespawnPoint(m_CurRespawnPoint);
+	RespawnPointMap::reverse_iterator revCurRespawnPoint(m_CurRespawnPoint);
 
-	if( revCurRespawnPoint!=m_vRespawnPoints.rend() )
+	if (revCurRespawnPoint != m_vRespawnPoints.rend())
 	{
-		if(++revCurRespawnPoint == m_vRespawnPoints.rend() )
+		if (++revCurRespawnPoint == m_vRespawnPoints.rend())
 		{
 			m_CurRespawnPoint = m_vRespawnPoints.begin();
 		}
@@ -916,11 +943,11 @@ ITagPoint* CXServer::GetPrevRespawnPoint()
 
 //////////////////////////////////////////////////////////////////////
 // get a specific respawn point
-ITagPoint* CXServer::GetRespawnPoint(char *name)
+ITagPoint* CXServer::GetRespawnPoint(char* name)
 {
-	RespawnPointMap::iterator itr=m_vRespawnPoints.find(name);
+	RespawnPointMap::iterator itr = m_vRespawnPoints.find(name);
 
-	if(itr == m_vRespawnPoints.end())
+	if (itr == m_vRespawnPoints.end())
 		return NULL;
 
 	return itr->second;
@@ -928,41 +955,41 @@ ITagPoint* CXServer::GetRespawnPoint(char *name)
 
 //////////////////////////////////////////////////////////////////////
 // get a random respawn point
-ITagPoint* CXServer::GetRandomRespawnPoint(const char *sFilter)
+ITagPoint* CXServer::GetRandomRespawnPoint(const char* sFilter)
 {
-	if(m_vRespawnPoints.empty())
+	if (m_vRespawnPoints.empty())
 	{
 		m_pGame->m_pLog->Log("CXServer::GetRandomRespawnPoint NO RESPAWN POINT");
 		return NULL; // no respawn point
 	}
-	
-	int RandomRespawn = 0;
 
-	ITagPoint *point;
-	int count;
+	int                       RandomRespawn = 0;
+
+	ITagPoint*                point;
+	int                       count;
 
 	RespawnPointMap::iterator itr;
-	if(sFilter==NULL)
+	if (sFilter == NULL)
 	{
-		count=m_vRespawnPoints.size();
+		count = m_vRespawnPoints.size();
 
-		itr=m_vRespawnPoints.begin();
+		itr   = m_vRespawnPoints.begin();
 	}
 	else
 	{
-		count=m_vRespawnPoints.count(sFilter);
-		
-		if(!count)
+		count = m_vRespawnPoints.count(sFilter);
+
+		if (!count)
 		{
-			m_pGame->m_pLog->Log("CXServer::GetRandomRespawnPoint NO RESPAWN POINT[%s]",sFilter);
+			m_pGame->m_pLog->Log("CXServer::GetRandomRespawnPoint NO RESPAWN POINT[%s]", sFilter);
 			return nullptr; // no respawn point
 		}
-		itr=m_vRespawnPoints.find(sFilter);
+		itr = m_vRespawnPoints.find(sFilter);
 	}
 
-	RandomRespawn=rand() % count;
+	RandomRespawn = rand() % count;
 
-	while( RandomRespawn-- ) 
+	while (RandomRespawn--)
 		++itr;
 
 	point = itr->second;
@@ -972,96 +999,96 @@ ITagPoint* CXServer::GetRandomRespawnPoint(const char *sFilter)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::BroadcastReliable(XSERVERMSG msg, CStream &stmIn,bool bSecondaryChannel)
+void CXServer::BroadcastReliable(XSERVERMSG msg, CStream& stmIn, bool bSecondaryChannel)
 {
 	CStream stmToSend;
 
 	stmToSend.WritePkd(msg);
 	stmToSend.Write(stmIn);
-	
+
 	// now... broadcast !
 	XSlotMap::iterator i;
 
-	for(i=m_mapXSlots.begin(); i!=m_mapXSlots.end(); ++i)
+	for (i = m_mapXSlots.begin(); i != m_mapXSlots.end(); ++i)
 	{
-		CXServerSlot *pSlot = i->second;
-		
-		if(!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
-			pSlot->SendReliable(stmToSend,bSecondaryChannel);
-	}	
+		CXServerSlot* pSlot = i->second;
+
+		if (!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
+			pSlot->SendReliable(stmToSend, bSecondaryChannel);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::BroadcastUnreliable(XSERVERMSG msg, CStream &stmIn,int nExclude)
+void CXServer::BroadcastUnreliable(XSERVERMSG msg, CStream& stmIn, int nExclude)
 {
 	CStream stmToSend;
 
 	stmToSend.WritePkd(msg);
 	stmToSend.Write(stmIn);
-	
+
 	// now... broadcast !
 	XSlotMap::iterator i;
 
-	for(i=m_mapXSlots.begin(); i!=m_mapXSlots.end(); ++i)
+	for (i = m_mapXSlots.begin(); i != m_mapXSlots.end(); ++i)
 	{
-		CXServerSlot *pSlot = i->second;
-		
-		if(!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && !nExclude==pSlot->GetID() && pSlot->IsContextReady())
+		CXServerSlot* pSlot = i->second;
+
+		if (!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && !nExclude == pSlot->GetID() && pSlot->IsContextReady())
 			pSlot->SendUnreliable(stmToSend);
-	}	
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::BroadcastText(const char *sText, float fLifeTime)
+void CXServer::BroadcastText(const char* sText, float fLifeTime)
 {
 	// now... broadcast !
 	XSlotMap::iterator i;
 
-	for(i=m_mapXSlots.begin(); i!=m_mapXSlots.end(); ++i)
+	for (i = m_mapXSlots.begin(); i != m_mapXSlots.end(); ++i)
 	{
-		CXServerSlot *pSlot = i->second;
-		
-		if(!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
+		CXServerSlot* pSlot = i->second;
+
+		if (!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
 			pSlot->SendText(sText, fLifeTime);
-	}	
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::OnClientMsgText(EntityId sender,CStream &stm)
+void CXServer::OnClientMsgText(EntityId sender, CStream& stm)
 {
 	TextMessage tm;
 	tm.Read(stm);
-	m_ServerRules.OnClientMsgText(sender,tm);
+	m_ServerRules.OnClientMsgText(sender, tm);
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::BindEntity(EntityId idParent,EntityId idChild,unsigned char cParam)
+void CXServer::BindEntity(EntityId idParent, EntityId idChild, unsigned char cParam)
 {
-	IEntity *pChild=m_pISystem->GetEntity(idChild);
-	IEntity *pParent=m_pISystem->GetEntity(idParent);
-	CStream stm;
+	IEntity* pChild  = m_pISystem->GetEntity(idChild);
+	IEntity* pParent = m_pISystem->GetEntity(idParent);
+	CStream  stm;
 	stm.Write(idParent);
 	stm.Write(idChild);
 	stm.Write(cParam);
 	stm.Write(true);
 	stm.Write(pParent->GetAngles(1));
 	stm.Write(pChild->GetAngles(1));
-	BroadcastReliable(XSERVERMSG_BINDENTITY,stm,false);
+	BroadcastReliable(XSERVERMSG_BINDENTITY, stm, false);
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::UnbindEntity(EntityId idParent,EntityId idChild,unsigned char cParam)
+void CXServer::UnbindEntity(EntityId idParent, EntityId idChild, unsigned char cParam)
 {
-	IEntity *pChild=m_pISystem->GetEntity(idChild);
-	IEntity *pParent=m_pISystem->GetEntity(idParent);
-	CStream stm;
+	IEntity* pChild  = m_pISystem->GetEntity(idChild);
+	IEntity* pParent = m_pISystem->GetEntity(idParent);
+	CStream  stm;
 	stm.Write(idParent);
 	stm.Write(idChild);
 	stm.Write(cParam);
 	stm.Write(false);
 	stm.Write(pParent->GetAngles(1));
 	stm.Write(pChild->GetAngles(1));
-	BroadcastReliable(XSERVERMSG_BINDENTITY,stm,false);
+	BroadcastReliable(XSERVERMSG_BINDENTITY, stm, false);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1078,204 +1105,204 @@ int CXServer::GetNumPlayers()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::AddToTeam(const char *sTeam,int eid)
+void CXServer::AddToTeam(const char* sTeam, int eid)
 {
-	int nTID=m_pISystem->GetTeamId(sTeam);
-	if(nTID!=-1)
+	int nTID = m_pISystem->GetTeamId(sTeam);
+	if (nTID != -1)
 	{
-		m_pISystem->SetTeam(eid,nTID);
+		m_pISystem->SetTeam(eid, nTID);
 		CStream stm;
 		WRITE_COOKIE(stm);
 		stm.Write((EntityId)eid);
 		stm.Write((BYTE)nTID);
 		WRITE_COOKIE(stm);
-		BroadcastReliable(XSERVERMSG_SETTEAM, stm,false);
+		BroadcastReliable(XSERVERMSG_SETTEAM, stm, false);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
 void CXServer::RemoveFromTeam(int eid)
 {
-	m_pISystem->SetTeam(eid,0xFF);
+	m_pISystem->SetTeam(eid, 0xFF);
 	CStream stm;
-	BYTE nNoTeam=0xFF;
+	BYTE    nNoTeam = 0xFF;
 	WRITE_COOKIE(stm);
 	stm.Write((EntityId)eid);
 	stm.Write(nNoTeam);
 	WRITE_COOKIE(stm);
-	BroadcastReliable(XSERVERMSG_SETTEAM, stm,false);
+	BroadcastReliable(XSERVERMSG_SETTEAM, stm, false);
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::AddTeam(const char *sTeam)
+void CXServer::AddTeam(const char* sTeam)
 {
-	int nTID=m_pISystem->GetTeamId(sTeam);
-	if(nTID==-1)
+	int nTID = m_pISystem->GetTeamId(sTeam);
+	if (nTID == -1)
 	{
-		nTID=m_pISystem->AddTeam(sTeam);
+		nTID = m_pISystem->AddTeam(sTeam);
 		CStream stm;
 		WRITE_COOKIE(stm);
 		stm.Write(sTeam);
 		stm.Write((BYTE)nTID);
 		WRITE_COOKIE(stm);
-		BroadcastReliable(XSERVERMSG_ADDTEAM, stm,false);
+		BroadcastReliable(XSERVERMSG_ADDTEAM, stm, false);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::RemoveTeam(const char *sTeam)
+void CXServer::RemoveTeam(const char* sTeam)
 {
-	int nTID=m_pISystem->GetTeamId(sTeam);
-	if(nTID!=-1)
+	int nTID = m_pISystem->GetTeamId(sTeam);
+	if (nTID != -1)
 	{
 		m_pISystem->RemoveTeam(nTID);
 		CStream stm;
 		stm.Write((BYTE)nTID);
-		BroadcastReliable(XSERVERMSG_REMOVETEAM, stm,false);
+		BroadcastReliable(XSERVERMSG_REMOVETEAM, stm, false);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::SendRequestScriptHash( EntityId Entity, const char *szPath, const char *szKey )
+void CXServer::SendRequestScriptHash(EntityId Entity, const char* szPath, const char* szKey)
 {
-	CStream stm;
-	
-	IBitStream *pBitStream = m_pGame->GetIBitStream();
+	CStream     stm;
 
-	uint32 dwServerStartHash=0;								// todo change
+	IBitStream* pBitStream        = m_pGame->GetIBitStream();
 
-	pBitStream->WriteBitStream(stm,Entity,eEntityId);									// e.g. INVALID_WID for globals, otherwise it's and entity
-	pBitStream->WriteBitStream(stm,szPath,255,eASCIIText);						// e.g. "cnt.myTable"
-	pBitStream->WriteBitStream(stm,szKey,255,eASCIIText);							// e.g. "luaFunc1" or "" 
-	pBitStream->WriteBitStream(stm,dwServerStartHash,eDoNotCompress);	// start hash
+	uint32      dwServerStartHash = 0; // todo change
 
-	BroadcastReliable(XSERVERMSG_REQUESTSCRIPTHASH,stm,true);		// send in secondary channel to prevent stall
+	pBitStream->WriteBitStream(stm, Entity, eEntityId);                 // e.g. INVALID_WID for globals, otherwise it's and entity
+	pBitStream->WriteBitStream(stm, szPath, 255, eASCIIText);           // e.g. "cnt.myTable"
+	pBitStream->WriteBitStream(stm, szKey, 255, eASCIIText);            // e.g. "luaFunc1" or ""
+	pBitStream->WriteBitStream(stm, dwServerStartHash, eDoNotCompress); // start hash
 
-	m_pGame->m_pLog->Log("RequestScriptHash '%s' '%s'",szPath,szKey);
+	BroadcastReliable(XSERVERMSG_REQUESTSCRIPTHASH, stm, true); // send in secondary channel to prevent stall
+
+	m_pGame->m_pLog->Log("RequestScriptHash '%s' '%s'", szPath, szKey);
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::SetTeamScore(const char *sTeam,int score)
+void CXServer::SetTeamScore(const char* sTeam, int score)
 {
-	int nTID=m_pISystem->GetTeamId(sTeam);
-	if(nTID!=-1)
+	int nTID = m_pISystem->GetTeamId(sTeam);
+	if (nTID != -1)
 	{
 		CStream stm;
 		WRITE_COOKIE(stm);
-		int curscore=m_pISystem->GetTeamScore(nTID);
-		if(curscore==score)return;
-		m_pISystem->SetTeamScore(nTID,score);
+		int curscore = m_pISystem->GetTeamScore(nTID);
+		if (curscore == score) return;
+		m_pISystem->SetTeamScore(nTID, score);
 		stm.Write((BYTE)nTID);
 		stm.Write((short)score);
 		WRITE_COOKIE(stm);
-		BroadcastReliable(XSERVERMSG_SETTEAMSCORE, stm,true);
+		BroadcastReliable(XSERVERMSG_SETTEAMSCORE, stm, true);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::SetTeamFlags(const char *sTeam,int flags)
+void CXServer::SetTeamFlags(const char* sTeam, int flags)
 {
-	int nTID=m_pISystem->GetTeamId(sTeam);
-	if(nTID!=-1)
+	int nTID = m_pISystem->GetTeamId(sTeam);
+	if (nTID != -1)
 	{
 		CStream stm;
 		WRITE_COOKIE(stm);
-		int curflags=m_pISystem->GetTeamFlags(nTID);
-		if(curflags==flags)return;
-		m_pISystem->SetTeamFlags(nTID,flags);
+		int curflags = m_pISystem->GetTeamFlags(nTID);
+		if (curflags == flags) return;
+		m_pISystem->SetTeamFlags(nTID, flags);
 		stm.Write((BYTE)nTID);
 		stm.WritePkd(flags);
 		WRITE_COOKIE(stm);
-		BroadcastReliable(XSERVERMSG_SETTEAMFLAGS, stm,true);
+		BroadcastReliable(XSERVERMSG_SETTEAMFLAGS, stm, true);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::BroadcastCommand(const char *sCmd)
+void CXServer::BroadcastCommand(const char* sCmd)
 {
 	// now... broadcast !
 	XSlotMap::iterator i;
 
-	for(i=m_mapXSlots.begin(); i!=m_mapXSlots.end(); ++i)
+	for (i = m_mapXSlots.begin(); i != m_mapXSlots.end(); ++i)
 	{
-		CXServerSlot *pSlot = i->second;
-		
-		if(!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
+		CXServerSlot* pSlot = i->second;
+
+		if (!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
 			pSlot->SendCommand(sCmd);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::BroadcastCommand(const char *sCmd, const Legacy::Vec3 &invPos, const Legacy::Vec3 &invNormal, 
-															 const EntityId inId, const unsigned char incUserByte )
+void CXServer::BroadcastCommand(const char* sCmd, const Legacy::Vec3& invPos, const Legacy::Vec3& invNormal,
+                                const EntityId inId, const unsigned char incUserByte)
 {
 	// now... broadcast !
 	XSlotMap::iterator i;
 
-	for(i=m_mapXSlots.begin(); i!=m_mapXSlots.end(); ++i)
+	for (i = m_mapXSlots.begin(); i != m_mapXSlots.end(); ++i)
 	{
-		CXServerSlot *pSlot = i->second;
-		
-		if(!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
+		CXServerSlot* pSlot = i->second;
+
+		if (!pSlot->IsXServerSlotGarbage() && pSlot->IsReady() && pSlot->IsContextReady())
 			pSlot->SendCommand(sCmd, invPos, invNormal, inId, incUserByte);
-	}	
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CXServer::SyncVariable(ICVar *p)
+void CXServer::SyncVariable(ICVar* p)
 {
 	CStream stm;
 	stm.Write(p->GetName());
 	stm.Write(p->GetString());
 
 	XSlotMap::iterator i = m_mapXSlots.begin();
-	while(i != m_mapXSlots.end())
+	while (i != m_mapXSlots.end())
 	{
-		CXServerSlot *pSlot = i->second;
-		
-		if(pSlot->IsXServerSlotGarbage() || (!pSlot->IsReady()) )
+		CXServerSlot* pSlot = i->second;
+
+		if (pSlot->IsXServerSlotGarbage() || (!pSlot->IsReady()))
 		{
 			++i;
 			continue;
-		}			
-		
-		pSlot->SendReliableMsg(XSERVERMSG_SYNCVAR,stm,true,p->GetName());
-		
+		}
+
+		pSlot->SendReliableMsg(XSERVERMSG_SYNCVAR, stm, true, p->GetName());
+
 		++i;
-	}	
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-// for AI multiplayer coop 
-void CXServer::SyncAIState(void )
+// for AI multiplayer coop
+void CXServer::SyncAIState(void)
 {
 	CStream stm;
 
 	// [marco] petar add your data into the stream -
-	// make it as small as possible 
-	int nDummy=123;
-	stm.Write(nDummy);	
+	// make it as small as possible
+	int     nDummy = 123;
+	stm.Write(nDummy);
 
 	XSlotMap::iterator i = m_mapXSlots.begin();
-	while(i != m_mapXSlots.end())
+	while (i != m_mapXSlots.end())
 	{
-		CXServerSlot *pSlot = i->second;
+		CXServerSlot* pSlot = i->second;
 
-		if (pSlot->IsXServerSlotGarbage() || (!pSlot->IsReady()) )
+		if (pSlot->IsXServerSlotGarbage() || (!pSlot->IsReady()))
 		{
 			++i;
 			continue;
-		}			
+		}
 
-		// [marco] petar, now it broadcasts AI state to all clients - 
+		// [marco] petar, now it broadcasts AI state to all clients -
 		// if you need to send only to a certain client which is better
 		// then restrict the range
 		// I suppose you need it reliable - in this
 		// case do not abuse bandwidth
-		pSlot->SendReliableMsg(XSERVERMSG_AISTATE,stm,false);
+		pSlot->SendReliableMsg(XSERVERMSG_AISTATE, stm, false);
 
 		++i;
-	}	// i
+	} // i
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1284,42 +1311,43 @@ unsigned int CXServer::GetSchedulingDelay()
 	assert(sv_min_scheduling_delay);
 	assert(sv_max_scheduling_delay);
 
-	if(!sv_min_scheduling_delay || !sv_max_scheduling_delay)
+	if (!sv_min_scheduling_delay || !sv_max_scheduling_delay)
 	{
 		m_pGame->m_pLog->LogError("CXServer::GetSchedulingDelay error");
 		return 100;
 	}
 
-	unsigned int nDelay=sv_min_scheduling_delay->GetIVal();
-	unsigned int nMaxDelay=sv_max_scheduling_delay->GetIVal();
+	unsigned int       nDelay    = sv_min_scheduling_delay->GetIVal();
+	unsigned int       nMaxDelay = sv_max_scheduling_delay->GetIVal();
 
-	XSlotMap::iterator i = m_mapXSlots.begin();
+	XSlotMap::iterator i         = m_mapXSlots.begin();
 
-	for(;i!=m_mapXSlots.end();++i)
+	for (; i != m_mapXSlots.end(); ++i)
 	{
-		CXServerSlot *slot=i->second;			assert(slot);
+		CXServerSlot* slot = i->second;
+		assert(slot);
 
-		if(slot)
-			nDelay = max(nDelay,min(nMaxDelay, slot->GetPing()*3>>2)); // half-ping multiplied by 1.5
+		if (slot)
+			nDelay = max(nDelay, min(nMaxDelay, slot->GetPing() * 3 >> 2)); // half-ping multiplied by 1.5
 	}
 
-	return m_pGame->SnapTime(nDelay*0.001f,1.0f);
+	return m_pGame->SnapTime(nDelay * 0.001f, 1.0f);
 }
 
 //////////////////////////////////////////////////////////////////////
-CXServerSlot* CXServer::GetServerSlotByIP( unsigned int clientIP ) const
+CXServerSlot* CXServer::GetServerSlotByIP(unsigned int clientIP) const
 {
-	for(XSlotMap::const_iterator itor=m_mapXSlots.begin();itor!=m_mapXSlots.end();++itor)
+	for (XSlotMap::const_iterator itor = m_mapXSlots.begin(); itor != m_mapXSlots.end(); ++itor)
 	{
-		CXServerSlot *slot=itor->second;
-		if(slot->GetIServerSlot()->GetClientIP() == clientIP)
+		CXServerSlot* slot = itor->second;
+		if (slot->GetIServerSlot()->GetClientIP() == clientIP)
 			return itor->second;
 	}
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////// 
-bool CXServer::IsIDBanned(const BannedID &ID)
+//////////////////////////////////////////////////////////////////////
+bool CXServer::IsIDBanned(const BannedID& ID)
 {
 	for (BannedIDListItor it = m_vBannedIDList.begin(); it != m_vBannedIDList.end(); ++it)
 	{
@@ -1332,8 +1360,8 @@ bool CXServer::IsIDBanned(const BannedID &ID)
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CXServer::BanID(const BannedID &ID)
+//////////////////////////////////////////////////////////////////////
+void CXServer::BanID(const BannedID& ID)
 {
 	if (!IsIDBanned(ID))
 	{
@@ -1343,8 +1371,8 @@ void CXServer::BanID(const BannedID &ID)
 	SaveBanList(1, 0);
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CXServer::UnbanID(const BannedID &ID)
+//////////////////////////////////////////////////////////////////////
+void CXServer::UnbanID(const BannedID& ID)
 {
 	for (BannedIDListItor it = m_vBannedIDList.begin(); it != m_vBannedIDList.end(); ++it)
 	{
@@ -1358,7 +1386,7 @@ void CXServer::UnbanID(const BannedID &ID)
 	}
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 bool CXServer::IsIPBanned(const unsigned int dwIP)
 {
 	for (BannedIPListItor it = m_vBannedIPList.begin(); it != m_vBannedIPList.end(); ++it)
@@ -1372,7 +1400,7 @@ bool CXServer::IsIPBanned(const unsigned int dwIP)
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 void CXServer::BanIP(const unsigned int dwIP)
 {
 	if (!IsIPBanned(dwIP))
@@ -1383,7 +1411,7 @@ void CXServer::BanIP(const unsigned int dwIP)
 	SaveBanList(0, 1);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 void CXServer::UnbanIP(const unsigned int dwIP)
 {
 	for (BannedIPListItor it = m_vBannedIPList.begin(); it != m_vBannedIPList.end(); ++it)
@@ -1399,20 +1427,20 @@ void CXServer::UnbanIP(const unsigned int dwIP)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXServer::CheaterFound( const unsigned int dwIP,int type,const char *sMsg )
+void CXServer::CheaterFound(const unsigned int dwIP, int type, const char* sMsg)
 {
-	CXServerSlot *pSlot = GetServerSlotByIP(dwIP);
+	CXServerSlot* pSlot = GetServerSlotByIP(dwIP);
 	if (pSlot)
 	{
-		string str = string("Client ") +  pSlot->GetName() +" detected to be a $3Cheater";
-		BroadcastText( str.c_str() );
+		string str = string("Client ") + pSlot->GetName() + " detected to be a $3Cheater";
+		BroadcastText(str.c_str());
 
-		CryLogAlways( "<CHEATER> #%d %s",pSlot->GetID(),(const char*)pSlot->GetName() );
+		CryLogAlways("<CHEATER> #%d %s", pSlot->GetID(), (const char*)pSlot->GetName());
 		// Kick offender.
 		if (!pSlot->IsLocalHost())
 		{
 			if (m_pGame->sv_cheater_kick->GetIVal())
-				pSlot->Disconnect( sMsg );
+				pSlot->Disconnect(sMsg);
 		}
 	}
 	if (m_pGame->sv_cheater_ban->GetIVal() && m_pGame->sv_cheater_kick->GetIVal())
@@ -1420,27 +1448,27 @@ void CXServer::CheaterFound( const unsigned int dwIP,int type,const char *sMsg )
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXServer::GetSlotInfo(  const unsigned int dwIP,SSlotInfo &info , int nameOnly )
+bool CXServer::GetSlotInfo(const unsigned int dwIP, SSlotInfo& info, int nameOnly)
 {
-	memset ( &info , 0 , sizeof ( info ) ) ;
-	CXServerSlot *pSlot = GetServerSlotByIP(dwIP);
+	memset(&info, 0, sizeof(info));
+	CXServerSlot* pSlot = GetServerSlotByIP(dwIP);
 	if (pSlot)
 	{
-		strncpy( info.playerName,pSlot->GetName(),sizeof(info.playerName) );
-		info.playerName[sizeof(info.playerName)-1] = 0;
+		strncpy(info.playerName, pSlot->GetName(), sizeof(info.playerName));
+		info.playerName[sizeof(info.playerName) - 1] = 0;
 
-		if ( *info.playerName == 0 && pSlot->CanSpawn() ) strcpy ( info.playerName , "*NO NAME*" ) ;
+		if (*info.playerName == 0 && pSlot->CanSpawn()) strcpy(info.playerName, "*NO NAME*");
 
-		if ( nameOnly ) return true;
+		if (nameOnly) return true;
 
-		IEntity *pPlayerEntity = m_pISystem->GetEntity(pSlot->GetPlayerId());
-		if(pPlayerEntity && pPlayerEntity->GetContainer())
+		IEntity* pPlayerEntity = m_pISystem->GetEntity(pSlot->GetPlayerId());
+		if (pPlayerEntity && pPlayerEntity->GetContainer())
 		{
-			CPlayer *pPlayer = NULL;
-			pPlayerEntity->GetContainer()->QueryContainerInterface(CIT_IPLAYER,(void **)&pPlayer);
+			CPlayer* pPlayer = NULL;
+			pPlayerEntity->GetContainer()->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer);
 			if (pPlayer)
 			{
-				info.score = pPlayer->m_stats.score;
+				info.score  = pPlayer->m_stats.score;
 				info.deaths = pPlayer->m_stats.deaths;
 			}
 		}
@@ -1456,7 +1484,7 @@ void CXServer::SaveBanList(bool bSaveID, bool bSaveIP)
 	{
 		GetISystem()->GetILog()->Log("\001Saving banned IP list...");
 
-		FILE *hFile = fopen("bannedip.txt", "w+");
+		FILE* hFile = fopen("bannedip.txt", "w+");
 
 		if (!hFile)
 		{
@@ -1467,7 +1495,7 @@ void CXServer::SaveBanList(bool bSaveID, bool bSaveIP)
 
 		for (BannedIPList::iterator it = m_vBannedIPList.begin(); it != m_vBannedIPList.end(); ++it)
 		{
-			char szLine[256];
+			char       szLine[256];
 
 			CIPAddress ip;
 			ip.m_Address.ADDR = *it;
@@ -1482,12 +1510,11 @@ void CXServer::SaveBanList(bool bSaveID, bool bSaveIP)
 		fclose(hFile);
 	}
 
-	
 	if (bSaveID)
 	{
 		GetISystem()->GetILog()->Log("\001Saving banned ID list...");
 
-		FILE *hFile = fopen("bannedid.txt", "w+");
+		FILE* hFile = fopen("bannedid.txt", "w+");
 
 		if (!hFile)
 		{
@@ -1498,17 +1525,17 @@ void CXServer::SaveBanList(bool bSaveID, bool bSaveIP)
 
 		for (BannedIDList::iterator it = m_vBannedIDList.begin(); it != m_vBannedIDList.end(); ++it)
 		{
-			char szLine[256] = {0};
+			char     szLine[256] = {0};
 
 			BannedID ban(*it);
 
-			char szBanID[256] = {0};
+			char     szBanID[256] = {0};
 
 			for (int i = 0; i < ban.bSize; i++)
 			{
-				sprintf(&szBanID[i*2], "%02x", ban.vBanID[i]);
+				sprintf(&szBanID[i * 2], "%02x", ban.vBanID[i]);
 			}
-			
+
 			sprintf(szLine, "%-36s %s\n", szBanID, it->szName.c_str());
 			fputs(szLine, hFile);
 #if defined(LINUX)
@@ -1529,7 +1556,7 @@ void CXServer::LoadBanList(bool bLoadID, bool bLoadIP)
 		m_vBannedIPList.clear();
 		GetISystem()->GetILog()->Log("\001Loading banned IP list...");
 
-		FILE *hFile = fopen("bannedip.txt", "r");
+		FILE* hFile = fopen("bannedip.txt", "r");
 
 		if (!hFile)
 		{
@@ -1540,7 +1567,7 @@ void CXServer::LoadBanList(bool bLoadID, bool bLoadIP)
 
 		char szLine[1024] = {0};
 
-		while(fgets(szLine, 1024, hFile))
+		while (fgets(szLine, 1024, hFile))
 		{
 			char szIP[1024] = {0};
 
@@ -1568,7 +1595,7 @@ void CXServer::LoadBanList(bool bLoadID, bool bLoadIP)
 		m_vBannedIDList.clear();
 		GetISystem()->GetILog()->Log("\001Loading banned ID list...");
 
-		FILE *hFile = fopen("bannedid.txt", "r");
+		FILE* hFile = fopen("bannedid.txt", "r");
 
 		if (!hFile)
 		{
@@ -1579,11 +1606,11 @@ void CXServer::LoadBanList(bool bLoadID, bool bLoadIP)
 
 		char szLine[1024] = {0};
 
-		while(fgets(szLine, 1024, hFile))
+		while (fgets(szLine, 1024, hFile))
 		{
-			char szName[1024] = {0};
+			char szName[1024]  = {0};
 			char szBanID[1024] = {0};
-			char szByte[5] = {'0', 'x', 0, 0, 0};
+			char szByte[5]     = {'0', 'x', 0, 0, 0};
 
 			// remove trailing spaces
 			if (sscanf(szLine, "%s %s", szBanID, szName) != 2)
@@ -1595,11 +1622,11 @@ void CXServer::LoadBanList(bool bLoadID, bool bLoadIP)
 				szName[0] = 0;
 			}
 
-			int isize = strlen(szBanID);
+			int      isize = strlen(szBanID);
 
 			BannedID ban;
 
-			ban.bSize = isize >> 1;
+			ban.bSize  = isize >> 1;
 			ban.szName = szName;
 
 			// must be at least a dword
@@ -1610,10 +1637,10 @@ void CXServer::LoadBanList(bool bLoadID, bool bLoadIP)
 
 			for (int i = 0; i < ban.bSize; i++)
 			{
-				szByte[2] = szBanID[i*2];
-				szByte[3] = szBanID[i*2+1];
+				szByte[2] = szBanID[i * 2];
+				szByte[3] = szBanID[i * 2 + 1];
 
-				int b = 0;
+				int b     = 0;
 				sscanf(szByte, "%x", &b);
 
 				ban.vBanID[i] = b;

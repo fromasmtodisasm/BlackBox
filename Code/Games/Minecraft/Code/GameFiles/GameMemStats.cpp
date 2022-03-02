@@ -1,7 +1,7 @@
 #include <TagPoint.hpp>
 
 //////////////////////////////////////////////////////////////////////////
-unsigned	CTagPoint::MemStats() const
+unsigned CTagPoint::MemStats() const
 {
 	unsigned memSize = sizeof *this;
 	memSize += m_sName.capacity();
@@ -11,16 +11,14 @@ unsigned	CTagPoint::MemStats() const
 //////////////////////////////////////////////////////////////////////////
 unsigned CEntityClassRegistry::MemStats() const
 {
-unsigned size = sizeof *this;
+	unsigned size = sizeof *this;
 
 	//for(EntityClassMapItor itr=m_vEntityClasses.begin(); itr!=m_vEntityClasses.end(); itr++)
-	for(const auto& itr : m_vEntityClasses)
+	for (const auto& itr : m_vEntityClasses)
 	{
-	  size += sizeof(EntityClass) + (itr.second).strFullScriptFile.capacity()
-						+ (itr.second).strScriptFile.capacity()
-						+ (itr.second).strClassName.capacity();
+		size += sizeof(EntityClass) + (itr.second).strFullScriptFile.capacity() + (itr.second).strScriptFile.capacity() + (itr.second).strClassName.capacity();
 	}
-	
+
 	return size;
 }
 

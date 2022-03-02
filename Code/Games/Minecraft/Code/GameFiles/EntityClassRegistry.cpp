@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: EntityClassRegistry.cpp
@@ -33,9 +33,10 @@ CEntityClassRegistry::~CEntityClassRegistry()
 //////////////////////////////////////////////////////////////////////////
 void CEntityClassRegistry::ResetClassRegistry()
 {
-	if(m_pScriptSystem){
-		EntityClassMapItor itor=m_vEntityClasses.begin();
-		while(itor!=m_vEntityClasses.end())
+	if (m_pScriptSystem)
+	{
+		EntityClassMapItor itor = m_vEntityClasses.begin();
+		while (itor != m_vEntityClasses.end())
 		{
 			m_pScriptSystem->SetGlobalToNull(itor->second.strClassName.c_str());
 			m_pScriptSystem->UnloadScript(itor->second.strFullScriptFile.c_str());
@@ -47,9 +48,9 @@ void CEntityClassRegistry::ResetClassRegistry()
 
 //////////////////////////////////////////////////////////////////////////
 // Initializes the ClassRegistry. Must be called before usage of any other functions in this class.
-void CEntityClassRegistry::Init( ISystem *pSystem )
+void CEntityClassRegistry::Init(ISystem* pSystem)
 {
-	m_pSystem = pSystem;
+	m_pSystem       = pSystem;
 	m_pScriptSystem = m_pSystem->GetIScriptSystem();
 
 	ResetClassRegistry();
@@ -57,17 +58,17 @@ void CEntityClassRegistry::Init( ISystem *pSystem )
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CEntityClassRegistry::SetGameType( const string &sGameType )
+void CEntityClassRegistry::SetGameType(const string& sGameType)
 {
-	m_sGameType=sGameType;
-	
+	m_sGameType = sGameType;
+
 	// Unload all entity scripts.
-	if(m_pScriptSystem)
+	if (m_pScriptSystem)
 	{
-		EntityClassMapItor itor=m_vEntityClasses.begin();
-		while(itor!=m_vEntityClasses.end())
+		EntityClassMapItor itor = m_vEntityClasses.begin();
+		while (itor != m_vEntityClasses.end())
 		{
-			EntityClass *pEntClass = &(itor->second);
+			EntityClass* pEntClass = &(itor->second);
 			if (pEntClass->bLoaded)
 			{
 				m_pScriptSystem->SetGlobalToNull(itor->second.strClassName.c_str());
@@ -83,13 +84,13 @@ void CEntityClassRegistry::SetGameType( const string &sGameType )
 void CEntityClassRegistry::Debug()
 {
 	EntityClassMapItor itor;
-	itor=m_vEntityClasses.begin();
-	while(itor!=m_vEntityClasses.end())
+	itor = m_vEntityClasses.begin();
+	while (itor != m_vEntityClasses.end())
 	{
 		char str[256];
 
-		sprintf(str," CEntityClassRegistry::Debug %c %d '%s'\n",
-			itor->second.bLoaded?'1':'0',itor->first,itor->second.strClassName.c_str());
+		sprintf(str, " CEntityClassRegistry::Debug %c %d '%s'\n",
+		        itor->second.bLoaded ? '1' : '0', itor->first, itor->second.strClassName.c_str());
 
 		OutputDebugString(str);
 
@@ -99,21 +100,21 @@ void CEntityClassRegistry::Debug()
 
 //////////////////////////////////////////////////////////////////////////
 // Register a new class in the registry.
-bool CEntityClassRegistry::AddClass(const EntityClassId _ClassId,const char* sClassName,const char* sScriptFile,bool bReserved, bool bForceReload)
+bool CEntityClassRegistry::AddClass(const EntityClassId _ClassId, const char* sClassName, const char* sScriptFile, bool bReserved, bool bForceReload)
 {
-	ILog *pLog = m_pSystem->GetILog();
+	ILog*       pLog = m_pSystem->GetILog();
 	EntityClass ec;
 
 	//is the id already used?
-	if(GetByClassId(_ClassId,false)!=NULL && !bForceReload)
+	if (GetByClassId(_ClassId, false) != NULL && !bForceReload)
 	{
-		CryError( "<EntityClassRegistry> AddClass called with duplicate ClassID ID=%d Class=\"%s\"",(int)_ClassId,sClassName );	
+		CryError("<EntityClassRegistry> AddClass called with duplicate ClassID ID=%d Class=\"%s\"", (int)_ClassId, sClassName);
 		return false;
 	}
 
-	if (GetByClass(sClassName,false)!=NULL)
+	if (GetByClass(sClassName, false) != NULL)
 	{
-		CryError( "<EntityClassRegistry> AddClass called with duplicate Class Name ID=%d Class=\"%s\"",(int)_ClassId,sClassName );	
+		CryError("<EntityClassRegistry> AddClass called with duplicate Class Name ID=%d Class=\"%s\"", (int)_ClassId, sClassName);
 		return false;
 	}
 
@@ -127,23 +128,23 @@ bool CEntityClassRegistry::AddClass(const EntityClassId _ClassId,const char* sCl
 		// lets try to load the script from the current gametype-folder
 		if (m_sGameType.empty())
 #if defined(LINUX)
-			sFilename=string("Scripts/Default/Entities/")+sScriptFile;
+			sFilename = string("Scripts/Default/Entities/") + sScriptFile;
 #else
-			sFilename=string("Scripts\\Default\\Entities\\")+sScriptFile;
+			sFilename = string("Scripts\\Default\\Entities\\") + sScriptFile;
 #endif
 		else
 #if defined(LINUX)
-			sFilename="Scripts/"+m_sGameType+"/Entities/"+sScriptFile;
+			sFilename = "Scripts/" + m_sGameType + "/Entities/" + sScriptFile;
 #else
-			sFilename="Scripts\\"+m_sGameType+"\\Entities\\"+sScriptFile;
+			sFilename = "Scripts\\" + m_sGameType + "\\Entities\\" + sScriptFile;
 #endif
 	}
 
-	ec.ClassId=_ClassId;
-	ec.strClassName=sClassName;
-	ec.strScriptFile=sScriptFile;
-	ec.strFullScriptFile = sFilename;
-	ec.bReserved=bReserved;
+	ec.ClassId                 = _ClassId;
+	ec.strClassName            = sClassName;
+	ec.strScriptFile           = sScriptFile;
+	ec.strFullScriptFile       = sFilename;
+	ec.bReserved               = bReserved;
 	m_vEntityClasses[_ClassId] = ec;
 
 	return true;
@@ -151,18 +152,18 @@ bool CEntityClassRegistry::AddClass(const EntityClassId _ClassId,const char* sCl
 
 //////////////////////////////////////////////////////////////////////////
 // Retrieve a class-description by the class-name
-EntityClass *CEntityClassRegistry::GetByClass(const char *sClassName,bool bAutoLoadScript)
+EntityClass* CEntityClassRegistry::GetByClass(const char* sClassName, bool bAutoLoadScript)
 {
 	//<<FIXME>> optimize this
 	EntityClassMapItor itor;
-	itor=m_vEntityClasses.begin();
-	while(itor!=m_vEntityClasses.end())
+	itor = m_vEntityClasses.begin();
+	while (itor != m_vEntityClasses.end())
 	{
-		if (stricmp(itor->second.strClassName.c_str(),sClassName) == 0)
+		if (stricmp(itor->second.strClassName.c_str(), sClassName) == 0)
 		{
-			if(!itor->second.bLoaded && bAutoLoadScript)
+			if (!itor->second.bLoaded && bAutoLoadScript)
 			{
-				if (!LoadRegistryEntry(&itor->second,true))
+				if (!LoadRegistryEntry(&itor->second, true))
 					return NULL;
 			}
 			return &(itor->second);
@@ -174,16 +175,16 @@ EntityClass *CEntityClassRegistry::GetByClass(const char *sClassName,bool bAutoL
 
 //////////////////////////////////////////////////////////////////////////
 // Retrieve a class-description by the class-id
-EntityClass *CEntityClassRegistry::GetByClassId(const EntityClassId _ClassId,bool bAutoLoadScript)
+EntityClass* CEntityClassRegistry::GetByClassId(const EntityClassId _ClassId, bool bAutoLoadScript)
 {
 	//<<FIXME>> optimize this
-	EntityClassMapItor itor = m_vEntityClasses.find( _ClassId );
+	EntityClassMapItor itor = m_vEntityClasses.find(_ClassId);
 
-	if (itor!=m_vEntityClasses.end())
+	if (itor != m_vEntityClasses.end())
 	{
-		if(!itor->second.bLoaded && bAutoLoadScript)
+		if (!itor->second.bLoaded && bAutoLoadScript)
 		{
-			if (!LoadRegistryEntry(&itor->second,true))
+			if (!LoadRegistryEntry(&itor->second, true))
 				return NULL;
 		}
 		return &itor->second;
@@ -195,17 +196,17 @@ EntityClass *CEntityClassRegistry::GetByClassId(const EntityClassId _ClassId,boo
 // Move the ClassIterator to the first element.
 void CEntityClassRegistry::MoveFirst()
 {
-	m_itor=m_vEntityClasses.begin();
+	m_itor = m_vEntityClasses.begin();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Retrieve the next class-description.
-EntityClass *CEntityClassRegistry::Next()
+EntityClass* CEntityClassRegistry::Next()
 {
-	EntityClass *pEntityClass=NULL;
-	if(m_itor==m_vEntityClasses.end())
+	EntityClass* pEntityClass = NULL;
+	if (m_itor == m_vEntityClasses.end())
 		return NULL;
-	pEntityClass=&(m_itor->second);
+	pEntityClass = &(m_itor->second);
 	++m_itor;
 	return pEntityClass;
 }
@@ -218,49 +219,49 @@ int CEntityClassRegistry::Count()
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CEntityClassRegistry::LoadRegistryEntry(EntityClass * pClass,bool bForceReload )
+bool CEntityClassRegistry::LoadRegistryEntry(EntityClass* pClass, bool bForceReload)
 {
-	assert( pClass );
-	ILog *pLog = m_pSystem->GetILog();
+	assert(pClass);
+	ILog* pLog = m_pSystem->GetILog();
 
 	if (pClass->bLoaded && !bForceReload)
 		return true;
 
-	if (!m_pScriptSystem || pClass->strScriptFile.size()==0)
-		return true;	// no script attached (entities like cameras etc...)
+	if (!m_pScriptSystem || pClass->strScriptFile.size() == 0)
+		return true; // no script attached (entities like cameras etc...)
 #if defined(LINUX)
 	bool bStartsWithSlash = false;
-	if(m_sGameType.size() > 0)
-		if((m_sGameType.c_str()[0] == '/') || (m_sGameType.c_str()[0] == '\\'))
+	if (m_sGameType.size() > 0)
+		if ((m_sGameType.c_str()[0] == '/') || (m_sGameType.c_str()[0] == '\\'))
 			bStartsWithSlash = true;
-	string sFilename=(bStartsWithSlash?"Scripts/":"Scripts")+m_sGameType+"/Entities/"+pClass->strScriptFile;
+	string sFilename = (bStartsWithSlash ? "Scripts/" : "Scripts") + m_sGameType + "/Entities/" + pClass->strScriptFile;
 #else
-	string sFilename="Scripts\\"+m_sGameType+"\\Entities\\"+pClass->strScriptFile;
+	string sFilename = "Scripts\\" + m_sGameType + "\\Entities\\" + pClass->strScriptFile;
 #endif
 	pClass->strFullScriptFile = sFilename;
-	if (m_sGameType.empty() || !m_pScriptSystem->ExecuteFile(sFilename.c_str(), false,bForceReload))
+	if (m_sGameType.empty() || !m_pScriptSystem->ExecuteFile(sFilename.c_str(), false, bForceReload))
 	{
 		// failed, so try to load it from the default-folder
 		if (pLog)
 		{
-			string sMessage=sFilename +" is not available. Loading default script.";
+			string sMessage = sFilename + " is not available. Loading default script.";
 			pLog->LogToFile(sMessage.c_str());
 		}
 #if defined(LINUX)
-		sFilename=string("Scripts/Default/Entities/")+pClass->strScriptFile;
+		sFilename = string("Scripts/Default/Entities/") + pClass->strScriptFile;
 #else
-		sFilename=string("Scripts\\Default\\Entities\\")+pClass->strScriptFile;
+		sFilename = string("Scripts\\Default\\Entities\\") + pClass->strScriptFile;
 #endif
 		pClass->strFullScriptFile = sFilename;
-		if (!m_pScriptSystem->ExecuteFile(sFilename.c_str(),true,bForceReload))
+		if (!m_pScriptSystem->ExecuteFile(sFilename.c_str(), true, bForceReload))
 		{
 			// failed too: return...
-			string sMessage=sFilename+" Can't be loaded, script not found !";
-			GameWarning( sMessage.c_str() );
+			string sMessage = sFilename + " Can't be loaded, script not found !";
+			GameWarning(sMessage.c_str());
 			return false;
 		}
 	}
-	pClass->bLoaded=true;
+	pClass->bLoaded = true;
 	return true;
 }
 
@@ -269,48 +270,48 @@ bool CEntityClassRegistry::InitRegistry()
 {
 	m_pSystem->GetILog()->Log("<EntityClassRegistry> Initializing");
 
-	const char *sFilename = "scripts/ClassRegistry.lua";
+	const char* sFilename = "scripts/ClassRegistry.lua";
 	// load registry lua script.
 	m_pScriptSystem->ExecuteFile(sFilename);
 
-	SmartScriptObject pTable(m_pScriptSystem,true);
-	SmartScriptObject pLineObj(m_pScriptSystem,true);
-	if (!m_pScriptSystem->GetGlobalValue("EntityClassRegistry",*pTable))
+	SmartScriptObject pTable(m_pScriptSystem, true);
+	SmartScriptObject pLineObj(m_pScriptSystem, true);
+	if (!m_pScriptSystem->GetGlobalValue("EntityClassRegistry", *pTable))
 	{
 		CryError("Cannot find EntityClassRegistry table in scripts (wrong working folder?)");
 		return false;
 	}
-	int i=0;
+	int i = 0;
 
 	// Scan table.
-	while (pTable->GetAt(++i,*pLineObj))
+	while (pTable->GetAt(++i, *pLineObj))
 	{
-		int clsid;
-		const char *scriptfile;
-		const char *tablename;
-		const char *entity_type;
+		int         clsid;
+		const char* scriptfile;
+		const char* tablename;
+		const char* entity_type;
 
-		if (pLineObj->GetAt(1,entity_type) &&
-				pLineObj->GetAt(2,tablename) &&
-				pLineObj->GetAt(3,clsid) &&
-				pLineObj->GetAt(4,scriptfile))
+		if (pLineObj->GetAt(1, entity_type) &&
+		    pLineObj->GetAt(2, tablename) &&
+		    pLineObj->GetAt(3, clsid) &&
+		    pLineObj->GetAt(4, scriptfile))
 		{
-			EntityClassId ClassId=(EntityClassId)clsid;
+			EntityClassId ClassId      = (EntityClassId)clsid;
 
-			EntityClass *pEntityClass = GetByClassId(ClassId,false);
+			EntityClass*  pEntityClass = GetByClassId(ClassId, false);
 			if (pEntityClass)
 			{
-				GameWarning( "<EntityClassRegistry> Duplicate Class ID, ClsId=%d already registered for class %s",clsid,pEntityClass->strClassName.c_str() );
+				GameWarning("<EntityClassRegistry> Duplicate Class ID, ClsId=%d already registered for class %s", clsid, pEntityClass->strClassName.c_str());
 			}
-			if (!AddClass(ClassId,tablename,scriptfile,true))
+			if (!AddClass(ClassId, tablename, scriptfile, true))
 			{
-				GameWarning( "<EntityClassRegistry> AddClass failed, Class group='%s' clsid=%d name='%s' script='%s'",entity_type,clsid,tablename,scriptfile );
+				GameWarning("<EntityClassRegistry> AddClass failed, Class group='%s' clsid=%d name='%s' script='%s'", entity_type, clsid, tablename, scriptfile);
 				continue;
 			}
-			pEntityClass = GetByClassId(ClassId,false);
-			assert( pEntityClass ); // Cannot happen.
+			pEntityClass = GetByClassId(ClassId, false);
+			assert(pEntityClass); // Cannot happen.
 
-			pEntityClass->bReserved = true;
+			pEntityClass->bReserved   = true;
 			pEntityClass->strGameType = entity_type;
 		}
 	}

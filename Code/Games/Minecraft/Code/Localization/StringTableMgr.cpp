@@ -1,14 +1,14 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: StringTableMgr.cpp
 //  Description: implementation of the CStringTableMgr class.
 //
 //  History:
-//  - Aug 2002: File created 
+//  - Aug 2002: File created
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
@@ -26,11 +26,11 @@
 //////////////////////////////////////////////////////////////////////
 CStringTableMgr::CStringTableMgr()
 {
-	#if 0
+#if 0
 	m_pSystem = NULL;
-	#else
+#else
 	m_pSystem = gEnv->pSystem;
-	#endif
+#endif
 	m_pLanguageStriptObject = NULL;
 }
 
@@ -42,8 +42,8 @@ CStringTableMgr::~CStringTableMgr()
 //////////////////////////////////////////////////////////////////////
 bool CStringTableMgr::Load(ISystem* pSystem, CScriptObjectLanguage& oLang, string sLanguage)
 {
-	m_pSystem = pSystem;
-	m_sLanguage = sLanguage;
+	m_pSystem               = pSystem;
+	m_sLanguage             = sLanguage;
 	m_pLanguageStriptObject = &oLang;
 	m_vStrings.clear();
 
@@ -74,8 +74,8 @@ void CStringTableMgr::AddControl(int nKey)
 		return;
 	}
 
-	wchar_t szwKeyName[256] = { 0 };
-	char		szKey[256] = { 0 };
+	wchar_t szwKeyName[256] = {0};
+	char    szKey[256]      = {0};
 
 	if (!IS_MOUSE_KEY(nKey))
 	{
@@ -89,12 +89,12 @@ void CStringTableMgr::AddControl(int nKey)
 		{
 			sprintf(szKey, "control%d", nKey);
 
-			int nID = (int)m_vStrings.size();
+			int nID          = (int)m_vStrings.size();
 
 			m_keysMap[szKey] = nID;
-			#if 0
+#if 0
 			m_vStrings.push_back(name);
-			#endif
+#endif
 			m_pLanguageStriptObject->AddString(szKey, nID);
 
 			sprintf(szKey, "%S", name);
@@ -110,7 +110,7 @@ const wstring& CStringTableMgr::EnumString(int nID) const
 	static wstring unknown(L"???");
 
 	if (nID < 0 || nID >= int(m_vStrings.size()))
-		return (unknown);// string doesnt exist, return "???"
+		return (unknown); // string doesnt exist, return "???"
 
 	return (m_vStrings[nID]);
 }
@@ -119,17 +119,17 @@ const wstring& CStringTableMgr::EnumString(int nID) const
 // Loads a string-table from a Excel XML Spreadsheet file.
 bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 {
-	string sPath = "LANGUAGES/" + sFileName;
+	string           sPath = "LANGUAGES/" + sFileName;
 
 	// check if this table has already been loaded
-	FileNamesMapItor nit = m_mapLoadedTables.find(sPath);
+	FileNamesMapItor nit   = m_mapLoadedTables.find(sPath);
 	if (nit != m_mapLoadedTables.end())
 		return (true);
 
-	#if 1
+#if 1
 	XDOM::IXMLDOMDocumentPtr pDoc = m_pSystem->CreateXMLDocument();
 
-	// load xml-file	
+	// load xml-file
 	if (!pDoc->load(sPath.c_str()))
 		return (false);
 
@@ -137,9 +137,9 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 
 	XDOM::IXMLDOMNodeListPtr pNodeList;
 
-	XDOM::IXMLDOMNodePtr pString;
-	XDOM::IXMLDOMNodePtr pEnum;
-	XDOM::IXMLDOMNodePtr pValue;
+	XDOM::IXMLDOMNodePtr     pString;
+	XDOM::IXMLDOMNodePtr     pEnum;
+	XDOM::IXMLDOMNodePtr     pValue;
 
 	XDOM::IXMLDOMNodeListPtr pWorksheetList = pDoc->getElementsByTagName("Worksheet");
 	pWorksheetList->reset();
@@ -155,10 +155,10 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 
 	XDOM::IXMLDOMNodeListPtr pRowsList = pTableNode->getElementsByTagName("Row");
 
-	XDOM::IXMLDOMNodePtr pRowNode;
-	XDOM::IXMLDOMNodePtr pCellNode;
+	XDOM::IXMLDOMNodePtr     pRowNode;
+	XDOM::IXMLDOMNodePtr     pCellNode;
 
-	int nRow = 0;
+	int                      nRow = 0;
 	pRowsList->reset();
 	// get all strings in table
 	while (pRowNode = pRowsList->nextNode())
@@ -170,11 +170,11 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 		if (nRow == 1) // Skip first row, it only have description.
 			continue;
 
-		const char* sKeyString = "";
-		const char* sEnglishString = "";
+		const char* sKeyString      = "";
+		const char* sEnglishString  = "";
 		const char* sLanguageString = "";
 
-		int nCell = 0;
+		int         nCell           = 0;
 		pCellList->reset();
 		while (pCellNode = pCellList->nextNode())
 		{
@@ -212,18 +212,18 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 			sUTF_8_Str = sEnglishString;
 		}
 
-		int nUTF_8_Len = strlen(sUTF_8_Str);
-		int nUnicodeLen = nUTF_8_Len + 16; // + 16 just for safety.
+		int      nUTF_8_Len  = strlen(sUTF_8_Str);
+		int      nUnicodeLen = nUTF_8_Len + 16; // + 16 just for safety.
 		wchar_t* sUnicodeStr = new wchar_t[nUnicodeLen * sizeof(wchar_t) + 16];
 		// Use UTF-8 multibyte unicode decoding to convert to wide string.
 		// This is potentially not portable, so for different platforms, alternative function must be used.
-#if defined(LINUX)
+	#if defined(LINUX)
 		mbstowcs(sUnicodeStr, sUTF_8_Str, nUTF_8_Len);
 		sUnicodeStr[nUTF_8_Len] = 0;
-#else
+	#else
 		MultiByteToWideChar(CP_UTF8, 0, sUTF_8_Str, -1, sUnicodeStr, nUnicodeLen);
-#endif
-		wstring unicodeStr = sUnicodeStr;
+	#endif
+		wstring            unicodeStr = sUnicodeStr;
 		wstring::size_type nPos;
 		while ((nPos = unicodeStr.find(L"\\n", 0, 2)) != wstring::npos)
 		{
@@ -238,7 +238,7 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 		}
 		else
 		{
-			int nID = (int)m_vStrings.size();
+			int  nID = (int)m_vStrings.size();
 
 			char szLowerCaseKey[1024];
 			strcpy(szLowerCaseKey, sKeyString);
@@ -250,9 +250,9 @@ bool CStringTableMgr::LoadExcelXmlSpreadsheet(const string& sFileName)
 		}
 	}
 	return (true);
-	#else
+#else
 	NOT_IMPLEMENTED_V;
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -299,7 +299,7 @@ bool CStringTableMgr::LookupString(const char* sKey, wstring& sLocalizedString)
 	}
 	else
 	{
-		GameWarning( "Not a valid localized string Label <%s>, must start with @ symbol",sKey );
+		GameWarning("Not a valid localized string Label <%s>, must start with @ symbol", sKey);
 	}
 
 	AppendToUnicodeString(sKey, sLocalizedString);
@@ -354,10 +354,10 @@ bool CStringTableMgr::LookupEnglishString(const char* sKey, string& sLocalizedSt
 void CStringTableMgr::Localize(const string& sString, wstring& sLocalizedString, bool bEnglish)
 {
 	// scan the string
-	bool done = false;
+	bool done   = false;
 
-	int len = sString.length();
-	int curpos = 0;
+	int  len    = sString.length();
+	int  curpos = 0;
 	while (!done)
 	{
 		int pos = sString.find_first_of("@", curpos);
@@ -365,11 +365,11 @@ void CStringTableMgr::Localize(const string& sString, wstring& sLocalizedString,
 		{
 			// did not find anymore, so we are done
 			done = true;
-			pos = len;
+			pos  = len;
 		}
 		// found an occurence
 
-			// we have skipped a few characters, so copy them over
+		// we have skipped a few characters, so copy them over
 		if (pos > curpos)
 		{
 			// skip
@@ -384,13 +384,13 @@ void CStringTableMgr::Localize(const string& sString, wstring& sLocalizedString,
 			if (endpos == string::npos)
 			{
 				// have reached the end
-				done = true;
+				done   = true;
 				endpos = len;
 			}
 
 			if (endpos > curpos)
 			{
-				// localize token		
+				// localize token
 				if (bEnglish)
 				{
 					string sLocalizedToken;
@@ -463,11 +463,10 @@ bool CStringTableMgr::GetSubtitleLabel(const char* _szFilename, char* szLabel)
 	strncpy(szTemp, szIn, len);
 	szTemp[len] = 0;
 
-	int nId = stl::find_in_map(m_keysMap, szTemp, -1);
+	int nId     = stl::find_in_map(m_keysMap, szTemp, -1);
 
 	if (nId >= 0)
 	{
-
 		// changed this, was copying szIn (original filename) into szLabel
 		sprintf(szLabel, "@%s", szTemp);
 		return (true);

@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XClientSnapshot.cpp
@@ -19,11 +19,11 @@
 
 //FIXME: remove it
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+	#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+	#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -43,14 +43,14 @@ CXClientSnapshot::~CXClientSnapshot()
 //////////////////////////////////////////////////////////////////////
 bool CXClientSnapshot::IsTimeToSend(float fFrameTimeInSec)
 {
-	int iServerMax = sv_maxcmdrate->GetIVal();
-	int iSendPerSecond = min(iServerMax,(int)m_cSendPerSecond);
+	int          iServerMax     = sv_maxcmdrate->GetIVal();
+	int          iSendPerSecond = min(iServerMax, (int)m_cSendPerSecond);
 
-	unsigned int	nTimeToUpdate = 1000/iSendPerSecond;
+	unsigned int nTimeToUpdate  = 1000 / iSendPerSecond;
 
-	m_nTimer += (unsigned int)(fFrameTimeInSec*1000.0f);
-	
-	if(m_nTimer >= nTimeToUpdate)
+	m_nTimer += (unsigned int)(fFrameTimeInSec * 1000.0f);
+
+	if (m_nTimer >= nTimeToUpdate)
 		return true;
 
 	return false;
@@ -67,6 +67,5 @@ void CXClientSnapshot::Reset()
 //////////////////////////////////////////////////////////////////////
 void CXClientSnapshot::SetSendPerSecond(BYTE cSendPerSecond)
 {
-	m_cSendPerSecond = cSendPerSecond?cSendPerSecond:25;
+	m_cSendPerSecond = cSendPerSecond ? cSendPerSecond : 25;
 }
-

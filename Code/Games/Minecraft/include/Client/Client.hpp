@@ -33,53 +33,53 @@ namespace
 	}
 } // namespace
 
-class CClient : 
-	public IClientSink
-	, public IActionMapSink
-	, public IRendererCallbackClient
+class CClient :
+    public IClientSink,
+    public IActionMapSink,
+    public IRendererCallbackClient
 {
-  public:
+public:
 	CClient(CXGame* pGame);
 	~CClient();
-	void Update();
-	bool Init();
+	void         Update();
+	bool         Init();
 
-	void OnRenderer_BeforeEndFrame() override;
+	void         OnRenderer_BeforeEndFrame() override;
 
 	// Inherited via IClientSink
-	void OnXConnect() override;
-	void OnXClientDisconnect(const char* szCause) override;
-	void OnXContextSetup(CStream& stmContext) override;
-	void OnXData(CStream& stm) override;
-	void OnXServerTimeout() override;
-	void OnXServerRessurect() override;
+	void         OnXConnect() override;
+	void         OnXClientDisconnect(const char* szCause) override;
+	void         OnXContextSetup(CStream& stmContext) override;
+	void         OnXData(CStream& stm) override;
+	void         OnXServerTimeout() override;
+	void         OnXServerRessurect() override;
 	unsigned int GetTimeoutCompensation() override;
-	void MarkForDestruct() override;
-	bool DestructIfMarked() override;
+	void         MarkForDestruct() override;
+	bool         DestructIfMarked() override;
 
 	// Triggers function
-	void TriggerMoveLeft(float fValue, XActivationEvent ae);
-	void TriggerMoveRight(float fValue, XActivationEvent ae);
-	void TriggerMoveForward(float fValue, XActivationEvent ae);
-	void TriggerMoveBackward(float fValue, XActivationEvent ae);
-	void TriggerJump(float fValue, XActivationEvent ae);
+	void         TriggerMoveLeft(float fValue, XActivationEvent ae);
+	void         TriggerMoveRight(float fValue, XActivationEvent ae);
+	void         TriggerMoveForward(float fValue, XActivationEvent ae);
+	void         TriggerMoveBackward(float fValue, XActivationEvent ae);
+	void         TriggerJump(float fValue, XActivationEvent ae);
 
-	void TriggerFire0(float fValue, XActivationEvent ae);
+	void         TriggerFire0(float fValue, XActivationEvent ae);
 
-	void TriggerUse(float fValue, XActivationEvent ae);
-	void TriggerTurnLR(float fValue, XActivationEvent ae);
-	void TriggerTurnUD(float fValue, XActivationEvent ae);
+	void         TriggerUse(float fValue, XActivationEvent ae);
+	void         TriggerTurnLR(float fValue, XActivationEvent ae);
+	void         TriggerTurnUD(float fValue, XActivationEvent ae);
 
-	void TriggerQuickLoad(float fValue, XActivationEvent ae);
-	void TriggerQuickSave(float fValue, XActivationEvent ae);
-	void TriggerMessageMode(float fValue, XActivationEvent ae);
-	void TriggerMessageMode2(float fValue, XActivationEvent ae);
-	void TriggerScreenshot(float fValue, XActivationEvent ae);
-	void TriggerFullscreen(float fValue, XActivationEvent ae);
+	void         TriggerQuickLoad(float fValue, XActivationEvent ae);
+	void         TriggerQuickSave(float fValue, XActivationEvent ae);
+	void         TriggerMessageMode(float fValue, XActivationEvent ae);
+	void         TriggerMessageMode2(float fValue, XActivationEvent ae);
+	void         TriggerScreenshot(float fValue, XActivationEvent ae);
+	void         TriggerFullscreen(float fValue, XActivationEvent ae);
 
-	void TriggerChangeCameraMode(float fValue, XActivationEvent ae);
+	void         TriggerChangeCameraMode(float fValue, XActivationEvent ae);
 
-	void OnLoadScene();
+	void         OnLoadScene();
 
 	BEGIN_INPUTACTIONMAP()
 	REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)
@@ -95,10 +95,10 @@ class CClient :
 	REGISTER_INPUTACTIONMAP(ACTION_TURNLR, TriggerTurnLR)
 	REGISTER_INPUTACTIONMAP(ACTION_TURNUD, TriggerTurnUD)
 
-	#if 0
+#if 0
 	REGISTER_INPUTACTIONMAP(ACTION_QUICKLOAD, TriggerQuickLoad);
 	REGISTER_INPUTACTIONMAP(ACTION_QUICKSAVE, TriggerQuickSave);
-	#endif
+#endif
 
 	REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE, TriggerMessageMode)
 	REGISTER_INPUTACTIONMAP(ACTION_MESSAGEMODE2, TriggerMessageMode2)
@@ -109,31 +109,30 @@ class CClient :
 	void Render();
 	void GetMemoryUsage(ICrySizer* pSizer);
 
-  private:
+private:
 	void DrawAux();
 	void DrawAxis(IRenderAuxGeom* render, Legacy::Vec3 axis);
 	void IntersectionTest();
 	void IntersectionByRayCasting();
 
-
-  public:
-	CXGame* m_pGame{};
+public:
+	CXGame*                 m_pGame{};
 
 	// Player
-	CXEntityProcessingCmd m_PlayerProcessingCmd;
-	CXEntityProcessingCmd m_PrevPlayerProcessingCmd;
-	CCameraController m_CameraController;
-	IActionMapManager* m_pIActionMapManager{};
-	SmartScriptObject m_PlayerScript;
+	CXEntityProcessingCmd   m_PlayerProcessingCmd;
+	CXEntityProcessingCmd   m_PrevPlayerProcessingCmd;
+	CCameraController       m_CameraController;
+	IActionMapManager*      m_pIActionMapManager{};
+	SmartScriptObject       m_PlayerScript;
 
-	IClient* m_pClient = nullptr;
+	IClient*                m_pClient = nullptr;
 
 	std::vector<TestObject> m_testObjects;
-	size_t m_SelectedBox = 0;
+	size_t                  m_SelectedBox = 0;
 	struct SIntersectionState
 	{
-		SIntersectionState() = default;
-		bool m_NeedIntersect = false;
+		SIntersectionState()         = default;
+		bool         m_NeedIntersect = false;
 		Legacy::Vec3 m_LastPickedPos = Legacy::Vec3(0);
 		struct Ray
 		{
@@ -144,23 +143,22 @@ class CClient :
 			Legacy::Vec3 direction;
 		} ray;
 		std::vector<TestObject>::iterator picked;
-		float m_CurrentDistant = 0.f;
-		float mx, my;
+		float                             m_CurrentDistant = 0.f;
+		float                             mx, my;
 	} m_IntersectionState;
 
 	std::vector<Legacy::Vec3> m_LineList;
-	bool m_InsertLines = false;
+	bool                      m_InsertLines = false;
 
+	size_t                    m_FireCount;
 
-	size_t m_FireCount;
-
-	int m_CurrentFrameID = 0;
-	int m_NumHitsInFrame = 0;
+	int                       m_CurrentFrameID = 0;
+	int                       m_NumHitsInFrame = 0;
 
 	//###########################################
-	float m_CamSpeed	= 0.f;
-	bool  m_OnGround	= true;
-	bool  m_JumpPressed = false;
+	float                     m_CamSpeed       = 0.f;
+	bool                      m_OnGround       = true;
+	bool                      m_JumpPressed    = false;
 
-	bool	   m_ShowEditor = false;
+	bool                      m_ShowEditor     = false;
 };

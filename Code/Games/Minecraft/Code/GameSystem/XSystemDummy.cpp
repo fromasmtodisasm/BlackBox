@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: XSystemDummy.cpp
@@ -18,7 +18,8 @@
 #include "XSystemDummy.h"
 
 //////////////////////////////////////////////////////////////////////
-CXSystemDummy::CXSystemDummy(CXGame *pGame,ILog *pLog):CXSystemBase(pGame,pLog)
+CXSystemDummy::CXSystemDummy(CXGame* pGame, ILog* pLog)
+    : CXSystemBase(pGame, pLog)
 {
 	m_pEntitySystem->EnableClient(true);
 }
@@ -36,28 +37,28 @@ void CXSystemDummy::Release()
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CXSystemDummy::LoadLevel(const char *szLevelDir,const char *szMissionName, bool bEditor)
+bool CXSystemDummy::LoadLevel(const char* szLevelDir, const char* szMissionName, bool bEditor)
 {
-	IInput *pInput=m_pGame->m_pSystem->GetIInput();
+	IInput* pInput = m_pGame->m_pSystem->GetIInput();
 
-	if(pInput)						// might be 0, e.g. dedicated server
+	if (pInput) // might be 0, e.g. dedicated server
 	{
 		pInput->Update(true);
 		pInput->Update(true);
 	}
 
-	IActionMapManager *pActionManager=m_pGame->m_pIActionMapManager;
-	
-	if(pActionManager)		// might be 0, e.g. dedicated server
+	IActionMapManager* pActionManager = m_pGame->m_pIActionMapManager;
+
+	if (pActionManager) // might be 0, e.g. dedicated server
 		pActionManager->Reset();
 
-	m_pGame->m_bMapLoadedFromCheckpoint=false;
+	m_pGame->m_bMapLoadedFromCheckpoint = false;
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////
-IEntity*	CXSystemDummy::SpawnEntity(CEntityDesc &ed)
+IEntity* CXSystemDummy::SpawnEntity(CEntityDesc& ed)
 {
 	return m_pEntitySystem->GetEntity((EntityId)ed.id);
 }
@@ -73,14 +74,14 @@ void CXSystemDummy::DeleteAllEntities()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CXSystemDummy::Disconnected(const char *szCause)
+void CXSystemDummy::Disconnected(const char* szCause)
 {
-	if(!szCause) szCause = "NULL ERROR";
+	if (!szCause) szCause = "NULL ERROR";
 	TRACE("Client Disconnected");
-	TRACE(szCause);	
+	TRACE(szCause);
 }
 
 //////////////////////////////////////////////////////////////////////
-void	CXSystemDummy::SetMyPlayer(EntityId wID)
-{	
+void CXSystemDummy::SetMyPlayer(EntityId wID)
+{
 }

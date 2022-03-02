@@ -1,11 +1,11 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: UICheckBox.cpp  
-//  Description: UI ComboBox 
+//  File: UICheckBox.cpp
+//  Description: UI ComboBox
 //
 //  History:
 //  - [10/7/2003]: File created by Márcio Martins
@@ -23,55 +23,54 @@
 #include "UIScrollBar.h"
 #include "UISystem.h"
 
-
 _DECLARE_SCRIPTABLEEX(CUIComboBox);
 
 //FIXME: remove it
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+	#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+	#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
-CUIComboBox *CUIComboBox::m_pStaticThis = 0;
+CUIComboBox* CUIComboBox::m_pStaticThis = 0;
 
 //////////////////////////////////////////////////////////////////////////
 CUIComboBox::CUIComboBox()
-: m_iSelectionIndex(0),
-	m_iHAlignment(UIALIGN_LEFT),
-	m_iVAlignment(UIALIGN_CENTER),
-	m_cButtonColor(color4f(1.0f, 1.0f, 1.0f, 1.0f)),
-	m_iState(0),
-	m_iOldZ(0),
-	m_iNewIndex(1),
-	m_bNeedSort(0),
-	m_iSortOrder(UISORT_ASCENDING),
-	m_fLeftSpacing(0),
-	m_iMaxItems(6),
-	m_iFirstItem(0),
-	m_pVScroll(0),
-	m_bVerticalScrollBar(0),
-	m_cItemBgColor(0.0f, 0.0f, 0.0f, 0.35f),
-	m_iRollUp(0)
+    : m_iSelectionIndex(0)
+    , m_iHAlignment(UIALIGN_LEFT)
+    , m_iVAlignment(UIALIGN_CENTER)
+    , m_cButtonColor(color4f(1.0f, 1.0f, 1.0f, 1.0f))
+    , m_iState(0)
+    , m_iOldZ(0)
+    , m_iNewIndex(1)
+    , m_bNeedSort(0)
+    , m_iSortOrder(UISORT_ASCENDING)
+    , m_fLeftSpacing(0)
+    , m_iMaxItems(6)
+    , m_iFirstItem(0)
+    , m_pVScroll(0)
+    , m_bVerticalScrollBar(0)
+    , m_cItemBgColor(0.0f, 0.0f, 0.0f, 0.35f)
+    , m_iRollUp(0)
 {
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 CUIComboBox::~CUIComboBox()
 {
 	Clear();
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 string CUIComboBox::GetClassName()
 {
 	return UICLASSNAME_COMBOBOX;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	//AMD Port
+//////////////////////////////////////////////////////////////////////////
+LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
 	m_fButtonSize = m_pUISystem->AdjustWidth(m_fButtonSize);
 
@@ -79,236 +78,237 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 	{
 	case UIM_KEYUP:
 	case UIM_KEYPRESSED:
+	{
+		switch (lParam)
 		{
-			switch(lParam)
-			{
-			case Legacy::XKEY_DOWN:
-			case Legacy::XKEY_MWHEEL_DOWN:
-				{
-					if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
-					{
-						if (m_pVScroll)
-						{
-							// scroll 1 item down
-							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
-						}
-					}
-					else if (!m_vItemList.empty())
-					{
-						if (m_iSelectionIndex)
-						{
-							for (CUIComboItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
-							{
-								if ((*it)->iIndex == m_iSelectionIndex)
-								{
-									++it;
-
-									if (it != m_vItemList.end())
-									{
-										m_iSelectionIndex = (*it)->iIndex;
-
-										OnChanged();
-									}
-
-									break;
-								}
-							}
-						}
-						else
-						{
-							m_iSelectionIndex = m_vItemList[0]->iIndex;
-
-							OnChanged();
-						}
-					}
-				}
-				break;
-			case Legacy::XKEY_UP:
-			case Legacy::XKEY_MWHEEL_UP:
-				{
-					if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
-					{
-						if (m_pVScroll)
-						{
-							// scroll 1 items up
-							m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
-						}
-					}
-					else if (!m_vItemList.empty())
-					{
-						if (m_iSelectionIndex)
-						{
-							for (CUIComboItemList::reverse_iterator rit = m_vItemList.rbegin(); rit != m_vItemList.rend(); ++rit)
-							{
-								if ((*rit)->iIndex == m_iSelectionIndex)
-								{
-									++rit;
-
-									if (rit != m_vItemList.rend())
-									{
-										m_iSelectionIndex = (*rit)->iIndex;
-
-										OnChanged();
-									}
-
-									break;
-								}
-							}
-						}
-						else
-						{
-							m_iSelectionIndex = 0;
-
-							OnChanged();
-						}
-					}
-				}
-				break;
-			}
-		}
-		break;
-	case UIM_MOUSEUP:
-		{
-			float fMouseX = UIM_GET_X_FLOAT(wParam);
-			float fMouseY = UIM_GET_Y_FLOAT(wParam);
-
-			m_pUISystem->GetRelativeXY(&fMouseX, &fMouseY, fMouseX, fMouseY, this);
-
-			UIRect pRect(0.0f, 0.0f, m_pRect.fWidth, m_pRect.fHeight);
-
-			if (!m_pUISystem->PointInRect(pRect, fMouseX, fMouseY))
-			{
-				if ((m_iState & UICOMBOBOXSTATE_JUSTDROPEDLIST) == 0)
-				{
-					UndropList();
-				}
-				else
-				{
-					m_iState &= ~UICOMBOBOXSTATE_JUSTDROPEDLIST;
-					m_iState &= ~UICOMBOBOXSTATE_BUTTONDOWN;
-				}
-			}
-			else
-			{
-				if ((m_iState & UICOMBOBOXSTATE_DROPDOWNLIST) && ((m_iState & UICOMBOBOXSTATE_JUSTDROPEDLIST) == 0))
-				{
-					UIRect pListRect(GetListRect(0));
-
-					pListRect.fWidth -= m_fButtonSize + (m_pBorder.fSize > 0.125 ? m_pUISystem->AdjustWidth(m_pBorder.fSize) : 0.0f);
-
-					if (m_pUISystem->PointInRect(pListRect, fMouseX, fMouseY))
-					{
-						float fY = fMouseY - pListRect.fTop;
-						int iItem = (int)(fY / m_fItemHeight);;
-
-						if (m_iRollUp)
-						{
-							iItem = m_iFirstItem + min(m_iMaxItems - 1, (int)m_vItemList.size() - 1) - iItem;
-						}
-						else
-						{
-							iItem += m_iFirstItem;
-						}
-
-						if (iItem == (int)m_vItemList.size())
-						{
-							--iItem;
-						}
-
-						assert(iItem >= 0 && iItem < (int)m_vItemList.size());
-
-						m_iSelectionIndex = m_vItemList[iItem]->iIndex;
-
-						OnChanged();
-
-						UndropList();
-					}
-					else if (m_bVerticalScrollBar && m_pVScroll)
-					{
-						UIRect pRect(GetListRect(0));
-
-						pRect.fLeft += pRect.fWidth - m_fButtonSize;
-						pRect.fWidth = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
-
-						if (!m_pUISystem->PointInRect(pRect, fMouseX, fMouseY))
-						{
-							UndropList();
-						}
-					}
-					else
-					{
-						UndropList();
-					}
-				}
-				else
-				{
-					m_iState &= ~UICOMBOBOXSTATE_JUSTDROPEDLIST;
-				}
-			}
-			m_iState &= ~UICOMBOBOXSTATE_BUTTONDOWN;
-		}
-		break;
-	case UIM_MOUSELEAVE:
-		{
-			m_iState &= ~UICOMBOBOXSTATE_BUTTONDOWN;
-			m_iState &= ~UICOMBOBOXSTATE_BUTTONOVER;
-		}
-		break;
-	case UIM_LBUTTONDOWN:
-		{
-			// check if we need to show the list
-			if ((m_iState & UICOMBOBOXSTATE_DROPDOWNLIST) == 0)
-			{
-				DropList();
-			}
-
-			UIRect pButtonRect = GetComboRect();
-
-			if (m_fButtonSize > 0.125f)
-			{
-				pButtonRect.fLeft += pButtonRect.fWidth - m_fButtonSize;
-			}
-
-			if (m_pUISystem->PointInRect(pButtonRect, UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam)))
-			{
-				m_iState |= UICOMBOBOXSTATE_BUTTONDOWN;
-			}
-			
-			return 1;
-		}
-		break;
-	case UIM_MOUSEOVER:
-		{
-			UIRect pButtonRect = GetComboRect();
-
-			if (m_fButtonSize > 0.125f)
-			{
-				pButtonRect.fLeft += pButtonRect.fWidth - m_fButtonSize;
-			}
-
-			if (m_pUISystem->PointInRect(pButtonRect, UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam)))
-			{
-				m_iState |= UICOMBOBOXSTATE_BUTTONOVER;
-			}
-			else
-			{
-				m_iState &= ~UICOMBOBOXSTATE_BUTTONOVER;
-			}
-		}
-		break;
-	case UIM_LOSTFOCUS:
+		case Legacy::XKEY_DOWN:
+		case Legacy::XKEY_MWHEEL_DOWN:
 		{
 			if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
 			{
-				UndropList();
+				if (m_pVScroll)
+				{
+					// scroll 1 item down
+					m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
+				}
+			}
+			else if (!m_vItemList.empty())
+			{
+				if (m_iSelectionIndex)
+				{
+					for (CUIComboItemItor it = m_vItemList.begin(); it != m_vItemList.end(); ++it)
+					{
+						if ((*it)->iIndex == m_iSelectionIndex)
+						{
+							++it;
+
+							if (it != m_vItemList.end())
+							{
+								m_iSelectionIndex = (*it)->iIndex;
+
+								OnChanged();
+							}
+
+							break;
+						}
+					}
+				}
+				else
+				{
+					m_iSelectionIndex = m_vItemList[0]->iIndex;
+
+					OnChanged();
+				}
 			}
 		}
 		break;
+		case Legacy::XKEY_UP:
+		case Legacy::XKEY_MWHEEL_UP:
+		{
+			if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
+			{
+				if (m_pVScroll)
+				{
+					// scroll 1 items up
+					m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
+				}
+			}
+			else if (!m_vItemList.empty())
+			{
+				if (m_iSelectionIndex)
+				{
+					for (CUIComboItemList::reverse_iterator rit = m_vItemList.rbegin(); rit != m_vItemList.rend(); ++rit)
+					{
+						if ((*rit)->iIndex == m_iSelectionIndex)
+						{
+							++rit;
+
+							if (rit != m_vItemList.rend())
+							{
+								m_iSelectionIndex = (*rit)->iIndex;
+
+								OnChanged();
+							}
+
+							break;
+						}
+					}
+				}
+				else
+				{
+					m_iSelectionIndex = 0;
+
+					OnChanged();
+				}
+			}
+		}
+		break;
+		}
+	}
+	break;
+	case UIM_MOUSEUP:
+	{
+		float fMouseX = UIM_GET_X_FLOAT(wParam);
+		float fMouseY = UIM_GET_Y_FLOAT(wParam);
+
+		m_pUISystem->GetRelativeXY(&fMouseX, &fMouseY, fMouseX, fMouseY, this);
+
+		UIRect pRect(0.0f, 0.0f, m_pRect.fWidth, m_pRect.fHeight);
+
+		if (!m_pUISystem->PointInRect(pRect, fMouseX, fMouseY))
+		{
+			if ((m_iState & UICOMBOBOXSTATE_JUSTDROPEDLIST) == 0)
+			{
+				UndropList();
+			}
+			else
+			{
+				m_iState &= ~UICOMBOBOXSTATE_JUSTDROPEDLIST;
+				m_iState &= ~UICOMBOBOXSTATE_BUTTONDOWN;
+			}
+		}
+		else
+		{
+			if ((m_iState & UICOMBOBOXSTATE_DROPDOWNLIST) && ((m_iState & UICOMBOBOXSTATE_JUSTDROPEDLIST) == 0))
+			{
+				UIRect pListRect(GetListRect(0));
+
+				pListRect.fWidth -= m_fButtonSize + (m_pBorder.fSize > 0.125 ? m_pUISystem->AdjustWidth(m_pBorder.fSize) : 0.0f);
+
+				if (m_pUISystem->PointInRect(pListRect, fMouseX, fMouseY))
+				{
+					float fY    = fMouseY - pListRect.fTop;
+					int   iItem = (int)(fY / m_fItemHeight);
+					;
+
+					if (m_iRollUp)
+					{
+						iItem = m_iFirstItem + min(m_iMaxItems - 1, (int)m_vItemList.size() - 1) - iItem;
+					}
+					else
+					{
+						iItem += m_iFirstItem;
+					}
+
+					if (iItem == (int)m_vItemList.size())
+					{
+						--iItem;
+					}
+
+					assert(iItem >= 0 && iItem < (int)m_vItemList.size());
+
+					m_iSelectionIndex = m_vItemList[iItem]->iIndex;
+
+					OnChanged();
+
+					UndropList();
+				}
+				else if (m_bVerticalScrollBar && m_pVScroll)
+				{
+					UIRect pRect(GetListRect(0));
+
+					pRect.fLeft += pRect.fWidth - m_fButtonSize;
+					pRect.fWidth = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
+
+					if (!m_pUISystem->PointInRect(pRect, fMouseX, fMouseY))
+					{
+						UndropList();
+					}
+				}
+				else
+				{
+					UndropList();
+				}
+			}
+			else
+			{
+				m_iState &= ~UICOMBOBOXSTATE_JUSTDROPEDLIST;
+			}
+		}
+		m_iState &= ~UICOMBOBOXSTATE_BUTTONDOWN;
+	}
+	break;
+	case UIM_MOUSELEAVE:
+	{
+		m_iState &= ~UICOMBOBOXSTATE_BUTTONDOWN;
+		m_iState &= ~UICOMBOBOXSTATE_BUTTONOVER;
+	}
+	break;
+	case UIM_LBUTTONDOWN:
+	{
+		// check if we need to show the list
+		if ((m_iState & UICOMBOBOXSTATE_DROPDOWNLIST) == 0)
+		{
+			DropList();
+		}
+
+		UIRect pButtonRect = GetComboRect();
+
+		if (m_fButtonSize > 0.125f)
+		{
+			pButtonRect.fLeft += pButtonRect.fWidth - m_fButtonSize;
+		}
+
+		if (m_pUISystem->PointInRect(pButtonRect, UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam)))
+		{
+			m_iState |= UICOMBOBOXSTATE_BUTTONDOWN;
+		}
+
+		return 1;
+	}
+	break;
+	case UIM_MOUSEOVER:
+	{
+		UIRect pButtonRect = GetComboRect();
+
+		if (m_fButtonSize > 0.125f)
+		{
+			pButtonRect.fLeft += pButtonRect.fWidth - m_fButtonSize;
+		}
+
+		if (m_pUISystem->PointInRect(pButtonRect, UIM_GET_X_FLOAT(wParam), UIM_GET_Y_FLOAT(wParam)))
+		{
+			m_iState |= UICOMBOBOXSTATE_BUTTONOVER;
+		}
+		else
+		{
+			m_iState &= ~UICOMBOBOXSTATE_BUTTONOVER;
+		}
+	}
+	break;
+	case UIM_LOSTFOCUS:
+	{
+		if (m_iState & UICOMBOBOXSTATE_DROPDOWNLIST)
+		{
+			UndropList();
+		}
+	}
+	break;
 	}
 
 	if (iMessage == UIM_DRAW)
 	{
-		m_pVScroll = (CUIScrollBar *)GetChild("vscrollbar");
+		m_pVScroll    = (CUIScrollBar*)GetChild("vscrollbar");
 
 		// check if we need a scrollbar
 		bool bVScroll = ((int)m_vItemList.size() > m_iMaxItems);
@@ -338,7 +338,7 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 		}
 		else
 		{
-			m_iFirstItem = 0;
+			m_iFirstItem         = 0;
 			m_bVerticalScrollBar = 0;
 		}
 
@@ -347,8 +347,8 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 			// set the rect
 			UIRect pVScrollRect;
 
-			pVScrollRect.fLeft = GetComboRect().fLeft + GetComboRect().fWidth - m_fButtonSize;
-			pVScrollRect.fWidth = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
+			pVScrollRect.fLeft   = GetComboRect().fLeft + GetComboRect().fWidth - m_fButtonSize;
+			pVScrollRect.fWidth  = m_pUISystem->GetWidgetRect(m_pVScroll).fWidth;
 			pVScrollRect.fHeight = m_fItemHeight * m_iMaxItems + (m_pBorder.fSize > 0.125f ? m_pUISystem->AdjustHeight(m_pBorder.fSize) : 0.0f);
 
 			if (m_iRollUp)
@@ -384,7 +384,7 @@ LRESULT CUIComboBox::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 	return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::Draw(int iPass)
 {
 	if ((iPass != 0) && (iPass != 1))
@@ -422,12 +422,12 @@ int CUIComboBox::Draw(int iPass)
 
 		// save the client area without the border,
 		// to draw a greyed quad later, if disabled
-		UIRect pGreyedRect = pAbsoluteRect;
+		UIRect  pGreyedRect = pAbsoluteRect;
 
-		IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+		IFFont* pFont       = m_pUISystem->GetIFont(m_pFont);
 
 		// now draw the dropdown button
-		UIRect pRect = UIRect(pAbsoluteRect.fLeft + pAbsoluteRect.fWidth - m_fButtonSize, pAbsoluteRect.fTop, m_fButtonSize, pAbsoluteRect.fHeight);
+		UIRect  pRect       = UIRect(pAbsoluteRect.fLeft + pAbsoluteRect.fWidth - m_fButtonSize, pAbsoluteRect.fTop, m_fButtonSize, pAbsoluteRect.fHeight);
 
 		if (m_pButtonTexture.iTextureID > -1)
 		{
@@ -463,8 +463,8 @@ int CUIComboBox::Draw(int iPass)
 		m_pUISystem->DrawSkin(pItemRect, m_pItemBg, m_cItemBgColor, UISTATE_UP);
 
 		if (m_iSelectionIndex)
-		{	
-			UIComboItem *pItem = GetItem(m_iSelectionIndex);
+		{
+			UIComboItem* pItem = GetItem(m_iSelectionIndex);
 
 			assert(pItem);
 
@@ -502,9 +502,9 @@ int CUIComboBox::Draw(int iPass)
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////
 	// Second Pass
-	////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////
 
 	// check if list is down and if we are drawing second pass
 	if ((m_iState & UICOMBOBOXSTATE_DROPDOWNLIST) && (iPass == 1))
@@ -515,12 +515,12 @@ int CUIComboBox::Draw(int iPass)
 		m_pUISystem->GetAbsoluteXY(&pAbsoluteRect.fLeft, &pAbsoluteRect.fTop, m_pComboRect.fLeft, m_pComboRect.fTop, m_pParent);
 
 		// get the font
-		IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+		IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
-		////////////////////////////////////////////////////////////////////// 
-		UIRect pItemRect(pAbsoluteRect);
-		float fBorderSize = (m_pBorder.fSize > 0.125f ? m_pBorder.fSize : 0.0f);
-		int iItemCount = ((int)m_vItemList.size() <= m_iMaxItems ? (int)m_vItemList.size() : m_iMaxItems);
+		//////////////////////////////////////////////////////////////////////
+		UIRect  pItemRect(pAbsoluteRect);
+		float   fBorderSize = (m_pBorder.fSize > 0.125f ? m_pBorder.fSize : 0.0f);
+		int     iItemCount  = ((int)m_vItemList.size() <= m_iMaxItems ? (int)m_vItemList.size() : m_iMaxItems);
 
 		pItemRect.fLeft += m_pUISystem->AdjustWidth(fBorderSize);
 		pItemRect.fWidth -= (m_fButtonSize + 2.0f * m_pUISystem->AdjustWidth(fBorderSize));
@@ -546,14 +546,14 @@ int CUIComboBox::Draw(int iPass)
 
 		if (m_iRollUp)
 		{
-			pItemRect.fTop += (iItemCount-1) * m_fItemHeight;
+			pItemRect.fTop += (iItemCount - 1) * m_fItemHeight;
 		}
 
 		pItemRect.fHeight = m_fItemHeight;
 
-		int iFirstItem = CLAMP(m_iFirstItem, 0, m_vItemList.size());
-		int iLastItem = iFirstItem + m_iMaxItems;
-		
+		int iFirstItem    = CLAMP(m_iFirstItem, 0, m_vItemList.size());
+		int iLastItem     = iFirstItem + m_iMaxItems;
+
 		for (CUIComboItemItor pItor = m_vItemList.begin() + m_iFirstItem; (pItor != m_vItemList.end()); ++pItor)
 		{
 			if (m_iFirstItem + m_iMaxItems < m_vItemList.size())
@@ -563,8 +563,8 @@ int CUIComboBox::Draw(int iPass)
 					break;
 				}
 			}
-			
-			UIComboItem *pItem = *pItor;
+
+			UIComboItem* pItem = *pItor;
 
 			m_pUISystem->SetScissor(&pItemRect);
 
@@ -613,8 +613,8 @@ int CUIComboBox::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-void CUIComboBox::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////////
+void CUIComboBox::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIComboBox>::InitializeTemplate(pScriptSystem);
 
@@ -657,7 +657,7 @@ void CUIComboBox::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIComboBox, GetButtonColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::ClearSelection()
 {
 	m_iSelectionIndex = 0;
@@ -665,7 +665,7 @@ int CUIComboBox::ClearSelection()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::SelectIndex(int iIndex)
 {
 	if (GetItem(iIndex))
@@ -677,7 +677,7 @@ int CUIComboBox::SelectIndex(int iIndex)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::DeselectIndex(int iIndex)
 {
 	if (iIndex == m_iSelectionIndex)
@@ -689,18 +689,18 @@ int CUIComboBox::DeselectIndex(int iIndex)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 bool CUIComboBox::IsSelectedIndex(int iIndex)
 {
 	return (m_iSelectionIndex == iIndex);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::Select(const wstring &szText)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::Select(const wstring& szText)
 {
-	m_iSelectionIndex = 0;
+	m_iSelectionIndex  = 0;
 
-	UIComboItem *pItem = GetItem(szText);
+	UIComboItem* pItem = GetItem(szText);
 
 	if (pItem)
 	{
@@ -717,25 +717,25 @@ int CUIComboBox::Select(const wstring &szText)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::Deselect(const wstring &szText)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::Deselect(const wstring& szText)
 {
-	UIComboItem *pItem = GetItem(szText);
+	UIComboItem* pItem = GetItem(szText);
 
 	if ((pItem) && (pItem->iIndex == m_iSelectionIndex))
 	{
-			m_iSelectionIndex = 0;
+		m_iSelectionIndex = 0;
 
-			return 1;
+		return 1;
 	}
 
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-bool CUIComboBox::IsSelected(const wstring &szText)
+//////////////////////////////////////////////////////////////////////////
+bool CUIComboBox::IsSelected(const wstring& szText)
 {
-	UIComboItem *pItem = GetItem(szText);
+	UIComboItem* pItem = GetItem(szText);
 
 	if (pItem)
 	{
@@ -748,14 +748,14 @@ bool CUIComboBox::IsSelected(const wstring &szText)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::GetItemCount()
 {
 	return (int)m_vItemList.size();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-UIComboItem *CUIComboBox::GetItem(int iIndex, CUIComboItemItor *pItemItor)
+//////////////////////////////////////////////////////////////////////////
+UIComboItem* CUIComboBox::GetItem(int iIndex, CUIComboItemItor* pItemItor)
 {
 	for (CUIComboItemItor pItor = m_vItemList.begin(); pItor != m_vItemList.end(); ++pItor)
 	{
@@ -773,8 +773,8 @@ UIComboItem *CUIComboBox::GetItem(int iIndex, CUIComboItemItor *pItemItor)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-UIComboItem *CUIComboBox::GetItem(const wstring &szItemText, CUIComboItemItor *pItemItor)
+//////////////////////////////////////////////////////////////////////////
+UIComboItem* CUIComboBox::GetItem(const wstring& szItemText, CUIComboItemItor* pItemItor)
 {
 	for (CUIComboItemItor pItor = m_vItemList.begin(); pItor != m_vItemList.end(); ++pItor)
 	{
@@ -792,15 +792,15 @@ UIComboItem *CUIComboBox::GetItem(const wstring &szItemText, CUIComboItemItor *p
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::AddItem(const wstring &szText, UISkinTexture pTexture, const color4f &cColor)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::AddItem(const wstring& szText, UISkinTexture pTexture, const color4f& cColor)
 {
-	UIComboItem *pItem = new UIComboItem();
+	UIComboItem* pItem = new UIComboItem();
 
-	pItem->szText = szText;
-	pItem->pTexture = pTexture;
-	pItem->iIndex = m_iNewIndex++;
-	pItem->cColor = cColor;
+	pItem->szText      = szText;
+	pItem->pTexture    = pTexture;
+	pItem->iIndex      = m_iNewIndex++;
+	pItem->cColor      = cColor;
 
 	m_vItemList.push_back(pItem);
 
@@ -809,20 +809,20 @@ int CUIComboBox::AddItem(const wstring &szText, UISkinTexture pTexture, const co
 	return pItem->iIndex;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::InsertItem(int iPosition, const wstring &szText, const UISkinTexture &pTexture, const color4f &cColor)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::InsertItem(int iPosition, const wstring& szText, const UISkinTexture& pTexture, const color4f& cColor)
 {
 	if (iPosition < 0 || iPosition > (int)m_vItemList.size())
 	{
 		return 0;
 	}
 
-	UIComboItem *pItem = new UIComboItem();
+	UIComboItem* pItem = new UIComboItem();
 
-	pItem->szText = szText;
-	pItem->pTexture = pTexture;
-	pItem->iIndex = m_iNewIndex++;
-	pItem->cColor = cColor;
+	pItem->szText      = szText;
+	pItem->pTexture    = pTexture;
+	pItem->iIndex      = m_iNewIndex++;
+	pItem->cColor      = cColor;
 
 	m_vItemList.insert(m_vItemList.begin() + iPosition, pItem);
 
@@ -831,7 +831,7 @@ int CUIComboBox::InsertItem(int iPosition, const wstring &szText, const UISkinTe
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::RemoveItem(int iItemIndex)
 {
 	for (CUIComboItemItor pItor = m_vItemList.begin(); pItor != m_vItemList.end(); ++pItor)
@@ -851,7 +851,7 @@ int CUIComboBox::RemoveItem(int iItemIndex)
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::Clear()
 {
 	m_bNeedSort = 0;
@@ -869,19 +869,18 @@ int CUIComboBox::Clear()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIComboBox::Sort(int iSortOrder)
 {
 	m_pStaticThis = this;
-	m_bNeedSort = 0;
+	m_bNeedSort   = 0;
 
 	std::stable_sort(m_vItemList.begin(), m_vItemList.end(), SortCallback);
 
 	return 1;
 }
 
-
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 UIRect CUIComboBox::GetComboRect()
 {
 	UIRect pComboRect(m_pComboRect);
@@ -898,7 +897,7 @@ UIRect CUIComboBox::GetComboRect()
 	return pComboRect;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 UIRect CUIComboBox::GetListRect(bool bScrollBars)
 {
 	UIRect pListRect(0, 0, m_pComboRect.fWidth, m_pComboRect.fHeight);
@@ -930,7 +929,7 @@ UIRect CUIComboBox::GetListRect(bool bScrollBars)
 	return pListRect;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 void CUIComboBox::DropList()
 {
 	m_iState |= UICOMBOBOXSTATE_DROPDOWNLIST;
@@ -951,53 +950,53 @@ void CUIComboBox::DropList()
 	}
 
 	m_iOldZ = m_iZ; // temporarily change the Z value so that our list is the topmost thing
-	m_iZ = 1000000000;
+	m_iZ    = 1000000000;
 
 	m_pUISystem->OnZChanged(this);
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 void CUIComboBox::UndropList()
 {
 	m_iState &= ~UICOMBOBOXSTATE_DROPDOWNLIST;
 	m_iState &= ~UICOMBOBOXSTATE_JUSTDROPEDLIST;
 	m_pRect = m_pComboRect;
 
-	m_iZ = m_iOldZ;
+	m_iZ    = m_iOldZ;
 
 	m_pUISystem->OnZChanged(this);
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetButtonSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetButtonSize(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetButtonSize, m_fButtonSize);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetButtonSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetButtonSize(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetButtonSize, m_fButtonSize);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetItemHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetItemHeight(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetItemHeight, m_fItemHeight);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetItemHeight(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetItemHeight(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetItemHeight, m_fItemHeight);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::ClearSelection(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::ClearSelection(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), ClearSelection, 0);
 
@@ -1007,16 +1006,16 @@ int CUIComboBox::ClearSelection(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::IsDropDown(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::IsDropDown(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), IsDropDown, 0);
 
 	return pH->EndFunction((bool)(m_iState & UICOMBOBOXSTATE_DROPDOWNLIST));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SelectIndex(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SelectIndex(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SelectIndex, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SelectIndex, 1, svtNumber);
@@ -1028,8 +1027,8 @@ int CUIComboBox::SelectIndex(IFunctionHandler *pH)
 	return pH->EndFunction(SelectIndex(iItemIndex));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::DeselectIndex(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::DeselectIndex(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), DeselectIndex, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), DeselectIndex, 1, svtNumber);
@@ -1043,9 +1042,8 @@ int CUIComboBox::DeselectIndex(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::IsSelectedIndex(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::IsSelectedIndex(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), IsSelectedIndex, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), IsSelectedIndex, 1, svtNumber);
@@ -1057,8 +1055,8 @@ int CUIComboBox::IsSelectedIndex(IFunctionHandler *pH)
 	return pH->EndFunction(IsSelectedIndex(iItemIndex));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::Select(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::Select(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Select, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), Select, 1, svtString, svtNumber);
@@ -1070,8 +1068,8 @@ int CUIComboBox::Select(IFunctionHandler *pH)
 	return pH->EndFunction(Select(szText));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::Deselect(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::Deselect(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Deselect, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), Deselect, 1, svtString, svtNumber);
@@ -1083,8 +1081,8 @@ int CUIComboBox::Deselect(IFunctionHandler *pH)
 	return pH->EndFunction(Deselect(szText));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::IsSelected(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::IsSelected(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), IsSelected, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), IsSelected, 1, svtString, svtNumber);
@@ -1096,8 +1094,8 @@ int CUIComboBox::IsSelected(IFunctionHandler *pH)
 	return pH->EndFunction(IsSelected(szText));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetSelection(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetSelection(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetSelection, 0);
 
@@ -1106,7 +1104,7 @@ int CUIComboBox::GetSelection(IFunctionHandler *pH)
 		return pH->EndFunctionNull();
 	}
 
-	UIComboItem *pItem = GetItem(m_iSelectionIndex);
+	UIComboItem* pItem = GetItem(m_iSelectionIndex);
 
 	if (!pItem)
 	{
@@ -1120,8 +1118,8 @@ int CUIComboBox::GetSelection(IFunctionHandler *pH)
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetSelectionIndex(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetSelectionIndex(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetSelectionIndex, 0);
 
@@ -1133,8 +1131,8 @@ int CUIComboBox::GetSelectionIndex(IFunctionHandler *pH)
 	return pH->EndFunction(m_iSelectionIndex);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetItem(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetItem, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), GetItem, 1, svtNumber);
@@ -1143,25 +1141,25 @@ int CUIComboBox::GetItem(IFunctionHandler *pH)
 
 	pH->GetParam(1, iItemIndex);
 
-	UIComboItem *pItem = GetItem(iItemIndex);
+	UIComboItem* pItem = GetItem(iItemIndex);
 
-	char szString[1024];
+	char         szString[1024];
 
 	m_pUISystem->ConvertToString(szString, pItem->szText, 1023);
 
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetItemCount(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetItemCount(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetItemCount, 0);
 
 	return pH->EndFunction(GetItemCount());
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::AddItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::AddItem(IFunctionHandler* pH)
 {
 	if (pH->GetParamCount() < 1)
 	{
@@ -1172,10 +1170,10 @@ int CUIComboBox::AddItem(IFunctionHandler *pH)
 		CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), AddItem, 4);
 	}
 
-	wstring	szText = L"";
+	wstring       szText = L"";
 	UISkinTexture pTexture;
-	char					*szRect = 0;
-	color4f	cColor = color4f(0,0,0,0);
+	char*         szRect = 0;
+	color4f       cColor = color4f(0, 0, 0, 0);
 
 	// get the texture first
 	if (pH->GetParamCount() > 1)
@@ -1207,7 +1205,7 @@ int CUIComboBox::AddItem(IFunctionHandler *pH)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddItem, 4, svtString);
 
-		char *szColor = 0;
+		char* szColor = 0;
 
 		if (pH->GetParam(4, szColor))
 		{
@@ -1224,8 +1222,8 @@ int CUIComboBox::AddItem(IFunctionHandler *pH)
 	return pH->EndFunction(AddItem(szText, pTexture, cColor));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::InsertItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::InsertItem(IFunctionHandler* pH)
 {
 	if (pH->GetParamCount() < 2)
 	{
@@ -1238,11 +1236,11 @@ int CUIComboBox::InsertItem(IFunctionHandler *pH)
 
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), InsertItem, 1, svtNumber);
 
-	wstring	szText = L"";
+	wstring       szText = L"";
 	UISkinTexture pTexture;
-	char					*szRect = 0;
-	color4f	cColor = color4f(0,0,0,0);
-	int						iPosition;
+	char*         szRect = 0;
+	color4f       cColor = color4f(0, 0, 0, 0);
+	int           iPosition;
 
 	// get the texture first
 	if (pH->GetParamCount() > 2)
@@ -1274,7 +1272,7 @@ int CUIComboBox::InsertItem(IFunctionHandler *pH)
 	{
 		CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), AddItem, 5, svtString);
 
-		char *szColor = 0;
+		char* szColor = 0;
 
 		if (pH->GetParam(5, szColor))
 		{
@@ -1293,8 +1291,8 @@ int CUIComboBox::InsertItem(IFunctionHandler *pH)
 	return pH->EndFunction(InsertItem(iPosition, szText, pTexture, cColor));
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::RemoveItem(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::RemoveItem(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), RemoveItem, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), RemoveItem, 1, svtNumber);
@@ -1308,32 +1306,32 @@ int CUIComboBox::RemoveItem(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetVAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetVAlign, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetVAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetVAlign, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetHAlign, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetHAlign, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::Clear(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::Clear(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Sort, 0);
 
@@ -1342,8 +1340,8 @@ int CUIComboBox::Clear(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::Sort(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::Sort(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), Sort, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), Sort, 1, svtNumber);
@@ -1357,62 +1355,62 @@ int CUIComboBox::Sort(IFunctionHandler *pH)
 	return pH->EndFunctionNull();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetButtonTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetButtonTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetButtonTexture, m_pButtonTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetButtonTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetButtonTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetButtonTexture, m_pButtonTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetButtonOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetButtonOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetButtonOverTexture, m_pButtonTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetButtonOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetButtonOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetButtonOverTexture, m_pButtonTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetButtonDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetButtonDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetButtonDownTexture, m_pButtonTexture.iDownTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetButtonDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetButtonDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetButtonDownTexture, m_pButtonTexture.iDownTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::SetButtonColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::SetButtonColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetButtonColor, m_cButtonColor);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIComboBox::GetButtonColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIComboBox::GetButtonColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetButtonColor, m_cButtonColor);
 }

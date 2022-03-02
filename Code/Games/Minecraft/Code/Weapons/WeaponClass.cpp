@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: Weapon.cpp
@@ -18,43 +18,46 @@
 #include "WeaponClass.h"
 #include "XPlayer.h"
 #if 0
-#include "XVehicle.h"
-#include "Flock.h"
-#include "ScriptObjectWeaponClass.h"
-#include <IAISystem.h>
+	#include "XVehicle.h"
+	#include "Flock.h"
+	#include "ScriptObjectWeaponClass.h"
+	#include <IAISystem.h>
 #endif
 #include "WeaponSystemEx.h"
 #include <CryCharAnimationParams.h>
 
 //////////////////////////////////////////////////////////////////////
-#define SCRIPT_BEGINCALL(host, func)\
-	if (m_rWeaponSystem.GetGame()->Is##host() && m_h##host##Funcs[WeaponFunc_##func]){\
-		m_pScriptSystem->BeginCall(m_h##host##Funcs[WeaponFunc_##func]);\
+#define SCRIPT_BEGINCALL(host, func)                                                  \
+	if (m_rWeaponSystem.GetGame()->Is##host() && m_h##host##Funcs[WeaponFunc_##func]) \
+	{                                                                                 \
+		m_pScriptSystem->BeginCall(m_h##host##Funcs[WeaponFunc_##func]);              \
 		m_pScriptSystem->PushFuncParam(m_soWeaponClass);
 
-#define SCRIPT_ENDCALL() 		m_pScriptSystem->EndCall();}
+#define SCRIPT_ENDCALL()        \
+	m_pScriptSystem->EndCall(); \
+	}
 //#define FIRE_DEBUG			// only for debugging
 
 //////////////////////////////////////////////////////////////////////
-CWeaponClass::CWeaponClass(CWeaponSystemEx& rWeaponSystem) :
-m_rWeaponSystem(rWeaponSystem)
+CWeaponClass::CWeaponClass(CWeaponSystemEx& rWeaponSystem)
+    : m_rWeaponSystem(rWeaponSystem)
 {
-	m_pObject = NULL;
-	m_pCharacter = NULL;
-	m_pMuzzleFlash = NULL;
-	m_ID = 0;
-	m_bIsLoaded = false;
+	m_pObject       = NULL;
+	m_pCharacter    = NULL;
+	m_pMuzzleFlash  = NULL;
+	m_ID            = 0;
+	m_bIsLoaded     = false;
 	m_pScriptSystem = NULL;
 	m_soWeaponClass = NULL;
 
-	#if 0 
+#if 0 
 	m_vAngles.Set(0,0,0);
 	m_vPos.Set(0,0,0);
 	m_fpvPos.Set(0,0,0);
 	m_fpvAngles.Set(0,0,0);
 	m_fpvPosOffset.Set(0,0,0);
 	m_fpvAngleOffset.Set(0,0,0);
-	#endif
+#endif
 	m_fLastUpdateTime = 0;
 
 	memset(m_hClientFuncs, 0, sizeof(m_hClientFuncs));
@@ -70,19 +73,19 @@ CWeaponClass::~CWeaponClass()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::OnStartAnimation(const char *sAnimation)
+void CWeaponClass::OnStartAnimation(const char* sAnimation)
 {
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::OnAnimationEvent(const char *sAnimation, AnimSinkEventData UserData)
+void CWeaponClass::OnAnimationEvent(const char* sAnimation, AnimSinkEventData UserData)
 {
-	FUNCTION_PROFILER(PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	IScriptObject *params = m_sso_Params_OnAnimationKey;
+	IScriptObject* params = m_sso_Params_OnAnimationKey;
 	params->SetValue("animation", sAnimation);
 	USER_DATA udUserData = (USER_DATA)UserData.p;
-	if (udUserData!=(USER_DATA)(-1))
+	if (udUserData != (USER_DATA)(-1))
 		params->SetValue("userdata", udUserData);
 	else
 		params->SetToNull("userdata");
@@ -96,7 +99,7 @@ void CWeaponClass::OnAnimationEvent(const char *sAnimation, AnimSinkEventData Us
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::OnEndAnimation(const char *sAnimation)
+void CWeaponClass::OnEndAnimation(const char* sAnimation)
 {
 }
 
@@ -105,13 +108,13 @@ bool CWeaponClass::Init(const string& sName)
 {
 	Reset();
 
-	ILog *pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
+	ILog* pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
 	assert(pLog);
 
 	m_pScriptSystem = m_rWeaponSystem.GetGame()->GetSystem()->GetIScriptSystem();
 	assert(m_pScriptSystem);
 
-	m_sName	= sName;
+	m_sName = sName;
 
 	if (!InitWeaponClassVariables())
 		return false;
@@ -165,7 +168,7 @@ void CWeaponClass::Reset()
 
 	//Never force Lua GC, m_pScriptSystem->ForceGarbageCollection();
 
-	while(!m_vFireModes.empty())
+	while (!m_vFireModes.empty())
 	{
 		delete m_vFireModes.back();
 		m_vFireModes.pop_back();
@@ -194,9 +197,9 @@ void CWeaponClass::ScriptOnInit()
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::ScriptOnActivate(IEntity *pShooter)
+void CWeaponClass::ScriptOnActivate(IEntity* pShooter)
 {
-	IScriptObject *params = m_sso_Params_OnActivate;
+	IScriptObject* params = m_sso_Params_OnActivate;
 
 	params->SetValue("shooter", pShooter->GetScriptObject());
 
@@ -209,9 +212,9 @@ void CWeaponClass::ScriptOnActivate(IEntity *pShooter)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::ScriptOnDeactivate(IEntity *pShooter)
+void CWeaponClass::ScriptOnDeactivate(IEntity* pShooter)
 {
-	IScriptObject *params = m_sso_Params_OnActivate;
+	IScriptObject* params = m_sso_Params_OnActivate;
 
 	params->SetValue("shooter", pShooter->GetScriptObject());
 
@@ -224,7 +227,7 @@ void CWeaponClass::ScriptOnDeactivate(IEntity *pShooter)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::ScriptWeaponReady(IEntity *pShooter)
+void CWeaponClass::ScriptWeaponReady(IEntity* pShooter)
 {
 	SCRIPT_BEGINCALL(Client, WeaponReady);
 	m_pScriptSystem->PushFuncParam(pShooter->GetScriptObject());
@@ -235,7 +238,7 @@ void CWeaponClass::ScriptWeaponReady(IEntity *pShooter)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::ScriptOnStopFiring(IEntity *pShooter)
+void CWeaponClass::ScriptOnStopFiring(IEntity* pShooter)
 {
 	SCRIPT_BEGINCALL(Client, OnStopFiring);
 	m_pScriptSystem->PushFuncParam(pShooter->GetScriptObject());
@@ -246,7 +249,7 @@ void CWeaponClass::ScriptOnStopFiring(IEntity *pShooter)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::ScriptReload(IEntity *pShooter)
+void CWeaponClass::ScriptReload(IEntity* pShooter)
 {
 	SCRIPT_BEGINCALL(Client, Reload);
 	m_pScriptSystem->PushFuncParam(pShooter->GetScriptObject());
@@ -281,20 +284,20 @@ void CWeaponClass::ScriptOnUpdate(float fDeltaTime, IEntity* pEntity)
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CWeaponClass::ScriptOnFireCancel(IScriptObject *params)
+bool CWeaponClass::ScriptOnFireCancel(IScriptObject* params)
 {
 	return false;
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CWeaponClass::ScriptOnFire(IScriptObject *pParamters)
+bool CWeaponClass::ScriptOnFire(IScriptObject* pParamters)
 {
 	bool bRet = true;
 
 	// Client side always first
 	if (m_rWeaponSystem.GetGame()->IsClient() && m_hClientFuncs[WeaponFunc_OnFire])
 	{
-		FRAME_PROFILER( "CWeaponClass::Client_ScriptOnFire",PROFILE_GAME );
+		FRAME_PROFILER("CWeaponClass::Client_ScriptOnFire", PROFILE_GAME);
 		m_pScriptSystem->BeginCall(m_hClientFuncs[WeaponFunc_OnFire]);
 		m_pScriptSystem->PushFuncParam(m_soWeaponClass);
 		if (pParamters)
@@ -308,7 +311,7 @@ bool CWeaponClass::ScriptOnFire(IScriptObject *pParamters)
 
 	if (m_rWeaponSystem.GetGame()->IsServer() && m_hServerFuncs[WeaponFunc_OnFire])
 	{
-		FRAME_PROFILER( "CWeaponClass::Server_ScriptOnFire",PROFILE_GAME );
+		FRAME_PROFILER("CWeaponClass::Server_ScriptOnFire", PROFILE_GAME);
 		m_pScriptSystem->BeginCall(m_hServerFuncs[WeaponFunc_OnFire]);
 		m_pScriptSystem->PushFuncParam(m_soWeaponClass);
 		if (pParamters)
@@ -334,7 +337,7 @@ void CWeaponClass::ScriptOnHit(IScriptObject* params)
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::ScriptOnEvent(int eventID, IScriptObject *pParameters, bool *pRet)
+void CWeaponClass::ScriptOnEvent(int eventID, IScriptObject* pParameters, bool* pRet)
 {
 	// Client side always first
 	if (m_rWeaponSystem.GetGame()->IsClient() && m_hClientFuncs[WeaponFunc_OnEvent])
@@ -364,7 +367,7 @@ void CWeaponClass::ScriptOnEvent(int eventID, IScriptObject *pParameters, bool *
 			m_pScriptSystem->PushFuncParam(pParameters);
 		else
 			m_pScriptSystem->PushFuncParam(false);
-		
+
 		if (pRet)
 			m_pScriptSystem->EndCall(*pRet);
 		else
@@ -373,33 +376,33 @@ void CWeaponClass::ScriptOnEvent(int eventID, IScriptObject *pParameters, bool *
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::SetFirstPersonWeaponPos( const Legacy::Vec3 &pos,const Legacy::Vec3 &angles )
+void CWeaponClass::SetFirstPersonWeaponPos(const Legacy::Vec3& pos, const Legacy::Vec3& angles)
 {
 	// Move weapon for first person view.
-	m_fpvPos = pos;
+	m_fpvPos    = pos;
 	m_fpvAngles = angles;
 }
 
 //////////////////////////////////////////////////////////////////////
-Legacy::Vec3	CWeaponClass::GetFirePos( IEntity *pIEntity ) const
+Legacy::Vec3 CWeaponClass::GetFirePos(IEntity* pIEntity) const
 {
-	ASSERT( pIEntity != 0 );
+	ASSERT(pIEntity != 0);
 	Legacy::Vec3 firepos = pIEntity->GetCamera()->GetPos();
 
 	return firepos;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::SetFirstPersonOffset( const Legacy::Vec3 &posOfs,const Legacy::Vec3 &angOfs )
+void CWeaponClass::SetFirstPersonOffset(const Legacy::Vec3& posOfs, const Legacy::Vec3& angOfs)
 {
-	m_fpvPosOffset = posOfs;
+	m_fpvPosOffset   = posOfs;
 	m_fpvAngleOffset = angOfs;
 }
 
 //////////////////////////////////////////////////////////////////////
-void CWeaponClass::MoveToFirstPersonPos(IEntity *pIEntity)
+void CWeaponClass::MoveToFirstPersonPos(IEntity* pIEntity)
 {
-	#if 0
+#if 0
 	Legacy::Vec3 pos = m_fpvPos+m_fpvPosOffset;
 
 	Matrix44 m=Matrix34::CreateRotationXYZ( Deg2Rad(pIEntity->GetCamera()->GetAngles()), pIEntity->GetCamera()->GetPos() );	//set rotation and translation in one function call
@@ -407,9 +410,9 @@ void CWeaponClass::MoveToFirstPersonPos(IEntity *pIEntity)
 
 	m_vPos = m.TransformPointOLD(pos);
 	m_vAngles = pIEntity->GetCamera()->GetAngles()+m_fpvAngleOffset;
-	#else
+#else
 	NOT_IMPLEMENTED;
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -444,13 +447,13 @@ float CWeaponClass::GetFireRate(eFireType ft) const
 }
 
 //////////////////////////////////////////////////////////////////////
-bool CWeaponClass::HasAIFireMode()	const
+bool CWeaponClass::HasAIFireMode() const
 {
 	return (m_nAIMode != -1);
 }
 
 //////////////////////////////////////////////////////////////////////
-int CWeaponClass::GetAIFireMode()	const
+int CWeaponClass::GetAIFireMode() const
 {
 	if (HasAIFireMode())
 		return m_nAIMode;
@@ -491,7 +494,7 @@ unsigned CWeaponClass::MemStats() const
 //////////////////////////////////////////////////////////////////////
 bool CWeaponClass::InitWeaponClassVariables()
 {
-	ILog *pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
+	ILog* pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
 	assert(pLog);
 
 	m_ssoFireTable.Create(m_pScriptSystem);
@@ -507,7 +510,7 @@ bool CWeaponClass::InitWeaponClassVariables()
 	m_sso_Params_OnDeactivate.Create(m_pScriptSystem);
 
 	// get entry in WeaponClasses table
-	IScriptObject *soWeaponClasses = m_rWeaponSystem.GetWeaponClassesTable();
+	IScriptObject*     soWeaponClasses = m_rWeaponSystem.GetWeaponClassesTable();
 
 	_SmartScriptObject soObj(m_pScriptSystem, true);
 
@@ -518,19 +521,19 @@ bool CWeaponClass::InitWeaponClassVariables()
 	}
 
 	// get values out of the entry in the WeaponClasses table
-	char * sVal = 0;
+	char* sVal = 0;
 	if (!soObj->GetValue("id", m_ID))
 	{
 		pLog->LogError("CWeaponClass: Cannot access field 'id'");
 		return false;
 	}
-	if (!soObj->GetValue("script", (const char* &)sVal))
+	if (!soObj->GetValue("script", (const char*&)sVal))
 	{
 		pLog->LogError("CWeaponClass: Cannot access field 'script'");
 		return false;
 	}
 	m_sScript = sVal;
-	if (soObj->GetValue("pickup", (const char* &)sVal))
+	if (soObj->GetValue("pickup", (const char*&)sVal))
 	{
 		m_sPickup = sVal;
 	}
@@ -541,7 +544,7 @@ bool CWeaponClass::InitWeaponClassVariables()
 //////////////////////////////////////////////////////////////////////////
 bool CWeaponClass::InitScripts()
 {
-	ILog *pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
+	ILog* pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
 	assert(pLog);
 
 	// execute weapon script
@@ -550,7 +553,7 @@ bool CWeaponClass::InitScripts()
 		return false;
 	}
 
-	#if 0
+#if 0
 	CScriptObjectWeaponClass* soWC = new CScriptObjectWeaponClass();
 
 	if (!soWC->Create(m_rWeaponSystem.GetGame(), this))
@@ -558,22 +561,22 @@ bool CWeaponClass::InitScripts()
 
 	m_soWeaponClass = soWC->GetScriptObject();
 	ASSERT(m_soWeaponClass)
-		#endif
+#endif
 
 	// get client/server functions
 	bool bOnClient = m_rWeaponSystem.GetGame()->IsClient();
 	bool bOnServer = m_rWeaponSystem.GetGame()->IsServer();
 
-	#define GET_VALUE_EX(host, name)\
-	if (bOn##host && m_soWeaponClass->GetValue( #host, soTemp) && soTemp->GetValue(#name, pFunc))\
+#define GET_VALUE_EX(host, name)                                                                 \
+	if (bOn##host && m_soWeaponClass->GetValue(#host, soTemp) && soTemp->GetValue(#name, pFunc)) \
 		m_h##host##Funcs[WeaponFunc_##name] = pFunc;
 
-	#define GET_VALUE(name)\
-		GET_VALUE_EX(Client, name);\
-		GET_VALUE_EX(Server, name);
+#define GET_VALUE(name)         \
+	GET_VALUE_EX(Client, name); \
+	GET_VALUE_EX(Server, name);
 
 	_SmartScriptObject soTemp(m_pScriptSystem, true);
-	HSCRIPTFUNCTION pFunc = 0;
+	HSCRIPTFUNCTION    pFunc = 0;
 
 	GET_VALUE(OnInit);
 	GET_VALUE(OnActivate);
@@ -588,8 +591,8 @@ bool CWeaponClass::InitScripts()
 	GET_VALUE(OnHit);
 	GET_VALUE(OnEvent);
 
-	#undef GET_VALUE
-	#undef GET_VALUE_EX
+#undef GET_VALUE
+#undef GET_VALUE_EX
 
 	// make sure models are loaded before calling OnInit()
 	if (!InitModels())
@@ -605,14 +608,14 @@ bool CWeaponClass::InitScripts()
 bool CWeaponClass::InitModels()
 {
 	// prepare to load models
-	ILog *pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
+	ILog* pLog = m_rWeaponSystem.GetGame()->GetSystem()->GetILog();
 	assert(pLog);
-	ISystem*		pSystem = m_rWeaponSystem.GetGame()->GetSystem();
+	ISystem* pSystem = m_rWeaponSystem.GetGame()->GetSystem();
 	assert(pSystem);
 
 	// load 3rd person model
 	const char* pszObject;
-	if(m_soWeaponClass->GetValue("object", pszObject))
+	if (m_soWeaponClass->GetValue("object", pszObject))
 	{
 		//pLog->Log("WeaponClass '%s': Object -> '%s'", m_sName.c_str(), pszObject);
 		m_pObject = pSystem->GetI3DEngine()->MakeObject(pszObject);
@@ -620,7 +623,7 @@ bool CWeaponClass::InitModels()
 
 	// load 1st person animated model
 	const char* pszCharacter;
-	if(m_soWeaponClass->GetValue("character", pszCharacter))
+	if (m_soWeaponClass->GetValue("character", pszCharacter))
 	{
 		//pLog->Log("WeaponClass '%s': Character -> '%s'", m_sName.c_str(), pszCharacter);
 		m_pCharacter = pSystem->GetIAnimationSystem()->MakeCharacter(pszCharacter, ICryCharManager::nHintModelTransient);
@@ -629,19 +632,19 @@ bool CWeaponClass::InitModels()
 			m_pCharacter->ResetAnimations();
 			m_pCharacter->SetFlags(m_pCharacter->GetFlags() | CS_FLAG_DRAW_MODEL | CS_FLAG_UPDATE);
 			if (m_rWeaponSystem.IsLeftHanded())
-				m_pCharacter->SetScale(Legacy::Vec3(-1,1,1));
+				m_pCharacter->SetScale(Legacy::Vec3(-1, 1, 1));
 
 			// set keyframe 1
 			CryCharAnimationParams ccap;
-			ccap.fBlendInTime = 0;
+			ccap.fBlendInTime  = 0;
 			ccap.fBlendOutTime = 0;
-			ccap.nLayerID = 0;
+			ccap.nLayerID      = 0;
 			m_pCharacter->SetAnimationSpeed(1.0f);
-			m_pCharacter->SetDefaultIdleAnimation(0,"Idle11");
-			m_pCharacter->StartAnimation("Idle11",ccap);
+			m_pCharacter->SetDefaultIdleAnimation(0, "Idle11");
+			m_pCharacter->StartAnimation("Idle11", ccap);
 			m_pCharacter->Update();
-			m_pCharacter->ForceUpdate(); 
-			//m_pCharacter->SetAnimationFrame("idle",1);			
+			m_pCharacter->ForceUpdate();
+			//m_pCharacter->SetAnimationFrame("idle",1);
 			//m_pCharacter->StopAnimation(0);
 		}
 	}
@@ -652,7 +655,7 @@ bool CWeaponClass::InitModels()
 //////////////////////////////////////////////////////////////////////////
 bool CWeaponClass::LoadMuzzleFlash(const string& sGeometryName)
 {
-	ISystem*		pSystem = m_rWeaponSystem.GetGame()->GetSystem();
+	ISystem* pSystem = m_rWeaponSystem.GetGame()->GetSystem();
 	assert(pSystem);
 
 	if (m_pMuzzleFlash && !m_pMuzzleFlash->IsSameObject(sGeometryName.c_str(), NULL))
@@ -667,33 +670,33 @@ bool CWeaponClass::LoadMuzzleFlash(const string& sGeometryName)
 
 //////////////////////////////////////////////////////////////////////////
 //! Set parameters of this weapon.
-WeaponParams *CWeaponClass::AddWeaponParams(const WeaponParams &params )
+WeaponParams* CWeaponClass::AddWeaponParams(const WeaponParams& params)
 {
-	WeaponParams *p=new WeaponParams;
-	*p=params;
+	WeaponParams* p = new WeaponParams;
+	*p              = params;
 	m_vFireModes.push_back(p);
 
 	m_fireParams = params;
 	if (params.bAIMode)
 	{
-		m_nAIMode = m_vFireModes.size()-1;
+		m_nAIMode = m_vFireModes.size() - 1;
 	}
 	return p;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //! Get parameters of this weapon.
-void CWeaponClass::GetWeaponParams(WeaponParams &params )
+void CWeaponClass::GetWeaponParams(WeaponParams& params)
 {
 	params = m_fireParams;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool CWeaponClass::GetModeParams(int mode, WeaponParams &stats)
+bool CWeaponClass::GetModeParams(int mode, WeaponParams& stats)
 {
 	int x = m_vFireModes.size();
 
-	if ((mode >=0) && (mode < int(m_vFireModes.size())))
+	if ((mode >= 0) && (mode < int(m_vFireModes.size())))
 	{
 		stats = *(m_vFireModes[mode]);
 		return true;
@@ -704,10 +707,10 @@ bool CWeaponClass::GetModeParams(int mode, WeaponParams &stats)
 //////////////////////////////////////////////////////////////////////////
 bool CWeaponClass::CancelFire()
 {
-	FUNCTION_PROFILER(PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
 	m_ssoFireTable->BeginSetGetChain();
-	m_ssoFireTable->SetValueChain("fire_event_type", (int) eCancel);
+	m_ssoFireTable->SetValueChain("fire_event_type", (int)eCancel);
 	m_ssoFireTable->EndSetGetChain();
 
 	bool bWeaponReady;
@@ -717,7 +720,7 @@ bool CWeaponClass::CancelFire()
 		// Not an instant hit weapon and not a projectile weapon.
 		// Special case, let the script handle it
 		if (m_fireParams.sProjectileClass.empty())
-			return true; 
+			return true;
 
 		// Weapon not ready to fire ?
 		ScriptOnEvent(ScriptEvent_FireCancel, *m_ssoFireTable, &bWeaponReady);
@@ -728,34 +731,34 @@ bool CWeaponClass::CancelFire()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CWeaponClass::Update(CPlayer *pPlayer)
+void CWeaponClass::Update(CPlayer* pPlayer)
 {
-	FUNCTION_PROFILER(PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
 	if (pPlayer == NULL)
 	{
 		m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("\001 CWeaponClass::Update - ERROR -> pPlayer == NULL");
 		return;
 	}
-	assert(pPlayer->m_stats.firemode>=0 && pPlayer->m_stats.firemode<int(m_vFireModes.size()));
+	assert(pPlayer->m_stats.firemode >= 0 && pPlayer->m_stats.firemode < int(m_vFireModes.size()));
 	if (m_vFireModes[pPlayer->m_stats.firemode] == NULL)
 	{
 		m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("\001 CWeaponClass::Update - ERROR -> m_vFireModes[pPlayer->m_stats.firemode] == NULL");
 		return;
 	}
-	m_fireParams = *(m_vFireModes[pPlayer->m_stats.firemode]);
+	m_fireParams     = *(m_vFireModes[pPlayer->m_stats.firemode]);
 
-	IEntity *pEntity = pPlayer->GetEntity();
-	float time = m_rWeaponSystem.GetGame()->GetSystem()->GetITimer()->GetCurrTime();
+	IEntity* pEntity = pPlayer->GetEntity();
+	float    time    = m_rWeaponSystem.GetGame()->GetSystem()->GetITimer()->GetCurrTime();
 
-	ScriptOnUpdate(time-m_fLastUpdateTime, pEntity);
+	ScriptOnUpdate(time - m_fLastUpdateTime, pEntity);
 
-	m_fLastUpdateTime = time;
+	m_fLastUpdateTime       = time;
 
-	ICryCharInstance *pChar = pEntity->GetCharInterface()->GetCharacter(1);
+	ICryCharInstance* pChar = pEntity->GetCharInterface()->GetCharacter(1);
 	if (pPlayer->IsMyPlayer() && m_pCharacter && pChar)
 	{
-		FRAME_PROFILER( "CWeaponClass::UpdateCharacter",PROFILE_GAME );
+		FRAME_PROFILER("CWeaponClass::UpdateCharacter", PROFILE_GAME);
 		pChar->Update(GetPos());
 	}
 }
@@ -763,13 +766,13 @@ void CWeaponClass::Update(CPlayer *pPlayer)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //weapon fire,play sounds and perform collision check
 //////////////////////////////////////////////////////////////////////
-int CWeaponClass::Fire(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, CPlayer *pPlayer, WeaponInfo &winfo, IPhysicalEntity *pIRedirected)
+int CWeaponClass::Fire(const Legacy::Vec3& origin, const Legacy::Vec3& angles, CPlayer* pPlayer, WeaponInfo& winfo, IPhysicalEntity* pIRedirected)
 {
-	#if 0
+#if 0
 	FUNCTION_PROFILER(PROFILE_GAME );
-#ifdef FIRE_DEBUG
+	#ifdef FIRE_DEBUG
 	CryLog("CWeaponClass::Fire");
-#endif
+	#endif
 	if (pPlayer == NULL)
 	{
 		m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("\001 CWeaponClass::Fire - ERROR -> pPlayer == NULL");
@@ -933,9 +936,9 @@ int CWeaponClass::Fire(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, C
 			pClass=m_rWeaponSystem.GetGame()->GetClassRegistry()->GetByClass(m_fireParams.sProjectileClass.c_str());
 			if(!pClass)
 			{
-#ifdef _DEBUG
+	#ifdef _DEBUG
 				m_rWeaponSystem.GetGame()->GetClassRegistry()->Debug();			// OutputDebugString
-#endif
+	#endif
 				assert(false);
 				return 1;
 			}
@@ -992,7 +995,7 @@ int CWeaponClass::Fire(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, C
 			pPlayer->m_SynchedRandomSeed.IncreaseRandomSeedC();
 		}
 
-#define MAX_HITS 5
+	#define MAX_HITS 5
 		static ray_hit hits[MAX_HITS];
 
 		memset(hits,0,sizeof(hits));
@@ -1060,14 +1063,14 @@ int CWeaponClass::Fire(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, C
 			FRAME_PROFILER( "CWeaponClass::RayWorldIntersection",PROFILE_GAME );
 			res = pPhysicalWorld->RayWorldIntersection(origin, dir, ent_all, rwi_separate_important_hits,hits,MAX_HITS, skip, skipMore);
 
-#ifdef FIRE_DEBUG
+	#ifdef FIRE_DEBUG
 				m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("CWeaponClass::Fire RayWorldIntersection d",res);
 				for(int i=0;i<res;i++)
 				{
 					m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("CWeaponClass::Fire hits: dist=%.2f type=%d pos=(%.2f %.2f %.2f)",
 						hits[i].dist,hits[i].pCollider?hits[i].pCollider->GetType():-1,hits[i].pt.x,hits[i].pt.y,hits[i].pt.z);				
 				}
-#endif
+	#endif
 
 		}
 
@@ -1147,17 +1150,17 @@ int CWeaponClass::Fire(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, C
 					else if (physType == OT_STAT_OBJ)
 					{
 						entrendercontact = (IEntityRender *)hits[nCount].pCollider->GetForeignData(1);
-#ifdef FIRE_DEBUG
+	#ifdef FIRE_DEBUG
 						m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("IEntityRender %x",centycontact);
-#endif
+	#endif
 						objecttype = OT_STAT_OBJ;
 					}
 					else
 					{
 						centycontact = (IEntity *)hits[nCount].pCollider->GetForeignData();
-#ifdef FIRE_DEBUG
+	#ifdef FIRE_DEBUG
 						m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("centycontact %x",centycontact);
-#endif
+	#endif
 
 						if (centycontact && centycontact->IsGarbage())
 						{
@@ -1233,27 +1236,27 @@ int CWeaponClass::Fire(const Legacy::Vec3 &origin, const Legacy::Vec3 &angles, C
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CWeaponClass::ProcessHitTarget(const SWeaponHit &hit)
+void CWeaponClass::ProcessHitTarget(const SWeaponHit& hit)
 {
-	FUNCTION_PROFILER(PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 
-	if (hit.target!=NULL)
+	if (hit.target != NULL)
 	{
 #ifdef FIRE_DEBUG
-		m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("hit.target!=NULL id=%d target=%s %x",hit.target->GetId(),(const char *)hit.target->GetName(),hit.target->GetScriptObject());
+		m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("hit.target!=NULL id=%d target=%s %x", hit.target->GetId(), (const char*)hit.target->GetName(), hit.target->GetScriptObject());
 #endif
-		m_ssoProcessHit->SetValueChain("target_id",hit.target->GetId());
+		m_ssoProcessHit->SetValueChain("target_id", hit.target->GetId());
 		if (hit.target->GetScriptObject())
-			m_ssoProcessHit->SetValueChain("target",hit.target->GetScriptObject());
+			m_ssoProcessHit->SetValueChain("target", hit.target->GetScriptObject());
 		else
 			m_ssoProcessHit->SetToNullChain("target");
 		m_ssoProcessHit->SetToNullChain("targetStat");
 	}
-	else 	if (hit.targetStat!=NULL)
+	else if (hit.targetStat != NULL)
 	{
 		// Make user data for pointer.
-		USER_DATA ud = m_pScriptSystem->CreateUserData( (ULONG_PTR)hit.targetStat,USER_DATA_POINTER );
-		m_ssoProcessHit->SetValueChain("targetStat",ud);
+		USER_DATA ud = m_pScriptSystem->CreateUserData((ULONG_PTR)hit.targetStat, USER_DATA_POINTER);
+		m_ssoProcessHit->SetValueChain("targetStat", ud);
 
 		m_ssoProcessHit->SetToNullChain("target");
 		m_ssoProcessHit->SetToNullChain("target_id");
@@ -1267,26 +1270,26 @@ void CWeaponClass::ProcessHitTarget(const SWeaponHit &hit)
 		m_ssoProcessHit->SetToNullChain("targetStat");
 		m_ssoProcessHit->SetToNullChain("target");
 		m_ssoProcessHit->SetToNullChain("target_id");
-		m_ssoProcessHit->SetValueChain("objtype",hit.objecttype);
-	}	
+		m_ssoProcessHit->SetValueChain("objtype", hit.objecttype);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CWeaponClass::ProcessHit(const SWeaponHit &hit)
+void CWeaponClass::ProcessHit(const SWeaponHit& hit)
 {
-	FUNCTION_PROFILER(PROFILE_GAME );
+	FUNCTION_PROFILER(PROFILE_GAME);
 #ifdef FIRE_DEBUG
 	m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("CWeaponClass::ProcessHit target=%s pos=(%.2f %.2f %.2f)",
-		hit.target?hit.target->GetName():"nil",hit.pos.x,hit.pos.y,hit.pos.z);
+	                                                       hit.target ? hit.target->GetName() : "nil", hit.pos.x, hit.pos.y, hit.pos.z);
 #endif
 
-	#if 0
+#if 0
 	IScriptObject *pTargetMaterial;
 	NOT_IMPLEMENTED;
 	float fWaterLevel=m_rWeaponSystem.GetGame()->GetSystem()->GetI3DEngine()->GetWaterLevel(&hit.pos);
-	#endif
+#endif
 
-	#if 0
+#if 0
 	Legacy::Vec3 vHitPoint;
 	Legacy::Vec3 vShooter=hit.shooter->GetCamera()->GetPos();
 
@@ -1386,41 +1389,40 @@ void CWeaponClass::ProcessHit(const SWeaponHit &hit)
 
 	if (hit.target)
 	{
-#ifdef FIRE_DEBUG
+	#ifdef FIRE_DEBUG
 		m_rWeaponSystem.GetGame()->GetSystem()->GetILog()->Log("CWeaponClass::ProcessHit OnDamage");
-#endif
+	#endif
 
 		hit.target->OnDamage(m_ssoProcessHit);
 		if(hit.target->IsStatic())
 			hit.target->AddImpulse( hit.ipart, hit.pos, hit.dir*(float)(hit.iImpactForceMul));
 	}
-	#endif
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
 void CWeaponClass::CalculateWeaponAngles(BYTE random_seed, Legacy::Vec3* pVector, float fAccuracy)
 {
-	IXSystem *pXSystem = m_rWeaponSystem.GetGame()->GetXSystem();
+	IXSystem* pXSystem = m_rWeaponSystem.GetGame()->GetXSystem();
 
 	//take into account weapon's accuracy
-	if(m_fireParams.fMinAccuracy<1) //if 100 accurate just return
+	if (m_fireParams.fMinAccuracy < 1) //if 100 accurate just return
 	{
 		float spread = 15.0f;
 
 		float r1, r2;
-		
-		for(int i=0; i<256; ++i)
+
+		for (int i = 0; i < 256; ++i)
 		{
-			r1 = CSynchedRandomSeed::GetRandTable(random_seed+i);
-			r2 = CSynchedRandomSeed::GetRandTable(random_seed+3+i);
-			if ((r1*r1 + r2*r2) <= 1.0f) break;
+			r1 = CSynchedRandomSeed::GetRandTable(random_seed + i);
+			r2 = CSynchedRandomSeed::GetRandTable(random_seed + 3 + i);
+			if ((r1 * r1 + r2 * r2) <= 1.0f) break;
 		}
 
-		r1 = -0.5f*spread + spread*r1;
-		r2 = -0.5f*spread + spread*r2;
+		r1 = -0.5f * spread + spread * r1;
+		r2 = -0.5f * spread + spread * r2;
 
 		pVector->x += r1 * fAccuracy;
 		pVector->z += r2 * fAccuracy;
 	}
 }
-

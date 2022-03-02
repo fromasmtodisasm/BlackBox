@@ -1,9 +1,8 @@
 #pragma once
 #include <Network/XEntityProcessingCmd.hpp>
-#include <Network/XNetwork.hpp>	
+#include <Network/XNetwork.hpp>
 
-class CServer
-	: public IServerSlotSink
+class CServer : public IServerSlotSink
 {
 	CServer(CXGame* pGame);
 

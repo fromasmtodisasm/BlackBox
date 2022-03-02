@@ -1,10 +1,10 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
-//  File: UIButton.cpp  
+//  File: UIButton.cpp
 //  Description: UI buttons handling
 //
 //  History:
@@ -21,36 +21,35 @@ _DECLARE_SCRIPTABLEEX(CUIButton)
 
 //FIXME: remove it
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+	#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
+	#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
-
 
 //////////////////////////////////////////////////////////////////////////
 CUIButton::CUIButton()
-: m_iHAlignment(UIALIGN_CENTER),
-	m_iVAlignment(UIALIGN_MIDDLE),
-	m_iState(UISTATE_UP),
-	m_bKeepOver(0)
+    : m_iHAlignment(UIALIGN_CENTER)
+    , m_iVAlignment(UIALIGN_MIDDLE)
+    , m_iState(UISTATE_UP)
+    , m_bKeepOver(0)
 {
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 CUIButton::~CUIButton()
 {
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 std::string CUIButton::GetClassName()
 {
 	return UICLASSNAME_BUTTON;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-LRESULT CUIButton::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	//AMD Port
+//////////////////////////////////////////////////////////////////////////
+LRESULT CUIButton::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
 	switch (iMessage)
 	{
@@ -60,46 +59,46 @@ LRESULT CUIButton::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	/
 			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 		}
 	case UIM_LBUTTONUP:
-		{
-			m_iState |= UISTATE_UP;
-			m_iState &= ~UISTATE_DOWN;
+	{
+		m_iState |= UISTATE_UP;
+		m_iState &= ~UISTATE_DOWN;
 
-			m_pUISystem->ResetInput();
+		m_pUISystem->ResetInput();
 
-			OnCommand();
+		OnCommand();
 
-			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
-		}
+		return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
+	}
 	case UIM_LBUTTONDOWN:
-		{
-			m_iState |= UISTATE_DOWN;
-			m_iState &= ~UISTATE_UP;
+	{
+		m_iState |= UISTATE_DOWN;
+		m_iState &= ~UISTATE_UP;
 
-			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
-		}
+		return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
+	}
 	case UIM_MOUSEENTER:
-		{
-			m_iState |= UISTATE_OVER;
+	{
+		m_iState |= UISTATE_OVER;
 
-			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
-		}
+		return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
+	}
 	case UIM_MOUSELEAVE:
-		{
-			m_iState &= ~UISTATE_OVER;		
-			m_iState &= ~UISTATE_DOWN;
-			m_iState |= UISTATE_UP;
+	{
+		m_iState &= ~UISTATE_OVER;
+		m_iState &= ~UISTATE_DOWN;
+		m_iState |= UISTATE_UP;
 
-			return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
-		}
+		return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
+	}
 
 	default:
 		return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
-	}	
+	}
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 int CUIButton::Draw(int iPass)
 {
 	if (iPass != 0)
@@ -108,10 +107,10 @@ int CUIButton::Draw(int iPass)
 	}
 
 	m_pUISystem->BeginDraw(this);
-	
+
 	// get the absolute widget rect
 	UIRect pAbsoluteRect(m_pRect);
-	
+
 	m_pUISystem->GetAbsoluteXY(&pAbsoluteRect.fLeft, &pAbsoluteRect.fTop, m_pRect.fLeft, m_pRect.fTop, m_pParent);
 
 	// if transparent, draw only the clipped text
@@ -135,7 +134,7 @@ int CUIButton::Draw(int iPass)
 	// to draw a greyed quad later, if disabled
 	UIRect pGreyedRect = pAbsoluteRect;
 
-	int iOldState = m_iState;
+	int    iOldState   = m_iState;
 
 	if (m_bKeepOver)
 	{
@@ -182,7 +181,7 @@ int CUIButton::Draw(int iPass)
 		m_pUISystem->AdjustRect(&pTextRect, pAbsoluteRect, UI_DEFAULT_TEXT_BORDER_SIZE);
 		m_pUISystem->SetScissor(&pTextRect);
 
-		IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+		IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
 		m_pUISystem->DrawText(pTextRect, m_iHAlignment, m_iVAlignment, pFont, m_szText.c_str());
 	}
@@ -207,16 +206,16 @@ int CUIButton::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetText(const std::wstring &szText)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetText(const std::wstring& szText)
 {
 	m_szText = szText;
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////////// 
-void CUIButton::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////////
+void CUIButton::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIButton>::InitializeTemplate(pScriptSystem);
 
@@ -239,11 +238,10 @@ void CUIButton::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIButton, SetOverState);
 }
 
-
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetText, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE2(m_pScriptSystem, GetName().c_str(), SetText, 1, svtString, svtNumber);
@@ -255,16 +253,16 @@ int CUIButton::SetText(IFunctionHandler *pH)
 	return pH->EndFunction();
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::GetText(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::GetText(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), GetText, 0);
 
-	char szString[1024] = {0,0};
+	char   szString[1024] = {0, 0};
 
-	size_t iSize = min(m_szText.size(), sizeof(szString)-1);
+	size_t iSize          = min(m_szText.size(), sizeof(szString) - 1);
 
-	size_t i = 0;
+	size_t i              = 0;
 	for (; i < iSize; i++)
 	{
 		szString[i] = (char)m_szText[i];
@@ -274,80 +272,80 @@ int CUIButton::GetText(IFunctionHandler *pH)
 	return pH->EndFunction(szString);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::GetState(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::GetState(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetState, m_iState);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetState(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetState(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetState, m_iState);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetVAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetVerticalTextAlignment, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::GetVAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::GetVAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetVerticalTextAlignment, m_iVAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetHorizontalTextAlignment, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::GetHAlign(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::GetHAlign(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetHorizontalTextAlignment, m_iHAlignment);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::GetTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::GetTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetTexture, m_pTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetDownTexture, m_pTexture.iDownTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::GetDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::GetDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetDownTexture, m_pTexture.iDownTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetOverTexture, m_pTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::GetOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::GetOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetOverTexture, m_pTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////////// 
-int CUIButton::SetOverState(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////////
+int CUIButton::SetOverState(IFunctionHandler* pH)
 {
 	CHECK_SCRIPT_FUNCTION_PARAMCOUNT(m_pScriptSystem, GetName().c_str(), SetOverState, 1);
 	CHECK_SCRIPT_FUNCTION_PARAMTYPE(m_pScriptSystem, GetName().c_str(), SetOverState, 1, svtNumber);

@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: UIVideoPanel.h
@@ -14,15 +14,15 @@
 //////////////////////////////////////////////////////////////////////
 
 #ifndef UIVIDEOPANEL_H
-#define UIVIDEOPANEL_H 
+#define UIVIDEOPANEL_H
 
-#define UICLASSNAME_VIDEOPANEL			"UIVideoPanel"
+#define UICLASSNAME_VIDEOPANEL "UIVideoPanel"
 
 #include "UIWidget.h"
 #include "UISystem.h"
 
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
-#	include "../binksdk/bink.h"
+	#include "../binksdk/bink.h"
 #endif
 
 class CUISystem;
@@ -31,77 +31,76 @@ class CUISystem;
 class CUIVideoPanel : public CUIWidget, public _ScriptableEx<CUIVideoPanel>
 {
 public:
-
 	UI_WIDGET(CUIVideoPanel)
 
 	CUIVideoPanel();
 	~CUIVideoPanel();
 
-	CUISystem* GetUISystem() { return m_pUISystem; }
+	CUISystem*  GetUISystem() { return m_pUISystem; }
 
-	string GetClassName();
+	string      GetClassName();
 
-	LRESULT Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam);	//AMD Port
-	int Draw(int iPass);
+	LRESULT     Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam); //AMD Port
+	int         Draw(int iPass);
 
-	int InitBink();
+	int         InitBink();
 
-	int LoadVideo(const string &szFileName, bool bSound);	
+	int         LoadVideo(const string& szFileName, bool bSound);
 
-	int ReleaseVideo();
-	int Play();
-	int Stop();
-	int Pause(bool bPause = 1);
-	int IsPlaying();
-	int IsPaused();
+	int         ReleaseVideo();
+	int         Play();
+	int         Stop();
+	int         Pause(bool bPause = 1);
+	int         IsPlaying();
+	int         IsPaused();
 
-	int SetVolume(int iTrackID, float fVolume);
-	int SetPan(int iTrackID, float fPan);
+	int         SetVolume(int iTrackID, float fVolume);
+	int         SetPan(int iTrackID, float fPan);
 
-	int SetFrameRate(int iFrameRate);
+	int         SetFrameRate(int iFrameRate);
 
-	int EnableVideo(bool bEnable = 1);
-	int EnableAudio(bool bEnable = 1);
+	int         EnableVideo(bool bEnable = 1);
+	int         EnableAudio(bool bEnable = 1);
 
-	int OnError(const char *szError);
-	int OnFinished();
+	int         OnError(const char* szError);
+	int         OnFinished();
 
-	static void InitializeTemplate(IScriptSystem *pScriptSystem);
+	static void InitializeTemplate(IScriptSystem* pScriptSystem);
 
 	//////////////////////////////////////////////////////////////////////
 	// Script Functions
 	//////////////////////////////////////////////////////////////////////
-	int LoadVideo(IFunctionHandler *pH);
-	int ReleaseVideo(IFunctionHandler *pH);
+	int         LoadVideo(IFunctionHandler* pH);
+	int         ReleaseVideo(IFunctionHandler* pH);
 
-	int Play(IFunctionHandler *pH);
-	int Stop(IFunctionHandler *pH);
-	int Pause(IFunctionHandler *pH);
-	
-	int IsPlaying(IFunctionHandler *pH);
-	int IsPaused(IFunctionHandler *pH);
+	int         Play(IFunctionHandler* pH);
+	int         Stop(IFunctionHandler* pH);
+	int         Pause(IFunctionHandler* pH);
 
-	int SetVolume(IFunctionHandler *pH);
-	int SetPan(IFunctionHandler *pH);
+	int         IsPlaying(IFunctionHandler* pH);
+	int         IsPaused(IFunctionHandler* pH);
 
-	int SetFrameRate(IFunctionHandler *pH);
+	int         SetVolume(IFunctionHandler* pH);
+	int         SetPan(IFunctionHandler* pH);
 
-	int EnableVideo(IFunctionHandler *pH);
-	int EnableAudio(IFunctionHandler *pH);
+	int         SetFrameRate(IFunctionHandler* pH);
 
-	bool					m_DivX_Active;
+	int         EnableVideo(IFunctionHandler* pH);
+	int         EnableAudio(IFunctionHandler* pH);
 
-	string				m_szVideoFile;
+	bool        m_DivX_Active;
+
+	string      m_szVideoFile;
 #if !defined(WIN64) && !defined(LINUX) && !defined(NOT_USE_BINK_SDK)
-	HBINK					m_hBink;
+	HBINK m_hBink;
 #endif
-	bool					m_bPaused;
-	bool					m_bPlaying;
-	bool					m_bLooping;
-	bool					m_bKeepAspect;
-	int						m_iTextureID;
+	bool          m_bPaused;
+	bool          m_bPlaying;
+	bool          m_bLooping;
+	bool          m_bKeepAspect;
+	int           m_iTextureID;
 	UISkinTexture m_pOverlay;
-	int						*m_pSwapBuffer;
+	int*          m_pSwapBuffer;
 };
 
 #endif

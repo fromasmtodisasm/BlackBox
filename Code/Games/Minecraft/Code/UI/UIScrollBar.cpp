@@ -1,11 +1,11 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
 //
 //  File: UIScrollBar.cpp
-//  Description: An UI ScrollBar 
+//  Description: An UI ScrollBar
 //
 //  History:
 //  - [23/6/2003]: File created by Márcio Martins
@@ -19,277 +19,279 @@
 
 _DECLARE_SCRIPTABLEEX(CUIScrollBar);
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIScrollBar::CUIScrollBar()
-: m_fValue(0.0f), m_fStep(0.0275f), m_iState(0), m_fRepeatTimer(0)
+    : m_fValue(0.0f)
+    , m_fStep(0.0275f)
+    , m_iState(0)
+    , m_fRepeatTimer(0)
 {
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 CUIScrollBar::~CUIScrollBar()
 {
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 string CUIScrollBar::GetClassName()
 {
 	return UICLASSNAME_SCROLLBAR;
 }
 
-////////////////////////////////////////////////////////////////////// 
-LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)	//AMD Port
+//////////////////////////////////////////////////////////////////////
+LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
 	m_fValue = CLAMP(m_fValue, 0.0f, 1.0f);
 
 	switch (iMessage)
 	{
 	case UIM_MOUSEOVER:
+	{
+		float fX = UIM_GET_X_FLOAT(lParam);
+		float fY = UIM_GET_Y_FLOAT(lParam);
+
+		if (m_pUISystem->PointInRect(m_pMinusRect, fX, fY))
+		{
+			m_iState |= UISCROLLBARSTATE_MINUS_OVER;
+		}
+		else
+		{
+			m_iState &= ~UISCROLLBARSTATE_MINUS_OVER;
+		}
+
+		if (m_pUISystem->PointInRect(m_pPlusRect, fX, fY))
+		{
+			m_iState |= UISCROLLBARSTATE_PLUS_OVER;
+		}
+		else
+		{
+			m_iState &= ~UISCROLLBARSTATE_PLUS_OVER;
+		}
+
+		if (m_pUISystem->PointInRect(m_pSliderRect, fX, fY))
+		{
+			m_iState |= UISCROLLBARSTATE_SLIDER_OVER;
+			m_iState &= ~UISCROLLBARSTATE_PATH_OVER;
+		}
+		else if (m_pUISystem->PointInRect(m_pPathRect, fX, fY))
+		{
+			m_iState &= ~UISCROLLBARSTATE_SLIDER_OVER;
+			//m_iState |= UISCROLLBARSTATE_PATH_OVER;
+		}
+		else
+		{
+			m_iState &= ~UISCROLLBARSTATE_PATH_OVER;
+			m_iState &= ~UISCROLLBARSTATE_SLIDER_OVER;
+		}
+	}
+	break;
+	case UIM_KEYDOWN:
+	{
+		if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_LEFT))
+		{
+			m_fValue -= m_fStep;
+
+			OnChanged();
+		}
+		else if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_RIGHT))
+		{
+			m_fValue += m_fStep;
+
+			OnChanged();
+		}
+		else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_UP))
+		{
+			m_fValue -= m_fStep;
+
+			OnChanged();
+		}
+		else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_DOWN))
+		{
+			m_fValue += m_fStep;
+
+			OnChanged();
+		}
+	}
+	break;
+	case UIM_MOUSELEAVE:
+	{
+		//if (m_iState &= UISCROLLBARSTATE_SLIDER_MOVING)
+		//{
+		//	m_iState &= ~UISCROLLBARSTATE_SLIDER_MOVING;
+
+		//	m_pUISystem->ReleaseMouse();
+		//}
+		m_iState &= UISCROLLBARSTATE_SLIDER_MOVING;
+	}
+	break;
+	case UIM_MOUSEMOVE:
+	{
+		if (m_iState & UISCROLLBARSTATE_SLIDER_MOVING)
 		{
 			float fX = UIM_GET_X_FLOAT(lParam);
 			float fY = UIM_GET_Y_FLOAT(lParam);
 
-			if (m_pUISystem->PointInRect(m_pMinusRect, fX, fY))
+			float fSliderX, fSliderY;
+
+			m_pUISystem->GetAbsoluteXY(&fSliderX, &fSliderY, m_pSliderRect.fLeft, m_pSliderRect.fTop, this);
+
+			float fDelta = 0.0f;
+
+			if (GetType() == UISCROLLBARTYPE_HORIZONTAL)
 			{
-				m_iState |= UISCROLLBARSTATE_MINUS_OVER;
+				fDelta = fX - m_fSliderClick;
 			}
 			else
 			{
-				m_iState &= ~UISCROLLBARSTATE_MINUS_OVER;
+				fDelta = fY - m_fSliderClick;
 			}
 
-			if (m_pUISystem->PointInRect(m_pPlusRect, fX, fY))
-			{
-				m_iState |= UISCROLLBARSTATE_PLUS_OVER;
-			}
-			else
-			{
-				m_iState &= ~UISCROLLBARSTATE_PLUS_OVER;
-			}
+			MoveSlider(fDelta);
 
-			if (m_pUISystem->PointInRect(m_pSliderRect, fX, fY))
-			{
-				m_iState |= UISCROLLBARSTATE_SLIDER_OVER;
-				m_iState &= ~UISCROLLBARSTATE_PATH_OVER;
-			}
-			else if (m_pUISystem->PointInRect(m_pPathRect, fX, fY))
-			{
-				m_iState &= ~UISCROLLBARSTATE_SLIDER_OVER;
-				//m_iState |= UISCROLLBARSTATE_PATH_OVER;
-			}
-			else
-			{
-				m_iState &= ~UISCROLLBARSTATE_PATH_OVER;
-				m_iState &= ~UISCROLLBARSTATE_SLIDER_OVER;
-			}
+			m_fValue += fDelta / m_fPathSize;
+
+			OnChanged();
 		}
-		break;
-	case UIM_KEYDOWN:
-		{
-			if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_LEFT))
-			{
-				m_fValue -= m_fStep;
-
-				OnChanged();
-			}
-			else if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_RIGHT))
-			{
-				m_fValue += m_fStep;
-
-				OnChanged();
-			}
-			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_UP))
-			{
-				m_fValue -= m_fStep;
-
-				OnChanged();
-			}
-			else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_DOWN))
-			{
-				m_fValue += m_fStep;
-
-				OnChanged();
-			}
-		}
-		break;
-	case UIM_MOUSELEAVE:
-		{
-			//if (m_iState &= UISCROLLBARSTATE_SLIDER_MOVING)
-			//{
-			//	m_iState &= ~UISCROLLBARSTATE_SLIDER_MOVING;
-
-			//	m_pUISystem->ReleaseMouse();
-			//}			
-			m_iState &= UISCROLLBARSTATE_SLIDER_MOVING;
-		}
-		break;
-	case UIM_MOUSEMOVE:
-		{
-			if (m_iState & UISCROLLBARSTATE_SLIDER_MOVING)
-			{
-				float fX = UIM_GET_X_FLOAT(lParam);
-				float fY = UIM_GET_Y_FLOAT(lParam);
-
-				float fSliderX, fSliderY;
-
-				m_pUISystem->GetAbsoluteXY(&fSliderX, &fSliderY, m_pSliderRect.fLeft, m_pSliderRect.fTop, this);
-
-
-				float fDelta = 0.0f;
-
-				if (GetType() == UISCROLLBARTYPE_HORIZONTAL)
-				{
-					fDelta = fX - m_fSliderClick;
-				}
-				else
-				{
-					fDelta = fY - m_fSliderClick;
-				}
-
-				MoveSlider(fDelta);
-
-				m_fValue += fDelta / m_fPathSize;
-
-				OnChanged();
-			}
-		}
-		break;
+	}
+	break;
 	case UIM_MOUSEUP:
+	{
+		if (m_iState & UISCROLLBARSTATE_SLIDER_MOVING)
 		{
-			if (m_iState & UISCROLLBARSTATE_SLIDER_MOVING)
-			{
-				m_iState &= ~UISCROLLBARSTATE_SLIDER_MOVING;
+			m_iState &= ~UISCROLLBARSTATE_SLIDER_MOVING;
 
-				m_pUISystem->ReleaseMouse();
-			}
-			m_iState &= ~(UISCROLLBARSTATE_MINUS_DOWN | UISCROLLBARSTATE_PLUS_DOWN);
-
-			m_fRepeatTimer = 0;
+			m_pUISystem->ReleaseMouse();
 		}
-		break;
+		m_iState &= ~(UISCROLLBARSTATE_MINUS_DOWN | UISCROLLBARSTATE_PLUS_DOWN);
+
+		m_fRepeatTimer = 0;
+	}
+	break;
 	case UIM_LBUTTONDOWN:
+	{
+		float fX = UIM_GET_X_FLOAT(wParam);
+		float fY = UIM_GET_Y_FLOAT(wParam);
+
+		// check if mouse position is inside the scroll slider
+		if (m_pUISystem->PointInRect(m_pSliderRect, fX, fY))
 		{
-			float fX = UIM_GET_X_FLOAT(wParam);
-			float fY = UIM_GET_Y_FLOAT(wParam);
-
-			// check if mouse position is inside the scroll slider
-			if (m_pUISystem->PointInRect(m_pSliderRect, fX, fY))
+			if ((lParam == Legacy::XKEY_MOUSE1) && ((m_iState & UISCROLLBARSTATE_SLIDER_MOVING) == 0) && m_pUISystem->CaptureMouse(this))
 			{
-				if ((lParam == Legacy::XKEY_MOUSE1) && ((m_iState & UISCROLLBARSTATE_SLIDER_MOVING) == 0) && m_pUISystem->CaptureMouse(this))
-				{
-					m_iState = UISCROLLBARSTATE_SLIDER_MOVING | UISCROLLBARSTATE_SLIDER_OVER;
+				m_iState = UISCROLLBARSTATE_SLIDER_MOVING | UISCROLLBARSTATE_SLIDER_OVER;
 
-					float fAbsX, fAbsY;
+				float fAbsX, fAbsY;
 
-					m_pUISystem->GetAbsoluteXY(&fAbsX, &fAbsY, fX, fY, this);
-
-					if (GetType() == UISCROLLBARTYPE_HORIZONTAL)
-					{
-						m_fSliderClick = fAbsX;
-						m_fSliderOffset = fX - m_pSliderRect.fLeft;
-					}
-					else
-					{
-						m_fSliderClick = fAbsY;
-						m_fSliderOffset = fY - m_pSliderRect.fTop;
-					}
-
-					m_fRepeatTimer = 0.0f;
-				}
-			}
-
-			// mouse is not in the scroll slider,
-			// check if it is in the arrows
-
-			// left/top arrow
-			else if (m_pUISystem->PointInRect(m_pMinusRect, fX, fY) && !(m_iState & UISCROLLBARSTATE_SLIDER_MOVING))
-			{
-				//m_iState = UISCROLLBARSTATE_MINUS_OVER;
-
-				if (lParam == Legacy::XKEY_MOUSE1)
-				{
-					float fTimer = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
-
-					if ((m_fRepeatTimer == 0.0f) || (fTimer > m_fRepeatTimer))
-					{
-						m_iState |= UISCROLLBARSTATE_MINUS_DOWN;
-						m_fValue -= m_fStep;
-
-						OnChanged();
-
-						if (m_fRepeatTimer == 0.0f)
-						{
-							m_fRepeatTimer = fTimer + 0.35f;
-						}
-						else
-						{
-							m_fRepeatTimer = fTimer + 0.075f;
-						}
-					}
-				}
-			}
-			// right/bottom
-			else if (m_pUISystem->PointInRect(m_pPlusRect, fX, fY) && !(m_iState & UISCROLLBARSTATE_SLIDER_MOVING))
-			{
-				//m_iState = UISCROLLBARSTATE_PLUS_OVER;
-
-				if (lParam == Legacy::XKEY_MOUSE1)
-				{
-					float fTimer = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
-
-					if ((m_fRepeatTimer == 0.0f) || (fTimer > m_fRepeatTimer))
-					{
-						m_iState |= UISCROLLBARSTATE_PLUS_DOWN;
-						m_fValue += m_fStep;
-
-						OnChanged();
-						
-						if (m_fRepeatTimer == 0.0f)
-						{
-							m_fRepeatTimer = fTimer + 0.35f;
-						}
-						else
-						{
-							m_fRepeatTimer = fTimer + 0.075f;
-						}
-					}
-				}
-			}
-			// path
-			else if (m_pUISystem->PointInRect(m_pPathRect, fX, fY) && !(m_iState & UISCROLLBARSTATE_SLIDER_MOVING))
-			{
-				//m_iState = UISCROLLBARSTATE_PATH_OVER;
-
-				float fDelta = 0.0f;
+				m_pUISystem->GetAbsoluteXY(&fAbsX, &fAbsY, fX, fY, this);
 
 				if (GetType() == UISCROLLBARTYPE_HORIZONTAL)
 				{
-					if (fX > m_pSliderRect.fLeft)
-					{
-						fX -= m_fSliderSize;
-					}			
-
-					fDelta = (fX - m_pSliderRect.fLeft) * 0.05f;
+					m_fSliderClick  = fAbsX;
+					m_fSliderOffset = fX - m_pSliderRect.fLeft;
 				}
 				else
 				{
-					if (fY > m_pSliderRect.fTop)
-					{
-						fY -= m_fSliderSize;
-					}
-
-					fDelta = (fY - m_pSliderRect.fTop) * 0.05f;
+					m_fSliderClick  = fAbsY;
+					m_fSliderOffset = fY - m_pSliderRect.fTop;
 				}
-
-				MoveSlider(fDelta);
-
-				m_fValue += fDelta / m_fPathSize;
-
-				OnChanged();
 
 				m_fRepeatTimer = 0.0f;
 			}
 		}
-		break;
+
+		// mouse is not in the scroll slider,
+		// check if it is in the arrows
+
+		// left/top arrow
+		else if (m_pUISystem->PointInRect(m_pMinusRect, fX, fY) && !(m_iState & UISCROLLBARSTATE_SLIDER_MOVING))
+		{
+			//m_iState = UISCROLLBARSTATE_MINUS_OVER;
+
+			if (lParam == Legacy::XKEY_MOUSE1)
+			{
+				float fTimer = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
+
+				if ((m_fRepeatTimer == 0.0f) || (fTimer > m_fRepeatTimer))
+				{
+					m_iState |= UISCROLLBARSTATE_MINUS_DOWN;
+					m_fValue -= m_fStep;
+
+					OnChanged();
+
+					if (m_fRepeatTimer == 0.0f)
+					{
+						m_fRepeatTimer = fTimer + 0.35f;
+					}
+					else
+					{
+						m_fRepeatTimer = fTimer + 0.075f;
+					}
+				}
+			}
+		}
+		// right/bottom
+		else if (m_pUISystem->PointInRect(m_pPlusRect, fX, fY) && !(m_iState & UISCROLLBARSTATE_SLIDER_MOVING))
+		{
+			//m_iState = UISCROLLBARSTATE_PLUS_OVER;
+
+			if (lParam == Legacy::XKEY_MOUSE1)
+			{
+				float fTimer = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
+
+				if ((m_fRepeatTimer == 0.0f) || (fTimer > m_fRepeatTimer))
+				{
+					m_iState |= UISCROLLBARSTATE_PLUS_DOWN;
+					m_fValue += m_fStep;
+
+					OnChanged();
+
+					if (m_fRepeatTimer == 0.0f)
+					{
+						m_fRepeatTimer = fTimer + 0.35f;
+					}
+					else
+					{
+						m_fRepeatTimer = fTimer + 0.075f;
+					}
+				}
+			}
+		}
+		// path
+		else if (m_pUISystem->PointInRect(m_pPathRect, fX, fY) && !(m_iState & UISCROLLBARSTATE_SLIDER_MOVING))
+		{
+			//m_iState = UISCROLLBARSTATE_PATH_OVER;
+
+			float fDelta = 0.0f;
+
+			if (GetType() == UISCROLLBARTYPE_HORIZONTAL)
+			{
+				if (fX > m_pSliderRect.fLeft)
+				{
+					fX -= m_fSliderSize;
+				}
+
+				fDelta = (fX - m_pSliderRect.fLeft) * 0.05f;
+			}
+			else
+			{
+				if (fY > m_pSliderRect.fTop)
+				{
+					fY -= m_fSliderSize;
+				}
+
+				fDelta = (fY - m_pSliderRect.fTop) * 0.05f;
+			}
+
+			MoveSlider(fDelta);
+
+			m_fValue += fDelta / m_fPathSize;
+
+			OnChanged();
+
+			m_fRepeatTimer = 0.0f;
+		}
+	}
+	break;
 	default:
 		break;
 	}
@@ -301,7 +303,7 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 	return CUISystem::DefaultUpdate(this, iMessage, wParam, lParam);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScrollBar::Draw(int iPass)
 {
 	if (iPass != 0)
@@ -339,9 +341,9 @@ int CUIScrollBar::Draw(int iPass)
 
 	// arrange stuff for different types
 	UIRect pNewRect;
-	int iState = UISTATE_UP;
+	int    iState = UISTATE_UP;
 
-	pNewRect = UIRect(pAbsoluteRect.fLeft + m_pPathRect.fLeft, pAbsoluteRect.fTop + m_pPathRect.fTop, m_pPathRect.fWidth, m_pPathRect.fHeight);
+	pNewRect      = UIRect(pAbsoluteRect.fLeft + m_pPathRect.fLeft, pAbsoluteRect.fTop + m_pPathRect.fTop, m_pPathRect.fWidth, m_pPathRect.fHeight);
 	// draw the button path
 	// if textured and textureid set, draw the texture
 	if (m_pPathTexture.iTextureID > -1)
@@ -405,7 +407,7 @@ int CUIScrollBar::Draw(int iPass)
 	}
 	else
 	{
-		IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
+		IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
 
 		if ((m_iState & UISCROLLBARSTATE_MINUS_DOWN) == 0)
 		{
@@ -419,13 +421,12 @@ int CUIScrollBar::Draw(int iPass)
 		}
 	}
 
-
 	// draw second button
 	pNewRect = UIRect(pAbsoluteRect.fLeft + m_pPlusRect.fLeft, pAbsoluteRect.fTop + m_pPlusRect.fTop, m_pPlusRect.fWidth, m_pPlusRect.fHeight);
 
 	// if textured and textureid set, draw it
 	if (m_pPlusTexture.iTextureID > -1)
-	{	
+	{
 		if (m_iState & UISCROLLBARSTATE_PLUS_DOWN)
 		{
 			iState = UISTATE_DOWN;
@@ -445,8 +446,8 @@ int CUIScrollBar::Draw(int iPass)
 	// if not textured, or textured but textureid not set, render the defualt button
 	else
 	{
-		IFFont *pFont = m_pUISystem->GetIFont(m_pFont);
-	
+		IFFont* pFont = m_pUISystem->GetIFont(m_pFont);
+
 		if ((m_iState & UISCROLLBARSTATE_PLUS_DOWN) == 0)
 		{
 			m_pUISystem->DrawButton(pNewRect, m_cColor, 1.0f, 0);
@@ -479,8 +480,8 @@ int CUIScrollBar::Draw(int iPass)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
-void CUIScrollBar::InitializeTemplate(IScriptSystem *pScriptSystem)
+//////////////////////////////////////////////////////////////////////
+void CUIScrollBar::InitializeTemplate(IScriptSystem* pScriptSystem)
 {
 	_ScriptableEx<CUIScrollBar>::InitializeTemplate(pScriptSystem);
 
@@ -521,7 +522,7 @@ void CUIScrollBar::InitializeTemplate(IScriptSystem *pScriptSystem)
 	REGISTER_SCRIPTOBJECT_MEMBER(pScriptSystem, CUIScrollBar, GetPlusDownTexture);
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScrollBar::SetValue(float fValue)
 {
 	m_fValue = fValue;
@@ -531,7 +532,7 @@ int CUIScrollBar::SetValue(float fValue)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 float CUIScrollBar::GetValue()
 {
 	float fValue = CLAMP(m_fValue, 0.0f, 1.0f);
@@ -539,7 +540,7 @@ float CUIScrollBar::GetValue()
 	return fValue;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScrollBar::SetStep(float fStep)
 {
 	m_fStep = fStep;
@@ -547,17 +548,17 @@ int CUIScrollBar::SetStep(float fStep)
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 float CUIScrollBar::GetStep()
 {
 	return m_fStep;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScrollBar::GetType()
 {
 	// set the default type, if not set
-	if ((m_iType != UISCROLLBARTYPE_HORIZONTAL) &&  (m_iType != UISCROLLBARTYPE_VERTICAL))
+	if ((m_iType != UISCROLLBARTYPE_HORIZONTAL) && (m_iType != UISCROLLBARTYPE_VERTICAL))
 	{
 		if (m_pRect.fHeight > m_pRect.fWidth)
 		{
@@ -572,7 +573,7 @@ int CUIScrollBar::GetType()
 	return m_iType;
 }
 
-//////////////////////////////////////////////////////////////////////  
+//////////////////////////////////////////////////////////////////////
 int CUIScrollBar::MoveSlider(float fDelta)
 {
 	UIRect pRect(m_pRect);
@@ -636,18 +637,18 @@ int CUIScrollBar::MoveSlider(float fDelta)
 			m_pUISystem->GetAbsoluteXY(&fAbsX, &fAbsY, m_pSliderRect.fLeft, m_pSliderRect.fTop, this);
 
 			m_fSliderClick = fAbsY + m_fSliderOffset;
-		}	
+		}
 	}
 
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 int CUIScrollBar::UpdateRect()
 {
 	// make the rect relative to the widget
 	UIRect pRect(0, 0, m_pRect.fWidth, m_pRect.fHeight);
-	
+
 	if (m_pBorder.fSize > 0.125f)
 	{
 		m_pUISystem->AdjustRect(&pRect, pRect, m_pBorder.fSize);
@@ -660,13 +661,13 @@ int CUIScrollBar::UpdateRect()
 		m_fButtonSize = m_pUISystem->AdjustWidth(m_fButtonSize);
 		m_fSliderSize = m_pUISystem->AdjustWidth(m_fSliderSize);
 
-		m_pMinusRect = UIRect(pRect.fLeft, pRect.fTop, m_fButtonSize, pRect.fHeight);
-		m_pPlusRect = UIRect(pRect.fLeft + pRect.fWidth - m_fButtonSize, pRect.fTop, m_fButtonSize, pRect.fHeight);
+		m_pMinusRect  = UIRect(pRect.fLeft, pRect.fTop, m_fButtonSize, pRect.fHeight);
+		m_pPlusRect   = UIRect(pRect.fLeft + pRect.fWidth - m_fButtonSize, pRect.fTop, m_fButtonSize, pRect.fHeight);
 
-		m_fPathSize = m_pPlusRect.fLeft - (m_pMinusRect.fLeft + m_pMinusRect.fWidth + m_fSliderSize);
+		m_fPathSize   = m_pPlusRect.fLeft - (m_pMinusRect.fLeft + m_pMinusRect.fWidth + m_fSliderSize);
 
 		m_pSliderRect = UIRect(pRect.fLeft + m_fButtonSize + m_fValue * m_fPathSize, pRect.fTop, m_fSliderSize, pRect.fHeight);
-		m_pPathRect = UIRect(pRect.fLeft + m_fButtonSize, pRect.fTop, pRect.fWidth - m_fButtonSize - m_fButtonSize, pRect.fHeight);
+		m_pPathRect   = UIRect(pRect.fLeft + m_fButtonSize, pRect.fTop, pRect.fWidth - m_fButtonSize - m_fButtonSize, pRect.fHeight);
 
 		break;
 
@@ -675,13 +676,13 @@ int CUIScrollBar::UpdateRect()
 		m_fButtonSize = m_pUISystem->AdjustHeight(m_fButtonSize);
 		m_fSliderSize = m_pUISystem->AdjustHeight(m_fSliderSize);
 
-		m_pMinusRect = UIRect(pRect.fLeft, pRect.fTop, pRect.fWidth, m_fButtonSize);
-		m_pPlusRect = UIRect(pRect.fLeft, pRect.fTop + pRect.fHeight - m_fButtonSize, pRect.fWidth, m_fButtonSize);
+		m_pMinusRect  = UIRect(pRect.fLeft, pRect.fTop, pRect.fWidth, m_fButtonSize);
+		m_pPlusRect   = UIRect(pRect.fLeft, pRect.fTop + pRect.fHeight - m_fButtonSize, pRect.fWidth, m_fButtonSize);
 
-		m_fPathSize = m_pPlusRect.fTop - (m_pMinusRect.fTop + m_pMinusRect.fHeight + m_fSliderSize);
+		m_fPathSize   = m_pPlusRect.fTop - (m_pMinusRect.fTop + m_pMinusRect.fHeight + m_fSliderSize);
 
 		m_pSliderRect = UIRect(pRect.fLeft, pRect.fTop + m_fButtonSize + m_fValue * m_fPathSize, pRect.fWidth, m_fSliderSize);
-		m_pPathRect = UIRect(pRect.fLeft, pRect.fTop + m_fButtonSize, pRect.fWidth, pRect.fHeight - m_fButtonSize - m_fButtonSize);
+		m_pPathRect   = UIRect(pRect.fLeft, pRect.fTop + m_fButtonSize, pRect.fWidth, pRect.fHeight - m_fButtonSize - m_fButtonSize);
 
 		break;
 	}
@@ -689,204 +690,204 @@ int CUIScrollBar::UpdateRect()
 	return 1;
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // Script Functions
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetType(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetType(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetType, m_iType);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetValue(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetValue(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetValue, m_fValue);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetValue(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetValue(IFunctionHandler* pH)
 {
 	float fValue = GetValue();
 
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetValue, fValue);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetStep(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetStep(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetStep, m_fStep);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetStep(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetStep(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetStep, m_fStep);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetSliderColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetSliderColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetSliderColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetSliderColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetSliderColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetSliderColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetMinusColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetMinusColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetMinusColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetMinusColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetMinusColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetMinusColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetPlusColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetPlusColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetPlusColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetPlusColor(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetPlusColor(IFunctionHandler* pH)
 {
 	RETURN_COLOR_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetPlusColor, m_cColor);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetSliderSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetSliderSize(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetSliderSize, m_fSliderSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetSliderSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetSliderSize(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetSliderSize, m_fSliderSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetButtonSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetButtonSize(IFunctionHandler* pH)
 {
 	RETURN_INT_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetButtonSize, m_fButtonSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetButtonSize(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetButtonSize(IFunctionHandler* pH)
 {
 	RETURN_INT_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetButtonSize, m_fButtonSize);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetPathTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetPathTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetPathTexture, m_pPathTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetPathTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetPathTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetPathTexture, m_pPathTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetSliderTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetSliderTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetSliderTexture, m_pSliderTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetSliderTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetSliderTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetSliderTexture, m_pSliderTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetSliderOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetSliderOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetSliderOverTexture, m_pSliderTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetSliderOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetSliderOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetSliderOverTexture, m_pSliderTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetMinusTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetMinusTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetMinusTexture, m_pMinusTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetMinusTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetMinusTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetMinusTexture, m_pMinusTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetMinusOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetMinusOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetMinusOverTexture, m_pMinusTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetMinusOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetMinusOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetMinusOverTexture, m_pMinusTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetMinusDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetMinusDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetMinusDownTexture, m_pMinusTexture.iDownTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetMinusDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetMinusDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetMinusDownTexture, m_pMinusTexture.iDownTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetPlusTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetPlusTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetPlusTexture, m_pPlusTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetPlusTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetPlusTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetPlusTexture, m_pPlusTexture.iTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetPlusOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetPlusOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetPlusOverTexture, m_pPlusTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetPlusOverTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetPlusOverTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetPlusOverTexture, m_pPlusTexture.iOverTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::SetPlusDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::SetPlusDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_FROM_SCRIPT(m_pScriptSystem, GetName().c_str(), SetPlusDownTexture, m_pPlusTexture.iDownTextureID);
 }
 
-////////////////////////////////////////////////////////////////////// 
-int CUIScrollBar::GetPlusDownTexture(IFunctionHandler *pH)
+//////////////////////////////////////////////////////////////////////
+int CUIScrollBar::GetPlusDownTexture(IFunctionHandler* pH)
 {
 	RETURN_TEXTURE_TO_SCRIPT(m_pScriptSystem, GetName().c_str(), GetPlusDownTexture, m_pPlusTexture.iDownTextureID);
 }

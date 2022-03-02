@@ -4,7 +4,7 @@ CDevMode::CDevMode()
 {
 	if (gEnv->pInput) gEnv->pInput->AddEventListener(this);
 	m_bSlowDownGameSpeed = false;
-	m_bHUD = false;
+	m_bHUD               = false;
 }
 
 CDevMode::~CDevMode()
@@ -19,7 +19,7 @@ void CDevMode::GotoTagPoint(int i)
 	if (tags.size() > size_t(i))
 	{
 		STagFileEntry ent = tags[i];
-		#if 0
+#if 0
 		IActor* pActor = CCryAction::GetCryAction()->GetClientActor();
 		if (!pActor) return;
 		IEntity* pEntity = pActor->GetEntity();
@@ -39,7 +39,7 @@ void CDevMode::GotoTagPoint(int i)
 		Legacy::Vec3 scale = pEntity->GetScale();
 		pEntity->SetPosRotScale(pos, rot, scale);
 		pActor->SetViewRotation(rot);
-		#endif
+#endif
 	}
 }
 
@@ -58,15 +58,15 @@ void CDevMode::SaveTagPoint(int i)
 bool CDevMode::OnInputEvent(const SInputEvent& evt)
 {
 	//CRY_PROFILE_FUNCTION(PROFILE_ACTION);
-	bool handled = false;
-	bool canCheat = true;	//CCryAction::GetCryAction()->CanCheat();
+	bool handled  = false;
+	bool canCheat = true; //CCryAction::GetCryAction()->CanCheat();
 
-	#if 0
+#if 0
 	IActor* pActor = CCryAction::GetCryAction()->GetClientActor();
 	if (!pActor) return false;
 	IEntity* pEntity = pActor->GetEntity();
 	if (!pEntity) return false;
-	#endif
+#endif
 
 	// tag-point functionality is provided by the editor already, so we should ignore it
 	// when running in the editor
@@ -133,14 +133,14 @@ bool CDevMode::OnInputEvent(const SInputEvent& evt)
 		{
 			if (handled = (evt.keyId == eKI_F2)) // go to next spawnpoint
 			{
-				#if 0
+#if 0
 				//Legacy::Vec3 oldPos = pEntity->GetWorldPos();
 				if (gEnv->pScriptSystem->BeginCall("BasicActor", "OnNextSpawnPoint"))
 				{
 					gEnv->pScriptSystem->PushFuncParam(pEntity->GetScriptObject());
 					gEnv->pScriptSystem->EndCall();
 
-					#if 0
+	#if 0
 					if (gEnv->pStatoscope)
 					{
 						char buffer[100];
@@ -148,14 +148,14 @@ bool CDevMode::OnInputEvent(const SInputEvent& evt)
 						sprintf(buffer, "Teleported from (%.2f, %.2f, %.2f) to (%.2f, %.2f, %.2f)", oldPos.x, oldPos.y, oldPos.z, pos.x, pos.y, pos.z);
 						//gEnv->pStatoscope->AddUserMarker("Player", buffer);
 					}
-					#endif
+	#endif
 				}
-				#endif
+#endif
 			}
 		}
 	}
 
-	#if 0
+#if 0
 	if (handled == false && evt.state == eIS_Pressed && (evt.modifiers & eMM_Alt) != 0)
 	{
 		if (evt.keyId == eKI_F7)
@@ -163,7 +163,7 @@ bool CDevMode::OnInputEvent(const SInputEvent& evt)
 		else if (evt.keyId == eKI_F8)
 			SwitchHUD();
 	}
-	#endif
+#endif
 
 	// AlexL: don't mark commands as handled for now. Would stop processing/propagating to other
 	//        listeners. especially for non-modifier keys like f7,f8,f9 problematic
@@ -174,7 +174,7 @@ std::vector<STagFileEntry> CDevMode::LoadTagFile()
 {
 	std::vector<STagFileEntry> out;
 
-	FILE* finput = fopen(TagFileName().c_str(), "rt");
+	FILE*                      finput = fopen(TagFileName().c_str(), "rt");
 	if (finput)
 	{
 		while (!feof(finput))
@@ -182,8 +182,7 @@ std::vector<STagFileEntry> CDevMode::LoadTagFile()
 			STagFileEntry ent;
 			if (6 == fscanf(finput, "%f,%f,%f,%f,%f,%f",
 			                &ent.pos.x, &ent.pos.y, &ent.pos.z,
-			                &ent.ang.x, &ent.ang.y, &ent.ang.z
-			                ))
+			                &ent.ang.x, &ent.ang.y, &ent.ang.z))
 				out.push_back(ent);
 			else
 				break;
