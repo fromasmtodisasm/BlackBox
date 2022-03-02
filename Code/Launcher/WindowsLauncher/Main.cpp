@@ -15,14 +15,13 @@
 extern "C"
 {
 	// nVidia
-	DLL_EXPORT DWORD NvOptimusEnablement = 0x00000001;
+	DLL_EXPORT DWORD NvOptimusEnablement                  = 0x00000001;
 	// AMD
-	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
+	DLL_EXPORT int   AmdPowerXpressRequestHighPerformance = 1;
 }
 
 static INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
 	switch (uMsg)
 	{
 	case WM_INITDIALOG:
@@ -48,12 +47,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), 0, SelectDeviceProc, 0);
 
 	SSystemInitParams startupParams;
-	startupParams.sLogFileName = "Game.log";
+	startupParams.sLogFileName      = "Game.log";
 	startupParams.bManualEngineLoop = true;
 	// Enable run-time memory check for debug builds.
 
 	// Note: lpCmdLine does not contain the filename.
-	const string cmdLine = GetCommandLineA();
+	const string cmdLine            = GetCommandLineA();
 	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
 
 	auto result = EXIT_FAILURE;
@@ -80,4 +79,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 	return result;
 }
-

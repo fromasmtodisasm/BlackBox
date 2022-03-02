@@ -14,14 +14,13 @@
 extern "C"
 {
 	// nVidia
-	DLL_EXPORT DWORD NvOptimusEnablement = 0x00000001;
+	DLL_EXPORT DWORD NvOptimusEnablement                  = 0x00000001;
 	// AMD
-	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
+	DLL_EXPORT int   AmdPowerXpressRequestHighPerformance = 1;
 }
 
 static INT_PTR SelectDeviceProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
 	switch (uMsg)
 	{
 	case WM_INITDIALOG:
@@ -47,26 +46,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOGBAR), 0, SelectDeviceProc, 0);
 
 	SSystemInitParams startupParams;
-	startupParams.sLogFileName	   = "Server.log";
+	startupParams.sLogFileName     = "Server.log";
 	startupParams.bDedicatedServer = true;
 	//startupParams.bSkipInput	   = true;
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	// Note: lpCmdLine does not contain the filename.
-	const string cmdLine = GetCommandLineA();
+	const string cmdLine           = GetCommandLineA();
 	strcpy(startupParams.szSystemCmdLine, cmdLine.c_str());
 
 	auto result = EXIT_FAILURE;
 	//_CrtMemState s1, s2, s3;
 	//_CrtMemCheckpoint(&s1);
-	
+
 	if (InitializeEngine(startupParams))
 	{
 		startupParams.pSystem->Start();
 		startupParams.pSystem->Release();
 		result = EXIT_SUCCESS;
 	}
-
 
 #if 0
 	_CrtMemCheckpoint(&s2);
@@ -79,4 +77,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
 	return result;
 }
-
