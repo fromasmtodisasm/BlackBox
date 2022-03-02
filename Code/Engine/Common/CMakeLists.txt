@@ -236,20 +236,23 @@ target_include_directories(Interface INTERFACE
     $<INSTALL_INTERFACE:include/BlackBox/Legacy> 
 )
 
-target_link_libraries(Interface INTERFACE GameLauncher)
+# FIXME
+if (0)
+	target_link_libraries(Interface INTERFACE GameLauncher)
 
-install(TARGETS Interface
-	EXPORT blackboxConfig 
-	INCLUDES DESTINATION include
-)
+	install(TARGETS Interface
+		EXPORT blackboxConfig 
+		INCLUDES DESTINATION include
+	)
 
-export(TARGETS
-	Interface
-	NAMESPACE BlackBox::
-	FILE "${CMAKE_CURRENT_BINARY_DIR}/blackboxConfig.cmake"
-)
-install(EXPORT
-        blackboxConfig
-    DESTINATION "${CMAKE_INSTALL_DATADIR}/blackbox/cmake"
-    NAMESPACE BlackBox::
-)
+	export(TARGETS
+		Interface
+		NAMESPACE BlackBox::
+		FILE "${CMAKE_CURRENT_BINARY_DIR}/blackboxConfig.cmake"
+	)
+	install(EXPORT
+			blackboxConfig
+		DESTINATION "${CMAKE_INSTALL_DATADIR}/blackbox/cmake"
+		NAMESPACE BlackBox::
+	)
+endif()

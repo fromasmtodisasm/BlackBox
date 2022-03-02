@@ -68,8 +68,11 @@ include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 #clang_format("${ALL_PROJECT_SOURCES}")
 
 set(CMAKE_INSTALL_MESSAGE LAZY)
-configure_file("${TOOLS_CMAKE_DIR}/modules/BlackBoxConfig.cmake.in" "${CMAKE_BINARY_DIR}/blackboxConfig.cmake")
-install(FILES "${CMAKE_BINARY_DIR}/blackboxConfig.cmake" DESTINATION share/blackbox)
+# FIXME
+if (0)
+	configure_file("${TOOLS_CMAKE_DIR}/modules/BlackBoxConfig.cmake.in" "${CMAKE_BINARY_DIR}/blackboxConfig.cmake")
+	install(FILES "${CMAKE_BINARY_DIR}/blackboxConfig.cmake" DESTINATION share/blackbox)
+endif()
 
 install(DIRECTORY ${TOOLS_CMAKE_DIR} DESTINATION share/blackbox/Tools)
 
