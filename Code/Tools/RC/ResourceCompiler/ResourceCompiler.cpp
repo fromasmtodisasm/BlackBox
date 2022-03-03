@@ -31,6 +31,8 @@ struct SOptions
 	bool   create_pak;
 	string input_folder;
 	string output_file;
+	bool   unpak;
+	string unpak_file;
 };
 
 SOptions g_Options;
@@ -251,24 +253,67 @@ SArchive write_archive(const std::string& pattern, const std::string out_file)
 	return ar;
 }
 
-void list_of_files(SArchive& ar)
+template<typename F>
+void iterate(SArchive& ar, F func)
 {
 	auto* entry = reinterpret_cast<SToc*>((byte*)&ar + ar.toc_offset);
-    puts("id\tpath\toffset\tsize");
 	for (size_t i = 0; i < ar.number_of_files; i++)
 	{
-		printf("%d\t%*.*s\t%d\t%d\n", i, entry->file_name.size, entry->file_name.size, entry->file_name.data, entry->offset + 1, entry->size);
+		func(ar, entry);
 		entry = (SToc*)((byte*)entry->file_name.data + entry->file_name.size);
 	}
 }
 
+struct SArchiveHandle
+{
+	CFileMapping fm;
+	SArchive*    header{};
+	SArchiveHandle(std::string_view file)
+	    : fm(file.data())
+	{
+		header = (SArchive*)fm.getData();
+	}
+
+	operator SArchive&()
+	{
+		return *header;
+	}
+
+	operator bool()
+	{
+		return header != nullptr;
+	}
+};
+
+SArchiveHandle archive_open(std::string_view file)
+{
+	return SArchiveHandle(file);
+}
+
 void dump(const string& file)
 {
-	CFileMapping archive(file.c_str());
+	if (auto ar = archive_open(file); ar)
+	{
+		int i = 0;
+		printf("number of files: %d\n", ((SArchive&)ar).number_of_files);
+		puts("id\tpath\toffset\tsize");
+		iterate(ar, [&i](SArchive& ar, SToc* entry)
+		        { printf("%d\t%*.*s\t%d\t%d\n",
+			             i++,
+			             entry->file_name.size,
+			             entry->file_name.size,
+			             entry->file_name.data,
+			             entry->offset + 1,
+			             entry->size); });
+	}
+}
 
-	auto         archive_data = (SArchive*)archive.getData();
-	printf("number of files: %d\n", archive_data->number_of_files);
-	list_of_files(*archive_data);
+void unpak(const string& file)
+{
+	if (auto archive = archive_open(file); archive)
+	{
+		printf("Unpaking archive %s\n", file.data());
+	}
 }
 
 int config_handler(void* user, const char* section,
@@ -280,23 +325,23 @@ int config_handler(void* user, const char* section,
 		g_Options.dump = *value - '0';
 		return true;
 	}
-	match("create_pak")
+	match("create-pak")
 	{
 		g_Options.create_pak = *value - '0';
 		return true;
 	}
-	match("input_file")
+	match("input-file")
 	{
 		g_Options.input_file = value;
 		return true;
 	}
 
-	match("input_folder")
+	match("input-folder")
 	{
 		g_Options.input_folder = value;
 		return true;
 	}
-	match("output_file")
+	match("output-file")
 	{
 		g_Options.output_file = value;
 		return true;
@@ -309,6 +354,32 @@ void parse_cmd(int argc, char* argv[])
 	string config = argv[1];
 
 	ini_parse(config.c_str(), config_handler, nullptr);
+
+	for (int i = 2; i < argc; i++)
+	{
+#define match(s, n) if (strstr(argv[i], "--" s) && (argc > i + n))
+		match("dump", 1)
+		{
+			g_Options.input_file = argv[++i];
+			g_Options.dump       = !g_Options.input_file.empty();
+			continue;
+		}
+		match("create-pak", 2)
+		{
+			g_Options.input_folder = argv[++i];
+			g_Options.output_file  = argv[++i];
+			g_Options.create_pak   = !g_Options.input_folder.empty() && !g_Options.output_file.empty();
+			continue;
+		}
+
+		match("unpak", 1)
+		{
+			g_Options.unpak_file = argv[++i];
+			g_Options.unpak      = !g_Options.unpak_file.empty();
+			continue;
+		}
+	}
+#undef match
 }
 
 int main(int argc, char* argv[])
@@ -316,16 +387,17 @@ int main(int argc, char* argv[])
 	parse_cmd(argc, argv);
 
 	ResourceCompiler RC;
-	RC.RegisterConverters();
+	//RC.RegisterConverters();
 
 	if (g_Options.dump)
 	{
 		dump(g_Options.input_file);
 		return 0;
 	}
-
-	if (g_Options.create_pak)
+	else if (g_Options.create_pak)
 		write_archive(g_Options.input_folder, g_Options.output_file);
+	else if (g_Options.unpak)
+		unpak(g_Options.unpak_file);
 
 	return 0;
 }
