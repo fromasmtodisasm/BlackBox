@@ -12,7 +12,8 @@
 #include <cassert>
 #include <regex>
 
-#include <ini.h>
+#include "../ResourceTools/ini.h"
+#include <iostream>
 
 using std::string;
 using std::wstring;
@@ -327,6 +328,7 @@ void create_file(SArchive& ar, fs::path filename, std::int32_t offset, std::uint
 
 		fs::create_directories(path);
 	}
+    std::cout << "./" + filename.string() << " " << filename.string().size() << std::endl;
 	std::ofstream of{"./" + string(filename.u8string()), std::ios_base::binary};
 	of.write(base + offset, size);
 }
@@ -342,7 +344,7 @@ void unpak(const string& file, const string& base)
 				if (auto pos = strv.find(base.c_str()); pos == 0) {
 				    offset = base.size();
                 }
-                create_file(ar, fs::path(string(string_view(entry->file_name.data + offset, entry->file_name.size))), entry->offset, entry->size); });
+                create_file(ar, fs::path(strv.substr(offset)), entry->offset, entry->size); });
 	}
 }
 
@@ -376,6 +378,7 @@ int config_handler(void* user, const char* section,
 		g_Options.output_file = value;
 		return true;
 	}
+	return false;
 #undef match
 }
 

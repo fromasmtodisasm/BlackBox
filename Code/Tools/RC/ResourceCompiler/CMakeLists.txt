@@ -17,5 +17,3 @@ end_sources()
 CryResourceCompiler(ResourceCompiler PCH "pch.hpp" SOLUTION_FOLDER "RC")
 
 
-find_package(tinyxml2 CONFIG REQUIRED)
-target_link_libraries(ResourceCompiler PRIVATE tinyxml2::tinyxml2)
