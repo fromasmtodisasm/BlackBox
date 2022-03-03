@@ -4,6 +4,8 @@ add_sources("NoUberFile"
 	SOURCE_GROUP "Source Files"
 		"pch.hpp"
 		"resource.h"
+		"../ResourceTools/ini.h"
+		"../ResourceTools/ini.c"
 		"ResourceCompiler.h"
 		"ResourceCompiler.cpp"
 		"ResourceCompilerPlugin.def"
@@ -13,3 +15,7 @@ add_sources("NoUberFile"
 end_sources()
 
 CryResourceCompiler(ResourceCompiler PCH "pch.hpp" SOLUTION_FOLDER "RC")
+
+
+find_package(tinyxml2 CONFIG REQUIRED)
+target_link_libraries(ResourceCompiler PRIVATE tinyxml2::tinyxml2)

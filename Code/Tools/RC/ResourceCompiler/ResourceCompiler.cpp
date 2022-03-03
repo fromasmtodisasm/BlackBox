@@ -9,6 +9,10 @@
 #include <fstream>
 
 #include <filesystem>
+#include <cassert>
+#include <regex>
+
+#include <ini.h>
 
 using std::string;
 using std::wstring;
@@ -20,8 +24,19 @@ namespace fs = std::filesystem;
 
 #define GetExePath()  "./"
 
+struct SOptions
+{
+	bool   dump{};
+	string input_file;
+	bool   create_pak;
+	string input_folder;
+	string output_file;
+};
+
+SOptions g_Options;
+
 //////////////////////////////////////////////////////////////////////////
-bool ResourceCompiler::RegisterConverters()
+bool     ResourceCompiler::RegisterConverters()
 {
 	const string strDir  = GetExePath();
 	const string strMask = strDir + "ResourceCompiler*.dll";
@@ -105,17 +120,68 @@ public:
 	std::uint32_t version;
 };
 
+struct MemoryArena
+{
+	static constexpr std::uint32_t _size = 10 * 0xffff;
+	size_t                         _offset{};
+	std::vector<char>              _data{};
+	MemoryArena()
+	{
+		_data.resize(this->_size);
+	}
+
+	void* alloc(size_t size)
+	{
+		assert(_offset + size < this->_size);
+		auto result = &_data[_offset];
+		_offset += size;
+
+		return result;
+	}
+	template<class T>
+	T* alloc(size_t size)
+	{
+		return reinterpret_cast<T*>(alloc(size));
+	}
+
+	size_t size() { return _offset; }
+	void*  data() { return &_data[0]; }
+};
+
 struct SVariableString
 {
 	std::uint16_t size;
-	char          data[64];
+	char          data[1];
+
+	SVariableString(std::uint16_t size, char* data)
+	    : size(size)
+	{
+		strncpy((this->data), data, size);
+	}
 };
 
 struct SToc
 {
-	SVariableString file_name;
 	std::int32_t    offset;
+	std::uint32_t   size;
+	SVariableString file_name;
+
+	SToc(const char* file_name, std::uint16_t file_name_size, std::int32_t offset, std::uint32_t size)
+	    : file_name(file_name_size, (char*)file_name)
+	    , offset(offset)
+	    , size(size)
+	{
+	}
+
+	static MemoryArena arena;
+
+	static SToc*       alloc(size_t size)
+	{
+		return (SToc*)arena.alloc(size);
+	}
 };
+
+MemoryArena SToc::arena;
 
 struct SArchive
 {
@@ -125,159 +191,141 @@ struct SArchive
 	std::uint32_t toc_offset;
 };
 
-template<typename fn>
-void write(const SArchive& ar, const std::string& file_name, fn func)
+std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& pattern, std::ofstream& of)
 {
-	using namespace std;
-	ofstream of(file_name.data(), ios_base::binary);
-	if (of.is_open())
-	{
-		func(of, (const char*)&ar.magic, sizeof ar.magic);
-		func(of, (const char*)&ar.version.version, sizeof ar.version.version);
-		func(of, (const char*)&ar.number_of_files, sizeof ar.number_of_files);
-		auto* entry = &ar.toc[0];
-		for (auto count{0}; count < ar.number_of_files; count++)
-		{
-			func(of, (const char*)&entry[count].file_name, sizeof SVariableString);
-			func(of, (const char*)&entry[count].offset, sizeof entry[count].offset);
-		}
-	}
-	else
-	{
-		printf("All bad");
-	}
-}
-
-template<typename fn>
-void read(SArchive& ar, const std::string& file_name, fn func)
-{
-	using namespace std;
-	ifstream in(file_name.data(), ios_base::binary);
-	if (in.is_open())
-	{
-		func(in, (char*)&ar.magic, sizeof ar.magic);
-		func(in, (char*)&ar.version.version, sizeof ar.version.version);
-		func(in, (char*)&ar.number_of_files, sizeof ar.number_of_files);
-		auto* entry = &ar.toc[0];
-		for (auto count{0}; count < ar.number_of_files; count++)
-		{
-			func(in, (char*)&entry[count].file_name, sizeof entry[count].file_name);
-			func(in, (char*)&entry[count].offset, sizeof entry[count].offset);
-		}
-	}
-	else
-	{
-		printf("All bad");
-	}
-}
-
-bool cat(const string& source, const string& dest)
-{
-	const string strDir  = "./test_folder/";
-	const string strMask = strDir + "*.txt";
-
-	RCLog("Searching for %s", strMask.c_str());
-
-	string      widePath = strMask, wstrDir = strDir;
-
-	_finddata_t fd;
-	intptr_t    hSearch = _findfirst(widePath.data(), &fd);
-	if (hSearch == -1)
-	{
-		RCLog("Cannot find any %s", strMask.c_str());
-		return false;
-	}
-
-	do
-	{
-		const string pluginFilename = wstrDir + fd.name;
-		RCLog("Loading \"%s\"", pluginFilename.c_str());
-		CFileMapping fileMapping(pluginFilename.c_str());
-		if (!fileMapping.getData())
-		{
-			RCLogError("Error");
-			return false;
-		}
-
-		RCLog("  Loaded \"%s\"", fd.name);
-		//std::printf("%s\n", fileMapping.getData());
-
-	} while (_findnext(hSearch, &fd) != -1);
-}
-
-static constexpr const char* fn = "../../CMakeLists.txt";
-
-///////
-void                         write_archive(SArchive& ar, const std::string& pattern, const std::string out_file)
-{
-	std::ofstream     of{out_file};
-
-	auto              it = std::filesystem::directory_iterator{pattern};
-	std::vector<SToc> vtoc;
-	ar.number_of_files = 0;
-	ar.toc_offset = sizeof SArchive;
-
-	of.write((const char*)&ar, sizeof SArchive);
-
+	auto               it = std::filesystem::directory_iterator{pattern};
+	std::vector<SToc*> vtoc;
 	for (auto const& dir_entry : std::filesystem::directory_iterator{pattern})
 	{
 		if (dir_entry.is_regular_file())
 		{
 			string       path = dir_entry.path().u8string();
 			CFileMapping fm(path.c_str());
-			SToc         toc;
-			toc.offset         = ar.toc_offset;
-			toc.file_name.size = fm.getSize();
-			strcpy(toc.file_name.data, path.data());
+
+			auto         alloc_size = sizeof SToc + path.size() - 2; // why -2 ???
+			SToc*        toc        = SToc::alloc(alloc_size);
+
+			new (toc) SToc(path.data(), std::uint16_t(path.size()), ar.toc_offset, fm.getSize());
 
 			of.write((const char*)fm.getData(), fm.getSize());
-			//printf("data: \n%s\n", fm.getData());
 			ar.toc_offset += fm.getSize();
 			ar.number_of_files++;
 
+#if 0
 			vtoc.push_back(toc);
+#endif
+		}
+		else
+		{
+			auto toc = write_archive_recursive(ar, dir_entry.path().u8string(), of);
+#if 0
+			vtoc.insert(vtoc.end(), toc.begin(), toc.end());
+#endif
 		}
 	}
-	//ar.toc_offset += 3;
-	of.write((const char*)vtoc.data(), vtoc.size() * sizeof(SToc));
+	return vtoc;
+}
+SArchive write_archive(const std::string& pattern, const std::string out_file);
+
+///////
+SArchive write_archive(const std::string& pattern, const std::string out_file)
+{
+	SArchive ar;
+	ar.magic   = 'BBAR';
+	ar.version = SFileVersion{1, 1, 1};
+
+	std::ofstream of{out_file, std::ios_base::binary};
+
+	ar.number_of_files = 0;
+	ar.toc_offset      = sizeof SArchive;
+
+	of.write((const char*)&ar, sizeof SArchive);
+
+	auto toc = write_archive_recursive(ar, pattern, of);
+	of.write((char*)SToc::arena.data(), SToc::arena.size());
 	auto _offset = offsetof(SArchive, number_of_files);
 	of.seekp(_offset);
 	of.write((const char*)&ar.number_of_files, sizeof ar.number_of_files);
 	of.write((const char*)&ar.toc_offset, sizeof ar.toc_offset);
+
+	return ar;
 }
 
 void list_of_files(SArchive& ar)
 {
-	auto* entry = reinterpret_cast<SToc*>((byte*) & ar + ar.toc_offset);
+	auto* entry = reinterpret_cast<SToc*>((byte*)&ar + ar.toc_offset);
+    puts("id\tpath\toffset\tsize");
 	for (size_t i = 0; i < ar.number_of_files; i++)
 	{
-		printf("file: %s, offset: %d\n", entry[i].file_name.data, entry[i].offset + 1);
+		printf("%d\t%*.*s\t%d\t%d\n", i, entry->file_name.size, entry->file_name.size, entry->file_name.data, entry->offset + 1, entry->size);
+		entry = (SToc*)((byte*)entry->file_name.data + entry->file_name.size);
 	}
 }
 
-void read_archive()
+void dump(const string& file)
 {
+	CFileMapping archive(file.c_str());
+
+	auto         archive_data = (SArchive*)archive.getData();
+	printf("number of files: %d\n", archive_data->number_of_files);
+	list_of_files(*archive_data);
 }
 
-int main()
+int config_handler(void* user, const char* section,
+                   const char* name, const char* value)
 {
+#define match(a) if ((std::string_view(a) == name))
+	match("dump")
+	{
+		g_Options.dump = *value - '0';
+		return true;
+	}
+	match("create_pak")
+	{
+		g_Options.create_pak = *value - '0';
+		return true;
+	}
+	match("input_file")
+	{
+		g_Options.input_file = value;
+		return true;
+	}
+
+	match("input_folder")
+	{
+		g_Options.input_folder = value;
+		return true;
+	}
+	match("output_file")
+	{
+		g_Options.output_file = value;
+		return true;
+	}
+#undef match
+}
+
+void parse_cmd(int argc, char* argv[])
+{
+	string config = argv[1];
+
+	ini_parse(config.c_str(), config_handler, nullptr);
+}
+
+int main(int argc, char* argv[])
+{
+	parse_cmd(argc, argv);
+
 	ResourceCompiler RC;
-
-	CFileMapping     fm(fn);
-	auto             data = fm.getData();
-	auto             fv   = SFileVersion(1, 1, 1);
-
 	RC.RegisterConverters();
-	SArchive         ar;
-	ar.magic   = 0xff;
-	ar.version = SFileVersion{1, 1, 1};
-	write_archive(ar, "./test_folder/", "my.pak");
 
-	CFileMapping archive("my.pak");
+	if (g_Options.dump)
+	{
+		dump(g_Options.input_file);
+		return 0;
+	}
 
-	list_of_files((SArchive&)*((SArchive*)(archive.getData())));
-
-
+	if (g_Options.create_pak)
+		write_archive(g_Options.input_folder, g_Options.output_file);
 
 	return 0;
 }
