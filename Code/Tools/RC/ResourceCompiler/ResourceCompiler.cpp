@@ -33,6 +33,7 @@ struct SOptions
 	string output_file;
 	bool   unpak;
 	string unpak_file;
+	string unpak_base;
 };
 
 SOptions g_Options;
@@ -158,7 +159,7 @@ struct SVariableString
 	SVariableString(std::uint16_t size, char* data)
 	    : size(size)
 	{
-		strncpy((this->data), data, size);
+		strcpy((this->data), data);
 	}
 };
 
@@ -204,7 +205,7 @@ std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& patt
 			string       path = dir_entry.path().u8string();
 			CFileMapping fm(path.c_str());
 
-			auto         alloc_size = sizeof SToc + path.size() - 2; // why -2 ???
+			auto         alloc_size = sizeof SToc + path.size() - 1; // why -2 ???
 			SToc*        toc        = SToc::alloc(alloc_size);
 
 			new (toc) SToc(path.data(), std::uint16_t(path.size()), ar.toc_offset, fm.getSize());
@@ -260,7 +261,7 @@ void iterate(SArchive& ar, F func)
 	for (size_t i = 0; i < ar.number_of_files; i++)
 	{
 		func(ar, entry);
-		entry = (SToc*)((byte*)entry->file_name.data + entry->file_name.size);
+		entry = (SToc*)((byte*)entry->file_name.data + entry->file_name.size + 1);
 	}
 }
 
@@ -309,25 +310,38 @@ void dump(const string& file)
 }
 using std::string_view;
 
-void create_file(SArchive& ar, const string_view filename, std::int32_t offset, std::uint32_t size)
+void create_file(SArchive& ar, fs::path filename, std::int32_t offset, std::uint32_t size)
 {
 	char* base = (char*)&ar;
 
-	auto  path = fs::path(filename).parent_path();
-	if (!fs::exists(path))
+	auto  path = (fs::path("./") / fs::path(filename)).parent_path();
+	if (!fs::exists(path) && !path.has_extension())
 	{
+		auto tmp = path.u8string();
+		if (path.u8string().find(".cpp") != tmp.npos)
+		{
+			printf("OMG!!!");
+			//DebugBreak();
+		}
+
 		fs::create_directories(path);
 	}
-	std::ofstream of{filename.data(), std::ios_base::binary};
+	std::ofstream of{"./" + string(filename.u8string()), std::ios_base::binary};
 	of.write(base + offset, size);
 }
 
-void unpak(const string& file)
+void unpak(const string& file, const string& base)
 {
 	if (auto ar = archive_open(file); ar)
 	{
-		iterate(ar, [](SArchive& ar, SToc* entry)
-		        { create_file(ar, string_view(entry->file_name.data, entry->file_name.size), entry->offset, entry->size); });
+		iterate(ar, [&base](SArchive& ar, SToc* entry)
+		        {
+				auto offset = 0;
+				auto strv = string_view(entry->file_name.data, entry->file_name.size);
+				if (auto pos = strv.find(base.c_str()); pos == 0) {
+				    offset = base.size();
+                }
+                create_file(ar, fs::path(string(string_view(entry->file_name.data + offset, entry->file_name.size))), entry->offset, entry->size); });
 	}
 }
 
@@ -372,7 +386,8 @@ void parse_cmd(int argc, char* argv[])
 
 	for (int i = 2; i < argc; i++)
 	{
-#define match(s, n) if (strstr(argv[i], "--" s) && (argc > i + n))
+#define match(s, n) \
+	if ((std::regex_match(argv[i], std::regex{"--" s})) && (argc > i + n))
 		match("dump", 1)
 		{
 			g_Options.input_file = argv[++i];
@@ -393,6 +408,12 @@ void parse_cmd(int argc, char* argv[])
 			g_Options.unpak      = !g_Options.unpak_file.empty();
 			continue;
 		}
+		match("unpak-base", 1)
+		{
+			g_Options.unpak_base = argv[++i];
+			continue;
+		}
+        //string_view(argv[i]).find_first_of("--",)
 	}
 #undef match
 }
@@ -412,7 +433,7 @@ int main(int argc, char* argv[])
 	else if (g_Options.create_pak)
 		write_archive(g_Options.input_folder, g_Options.output_file);
 	else if (g_Options.unpak)
-		unpak(g_Options.unpak_file);
+		unpak(g_Options.unpak_file, g_Options.unpak_base);
 
 	return 0;
 }
