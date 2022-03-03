@@ -4,7 +4,7 @@ function(PrepareVcpkg)
 		return()
 	endif()
 	message(STATUS "Prepare VCPKG")
-	if (ENV{VCPKG_ROOT})
+	if (DEFINED ENV{VCPKG_ROOT})
 		if (NOT DEFINED VCPKG_ROOT)
 			message(FATAL_ERROR "VCPKG_ROOT not defined")
 			set(VCPKG_ROOT ENV{VCPKG_ROOT})
@@ -27,6 +27,8 @@ function(PrepareVcpkg)
 		PATH_SUFFIXES
 			vcpkg
 		NO_CACHE
+		NO_CMAKE_ENVIRONMENT_PATH
+		NO_SYSTEM_ENVIRONMENT_PATH
 		)
 	message(STATUS "VCPKG = ${VCPKG}")
 
