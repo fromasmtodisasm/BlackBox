@@ -307,12 +307,27 @@ void dump(const string& file)
 			             entry->size); });
 	}
 }
+using std::string_view;
+
+void create_file(SArchive& ar, const string_view filename, std::int32_t offset, std::uint32_t size)
+{
+	char* base = (char*)&ar;
+
+	auto  path = fs::path(filename).parent_path();
+	if (!fs::exists(path))
+	{
+		fs::create_directories(path);
+	}
+	std::ofstream of{filename.data(), std::ios_base::binary};
+	of.write(base + offset, size);
+}
 
 void unpak(const string& file)
 {
-	if (auto archive = archive_open(file); archive)
+	if (auto ar = archive_open(file); ar)
 	{
-		printf("Unpaking archive %s\n", file.data());
+		iterate(ar, [](SArchive& ar, SToc* entry)
+		        { create_file(ar, string_view(entry->file_name.data, entry->file_name.size), entry->offset, entry->size); });
 	}
 }
 
