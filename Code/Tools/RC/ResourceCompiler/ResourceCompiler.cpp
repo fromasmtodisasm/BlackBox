@@ -318,8 +318,9 @@ void create_file(SArchive& ar, fs::path filename, std::int32_t offset, std::uint
 	if (!fs::exists(path) && !path.has_extension())
 	{
 		auto tmp = path.u8string();
-		if (path.u8string().find(".cpp") != tmp.npos)
+		if (auto pos = path.u8string().find("ScriptSystem.cpp"); pos != tmp.npos) // WTF!!!
 		{
+			path = path.u8string().substr(0, pos);
 			printf("OMG!!!");
 			//DebugBreak();
 		}
