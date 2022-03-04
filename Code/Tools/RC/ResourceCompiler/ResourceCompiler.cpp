@@ -317,7 +317,7 @@ SArchive write_archive(const std::string& pattern, const std::string out_file)
 }
 
 template<typename F>
-void iterate(SArchive& ar, F func)
+void foreach(SArchive& ar, F func)
 {
 	auto* entry = reinterpret_cast<SToc*>((byte*)&ar + ar.toc_offset);
 	for (size_t i = 0; i < ar.number_of_files; i++)
@@ -360,7 +360,7 @@ void list(const string& file)
 		int i = 0;
 		printf("number of files: %d\n", ((SArchive&)ar).number_of_files);
 		puts("id\tpath\toffset\tsize");
-		iterate(ar, [&i](SArchive& ar, SToc* entry)
+		foreach(ar, [&i](SArchive& ar, SToc* entry)
 		        { printf("%d\t%*.*s\t%d\t%d\n",
 			             i++,
 			             entry->file_name.size,
@@ -392,7 +392,7 @@ void extract(const string& file, const string& base, const string& pattern)
 {
 	if (auto ar = archive_open(file); ar)
 	{
-		iterate(ar, [&base, &pattern](SArchive& ar, SToc* entry)
+		foreach(ar, [&base, &pattern](SArchive& ar, SToc* entry)
 		        {
 			        size_t offset = 0;
 			        auto   strv   = string_view(entry->file_name.data, entry->file_name.size);
