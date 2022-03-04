@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "FileMapping.h"
+#include <algorithm>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -30,6 +31,35 @@ CFileMapping::CFileMapping():
 #endif
 {
 
+}
+CFileMapping::CFileMapping(const CFileMapping& other)
+{
+	m_nSize = other.m_nSize;
+	m_pData = other.m_pData;
+#ifdef USE_FILE_MAPPING
+	m_hFile = other.m_hFile;
+	m_hMapping = other.m_hMapping;
+#endif
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CFileMapping::CFileMapping(CFileMapping&& other) 
+    : CFileMapping()
+{
+	m_nSize = other.m_nSize;
+	m_pData = other.m_pData;
+#ifdef USE_FILE_MAPPING
+	m_hFile = other.m_hFile;
+	m_hMapping = other.m_hMapping;
+#endif
+
+	other.m_nSize = 0;
+	other.m_pData = 0;
+#ifdef USE_FILE_MAPPING
+	other.m_hFile    = INVALID_HANDLE_VALUE;
+	other.m_hMapping = 0;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////

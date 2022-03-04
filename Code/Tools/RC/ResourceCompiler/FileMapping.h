@@ -36,6 +36,8 @@ class CFileMapping//: public _reference_target_t
 public:
 	// Initializes an empty file mapping object
 	CFileMapping();
+	CFileMapping(const CFileMapping&);
+    CFileMapping(CFileMapping&& fileMapping);
 	// initializes the object and tries to open the given file mapping
 	CFileMapping (const char* szFileName, unsigned nFlags = 0);
 	// closes file mapping
