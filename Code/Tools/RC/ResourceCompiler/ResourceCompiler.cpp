@@ -12,7 +12,7 @@
 #include <cassert>
 #include <regex>
 
-#include "../ResourceTools/ini.h"
+#include "ini.h"
 #include <iostream>
 
 using std::string;
@@ -27,14 +27,19 @@ namespace fs = std::filesystem;
 
 struct SOptions
 {
-	bool   dump{};
+	bool   list{false};
 	string input_file;
-	bool   create_pak;
+
+	bool   create{false};
 	string input_folder;
 	string output_file;
-	bool   unpak;
-	string unpak_file;
-	string unpak_base;
+
+	bool   extract{false};
+	string extract_file;
+	string extract_base;
+
+	bool   verbose{false};
+	bool   recursion{true};
 };
 
 SOptions g_Options;
@@ -197,6 +202,11 @@ struct SArchive
 
 std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& pattern, std::ofstream& of)
 {
+	if (!fs::exists(pattern))
+	{
+		printf("Path [%s] dont exists\n", pattern.c_str());
+		abort();
+	}
 	auto               it = std::filesystem::directory_iterator{pattern};
 	std::vector<SToc*> vtoc;
 	for (auto const& dir_entry : std::filesystem::directory_iterator{pattern})
@@ -213,13 +223,17 @@ std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& patt
 
 			of.write((const char*)fm.getData(), fm.getSize());
 			ar.toc_offset += fm.getSize();
+			if (g_Options.verbose)
+			{
+				std::cout << dir_entry.path().string() << std::endl;
+			}
 			ar.number_of_files++;
 
 #if 0
 			vtoc.push_back(toc);
 #endif
 		}
-		else
+		else if (g_Options.recursion)
 		{
 			auto toc = write_archive_recursive(ar, dir_entry.path().u8string(), of);
 #if 0
@@ -292,7 +306,7 @@ SArchiveHandle archive_open(std::string_view file)
 	return SArchiveHandle(file);
 }
 
-void dump(const string& file)
+void list(const string& file)
 {
 	if (auto ar = archive_open(file); ar)
 	{
@@ -320,23 +334,27 @@ void create_file(SArchive& ar, fs::path filename, std::int32_t offset, std::uint
 	{
 		fs::create_directories(path);
 	}
-    std::cout << filename.string() << std::endl;
+	if (g_Options.verbose)
+		std::cout << filename.string() << std::endl;
+
 	std::ofstream of{filename.string(), std::ios_base::binary};
 	of.write(base + offset, size);
 }
 
-void unpak(const string& file, const string& base)
+void extract(const string& file, const string& base)
 {
 	if (auto ar = archive_open(file); ar)
 	{
 		iterate(ar, [&base](SArchive& ar, SToc* entry)
 		        {
-				size_t offset = 0;
-				auto strv = string_view(entry->file_name.data, entry->file_name.size);
-				if (auto pos = strv.find(base.c_str()); pos == 0) {
-				    offset = base.size();
-                }
-                create_file(ar, fs::path(strv.substr(offset)), entry->offset, entry->size); });
+			        size_t offset = 0;
+			        auto   strv   = string_view(entry->file_name.data, entry->file_name.size);
+			        if (auto pos = strv.find(base.c_str()); pos == 0)
+			        {
+				        offset = base.size();
+			        }
+			        create_file(ar, fs::path(strv.substr(offset)), entry->offset, entry->size);
+		        });
 	}
 }
 
@@ -344,14 +362,14 @@ int config_handler(void* user, const char* section,
                    const char* name, const char* value)
 {
 #define match(a) if ((std::string_view(a) == name))
-	match("dump")
+	match("list")
 	{
-		g_Options.dump = *value - '0';
+		g_Options.list = *value - '0';
 		return true;
 	}
 	match("create-pak")
 	{
-		g_Options.create_pak = *value - '0';
+		g_Options.create = *value - '0';
 		return true;
 	}
 	match("input-file")
@@ -384,32 +402,42 @@ void parse_cmd(int argc, char* argv[])
 	{
 #define match(s, n) \
 	if ((std::regex_match(argv[i], std::regex{"--" s})) && (argc > i + n))
-		match("dump", 1)
+		match("list", 1)
 		{
 			g_Options.input_file = argv[++i];
-			g_Options.dump       = !g_Options.input_file.empty();
+			g_Options.list       = !g_Options.input_file.empty();
 			continue;
 		}
-		match("create-pak", 2)
+		match("create", 2)
 		{
 			g_Options.input_folder = argv[++i];
 			g_Options.output_file  = argv[++i];
-			g_Options.create_pak   = !g_Options.input_folder.empty() && !g_Options.output_file.empty();
+			g_Options.create   = !g_Options.input_folder.empty() && !g_Options.output_file.empty();
 			continue;
 		}
 
-		match("unpak", 1)
+		match("extract", 1)
 		{
-			g_Options.unpak_file = argv[++i];
-			g_Options.unpak      = !g_Options.unpak_file.empty();
+			g_Options.extract_file = argv[++i];
+			g_Options.extract    = !g_Options.extract_file.empty();
 			continue;
 		}
-		match("unpak-base", 1)
+		match("extract-base", 1)
 		{
-			g_Options.unpak_base = argv[++i];
+			g_Options.extract_base = argv[++i];
 			continue;
 		}
-        //string_view(argv[i]).find_first_of("--",)
+		match("verbose", 0)
+		{
+			g_Options.verbose = true;
+			continue;
+		}
+		match("no-recursion", 0)
+		{
+			g_Options.recursion = false;
+			continue;
+		}
+		//string_view(argv[i]).find_first_of("--",)
 	}
 #undef match
 }
@@ -420,17 +448,17 @@ int main(int argc, char* argv[])
 
 	ResourceCompiler RC;
 	(void)RC;
-	RC.RegisterConverters();
+	//RC.RegisterConverters();
 
-	if (g_Options.dump)
+	if (g_Options.list)
 	{
-		dump(g_Options.input_file);
+		list(g_Options.input_file);
 		return 0;
 	}
-	else if (g_Options.create_pak)
+	else if (g_Options.create)
 		write_archive(g_Options.input_folder, g_Options.output_file);
-	else if (g_Options.unpak)
-		unpak(g_Options.unpak_file, g_Options.unpak_base);
+	else if (g_Options.extract)
+		extract(g_Options.extract_file, g_Options.extract_base);
 
 	return 0;
 }
