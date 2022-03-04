@@ -10,7 +10,7 @@ add_sources("NoUberFile"
 )
 end_sources()
 
-CryResourceCompilerModule(ResourceCompilerPC PCH "pch.hpp" SOLUTION_FOLDER "RC")
+CryResourceCompilerModule(ResourceCompilerPC PCH "pch.hpp" SOLUTION_FOLDER "BLACKBOX/Tools/RC")
 target_include_directories(${THIS_PROJECT} PRIVATE
 	"${CMAKE_SOURCE_DIR}/ResourceCompiler"
 	#"${CRYENGINE_SOURCE_DIR}/Code/Tools"

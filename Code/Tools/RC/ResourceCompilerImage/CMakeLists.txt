@@ -10,4 +10,4 @@ add_sources("NoUberFile"
 )
 end_sources()
 
-CryResourceCompilerModule(ResourceCompilerImage PCH "pch.hpp" SOLUTION_FOLDER "RC")
+CryResourceCompilerModule(ResourceCompilerImage PCH "pch.hpp" SOLUTION_FOLDER "BLACKBOX/Tools/RC")

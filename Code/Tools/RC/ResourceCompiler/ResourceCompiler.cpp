@@ -318,18 +318,10 @@ void create_file(SArchive& ar, fs::path filename, std::int32_t offset, std::uint
 	auto  path = (fs::path("./") / fs::path(filename)).parent_path();
 	if (!fs::exists(path) && !path.has_extension())
 	{
-		auto tmp = path.u8string();
-		if (auto pos = path.u8string().find("ai_show_navigation_areas.ico"); pos != tmp.npos) // WTF!!!
-		{
-			path = path.u8string().substr(0, pos);
-			printf("OMG!!!");
-			//DebugBreak();
-		}
-
 		fs::create_directories(path);
 	}
-    std::cout << "./" + filename.string() << " " << filename.string().size() << std::endl;
-	std::ofstream of{"./" + string(filename.u8string()), std::ios_base::binary};
+    std::cout << filename.string() << std::endl;
+	std::ofstream of{filename.string(), std::ios_base::binary};
 	of.write(base + offset, size);
 }
 
@@ -339,7 +331,7 @@ void unpak(const string& file, const string& base)
 	{
 		iterate(ar, [&base](SArchive& ar, SToc* entry)
 		        {
-				auto offset = 0;
+				size_t offset = 0;
 				auto strv = string_view(entry->file_name.data, entry->file_name.size);
 				if (auto pos = strv.find(base.c_str()); pos == 0) {
 				    offset = base.size();
@@ -427,7 +419,8 @@ int main(int argc, char* argv[])
 	parse_cmd(argc, argv);
 
 	ResourceCompiler RC;
-	//RC.RegisterConverters();
+	(void)RC;
+	RC.RegisterConverters();
 
 	if (g_Options.dump)
 	{

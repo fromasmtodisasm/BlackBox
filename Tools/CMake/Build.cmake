@@ -62,6 +62,7 @@ endif()
 include ("${TOOLS_CMAKE_DIR}/BuildLaunchers.cmake")
 
 if (OPTION_RC AND EXISTS "${BLACKBOX_DIR}/Code/Tools/RC")
+if (0)
 	include(ExternalProject)
 	ExternalProject_Add(RC
 		CMAKE_ARGS "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}" "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}" "-DCMAKE_BUILD_TYPE=$<$<CONFIG:Profile>:Release>$<$<NOT:$<CONFIG:Profile>>:$<CONFIG>>"
@@ -69,6 +70,9 @@ if (OPTION_RC AND EXISTS "${BLACKBOX_DIR}/Code/Tools/RC")
 		BUILD_COMMAND "${CMAKE_COMMAND}" --build "." --config $<$<CONFIG:Profile>:Release>$<$<NOT:$<CONFIG:Profile>>:$<CONFIG>>
 		INSTALL_COMMAND echo "Skipping install"
 	)
+else()
+	add_subdirectory(Code/Tools/RC)
+endif()
 endif()
 
 #message(STATUS "file for clangformat: ${ALL_PROJECT_SOURCES}")

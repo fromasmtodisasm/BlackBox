@@ -13,8 +13,8 @@ set(BUILD_CPU_ARCHITECTURE x64)
 set(BUILD_PLATFORM Win64)
 set(WINDOWS 1)
 
-set(CRYENGINE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/../../..") 
-set(OUTPUT_DIRECTORY "${CRYENGINE_SOURCE_DIR}/Tools/rc")
+set(BLACKBOX_SOURCE_DIR "${CMAKE_SOURCE_DIR}/../../..") 
+set(OUTPUT_DIRECTORY "${BLACKBOX_SOURCE_DIR}/Tools/rc")
 
 #set(CMAKE_CXX_FLAGS "/W3 /fp:precise /MP /GF /Gy /DWIN32 /D_WINDOWS /GR- /Gd /Zm250 /Zc:forScope /wd4251 /wd4275 /utf-8 /Wv:18" CACHE STRING "C++ Flags" FORCE)
 #set(CMAKE_CXX_FLAGS_DEBUG "/Zi /MTd /Od /Ob0 /Oy- /RTC1 /GS /bigobj /DFORCE_STANDARD_ASSERT /D_DEBUG" CACHE STRING "C++ Flags" FORCE)
@@ -27,9 +27,9 @@ set(OUTPUT_DIRECTORY "${CRYENGINE_SOURCE_DIR}/Tools/rc")
 project(ResourceCompiler${BUILD_PLATFORM} CXX C)
 
 # SDK Directory
-set(SDK_DIR "${CRYENGINE_SOURCE_DIR}/Code/SDKs")
-set(CRY_LIBS_DIR "${CRYENGINE_SOURCE_DIR}/Code/Libs")
-set(WINSDK_SDK_DIR "${CRYENGINE_SOURCE_DIR}/Code/SDKs/Microsoft Windows SDK")
+set(SDK_DIR "${BLACKBOX_SOURCE_DIR}/Code/SDKs")
+set(CRY_LIBS_DIR "${BLACKBOX_SOURCE_DIR}/Code/Libs")
+set(WINSDK_SDK_DIR "${BLACKBOX_SOURCE_DIR}/Code/SDKs/Microsoft Windows SDK")
 set(WINSDK_SDK_LIB_DIR "${WINSDK_SDK_DIR}/V8.0/Lib/Win8/um")
 set(WINSDK_SDK_INCLUDE_DIR "${WINSDK_SDK_DIR}/V8.0/Include/um")
 
@@ -71,18 +71,18 @@ MESSAGE("OPTION_ASTC = ${OPTION_ASTC}")
 set(RESOURCE_COMPILER TRUE)
 set(BUILD_SHARED_LIBS TRUE)
 
-include("${CMAKE_SOURCE_DIR}/RCCommonMacros.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/RCCommonMacros.cmake")
 
-if (EXISTS "${CMAKE_SOURCE_DIR}/XBoxOne.cmake")
-	include("${CMAKE_SOURCE_DIR}/XBoxOne.cmake")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/XBoxOne.cmake")
+	include("${CMAKE_CURRENT_SOURCE_DIR}/XBoxOne.cmake")
 endif()
 
-if (EXISTS "${CMAKE_SOURCE_DIR}/PS4.cmake")
-	include("${CMAKE_SOURCE_DIR}/PS4.cmake")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/PS4.cmake")
+	include("${CMAKE_CURRENT_SOURCE_DIR}/PS4.cmake")
 endif()
 
 include_directories( "${SDK_DIR}" )
-include_directories( "${CRYENGINE_SOURCE_DIR}/Code/CryEngine/CryCommon" )
+include_directories( "${BLACKBOX_SOURCE_DIR}/Include" )
 
 set(COMMON_LIBS Ntdll User32 Advapi32 Ntdll Ws2_32)
 
@@ -107,8 +107,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #add_subdirectory("${CRY_LIBS_DIR}/vco" "${CMAKE_CURRENT_BINARY_DIR}/vco")
 #add_subdirectory("${CRY_LIBS_DIR}/qpOASES" "${CMAKE_CURRENT_BINARY_DIR}/qpOASES")
 #
-#add_subdirectory("${CRYENGINE_SOURCE_DIR}/Code/Tools/CryXML" "${CMAKE_CURRENT_BINARY_DIR}/CryXML")
-#add_subdirectory("${CRYENGINE_SOURCE_DIR}/Code/CryEngine/CryPhysics" "${CMAKE_CURRENT_BINARY_DIR}/CryPhysics")
+#add_subdirectory("${BLACKBOX_SOURCE_DIR}/Code/Tools/CryXML" "${CMAKE_CURRENT_BINARY_DIR}/CryXML")
+#add_subdirectory("${BLACKBOX_SOURCE_DIR}/Code/CryEngine/CryPhysics" "${CMAKE_CURRENT_BINARY_DIR}/CryPhysics")
 # ResourceCompiler
 add_subdirectory(ResourceCompiler)
 #add_subdirectory(ResourceCompilerABC)
@@ -116,6 +116,6 @@ add_subdirectory(ResourceCompilerImage)
 add_subdirectory(ResourceCompilerPC)
 #add_subdirectory(ResourceCompilerXML)
 if (OPTION_SUBSTANCE_SUPPORT)
-	add_subdirectory("${CRYENGINE_SOURCE_DIR}/Code/Sandbox/Libs/CrySubstance" "${CMAKE_CURRENT_BINARY_DIR}/CrySubstance")
+	add_subdirectory("${BLACKBOX_SOURCE_DIR}/Code/Sandbox/Libs/CrySubstance" "${CMAKE_CURRENT_BINARY_DIR}/CrySubstance")
 	add_subdirectory(ResourceCompilerSubstance)
 endif()
