@@ -230,6 +230,59 @@ struct SArchive
 	SFileVersion  version;
 	std::uint32_t number_of_files;
 	std::uint32_t toc_offset;
+
+	struct Iterator
+	{
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type   = std::ptrdiff_t;
+		using value_type        = SToc;
+		using pointer           = SToc*; // or also value_type*
+		using reference         = SToc&; // or also value_type&
+
+		Iterator(pointer ptr, std::uint32_t number_of_files = 0)
+		    : m_ptr(ptr)
+		    , number_of_files(number_of_files)
+		    , count(0)
+		{
+		}
+		/// <summary>
+		/// ////////////////////////
+		/// </summary>
+		reference operator*() const { return *m_ptr; }
+		pointer   operator->() { return m_ptr; }
+
+		// Prefix increment
+		Iterator& operator++()
+		{
+			m_ptr = (SToc*)((byte*)m_ptr->file_name.data + m_ptr->file_name.size + 1);
+			count++;
+			if (count > (number_of_files - 1))
+			{
+				m_ptr = nullptr;
+			}
+			return *this;
+		}
+
+		// Postfix increment
+		Iterator operator++(int)
+		{
+			Iterator tmp = *this;
+			++(*this);
+			return tmp;
+		}
+
+		friend bool operator==(const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
+		friend bool operator!=(const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
+		/////////////////////////////////////////////
+
+	private:
+		pointer       m_ptr;
+		std::uint32_t number_of_files;
+		std::uint32_t count;
+	};
+
+	Iterator begin() { return Iterator(reinterpret_cast<SToc*>((byte*)this + this->toc_offset), number_of_files); }
+	Iterator end() { return Iterator(nullptr); }
 };
 
 std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& file, std::ofstream& of)
@@ -307,7 +360,9 @@ SArchive write_archive(const std::string& pattern, const std::string out_file)
 	std::replace(file.begin(), file.end(), '\\', '/');
 
 	auto toc = write_archive_recursive(ar, file, of);
+	//SToc fakeToc{"", INT32_MAX, UINT32_MAX};
 	of.write((char*)SToc::arena.data(), SToc::arena.size());
+	//of.write((char*)&fakeToc, sizeof SToc);
 	auto _offset = offsetof(SArchive, number_of_files);
 	of.seekp(_offset);
 	of.write((const char*)&ar.number_of_files, sizeof ar.number_of_files);
@@ -317,7 +372,7 @@ SArchive write_archive(const std::string& pattern, const std::string out_file)
 }
 
 template<typename F>
-void foreach(SArchive& ar, F func)
+void foreach (SArchive& ar, F func)
 {
 	auto* entry = reinterpret_cast<SToc*>((byte*)&ar + ar.toc_offset);
 	for (size_t i = 0; i < ar.number_of_files; i++)
@@ -360,14 +415,18 @@ void list(const string& file)
 		int i = 0;
 		printf("number of files: %d\n", ((SArchive&)ar).number_of_files);
 		puts("id\tpath\toffset\tsize");
-		foreach(ar, [&i](SArchive& ar, SToc* entry)
-		        { printf("%d\t%*.*s\t%d\t%d\n",
-			             i++,
-			             entry->file_name.size,
-			             entry->file_name.size,
-			             entry->file_name.data,
-			             entry->offset + 1,
-			             entry->size); });
+
+		//auto* entry = reinterpret_cast<SToc*>((byte*)&ar + ((SArchive&)ar).toc_offset);
+		for (auto& entry : ((SArchive&)ar))
+		{
+			printf("%d\t%*.*s\t%d\t%d\n",
+			       i++,
+			       entry.file_name.size,
+			       entry.file_name.size,
+			       entry.file_name.data,
+			       entry.offset + 1,
+			       entry.size);
+		}
 	}
 }
 using std::string_view;
@@ -392,25 +451,26 @@ void extract(const string& file, const string& base, const string& pattern)
 {
 	if (auto ar = archive_open(file); ar)
 	{
-		foreach(ar, [&base, &pattern](SArchive& ar, SToc* entry)
-		        {
-			        size_t offset = 0;
-			        auto   strv   = string_view(entry->file_name.data, entry->file_name.size);
-			        if (auto pos = strv.find(base.c_str()); pos == 0)
-			        {
-				        offset = base.size();
-			        }
+		for (auto& entry : ((SArchive&)ar))
+		{
+			size_t offset = 0;
+			auto   strv   = string_view(entry.file_name.data, entry.file_name.size);
+			if (auto pos = strv.find(base.c_str()); pos == 0)
+			{
+				offset = base.size();
+			}
 
-			        auto path = fs::path(strv.substr(offset));
-			        if (!pattern.empty())
-			        {
-				        if (regex_match(path.string(), std::regex{pattern, std::regex::extended}))
-                            create_file(ar, path, entry->offset, entry->size);
-			        }
-					else
-                    {
-                        create_file(ar, path, entry->offset, entry->size);
-					} });
+			auto path = fs::path(strv.substr(offset));
+			if (!pattern.empty())
+			{
+				if (regex_match(path.string(), std::regex{pattern, std::regex::extended}))
+					create_file(ar, path, entry.offset, entry.size);
+			}
+			else
+			{
+				create_file(ar, path, entry.offset, entry.size);
+			}
+		}
 	}
 }
 
