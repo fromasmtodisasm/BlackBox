@@ -1,9 +1,6 @@
 [submodule "Data/shaders/tonemap"]
 	path = Data/shaders/tonemap
 	url = https://github.com/dmnsgn/glsl-tone-map.git
-[submodule "Code/Sandbox/GUI/GuiTools/ImGuiColorTextEdit"]
-	path = Code/Sandbox/GUI/GuiTools/ImGuiColorTextEdit
-	url = https://github.com/fromasmtodisasm/ImGuiColorTextEdit
 [submodule "Tools/Cmake"]
 	path = Tools/Cmake
 	url = git@github.com:fromasmtodisasm/BlackBoxCmakeTools.git
