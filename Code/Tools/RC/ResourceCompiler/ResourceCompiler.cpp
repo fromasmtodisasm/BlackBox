@@ -231,58 +231,6 @@ struct SArchive
 	std::uint32_t number_of_files;
 	std::uint32_t toc_offset;
 
-	struct Iterator
-	{
-		using iterator_category = std::forward_iterator_tag;
-		using difference_type   = std::ptrdiff_t;
-		using value_type        = SToc;
-		using pointer           = SToc*; // or also value_type*
-		using reference         = SToc&; // or also value_type&
-
-		Iterator(pointer ptr, std::uint32_t number_of_files = 0)
-		    : m_ptr(ptr)
-		    , number_of_files(number_of_files)
-		    , count(0)
-		{
-		}
-		/// <summary>
-		/// ////////////////////////
-		/// </summary>
-		reference operator*() const { return *m_ptr; }
-		pointer   operator->() { return m_ptr; }
-
-		// Prefix increment
-		Iterator& operator++()
-		{
-			m_ptr = (SToc*)((byte*)m_ptr->file_name.data + m_ptr->file_name.size + 1);
-			count++;
-			if (count > (number_of_files - 1))
-			{
-				m_ptr = nullptr;
-			}
-			return *this;
-		}
-
-		// Postfix increment
-		Iterator operator++(int)
-		{
-			Iterator tmp = *this;
-			++(*this);
-			return tmp;
-		}
-
-		friend bool operator==(const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
-		friend bool operator!=(const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
-		/////////////////////////////////////////////
-
-	private:
-		pointer       m_ptr;
-		std::uint32_t number_of_files;
-		std::uint32_t count;
-	};
-
-	Iterator begin() { return Iterator(reinterpret_cast<SToc*>((byte*)this + this->toc_offset), number_of_files); }
-	Iterator end() { return Iterator(nullptr); }
 };
 
 std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& file, std::ofstream& of)
@@ -401,6 +349,47 @@ struct SArchiveHandle
 	{
 		return header != nullptr;
 	}
+
+	struct Iterator
+	{
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type   = std::ptrdiff_t;
+		using value_type        = SToc;
+		using pointer           = SToc*; // or also value_type*
+		using reference         = SToc&; // or also value_type&
+
+		Iterator(pointer ptr)
+		    : m_ptr(ptr)
+		{
+		}
+		reference operator*() const { return *m_ptr; }
+		pointer   operator->() { return m_ptr; }
+
+		// Prefix increment
+		Iterator& operator++()
+		{
+			m_ptr = (SToc*)((byte*)m_ptr->file_name.data + m_ptr->file_name.size + 1);
+			return *this;
+		}
+
+		// Postfix increment
+		Iterator operator++(int)
+		{
+			Iterator tmp = *this;
+			++(*this);
+			return tmp;
+		}
+
+		friend bool operator==(const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
+		friend bool operator!=(const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
+		/////////////////////////////////////////////
+
+	private:
+		pointer       m_ptr;
+	};
+
+	Iterator begin() { return Iterator(reinterpret_cast<SToc*>((byte*)header + header->toc_offset)); }
+	Iterator end() { return Iterator((SToc*)((byte*)header + fm.getSize())); }
 };
 
 SArchiveHandle archive_open(std::string_view file)
@@ -410,14 +399,13 @@ SArchiveHandle archive_open(std::string_view file)
 
 void list(const string& file)
 {
-	if (auto ar = archive_open(file); ar)
+	if (auto ar = SArchiveHandle(file); ar)
 	{
 		int i = 0;
 		printf("number of files: %d\n", ((SArchive&)ar).number_of_files);
 		puts("id\tpath\toffset\tsize");
 
-		//auto* entry = reinterpret_cast<SToc*>((byte*)&ar + ((SArchive&)ar).toc_offset);
-		for (auto& entry : ((SArchive&)ar))
+		for (auto& entry : ar)
 		{
 			printf("%d\t%*.*s\t%d\t%d\n",
 			       i++,
@@ -449,9 +437,9 @@ void create_file(SArchive& ar, fs::path filename, std::int32_t offset, std::uint
 
 void extract(const string& file, const string& base, const string& pattern)
 {
-	if (auto ar = archive_open(file); ar)
+	if (auto ar = SArchiveHandle(file); ar)
 	{
-		for (auto& entry : ((SArchive&)ar))
+		for (auto& entry : ar)
 		{
 			size_t offset = 0;
 			auto   strv   = string_view(entry.file_name.data, entry.file_name.size);
@@ -563,7 +551,6 @@ void parse_cmd(int argc, char* argv[])
 			g_Options.exclude = argv[++i];
 			continue;
 		}
-		//string_view(argv[i]).find_first_of("--",)
 	}
 #undef match
 }
