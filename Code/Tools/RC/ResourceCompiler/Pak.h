@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <memory>
+#include <map>
 
 struct SFileVersion
 {
@@ -100,12 +101,12 @@ struct SArchive
 
 struct SArchiveHandle
 {
-	CFileMapping fm;
-	SArchive*    header{};
+	std::unique_ptr<CFileMapping> fm;
+	SArchive*                     header{};
 	SArchiveHandle(std::string_view file)
-	    : fm(file.data())
+	    : fm{std::make_unique<CFileMapping>(file.data())}
 	{
-		header = (SArchive*)fm.getData();
+		header = (SArchive*)fm->getData();
 	}
 
 	//SArchiveHandle(SArchiveHandle&& other)
@@ -161,7 +162,7 @@ struct SArchiveHandle
 	};
 
 	Iterator begin() { return Iterator(reinterpret_cast<SDirEntry*>((byte*)header + header->toc_offset)); }
-	Iterator end() { return Iterator((SDirEntry*)((byte*)header + fm.getSize())); }
+	Iterator end() { return Iterator((SDirEntry*)((byte*)header + fm->getSize())); }
 };
 
 std::string_view remove_leading_ups(std::string_view str);
@@ -200,18 +201,21 @@ struct MyFile
 	File*        m_File;
 	std::int32_t pointer{};
 
-	//
 public:
 	void Read(void* dst, size_t size)
 	{
 		size_t left = m_File->size - pointer;
 		if (left > 0)
 		{
-			left = std::min(size_t(left), size);
+			left        = std::min(size_t(left), size);
 			auto offset = m_File->base + m_File->offset + pointer;
 			memcpy(dst, offset, left);
+
+			pointer += std::int32_t(size);
 		}
 	}
+
+	bool   Eof() { return pointer < Size(); }
 
 	size_t Size()
 	{
@@ -222,15 +226,18 @@ public:
 class CPak
 {
 public:
-	///////////////////
-	using KeyType =
+	
+	using KeyType = string_view;
+	template<typename Type>
+	using MapType =
 #if 0
-	    string;
+		std::unordered_map<KeyType,Type>
 #else
-	    string_view;
+	    std::map<KeyType, Type>
 #endif
-	    using FileList = std::unordered_map<KeyType, File>;
+	    ;
 
+	using FileList = MapType<File>;
 	bool OpenPak(string_view pak)
 	{
 		SArchiveHandle ar{pak};
@@ -240,28 +247,18 @@ public:
 		{
 			File file{.offset = entry.offset, .size = entry.size, .name = entry.Name(), .base = (char*)ar.header};
 
-			if (auto it = m_Files.find(file.name); it != m_Files.end())
-			{
-				printf("Eroror, file %s already mapped\n", file.name.data());
-			}
+			if (auto it = m_Files.find(file.name); it != m_Files.end()) printf("Eroror, file %s already mapped\n", file.name.data());
 
 			m_Files[file.name] = file;
 		}
 		m_Archives.emplace_back(std::move(ar));
 		return true;
 	}
-
 	std::shared_ptr<MyFile> FOpen(string_view fname)
 	{
-		if (auto it = m_Files.find(fname); it != m_Files.end())
-		{
-			return std::make_shared<MyFile>(&it->second);
-		}
-
-		printf("Eroror, file %s already mapped\n", fname.data());
+		if (auto it = m_Files.find(fname); it != m_Files.end()) return std::make_shared<MyFile>(&it->second);
 		return nullptr;
 	}
-
 	void Dump()
 	{
 		for (auto& f : m_Files)
@@ -271,7 +268,6 @@ public:
 	}
 
 public:
-	///////////////////
 	FileList                    m_Files;
 	std::vector<SArchiveHandle> m_Archives;
 };

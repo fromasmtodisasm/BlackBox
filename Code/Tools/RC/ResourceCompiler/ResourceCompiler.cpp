@@ -7,7 +7,7 @@
 
 #include "ini.h"
 
-SOptions g_Options;
+SOptions         g_Options;
 
 std::string_view remove_leading_ups(std::string_view str)
 {
@@ -118,6 +118,11 @@ void parse_cmd(int argc, char* argv[])
 			g_Options.exclude = argv[++i];
 			continue;
 		}
+		match("testing", 0)
+		{
+			g_Options.testing = true;
+			continue;
+		}
 	}
 #undef match
 }
@@ -130,7 +135,6 @@ int main(int argc, char* argv[])
 	(void)RC;
 	//RC.RegisterConverters();
 
-	#if 0
 	if (g_Options.list)
 	{
 		list(g_Options.input_file);
@@ -143,23 +147,32 @@ int main(int argc, char* argv[])
 		else if (g_Options.extract)
 			extract(g_Options.extract_file, g_Options.extract_base, g_Options.extract_pattern);
 	}
-	#endif
 
-	CPak testPak;
-
-	if (testPak.OpenPak("Shaders.pak"))
+	if (g_Options.testing)
 	{
-		testPak.Dump();
+		CPak testPak;
 
-		auto file = testPak.FOpen("Shaders/fx/AuxGeom.cfx");
-		auto size = file->Size();
-		std::vector<char> data;
+		bool ok{true};
+		for (auto pak : {"Shaders.pak", "Include.pak", "Code.pak"})
+		{
+			ok &= testPak.OpenPak(pak);
+		}
+		if (ok)
+		{
+			testPak.Dump();
 
-		data.resize(size);
+			for (auto name : {"Shaders/fx/AuxGeom.cfx", "Include/BlackBox/System/ISystem.hpp"})
+			{
+				auto              file = testPak.FOpen(name);
+				auto              size = file->Size();
+				std::vector<char> data;
 
-		file->Read(&data[0], size);
+				data.resize(size);
+				file->Read(&data[0], size);
 
-		printf("file: %*.*s", size, size, &data[0]);
+				printf("file: %*.*s", size, size, &data[0]);
+			}
+		}
 	}
 
 	return 0;

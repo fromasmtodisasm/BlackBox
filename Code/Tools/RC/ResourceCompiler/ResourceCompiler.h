@@ -129,6 +129,8 @@ struct SOptions
 	bool   recursion{true};
 
 	string exclude;
+
+	bool   testing{false};
 };
 extern SOptions g_Options;
 
