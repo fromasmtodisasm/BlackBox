@@ -355,8 +355,8 @@ struct SArchiveHandle
 		using iterator_category = std::forward_iterator_tag;
 		using difference_type   = std::ptrdiff_t;
 		using value_type        = SToc;
-		using pointer           = SToc*; // or also value_type*
-		using reference         = SToc&; // or also value_type&
+		using pointer           = value_type*; // or also value_type*
+		using reference         = value_type&; // or also value_type&
 
 		Iterator(pointer ptr)
 		    : m_ptr(ptr)
