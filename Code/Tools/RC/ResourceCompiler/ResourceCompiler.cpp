@@ -25,6 +25,27 @@ namespace fs = std::filesystem;
 
 #define GetExePath()  "./"
 
+std::string_view remove_leading_ups(std::string_view str)
+{
+	std::string_view result = str;
+	while (true)
+	{
+		if (auto pos = result.find("../"); pos == 0)
+		{
+			result = std::string_view{result.data() + 3};
+		}
+		else if (auto pos = result.find("./"); pos == 0)
+		{
+			result = std::string_view{result.data() + 2};
+		}
+		else
+		{
+			break;
+		}
+	}
+	return result;
+}
+
 struct SOptions
 {
 	bool   list{false};
@@ -186,8 +207,8 @@ struct SToc
 	std::uint32_t   size;
 	SVariableString file_name;
 
-	SToc(const char* file_name, std::uint16_t file_name_size, std::int32_t offset, std::uint32_t size)
-	    : file_name(file_name_size, (char*)file_name)
+	SToc(std::string_view file_name, std::int32_t offset, std::uint32_t size)
+	    : file_name(std::uint16_t(file_name.length()), (char*)file_name.data())
 	    , offset(offset)
 	    , size(size)
 	{
@@ -236,12 +257,13 @@ std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& file
 		}
 		if (dir_entry.is_regular_file())
 		{
-			CFileMapping fm(path.c_str());
+			auto reduced_path = remove_leading_ups(path);
+			CFileMapping     fm(path.data());
 
-			auto         alloc_size = sizeof SToc + path.size() - 1; // why -2 ???
-			SToc*        toc        = SToc::alloc(alloc_size);
+			auto             alloc_size = sizeof SToc + reduced_path.size() - 1; // why -2 ???
+			SToc*            toc        = SToc::alloc(alloc_size);
 
-			new (toc) SToc(path.data(), std::uint16_t(path.size()), ar.toc_offset, fm.getSize());
+			new (toc) SToc(reduced_path, ar.toc_offset, fm.getSize());
 
 			of.write((const char*)fm.getData(), fm.getSize());
 			ar.toc_offset += fm.getSize();
@@ -428,11 +450,11 @@ int config_handler(void* user, const char* section,
 
 void parse_cmd(int argc, char* argv[])
 {
-	string config = argv[1];
+#if 0
+	ini_parse("rc.ini", config_handler, nullptr);
+#endif
 
-	ini_parse(config.c_str(), config_handler, nullptr);
-
-	for (int i = 2; i < argc; i++)
+	for (int i = 1; i < argc; i++)
 	{
 #define match(s, n) \
 	if ((std::regex_match(argv[i], std::regex{"--" s})) && (argc > i + n))
@@ -496,7 +518,7 @@ int main(int argc, char* argv[])
 
 	if (g_Options.list)
 	{
-		::list(g_Options.input_file);
+		list(g_Options.input_file);
 		return 0;
 	}
 	else if (g_Options.create)
