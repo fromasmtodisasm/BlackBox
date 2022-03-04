@@ -37,9 +37,12 @@ struct SOptions
 	bool   extract{false};
 	string extract_file;
 	string extract_base;
+	string extract_pattern;
 
 	bool   verbose{false};
 	bool   recursion{true};
+
+	string exclude;
 };
 
 SOptions g_Options;
@@ -131,7 +134,8 @@ public:
 
 struct MemoryArena
 {
-	static constexpr std::uint32_t _size = 10 * 0xffff;
+	static constexpr std::uint32_t _size           = 10 * 0xffff;
+	static constexpr float         _growing_factor = 1.6f;
 	size_t                         _offset{};
 	std::vector<char>              _data{};
 	MemoryArena()
@@ -141,7 +145,14 @@ struct MemoryArena
 
 	void* alloc(size_t size)
 	{
-		assert(_offset + size < this->_size);
+		//assert(_offset + size < this->_size && "Not enough memory in arena!!!");
+
+		bool enough_mem = (_offset + size) < this->_size;
+		if (!enough_mem)
+		{
+			_data.resize(size_t(_data.size() * _growing_factor));
+		}
+
 		auto result = &_data[_offset];
 		_offset += size;
 
@@ -200,8 +211,10 @@ struct SArchive
 	std::uint32_t toc_offset;
 };
 
-std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& pattern, std::ofstream& of)
+std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& file, std::ofstream& of)
 {
+	string pattern = file;
+	std::replace(pattern.begin(), pattern.end(), '\\', '/');
 	if (!fs::exists(pattern))
 	{
 		printf("Path [%s] dont exists\n", pattern.c_str());
@@ -211,9 +224,18 @@ std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& patt
 	std::vector<SToc*> vtoc;
 	for (auto const& dir_entry : std::filesystem::directory_iterator{pattern})
 	{
+		auto path     = dir_entry.path().string();
+		auto filename = dir_entry.path().filename().string();
+		std::replace(path.begin(), path.end(), '\\', '/');
+		if (!g_Options.exclude.empty())
+		{
+			if (regex_match(path, std::regex{g_Options.exclude, std::regex::extended}))
+			{
+				continue;
+			}
+		}
 		if (dir_entry.is_regular_file())
 		{
-			string       path = dir_entry.path().u8string();
 			CFileMapping fm(path.c_str());
 
 			auto         alloc_size = sizeof SToc + path.size() - 1; // why -2 ???
@@ -225,7 +247,7 @@ std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& patt
 			ar.toc_offset += fm.getSize();
 			if (g_Options.verbose)
 			{
-				std::cout << dir_entry.path().string() << std::endl;
+				std::cout << path << std::endl;
 			}
 			ar.number_of_files++;
 
@@ -235,7 +257,7 @@ std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& patt
 		}
 		else if (g_Options.recursion)
 		{
-			auto toc = write_archive_recursive(ar, dir_entry.path().u8string(), of);
+			auto toc = write_archive_recursive(ar, path, of);
 #if 0
 			vtoc.insert(vtoc.end(), toc.begin(), toc.end());
 #endif
@@ -259,7 +281,10 @@ SArchive write_archive(const std::string& pattern, const std::string out_file)
 
 	of.write((const char*)&ar, sizeof SArchive);
 
-	auto toc = write_archive_recursive(ar, pattern, of);
+	string file = pattern;
+	std::replace(file.begin(), file.end(), '\\', '/');
+
+	auto toc = write_archive_recursive(ar, file, of);
 	of.write((char*)SToc::arena.data(), SToc::arena.size());
 	auto _offset = offsetof(SArchive, number_of_files);
 	of.seekp(_offset);
@@ -341,11 +366,11 @@ void create_file(SArchive& ar, fs::path filename, std::int32_t offset, std::uint
 	of.write(base + offset, size);
 }
 
-void extract(const string& file, const string& base)
+void extract(const string& file, const string& base, const string& pattern)
 {
 	if (auto ar = archive_open(file); ar)
 	{
-		iterate(ar, [&base](SArchive& ar, SToc* entry)
+		iterate(ar, [&base, &pattern](SArchive& ar, SToc* entry)
 		        {
 			        size_t offset = 0;
 			        auto   strv   = string_view(entry->file_name.data, entry->file_name.size);
@@ -353,8 +378,17 @@ void extract(const string& file, const string& base)
 			        {
 				        offset = base.size();
 			        }
-			        create_file(ar, fs::path(strv.substr(offset)), entry->offset, entry->size);
-		        });
+
+			        auto path = fs::path(strv.substr(offset));
+			        if (!pattern.empty())
+			        {
+				        if (regex_match(path.string(), std::regex{pattern, std::regex::extended}))
+                            create_file(ar, path, entry->offset, entry->size);
+			        }
+					else
+                    {
+                        create_file(ar, path, entry->offset, entry->size);
+					} });
 	}
 }
 
@@ -412,19 +446,24 @@ void parse_cmd(int argc, char* argv[])
 		{
 			g_Options.input_folder = argv[++i];
 			g_Options.output_file  = argv[++i];
-			g_Options.create   = !g_Options.input_folder.empty() && !g_Options.output_file.empty();
+			g_Options.create       = !g_Options.input_folder.empty() && !g_Options.output_file.empty();
 			continue;
 		}
 
 		match("extract", 1)
 		{
 			g_Options.extract_file = argv[++i];
-			g_Options.extract    = !g_Options.extract_file.empty();
+			g_Options.extract      = !g_Options.extract_file.empty();
 			continue;
 		}
 		match("extract-base", 1)
 		{
 			g_Options.extract_base = argv[++i];
+			continue;
+		}
+		match("extract-pattern", 1)
+		{
+			g_Options.extract_pattern = argv[++i];
 			continue;
 		}
 		match("verbose", 0)
@@ -435,6 +474,11 @@ void parse_cmd(int argc, char* argv[])
 		match("no-recursion", 0)
 		{
 			g_Options.recursion = false;
+			continue;
+		}
+		match("exclude", 1)
+		{
+			g_Options.exclude = argv[++i];
 			continue;
 		}
 		//string_view(argv[i]).find_first_of("--",)
@@ -452,13 +496,13 @@ int main(int argc, char* argv[])
 
 	if (g_Options.list)
 	{
-		list(g_Options.input_file);
+		::list(g_Options.input_file);
 		return 0;
 	}
 	else if (g_Options.create)
 		write_archive(g_Options.input_folder, g_Options.output_file);
 	else if (g_Options.extract)
-		extract(g_Options.extract_file, g_Options.extract_base);
+		extract(g_Options.extract_file, g_Options.extract_base, g_Options.extract_pattern);
 
 	return 0;
 }
