@@ -257,11 +257,11 @@ std::vector<SToc*> write_archive_recursive(SArchive& ar, const std::string& file
 		}
 		if (dir_entry.is_regular_file())
 		{
-			auto reduced_path = remove_leading_ups(path);
-			CFileMapping     fm(path.data());
+			auto         reduced_path = remove_leading_ups(path);
+			CFileMapping fm(path.data());
 
-			auto             alloc_size = sizeof SToc + reduced_path.size() - 1; // why -2 ???
-			SToc*            toc        = SToc::alloc(alloc_size);
+			auto         alloc_size = sizeof SToc + reduced_path.size() - 1; // why -2 ???
+			SToc*        toc        = SToc::alloc(alloc_size);
 
 			new (toc) SToc(reduced_path, ar.toc_offset, fm.getSize());
 
@@ -521,10 +521,13 @@ int main(int argc, char* argv[])
 		list(g_Options.input_file);
 		return 0;
 	}
-	else if (g_Options.create)
-		write_archive(g_Options.input_folder, g_Options.output_file);
-	else if (g_Options.extract)
-		extract(g_Options.extract_file, g_Options.extract_base, g_Options.extract_pattern);
+	else
+	{
+		if (g_Options.create)
+			write_archive(g_Options.input_folder, g_Options.output_file);
+		else if (g_Options.extract)
+			extract(g_Options.extract_file, g_Options.extract_base, g_Options.extract_pattern);
+	}
 
 	return 0;
 }
