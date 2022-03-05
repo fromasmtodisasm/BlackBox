@@ -257,13 +257,20 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		return false;
 	}
 
-	auto path = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/fonts/")).c_str(), font);
+	auto     path = PathUtil::Make(string("Engine/fonts/").c_str(), font);
 
-	if (FT_New_Face(ft, path.c_str(), 0, &face))
+	CCryFile file;
+	if (!file.Open(path.c_str(), "rb")) return false;
+
+	auto size = file.GetLength();
+	m_FaceData.resize(size);
+	file.ReadRaw(&m_FaceData[0], size);
+	if (FT_New_Memory_Face(ft, &m_FaceData[0], size, 0, &face))
 	{
 		CryError("ERROR::FREETYPE: Failed to load font");
 		return false;
 	}
+
 	FT_Set_Pixel_Sizes(face, 0, h);
 
 	glm::uvec2 t_size(atlas_size);

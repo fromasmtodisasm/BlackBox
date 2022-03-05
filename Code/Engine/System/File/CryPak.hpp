@@ -34,6 +34,25 @@ namespace fs = std::filesystem;
 
 using CFileDataPtr = void*;
 
+struct ci_less
+{
+	// case-independent (ci) compare_less binary function
+	struct nocase_compare
+	{
+		bool operator()(const unsigned char& c1, const unsigned char& c2) const
+		{
+			return tolower(c1) < tolower(c2);
+		}
+	};
+
+	bool operator()(const std::string_view& s1, const std::string_view s2) const
+	{
+		return std::lexicographical_compare(s1.begin(), s1.end(), // source range
+		                                    s2.begin(), s2.end(), // dest range
+		                                    nocase_compare());    // comparison
+	}
+};
+
 class CCryPak : public ICryPak, public ISystemEventListener
 {
 public:
@@ -49,7 +68,10 @@ public:
 #endif
 	// this is the start of indexation of pseudofiles:
 	// to the actual index , this offset is added to get the valid handle
-	enum {g_nPseudoFileIdxOffset = 1};
+	enum
+	{
+		g_nPseudoFileIdxOffset = 1
+	};
 
 public:
 	CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes);
@@ -113,11 +135,12 @@ public:
 
 	using KeyType = string_view;
 	template<typename Type>
+
 	using MapType =
 #if 0
 		std::unordered_map<KeyType,Type>
 #else
-	    std::map<KeyType, Type>
+	    std::map<KeyType, Type, ci_less>
 #endif
 	    ;
 
@@ -136,9 +159,9 @@ private:
 	std::vector<SArchiveHandle> m_Archives;
 #endif
 	//std::vector< libzippp::ZipArchive> m_Archives;
-	std::string         m_DataRoot = "Data/";
+	std::string          m_DataRoot = "Data/";
 
-	FileList            m_Files;
+	FileList             m_Files;
 
 	std::vector<MyFile*> m_arrOpenFiles;
 };

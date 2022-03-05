@@ -889,8 +889,10 @@ bool CSystem::InitFileSystem()
 	#endif
 	}
 #else
-	//if (!m_env.pCryPak->OpenPack("Data/Engine.pak"))
-	//	CryFatalError("Cannot open Engine.pak");
+	if (!m_env.pCryPak->OpenPack("Engine.pak"))
+		CryFatalError("Cannot open Engine.pak");
+	if (!m_env.pCryPak->OpenPack("Data.pak"))
+		CryFatalError("Cannot open Engine.pak");
 #endif
 
 	// Now set up the log

@@ -95,5 +95,7 @@ private:
 	
 
 	static bool printColorTableRegistered;
+
+	std::vector<FT_Byte> m_FaceData;
 };
 #endif

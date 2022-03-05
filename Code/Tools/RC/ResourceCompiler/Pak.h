@@ -20,7 +20,7 @@ public:
 
 struct MemoryArena
 {
-	static constexpr std::uint32_t _size           = 10 * 0xffff;
+	static constexpr std::uint32_t _size           = 100 * 0xffff;
 	static constexpr float         _growing_factor = 1.6f;
 	size_t                         _offset{};
 	std::vector<char>              _data{};
@@ -31,7 +31,7 @@ struct MemoryArena
 
 	void* alloc(size_t size)
 	{
-		//assert(_offset + size < this->_size && "Not enough memory in arena!!!");
+		assert(_offset + size < this->_size && "Not enough memory in arena!!!");
 
 		bool enough_mem = (_offset + size) < this->_size;
 		if (!enough_mem)

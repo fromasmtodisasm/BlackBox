@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
 				std::vector<char> data;
 
 				data.resize(size);
-				file->Read(&data[0], size);
+				file->FRead(&data[0], size, 1, 0);
 
 				printf("file: %*.*s", size, size, &data[0]);
 			}

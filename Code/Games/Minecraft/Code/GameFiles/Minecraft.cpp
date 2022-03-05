@@ -97,8 +97,8 @@ void MineUI::draw() const
 void Minecraft::init()
 {
 	minecraft = this;
-	if (!gEnv->pCryPak->OpenPack("Data.pak"))
-		CryFatalError("Cannot open Data.pak");
+	//if (!gEnv->pCryPak->OpenPack("Data.pak"))
+	//	CryFatalError("Cannot open Data.pak");
 
 	world.init();
 	ui.init();

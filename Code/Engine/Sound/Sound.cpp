@@ -2,6 +2,8 @@
 #include "Sound.hpp"
 #include "SoundSystem.hpp"
 
+
+
 CSound::~CSound()
 {
 	DeleteThis();
@@ -235,24 +237,73 @@ void CSound::DeleteThis()
 		Mix_FreeChunk(Data.Sample);
 }
 
+Sint64 istream_seek(struct SDL_RWops* context, Sint64 offset, int whence)
+{
+	CCryFile* file = (CCryFile*)context->hidden.unknown.data1;
+
+	file->Seek(offset, whence);
+
+	return file->GetPosition();
+}
+
+size_t istream_read(struct SDL_RWops* context, void* ptr,
+                    size_t size, size_t maxnum)
+{
+	if (size == 0) return -1;
+	CCryFile* file = (CCryFile*)context->hidden.unknown.data1;
+	return file->Read((char*)ptr, size * maxnum);
+
+	//return file->bad() ? -1 : file->gcount() / size;
+}
+
+int istream_close(SDL_RWops* context)
+{
+	if (context)
+	{
+		delete (CCryFile*)context->hidden.unknown.data1;
+		SDL_FreeRW(context);
+	}
+	return 0;
+}
+
+SDL_RWops* SDL_RWFromPak(CCryFile* stream)
+{
+	SDL_RWops* rwops;
+	rwops = SDL_AllocRW();
+
+	if (rwops != NULL)
+	{
+		rwops->seek                 = istream_seek;
+		rwops->read                 = istream_read;
+		rwops->write                = NULL;
+		rwops->close                = istream_close;
+		rwops->hidden.unknown.data1 = stream;
+	}
+	return rwops;
+}
+
 CSound* CSound::Load(const char* path, int nFlags)
 {
 	SampleType Data{};
 	CSound*    pSound{};
 	char       buf[256];
 	sprintf(buf, "Data/%s", path);
-	if (nFlags & FLAG_SOUND_MUSIC)
-		Data.Music = Mix_LoadMUS(buf);
-	else
-		Data.Sample = Mix_LoadWAV(buf);
-	if (!Data.Sample)
+	CCryFile* file = new CCryFile;
+	if (file->Open(buf, "rb"))
 	{
-		CryError("Mix_LoadWA: %s", Mix_GetError());
-	}
-	else
-	{
-		pSound         = new CSound(Data);
-		pSound->nFlags = nFlags;
+		if (nFlags & FLAG_SOUND_MUSIC)
+			Data.Music = Mix_LoadMUS_RW(SDL_RWFromPak(file), 0);
+		else
+			Data.Sample = Mix_LoadWAV_RW(SDL_RWFromPak(file), 0);
+		if (!Data.Sample)
+		{
+			CryError("Mix_LoadWA: %s", Mix_GetError());
+		}
+		else
+		{
+			pSound         = new CSound(Data);
+			pSound->nFlags = nFlags;
+		}
 	}
 	return pSound;
 }

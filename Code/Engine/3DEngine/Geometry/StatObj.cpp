@@ -18,6 +18,7 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <BlackBox/System/File/CryFile.h>
 
 #define NOT_IMPLEMENTED                                         \
 	CryFatalError("Method [%s] not implemented", __FUNCTION__); \
@@ -236,14 +237,14 @@ CStatObj* CStatObj::Load(const char* szFileName, const char* szGeomName)
 #if FIXED_DYNAMIC_ATTRIBUTES
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
-	Assimp::Importer import;
-	const aiScene*   scene        = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+	Assimp::Importer ai;
+	const aiScene*   scene        = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
 	auto             shader       = gEnv->pRenderer->Sh_Load("test.Render", 0, 0);
 	auto             vertexFormat = shader->GetDynVertexFormat();
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
-		CryError("[ASSIMP] %s", import.GetErrorString());
+		CryError("[ASSIMP] %s", ai.GetErrorString());
 		return {};
 	}
 
@@ -419,12 +420,26 @@ int GetMatInfo(aiMaterial* mat, const char* objName)
 
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
-	Assimp::Importer import;
-	const aiScene*   scene = import.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+	Assimp::Importer ai;
+	//const aiScene*   scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+	CCryFile         geomFile;
+	if (!geomFile.Open(szFileName, "rb")) return false;
+
+	auto  size = geomFile.GetLength();
+	#if 0
+	std::vector<char> data;
+	data.resize(size);
+	#else
+	char* data = new char[size];
+	geomFile.Read(&data[0], size);
+	#endif
+
+	auto ext = PathUtil::GetExt(szFileName);
+	const aiScene* scene = ai.ReadFileFromMemory(&data[0], size, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes, ext);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
-		CryError("[ASSIMP] %s", import.GetErrorString());
+		CryError("[ASSIMP] %s", ai.GetErrorString());
 		return {};
 	}
 
