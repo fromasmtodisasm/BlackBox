@@ -5,6 +5,7 @@
 #include <glm/gtc/noise.hpp>
 #include <glm/glm.hpp>
 #include <array>
+#include <BlackBox/System/File/CryFile.h>
 
 Minecraft* minecraft;
 
@@ -96,6 +97,8 @@ void MineUI::draw() const
 void Minecraft::init()
 {
 	minecraft = this;
+	if (!gEnv->pCryPak->OpenPack("Data.pak"))
+		CryFatalError("Cannot open Data.pak");
 
 	world.init();
 	ui.init();

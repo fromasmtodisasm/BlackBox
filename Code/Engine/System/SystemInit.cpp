@@ -623,8 +623,7 @@ bool CSystem::InitInput()
 			                                         if (m_env.IsDedicated())
 				                                         return true;
 			                                         return false;
-		                                         }
-	                                         });
+		                                         } });
 }
 
 bool CSystem::InitScriptSystem()
@@ -634,8 +633,7 @@ bool CSystem::InitScriptSystem()
 	return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p)
 	                                                {
 		                                                m_env.pScriptSystem = p(this, true);
-		                                                return m_env.pScriptSystem != nullptr;
-	                                                });
+		                                                return m_env.pScriptSystem != nullptr; });
 }
 
 bool CSystem::InitEntitySystem()
@@ -645,8 +643,7 @@ bool CSystem::InitEntitySystem()
 	return LoadSubsystem<PFNCREATEENTITYSYSTEM>("EntitySystem", "CreateEntitySystem", [&](PFNCREATEENTITYSYSTEM p)
 	                                            {
 		                                            m_env.pEntitySystem = p(this);
-		                                            return m_env.pEntitySystem != nullptr;
-	                                            });
+		                                            return m_env.pEntitySystem != nullptr; });
 }
 
 bool CSystem::InitNetwork()
@@ -659,8 +656,7 @@ bool CSystem::InitNetwork()
 		                                       m_pNetwork = p(this);
 		                                       if (m_pNetwork == nullptr)
 			                                       return false;
-		                                       return true;
-	                                       });
+		                                       return true; });
 }
 
 #if ENABLE_DEBUG_GUI
@@ -672,8 +668,7 @@ bool CSystem::InitGUI()
 		                                m_GuiManager = p(this);
 		                                if (m_GuiManager == nullptr)
 			                                return false;
-		                                return true;
-	                                }))
+		                                return true; }))
 	{
 		return m_GuiManager->Init();
 	}
@@ -696,8 +691,7 @@ bool CSystem::Init3DEngine()
 		                                        }
 		                                        m_pProcess = m_env.p3DEngine;
 		                                        m_pProcess->SetFlags(PROC_3DENGINE);
-		                                        return true;
-	                                        });
+		                                        return true; });
 }
 
 bool CSystem::InitSoundSystem()
@@ -709,8 +703,7 @@ bool CSystem::InitSoundSystem()
 		                                           m_env.pSoundSystem = p(this, (void*)"0.0.0");
 		                                           if (m_env.pSoundSystem == nullptr)
 			                                           return false;
-		                                           return true;
-	                                           });
+		                                           return true; });
 }
 
 bool CSystem::InitSubSystem()
@@ -730,8 +723,7 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 		                                    m_pWindow = p((NativeWindow*)m_startupParams.hWnd);
 		                                    if (m_pWindow == nullptr)
 			                                    return false;
-		                                    return true;
-	                                    }))
+		                                    return true; }))
 	{
 		return false;
 	}
@@ -753,8 +745,7 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 		                                                 if (m_env.pRenderer == nullptr)
 			                                                 return false;
 		                                                 else
-			                                                 return true;
-	                                                 });
+			                                                 return true; });
 
 #if 0
 	CryFatalError("Unknown renderer type: %s", t_rend);
@@ -897,6 +888,9 @@ bool CSystem::InitFileSystem()
 		}
 	#endif
 	}
+#else
+	//if (!m_env.pCryPak->OpenPack("Data/Engine.pak"))
+	//	CryFatalError("Cannot open Engine.pak");
 #endif
 
 	// Now set up the log
@@ -977,8 +971,7 @@ bool CSystem::LoadCrynetwork()
 		                                       if (m_pNetworkLegacy == nullptr)
 			                                       return false;
 		                                       //m_pNetworkLegacy->Init();
-		                                       return true;
-	                                       });
+		                                       return true; });
 }
 
 IGame* CSystem::CreateGame(IGame* game)
@@ -993,8 +986,7 @@ IGame* CSystem::CreateGame(IGame* game)
 	LoadSubsystem<PFNCREATEGAMEINSTANCE>(gameDLLName.c_str(), "CreateGameInstance", [&](PFNCREATEGAMEINSTANCE P)
 	                                     {
 		                                     m_pGame = P();
-		                                     return true;
-	                                     });
+		                                     return true; });
 	return m_pGame;
 }
 
@@ -1009,6 +1001,5 @@ bool CSystem::InitPhysics()
 		                                       if (m_env.pPhysicalWorld == nullptr)
 			                                       return false;
 		                                       m_env.pPhysicalWorld->Init();
-		                                       return true;
-	                                       });
+		                                       return true; });
 }

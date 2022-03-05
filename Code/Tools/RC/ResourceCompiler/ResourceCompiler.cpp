@@ -161,7 +161,12 @@ int main(int argc, char* argv[])
 		{
 			testPak.Dump();
 
-			for (auto name : {"Shaders/fx/AuxGeom.cfx", "Include/BlackBox/System/ISystem.hpp"})
+			for (auto name : {
+			         "Shaders/fx/AuxGeom.cfx",
+			         "Include/BlackBox/System/ISystem.hpp",
+			         "Include/BlackBox/Renderer/IRender.hpp"
+			         //"Include/BlackBox/System/ISystem.hpp"
+				})
 			{
 				auto              file = testPak.FOpen(name);
 				auto              size = file->Size();

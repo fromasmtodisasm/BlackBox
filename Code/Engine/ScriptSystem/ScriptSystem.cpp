@@ -143,10 +143,15 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	    "2 to only trigger on errors\n"
 	    "Usage: lua_debugger [0/1/2]");
 
+	if (!gEnv->pCryPak->OpenPack("Scripts.pak"))
+	{
+		CryFatalError("Cannot open scripts folder");
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Execute common lua file.
 	//////////////////////////////////////////////////////////////////////////
-	ExecuteFile("scripts/common.lua", true, false);
+	ExecuteFile("Scripts/common.lua", true, false);
 
 	return L ? true : false;
 }

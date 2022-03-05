@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <BlackBox/Core/Platform/Platform.hpp>
 
 #include <io.h>
 #define NOMINMAX

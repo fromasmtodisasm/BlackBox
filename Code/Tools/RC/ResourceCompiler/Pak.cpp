@@ -60,7 +60,7 @@ SArchive write_archive(const std::string& pattern, const std::string out_file)
 {
 	SArchive ar;
 	ar.magic   = 'BBAR';
-	ar.version = SFileVersion{1, 1, 1};
+	ar.version = SPakFileVersion{1, 1, 1};
 
 	std::ofstream of{out_file, std::ios_base::binary};
 

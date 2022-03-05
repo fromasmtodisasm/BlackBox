@@ -44,6 +44,8 @@ add_sources(
 		"XConsoleVariable.cpp"
 	SOURCE_GROUP "File"
 		"File/CryPak.cpp"
+		"File/FileMapping.cpp"
+		"File/FileMapping.h"
 		"PakVars.h"
 	SOURCE_GROUP "ScriptBinds"
 		"ScriptBinds/ScriptObjectConsole.cpp"

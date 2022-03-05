@@ -599,8 +599,8 @@ unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex
 	}
 	else
 	{
-		//auto srv = CreateTextureFromFile(file);
-		auto srv = CreateTextureFromFile(adjustet_name.data());
+		auto srv = CreateTextureFromFile(file);
+		//auto srv = CreateTextureFromFile(adjustet_name.data());
 		if (srv)
 		{
 			CryLog("$3Loaded texture %s", filename.c_str());

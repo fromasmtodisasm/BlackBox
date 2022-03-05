@@ -1,12 +1,14 @@
 #pragma once
+
 #include <algorithm>
 #include <memory>
 #include <map>
+#include <BlackBox/Core/smartptr.hpp>
 
-struct SFileVersion
+struct SPakFileVersion
 {
-	SFileVersion() = default;
-	SFileVersion(byte major, byte minor, byte patch)
+	SPakFileVersion() = default;
+	SPakFileVersion(byte major, byte minor, byte patch)
 	    : version(0)
 	{
 		version = major << 16 | minor << 8 | patch;
@@ -93,10 +95,10 @@ struct SDirEntry
 
 struct SArchive
 {
-	std::uint32_t magic;
-	SFileVersion  version;
-	std::uint32_t number_of_files;
-	std::uint32_t toc_offset;
+	std::uint32_t   magic;
+	SPakFileVersion version;
+	std::uint32_t   number_of_files;
+	std::uint32_t   toc_offset;
 };
 
 struct SArchiveHandle
@@ -196,26 +198,58 @@ struct File
 	char*         base;
 };
 
-struct MyFile
+struct MyFile : public _i_reference_target_t
 {
-	File*        m_File;
-	std::int32_t pointer{};
+	File* m_File;
+	long  m_nCurSeek{};
 
-public:
-	void Read(void* dst, size_t size)
+	MyFile(File* file)
+	    : m_File(file)
 	{
-		size_t left = m_File->size - pointer;
-		if (left > 0)
-		{
-			left        = std::min(size_t(left), size);
-			auto offset = m_File->base + m_File->offset + pointer;
-			memcpy(dst, offset, left);
-
-			pointer += std::int32_t(size);
-		}
 	}
 
-	bool   Eof() { return pointer < Size(); }
+public:
+	int FRead(void* dst, size_t size, size_t nCount, FILE* file)
+	{
+		size_t left = m_File->size - m_nCurSeek;
+		if (left > 0)
+		{
+			left        = std::min(size_t(left), size * nCount);
+			auto offset = m_File->base + m_File->offset + m_nCurSeek;
+			memcpy(dst, offset, left);
+
+			m_nCurSeek += std::int32_t(size * nCount);
+			return size * nCount;
+		}
+		return 0;
+	}
+
+	bool     Eof() { return m_nCurSeek < Size(); }
+	long     FTell() { return m_nCurSeek; }
+	unsigned GetFileSize() { return m_File->size; }
+	//////////////////////////////////////////////////////////////////////////
+	int      FSeek(long nOffset, int nMode)
+	{
+		if (!m_File)
+			return -1;
+
+		switch (nMode)
+		{
+		case SEEK_SET:
+			m_nCurSeek = nOffset;
+			break;
+		case SEEK_CUR:
+			m_nCurSeek += nOffset;
+			break;
+		case SEEK_END:
+			m_nCurSeek = GetFileSize() - nOffset;
+			break;
+		default:
+			assert(0);
+			return -1;
+		}
+		return 0;
+	}
 
 	size_t Size()
 	{
@@ -226,7 +260,6 @@ public:
 class CPak
 {
 public:
-	
 	using KeyType = string_view;
 	template<typename Type>
 	using MapType =
@@ -245,7 +278,7 @@ public:
 
 		for (auto& entry : ar)
 		{
-			File file{.offset = entry.offset, .size = entry.size, .name = entry.Name(), .base = (char*)ar.header};
+			File file{entry.offset, entry.size, entry.Name(), (char*)ar.header};
 
 			if (auto it = m_Files.find(file.name); it != m_Files.end()) printf("Eroror, file %s already mapped\n", file.name.data());
 
@@ -254,9 +287,9 @@ public:
 		m_Archives.emplace_back(std::move(ar));
 		return true;
 	}
-	std::shared_ptr<MyFile> FOpen(string_view fname)
+	_smart_ptr<MyFile> FOpen(string_view fname)
 	{
-		if (auto it = m_Files.find(fname); it != m_Files.end()) return std::make_shared<MyFile>(&it->second);
+		if (auto it = m_Files.find(fname); it != m_Files.end()) return _smart_ptr<MyFile>(new MyFile(&it->second));
 		return nullptr;
 	}
 	void Dump()

@@ -11,6 +11,7 @@
 CCryPak::CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes)
     : m_pLog(pLog)
 {
+	m_arrOpenFiles.resize(128);
 }
 
 CCryPak::~CCryPak()
@@ -30,22 +31,25 @@ void CCryPak::Release()
 
 bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	int err;
-	CryLog("$3Open Pack: %s", pName);
-	auto a = zip_open(pName, ZIP_RDONLY, &err);
-	if (!a)
+	SArchiveHandle ar{pName};
+	if (!ar) return false;
+
+	for (auto& entry : ar)
 	{
-		auto e = zip_get_error(a);
-		CryError("[ZIP] %s", e);
-		return false;
+		File file{entry.offset, entry.size, entry.Name(), (char*)ar.header};
+
+		if (auto it = m_Files.find(file.name); it != m_Files.end()) printf("Eroror, file %s already mapped\n", file.name.data());
+
+		m_Files[file.name] = file;
 	}
-	m_Archives.insert({string(pName), a});
+	m_Archives.emplace_back(std::move(ar));
+
 	return true;
 }
 
 bool CCryPak::OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	return false;
+	return OpenPack(pName, nFlags);
 }
 
 bool CCryPak::ClosePack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
@@ -117,23 +121,33 @@ void CCryPak::FreePakInfo(PakInfo*)
 
 FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags /* = 0*/)
 {
-	auto file = fopen(pName, mode);
-	if (!file)
+	if (auto data = GetFileData(pName); data)
 	{
-		string adjustedName = m_DataRoot + pName;
-		file                = fopen(adjustedName.data(), mode);
+		INT_PTR nFile = m_arrOpenFiles.size() + CCryPak::g_nPseudoFileIdxOffset;
+		m_arrOpenFiles.push_back((MyFile*)data);
+		return (FILE*)nFile;
 	}
-	return file;
+	else
+	{
+		auto file = fopen(pName, mode);
+		if (!file)
+		{
+			string adjustedName = m_DataRoot + pName;
+			file                = fopen(adjustedName.data(), mode);
+		}
+		return file;
+	}
 }
 
 FILE* CCryPak::FOpen(const char* pName, const char* mode, char* szFileGamePath, int nLen)
 {
+	assert(0);
 	return fopen((szFileGamePath + std::string(pName)).c_str(), mode);
 }
 
 size_t CCryPak::FRead(void* data, size_t length, size_t elems, FILE* handle)
 {
-	return fread(data, length, elems, handle);
+	return FReadRaw(data, length, elems, handle);
 }
 
 size_t CCryPak::FWrite(void* data, size_t length, size_t elems, FILE* handle)
@@ -143,19 +157,55 @@ size_t CCryPak::FWrite(void* data, size_t length, size_t elems, FILE* handle)
 
 int CCryPak::FSeek(FILE* handle, long seek, int mode)
 {
-	return fseek(handle, seek, mode);
+	//SAutoCollectFileAcessTime accessTime(this);
+
+	{
+		INT_PTR nPseudoFile = ((INT_PTR)handle) - g_nPseudoFileIdxOffset;
+		//AUTO_READLOCK(m_csOpenFiles);
+		if ((UINT_PTR)nPseudoFile < m_arrOpenFiles.size())
+			return m_arrOpenFiles[nPseudoFile]->FSeek(seek, mode);
+	}
+
+	//int nResult = CIOWrapper::Fseek(hFile, seek, mode);
+	int nResult = fseek(handle, seek, mode);
+	assert(nResult == 0);
+	return nResult;
 }
+
 
 long CCryPak::FTell(FILE* handle)
 {
+	{
+		INT_PTR nPseudoFile = ((INT_PTR)handle) - g_nPseudoFileIdxOffset;
+		//AUTO_READLOCK(m_csOpenFiles);
+		if ((UINT_PTR)nPseudoFile < m_arrOpenFiles.size())
+		{
+			return m_arrOpenFiles[nPseudoFile]->FTell();
+		}
+	}
+	//return (long)CIOWrapper::FTell(hFile);
+
 	return ftell(handle);
 }
 
-int CCryPak::FClose(FILE* handle)
+int CCryPak::FClose(FILE* hFile)
 {
-	if (handle)
-		return fclose(handle);
-	return EOF;
+	//if (m_pCachedFileData && m_pCachedFileData->m_hFile == hFile) // Free cached data.
+	//	m_pCachedFileData = 0;
+
+	//SAutoCollectFileAcessTime accessTime(this);
+	{
+		INT_PTR nPseudoFile = ((INT_PTR)hFile) - g_nPseudoFileIdxOffset;
+		//AUTO_READLOCK(m_csOpenFiles);
+		if ((UINT_PTR)nPseudoFile < m_arrOpenFiles.size())
+		{
+			#if 0
+			m_arrOpenFiles[nPseudoFile].Destruct();
+			#endif
+			return 0;
+		}
+	}
+	return fclose(hFile);
 }
 
 int CCryPak::FEof(FILE* handle)
@@ -256,9 +306,42 @@ FILE* CCryPak::FOpenRaw(const char* pName, const char* mode)
 {
 	return nullptr;
 }
-size_t CCryPak::FReadRaw(void* data, size_t length, size_t elems, FILE* handle)
+size_t CCryPak::FReadRaw(void* pData, size_t nSize, size_t nCount, FILE* hFile)
 {
-	return FRead(data, length, elems, handle);
+	//CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
+
+	//SAutoCollectFileAcessTime accessTime(this);
+
+	{
+		INT_PTR nPseudoFile = ((INT_PTR)hFile) - g_nPseudoFileIdxOffset;
+		//AUTO_READLOCK(m_csOpenFiles);
+		if ((UINT_PTR)nPseudoFile < m_arrOpenFiles.size())
+		{
+			return m_arrOpenFiles[nPseudoFile]->FRead(pData, nSize, nCount, hFile);
+		}
+	}
+
+	return fread(pData, nSize, nCount, hFile);
+}
+
+CFileDataPtr CCryPak::GetFileData(const char* szName, unsigned int& nArchiveFlags)
+{
+	//CRY_PROFILE_FUNCTION(PROFILE_SYSTEM);
+
+	CFileDataPtr* pResult = 0;
+
+	//ZipDir::CachePtr   pZip       = 0;
+	//ZipDir::FileEntry* pFileEntry = FindPakFileEntry(szName, nArchiveFlags, &pZip);
+	//if (pFileEntry)
+	//{
+	//	pResult = new CCachedFileData(this, pZip, nArchiveFlags, pFileEntry, szName);
+	//}
+
+	if (auto it = m_Files.find(szName); it != m_Files.end())
+	{
+		pResult = (CFileDataPtr*)new MyFile(&it->second);
+	}
+	return pResult;
 }
 
 const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_nMaxPath], unsigned nFlags)
