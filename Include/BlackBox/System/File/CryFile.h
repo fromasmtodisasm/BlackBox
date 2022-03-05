@@ -45,7 +45,7 @@ public:
 	//! Reads data from a file at the current file position.
 	virtual size_t Read(void* lpBuf, size_t nSize);
 	//! Retrieves the length of the file.
-	virtual size_t GetLength();
+	virtual size_t GetLength() const;
 
 	//! Positions the current file pointer.
 	virtual size_t Seek(size_t seek, int mode);
@@ -54,7 +54,7 @@ public:
 	//! Positions the current file pointer at the end of the file.
 	size_t         SeekToEnd();
 	//! Retrieves the current file pointer.
-	size_t         GetPosition();
+	size_t         GetPosition() const;
 
 	//! Tests for end-of-file on a selected file.
 	virtual bool   IsEof();
@@ -151,7 +151,7 @@ inline size_t CCryFile::Read(void* lpBuf, size_t nSize)
 }
 
 //////////////////////////////////////////////////////////////////////////
-inline size_t CCryFile::GetLength()
+inline size_t CCryFile::GetLength() const
 {
 	assert(m_file);
 	long curr = m_pIPak->FTell(m_file);
@@ -190,7 +190,7 @@ inline size_t CCryFile::SeekToEnd()
 }
 
 //////////////////////////////////////////////////////////////////////////
-inline size_t CCryFile::GetPosition()
+inline size_t CCryFile::GetPosition() const
 {
 	assert(m_file);
 	return m_pIPak->FTell(m_file);

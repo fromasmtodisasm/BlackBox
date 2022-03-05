@@ -418,24 +418,121 @@ int GetMatInfo(aiMaterial* mat, const char* objName)
 	return -1;
 }
 
+	#include <assimp/IOSystem.hpp>
+	#include <assimp/IOStream.hpp>
+
+class MyIO : public Assimp::IOSystem
+{
+public:
+	struct IOStreamImpl : public Assimp::IOStream
+	{
+		IOStreamImpl(CCryFile file)
+		    : m_File(file)
+		{
+		}
+		~IOStreamImpl()
+		{
+			CryLog("Destruct IOStreamImpl");
+		}
+		// Inherited via IOStream
+		virtual size_t Read(void* pvBuffer, size_t pSize, size_t pCount) override
+		{
+			return m_File.Read(pvBuffer, pSize * pCount);
+		}
+		virtual size_t Write(const void* pvBuffer, size_t pSize, size_t pCount) override
+		{
+			assert(0);
+			return size_t();
+		}
+		virtual aiReturn Seek(size_t pOffset, aiOrigin pOrigin) override
+		{
+			switch (pOrigin)
+			{
+			case aiOrigin_SET:
+				m_File.Seek(pOffset, SEEK_SET);
+				break;
+			case aiOrigin_CUR:
+				m_File.Seek(pOffset, SEEK_CUR);
+				break;
+			case aiOrigin_END:
+				m_File.Seek(pOffset, SEEK_END);
+				break;
+			default:
+				break;
+			}
+			return aiReturn::aiReturn_SUCCESS;
+		}
+		virtual size_t Tell() const override
+		{
+			return m_File.GetPosition();
+		}
+		virtual size_t FileSize() const override
+		{
+			return m_File.GetLength();
+		}
+		virtual void Flush() override
+		{
+		}
+		CCryFile m_File;
+	};
+	// Inherited via IOSystem
+	virtual bool Exists(const char* pFile) const override
+	{
+		CCryFile file;
+		if (file.Open(pFile, "r"))
+		{
+			file.Close();
+			return true;
+		}
+		return false;
+	}
+	virtual char getOsSeparator() const override
+	{
+		return '/';
+	}
+	virtual Assimp::IOStream* Open(const char* pFile, const char* pMode = "rb") override
+	{
+		CCryFile file;
+		if (file.Open(pFile, pMode))
+		{
+			return new IOStreamImpl{file};
+		}
+		return nullptr;
+	}
+	virtual void Close(Assimp::IOStream* pFile) override
+	{
+		delete (IOStreamImpl*)pFile;
+	}
+	~MyIO()
+	{
+		CryLog("Destruct MyIO");
+	}
+};
+
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
 	Assimp::Importer ai;
-	//const aiScene*   scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
-	CCryFile         geomFile;
+	auto             ioHandler = new MyIO;
+	ai.SetIOHandler(ioHandler);
+
+	#if 1
+	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+	#else
+	CCryFile geomFile;
 	if (!geomFile.Open(szFileName, "rb")) return false;
 
-	auto  size = geomFile.GetLength();
-	#if 0
+	auto           size  = geomFile.GetLength();
+		#if 0
 	std::vector<char> data;
 	data.resize(size);
-	#else
+		#else
 	char* data = new char[size];
 	geomFile.Read(&data[0], size);
-	#endif
+		#endif
 
-	auto ext = PathUtil::GetExt(szFileName);
+	auto           ext   = PathUtil::GetExt(szFileName);
 	const aiScene* scene = ai.ReadFileFromMemory(&data[0], size, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes, ext);
+	#endif
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{

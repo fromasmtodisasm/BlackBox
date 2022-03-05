@@ -145,7 +145,8 @@ bool CScriptSystem::Init(ISystem* pSystem)
 
 	if (!gEnv->pCryPak->OpenPack("Scripts.pak"))
 	{
-		CryFatalError("Cannot open scripts folder");
+		0;
+		//CryFatalError("Cannot open scripts folder");
 	}
 
 	//////////////////////////////////////////////////////////////////////////
