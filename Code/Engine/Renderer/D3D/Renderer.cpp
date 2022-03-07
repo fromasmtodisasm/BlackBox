@@ -599,7 +599,7 @@ unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex
 	}
 	else
 	{
-		auto srv = CreateTextureFromFile(file);
+		auto srv = CreateTextureFromFile(std::move(file));
 		//auto srv = CreateTextureFromFile(adjustet_name.data());
 		if (srv)
 		{

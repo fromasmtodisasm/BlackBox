@@ -426,8 +426,8 @@ class MyIO : public Assimp::IOSystem
 public:
 	struct IOStreamImpl : public Assimp::IOStream
 	{
-		IOStreamImpl(CCryFile file)
-		    : m_File(file)
+		IOStreamImpl(CCryFile&& file)
+		    : m_File(std::move(file))
 		{
 		}
 		~IOStreamImpl()
@@ -495,7 +495,7 @@ public:
 		CCryFile file;
 		if (file.Open(pFile, pMode))
 		{
-			return new IOStreamImpl{file};
+			return new IOStreamImpl{std::move(file)};
 		}
 		return nullptr;
 	}

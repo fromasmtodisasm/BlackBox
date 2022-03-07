@@ -22,6 +22,7 @@
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/System/File/ICryPak.hpp>
 #include <BlackBox/Core/Path.hpp>
+#include <algorithm>
 
 #define IfPak(PakFunc, stdfunc, args) (m_pIPak ? m_pIPak->PakFunc args : stdfunc args)
 
@@ -32,6 +33,7 @@ class CCryFile
 {
 public:
 	CCryFile();
+	CCryFile(CCryFile&& other);
 	CCryFile(const char* filename, const char* mode);
 	virtual ~CCryFile();
 
@@ -87,6 +89,15 @@ inline CCryFile::CCryFile()
 {
 	m_file  = 0;
 	m_pIPak = GetISystem()->GetIPak();
+}
+inline CCryFile::CCryFile(CCryFile&& other)
+{
+	m_file        = other.m_file;
+	m_filename    = std::move(other.m_filename);
+	m_pIPak       = other.m_pIPak;
+
+	other.m_file  = 0;
+	other.m_pIPak = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
