@@ -2,8 +2,6 @@
 #include "Sound.hpp"
 #include "SoundSystem.hpp"
 
-
-
 CSound::~CSound()
 {
 	DeleteThis();
@@ -251,7 +249,7 @@ size_t istream_read(struct SDL_RWops* context, void* ptr,
 {
 	if (size == 0) return -1;
 	CCryFile* file = (CCryFile*)context->hidden.unknown.data1;
-	return file->Read((char*)ptr, size * maxnum);
+	return file->Read((char*)ptr, size * maxnum) / size;
 
 	//return file->bad() ? -1 : file->gcount() / size;
 }
