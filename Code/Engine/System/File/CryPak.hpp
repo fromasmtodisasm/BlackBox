@@ -159,7 +159,7 @@ private:
 	std::vector<SArchiveHandle> m_Archives;
 #endif
 	//std::vector< libzippp::ZipArchive> m_Archives;
-	std::string          m_DataRoot = "Data/";
+	std::string          m_DataRoot = "GameData/";
 
 	FileList             m_Files;
 

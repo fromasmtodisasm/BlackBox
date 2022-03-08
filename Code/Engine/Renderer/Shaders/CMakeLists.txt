@@ -13,6 +13,7 @@ add_sources(
 		"Parser.yy"
 		#${CMAKE_CURRENT_BINARY_DIR}/Parser.hpp
 		"Scanner.ll"
+		"Scanner.hpp"
 		"dummy.cpp"
 		"ScannerHelpers.cpp")
 end_sources()
