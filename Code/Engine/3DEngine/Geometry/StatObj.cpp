@@ -446,21 +446,7 @@ public:
 		}
 		virtual aiReturn Seek(size_t pOffset, aiOrigin pOrigin) override
 		{
-			switch (pOrigin)
-			{
-			case aiOrigin_SET:
-				m_File.Seek(pOffset, SEEK_SET);
-				break;
-			case aiOrigin_CUR:
-				m_File.Seek(pOffset, SEEK_CUR);
-				break;
-			case aiOrigin_END:
-				m_File.Seek(pOffset, SEEK_END);
-				break;
-			default:
-				break;
-			}
-			return aiReturn::aiReturn_SUCCESS;
+			return (aiReturn)m_File.Seek(pOffset, pOrigin);
 		}
 		virtual size_t Tell() const override
 		{
