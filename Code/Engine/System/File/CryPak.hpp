@@ -3,6 +3,7 @@
 #include <BlackBox/System/File/ICryPak.hpp>
 #include <BlackBox/System/IMiniLog.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Core/Path.hpp>
 
 //#include <PakVars.hpp>
 #define USE_FILE_MAPPING
@@ -159,7 +160,8 @@ private:
 	std::vector<SArchiveHandle> m_Archives;
 #endif
 	//std::vector< libzippp::ZipArchive> m_Archives;
-	std::string          m_DataRoot = "GameData/";
+	std::string          m_DataRoot             = "GameData/";
+	std::string          m_strDataRootWithSlash = PathUtil::GetEnginePath() + "/" + m_DataRoot;
 
 	FileList             m_Files;
 
