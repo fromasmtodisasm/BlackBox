@@ -7,7 +7,7 @@
 
 MemoryArena SDirEntry::arena;
 
-void write_archive_recursive(SArchive& ar, const std::string& file, std::ofstream& of)
+void        write_archive_recursive(SArchive& ar, const std::string& file, std::ofstream& of)
 {
 	string pattern = file;
 	std::replace(pattern.begin(), pattern.end(), '\\', '/');
@@ -63,23 +63,29 @@ SArchive write_archive(const std::string& pattern, const std::string out_file)
 	ar.version = SPakFileVersion{1, 1, 1};
 
 	std::ofstream of{out_file, std::ios_base::binary};
+	if (of.is_open())
+	{
+		ar.number_of_files = 0;
+		ar.toc_offset      = sizeof SArchive;
 
-	ar.number_of_files = 0;
-	ar.toc_offset      = sizeof SArchive;
+		of.write((const char*)&ar, sizeof SArchive);
 
-	of.write((const char*)&ar, sizeof SArchive);
+		string file = pattern;
+		std::replace(file.begin(), file.end(), '\\', '/');
 
-	string file = pattern;
-	std::replace(file.begin(), file.end(), '\\', '/');
+		auto _offset = offsetof(SArchive, number_of_files);
 
-	auto _offset = offsetof(SArchive, number_of_files);
-
-	write_archive_recursive(ar, file, of);
-	of.write((char*)SDirEntry::arena.data(), SDirEntry::arena.size());
-	of.seekp(_offset);
-	of.write((const char*)&ar.number_of_files, sizeof ar.number_of_files);
-	of.write((const char*)&ar.toc_offset, sizeof ar.toc_offset);
-
+		write_archive_recursive(ar, file, of);
+		of.write((char*)SDirEntry::arena.data(), SDirEntry::arena.size());
+		of.seekp(_offset);
+		of.write((const char*)&ar.number_of_files, sizeof ar.number_of_files);
+		of.write((const char*)&ar.toc_offset, sizeof ar.toc_offset);
+	}
+	else
+	{
+		std::cerr << "Can't open " << out_file << std::endl;
+		abort();
+	}
 	return ar;
 }
 
