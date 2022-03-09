@@ -8,6 +8,31 @@
 	#include <cstdarg>
 	#include <string>
 
+	#define CRY_NATIVE_PATH_SEPSTR "/"
+
+namespace filehelpers
+{
+	//////////////////////////////////////////////////////////////////////////
+	inline bool CheckPrefix(const char* str, const char* prefix)
+	{
+		//this should rather be a case insensitive check here, so strnicmp is used instead of strncmp
+		return (strnicmp(str, prefix, strlen(prefix)) == 0);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	//inline ICryPak::SignedFileSize GetFileSizeOnDisk(const char* filename)
+	//{
+	//	return gEnv->pCryPak->GetFileSizeOnDisk(filename);
+	//}
+
+	////////////////////////////////////////////////////////////////////////////
+	//inline bool CheckFileExistOnDisk(const char* filename)
+	//{
+	//	return GetFileSizeOnDisk(filename) != ICryPak::FILE_NOT_PRESENT;
+	//}
+
+}; // namespace filehelpers
+
 CCryPak::CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes)
     : m_pLog(pLog)
 {
@@ -31,8 +56,17 @@ void CCryPak::Release()
 
 bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	SArchiveHandle ar{pName};
-	if (!ar) return false;
+	string fullPath;
+	fullPath.resize(_MAX_PATH);
+	AdjustFileName(pName, fullPath.data(), 0);
+	SArchiveHandle ar{fullPath.c_str()};
+	if (!ar)
+	{
+		ar        = SArchiveHandle{fullPath.c_str()};
+		if (!ar) return false;
+	}
+
+	CryComment("Opening pak file %s", fullPath.c_str());
 
 	for (auto& entry : ar)
 	{
@@ -172,7 +206,6 @@ int CCryPak::FSeek(FILE* handle, long seek, int mode)
 	return nResult;
 }
 
-
 long CCryPak::FTell(FILE* handle)
 {
 	{
@@ -199,9 +232,9 @@ int CCryPak::FClose(FILE* hFile)
 		//AUTO_READLOCK(m_csOpenFiles);
 		if ((UINT_PTR)nPseudoFile < m_arrOpenFiles.size())
 		{
-			#if 0
+	#if 0
 			m_arrOpenFiles[nPseudoFile].Destruct();
-			#endif
+	#endif
 			return 0;
 		}
 	}
@@ -344,9 +377,66 @@ CFileDataPtr CCryPak::GetFileData(const char* szName, unsigned int& nArchiveFlag
 	return pResult;
 }
 
+ILINE bool IsDirSep(const char c)
+{
+	return (c == CCryPak::g_cNativeSlash || c == CCryPak::g_cNonNativeSlash);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool /*CCryPak::*/ IsAbsPath(const char* pPath)
+{
+	return (pPath && ((pPath[0] && pPath[1] == ':' && IsDirSep(pPath[2])) || IsDirSep(pPath[0])));
+}
+
 const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_nMaxPath], unsigned nFlags)
 {
-	strncpy(szDestPath, szSourcePath, g_nMaxPath);
+	//CRY_PROFILE_FUNCTION(PROFILE_SYSTEM);
+
+	{
+		// in many cases, the path will not be long, so there's no need to allocate so much..
+		// I'd use _alloca, but I don't like non-portable solutions. besides, it tends to confuse new developers. So I'm just using a big enough array
+		//CryPathString::MAX_SIZE = 256;
+		char szNewSrc[256];
+		strcpy(szNewSrc, szSourcePath);
+
+		//{
+		//	BeautifyPath(szNewSrc, (nFlags & FLAGS_NO_LOWCASE) == 0);
+		//	RemoveRelativeParts(szNewSrc);
+		//}
+
+		strncpy(szDestPath, szNewSrc, g_nMaxPath);
+	}
+
+	const bool isAbsolutePath = IsAbsPath(szDestPath);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Strip ./ or .\\ at the beginning of the path when absolute path is given.
+	//////////////////////////////////////////////////////////////////////////
+	if (nFlags & FLAGS_PATH_REAL)
+	{
+		if (filehelpers::CheckPrefix(szDestPath, "./") ||
+		    filehelpers::CheckPrefix(szDestPath, ".\\"))
+		{
+			//dst.erase(0, 2);
+			assert(0);
+			szDestPath += 2;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	if (
+	    (!filehelpers::CheckPrefix(szDestPath, m_strDataRootWithSlash.c_str()) &&
+	     !filehelpers::CheckPrefix(szDestPath, "." CRY_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, ".." CRY_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, "editor" CRY_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, "gamedata" CRY_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, "engine" CRY_NATIVE_PATH_SEPSTR)))
+	{
+		// Add data folder prefix.
+		string tmp = m_strDataRootWithSlash + szDestPath;
+		
+		strcpy(szDestPath, tmp.c_str());
+	}
+
 	return szSourcePath;
 }
 #endif
