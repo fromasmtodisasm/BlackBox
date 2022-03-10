@@ -75,6 +75,8 @@ public:
 	};
 
 public:
+	void  RemoveRelativeParts(char* dst);
+	char* BeautifyPath(char* dst, bool bMakeLowercase);
 	CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes);
 	~CCryPak();
 	// Inherited via ICryPak

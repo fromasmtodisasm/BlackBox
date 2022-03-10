@@ -180,27 +180,55 @@ enum
 ////////////////////////////////////////////////////////////////////////////
 struct ICryPak
 {
-	// Flags used in file path resolution rules
-	enum EPathResolutionRules
+	typedef uint64 FileTime;
+	//! Flags used in file path resolution rules.
+	enum EPathResolutionRules : uint32
 	{
-		// If used, the source path will be treated as the destination path
-		// and no transformations will be done. Pass this flag when the path is to be the actual
-		// path on the disk/in the packs and doesn't need adjustment (or after it has come through adjustments already)
-		FLAGS_PATH_REAL          = 1 << 16,
+		//! If used, the source path will be treated as the destination path and no transformations will be done.
+		//! Pass this flag when the path is to be the actual path on the disk/in the packs and doesn't need adjustment
+		//! (or after it has come through adjustments already). If this is set, AdjustFileName will not map the input
+		//! path into the master folder (Ex: Shaders will not be converted to Game\Shaders).
+		FLAGS_PATH_REAL          = BIT32(16),
 
-		// AdjustFileName will always copy the file path to the destination path:
-		// regardless of the returned value, szDestpath can be used
-		FLAGS_COPY_DEST_ALWAYS   = 1 << 17,
+		//! AdjustFileName will always copy the file path to the destination path: regardless of the returned value, szDestpath can be used.
+		FLAGS_COPY_DEST_ALWAYS   = BIT32(17),
 
-		// Adds trailing slash to the path
-		FLAGS_ADD_TRAILING_SLASH = 1 << 18,
+		//! Adds trailing slash to the path.
+		FLAGS_ADD_TRAILING_SLASH = BIT32(18),
 
-		// Doesn't take mods into account
-		FLAGS_IGNORE_MOD_DIRS    = 1 << 19,
+		//! If this is set, AdjustFileName will not make relative paths into full paths.
+		FLAGS_NO_FULL_PATH       = BIT32(21),
 
-		// Search only in MODs; if not found, return NULL; may not be used with FLAGS_IGNORE_MOD_DIRS
-		FLAGS_ONLY_MOD_DIRS      = 1 << 20
+		//! If this is set, AdjustFileName will redirect path to disc.
+		FLAGS_REDIRECT_TO_DISC   = BIT32(22),
+
+		//! If this is set, AdjustFileName will not adjust path for writing files.
+		FLAGS_FOR_WRITING        = BIT32(23),
+
+		//! If this is set, AdjustFileName will not convert the path to low case.
+		FLAGS_NO_LOWCASE         = BIT32(24),
+
+		//! If this is set, the pak would be stored in memory (gpu).
+		FLAGS_PAK_IN_MEMORY      = BIT32(25),
+
+		//! Store all file names as crc32 in a flat directory structure.
+		FLAGS_FILENAMES_AS_CRC32 = BIT32(26),
+
+		//! If this is set, AdjustFileName will try to find the file under any mod paths we know about.
+		FLAGS_CHECK_MOD_PATHS    = BIT32(27),
+
+		//! If this is set, AdjustFileName will always check the filesystem/disk and not check inside open paks.
+		FLAGS_NEVER_IN_PAK       = BIT32(28),
+
+		//! Used by the resource compiler to pass the real file name.
+		//! \return Existing file name from the local data or existing cache file name.
+		FLAGS_RESOLVE_TO_CACHE   = BIT32(29),
+
+		//! If this is set, the pak would be stored in memory (cpu).
+		FLAGS_PAK_IN_MEMORY_CPU  = BIT32(30),
 	};
+
+
 
 	// Used for widening FOpen functionality. They're ignored for the regular File System files.
 	enum EFOpenFlags

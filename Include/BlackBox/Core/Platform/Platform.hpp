@@ -209,11 +209,6 @@ typedef unsigned int* PUINT;
 	#define DLL_IMPORT __declspec(dllimport)
 #endif
 
-#define BIT(x)    (1u << (x))
-#define BIT64(x)  (1ull << (x))
-#define MASK(x)   (BIT(x) - 1U)
-#define MASK64(x) (BIT64(x) - 1ULL)
-
 #define FUNCTION_PROFILER(...)
 
 #if defined(USE_CRY_ASSERT)
@@ -239,13 +234,54 @@ namespace Cry
 
 #define CRY_FUNCTION_NOT_IMPLEMENTED CRY_ASSERT(false, "Call to not implemented function: %s", __func__)
 
+// Define BIT macro for use in enums and bit masks.
+// SWIG copies the C++ code directly, so some BIT() methods need SWIG specific versions.
+// 8 bit
+#if defined(SWIG)
+	#define BIT8(x) (((byte)1) << (x))
+#else
+	#define BIT8(x) ((static_cast<uint8>(1)) << (x))
+#endif
+
+// 16 bit
+#if defined(SWIG)
+	#define BIT16(x) (((ushort)1) << (x))
+#else
+	#define BIT16(x) ((static_cast<uint16>(1)) << (x))
+#endif
+
+// 32 bit
+#define BIT32(x) (1u << (x))
+
+// 64 bit
+#if defined(SWIG)
+	#define BIT64(x) (1ul << (x))
+#else
+	#define BIT64(x) (1ull << (x))
+#endif
+
+// BIT(x) defaults to BIT32(x)
+#if defined(SWIG)
+	#define BIT(x) (1u << (x)) // Swig can't handle nested macros properly, so we have to write the whole macro here again.
+#else
+	#define BIT BIT32
+#endif
+
+// Bitmasks
+#define MASK(x) (BIT(x) - 1U)
+#define MASK8(x)  (BIT8(x) - (static_cast<uint8>(1))
+#define MASK16(x) (BIT16(x) - (static_cast<uint16>(1))
+#define MASK32(x) (BIT32(x) - 1U)
+#define MASK64(x) (BIT64(x) - 1ULL)
+
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
 #if !defined(_DEBUG) && !defined(CRY_UBSAN)
-	#define ILINE __forceinline
+	#define ILINE CRY_FORCE_INLINE
 #else
 	#define ILINE inline
 #endif
+
 #include <cstdint>
 
 int64_t bbGetTicks();

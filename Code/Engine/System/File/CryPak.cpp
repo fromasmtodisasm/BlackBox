@@ -10,6 +10,93 @@
 
 	#define CRY_NATIVE_PATH_SEPSTR "/"
 
+// makes the path lower-case and removes the duplicate and non native slashes
+// may make some other fool-proof stuff
+// may NOT write beyond the string buffer (may not make it longer)
+// returns: the pointer to the ending terminator \0
+char* CCryPak::BeautifyPath(char* dst, bool bMakeLowercase)
+{
+	// make the path lower-letters and with native slashes
+	char* p, * q;
+	// there's a special case: two slashes at the beginning mean UNC filepath
+	p = q = dst;
+	if (*p == g_cNonNativeSlash || *p == g_cNativeSlash)
+		++p, ++q; // start normalization/beautifications from the second symbol; if it's a slash, we'll add it, too
+
+	bool bMakeLower = false;
+
+	while (*p)
+	{
+		if (*p == g_cNonNativeSlash || *p == g_cNativeSlash)
+		{
+			*q = g_cNativeSlash;
+			++p, ++q;
+			while (*p == g_cNonNativeSlash || *p == g_cNativeSlash)
+				++p; // skip the extra slashes
+		}
+		else
+		{
+			if (*p == '%')
+				bMakeLower = !bMakeLower;
+
+			if (bMakeLower || bMakeLowercase)
+				//*q = CryStringUtils::toLowerAscii(*p);
+				*q = std::tolower(*p);
+			else
+				*q = *p;
+			++q, ++p;
+		}
+	}
+	*q = '\0';
+	return q;
+}
+
+// remove all '%s/..' or '.' parts from the path (needs beautified path - only single native slashes)
+// e.g. Game/Scripts/AI/../Entities/foo -> Game/Scripts/Entities/foo
+// e.g. Game/Scripts/./Entities/foo -> Game/Scripts/Entities/foo
+void CCryPak::RemoveRelativeParts(char* dst)
+{
+	char* q = dst;
+	char* p = nullptr;
+
+	PREFAST_ASSUME(q);
+
+	// replace all '/./' with '/'
+	const char slashDotSlashString[4] = { CCryPak::g_cNativeSlash, '.', CCryPak::g_cNativeSlash, 0 };
+
+	while ((p = strstr(q, slashDotSlashString)) != nullptr)
+	{
+		//Move the string and the null terminator
+		memmove(p, p + 2, strlen(p + 2) + 1);
+	}
+
+	// replace all '/%s/../' with '/'
+	const char slashDotDotSlashString[5] = { CCryPak::g_cNativeSlash, '.', '.', CCryPak::g_cNativeSlash, 0 };
+
+	while ((p = strstr(q, slashDotDotSlashString)) != nullptr)
+	{
+		if (p != q) // only remove if not in front of a path
+		{
+			int i = 4;
+			bool bSpecial = true;
+			while (*(--p) != CCryPak::g_cNativeSlash && p != q)
+			{
+				if (*p != '.')
+				{
+					bSpecial = false;
+				}
+				i++;
+			}
+			if (!bSpecial)
+			{
+				memmove(p, p + i, strlen(p + i) + 1);
+				continue;
+			}
+		}
+		q += 3;
+	}
+}
+
 namespace filehelpers
 {
 	//////////////////////////////////////////////////////////////////////////
@@ -62,7 +149,7 @@ bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/
 	SArchiveHandle ar{fullPath.c_str()};
 	if (!ar)
 	{
-		ar        = SArchiveHandle{fullPath.c_str()};
+		ar = SArchiveHandle{fullPath.c_str()};
 		if (!ar) return false;
 	}
 
@@ -399,12 +486,12 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 		char szNewSrc[256];
 		strcpy(szNewSrc, szSourcePath);
 
-		//{
-		//	BeautifyPath(szNewSrc, (nFlags & FLAGS_NO_LOWCASE) == 0);
-		//	RemoveRelativeParts(szNewSrc);
-		//}
+		{
+			BeautifyPath(szNewSrc, (nFlags & FLAGS_NO_LOWCASE) == 0);
+			RemoveRelativeParts(szNewSrc);
+		}
 
-		strncpy(szDestPath, szNewSrc, g_nMaxPath);
+		strcpy(szDestPath, szNewSrc);
 	}
 
 	const bool isAbsolutePath = IsAbsPath(szDestPath);
@@ -433,7 +520,7 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 	{
 		// Add data folder prefix.
 		string tmp = m_strDataRootWithSlash + szDestPath;
-		
+
 		strcpy(szDestPath, tmp.c_str());
 	}
 
