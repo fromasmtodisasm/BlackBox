@@ -501,24 +501,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 	auto             ioHandler = new MyIO;
 	ai.SetIOHandler(ioHandler);
 
-	#if 1
 	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
-	#else
-	CCryFile geomFile;
-	if (!geomFile.Open(szFileName, "rb")) return false;
-
-	auto           size  = geomFile.GetLength();
-		#if 0
-	std::vector<char> data;
-	data.resize(size);
-		#else
-	char* data = new char[size];
-	geomFile.Read(&data[0], size);
-		#endif
-
-	auto           ext   = PathUtil::GetExt(szFileName);
-	const aiScene* scene = ai.ReadFileFromMemory(&data[0], size, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes, ext);
-	#endif
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
