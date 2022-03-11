@@ -200,7 +200,7 @@ namespace ZipFile
 		if (of.is_open())
 		{
 #if 1
-			info.NumberOfFiles = 0;
+			info.NumberOfFiles = 1;
 			info.CurrentOffset = 0;
 
 			string file        = pattern;
