@@ -441,6 +441,10 @@ inline int IsHeapValid()
 }
 #endif // NOT_USE_CRY_MEMORY_MANAGER
 #define MEMSTAT_CONTEXT(...)
+
+// Include support for meta-type data.
+#include <BlackBox/Core/TypeInfo_decl.h>
+
 #include <BlackBox/System/CrySizer.hpp>
 int64 CryGetTicks();
 

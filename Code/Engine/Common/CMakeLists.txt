@@ -15,19 +15,20 @@ add_sources(
 		${INC}/3DEngine/IObject.hpp
 		${INC}/3DEngine/IStatObj.hpp
 	SOURCE_GROUP "Core"
-		${INC}/Core/StlUtils.hpp
+		${INC}/Core/BaseTypes.hpp
+		${INC}/Core/Compiler/Clangspecific.h
+		${INC}/Core/Compiler/MSVCspecific.h
+		${INC}/Core/ICompressionHelper.hpp
+		${INC}/Core/IMarkers.hpp
 		${INC}/Core/Path.hpp
+		${INC}/Core/StlUtils.hpp
 		${INC}/Core/Stream.hpp
 		${INC}/Core/StringUtils.h
 		${INC}/Core/TArrays.h
 		${INC}/Core/Tarray.h
+		${INC}/Core/TypeInfo_decl.h
 		${INC}/Core/Utils.hpp
 		${INC}/Core/Version.hpp
-		${INC}/Core/BaseTypes.hpp
-		${INC}/Core/Compiler/MSVCspecific.h
-		${INC}/Core/Compiler/Clangspecific.h
-		${INC}/Core/ICompressionHelper.hpp
-		${INC}/Core/IMarkers.hpp
 		${INC}/Core/smartptr.hpp
 	
 	SOURCE_GROUP "Math"

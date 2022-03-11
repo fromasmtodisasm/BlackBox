@@ -1,37 +1,43 @@
 #undef UNICODE
 #include "ResourceCompiler.h"
-#include "Pak.h"
+#include "ZipFileFormat.h"
 
 #include <cassert>
 #include <regex>
 
 #include "ini.h"
 
-SOptions         g_Options;
+SOptions g_Options;
 
-std::string_view remove_leading_ups(std::string_view str)
+namespace ZipFile
 {
-	std::string_view result = str;
-	while (true)
+	std::string_view remove_leading_ups(std::string_view str)
 	{
-		if (auto pos = result.find("../"); pos == 0)
+		std::string_view result = str;
+		while (true)
 		{
-			result = std::string_view{result.data() + 3};
+			if (auto pos = result.find("../"); pos == 0)
+			{
+				result = std::string_view{result.data() + 3};
+			}
+			else if (auto pos = result.find("./"); pos == 0)
+			{
+				result = std::string_view{result.data() + 2};
+			}
+			else
+			{
+				break;
+			}
 		}
-		else if (auto pos = result.find("./"); pos == 0)
-		{
-			result = std::string_view{result.data() + 2};
-		}
-		else
-		{
-			break;
-		}
+		return result;
 	}
-	return result;
-}
+} // namespace ZipFile
 
-int config_handler(void* user, const char* section,
-                   const char* name, const char* value)
+int  config_handler(void* user, const char* section, const char* name, const char* value);
+void parse_cmd(int argc, char* argv[]);
+
+int  config_handler(void* user, const char* section,
+                    const char* name, const char* value)
 {
 #define match(a) if ((std::string_view(a) == name))
 	match("list")
@@ -129,6 +135,8 @@ void parse_cmd(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
+	using namespace ZipFile;
+
 	parse_cmd(argc, argv);
 
 	ResourceCompiler RC;
@@ -166,7 +174,7 @@ int main(int argc, char* argv[])
 			         "Include/BlackBox/System/ISystem.hpp",
 			         "Include/BlackBox/Renderer/IRender.hpp"
 			         //"Include/BlackBox/System/ISystem.hpp"
-				})
+			     })
 			{
 				auto              file = testPak.FOpen(name);
 				auto              size = file->Size();

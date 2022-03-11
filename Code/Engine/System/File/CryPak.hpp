@@ -29,7 +29,7 @@ using std::string_view;
 using std::wstring;
 
 namespace fs = std::filesystem;
-	#include <../Code/Tools/RC/ResourceCompiler/Pak.h>
+	#include <../Code/Tools/RC/ResourceCompiler/ZipFileFormat.h>
 
 #endif
 
@@ -147,7 +147,7 @@ public:
 #endif
 	    ;
 
-	using FileList = MapType<File>;
+	using FileList = MapType<ZipFile::File>;
 
 private:
 	IMiniLog*                m_pLog;
@@ -159,7 +159,7 @@ private:
 #if 0
 	std::map<string, SArchiveHandle> m_Archives;
 #else
-	std::vector<SArchiveHandle> m_Archives;
+	std::vector<ZipFile::SArchiveHandle> m_Archives;
 #endif
 	//std::vector< libzippp::ZipArchive> m_Archives;
 	std::string          m_DataRoot             = "GameData/";
@@ -167,5 +167,5 @@ private:
 
 	FileList             m_Files;
 
-	std::vector<MyFile*> m_arrOpenFiles;
+	std::vector<ZipFile::MyFile*> m_arrOpenFiles;
 };

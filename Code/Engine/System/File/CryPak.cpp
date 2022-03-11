@@ -10,6 +10,8 @@
 
 	#define CRY_NATIVE_PATH_SEPSTR "/"
 
+using namespace ZipFile;
+
 // makes the path lower-case and removes the duplicate and non native slashes
 // may make some other fool-proof stuff
 // may NOT write beyond the string buffer (may not make it longer)

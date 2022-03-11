@@ -13,6 +13,7 @@ add_sources("NoUberFile"
 		"Main.cpp"
 )
 end_sources()
+
 if(WINDOWS AND NOT OPTION_DEDICATED_SERVER)
 	Launcher(WindowsLauncher SOLUTION_FOLDER "Launcher")
 	target_link_libraries(${THIS_PROJECT} PRIVATE Shell32)

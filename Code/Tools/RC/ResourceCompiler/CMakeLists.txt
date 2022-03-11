@@ -10,12 +10,14 @@ add_sources("NoUberFile"
 		"FileMapping.cpp"
 		"FileMapping.h"
 		"Pak.cpp"
-		"Pak.h"
+		"ZipFileFormat.h"
 	SOURCE_GROUP "CommonTools"
 		"../../CommonTools/ini.h"
 		"../../CommonTools/ini.c"
 )
 end_sources()
+find_package(Crc32c CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
 
 CryResourceCompiler(ResourceCompiler PCH "pch.hpp" SOLUTION_FOLDER "BLACKBOX/Tools/RC")
 target_include_directories(${THIS_PROJECT} PRIVATE
@@ -28,4 +30,5 @@ target_compile_options(${THIS_PROJECT} PRIVATE /EHsc)
 
 target_compile_definitions(${THIS_PROJECT} PRIVATE -DCRYTOOLS -DRESOURCECOMPILERPC_EXPORTS -DOFFLINE_COMPUTATION)
 
-
+target_link_libraries(${THIS_PROJECT} PRIVATE Crc32c::crc32c)
+target_link_libraries(${THIS_PROJECT} PRIVATE ZLIB::ZLIB)
