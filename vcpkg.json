@@ -6,10 +6,11 @@
   "supports": "windows",
   "dependencies": [
     "assimp",
+    "crc32c",
     "freeimage",
     "freetype",
-    "glm",
     "getopt",
+    "glm",
     "libzip",
     "libzippp",
     "lua",
@@ -23,6 +24,7 @@
     },
     "sdl2-net",
     "stb",
+    "zlib",
     "tinyxml2"
   ],
   "default-features": [ "d3d11", "release-console", "static-linking" ],
