@@ -8,6 +8,7 @@
 //#include <crc32c/crc32c.h>
 #include <zlib.h>
 
+
 namespace ZipFile
 {
 	MemoryArena g_FileDataArena;
@@ -274,7 +275,12 @@ namespace ZipFile
 		}
 	}
 
-	void create_file(LocalFileHeader& ar, fs::path filename, std::int32_t offset, std::uint32_t size)
+	void create_file(LocalFileHeader& ar, fs::path filename, SRange range)
+	{
+		create_file(ar, filename, range.begin, range.end);
+	}
+
+	void create_file(LocalFileHeader& ar, fs::path filename, uint32 offset, uint32 size)
 	{
 		char* base = (char*)&ar;
 		auto  path = (fs::path("./") / fs::path(filename)).parent_path();
@@ -289,6 +295,16 @@ namespace ZipFile
 		of.write(base + offset, size);
 	}
 
+	SRange file_range(CentralDirectory& entry)
+	{
+		return SRange{entry.lLocalHeaderOffset + uint32(sizeof LocalFileHeader) + entry.nFileNameLength, entry.desc.SizeUncompressed};
+	}
+
+	string_view file_name(CentralDirectory& entry, void* header)
+	{
+		return string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength);//
+	}
+
 	void extract(const string& file, const string& base, const string& pattern)
 	{
 		if (auto ar = SArchiveHandle(file); ar)
@@ -296,7 +312,7 @@ namespace ZipFile
 			for (auto& entry : ar)
 			{
 				size_t offset = 0;
-				auto   strv   = string_view(entry.file_name.data, entry.file_name.size);
+				auto   strv   = file_name(entry, ar.header); // string_view(entry.file_name.data, entry.file_name.size);
 				if (auto pos = strv.find(base.c_str()); pos == 0)
 				{
 					offset = base.size();
@@ -306,11 +322,11 @@ namespace ZipFile
 				if (!pattern.empty())
 				{
 					if (regex_match(path.string(), std::regex{pattern, std::regex::extended}))
-						create_file(ar, path, entry.offset, entry.size);
+						create_file(ar, path, file_range(entry));
 				}
 				else
 				{
-					create_file(ar, path, entry.offset, entry.size);
+					create_file(ar, path, file_range(entry));
 				}
 			}
 		}

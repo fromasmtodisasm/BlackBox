@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
 	if (g_Options.list)
 	{
 		list(g_Options.input_file);
-		return 0;
+		//return 0;
 	}
 	else
 	{
@@ -161,7 +161,8 @@ int main(int argc, char* argv[])
 		CPak testPak;
 
 		bool ok{true};
-		for (auto pak : {"Shaders.pak", "Include.pak", "Code.pak"})
+		//for (auto pak : {"Shaders.pak", "Include.pak", "Code.pak"})
+		for (auto pak : {"GameData/Data.pak"})
 		{
 			ok &= testPak.OpenPak(pak);
 		}
@@ -170,10 +171,11 @@ int main(int argc, char* argv[])
 			testPak.Dump();
 
 			for (auto name : {
-			         "Shaders/fx/AuxGeom.cfx",
-			         "Include/BlackBox/System/ISystem.hpp",
-			         "Include/BlackBox/Renderer/IRender.hpp"
+			         //"Shaders/fx/AuxGeom.cfx",
+			         //"Include/BlackBox/System/ISystem.hpp",
+			         //"Include/BlackBox/Renderer/IRender.hpp"
 			         //"Include/BlackBox/System/ISystem.hpp"
+			         "Data/minecraft/bbox.obj"
 			     })
 			{
 				auto              file = testPak.FOpen(name);

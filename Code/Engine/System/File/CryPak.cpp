@@ -19,7 +19,7 @@ using namespace ZipFile;
 char* CCryPak::BeautifyPath(char* dst, bool bMakeLowercase)
 {
 	// make the path lower-letters and with native slashes
-	char* p, * q;
+	char *p, *q;
 	// there's a special case: two slashes at the beginning mean UNC filepath
 	p = q = dst;
 	if (*p == g_cNonNativeSlash || *p == g_cNativeSlash)
@@ -64,7 +64,7 @@ void CCryPak::RemoveRelativeParts(char* dst)
 	PREFAST_ASSUME(q);
 
 	// replace all '/./' with '/'
-	const char slashDotSlashString[4] = { CCryPak::g_cNativeSlash, '.', CCryPak::g_cNativeSlash, 0 };
+	const char slashDotSlashString[4] = {CCryPak::g_cNativeSlash, '.', CCryPak::g_cNativeSlash, 0};
 
 	while ((p = strstr(q, slashDotSlashString)) != nullptr)
 	{
@@ -73,13 +73,13 @@ void CCryPak::RemoveRelativeParts(char* dst)
 	}
 
 	// replace all '/%s/../' with '/'
-	const char slashDotDotSlashString[5] = { CCryPak::g_cNativeSlash, '.', '.', CCryPak::g_cNativeSlash, 0 };
+	const char slashDotDotSlashString[5] = {CCryPak::g_cNativeSlash, '.', '.', CCryPak::g_cNativeSlash, 0};
 
 	while ((p = strstr(q, slashDotDotSlashString)) != nullptr)
 	{
 		if (p != q) // only remove if not in front of a path
 		{
-			int i = 4;
+			int  i        = 4;
 			bool bSpecial = true;
 			while (*(--p) != CCryPak::g_cNativeSlash && p != q)
 			{
@@ -159,12 +159,13 @@ bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/
 
 	for (auto& entry : ar)
 	{
-		File file{entry.offset, entry.size, entry.Name(), (char*)ar.header};
+		File file{create_file(entry, ar.header)};
 
 		if (auto it = m_Files.find(file.name); it != m_Files.end()) printf("Eroror, file %s already mapped\n", file.name.data());
 
 		m_Files[file.name] = file;
 	}
+
 	m_Archives.emplace_back(std::move(ar));
 
 	return true;
@@ -182,7 +183,23 @@ bool CCryPak::ClosePack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*
 
 bool CCryPak::OpenPacks(const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	return false;
+	_finddata_t c_file;
+	intptr_t    hFile;
+
+	if ((hFile = FindFirst((string(pWildcard) + "\\*.*").c_str(), &c_file)) == -1L)
+	{
+		return false;
+	}
+	else
+	{
+		do
+		{
+			OpenPack(c_file.name);
+		} while (gEnv->pCryPak->FindNext(hFile, &c_file) == 0);
+
+		gEnv->pCryPak->FindClose(hFile);
+	}
+	return true;
 }
 
 bool CCryPak::OpenPacks(const char* pBindingRoot, const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
@@ -424,6 +441,14 @@ void CCryPak::EnumerateRecordedFiles(RecordedFilesEnumCallback enumCallback)
 void CCryPak::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
 }
+
+ZipFile::File CCryPak::create_file(ZipFile::CentralDirectory& entry, void* header)
+{
+	auto name = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
+	File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + name.length(), entry.desc.SizeUncompressed, name, (char*)header};
+	return file;
+}
+
 FILE* CCryPak::FOpenRaw(const char* pName, const char* mode)
 {
 	return nullptr;

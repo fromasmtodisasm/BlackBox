@@ -136,6 +136,8 @@ public:
 	// Inherited via ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 
+	ZipFile::File         create_file(ZipFile::CentralDirectory& entry, void* header);
+
 	using KeyType = string_view;
 	template<typename Type>
 
@@ -162,10 +164,10 @@ private:
 	std::vector<ZipFile::SArchiveHandle> m_Archives;
 #endif
 	//std::vector< libzippp::ZipArchive> m_Archives;
-	std::string          m_DataRoot             = "GameData/";
-	std::string          m_strDataRootWithSlash = PathUtil::GetEnginePath() + "/" + m_DataRoot;
+	std::string                   m_DataRoot             = "GameData/";
+	std::string                   m_strDataRootWithSlash = PathUtil::GetEnginePath() + "/" + m_DataRoot;
 
-	FileList             m_Files;
+	FileList                      m_Files;
 
 	std::vector<ZipFile::MyFile*> m_arrOpenFiles;
 };

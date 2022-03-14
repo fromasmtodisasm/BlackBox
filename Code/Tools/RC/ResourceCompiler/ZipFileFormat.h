@@ -41,6 +41,11 @@
 
 namespace ZipFile
 {
+	struct SRange
+	{
+		uint32 begin;
+		uint32 end;
+	};
 
 	// compression methods
 	enum
@@ -261,16 +266,18 @@ namespace ZipFile
 	struct SArchiveHandle
 	{
 		std::unique_ptr<CFileMapping> fm;
+		// Entry of file
 		LocalFileHeader*              header{};
+		CDREnd*                       m_CentralDirectoryRecordEnd;
+
 		SArchiveHandle(std::string_view file)
 		    : fm{std::make_unique<CFileMapping>(file.data())}
 		{
 			header = (LocalFileHeader*)fm->getData();
+			auto     data{(char*)fm->getData()};
+			unsigned size{fm->getSize()};
+			m_CentralDirectoryRecordEnd = (CDREnd*)(data + size - sizeof CDREnd);
 		}
-
-		//SArchiveHandle(SArchiveHandle&& other)
-		//{
-		//}
 
 		operator LocalFileHeader&()
 		{
@@ -286,7 +293,7 @@ namespace ZipFile
 		{
 			using iterator_category = std::forward_iterator_tag;
 			using difference_type   = std::ptrdiff_t;
-			using value_type        = SDirEntry;
+			using value_type        = CentralDirectory;
 			using pointer           = value_type*;
 			using reference         = value_type&;
 
@@ -300,7 +307,15 @@ namespace ZipFile
 			// Prefix increment
 			Iterator& operator++()
 			{
-				m_ptr = (SDirEntry*)((byte*)m_ptr->file_name.data + m_ptr->file_name.size + 1);
+				m_ptr = pointer((byte*)m_ptr + 
+				    // clang-format off
+				(
+					sizeof CentralDirectory + 
+					m_ptr->nFileNameLength +
+					m_ptr->nFileCommentLength +
+					m_ptr->nExtraFieldLength
+				));
+				// clang-format on
 				return *this;
 			}
 
@@ -318,10 +333,11 @@ namespace ZipFile
 
 		private:
 			pointer m_ptr;
+			byte*   base;
 		};
 
-		Iterator begin() { return Iterator(reinterpret_cast<SDirEntry*>((byte*)header /* + header->toc_offset*/)); }
-		Iterator end() { return Iterator((SDirEntry*)((byte*)header + fm->getSize())); }
+		Iterator begin() { return Iterator(reinterpret_cast<Iterator::pointer>((byte*)header + m_CentralDirectoryRecordEnd->lCDROffset)); }
+		Iterator end() { return Iterator((Iterator::pointer)((byte*)m_CentralDirectoryRecordEnd)); }
 	};
 
 	std::string_view remove_leading_ups(std::string_view str);
@@ -339,7 +355,8 @@ namespace ZipFile
 	void           write_archive(const std::string& pattern, const std::string out_file);
 	SArchiveHandle archive_open(std::string_view file);
 	void           list(const string& file);
-	void           create_file(LocalFileHeader& ar, fs::path filename, std::int32_t offset, uint32 size);
+	void           create_file(LocalFileHeader& ar, fs::path filename, SRange range);
+	void           create_file(LocalFileHeader& ar, fs::path filename, uint32 offset, uint32 size);
 	void           extract(const string& file, const string& base, const string& pattern);
 
 #if 0
@@ -436,6 +453,12 @@ namespace ZipFile
 		    std::map<KeyType, Type>
 #endif
 		    ;
+		File create_file(CentralDirectory& entry, void* header)
+		{
+			auto name = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
+			File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + name.length(), entry.desc.SizeUncompressed, name, (char*)header};
+			return file;
+		}
 
 		using FileList = MapType<File>;
 		bool OpenPak(string_view pak)
@@ -445,7 +468,7 @@ namespace ZipFile
 
 			for (auto& entry : ar)
 			{
-				File file{entry.offset, entry.size, entry.Name(), (char*)ar.header};
+				File file{create_file(entry, ar.header)};
 
 				if (auto it = m_Files.find(file.name); it != m_Files.end()) printf("Eroror, file %s already mapped\n", file.name.data());
 
@@ -463,7 +486,7 @@ namespace ZipFile
 		{
 			for (auto& f : m_Files)
 			{
-				printf("%s\n", f.first.data());
+				printf("%*.*s\n", f.first.size(), f.first.size(), f.first.data());
 			}
 		}
 
