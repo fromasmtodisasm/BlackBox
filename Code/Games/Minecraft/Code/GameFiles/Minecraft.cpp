@@ -26,7 +26,6 @@ void MineWorld::init()
 	auto loadAssets = [this]()
 	{
 		auto grass = gEnv->p3DEngine->MakeObject("Data/minecraft/Grass_Block.obj");
-		auto test = gEnv->pRenderer->LoadTexture("Textures/CheckPoints/checkpoint_archive_Archive_1.dds");
 		types.push_back(grass);
 	};
 
