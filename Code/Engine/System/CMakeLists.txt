@@ -74,6 +74,12 @@ add_sources(
 	SOURCE_GROUP "ScriptObject"
 		"ScriptObjectSystem.cpp"
 		"ScriptObjectSystem.hpp"
+	SOURCE_GROUP "ZLibDecompressor"
+		"ZLibDecompressor.h"
+		"ZLibDecompressor.cpp"
+	SOURCE_GROUP "ZLibCompressor"
+		"ZLibCompressor.cpp"
+		"ZLibCompressor.h"
 )
 end_sources()
 

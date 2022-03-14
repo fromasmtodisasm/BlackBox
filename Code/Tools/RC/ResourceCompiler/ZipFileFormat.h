@@ -307,8 +307,8 @@ namespace ZipFile
 			// Prefix increment
 			Iterator& operator++()
 			{
-				m_ptr = pointer((byte*)m_ptr + 
-				    // clang-format off
+				m_ptr = pointer((byte*)m_ptr +
+				                // clang-format off
 				(
 					sizeof CentralDirectory + 
 					m_ptr->nFileNameLength +
@@ -378,8 +378,48 @@ namespace ZipFile
 	{
 		std::int32_t offset;
 		uint32       size;
+		uint32       compressed_size;
 		string_view  name;
 		char*        base;
+		bool         compressed;
+
+
+
+		static File* CopyToHeap(File* file)
+		{
+			IZLibInflateStream* pInflateStream = ((CSystem*)(gEnv->pSystem))->GetIZLibDecompressor()->CreateInflateStream();
+
+			File*               result;
+			char*               BaseHeapAddres = (char*)malloc(file->size);
+			{
+				pInflateStream->SetOutputBuffer(const_cast<char*>(BaseHeapAddres), file->size);
+				pInflateStream->Input(file->base + file->offset, file->compressed_size);
+				pInflateStream->EndInput();
+				EZInflateState state = pInflateStream->GetState();
+				assert(state == eZInfState_Finished);
+				pInflateStream->Release();
+
+				if (state == eZInfState_Error)
+				{
+					return nullptr;
+				}
+			}
+			result = new File{0, file->size, file->compressed_size, file->name, BaseHeapAddres, file->compressed};
+
+			return result;
+		}
+
+		static File* CreateFrom(File* file)
+		{
+			if (file->compressed)
+			{
+				return CopyToHeap(file);
+			}
+			else
+			{
+				return file;
+			}
+		}
 	};
 
 	struct MyFile : public _i_reference_target_t
@@ -453,10 +493,12 @@ namespace ZipFile
 		    std::map<KeyType, Type>
 #endif
 		    ;
-		File create_file(CentralDirectory& entry, void* header)
+
+		ZipFile::File create_file(ZipFile::CentralDirectory& entry, void* header)
 		{
-			auto name = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
-			File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + name.length(), entry.desc.SizeUncompressed, name, (char*)header};
+			auto name       = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
+			bool compressed = entry.desc.SizeCompressed != entry.desc.SizeUncompressed;
+			File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + name.length(), entry.desc.SizeUncompressed, entry.desc.SizeCompressed, name, (char*)header, compressed};
 			return file;
 		}
 
@@ -479,14 +521,14 @@ namespace ZipFile
 		}
 		_smart_ptr<MyFile> FOpen(string_view fname)
 		{
-			if (auto it = m_Files.find(fname); it != m_Files.end()) return _smart_ptr<MyFile>(new MyFile(&it->second));
+			if (auto it = m_Files.find(fname); it != m_Files.end()) return _smart_ptr<MyFile>(new MyFile(File::CreateFrom(&it->second)));
 			return nullptr;
 		}
 		void Dump()
 		{
 			for (auto& f : m_Files)
 			{
-				printf("%*.*s\n", f.first.size(), f.first.size(), f.first.data());
+				printf("%*.*s\n\tcompressed: %s\n", f.first.size(), f.first.size(), f.first.data(), f.second.compressed ? "true" : "false");
 			}
 		}
 

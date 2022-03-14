@@ -192,6 +192,10 @@ add_sources(
 		${INC}/System/IWindow.hpp
 		${INC}/System/IWindowMessageHandler.h
 		${INC}/System/TimeValue.hpp
+	SOURCE_GROUP "System\\\\ZLib"
+		${INC}/System/ZLib/IZLibCompressor.h
+		${INC}/System/ZLib/IZlibDecompressor.h
+		${INC}/System/ZLib/ILZ4Decompressor.h
 	SOURCE_GROUP "Threading"
 		${INC}/Threading/IThreadManager.h
 	SOURCE_GROUP "Utils"

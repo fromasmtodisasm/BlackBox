@@ -27,7 +27,7 @@
 
 #include <Legacy\System.h>
 
-#define DEFAULT_APP_NAME "BlackBox"
+#define DEFAULT_APP_NAME        "BlackBox"
 
 #define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
 
@@ -59,17 +59,17 @@ class CScriptObjectRenderer;
 #ifdef DOWNLOAD_MANAGER
 	#include "DownloadManager.h"
 #endif //DOWNLOAD_MANAGER
-
+#include <BlackBox/System/ZLib/IZlibDecompressor.h>
 
 typedef void* WIN_HMODULE;
 
 struct SSystemCVars
 {
-	int    sys_no_crash_dialog = 0;
-	int    sys_dump_aux_threads;
-	int    sys_keyboard_break;
-	int    sys_dump_type;
-	int    sys_MaxFPS;
+	int sys_no_crash_dialog = 0;
+	int sys_dump_aux_threads;
+	int sys_keyboard_break;
+	int sys_dump_type;
+	int sys_MaxFPS;
 
 #ifdef USE_HTTP_WEBSOCKETS
 	int sys_simple_http_base_port;
@@ -84,7 +84,7 @@ struct SSystemCVars
 
 	int     sys_filesystemCaseSensitivity;
 
-	int sys_stop_at;
+	int     sys_stop_at;
 
 	PakVars pakVars;
 
@@ -103,21 +103,21 @@ extern SSystemCVars g_cvars;
 class CSystem;
 class CDownloadManager;
 
-
 IThreadManager* CreateThreadManager();
 struct SubsystemWrapper : public _i_reference_target_t
 {
 	HMODULE m_Handle;
-	char m_Name[64];
+	char    m_Name[64];
 
-	SubsystemWrapper(HMODULE handle, const char* name) : m_Handle(handle)
+	SubsystemWrapper(HMODULE handle, const char* name)
+	    : m_Handle(handle)
 	{
 		strncpy(m_Name, name, std::min(strlen(name) + 1, size_t(64)));
 	}
 
 	~SubsystemWrapper()
 	{
-		CryFreeLibrary(m_Handle);	
+		CryFreeLibrary(m_Handle);
 	}
 };
 
@@ -126,160 +126,154 @@ struct SubsystemWrapper : public _i_reference_target_t
    The System interface Class
    ===========================================
  */
-class CSystem final : public ISystem
-	, public IInputEventListener
-	, public IConsoleVarSink
-	, public ISystemEventListener
-	, public IWindowMessageHandler
-	, public ILoadConfigurationEntrySink
-	, IRendererCallbackClient
+class CSystem final : public ISystem, public IInputEventListener, public IConsoleVarSink, public ISystemEventListener, public IWindowMessageHandler, public ILoadConfigurationEntrySink, IRendererCallbackClient
 {
-  public:
+public:
 	CSystem(SSystemInitParams& initParams);
 	~CSystem();
-	void PreprocessCommandLine();
-	void ProcessCommandLine();
+	void              PreprocessCommandLine();
+	void              ProcessCommandLine();
 
-	virtual void	  SetGCFrequency(const float fRate) override;
-	virtual void	  SetIProcess(IProcess* process) override;
+	virtual void      SetGCFrequency(const float fRate) override;
+	virtual void      SetIProcess(IProcess* process) override;
 	virtual IProcess* GetIProcess() override;
-#if (defined (WIN32) || defined (PS2)) && defined(CHANGE_DEFINE)
+#if (defined(WIN32) || defined(PS2)) && defined(CHANGE_DEFINE)
 	virtual IRenderer* CreateRenderer(bool fullscreen, void* hinst, void* hWndAttach = 0) = 0;
-#endif	
+#endif
 
-	void OnRenderer_BeforeEndFrame() override;
+	void                              OnRenderer_BeforeEndFrame() override;
 
 	// Inherited via ISystem
-	virtual bool Init() override;
-	bool InitLog();
-	virtual void Start() override;
-	virtual bool Update(int updateFlags = 0, int nPauseMode = 0) override;
-	virtual void UpdateScriptSink() override;
-	virtual void RenderBegin() override;
-	virtual void Render() override;
-	virtual void RenderEnd() override;
-	virtual void Release() override;
+	virtual bool                      Init() override;
+	bool                              InitLog();
+	virtual void                      Start() override;
+	virtual bool                      Update(int updateFlags = 0, int nPauseMode = 0) override;
+	virtual void                      UpdateScriptSink() override;
+	virtual void                      RenderBegin() override;
+	virtual void                      Render() override;
+	virtual void                      RenderEnd() override;
+	virtual void                      Release() override;
 	virtual SSystemGlobalEnvironment* GetGlobalEnvironment() override
 	{
 		return &m_env;
 	}
-	virtual ISystemUserCallback*         GetUserCallback() const override { return m_pUserCallback; }
+	virtual ISystemUserCallback* GetUserCallback() const override { return m_pUserCallback; }
 
-	virtual I3DEngine*				GetI3DEngine() override { return m_env.p3DEngine; }
-	virtual IAISystem*				GetAISystem() override { return m_env.pAISystem; }
-	virtual ICmdLine*				GetICmdLine() override { return m_pCmdLine; };
-	virtual IConsole*				GetIConsole() override
+	virtual I3DEngine*           GetI3DEngine() override { return m_env.p3DEngine; }
+	virtual IAISystem*           GetAISystem() override { return m_env.pAISystem; }
+	virtual ICmdLine*            GetICmdLine() override { return m_pCmdLine; };
+	virtual IConsole*            GetIConsole() override
 	{
 		return m_env.pConsole;
 	}
-	virtual ICryCharManager*		GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
-	virtual ICryFont*				GetICryFont() { return &m_Font; }
-	virtual ICryPak*				GetIPak() override;
-	virtual IEntitySystem*			GetIEntitySystem() override;
-	virtual IFont*					GetIFont() override;
-	virtual IFrameProfileSystem*	GetIProfileSystem() { return m_env.pFrameProfileSystem; }
-	virtual IGame*					GetIGame() override
+	IZLibDecompressor*           GetIZLibDecompressor() { return m_pIZLibDecompressor; }
+	virtual ICryCharManager*     GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
+	virtual ICryFont*            GetICryFont() { return &m_Font; }
+	virtual ICryPak*             GetIPak() override;
+	virtual IEntitySystem*       GetIEntitySystem() override;
+	virtual IFont*               GetIFont() override;
+	virtual IFrameProfileSystem* GetIProfileSystem() { return m_env.pFrameProfileSystem; }
+	virtual IGame*               GetIGame() override
 	{
 		return m_pGame;
 	}
-	virtual IHardwareMouse*			GetIHardwareMouse() override { return m_env.pHardwareMouse; };
-	virtual IInput*					GetIInput() override
+	virtual IHardwareMouse* GetIHardwareMouse() override { return m_env.pHardwareMouse; };
+	virtual IInput*         GetIInput() override
 	{
 		return m_env.pInput;
 	}
-	virtual ILog*					GetILog() override
+	virtual ILog* GetILog() override
 	{
 		return m_env.pLog;
 	}
-	virtual IMovieSystem*			GetIMovieSystem() { return m_env.pMovieSystem; };
-	virtual IMusicSystem*			GetIMusicSystem() { return m_env.pMusicSystem; };
-	virtual INetwork*				GetINetwork() override;
-	virtual IPhysicalWorld*			GetIPhysicalWorld() { return m_env.pPhysicalWorld; }
-	virtual IProjectManager*		GetIProjectManager() override;
-	virtual IRemoteConsole*			GetIRemoteConsole() override;
-	virtual IRenderer*				GetIRenderer() override
+	virtual IMovieSystem*    GetIMovieSystem() { return m_env.pMovieSystem; };
+	virtual IMusicSystem*    GetIMusicSystem() { return m_env.pMusicSystem; };
+	virtual INetwork*        GetINetwork() override;
+	virtual IPhysicalWorld*  GetIPhysicalWorld() { return m_env.pPhysicalWorld; }
+	virtual IProjectManager* GetIProjectManager() override;
+	virtual IRemoteConsole*  GetIRemoteConsole() override;
+	virtual IRenderer*       GetIRenderer() override
 	{
 		return m_env.pRenderer;
 	}
-	virtual IScriptSystem*			GetIScriptSystem() override;
-	virtual ISoundSystem*			GetISoundSystem() { return m_env.pSoundSystem; } 
-	virtual IStreamEngine*			GetStreamEngine() override;
+	virtual IScriptSystem*          GetIScriptSystem() override;
+	virtual ISoundSystem*           GetISoundSystem() { return m_env.pSoundSystem; }
+	virtual IStreamEngine*          GetStreamEngine() override;
 	virtual ISystemEventDispatcher* GetISystemEventDispatcher() override { return m_pSystemEventDispatcher; }
-	virtual ITextModeConsole*		GetITextModeConsole() override;
-	virtual ITimer*					GetITimer() override;
-	virtual IValidator*				GetIValidator() override { return m_pValidator; };
-	virtual IWindow*				GetIWindow() override;
+	virtual ITextModeConsole*       GetITextModeConsole() override;
+	virtual ITimer*                 GetITimer() override;
+	virtual IValidator*             GetIValidator() override { return m_pValidator; };
+	virtual IWindow*                GetIWindow() override;
 
-	virtual int					GetCPUFlags()		 override;
-	virtual double				GetSecondsPerCycle() override;
-	virtual void				DumpMemoryUsageStatistics() override;
-	virtual IGame*				CreateGame(IGame* game) override;
-	virtual void				Quit() override;
-	virtual void				ShowMessage(const char* message, const char* caption, MessageType messageType) override;
-	virtual void				Log(const char* message) override;
-	virtual bool				OnInputEvent(const SInputEvent& event) override;
-	bool						ConfigLoad(const char* file);
+	virtual int                     GetCPUFlags() override;
+	virtual double                  GetSecondsPerCycle() override;
+	virtual void                    DumpMemoryUsageStatistics() override;
+	virtual IGame*                  CreateGame(IGame* game) override;
+	virtual void                    Quit() override;
+	virtual void                    ShowMessage(const char* message, const char* caption, MessageType messageType) override;
+	virtual void                    Log(const char* message) override;
+	virtual bool                    OnInputEvent(const SInputEvent& event) override;
+	bool                            ConfigLoad(const char* file);
 	//////////////////////////////////////////////////////////////////////////
-	virtual void				SetForceNonDevMode(const bool bValue) override;
-	virtual bool				GetForceNonDevMode() const override;
-	virtual bool				WasInDevMode() const override;
-	virtual bool				IsDevMode() const override;
-	virtual void				Error(const char* message) override;
-	virtual void				OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
-	virtual bool				OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
-	virtual float				GetDeltaTime() override;
-	virtual const SFileVersion& GetFileVersion() override;
-	virtual const SFileVersion& GetProductVersion() override;
-	virtual const char*			GetRootFolder() const override;
-	void						SetViewCamera(CCamera& Camera) override { m_ViewCamera = Camera; }
-	CCamera&					GetViewCamera() override { return m_ViewCamera; }
-	virtual bool				DoFrame(int updateFlags = 0) override;
-	virtual void				EnableGui(bool enable) override;
-	virtual void				SaveConfiguration() override;
+	virtual void                    SetForceNonDevMode(const bool bValue) override;
+	virtual bool                    GetForceNonDevMode() const override;
+	virtual bool                    WasInDevMode() const override;
+	virtual bool                    IsDevMode() const override;
+	virtual void                    Error(const char* message) override;
+	virtual void                    OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+	virtual bool                    OnBeforeVarChange(ICVar* pVar, const char* sNewValue) override;
+	virtual float                   GetDeltaTime() override;
+	virtual const SFileVersion&     GetFileVersion() override;
+	virtual const SFileVersion&     GetProductVersion() override;
+	virtual const char*             GetRootFolder() const override;
+	void                            SetViewCamera(CCamera& Camera) override { m_ViewCamera = Camera; }
+	CCamera&                        GetViewCamera() override { return m_ViewCamera; }
+	virtual bool                    DoFrame(int updateFlags = 0) override;
+	virtual void                    EnableGui(bool enable) override;
+	virtual void                    SaveConfiguration() override;
 
-	virtual bool IsTestMode() const override;
-	virtual void ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason) override;
-	virtual void SetFrameProfiler(bool on, bool display, char* prefix) override;
-	virtual void StartProfilerSection(CFrameProfilerSection* pProfileSection) override;
-	virtual void EndProfilerSection(CFrameProfilerSection* pProfileSection) override;
+	virtual bool                    IsTestMode() const override;
+	virtual void                    ShowDebugger(const char* pszSourceFile, int iLine, const char* pszReason) override;
+	virtual void                    SetFrameProfiler(bool on, bool display, char* prefix) override;
+	virtual void                    StartProfilerSection(CFrameProfilerSection* pProfileSection) override;
+	virtual void                    EndProfilerSection(CFrameProfilerSection* pProfileSection) override;
 
+	virtual void                    LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink = 0, ELoadConfigurationType configType = eLoadConfigDefault,
+	                                                  ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) override;
+	virtual void                    OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) override;
 
-	virtual void LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink = 0, ELoadConfigurationType configType = eLoadConfigDefault,
-	                                            ELoadConfigurationFlags flags = ELoadConfigurationFlags::None) override;
-	virtual void OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup) override;
+	virtual void                    Relaunch(bool bRelaunch) override;
+	virtual bool                    IsQuitting() override;
+	virtual void                    Error(const char* sFormat, ...) override;
+	virtual void                    Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...) override;
+	void                            WarningV(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, va_list args) override;
+	virtual bool                    CheckLogVerbosity(int verbosity) override;
 
-	virtual void Relaunch(bool bRelaunch) override;
-	virtual bool IsQuitting() override;
-	virtual void Error(const char* sFormat, ...) override;
-	virtual void Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...) override;
-	void		 WarningV(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, va_list args) override;
-	virtual bool CheckLogVerbosity(int verbosity) override;
+	virtual bool                    WriteCompressedFile(char* filename, void* data, unsigned int bitlen) override;
+	virtual unsigned int            ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen) override;
+	virtual unsigned int            GetCompressedFileSize(char* filename) override;
 
-	virtual bool		 WriteCompressedFile(char* filename, void* data, unsigned int bitlen) override;
-	virtual unsigned int ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen) override;
-	virtual unsigned int GetCompressedFileSize(char* filename) override;
+	virtual void                    OnAfterVarChange(ICVar* pVar) override;
+	virtual void                    OnVarUnregister(ICVar* pVar) override;
 
-	virtual void OnAfterVarChange(ICVar* pVar) override;
-	virtual void OnVarUnregister(ICVar* pVar) override;
+	virtual void                    RenderStatistics() override;
+	virtual const char*             GetUserName() override;
 
-	virtual void RenderStatistics() override;
-	virtual const char* GetUserName() override;
+	virtual void                    FatalError(const char* sFormat, ...);
+	virtual void                    ExecuteCommandLine() override;
+	virtual bool                    IsCVarWhitelisted(const char* szName, bool silent) const override;
 
-
-	virtual void FatalError(const char* sFormat, ...);
-	virtual void ExecuteCommandLine() override;
-	virtual bool IsCVarWhitelisted(const char* szName, bool silent) const override;
-
-  public:
-	void RunMainLoop();
-	void SleepIfNeeded();
+public:
+	void              RunMainLoop();
+	void              SleepIfNeeded();
 
 	//virtual ICryFactory* LoadModuleWithFactory(const char* dllName, const CryInterfaceID& moduleInterfaceId) override;
 	/*virtual */ bool UnloadEngineModule(const char* dllName);
-	WIN_HMODULE		  LoadDynamicLibrary(const char* dllName, bool bQuitIfNotFound = true, bool bLogLoadingInfo = false);
-	bool			  UnloadDynamicLibrary(const char* dllName);
-	void			  GetLoadedDynamicLibraries(std::vector<string>& moduleNames) const;
-  private:
+	WIN_HMODULE       LoadDynamicLibrary(const char* dllName, bool bQuitIfNotFound = true, bool bLogLoadingInfo = false);
+	bool              UnloadDynamicLibrary(const char* dllName);
+	void              GetLoadedDynamicLibraries(std::vector<string>& moduleNames) const;
+
+private:
 	bool InitConsole();
 	bool InitRender();
 	bool InitInput();
@@ -324,19 +318,18 @@ class CSystem final : public ISystem
 	inline P GetProcedure(L lib, const char* name)
 	{
 		return reinterpret_cast<P>(CryGetProcAddress(lib, name));
-	}	
-	public:
+	}
+
+public:
 	//! Update screen during loading.
-    void UpdateLoadingScreen()
-    {
+	void UpdateLoadingScreen()
+	{
+	}
 
-    }
-
-    template<typename Proc>
+	template<typename Proc>
 	inline bool InitStatic(const char* proc_name, std::function<bool(Proc proc)> f)
 	{
-			
-        auto P = GetProcedure<HANDLE, Proc>(NULL, proc_name);
+		auto P = GetProcedure<HANDLE, Proc>(NULL, proc_name);
 		if (P)
 		{
 			typedef void* (*PtrFunc_ModuleInitISystem)(ISystem * pSystem, const char* moduleName);
@@ -354,15 +347,15 @@ class CSystem final : public ISystem
 		return false;
 	}
 
-    template<typename Proc>
+	template<typename Proc>
 	inline bool LoadSubsystem(const char* szModulePath, const char* proc_name, std::function<bool(Proc proc)> f)
 	{
 		auto initStatic = InitStatic(proc_name, f);
 		if (initStatic)
 			return true;
 		//gEnv->pSystem->Log("Loading...");
-        stack_string modulePath = szModulePath;
-        modulePath = CrySharedLibraryPrefix + PathUtil::ReplaceExtension(modulePath.c_str(), CrySharedLibraryExtension);
+		stack_string modulePath = szModulePath;
+		modulePath              = CrySharedLibraryPrefix + PathUtil::ReplaceExtension(modulePath.c_str(), CrySharedLibraryExtension);
 
 		stack_string msg;
 		msg = "Loading Module ";
@@ -399,26 +392,25 @@ class CSystem final : public ISystem
 		}
 		else
 		{
-			#if 0
+#if 0
 			if (bQuitIfNotFound)
-			#endif
+#endif
 			{
-	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
+#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE
 				CryFatalError("Error loading dynamic library: %s, error :  %s\n", modulePath, dlerror());
-                fprintf(stderr, "dlopen failed: %s\n", dlerror());
-	#else
+				fprintf(stderr, "dlopen failed: %s\n", dlerror());
+#else
 				CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
-	#endif
+#endif
 
 				gEnv->pSystem->Quit();
 			}
 
-            return false;
+			return false;
 			gEnv->pSystem->Log("Library not found");
 		}
 		return false;
 	}
-
 
 	template<class T>
 	struct Sizer
@@ -440,12 +432,11 @@ class CSystem final : public ISystem
 		Bottom,
 		Up,
 	};
-	
+
 	template<class T>
 	void PrintMemoryUsageForName(const char* name, typename Sizer<T>::Func fn, T* This, float px, float py)
 	{
-
-		static char	 stats[256];
+		static char  stats[256];
 		CrySizerImpl sizer;
 		SIZER_COMPONENT_NAME(&sizer, name);
 		(This->*fn)(&sizer);
@@ -457,13 +448,11 @@ class CSystem final : public ISystem
 
 	void RenderStats();
 
-
-
-  protected:
+protected:
 	std::vector<_smart_ptr<SubsystemWrapper>> m_Subsystems;
-	CCmdLine* m_pCmdLine = nullptr;
+	CCmdLine*                                 m_pCmdLine = nullptr;
 
-  private:
+private:
 	// System environment.
 #if defined(SYS_ENV_AS_STRUCT)
 	//since gEnv is a global var, this should just be a reference for code consistency
@@ -471,24 +460,24 @@ class CSystem final : public ISystem
 #else
 	SSystemGlobalEnvironment m_env;
 #endif
-	CTimer		  m_Time;		  //!<
-	CCamera		  m_ViewCamera;	  //!<
-	volatile bool m_bQuit{false}; //!< if is true the system is quitting. Volatile as it may be polled from multiple threads.
+	CTimer                  m_Time;         //!<
+	CCamera                 m_ViewCamera;   //!<
+	volatile bool           m_bQuit{false}; //!< if is true the system is quitting. Volatile as it may be polled from multiple threads.
 
 	//IInput* m_pInput;
-	ICryPak*		  m_pCryPak		  = nullptr;
-	IGame*			  m_pGame		  = nullptr;
-	IFont*			  m_pFont		  = nullptr;
-	IFont*			  m_pBlackBoxFont = nullptr;
-	IWindow*		  m_pWindow		  = nullptr;
-	IValidator*		  m_pValidator; //!< Pointer to validator interface.
+	ICryPak*                m_pCryPak       = nullptr;
+	IGame*                  m_pGame         = nullptr;
+	IFont*                  m_pFont         = nullptr;
+	IFont*                  m_pBlackBoxFont = nullptr;
+	IWindow*                m_pWindow       = nullptr;
+	IValidator*             m_pValidator; //!< Pointer to validator interface.
 	//IEntitySystem*	  m_pEntitySystem	 = nullptr;
-	INetwork*		  m_pNetwork		 = nullptr;
-	ITextModeConsole* m_pTextModeConsole = nullptr;
+	INetwork*               m_pNetwork               = nullptr;
+	ITextModeConsole*       m_pTextModeConsole       = nullptr;
 	//! system event dispatcher
 	ISystemEventDispatcher* m_pSystemEventDispatcher = nullptr;
 
-		//! DLLs handles.
+	//! DLLs handles.
 	struct SDllHandles
 	{
 		WIN_HMODULE hRenderer;
@@ -504,97 +493,96 @@ class CSystem final : public ISystem
 		WIN_HMODULE hLiveCreate;
 		WIN_HMODULE hInterface;
 	};
-	SDllHandles m_dll = {0};
+	SDllHandles                                                            m_dll = {0};
 
-	std::unordered_map<string, WIN_HMODULE/*, stl::hash_strcmp<string>*/> m_moduleDLLHandles;
+	std::unordered_map<string, WIN_HMODULE /*, stl::hash_strcmp<string>*/> m_moduleDLLHandles;
 
+	CTimeValue                                                             m_lastTickTime;
 
-	CTimeValue m_lastTickTime;
-
-	CScriptObjectConsole*  m_ScriptObjectConsole  = nullptr;
-	CScriptObjectSystem*   m_ScriptObjectSystem   = nullptr;
-	CScriptObjectSound*	   m_ScriptObjectSound	  = nullptr;
-	CScriptObjectScript*   m_ScriptObjectScript	  = nullptr;
-	CScriptObjectRenderer* m_ScriptObjectRenderer = nullptr;
+	CScriptObjectConsole*                                                  m_ScriptObjectConsole  = nullptr;
+	CScriptObjectSystem*                                                   m_ScriptObjectSystem   = nullptr;
+	CScriptObjectSound*                                                    m_ScriptObjectSound    = nullptr;
+	CScriptObjectScript*                                                   m_ScriptObjectScript   = nullptr;
+	CScriptObjectRenderer*                                                 m_ScriptObjectRenderer = nullptr;
 
 public:
 	//! Pointer to the download manager
 	CDownloadManager* m_pDownloadManager;
 
-  private:
-	ICVar* cvGameName = nullptr;
+private:
+	ICVar*               cvGameName      = nullptr;
 	//////////////////////////////////////////////////////////////////////////
 	//! User define callback for system events.
 	ISystemUserCallback* m_pUserCallback = nullptr;
 
 	//SSystemInitParams& m_startupParams;
-	SSystemInitParams m_startupParams;
-	SFileVersion	  m_FileVersion;
-	SFileVersion	  m_ProductVersion;
+	SSystemInitParams    m_startupParams;
+	SFileVersion         m_FileVersion;
+	SFileVersion         m_ProductVersion;
 
-	uint64_t NOW;
-	uint64_t LAST;
-	double	 m_DeltaTime = 0.0;
+	//! System to access zlib decompressor
+	IZLibDecompressor*   m_pIZLibDecompressor;
+
+	uint64_t             NOW;
+	uint64_t             LAST;
+	double               m_DeltaTime = 0.0;
 
 	//! global root folder
-	string m_root;
-	int	   m_iApplicationInstance;
+	string               m_root;
+	int                  m_iApplicationInstance;
 
 	//! to hold the values stored in system.cfg
 	//! because editor uses it's own values,
 	//! and then saves them to file, overwriting the user's resolution.
-	int m_iHeight	 = 0;
-	int m_iWidth	 = 0;
-	int m_iColorBits = 0;
+	int                  m_iHeight    = 0;
+	int                  m_iWidth     = 0;
+	int                  m_iColorBits = 0;
 
 	// System console variables.
 	//////////////////////////////////////////////////////////////////////////
-	float m_rIntialWindowSizeRatio;
-	int	  m_rWidth;
-	int	  m_rHeight;
-	int	  m_rColorBits;
-	int	  m_rDepthBits;
-	int	  m_rStencilBits;
-	int	  m_rFullscreen;
+	float                m_rIntialWindowSizeRatio;
+	int                  m_rWidth;
+	int                  m_rHeight;
+	int                  m_rColorBits;
+	int                  m_rDepthBits;
+	int                  m_rStencilBits;
+	int                  m_rFullscreen;
 	//ICVar* m_rFullsceenNativeRes;
 	//ICVar* m_rWindowState;
-	ICVar* m_rDriver;
-	ICVar* m_sysNoUpdate{};
+	ICVar*               m_rDriver;
+	ICVar*               m_sysNoUpdate{};
 
-	int	   m_rDisplayInfo;
-	int	   m_rDebug;
-	int	   m_rTonemap;
-	int	   m_rSkipShaderCache;
+	int                  m_rDisplayInfo;
+	int                  m_rDebug;
+	int                  m_rTonemap;
+	int                  m_rSkipShaderCache;
 
-	bool m_bIsActive = true;
-	
-	string m_RootFolder;
+	bool                 m_bIsActive = true;
 
-	int sys_dump_memstats = false;
+	string               m_RootFolder;
 
-	IProcess* m_pProcess{};
+	int                  sys_dump_memstats = false;
 
-	INetwork*		 m_pNetworkLegacy;
-	legacy::ISystem* m_pSystemLegacy;
-	CCryNullFont	 m_Font;
+	IProcess*            m_pProcess{};
 
-	bool m_bCanSwitch = false;
+	INetwork*            m_pNetworkLegacy;
+	legacy::ISystem*     m_pSystemLegacy;
+	CCryNullFont         m_Font;
+
+	bool                 m_bCanSwitch = false;
 	// Pause mode.
-	bool   m_bPaused;
-	uint8  m_PlatformOSCreateFlags;
-	bool   m_bNoUpdate;
+	bool                 m_bPaused;
+	uint8                m_PlatformOSCreateFlags;
+	bool                 m_bNoUpdate;
 
-	uint64 m_nUpdateCounter;
+	uint64               m_nUpdateCounter;
 
-
-    // ISystem interface
+	// ISystem interface
 public:
-    virtual XDOM::IXMLDOMDocument *CreateXMLDocument() override;
-    virtual XmlNodeRef CreateXmlNode(const char *sNodeName) override;
-    virtual XmlNodeRef LoadXmlFile(const char *sFilename) override;
-    virtual XmlNodeRef LoadXmlFromString(const char *sXmlString) override;
+	virtual XDOM::IXMLDOMDocument* CreateXMLDocument() override;
+	virtual XmlNodeRef             CreateXmlNode(const char* sNodeName) override;
+	virtual XmlNodeRef             LoadXmlFile(const char* sFilename) override;
+	virtual XmlNodeRef             LoadXmlFromString(const char* sXmlString) override;
 };
-
-
 
 void AddInternalCommands(ISystem* pSystem);

@@ -546,8 +546,17 @@ void CCryPak::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 
 ZipFile::File CCryPak::create_file(ZipFile::CentralDirectory& entry, void* header)
 {
-	auto name = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
-	File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + name.length(), entry.desc.SizeUncompressed, name, (char*)header};
+	auto name       = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
+	#if 0 // For test purpose
+	if (stricmp(std::string(name.data(), name.length()).c_str(), std::string("textures/console/defaultconsole.dds").c_str()) == 0)
+	{
+		puts("");
+		//CryLog("Here");
+	}
+	#endif
+	bool compressed = entry.desc.SizeCompressed != entry.desc.SizeUncompressed;
+	auto& lfh        = *(LocalFileHeader*)((char*)header + entry.lLocalHeaderOffset);
+	File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + lfh.FileNameLength + lfh.ExtraFieldLength, entry.desc.SizeUncompressed, entry.desc.SizeCompressed, name, (char*)header, compressed};
 	return file;
 }
 
@@ -588,7 +597,7 @@ CFileDataPtr CCryPak::GetFileData(const char* szName, unsigned int& nArchiveFlag
 
 	if (auto it = m_Files.find(szName); it != m_Files.end())
 	{
-		pResult = (CFileDataPtr*)new MyFile(&it->second);
+		pResult = (CFileDataPtr*)new MyFile(File::CreateFrom(&it->second));
 	}
 	return pResult;
 }

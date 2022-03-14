@@ -162,7 +162,8 @@ int main(int argc, char* argv[])
 
 		bool ok{true};
 		//for (auto pak : {"Shaders.pak", "Include.pak", "Code.pak"})
-		for (auto pak : {"GameData/Data.pak"})
+		//for (auto pak : {"GameData/Data.pak"})
+		for (auto pak : {"GameData/Textures.pak"})
 		{
 			ok &= testPak.OpenPak(pak);
 		}
@@ -175,7 +176,8 @@ int main(int argc, char* argv[])
 			         //"Include/BlackBox/System/ISystem.hpp",
 			         //"Include/BlackBox/Renderer/IRender.hpp"
 			         //"Include/BlackBox/System/ISystem.hpp"
-			         "Data/minecraft/bbox.obj"
+			         //"Data/minecraft/bbox.obj"
+			         "Textures/hud/white_dot.dds"
 			     })
 			{
 				auto              file = testPak.FOpen(name);

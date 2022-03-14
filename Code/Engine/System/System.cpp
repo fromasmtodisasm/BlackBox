@@ -618,6 +618,8 @@ void CSystem::ShutDown()
 
 	SAFE_DELETE(m_env.pFrameProfileSystem);
 
+	SAFE_RELEASE(m_pIZLibDecompressor);
+
 	SAFE_DELETE(m_ScriptObjectConsole);
 	SAFE_DELETE(m_ScriptObjectSound);
 	SAFE_DELETE(m_ScriptObjectScript);

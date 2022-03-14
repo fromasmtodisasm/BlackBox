@@ -5,6 +5,8 @@
 #include "System.hpp"
 #include <WindowsConsole.h>
 
+#include "ZLibDecompressor.h"
+
 #include "Profiling\ProfilingSystem.hpp"
 
 #include <BlackBox/Core/Path.hpp>
@@ -396,6 +398,12 @@ bool CSystem::Init()
 	Log("Initialize Render");
 	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_PRE_RENDERER_INIT, 0, 0);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Zlib decompressor
+	m_pIZLibDecompressor = new CZLibDecompressor();
+
+	InlineInitializationProcessing("CSystem::Init ZLibDecompressor");
+
 	if (!m_env.IsDedicated())
 	{
 		if (!InitRender())
@@ -433,10 +441,12 @@ bool CSystem::Init()
 			RenderEnd();
 		}
 	}
+
 	if (m_env.pConsole != nullptr)
 	{
 		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
 	}
+
 	if (!InitSoundSystem())
 		return false;
 	if (!Init3DEngine())
@@ -494,6 +504,8 @@ bool CSystem::Init()
 	{
 		return false;
 	}
+
+
 	//====================================================
 	m_env.pConsole->AddConsoleVarSink(this);
 	ParseCMD();
