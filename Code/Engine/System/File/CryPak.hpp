@@ -29,7 +29,8 @@ using std::string_view;
 using std::wstring;
 
 namespace fs = std::filesystem;
-	#include <../Code/Tools/RC/ResourceCompiler/ZipFileFormat.h>
+
+	#include ZIP_FORMAT_H
 
 #endif
 
@@ -54,8 +55,7 @@ struct ci_less
 	}
 };
 
-interface IMemoryBlock
-{
+interface IMemoryBlock {
 };
 
 class CCryPak : public ICryPak, public ISystemEventListener

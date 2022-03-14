@@ -9,141 +9,141 @@ add_sources(
 	PROJECTS
 	Common
 	SOURCE_GROUP "3DEngine"
-		${INC}/3DEngine/CryHeaders.h
-		${INC}/3DEngine/I3DEngine.hpp
-		${INC}/3DEngine/IBindable.hpp
-		${INC}/3DEngine/IObject.hpp
-		${INC}/3DEngine/IStatObj.hpp
+		BlackBox/3DEngine/CryHeaders.h
+		BlackBox/3DEngine/I3DEngine.hpp
+		BlackBox/3DEngine/IBindable.hpp
+		BlackBox/3DEngine/IObject.hpp
+		BlackBox/3DEngine/IStatObj.hpp
 	SOURCE_GROUP "Core"
-		${INC}/Core/BaseTypes.hpp
-		${INC}/Core/Compiler/Clangspecific.h
-		${INC}/Core/Compiler/MSVCspecific.h
-		${INC}/Core/ICompressionHelper.hpp
-		${INC}/Core/IMarkers.hpp
-		${INC}/Core/Path.hpp
-		${INC}/Core/StlUtils.hpp
-		${INC}/Core/Stream.hpp
-		${INC}/Core/StringUtils.h
-		${INC}/Core/TArrays.h
-		${INC}/Core/Tarray.h
-		${INC}/Core/TypeInfo_decl.h
-		${INC}/Core/Utils.hpp
-		${INC}/Core/Version.hpp
-		${INC}/Core/smartptr.hpp
+		BlackBox/Core/BaseTypes.hpp
+		BlackBox/Core/Compiler/Clangspecific.h
+		BlackBox/Core/Compiler/MSVCspecific.h
+		BlackBox/Core/ICompressionHelper.hpp
+		BlackBox/Core/IMarkers.hpp
+		BlackBox/Core/Path.hpp
+		BlackBox/Core/StlUtils.hpp
+		BlackBox/Core/Stream.hpp
+		BlackBox/Core/StringUtils.h
+		BlackBox/Core/TArrays.h
+		BlackBox/Core/Tarray.h
+		BlackBox/Core/TypeInfo_decl.h
+		BlackBox/Core/Utils.hpp
+		BlackBox/Core/Version.hpp
+		BlackBox/Core/smartptr.hpp
 	
 	SOURCE_GROUP "Math"
-		${INC}/Math/MathHelper.hpp
-		${INC}/Math/Cry_Camera.h
-		${INC}/Math/Cry_Color4.h
-		${INC}/Math/Cry_Geo.h
-		${INC}/Math/Cry_GeoDistance.h
-		${INC}/Math/Cry_GeoIntersect.h
-		${INC}/Math/Cry_GeoOverlap.h
-		${INC}/Math/Cry_Math.h
-		${INC}/Math/Cry_Matrix.h
-		${INC}/Math/Cry_Quat.h
-		${INC}/Math/Cry_Vector2.h
-		${INC}/Math/Cry_Vector3.h
-		${INC}/Math/Cry_XOptimise.h
-		${INC}/Math/Geo.hpp
-		${INC}/Math/platform.h
+		BlackBox/Math/MathHelper.hpp
+		BlackBox/Math/Cry_Camera.h
+		BlackBox/Math/Cry_Color4.h
+		BlackBox/Math/Cry_Geo.h
+		BlackBox/Math/Cry_GeoDistance.h
+		BlackBox/Math/Cry_GeoIntersect.h
+		BlackBox/Math/Cry_GeoOverlap.h
+		BlackBox/Math/Cry_Math.h
+		BlackBox/Math/Cry_Matrix.h
+		BlackBox/Math/Cry_Quat.h
+		BlackBox/Math/Cry_Vector2.h
+		BlackBox/Math/Cry_Vector3.h
+		BlackBox/Math/Cry_XOptimise.h
+		BlackBox/Math/Geo.hpp
+		BlackBox/Math/platform.h
 	SOURCE_GROUP "Core\\\\Platform"
-		${INC}/Core/Platform/CryLibrary.h
-		${INC}/Core/Platform/Linux32Specific.h
-		${INC}/Core/Platform/Linux64Specific.h
-		${INC}/Core/Platform/LinuxSpecific.h
-		${INC}/Core/Platform/Linux_Win32Wrapper.h
-		${INC}/Core/Platform/Platform.hpp
-		${INC}/Core/Platform/PlatformDefines.hpp
-		${INC}/Core/Platform/Project/ProjectDefines.hpp
-		${INC}/Core/Platform/StlConfig.h
-		${INC}/Core/Platform/Windows.hpp
-		${INC}/Core/Platform/WindowsSpecific.hpp
-		${INC}/Core/Platform/_CryLibrary.h
-		${INC}/Core/Platform/platform_impl.inl
-		${INC}/Core/Platform/platform_impl_winapi.inl
+		BlackBox/Core/Platform/CryLibrary.h
+		BlackBox/Core/Platform/Linux32Specific.h
+		BlackBox/Core/Platform/Linux64Specific.h
+		BlackBox/Core/Platform/LinuxSpecific.h
+		BlackBox/Core/Platform/Linux_Win32Wrapper.h
+		BlackBox/Core/Platform/Platform.hpp
+		BlackBox/Core/Platform/PlatformDefines.hpp
+		BlackBox/Core/Platform/Project/ProjectDefines.hpp
+		BlackBox/Core/Platform/StlConfig.h
+		BlackBox/Core/Platform/Windows.hpp
+		BlackBox/Core/Platform/WindowsSpecific.hpp
+		BlackBox/Core/Platform/_CryLibrary.h
+		BlackBox/Core/Platform/platform_impl.inl
+		BlackBox/Core/Platform/platform_impl_winapi.inl
 	SOURCE_GROUP "Core\\\\Platform"
-		${INC}/Core/Platform/Project/ProjectDefines.hpp
+		BlackBox/Core/Platform/Project/ProjectDefines.hpp
 	SOURCE_GROUP "EntitySystem"
-		${INC}/EntitySystem/EntityDesc.hpp
-		${INC}/EntitySystem/IEntityRenderState.hpp
-		${INC}/EntitySystem/IEntitySystem.hpp
+		BlackBox/EntitySystem/EntityDesc.hpp
+		BlackBox/EntitySystem/IEntityRenderState.hpp
+		BlackBox/EntitySystem/IEntitySystem.hpp
 	SOURCE_GROUP "Input"
-		${INC}/Input/Events.h
-		${INC}/Input/IHardwareMouse.hpp
-		${INC}/Input/IInput.hpp
+		BlackBox/Input/Events.h
+		BlackBox/Input/IHardwareMouse.hpp
+		BlackBox/Input/IInput.hpp
 	SOURCE_GROUP "Input"
-		${INC}/Game/IGame.hpp
+		BlackBox/Game/IGame.hpp
 	SOURCE_GROUP "Legacy"
-		${INC}/Legacy/AgentParams.h
-		${INC}/Legacy/StlUtils.h
-		${INC}/Legacy/AnimKey.h
-		${INC}/Legacy/ColorDefs.h
-		${INC}/Legacy/CryAnimationScriptCommands.h
-		${INC}/Legacy/CryCharAnimationParams.h
-		${INC}/Legacy/CryCharFxTrailParams.h
-		${INC}/Legacy/CryCharMorphParams.h
-		${INC}/Legacy/CryCompiledFile.h
-		${INC}/Legacy/CryEngineDecalInfo.h
-		${INC}/Legacy/CryHeaders.h
-		${INC}/Legacy/CrySizer.h
-		${INC}/Legacy/CryVersion.h
-		${INC}/Legacy/Cry_Color4.h
-		${INC}/Legacy/Cry_Geo.h
-		${INC}/Legacy/Cry_GeoDistance.h
-		${INC}/Legacy/Cry_GeoIntersect.h
-		${INC}/Legacy/Cry_GeoOverlap.h
-		${INC}/Legacy/Cry_Math.h
-		${INC}/Legacy/Cry_Matrix.h
-		${INC}/Legacy/Cry_Quat.h
-		${INC}/Legacy/Cry_Vector2.h
-		${INC}/Legacy/Cry_Vector3.h
-		${INC}/Legacy/Cry_XOptimise.h
-		${INC}/Legacy/Font.h
-		${INC}/Legacy/IFont.h
-		${INC}/Legacy/IAISystem.h
-		${INC}/Legacy/IAgent.h
-		${INC}/Legacy/list2.h
-		${INC}/Legacy/IMiniLog.h
-		${INC}/Legacy/ILog.h
-		${INC}/Legacy/IBindable.h
-		${INC}/Legacy/ICryAnimation.h
-		${INC}/Legacy/IDataProbe.h
-		${INC}/Legacy/ILipSync.h
-		${INC}/Legacy/IMovieSystem.h
-		${INC}/Legacy/IPhysics.h
-		${INC}/Legacy/IProcess.h
-		${INC}/Legacy/ISound.h
-		${INC}/Legacy/IStatObj.h
-		${INC}/Legacy/IXMLDOM.h
-		${INC}/Legacy/IXml.h
-		${INC}/Legacy/MeshIdx.h
-		${INC}/Legacy/Names.h
-		${INC}/Legacy/Range.h
-		${INC}/Legacy/SerializeBuffer.h
-		${INC}/Legacy/StreamData.h
-		${INC}/Legacy/TAlloc.h
-		${INC}/Legacy/TArrays.h
-		${INC}/Legacy/TString.h
-		${INC}/Legacy/Tarray.h
-		${INC}/Legacy/XmlParser.h
-		${INC}/Legacy/XmlParserFont.h
-		${INC}/Legacy/XmlStream.h
-		${INC}/Legacy/crysound.h
-		${INC}/Legacy/crysound64.h
-		${INC}/Legacy/physinterface.h
-		${INC}/Legacy/platform.h
-		${INC}/Legacy/primitives.h
-		${INC}/Legacy/smartptr.h
+		BlackBox/Legacy/AgentParams.h
+		BlackBox/Legacy/StlUtils.h
+		BlackBox/Legacy/AnimKey.h
+		BlackBox/Legacy/ColorDefs.h
+		BlackBox/Legacy/CryAnimationScriptCommands.h
+		BlackBox/Legacy/CryCharAnimationParams.h
+		BlackBox/Legacy/CryCharFxTrailParams.h
+		BlackBox/Legacy/CryCharMorphParams.h
+		BlackBox/Legacy/CryCompiledFile.h
+		BlackBox/Legacy/CryEngineDecalInfo.h
+		BlackBox/Legacy/CryHeaders.h
+		BlackBox/Legacy/CrySizer.h
+		BlackBox/Legacy/CryVersion.h
+		BlackBox/Legacy/Cry_Color4.h
+		BlackBox/Legacy/Cry_Geo.h
+		BlackBox/Legacy/Cry_GeoDistance.h
+		BlackBox/Legacy/Cry_GeoIntersect.h
+		BlackBox/Legacy/Cry_GeoOverlap.h
+		BlackBox/Legacy/Cry_Math.h
+		BlackBox/Legacy/Cry_Matrix.h
+		BlackBox/Legacy/Cry_Quat.h
+		BlackBox/Legacy/Cry_Vector2.h
+		BlackBox/Legacy/Cry_Vector3.h
+		BlackBox/Legacy/Cry_XOptimise.h
+		BlackBox/Legacy/Font.h
+		BlackBox/Legacy/IFont.h
+		BlackBox/Legacy/IAISystem.h
+		BlackBox/Legacy/IAgent.h
+		BlackBox/Legacy/list2.h
+		BlackBox/Legacy/IMiniLog.h
+		BlackBox/Legacy/ILog.h
+		BlackBox/Legacy/IBindable.h
+		BlackBox/Legacy/ICryAnimation.h
+		BlackBox/Legacy/IDataProbe.h
+		BlackBox/Legacy/ILipSync.h
+		BlackBox/Legacy/IMovieSystem.h
+		BlackBox/Legacy/IPhysics.h
+		BlackBox/Legacy/IProcess.h
+		BlackBox/Legacy/ISound.h
+		BlackBox/Legacy/IStatObj.h
+		BlackBox/Legacy/IXMLDOM.h
+		BlackBox/Legacy/IXml.h
+		BlackBox/Legacy/MeshIdx.h
+		BlackBox/Legacy/Names.h
+		BlackBox/Legacy/Range.h
+		BlackBox/Legacy/SerializeBuffer.h
+		BlackBox/Legacy/StreamData.h
+		BlackBox/Legacy/TAlloc.h
+		BlackBox/Legacy/TArrays.h
+		BlackBox/Legacy/TString.h
+		BlackBox/Legacy/Tarray.h
+		BlackBox/Legacy/XmlParser.h
+		BlackBox/Legacy/XmlParserFont.h
+		BlackBox/Legacy/XmlStream.h
+		BlackBox/Legacy/crysound.h
+		BlackBox/Legacy/crysound64.h
+		BlackBox/Legacy/physinterface.h
+		BlackBox/Legacy/platform.h
+		BlackBox/Legacy/primitives.h
+		BlackBox/Legacy/smartptr.h
 	SOURCE_GROUP "Memory"
-		${INC}/Memory/CryMemoryManager.h
-		${INC}/Memory/CryMemoryManager_impl.h
+		BlackBox/Memory/CryMemoryManager.h
+		BlackBox/Memory/CryMemoryManager_impl.h
 	SOURCE_GROUP "Network"
-		${INC}/Network/INetwork.hpp
-		${INC}/Network/IPAddress.hpp
-		${INC}/Network/Socks.hpp
-		${INC}/Network/Socks_posix.hpp
-		${INC}/Network/Socks_win32.hpp
+		BlackBox/Network/INetwork.hpp
+		BlackBox/Network/IPAddress.hpp
+		BlackBox/Network/Socks.hpp
+		BlackBox/Network/Socks_posix.hpp
+		BlackBox/Network/Socks_win32.hpp
 	#Profiler/Config.h.in
 	#Profiler/Drawer2D.h
 	#Profiler/Hole_array.h
@@ -153,76 +153,76 @@ add_sources(
 	#Profiler/Thread.h
 	#Profiler/Utils.h
 	SOURCE_GROUP "Renderer"
-		${INC}/Renderer/Camera.hpp
-		${INC}/Renderer/IFont.hpp
-		${INC}/Renderer/IRender.hpp
-		${INC}/Renderer/IShader.hpp
-		${INC}/Renderer/IRenderAuxGeom.hpp
-		${INC}/Renderer/VertexFormats.hpp
-		${INC}/Renderer/RendElement.h
+		BlackBox/Renderer/Camera.hpp
+		BlackBox/Renderer/IFont.hpp
+		BlackBox/Renderer/IRender.hpp
+		BlackBox/Renderer/IShader.hpp
+		BlackBox/Renderer/IRenderAuxGeom.hpp
+		BlackBox/Renderer/VertexFormats.hpp
+		BlackBox/Renderer/RendElement.h
 	SOURCE_GROUP "ScriptSystem"
-		${INC}/ScriptSystem/IScriptSystem.hpp
-		${INC}/ScriptSystem/ScriptObject.hpp
-		${INC}/ScriptSystem/_ScriptableEx.hpp
+		BlackBox/ScriptSystem/IScriptSystem.hpp
+		BlackBox/ScriptSystem/ScriptObject.hpp
+		BlackBox/ScriptSystem/_ScriptableEx.hpp
 	SOURCE_GROUP "System"
-		${INC}/System/ConsoleCommands.hpp
-		${INC}/System/ConsoleRegistration.h
-		${INC}/System/File/CryFile.h
-		${INC}/System/CrySizer.hpp
-		${INC}/System/CVarOverrides.h
-		${INC}/System/File/ICryPak.hpp
-		${INC}/System/FrameProfiler.hpp
-		${INC}/System/IBitStream.hpp
-		${INC}/System/IClipBoard.hpp
-		${INC}/System/ICmdLine.hpp
-		${INC}/System/ICommand.hpp
-		${INC}/System/IConsole.hpp
-		${INC}/System/IInputHandler.hpp
-		${INC}/System/ILog.hpp
-		${INC}/System/IMiniGUI.hpp
-		${INC}/System/IMiniLog.hpp
-		${INC}/System/IPlatform.hpp
-		${INC}/System/IProcess.hpp
-		${INC}/System/IProjectManager.hpp
-		${INC}/System/IStreamEngine.h
-		${INC}/System/ISystem.hpp
-		${INC}/System/ITextModeConsole.h
-		${INC}/System/ITimer.hpp
-		${INC}/System/IValidator.hpp
-		${INC}/System/IWindow.hpp
-		${INC}/System/IWindowMessageHandler.h
-		${INC}/System/TimeValue.hpp
+		BlackBox/System/ConsoleCommands.hpp
+		BlackBox/System/ConsoleRegistration.h
+		BlackBox/System/File/CryFile.h
+		BlackBox/System/CrySizer.hpp
+		BlackBox/System/CVarOverrides.h
+		BlackBox/System/File/ICryPak.hpp
+		BlackBox/System/FrameProfiler.hpp
+		BlackBox/System/IBitStream.hpp
+		BlackBox/System/IClipBoard.hpp
+		BlackBox/System/ICmdLine.hpp
+		BlackBox/System/ICommand.hpp
+		BlackBox/System/IConsole.hpp
+		BlackBox/System/IInputHandler.hpp
+		BlackBox/System/ILog.hpp
+		BlackBox/System/IMiniGUI.hpp
+		BlackBox/System/IMiniLog.hpp
+		BlackBox/System/IPlatform.hpp
+		BlackBox/System/IProcess.hpp
+		BlackBox/System/IProjectManager.hpp
+		BlackBox/System/IStreamEngine.h
+		BlackBox/System/ISystem.hpp
+		BlackBox/System/ITextModeConsole.h
+		BlackBox/System/ITimer.hpp
+		BlackBox/System/IValidator.hpp
+		BlackBox/System/IWindow.hpp
+		BlackBox/System/IWindowMessageHandler.h
+		BlackBox/System/TimeValue.hpp
 	SOURCE_GROUP "System\\\\ZLib"
-		${INC}/System/ZLib/IZLibCompressor.h
-		${INC}/System/ZLib/IZlibDecompressor.h
-		${INC}/System/ZLib/ILZ4Decompressor.h
+		BlackBox/System/ZLib/IZLibCompressor.h
+		BlackBox/System/ZLib/IZlibDecompressor.h
+		BlackBox/System/ZLib/ILZ4Decompressor.h
 	SOURCE_GROUP "Threading"
-		${INC}/Threading/IThreadManager.h
+		BlackBox/Threading/IThreadManager.h
 	SOURCE_GROUP "Utils"
-		${INC}/Utils/Text.hpp
+		BlackBox/Utils/Text.hpp
 	)
 
 end_sources()
 
-make_directory(CopyIncludes)
-foreach(src ${SOURCES})
-	#get_filename_component(DIR ${src} )
-	file(RELATIVE_PATH
-		ITEM_PATH_REL # Output variable
-		${BLACKBOX_DIR} # Base directory
-		${src} # Absolute path to the file
-	)
-	#message("Relative path: ${ITEM_PATH_REL}")
-	get_filename_component(REL ${ITEM_PATH_REL} DIRECTORY)
-	file(INSTALL ${src} DESTINATION ${CMAKE_BINARY_DIR}/CopyIncludes/${REL})
-endforeach()
+#make_directory(CopyIncludes)
+#foreach(src ${SOURCES})
+#	#get_filename_component(DIR ${src} )
+#	file(RELATIVE_PATH
+#		ITEM_PATH_REL # Output variable
+#		${BLACKBOX_DIR} # Base directory
+#		${src} # Absolute path to the file
+#	)
+#	#message("Relative path: ${ITEM_PATH_REL}")
+#	get_filename_component(REL ${ITEM_PATH_REL} DIRECTORY)
+#	file(INSTALL ${src} DESTINATION ${CMAKE_BINARY_DIR}/CopyIncludes/${REL})
+#endforeach()
 
 CryFileContainer(Common SOLUTION_FOLDER Common)
 
 
 macro(install_headers)
 	foreach(dir ${ARGN})
-		install(DIRECTORY ${INC}/${dir} DESTINATION include/BlackBox)
+		install(DIRECTORY BlackBox/${dir} DESTINATION include/BlackBox)
 	endforeach()
 endmacro()
 
@@ -236,7 +236,7 @@ install_headers(Utils)
 
 add_library(Interface INTERFACE ${SOURCES})
 target_include_directories(Interface INTERFACE
-    $<BUILD_INTERFACE:${INC}>  
+    $<BUILD_INTERFACE:BlackBox>  
     $<INSTALL_INTERFACE:include> 
     $<INSTALL_INTERFACE:include/BlackBox/Legacy> 
 )

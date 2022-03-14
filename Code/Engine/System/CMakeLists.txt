@@ -114,3 +114,5 @@ target_link_libraries(${THIS_PROJECT} PUBLIC libzip::zip libzippp::libzippp)
 if (WINDOWS)
 	target_link_libraries(${THIS_PROJECT} PUBLIC Wininet)
 endif()
+
+target_compile_definitions(${THIS_PROJECT} PRIVATE "-DZIP_FORMAT_H=\"${BLACKBOX_DIR}/Code/Tools/RC/ResourceCompiler/ZipFileFormat.h\"")
