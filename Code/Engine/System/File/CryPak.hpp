@@ -54,6 +54,10 @@ struct ci_less
 	}
 };
 
+interface IMemoryBlock
+{
+};
+
 class CCryPak : public ICryPak, public ISystemEventListener
 {
 public:
@@ -86,6 +90,8 @@ public:
 	virtual bool         OpenPack(const char* pName, unsigned nFlags = FLAGS_PATH_REAL) override;
 	virtual bool         OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags = FLAGS_PATH_REAL) override;
 	virtual bool         ClosePack(const char* pName, unsigned nFlags = FLAGS_PATH_REAL) override;
+	bool                 OpenPackCommon(const char* szBindRoot, const char* pName, unsigned int nPakFlags, IMemoryBlock* pData = 0);
+	bool                 OpenPacksCommon(const char* szDir, const char* pWildcardIn, CryPathString& wildcardPath, int nPakFlags, std::vector<CryPathString>* pFullPaths = NULL);
 	virtual bool         OpenPacks(const char* pWildcard, unsigned nFlags = FLAGS_PATH_REAL) override;
 	virtual bool         OpenPacks(const char* pBindingRoot, const char* pWildcard, unsigned nFlags = FLAGS_PATH_REAL) override;
 	virtual bool         ClosePacks(const char* pWildcard, unsigned nFlags = FLAGS_PATH_REAL) override;
@@ -134,9 +140,9 @@ public:
 	}
 
 	// Inherited via ISystemEventListener
-	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+	virtual void  OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 
-	ZipFile::File         create_file(ZipFile::CentralDirectory& entry, void* header);
+	ZipFile::File create_file(ZipFile::CentralDirectory& entry, void* header);
 
 	using KeyType = string_view;
 	template<typename Type>

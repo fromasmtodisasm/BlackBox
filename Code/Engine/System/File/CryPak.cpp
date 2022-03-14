@@ -8,7 +8,7 @@
 	#include <cstdarg>
 	#include <string>
 
-	#define CRY_NATIVE_PATH_SEPSTR "/"
+	#define BB_NATIVE_PATH_SEPSTR "/"
 
 using namespace ZipFile;
 
@@ -125,6 +125,8 @@ namespace filehelpers
 CCryPak::CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes)
     : m_pLog(pLog)
 {
+	std::replace(m_strDataRootWithSlash.begin(), m_strDataRootWithSlash.end(), g_cNativeSlash, g_cNonNativeSlash);
+	m_strDataRootWithSlash[m_strDataRootWithSlash.size() - 1] = g_cNativeSlash;
 	m_arrOpenFiles.resize(128);
 }
 
@@ -143,19 +145,16 @@ void CCryPak::Release()
 		delete this;
 }
 
-bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPackCommon(const char* szBindRoot, const char* szFullPath, unsigned int nPakFlags, IMemoryBlock* pData)
 {
-	string fullPath;
-	fullPath.resize(_MAX_PATH);
-	AdjustFileName(pName, fullPath.data(), 0);
-	SArchiveHandle ar{fullPath.c_str()};
+	SArchiveHandle ar{szFullPath};
 	if (!ar)
 	{
-		ar = SArchiveHandle{fullPath.c_str()};
+		ar = SArchiveHandle{szFullPath};
 		if (!ar) return false;
 	}
 
-	CryComment("Opening pak file %s", fullPath.c_str());
+	CryComment("Opening pak file %s", szFullPath);
 
 	for (auto& entry : ar)
 	{
@@ -171,6 +170,42 @@ bool CCryPak::OpenPack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/
 	return true;
 }
 
+bool CCryPak::OpenPack(const char* szPath, unsigned nFlags)
+{
+	CryPathString fullPath;
+	fullPath.resize(_MAX_PATH);
+	AdjustFileName(szPath, fullPath.data(), nFlags);
+
+	CryPathString bindRoot;
+	size_t        lastSlashIdx = fullPath.rfind(g_cNativeSlash);
+
+	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE || BB_PLATFORM_ORBIS
+	if (lastSlashIdx == CryPathString::npos)
+	{
+		lastSlashIdx = fullPath.rfind(g_cNonNativeSlash);
+	}
+	#endif
+	if (lastSlashIdx != CryPathString::npos)
+	{
+		bindRoot.assign(fullPath, lastSlashIdx + 1);
+	}
+	else
+	{
+		m_pLog->LogError("Pak file %s has absolute path %s, which is strange", szPath, fullPath.c_str());
+	}
+
+	bool result = OpenPackCommon(bindRoot.data(), fullPath.data(), nFlags, nullptr);
+
+	#if 0
+	if (pFullPath)
+	{
+		pFullPath->assign(fullPath);
+	}
+	#endif
+
+	return result;
+}
+
 bool CCryPak::OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
 	return OpenPack(pName, nFlags);
@@ -181,25 +216,92 @@ bool CCryPak::ClosePack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*
 	return false;
 }
 
-bool CCryPak::OpenPacks(const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPacksCommon(const char* szDir, const char* pWildcardIn, CryPathString& wildcardPath, int nPakFlags, std::vector<CryPathString>* pFullPaths)
 {
-	_finddata_t c_file;
-	intptr_t    hFile;
-
-	if ((hFile = FindFirst((string(pWildcard) + "\\*.*").c_str(), &c_file)) == -1L)
+	if (wildcardPath.find('*') == CryPathString::npos && wildcardPath.find('?') != CryPathString::npos)
 	{
-		return false;
+		// No wildcards, just open pack
+		if (OpenPackCommon(szDir, wildcardPath.data(), nPakFlags))
+		{
+			if (pFullPaths)
+			{
+				pFullPaths->push_back(wildcardPath);
+			}
+		}
+		return true;
 	}
+
+	// Note this code suffers from a common FindFirstFile problem - a search
+	// for *.pak will also find *.pak? (since the short filename version of *.pakx,
+	// for example, is *.pak). For more information, see
+	// http://blogs.msdn.com/oldnewthing/archive/2005/07/20/440918.aspx
+	// Therefore this code performs an additional check to make sure that the
+	// found filenames match the spec.
+	_finddata_t   fd;
+	intptr_t      h = FindFirst(wildcardPath.data(), &fd /* , FLAGS_PATH_REAL */);
+
+	CryPathString wildcardFullPath;
+	#if 0
+	wildcardFullPath.Format("*.%s", PathUtil::GetExt(pWildcardIn));
+	#else
+	wildcardFullPath.resize(256);
+	sprintf(wildcardFullPath.data(), "*.%s", PathUtil::GetExt(pWildcardIn));
+	#endif
+
+	// buffer to concatenate filenames to the directory part of wildcardPath
+	//CryPathString::MAX_SIZE = 256
+	char destName[256];
+	strcpy(destName, wildcardPath.data());
+	char* pDirectoriesEnd = strrchr(destName, g_cNativeSlash);
+
+	#if BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_APPLE || BB_PLATFORM_ORBIS
+	if (!pDirectoriesEnd)
+		pDirectoriesEnd = strrchr(destName, g_cNonNativeSlash);
+	#endif
+	if (!pDirectoriesEnd)
+		pDirectoriesEnd = destName;
 	else
+		++pDirectoriesEnd;
+
+	const size_t remainingBufferCapacity = sizeof(destName) - (pDirectoriesEnd - destName);
+	if (h != -1)
 	{
+		std::vector<string> files;
 		do
 		{
-			OpenPack(c_file.name);
-		} while (gEnv->pCryPak->FindNext(hFile, &c_file) == 0);
+			strncpy(pDirectoriesEnd, fd.name, remainingBufferCapacity);
+			if (PathUtil::MatchWildcard(destName, wildcardFullPath.data()))
+				files.push_back(strlwr(destName));
+		} while (FindNext(h, &fd) >= 0);
 
-		gEnv->pCryPak->FindClose(hFile);
+		// Open files in alphabet order.
+		std::sort(files.begin(), files.end());
+		bool bAllOk = true;
+		for (int i = 0; i < (int)files.size(); i++)
+		{
+			bAllOk = OpenPackCommon(szDir, files[i].c_str(), nPakFlags) && bAllOk;
+
+			if (pFullPaths)
+			{
+				pFullPaths->push_back(files[i].c_str());
+			}
+		}
+
+		FindClose(h);
+		return bAllOk;
 	}
-	return true;
+
+	return false;
+}
+
+bool CCryPak::OpenPacks(const char* pWildcardIn, unsigned nFlags /* = FLAGS_PATH_REAL*/)
+{
+	CryPathString wildcardPath;
+	wildcardPath.resize(_MAX_PATH);
+	AdjustFileName(pWildcardIn, wildcardPath.data(), nFlags | FLAGS_COPY_DEST_ALWAYS);
+	string strBindRoot = PathUtil::GetParentDirectory(wildcardPath);
+	strBindRoot += g_cNativeSlash;
+	return OpenPacksCommon(strBindRoot.c_str(), pWildcardIn, wildcardPath, nFlags /*, pFullPaths*/);
 }
 
 bool CCryPak::OpenPacks(const char* pBindingRoot, const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
@@ -455,7 +557,7 @@ FILE* CCryPak::FOpenRaw(const char* pName, const char* mode)
 }
 size_t CCryPak::FReadRaw(void* pData, size_t nSize, size_t nCount, FILE* hFile)
 {
-	//CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
+	//BB_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
 
 	//SAutoCollectFileAcessTime accessTime(this);
 
@@ -473,7 +575,7 @@ size_t CCryPak::FReadRaw(void* pData, size_t nSize, size_t nCount, FILE* hFile)
 
 CFileDataPtr CCryPak::GetFileData(const char* szName, unsigned int& nArchiveFlags)
 {
-	//CRY_PROFILE_FUNCTION(PROFILE_SYSTEM);
+	//BB_PROFILE_FUNCTION(PROFILE_SYSTEM);
 
 	CFileDataPtr* pResult = 0;
 
@@ -504,7 +606,7 @@ bool /*CCryPak::*/ IsAbsPath(const char* pPath)
 
 const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_nMaxPath], unsigned nFlags)
 {
-	//CRY_PROFILE_FUNCTION(PROFILE_SYSTEM);
+	//BB_PROFILE_FUNCTION(PROFILE_SYSTEM);
 
 	{
 		// in many cases, the path will not be long, so there's no need to allocate so much..
@@ -539,11 +641,11 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 	//////////////////////////////////////////////////////////////////////////
 	if (
 	    (!filehelpers::CheckPrefix(szDestPath, m_strDataRootWithSlash.c_str()) &&
-	     !filehelpers::CheckPrefix(szDestPath, "." CRY_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, ".." CRY_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, "editor" CRY_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, "gamedata" CRY_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, "engine" CRY_NATIVE_PATH_SEPSTR)))
+	     !filehelpers::CheckPrefix(szDestPath, "." BB_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, ".." BB_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, "editor" BB_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, "gamedata" BB_NATIVE_PATH_SEPSTR) &&
+	     !filehelpers::CheckPrefix(szDestPath, "engine" BB_NATIVE_PATH_SEPSTR)))
 	{
 		// Add data folder prefix.
 		string tmp = m_strDataRootWithSlash + szDestPath;

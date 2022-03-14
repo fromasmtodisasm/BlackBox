@@ -894,6 +894,8 @@ bool CSystem::InitFileSystem()
 	//CryFatalError("Cannot open Engine.pak");
 	if (!m_env.pCryPak->OpenPack("Data.pak"))
 		0;
+	if (!m_env.pCryPak->OpenPacks("Textures*.pak"))
+		0;
 	//CryFatalError("Cannot open Engine.pak");
 #endif
 

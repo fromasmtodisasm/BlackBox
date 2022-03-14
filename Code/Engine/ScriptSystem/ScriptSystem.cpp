@@ -18,7 +18,6 @@
 	#define new DEBUG_CLIENTBLOCK
 #endif
 #include <BlackBox/System/File/CryFile.h>
-using CryPathString = string;
 
 #define INDENT_LOG_DURING_SCOPE(i, format, ...) CryLog(format, __VA_ARGS__)
 

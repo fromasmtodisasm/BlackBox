@@ -833,3 +833,4 @@ namespace PathUtil
 		return projectFilePath;
 	}
 } // namespace PathUtil
+using CryPathString = string;

@@ -276,8 +276,8 @@ namespace Cry
 
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
-#if !defined(_DEBUG) && !defined(CRY_UBSAN)
-	#define ILINE CRY_FORCE_INLINE
+#if !defined(_DEBUG) && !defined(BB_UBSAN)
+	#define ILINE BB_FORCE_INLINE
 #else
 	#define ILINE inline
 #endif
@@ -474,3 +474,5 @@ bool InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngin
 	typedef std::weak_ptr<const name>   name##ConstWeakPtr;
 
 #define fxopen fopen
+
+#define interface struct
