@@ -28,7 +28,7 @@ target_include_directories(${THIS_PROJECT} PRIVATE
 #target_link_libraries(${THIS_PROJECT} PRIVATE zlib md5 psapi)
 target_compile_options(${THIS_PROJECT} PRIVATE /EHsc)
 
-target_compile_definitions(${THIS_PROJECT} PRIVATE -DCRYTOOLS -DRESOURCECOMPILERPC_EXPORTS -DOFFLINE_COMPUTATION)
+target_compile_definitions(${THIS_PROJECT} PRIVATE -DCRYTOOLS -DRESOURCECOMPILERPC_EXPORTS -DOFFLINE_COMPUTATION -DRC_COMPILER)
 
 target_link_libraries(${THIS_PROJECT} PRIVATE Crc32c::crc32c)
 target_link_libraries(${THIS_PROJECT} PRIVATE ZLIB::ZLIB)

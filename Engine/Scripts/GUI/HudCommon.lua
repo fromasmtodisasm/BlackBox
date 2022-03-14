@@ -598,19 +598,19 @@ function Hud:CommonInit()
 	self.damage_icon_ud=System:LoadImage("Textures/hud/damage_gradT.dds");
 	
 	-- mission textures
-	self.missioncheckbox=System:LoadImage("Textures/Hud/new/MissionBoxCheckbox.tga");
-	self.missioncheckboxcomp=System:LoadImage("Textures/Hud/new/MissionCheckboxComp.tga");
+	self.missioncheckbox=System:LoadImage("Textures/Hud/new/MissionBoxCheckbox.dds");
+	self.missioncheckboxcomp=System:LoadImage("Textures/Hud/new/MissionCheckboxComp.dds");
 	-- [Michael G.], texture not used???
 	-- self.missionboxframe=System:LoadImage("Textures/Hud/new/MissionBoxFrame.tga");
-	self.radimessageicon=System:LoadImage("Textures/Hud/new/RadiomessageIcon.tga");
+	self.radimessageicon=System:LoadImage("Textures/Hud/new/RadiomessageIcon.dds");
 	
 	-- general use textures
-	self.white_dot=System:LoadImage("Textures/hud/white_dot.tga");
-	self.black_dot=System:LoadImage("Textures/hud/black_dot.tga");
+	self.white_dot=System:LoadImage("Textures/hud/white_dot.dds");
+	self.black_dot=System:LoadImage("Textures/hud/black_dot.dds");
 	self.blue=System:LoadImage("Textures/hud/blue.dds");
 
 	--	self.flashlight_blinding=System:LoadImage("Textures/flight");
-	self.flashlight_blinding=System:LoadImage("Textures/fl");	
+	self.flashlight_blinding=System:LoadImage("Textures/flight.tga");	
 
 	-- keycard icons
 	self.KeyItem= {

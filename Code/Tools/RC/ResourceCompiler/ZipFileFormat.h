@@ -4,6 +4,7 @@
 #include <memory>
 #include <map>
 #include <BlackBox/Core/smartptr.hpp>
+#include <BlackBox/System/ZLib/IZlibDecompressor.h>
 
 #if !BB_PLATFORM_LINUX && !BB_PLATFORM_ANDROID && !BB_PLATFORM_APPLE
 	#pragma pack(push)
@@ -341,7 +342,9 @@ namespace ZipFile
 	};
 
 	std::string_view remove_leading_ups(std::string_view str);
-	void             write_archive_recursive(ArchiveInfo& ar, const std::string& file, std::ofstream& of);
+	void             WriteArchiveRecursive(ArchiveInfo& ar, std::filesystem::directory_entry dir_entry, std::ofstream& of);
+
+	void             WriteDirectoryEntry(std::ofstream& of, ZipFile::ArchiveInfo& ar, const std::filesystem::directory_entry& dir_entry);
 
 	template<class Header>
 	void WriteTime(Header& cd);
@@ -383,10 +386,9 @@ namespace ZipFile
 		char*        base;
 		bool         compressed;
 
-
-
 		static File* CopyToHeap(File* file)
 		{
+#ifndef RC_COMPILER
 			IZLibInflateStream* pInflateStream = ((CSystem*)(gEnv->pSystem))->GetIZLibDecompressor()->CreateInflateStream();
 
 			File*               result;
@@ -407,6 +409,9 @@ namespace ZipFile
 			result = new File{0, file->size, file->compressed_size, file->name, BaseHeapAddres, file->compressed};
 
 			return result;
+#else
+			return nullptr;
+#endif
 		}
 
 		static File* CreateFrom(File* file)

@@ -8,7 +8,6 @@
 //#include <crc32c/crc32c.h>
 #include <zlib.h>
 
-
 namespace ZipFile
 {
 	MemoryArena g_FileDataArena;
@@ -25,7 +24,7 @@ namespace ZipFile
 	{
 		LocalFileHeader& lfh = *(LocalFileHeader*)(char*)header;
 
-		auto crc = crc32(0, (const Bytef*)data, data_size);
+		auto             crc = crc32(0, (const Bytef*)data, data_size);
 
 		lfh.Signature        = LocalFileHeader::SIGNATURE;
 		lfh.VersionNeeded    = SPakFileVersion{0, 10};
@@ -101,57 +100,56 @@ namespace ZipFile
 		MakeLocalHeader(&data[0], path, 0, data_size, file_data);
 	}
 
-#if 1
-	void write_archive_recursive(ArchiveInfo& ar, const std::string& file, std::ofstream& of)
+	void WriteArchiveRecursive(ArchiveInfo& ar, std::filesystem::directory_entry dir_entry, std::ofstream& of)
 	{
-		string pattern = file;
-		std::replace(pattern.begin(), pattern.end(), '\\', '/');
-		if (!fs::exists(pattern))
+		if (!dir_entry.exists())
 		{
-			printf("Path [%s] dont exists\n", pattern.c_str());
+			printf("Path [%s] dont exists\n", dir_entry.path().string().c_str());
 			abort();
 		}
-		auto it = std::filesystem::directory_iterator{pattern};
-		for (auto const& dir_entry : std::filesystem::directory_iterator{pattern})
+
+		std::error_code ec;
+		for (fs::directory_iterator next(dir_entry, ec), end; next != end; ++next)
 		{
-			auto path     = dir_entry.path().string();
-			auto filename = dir_entry.path().filename().string();
-			std::replace(path.begin(), path.end(), '\\', '/');
 			if (!g_Options.exclude.empty())
 			{
-				if (regex_match(path, std::regex{g_Options.exclude, std::regex::extended}))
+				if (regex_match(next->path().string(), std::regex{g_Options.exclude, std::regex::extended}))
 				{
 					continue;
 				}
 			}
+			WriteDirectoryEntry(of, ar, *next);
+		}
+	}
+	void WriteDirectoryEntry(std::ofstream& of, ZipFile::ArchiveInfo& ar, const std::filesystem::directory_entry& dir_entry)
+	{
+		{
+			auto path         = dir_entry.path().string();
+			auto reduced_path = remove_leading_ups(path);
 
 			if (!dir_entry.is_regular_file())
 			{
 				if (path[path.size() - 1] != '/') path += '/';
 			}
 
+			CFileMapping fm(path.data());
+
+			auto         file_data = (void*)fm.getData();
+			auto         file_size = fm.getSize();
+
+			FillLocalFileHeaderAndCentralDirectory(reduced_path, file_size, file_data, of, ar);
+
+			if (g_Options.verbose)
 			{
-				auto         reduced_path = remove_leading_ups(path);
-				CFileMapping fm(path.data());
+				std::cout << path << std::endl;
+			}
+			ar.NumberOfFiles++;
 
-				auto         file_data = (void*)fm.getData();
-				auto         file_size = fm.getSize();
-
-				FillLocalFileHeaderAndCentralDirectory(reduced_path, file_size, file_data, of, ar);
-
-#endif
-				if (g_Options.verbose)
+			if (!dir_entry.is_regular_file())
+			{
+				if (g_Options.recursion)
 				{
-					std::cout << path << std::endl;
-				}
-				ar.NumberOfFiles++;
-
-				if (!dir_entry.is_regular_file())
-				{
-					if (g_Options.recursion)
-					{
-						write_archive_recursive(ar, path, of);
-					}
+					WriteArchiveRecursive(ar, dir_entry, of);
 				}
 			}
 		}
@@ -202,21 +200,25 @@ namespace ZipFile
 		if (of.is_open())
 		{
 #if 1
-			info.NumberOfFiles = 1;
+			info.NumberOfFiles = 0;
 			info.CurrentOffset = 0;
 
 			string file        = pattern;
 			std::replace(file.begin(), file.end(), '\\', '/');
 
-			if (fs::is_directory(pattern))
+			auto dir_entry = std::filesystem::directory_entry(file);
+			if (dir_entry.is_directory())
 			{
-				if (pattern[pattern.size() - 1] != '/') file += '/';
+				if (pattern[pattern.size() - 1] != '/') dir_entry = fs::directory_entry(file += '/');
+				info.NumberOfFiles++;
+				FillLocalFileHeaderAndCentralDirectory(dir_entry.path().string(), 0, 0, of, info);
+				WriteArchiveRecursive(info, dir_entry, of);
 			}
-			FillLocalFileHeaderAndCentralDirectory(file, 0, 0, of, info);
+			else
+			{
+				WriteDirectoryEntry(of, info, dir_entry);
+			}
 
-			//auto _offset = offsetof(LocalFileHeader, number_of_files);
-
-			write_archive_recursive(info, file, of);
 			auto offset = (uint32)of.tellp();
 			of.write((const char*)g_CentralDirArena.data(), g_CentralDirArena.size());
 
@@ -227,7 +229,7 @@ namespace ZipFile
 			cdr_end.numEntriesTotal  = info.NumberOfFiles;
 			of.write((const char*)&cdr_end, sizeof cdr_end);
 #else
-		of.write((const char*)&ar, sizeof LocalFileHeader);
+			of.write((const char*)&ar, sizeof LocalFileHeader);
 #endif
 		}
 		else
@@ -303,7 +305,7 @@ namespace ZipFile
 
 	string_view file_name(CentralDirectory& entry, void* header)
 	{
-		return string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength);//
+		return string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
 	}
 
 	void extract(const string& file, const string& base, const string& pattern)
