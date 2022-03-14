@@ -77,7 +77,7 @@ void MineWorld::init()
 void MineUI::init()
 {
 	crossHairTexture = gEnv->pRenderer->LoadTexture(
-	    "Data/images/crosshair.png", nullptr, false);
+	    "Textures/crosshair.png", nullptr, false);
 }
 
 void MineUI::draw() const
