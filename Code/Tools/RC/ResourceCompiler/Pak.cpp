@@ -33,7 +33,8 @@ namespace ZipFile
 		lfh.Method           = 0;
 		lfh.nLastModTime     = 0;
 		lfh.nLastModDate     = 0;
-		lfh.desc             = DataDescriptor{.CRC32 = crc, .SizeCompressed = 0, .SizeUncompressed = data_size};
+		// If file uncompressed then sizeCompressed and sizeUncompressed should match
+		lfh.desc             = DataDescriptor{.CRC32 = crc, .SizeCompressed = data_size, .SizeUncompressed = data_size};
 		lfh.FileNameLength   = path.length();
 		lfh.ExtraFieldLength = 0;
 
