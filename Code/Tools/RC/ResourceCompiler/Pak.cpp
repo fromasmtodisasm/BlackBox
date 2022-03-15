@@ -127,9 +127,9 @@ namespace ZipFile
 			auto path         = dir_entry.path().string();
 			std::replace(path.begin(), path.end(), '\\', '/');
 			dir_entry         = fs::directory_entry(path);
-			auto reduced_path = remove_leading_ups(path);
+			path = remove_leading_ups(path);
 
-			if (!dir_entry.is_regular_file())
+			if (dir_entry.is_directory())
 			{
 				if (path[path.size() - 1] != '/') path += '/';
 			}
@@ -139,7 +139,7 @@ namespace ZipFile
 			auto         file_data = (void*)fm.getData();
 			auto         file_size = fm.getSize();
 
-			FillLocalFileHeaderAndCentralDirectory(reduced_path, file_size, file_data, of, ar);
+			FillLocalFileHeaderAndCentralDirectory(path, file_size, file_data, of, ar);
 
 			if (g_Options.verbose)
 			{
@@ -193,7 +193,7 @@ namespace ZipFile
 	}
 
 	///////
-	void write_archive(const std::string& pattern, const std::string out_file)
+	void CreateArchive(const std::string& pattern, const std::string out_file)
 	{
 		ArchiveInfo   info{0};
 		CDREnd        cdr_end{};
@@ -241,12 +241,12 @@ namespace ZipFile
 		}
 	}
 
-	SArchiveHandle archive_open(std::string_view file)
+	SArchiveHandle OpenArchive(std::string_view file)
 	{
 		return SArchiveHandle(file);
 	}
 
-	void list(const string& file)
+	void List(const string& file)
 	{
 		if (auto ar = SArchiveHandle(file); ar)
 		{
@@ -310,7 +310,7 @@ namespace ZipFile
 		return string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
 	}
 
-	void extract(const string& file, const string& base, const string& pattern)
+	void Extract(const string& file, const string& base, const string& pattern)
 	{
 		if (auto ar = SArchiveHandle(file); ar)
 		{

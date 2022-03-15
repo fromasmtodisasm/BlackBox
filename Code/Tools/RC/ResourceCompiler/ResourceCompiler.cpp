@@ -145,15 +145,15 @@ int main(int argc, char* argv[])
 
 	if (g_Options.list)
 	{
-		list(g_Options.input_file);
+		List(g_Options.input_file);
 		//return 0;
 	}
 	else
 	{
 		if (g_Options.create)
-			write_archive(g_Options.input_folder, g_Options.output_file);
+			CreateArchive(g_Options.input_folder, g_Options.output_file);
 		else if (g_Options.extract)
-			extract(g_Options.extract_file, g_Options.extract_base, g_Options.extract_pattern);
+			Extract(g_Options.extract_file, g_Options.extract_base, g_Options.extract_pattern);
 	}
 
 	if (g_Options.testing)

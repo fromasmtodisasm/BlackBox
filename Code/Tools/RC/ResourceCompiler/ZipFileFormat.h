@@ -355,12 +355,12 @@ namespace ZipFile
 	    std::ofstream&          of,
 	    ArchiveInfo&            info);
 
-	void           write_archive(const std::string& pattern, const std::string out_file);
-	SArchiveHandle archive_open(std::string_view file);
-	void           list(const string& file);
+	void           CreateArchive(const std::string& pattern, const std::string out_file);
+	SArchiveHandle OpenArchive(std::string_view file);
+	void           List(const string& file);
 	void           create_file(LocalFileHeader& ar, fs::path filename, SRange range);
 	void           create_file(LocalFileHeader& ar, fs::path filename, uint32 offset, uint32 size);
-	void           extract(const string& file, const string& base, const string& pattern);
+	void           Extract(const string& file, const string& base, const string& pattern);
 
 #if 0
 	template<typename F>
