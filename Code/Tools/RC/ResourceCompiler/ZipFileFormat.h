@@ -344,7 +344,7 @@ namespace ZipFile
 	std::string_view remove_leading_ups(std::string_view str);
 	void             WriteArchiveRecursive(ArchiveInfo& ar, std::filesystem::directory_entry dir_entry, std::ofstream& of);
 
-	void             WriteDirectoryEntry(std::ofstream& of, ZipFile::ArchiveInfo& ar, const std::filesystem::directory_entry& dir_entry);
+	void             WriteDirectoryEntry(std::ofstream& of, ZipFile::ArchiveInfo& ar, std::filesystem::directory_entry dir_entry);
 
 	template<class Header>
 	void WriteTime(Header& cd);

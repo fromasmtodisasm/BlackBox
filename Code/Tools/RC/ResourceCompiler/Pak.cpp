@@ -121,10 +121,12 @@ namespace ZipFile
 			WriteDirectoryEntry(of, ar, *next);
 		}
 	}
-	void WriteDirectoryEntry(std::ofstream& of, ZipFile::ArchiveInfo& ar, const std::filesystem::directory_entry& dir_entry)
+	void WriteDirectoryEntry(std::ofstream& of, ZipFile::ArchiveInfo& ar, std::filesystem::directory_entry dir_entry)
 	{
 		{
 			auto path         = dir_entry.path().string();
+			std::replace(path.begin(), path.end(), '\\', '/');
+			dir_entry         = fs::directory_entry(path);
 			auto reduced_path = remove_leading_ups(path);
 
 			if (!dir_entry.is_regular_file())

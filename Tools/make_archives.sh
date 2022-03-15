@@ -16,13 +16,14 @@ function create()
 	rc --create $1 $GAME_DATA/$1.pak --verbose
 }
 
+##############################################################
 create Data
-create Engine --exclude ".*Shaders/|.*/Textures.*"
-
+##############################################################
 pushd .
+##############################################################
 cd Engine
-create Scripts
-create Textures
-create Textures1
-create Textures2
+for filename in Scripts Textures Textures1 Textures2 Fonts; do
+    create $filename
+done
+##############################################################
 popd
