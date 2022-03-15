@@ -1,5 +1,7 @@
 #pragma once
 #include <BlackBox/System/ICmdLine.hpp>
+//#include<BlackBox / System / File / ICryPak.hpp>
+
 namespace PathUtil
 {
 	namespace detail
@@ -782,6 +784,12 @@ namespace PathUtil
 	{
 		path.replace('\\', '/');
 		path.MakeLower();
+	}
+
+	inline string GetGameFolder()
+	{
+		CRY_ASSERT(gEnv && gEnv->pCryPak);
+		return gEnv->pCryPak->GetGameFolder();
 	}
 
 #define STACK_ARRAY(type, name, length) \

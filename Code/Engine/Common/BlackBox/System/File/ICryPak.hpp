@@ -80,7 +80,11 @@ struct ICryArchive : public _reference_target_t
 		FLAGS_DONT_COMPACT        = 1 << 5,
 
 		// if this is set, CryPak doesn't try to transform the path according to the MOD subdirectories
-		FLAGS_IGNORE_MODS         = 1 << 6
+		FLAGS_IGNORE_MODS         = 1 << 6,
+
+		//! Override pak - paks opened with this flag go at the end of the list and contents will be found before other paks.
+		//! Used for patching.
+		FLAGS_OVERRIDE_PAK = BIT32(10),
 	};
 
 	virtual ~ICryArchive()
@@ -267,6 +271,21 @@ struct ICryPak
 	virtual void        AddMod(const char* szMod)                                                                     = 0;
 	//! removes a mod from the list
 	virtual void        RemoveMod(const char* szMod)                                                                  = 0;
+	//! returns indexed mod path, or NULL if out of range
+	virtual const char* GetMod(int index) = 0;
+
+	//! Processes an alias command line containing multiple aliases.
+	virtual void ParseAliases(const char* szCommandLine) = 0;
+	//! adds or removes an alias from the list - if bAdd set to false will remove it
+	virtual void SetAlias(const char* szName, const char* szAlias, bool bAdd) = 0;
+	//! gets an alias from the list, if any exist.
+	//! if bReturnSame==true, it will return the input name if an alias doesn't exist. Otherwise returns NULL
+	virtual const char* GetAlias(const char* szName, bool bReturnSame = true) = 0;
+
+	// Set and Get "Game" folder (/Game, /Game04, ...)
+	virtual void        SetGameFolder(const char* szFolder) = 0;
+	virtual const char* GetGameFolder() const = 0;
+
 
 	struct PakInfo
 	{

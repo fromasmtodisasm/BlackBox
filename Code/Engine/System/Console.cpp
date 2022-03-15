@@ -902,6 +902,35 @@ int CXConsole::Register(const char* name, int* src, float defaultvalue, int flag
 	return static_cast<int>(defaultvalue);
 }
 
+ICVar* CXConsole::RegisterCVarGroup(const char* szName, const char* szFileName)
+{
+	AssertName(szName);
+	assert(szFileName);
+
+	// suppress cvars not starting with sys_spec_ as
+	// cheaters might create cvars before we created ours
+	if (strnicmp(szName, "sys_spec_", 9) != 0)
+		return 0;
+
+	ICVar* pCVar = stl::find_in_map(m_mapVariables, szName, NULL);
+	if (pCVar)
+		return pCVar; // Already registered, this is expected when loading engine specs after game specs.
+
+	#if 0
+	const string name(szName);
+	CXConsoleVariableCVarGroup* pCVarGroup = new CXConsoleVariableCVarGroup(this, name, szFileName, VF_COPYNAME);
+
+	pCVar = pCVarGroup;
+
+	RegisterVar(name, pCVar, CXConsoleVariableCVarGroup::OnCVarChangeFunc);
+
+	return pCVar;
+	#else
+	return nullptr;
+	#endif
+}
+
+
 ICVar* CXConsole::RegisterInternal(const char* sName, int* src, int iValue, int nFlags, const char* help, ConsoleVarFunc pChangeFunc, bool allowModify)
 {
 	AssertName(sName);

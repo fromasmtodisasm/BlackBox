@@ -577,6 +577,80 @@ void CSystem::CreateSystemVars()
 	REGISTER_CVAR2("sys_MaxFPS", &g_cvars.sys_MaxFPS, DEFAULT_SYS_MAX_FPS, VF_NULL, "Limits the frame rate to specified number n (if n>0 and if vsync is disabled).\n"
 	                                                                                " 0 = on PC if vsync is off auto throttles fps while in menu or game is paused (default)\n"
 	                                                                                "-1 = off");
+	g_cvars.sys_build_folder = REGISTER_STRING("sys_build_folder", "", 0, "Optionally specifies external full path to the build folder to read pak files from. Can be a full path to an external folder or a relative path to a folder inside of the local build.");
+	if (m_env.IsEditor())
+	{
+		// In Editor our Pak priority is always 0
+		g_cvars.pakVars.nPriority = ePakPriorityFileFirst;
+	}
+#ifndef _RELEASE
+	m_sys_resource_cache_folder = REGISTER_STRING("sys_resource_cache_folder", "Editor\\ResourceCache", 0, "Folder for resource compiled locally. Managed by Sandbox.");
+#endif
+
+	attachVariable("sys_PakPriority", &g_cvars.pakVars.nPriority, "If set to 1, tells CryPak to try to open the file in pak first, then go to file system", VF_READONLY | VF_CHEAT);
+	attachVariable("sys_PakTotalInMemorySizeLimit", &g_cvars.pakVars.nTotalInMemoryPakSizeLimit, "Total limit (in MB) for all in memory paks");
+	attachVariable("sys_PakLoadCache", &g_cvars.pakVars.nLoadCache, "Load in memory paks from _LoadCache folder");
+	attachVariable("sys_PakLoadModePaks", &g_cvars.pakVars.nLoadModePaks, "Load mode switching paks from modes folder");
+	attachVariable("sys_PakStreamCache", &g_cvars.pakVars.nStreamCache, "Load in memory paks for faster streaming (cgf_cache.pak,dds_cache.pak)");
+	attachVariable("sys_PakSaveTotalResourceList", &g_cvars.pakVars.nSaveTotalResourceList, "Save resource list");
+	attachVariable("sys_PakSaveLevelResourceList", &g_cvars.pakVars.nSaveLevelResourceList, "Save resource list when loading level");
+	attachVariable("sys_PakSaveFastLoadResourceList", &g_cvars.pakVars.nSaveFastloadResourceList, "Save resource list during initial loading");
+	attachVariable("sys_PakSaveMenuCommonResourceList", &g_cvars.pakVars.nSaveMenuCommonResourceList, "Save resource list during front end menu flow");
+	attachVariable("sys_PakMessageInvalidFileAccess", &g_cvars.pakVars.nMessageInvalidFileAccess, "Message Box synchronous file access when in game");
+	attachVariable("sys_PakLogInvalidFileAccess", &g_cvars.pakVars.nLogInvalidFileAccess, "Log synchronous file access when in game");
+}
+
+static string ConcatPath(const char* szPart1, const char* szPart2)
+{
+	if (szPart1[0] == 0)
+		return szPart2;
+
+	string ret;
+
+	ret.reserve(strlen(szPart1) + 1 + strlen(szPart2));
+
+	ret = szPart1;
+	ret += "/";
+	ret += szPart2;
+
+	return ret;
+}
+
+/////////////////////////////////////////////////////////////////////
+void CSystem::AddCVarGroupDirectory(const string& sPath)
+{
+	CryLog("creating CVarGroups from directory '%s' ...", sPath.c_str());
+//FIXME:
+#if 0
+	INDENT_LOG_DURING_SCOPE();
+#endif
+
+	_finddata_t fd;
+
+	intptr_t    handle = gEnv->pCryPak->FindFirst(ConcatPath(sPath.data(), "*.cfg").c_str(), &fd);
+
+	if (handle < 0)
+		return;
+
+	do
+	{
+		if (fd.attrib & _A_SUBDIR)
+		{
+			if (strcmp(fd.name, ".") != 0 && strcmp(fd.name, "..") != 0)
+				AddCVarGroupDirectory(ConcatPath(sPath.c_str(), fd.name));
+		}
+		else
+		{
+			string sFilePath = ConcatPath(sPath.c_str(), fd.name);
+			string sCVarName = PathUtil::GetFileName(fd.name);
+			if (m_env.pConsole != 0)
+			{
+				((CXConsole*)m_env.pConsole)->RegisterCVarGroup(sCVarName.c_str(), sFilePath.c_str());
+			}
+		}
+	} while (gEnv->pCryPak->FindNext(handle, &fd) >= 0);
+
+	gEnv->pCryPak->FindClose(handle);
 }
 
 void CSystem::ShutDown()

@@ -136,7 +136,7 @@ CCryPak::~CCryPak()
 
 bool CCryPak::Init(const char* szBasePath)
 {
-	return false;
+	return InitPack(szBasePath);
 }
 
 void CCryPak::Release()
@@ -304,9 +304,18 @@ bool CCryPak::OpenPacks(const char* pWildcardIn, unsigned nFlags /* = FLAGS_PATH
 	return OpenPacksCommon(strBindRoot.c_str(), pWildcardIn, wildcardPath, nFlags /*, pFullPaths*/);
 }
 
-bool CCryPak::OpenPacks(const char* pBindingRoot, const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPacks(const char* szBindRoot, const char* pWildcardIn, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	return false;
+	
+	CryPathString wildcardPath;
+	wildcardPath.resize(_MAX_PATH);
+	AdjustFileName(pWildcardIn, wildcardPath.data(), nFlags | FLAGS_COPY_DEST_ALWAYS);
+
+	CryPathString bindRoot;
+	bindRoot.resize(_MAX_PATH);
+	AdjustFileName(szBindRoot, bindRoot.data(), FLAGS_ADD_TRAILING_SLASH | FLAGS_PATH_REAL);
+
+	return OpenPacksCommon(bindRoot.data(), pWildcardIn, wildcardPath, nFlags /*, pFullPaths*/);
 }
 
 bool CCryPak::ClosePacks(const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_REAL*/)
@@ -317,7 +326,7 @@ bool CCryPak::ClosePacks(const char* pWildcard, unsigned nFlags /* = FLAGS_PATH_
 void CCryPak::AddMod(const char* szMod)
 {
 	std::string strPrepend = szMod;
-	strPrepend.replace(strPrepend.begin(), strPrepend.end(), g_cNativeSlash, g_cNonNativeSlash);
+	std::replace(strPrepend.begin(), strPrepend.end(), g_cNativeSlash, g_cNonNativeSlash);
 	std::transform(strPrepend.begin(), strPrepend.end(), strPrepend.begin(),
 	               [](unsigned char c)
 	               { return std::tolower(c); });
@@ -352,14 +361,256 @@ void CCryPak::RemoveMod(const char* szMod)
 	} //it
 }
 
-ICryPak::PakInfo* CCryPak::GetPakInfo()
+//////////////////////////////////////////////////////////////////////////
+const char* CCryPak::GetMod(int index)
 {
-	return nullptr;
+	#if 0
+	return index >= 0 && index < (int)m_arrMods.size() ? m_arrMods[index].path.c_str() : NULL;
+	#else
+	return "";
+	#endif
 }
 
-void CCryPak::FreePakInfo(PakInfo*)
+//////////////////////////////////////////////////////////////////////////
+void CCryPak::ParseAliases(const char* szCommandLine)
 {
+	const char* szVal = szCommandLine;
+	for (;;)
+	{
+		// this is a list of pairs separated by commas, i.e. Folder1,FolderNew,Textures,TestBuildTextures etc.
+		const char* const szSep = strchr(szVal, ',');
+		if (!szSep)
+		{
+			// bogus string passed
+			break;
+		}
+
+		char szName[256];
+		char szAlias[256];
+
+		// get old folder name
+		strncpy(szName, szVal, (size_t)(szSep - szVal));
+
+		// find next pair
+		const char* szSepNext = strchr(szSep + 1, ',');
+
+		// get alias name
+		if (!szSepNext)
+		{
+			// we may receive whole command line, not just alias pairs. so we must
+			// check if there are other commands in the command line and skip them.
+			const char* const szTail = strchr(szSep + 1, ' ');
+			if (szTail)
+			{
+				strncpy(szAlias, szSep + 1, (size_t)(szTail - (szSep + 1)));
+			}
+			else
+			{
+				strcpy(szAlias, szSep + 1);
+			}
+		}
+		else
+		{
+			strncpy(szAlias, szSep + 1, (size_t)(szSepNext - (szSep + 1)));
+		}
+
+		// inform the pak system
+		SetAlias(szName, szAlias, true);
+
+		CryLogAlways("PAK ALIAS:%s,%s\n", szName, szAlias);
+
+		if (!szSepNext)
+		{
+			// no more aliases
+			break;
+		}
+
+		// move over to the next pair
+		szVal = szSepNext + 1;
+	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+void CCryPak::SetAlias(const char* szName, const char* szAlias, bool bAdd)
+{
+	// Strip ./ or .\ at the beginning of the szAlias path.
+	if (szAlias && szAlias[0] == '.' && (szAlias[1] == '/' || szAlias[1] == '\\'))
+	{
+		szAlias += 2;
+	}
+
+	// find out if it is already there
+	TAliasList::iterator it;
+	tNameAlias* tPrev = NULL;
+	for (it = m_arrAliases.begin(); it != m_arrAliases.end(); ++it)
+	{
+		tNameAlias* tTemp = (*it);
+		if (stricmp(tTemp->szName, szName) == 0)
+		{
+			tPrev = tTemp;
+			if (!bAdd)
+			{
+				//remove it
+				SAFE_DELETE(tPrev->szName);
+				SAFE_DELETE(tPrev->szAlias);
+				delete tPrev;
+				m_arrAliases.erase(it);
+			}
+			break;
+		}
+	} //it
+
+	if (!bAdd)
+		return;
+
+	if (tPrev)
+	{
+		// replace existing alias
+		if (stricmp(tPrev->szAlias, szAlias) != 0)
+		{
+			SAFE_DELETE(tPrev->szAlias);
+			tPrev->nLen2 = strlen(szAlias);
+			tPrev->szAlias = new char[tPrev->nLen2 + 1]; // includes /0
+			strcpy(tPrev->szAlias, szAlias);
+			// make it lowercase
+#if !CRY_PLATFORM_IOS && !CRY_PLATFORM_LINUX && !CRY_PLATFORM_ANDROID
+			strlwr(tPrev->szAlias);
+#endif
+		}
+	}
+	else
+	{
+		// add a new one
+		tNameAlias* tNew = new tNameAlias;
+
+		tNew->nLen1 = strlen(szName);
+		tNew->szName = new char[tNew->nLen1 + 1]; // includes /0
+		strcpy(tNew->szName, szName);
+		// make it lowercase
+		strlwr(tNew->szName);
+
+		tNew->nLen2 = strlen(szAlias);
+		tNew->szAlias = new char[tNew->nLen2 + 1]; // includes /0
+		strcpy(tNew->szAlias, szAlias);
+		// make it lowercase
+#if !CRY_PLATFORM_IOS && !CRY_PLATFORM_LINUX && !CRY_PLATFORM_ANDROID
+		strlwr(tNew->szAlias);
+#endif
+		std::replace(tNew->szAlias, tNew->szAlias + tNew->nLen2 + 1, g_cNonNativeSlash, g_cNativeSlash);
+		m_arrAliases.push_back(tNew);
+	}
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//! if bReturnSame==true, it will return the input name if an alias doesn't exist. Otherwise returns NULL
+const char* CCryPak::GetAlias(const char* szName, bool bReturnSame)
+{
+	const TAliasList::const_iterator cAliasEnd = m_arrAliases.end();
+	for (TAliasList::const_iterator it = m_arrAliases.begin(); it != cAliasEnd; ++it)
+	{
+		tNameAlias* tTemp = (*it);
+		if (stricmp(tTemp->szName, szName) == 0)
+			return (tTemp->szAlias);
+	} //it
+	if (bReturnSame)
+		return (szName);
+	return (NULL);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//! Set "Game" folder (/Game, /Game04, ...)
+void CCryPak::SetGameFolder(const char* szFolder)
+{
+	assert(szFolder);
+	m_strDataRoot = GetAlias(szFolder, true);
+	#if 0
+	m_strDataRoot.MakeLower();
+	#else
+	std::transform(m_strDataRoot.begin(), m_strDataRoot.end(), m_strDataRoot.begin(),
+	               [](unsigned char c)
+	               { return std::tolower(c); });
+	#endif
+
+	#if BB_PLATFORM_WINDOWS
+	// Check that game folder exist, produce fatal error if missing.
+	{
+		__finddata64_t fd;
+		ZeroStruct(fd);
+		intptr_t hfile = 0;
+		hfile          = _findfirst64(m_strDataRoot.c_str(), &fd);
+		_findclose(hfile);
+		if (!(fd.attrib & _A_SUBDIR))
+		{
+			const char* dataRoot = m_strDataRoot.c_str();
+
+			m_pLog->LogWarning("Game folder %s not found, trying to create an empty one", dataRoot);
+
+			if (!MakeDir(dataRoot))
+			{
+				CryFatalError("Couldn't create an empty %s game folder", dataRoot);
+			}
+		}
+		else if (g_cvars.sys_filesystemCaseSensitivity > 0)
+		{
+			if (strcmp(szFolder, fd.name) != 0)
+			{
+				CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_ERROR, "Wrong letter casing of the game root folder! Should be '%s' instead of '%s'.", fd.name, m_strDataRoot.c_str());
+			}
+			m_strDataRoot = fd.name;
+		}
+	}
+	#endif
+
+	m_strDataRootWithSlash = m_strDataRoot + (char)g_cNativeSlash;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//! Get "Game" folder (/Game, /Game04, ...)
+const char* CCryPak::GetGameFolder() const
+{
+	return m_strDataRoot.c_str();
+}
+static char* cry_strdup(const char* szSource)
+{
+	size_t len      = strlen(szSource);
+	char*  szResult = (char*)malloc(len + 1);
+	memcpy(szResult, szSource, len + 1);
+	return szResult;
+}
+
+ICryPak::PakInfo* CCryPak::GetPakInfo()
+{
+	#if 0
+	AUTO_READLOCK(m_csZips);
+	#endif
+	PakInfo* pResult = (PakInfo*)malloc(sizeof(PakInfo) + sizeof(PakInfo::Pak) * m_arrZips.size());
+	assert(pResult);
+	pResult->numOpenPaks = m_arrZips.size();
+	for (unsigned i = 0; i < m_arrZips.size(); ++i)
+	{
+		pResult->arrPaks[i].szBindRoot = cry_strdup(m_arrZips[i].strBindRoot.c_str());
+		//FIXME:
+		#if 0
+		pResult->arrPaks[i].szFilePath = cry_strdup(m_arrZips[i].GetFullPath());
+		pResult->arrPaks[i].nUsedMem   = m_arrZips[i].sizeofThis();
+		#endif
+	}
+	return pResult;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CCryPak::FreePakInfo(PakInfo* pPakInfo)
+{
+	for (unsigned i = 0; i < pPakInfo->numOpenPaks; ++i)
+	{
+		free((void*)pPakInfo->arrPaks[i].szBindRoot);
+		free((void*)pPakInfo->arrPaks[i].szFilePath);
+	}
+	free(pPakInfo);
+}
+
 
 FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags /* = 0*/)
 {
@@ -374,7 +625,7 @@ FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags /* = 0
 		auto file = fopen(pName, mode);
 		if (!file)
 		{
-			string adjustedName = m_DataRoot + pName;
+			string adjustedName = m_strDataRoot + pName;
 			file                = fopen(adjustedName.data(), mode);
 		}
 		return file;
@@ -544,19 +795,35 @@ void CCryPak::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 {
 }
 
+bool CCryPak::InitPack(const char* szBasePath, unsigned nFlags)
+{
+	
+#if BB_PLATFORM_IOS
+	char buffer[1024];
+	if (AppleGetUserLibraryDirectory(buffer, sizeof(buffer)))
+	{
+		SetAlias("%USER%", buffer, true);
+	}
+#endif
+	CryFindEngineRootFolder(CRY_ARRAY_COUNT(m_szEngineRootDir), m_szEngineRootDir);
+	m_szEngineRootDirStrLen = strlen(m_szEngineRootDir);
+
+	return true;
+}
+
 ZipFile::File CCryPak::create_file(ZipFile::CentralDirectory& entry, void* header)
 {
-	auto name       = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
-	#if 0 // For test purpose
+	auto name = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
+	#if 0                                                                                                              // For test purpose
 	if (stricmp(std::string(name.data(), name.length()).c_str(), std::string("textures/console/defaultconsole.dds").c_str()) == 0)
 	{
 		puts("");
 		//CryLog("Here");
 	}
 	#endif
-	bool compressed = entry.desc.SizeCompressed != entry.desc.SizeUncompressed;
+	bool  compressed = entry.desc.SizeCompressed != entry.desc.SizeUncompressed;
 	auto& lfh        = *(LocalFileHeader*)((char*)header + entry.lLocalHeaderOffset);
-	File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + lfh.FileNameLength + lfh.ExtraFieldLength, entry.desc.SizeUncompressed, entry.desc.SizeCompressed, name, (char*)header, compressed};
+	File  file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + lfh.FileNameLength + lfh.ExtraFieldLength, entry.desc.SizeUncompressed, entry.desc.SizeCompressed, name, (char*)header, compressed};
 	return file;
 }
 

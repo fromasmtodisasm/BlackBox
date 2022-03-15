@@ -284,10 +284,8 @@ CSound* CSound::Load(const char* path, int nFlags)
 {
 	SampleType Data{};
 	CSound*    pSound{};
-	char       buf[256];
-	sprintf(buf, "Data/%s", path);
 	CCryFile* file = new CCryFile;
-	if (file->Open(buf, "rb"))
+	if (file->Open(path, "rb"))
 	{
 		if (nFlags & FLAG_SOUND_MUSIC)
 			Data.Music = Mix_LoadMUS_RW(SDL_RWFromPak(file), 0);

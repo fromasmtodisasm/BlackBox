@@ -25,6 +25,9 @@
 
 #include <BlackBox/Core/Platform/CryLibrary.h>
 
+#include <BlackBox/System/File/ICryPak.hpp>
+#include <BlackBox/Core/Path.hpp>
+
 #include <Legacy\System.h>
 
 #define DEFAULT_APP_NAME        "BlackBox"
@@ -88,7 +91,7 @@ struct SSystemCVars
 
 	PakVars pakVars;
 
-#if CRY_PLATFORM_WINDOWS || CRY_PLATFORM_DURANGO
+#if BB_PLATFORM_WINDOWS || BB_PLATFORM_DURANGO
 	int sys_display_threads;
 #endif
 
@@ -96,7 +99,9 @@ struct SSystemCVars
 	int sys_highrestimer;
 #endif
 
-	int sys_vr_support;
+	int    sys_vr_support;
+
+	ICVar* sys_build_folder;
 };
 extern SSystemCVars g_cvars;
 
@@ -267,52 +272,71 @@ public:
 	void              RunMainLoop();
 	void              SleepIfNeeded();
 
+	void              InitResourceCacheFolder();
+
 	//virtual ICryFactory* LoadModuleWithFactory(const char* dllName, const CryInterfaceID& moduleInterfaceId) override;
 	/*virtual */ bool UnloadEngineModule(const char* dllName);
 	WIN_HMODULE       LoadDynamicLibrary(const char* dllName, bool bQuitIfNotFound = true, bool bLogLoadingInfo = false);
 	bool              UnloadDynamicLibrary(const char* dllName);
 	void              GetLoadedDynamicLibraries(std::vector<string>& moduleNames) const;
 
-private:
-	bool InitConsole();
-	bool InitRender();
-	bool InitInput();
-	bool InitScriptSystem();
-	bool InitEntitySystem();
-	bool InitNetwork();
-	bool InitGUI();
-	bool Init3DEngine();
-	bool InitSoundSystem();
-	bool InitSubSystem();
-	bool InitPhysics();
-	bool LoadCrynetwork();
-	bool OpenRenderLibrary(std::string_view render);
-	bool CloseRenderLibrary(std::string_view render);
+public:
+	void         OpenBasicPaks(bool bLoadGamePaks);
+	virtual bool IsMODValid(const char* szMODName) const
+	{
+		if (!szMODName || strstr(szMODName, ".") || strstr(szMODName, "\\") || stricmp(szMODName, PathUtil::GetGameFolder().c_str()) == 0)
+			return (false);
+		return (true);
+	}
 
-	void ParseCMD();
-	void LoadScreen();
-	bool InitScripts();
-	void ReleaseScripts();
-	bool InitFileSystem(/*const IGameStartup* pGameStartup*/);
-	void SetWorkingDirectory(const std::string& path) const;
-	void LogCommandLine() const;
-	void Tests();
-	void PollEvents();
+private:
+	//! @name Initialization routines
+	//@{
+
+	bool   InitConsole();
+	ICVar* attachVariable(const char* szVarName, int* pContainer, const char* szComment, int dwFlags = 0);
+	bool   InitRender();
+	bool   InitInput();
+	bool   InitScriptSystem();
+	bool   InitEntitySystem();
+	bool   InitNetwork();
+	bool   InitGUI();
+	bool   Init3DEngine();
+	bool   InitSoundSystem();
+	bool   InitSubSystem();
+	bool   InitPhysics();
+	bool   LoadCrynetwork();
+	bool   OpenRenderLibrary(std::string_view render);
+	bool   CloseRenderLibrary(std::string_view render);
+
+	bool   InitFileSystem_LoadEngineFolders();
+
+	void   ParseCMD();
+	void   LoadScreen();
+	bool   InitScripts();
+	void   ReleaseScripts();
+	bool   InitFileSystem(/*const IGameStartup* pGameStartup*/);
+	void   SetWorkingDirectory(const std::string& path) const;
+	void   LogCommandLine() const;
+	void   Tests();
+	void   PollEvents();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Threading functions.
 	//////////////////////////////////////////////////////////////////////////
-	void InitThreadSystem();
-	void ShutDownThreadSystem();
+	void   InitThreadSystem();
+	void   ShutDownThreadSystem();
 	//////////////////////////////////////////////////////////////////////////
 	// Helper functions.
 	//////////////////////////////////////////////////////////////////////////
-	void CreateRendererVars(const SSystemInitParams& startupParams);
-	void CreateSystemVars();
+	void   CreateRendererVars(const SSystemInitParams& startupParams);
+	void   CreateSystemVars();
 
-	void ShutDown();
+	void   AddCVarGroupDirectory(const string& sPath);
 
-	void UnloadSubsystems();
+	void   ShutDown();
+
+	void   UnloadSubsystems();
 
 	template<typename L, typename P>
 	inline P GetProcedure(L lib, const char* name)
@@ -552,30 +576,34 @@ private:
 	ICVar*               m_rDriver;
 	ICVar*               m_sysNoUpdate{};
 
-	int                  m_rDisplayInfo;
-	int                  m_rDebug;
-	int                  m_rTonemap;
-	int                  m_rSkipShaderCache;
+#if !defined(_RELEASE)
+	ICVar* m_sys_resource_cache_folder;
+#endif
 
-	bool                 m_bIsActive = true;
+	int              m_rDisplayInfo;
+	int              m_rDebug;
+	int              m_rTonemap;
+	int              m_rSkipShaderCache;
 
-	string               m_RootFolder;
+	bool             m_bIsActive = true;
 
-	int                  sys_dump_memstats = false;
+	string           m_RootFolder;
 
-	IProcess*            m_pProcess{};
+	int              sys_dump_memstats = false;
 
-	INetwork*            m_pNetworkLegacy;
-	legacy::ISystem*     m_pSystemLegacy;
-	CCryNullFont         m_Font;
+	IProcess*        m_pProcess{};
 
-	bool                 m_bCanSwitch = false;
+	INetwork*        m_pNetworkLegacy;
+	legacy::ISystem* m_pSystemLegacy;
+	CCryNullFont     m_Font;
+
+	bool             m_bCanSwitch = false;
 	// Pause mode.
-	bool                 m_bPaused;
-	uint8                m_PlatformOSCreateFlags;
-	bool                 m_bNoUpdate;
+	bool             m_bPaused;
+	uint8            m_PlatformOSCreateFlags;
+	bool             m_bNoUpdate;
 
-	uint64               m_nUpdateCounter;
+	uint64           m_nUpdateCounter;
 
 	// ISystem interface
 public:

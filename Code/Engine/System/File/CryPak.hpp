@@ -58,6 +58,18 @@ struct ci_less
 interface IMemoryBlock {
 };
 
+//////////////////////////////////////////////////////////////////////////
+typedef struct
+{
+	char* szName;  // folder or name to be replaced
+	int   nLen1;   // string length, for faster operation
+	char* szAlias; // new folder name
+	int   nLen2;   // string length, for faster operation
+} tNameAlias;
+
+template<class K, class V>
+using VectorMap = std::map<K, V>;
+
 class CCryPak : public ICryPak, public ISystemEventListener
 {
 public:
@@ -78,6 +90,40 @@ public:
 		g_nPseudoFileIdxOffset = 1
 	};
 
+	//Pak file comment data. Supplied in key=value pairs in the zip archive file comment
+	typedef VectorMap<string, string> TCommentDataMap;
+	typedef std::pair<string, string> TCommentDataPair;
+
+	// the array of opened caches - they get destructed by themselves (these are auto-pointers, see the ZipDir::Cache documentation)
+	struct PackDesc
+	{
+		string          strBindRoot; // the zip binding root WITH the trailing native slash
+		string          strFileName; // the zip file name (with path) - very useful for debugging so please don't remove
+
+		TCommentDataMap m_commentData; //VectorMap of key=value pairs from the zip archive comments
+#if 0
+		const char*     GetFullPath() const { return pZip->GetFilePath(); }
+#endif
+
+		ICryArchive_AutoPtr pArchive;
+#if 0
+		ZipDir::CachePtr    pZip;
+#endif
+#if 0
+		size_t sizeofThis()
+		{
+			return strBindRoot.capacity() + strFileName.capacity() + pZip->GetSize();
+		}
+#endif
+
+		void GetMemoryUsage(ICrySizer* pSizer) const;
+	};
+	typedef std::vector<PackDesc /*, stl::STLGlobalAllocator<PackDesc>*/> ZipArray;
+#if 0
+	CryReadModifyLock m_csZips;
+#endif
+	ZipArray m_arrZips;
+
 public:
 	void  RemoveRelativeParts(char* dst);
 	char* BeautifyPath(char* dst, bool bMakeLowercase);
@@ -85,6 +131,8 @@ public:
 	~CCryPak();
 	// Inherited via ICryPak
 	virtual bool         Init(const char* szBasePath) override;
+	bool                 IsModPath(const char* szPath);
+	void                 AdjustFileNameInternal(const char* src, CryPathString& dst, unsigned nFlags);
 	virtual const char*  AdjustFileName(const char* szSourcePath, char szDestPath[g_nMaxPath], unsigned nFlags = 0) override;
 	virtual void         Release() override;
 	virtual bool         OpenPack(const char* pName, unsigned nFlags = FLAGS_PATH_REAL) override;
@@ -97,6 +145,21 @@ public:
 	virtual bool         ClosePacks(const char* pWildcard, unsigned nFlags = FLAGS_PATH_REAL) override;
 	virtual void         AddMod(const char* szMod) override;
 	virtual void         RemoveMod(const char* szMod) override;
+	//! returns indexed mod path, or NULL if out of range
+	virtual const char*  GetMod(int index) override;
+
+	//! Processes an alias command line containing multiple aliases.
+	virtual void         ParseAliases(const char* szCommandLine) override;
+	//! adds or removes an alias from the list - if bAdd set to false will remove it
+	virtual void         SetAlias(const char* szName, const char* szAlias, bool bAdd) override;
+	//! gets an alias from the list, if any exist.
+	//! if bReturnSame==true, it will return the input name if an alias doesn't exist. Otherwise returns NULL
+	virtual const char*  GetAlias(const char* szName, bool bReturnSame = true) override;
+
+	// Set and Get "Game" folder (/Game, /Game04, ...)
+	virtual void         SetGameFolder(const char* szFolder) override;
+	virtual const char*  GetGameFolder() const override;
+
 	virtual PakInfo*     GetPakInfo() override;
 	virtual void         FreePakInfo(PakInfo*) override;
 	virtual FILE*        FOpen(const char* pName, const char* mode, unsigned nFlags = 0) override;
@@ -140,7 +203,10 @@ public:
 	}
 
 	// Inherited via ISystemEventListener
-	virtual void  OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
+
+private:
+	bool          InitPack(const char* szBasePath, unsigned nFlags = FLAGS_PATH_REAL);
 
 	ZipFile::File create_file(ZipFile::CentralDirectory& entry, void* header);
 
@@ -170,10 +236,17 @@ private:
 	std::vector<ZipFile::SArchiveHandle> m_Archives;
 #endif
 	//std::vector< libzippp::ZipArchive> m_Archives;
-	std::string                   m_DataRoot             = "GameData/";
-	std::string                   m_strDataRootWithSlash = PathUtil::GetEnginePath() + "/" + m_DataRoot;
+	std::string                      m_strDataRoot                = "GameData/";
+	std::string                      m_strDataRootWithSlash       = PathUtil::GetEnginePath() + "/" + m_strDataRoot;
 
-	FileList                      m_Files;
+	char                             m_szEngineRootDir[_MAX_PATH] = {};
+	size_t                           m_szEngineRootDirStrLen      = 0;
 
-	std::vector<ZipFile::MyFile*> m_arrOpenFiles;
+	// this is the list of aliases, used to replace certain folder(s) or file name(s).
+	typedef std::vector<tNameAlias*> TAliasList;
+	TAliasList                       m_arrAliases;
+
+	FileList                         m_Files;
+
+	std::vector<ZipFile::MyFile*>    m_arrOpenFiles;
 };

@@ -1,6 +1,7 @@
 #include "StatObject.hpp"
 
 #include "ObjectManager.hpp"
+#include <BlackBox/System/File/ICryPak.hpp>
 #include <BlackBox/Core/Path.hpp>
 
 IStatObj* CObjectManager::LoadStatObj(const char* szFileName, const char* szGeomName)

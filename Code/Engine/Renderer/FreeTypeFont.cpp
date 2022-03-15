@@ -257,7 +257,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 		return false;
 	}
 
-	auto     path = PathUtil::Make(string("Engine/fonts/").c_str(), font);
+	auto     path = PathUtil::Make(string("fonts/").c_str(), font);
 
 	CCryFile file;
 	if (!file.Open(path.c_str(), "rb")) return false;

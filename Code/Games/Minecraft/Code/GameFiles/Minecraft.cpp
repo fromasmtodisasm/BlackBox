@@ -25,7 +25,7 @@ void MineWorld::init()
 {
 	auto loadAssets = [this]()
 	{
-		auto grass = gEnv->p3DEngine->MakeObject("Data/minecraft/Grass_Block.obj");
+		auto grass = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
 		types.push_back(grass);
 	};
 
@@ -97,8 +97,6 @@ void MineUI::draw() const
 void Minecraft::init()
 {
 	minecraft = this;
-	//if (!gEnv->pCryPak->OpenPack("Data.pak"))
-	//	CryFatalError("Cannot open Data.pak");
 
 	world.init();
 	ui.init();
@@ -408,7 +406,7 @@ void MinePlayer::init()
 {
 	getCamera()->mode = CCamera::Mode::FPS;
 
-	auto        steve = gEnv->p3DEngine->MakeObject("Data/minecraft/minecraft_steve.obj");
+	auto        steve = gEnv->p3DEngine->MakeObject("minecraft/minecraft_steve.obj");
 
 	CEntityDesc desc(0, 0);
 	entity = gEnv->pEntitySystem->SpawnEntity(desc);
@@ -487,7 +485,7 @@ void MinePlayer::move(glm::vec3 direction, float value)
 
 void MineDebug::init()
 {
-	model = gEnv->p3DEngine->MakeObject("Data/minecraft/bbox.obj");
+	model = gEnv->p3DEngine->MakeObject("minecraft/bbox.obj");
 	//drawBox({0, 0, 0}, {5, 5, 5});
 }
 

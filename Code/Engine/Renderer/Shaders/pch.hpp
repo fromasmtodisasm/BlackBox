@@ -6,6 +6,8 @@
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>
 #include <BlackBox/System/ISystem.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
+#include <BlackBox/System/File/ICryPak.hpp>
 #include <BlackBox/Core/smartptr.hpp>
 
 #include <array>

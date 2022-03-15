@@ -16,7 +16,13 @@ using stack_string = string;
 
 //#undef USE_DEDICATED_SERVER_CONSOLE
 //////////////////////////////////////////////////////////////////////////
-#define DEFAULT_LOG_FILENAME "Log.txt"
+#define DEFAULT_LOG_FILENAME                "Log.txt"
+
+#define CRYENGINE_ENGINE_FOLDER             "Engine"
+
+//////////////////////////////////////////////////////////////////////////
+#define CRYENGINE_DEFAULT_LOCALIZATION_LANG "english"
+
 //////////////////////////////////////////////////////////////////////////
 // Where possible, these are defaults used to initialize cvars
 // System.cfg can then be used to override them
@@ -357,7 +363,28 @@ bool CSystem::Init()
 	#endif
 		GetIRemoteConsole()->RegisterConsoleVariables();
 		GetIRemoteConsole()->Update();
+		// Register system console variables.
 		CreateSystemVars();
+	#if 0
+		if (*startupParams.szUserPath)
+		{
+			m_sys_user_folder->Set(startupParams.szUserPath);
+		}
+	#endif
+
+		//FIXME:
+		#if 0
+		// Set this as soon as the system cvars got initialized.
+		static_cast<CCryPak* const>(m_env.pCryPak)->SetLocalizationFolder(g_cvars.sys_localization_folder->GetString());
+		#endif
+
+		//////////////////////////////////////////////////////////////////////////
+		//Load engine files
+		//////////////////////////////////////////////////////////////////////////
+		InlineInitializationProcessing("CSystem::Init Load Engine Folders");
+
+		InitFileSystem_LoadEngineFolders();
+		//////////////////////////////////////////////////////////////////////////
 	}
 	#ifdef DOWNLOAD_MANAGER
 	m_pDownloadManager = new CDownloadManager;
@@ -505,7 +532,6 @@ bool CSystem::Init()
 		return false;
 	}
 
-
 	//====================================================
 	m_env.pConsole->AddConsoleVarSink(this);
 	ParseCMD();
@@ -586,6 +612,45 @@ bool CSystem::InitConsole()
 		return false;
 	return true;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// attaches the given variable to the given container;
+// recreates the variable if necessary
+ICVar* CSystem::attachVariable(const char* szVarName, int* pContainer, const char* szComment, int dwFlags)
+{
+	IConsole* pConsole = GetIConsole();
+
+	ICVar* pOldVar = pConsole->GetCVar(szVarName);
+	int nDefault;
+	if (pOldVar)
+	{
+		nDefault = pOldVar->GetIVal();
+		pConsole->UnregisterVariable(szVarName, true);
+	}
+
+	// NOTE: maybe we should preserve the actual value of the variable across the registration,
+	// because of the strange architecture of IConsole that converts int->float->int
+
+	REGISTER_CVAR2(szVarName, pContainer, *pContainer, dwFlags, szComment);
+
+	ICVar* pVar = pConsole->GetCVar(szVarName);
+
+#ifdef _DEBUG
+	// test if the variable really has this container
+	assert(*pContainer == pVar->GetIVal());
+	++*pContainer;
+	assert(*pContainer == pVar->GetIVal());
+	--*pContainer;
+#endif
+
+	if (pOldVar)
+	{
+		// carry on the default value from the old variable anyway
+		pVar->Set(nDefault);
+	}
+	return pVar;
+}
+
 
 bool CSystem::InitRender()
 {
@@ -785,6 +850,166 @@ bool CSystem::CloseRenderLibrary(std::string_view render)
 	CryFatalError("Unknown renderer type: %s", t_rend);
 	return false;
 }
+bool CSystem::InitFileSystem_LoadEngineFolders()
+{
+	MEMSTAT_CONTEXT(EMemStatContextType::Other, "Init Engine Folders");
+	//CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
+
+	if (g_cvars.pakVars.nPriority == ePakPriorityPakOnly)
+	{
+		OpenBasicPaks(false); //we need to open then engine.pak, since we only allow data from pak files
+	}
+
+#if CRY_PLATFORM_ANDROID && defined(ANDROID_OBB)
+	{
+		uint32      nFlags        = ICryPak::FLAGS_NEVER_IN_PAK;
+		const char* szMainExpName = androidGetMainExpName();
+		m_env.pCryPak->AddMod(androidGetExpFilePath());
+
+		const char* szAssetName = androidGetAssetFileName();
+		if (szAssetName && szAssetName[0])
+		{
+			bool r = m_env.pCryPak->OpenPack("", szAssetName, nFlags | ICryPak::FLAGS_NO_FULL_PATH);
+			if (r)
+			{
+				CryLog("Asset from APK package loaded");
+			}
+			else
+			{
+				CryLog("Asset not found in APK package.");
+			}
+		}
+
+		/// Open main expansion file if it exists.
+		if (szMainExpName && szMainExpName[0])
+		{
+			bool r = m_env.pCryPak->OpenPack("", szMainExpName, nFlags);
+			if (r)
+			{
+				CryLog("Main expansion file %s loaded", szMainExpName);
+			}
+			else
+			{
+				CryLog("Main expansion file %s load failed", szMainExpName);
+			}
+		}
+
+		/// Open patch expansion file if it exists.
+		const char* szPatchExpName = androidGetPatchExpName();
+		if (szPatchExpName && szPatchExpName[0])
+		{
+			bool r = m_env.pCryPak->OpenPack("", szPatchExpName, nFlags);
+			if (r)
+			{
+				CryLog("Patch expansion file %s loaded", szPatchExpName);
+			}
+		}
+	}
+#endif
+
+	// We set now the correct "game" folder to use in Pak File
+	ICVar* pGameFolderCVar = gEnv->pConsole->GetCVar("sys_game_folder");
+	CRY_ASSERT(pGameFolderCVar != nullptr);
+
+	m_env.pCryPak->SetGameFolder(pGameFolderCVar->GetString());
+
+	//FIXME:
+	#if 0
+	if (g_cvars.sys_build_folder->GetString() != nullptr && g_cvars.sys_build_folder->GetString()[0] != '\0')
+	{
+		m_env.pCryPak->AddMod(PathUtil::AddSlash(g_cvars.sys_build_folder->GetString()) + m_pProjectManager->GetCurrentAssetDirectoryRelative());
+	}
+	#endif
+
+//FIXME:
+#if 0
+	m_pProjectManager->MigrateFromLegacyWorkflowIfNecessary();
+
+	// Load engine folders.
+	ChangeUserPath(m_sys_user_folder->GetString());
+#endif
+
+#if !defined(_RELEASE)
+	if (const ICmdLineArg* pModArg = GetICmdLine()->FindArg(eCLAT_Pre, "MOD"))
+	{
+		if (IsMODValid(pModArg->GetValue()))
+		{
+			string modPath;
+			modPath.append("Mods\\");
+			modPath.append(pModArg->GetValue());
+			modPath.append("\\");
+			modPath.append(m_env.pCryPak->GetGameFolder());
+
+			m_env.pCryPak->AddMod(modPath.c_str());
+		}
+	}
+#endif // !defined(_RELEASE)
+
+	InitResourceCacheFolder();
+
+// simply open all paks if fast load pak can't be found
+//FIXME:
+#if 0
+	if (!g_cvars.sys_intromoviesduringinit || !m_pResourceManager->LoadFastLoadPaks(true))
+#endif
+	{
+		OpenBasicPaks(true);
+	}
+
+//FIXME:
+#if 1
+	// Load cvar groups first from game folder then from engine folder.
+	{
+		string gameFolder = (!PathUtil::GetGameFolder().empty()) ? (PathUtil::GetGameFolder() + "/") : string("");
+		AddCVarGroupDirectory(gameFolder + "Config/CVarGroups");
+	}
+	AddCVarGroupDirectory("%ENGINE%/Config/CVarGroups");
+#endif
+
+#if defined(USE_PATCH_PAK)
+	LoadPatchPaks();
+#endif
+	return (true);
+}
+/////////////////////////////////////////////////////////////////////////////////
+void CSystem::InitResourceCacheFolder()
+{
+	// Resource Cache folder is not enabled in the release configuration
+#if !defined(_RELEASE)
+	const char* szResourceCacheFolder = m_sys_resource_cache_folder->GetString();
+
+	if (0 == strlen(szResourceCacheFolder))
+		return;
+
+	CryPathString cacheFolder(szResourceCacheFolder);
+	//////////////////////////////////////////////////////////////////////////
+	// Open Paks from Engine folder
+	//////////////////////////////////////////////////////////////////////////
+	// After game paks to have same search order as with files on disk
+	{
+		CryPathString cacheFolderParentFolder;
+		auto          slashPos = cacheFolder.rfind('/');
+		if (slashPos != string::npos)
+		{
+			cacheFolderParentFolder = cacheFolder.substr(0, slashPos);
+		}
+		if (!cacheFolderParentFolder.empty())
+		{
+			const char*   szBindRoot = m_env.pCryPak->GetAlias("%ENGINE%", false);
+			CryPathString paksFolder = cacheFolderParentFolder + "/Engine/*.pak";
+			// Will open engine specific paks in the parent of the resource ccache folder /engine folder.
+			m_env.pCryPak->OpenPacks(szBindRoot, paksFolder.c_str());
+		}
+	}
+
+	//FIXME:
+	#if 0
+	// Resource cache folder is used to store locally compiled resources (or precompiled asset cache folder).
+	m_env.pCryPak->AddMod(szResourceCacheFolder, ICryPak::EModAccessPriority::AfterSource);
+	#endif
+
+#endif // !defined(_RELEASE)
+}
 bool CSystem::UnloadEngineModule(const char* dllName)
 {
 	return UnloadDynamicLibrary(dllName);
@@ -841,6 +1066,79 @@ bool CSystem::UnloadDynamicLibrary(const char* szDllName)
 	return false;
 }
 
+void CSystem::OpenBasicPaks(bool bLoadGamePaks)
+{
+	static bool s_bEnginePakLoaded = false;
+	static bool s_bGamePaksLoaded  = false;
+
+	//CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
+	MEMSTAT_CONTEXT(EMemStatContextType::Other, "Open Pak Files");
+
+#if 0
+	string buildFolder = PathUtil::AddSlash(g_cvars.sys_build_folder->GetString());
+#else
+	string buildFolder = PathUtil::AddSlash(g_cvars.sys_build_folder->GetString());
+#endif
+
+	// open pak files
+	if (bLoadGamePaks && !s_bGamePaksLoaded)
+	{
+		string paksFolder = buildFolder + string(PathUtil::GetGameFolder()) + "/*.pak";
+		m_env.pCryPak->OpenPacks(PathUtil::GetGameFolder().c_str(), paksFolder.c_str());
+		InlineInitializationProcessing("CSystem::OpenBasicPaks OpenPacks( paksFolder.c_str() )");
+		s_bGamePaksLoaded = true;
+	}
+
+	if (!s_bEnginePakLoaded)
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Open Paks from Engine folder
+		//////////////////////////////////////////////////////////////////////////
+		// After game paks to have same search order as with files on disk
+		{
+			const char*        szBindRoot               = m_env.pCryPak->GetAlias("%ENGINE%", false);
+			string             paksFolder               = PathUtil::Make(buildFolder.empty() ? string("%ENGINEROOT%").c_str() : buildFolder.c_str(), "Engine");
+
+			const unsigned int numOpenPacksBeforeEngine = m_env.pCryPak->GetPakInfo()->numOpenPaks;
+			m_env.pCryPak->OpenPacks(szBindRoot, PathUtil::Make(paksFolder.c_str(), "*.pak").c_str());
+
+			if (g_cvars.pakVars.nPriority == ePakPriorityPakOnly && numOpenPacksBeforeEngine == m_env.pCryPak->GetPakInfo()->numOpenPaks)
+			{
+				CryFatalError("Engine initialization failed: Engine assets are required to be in pak files and cannot be read from the directory structure");
+			}
+		}
+
+		InlineInitializationProcessing("CSystem::OpenBasicPaks OpenPacks( Engine... )");
+
+		//////////////////////////////////////////////////////////////////////////
+		// Open paks in MOD subfolders.
+		//////////////////////////////////////////////////////////////////////////
+#if !defined(_RELEASE)
+		if (const ICmdLineArg* pModArg = GetICmdLine()->FindArg(eCLAT_Pre, "MOD"))
+		{
+			if (IsMODValid(pModArg->GetValue()))
+			{
+				string modFolder = "Mods\\";
+				modFolder += pModArg->GetValue();
+				modFolder += "\\";
+				modFolder += PathUtil::GetGameFolder();
+
+				string paksModFolder = modFolder;
+				paksModFolder += "\\*.pak";
+				GetIPak()->OpenPacks(PathUtil::GetGameFolder().c_str(), paksModFolder.c_str(), ICryPak::FLAGS_PATH_REAL | ICryArchive::FLAGS_OVERRIDE_PAK);
+			}
+		}
+#endif // !defined(_RELEASE)
+
+// Load paks required for game init to mem
+// FIXME:
+#if 0
+		gEnv->pCryPak->LoadPakToMemory("engine.pak", ICryPak::eInMemoryPakLocale_GPU);
+#endif
+		s_bEnginePakLoaded = true;
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 bool CSystem::InitFileSystem()
 {
@@ -879,9 +1177,11 @@ bool CSystem::InitFileSystem()
 		fs::current_path(fs::path(temp.c_str()));
 #endif
 	}
-#if 0
+	//FIXME:
+	#if 0
 	if (m_bEditor || bLvlRes)
 		m_env.pCryPak->RecordFileOpen(ICryPak::RFOM_EngineStartup);
+	#endif
 
 	{
 		char szEngineRootDir[_MAX_PATH];
@@ -893,23 +1193,17 @@ bool CSystem::InitFileSystem()
 		m_env.pCryPak->SetAlias("%ENGINE%", engineDir.c_str(), true);
 
 	#ifndef RELEASE
+		#if 0
 		if (m_bEditor)
+			#else
+		if (gEnv->IsEditor())
+		#endif
 		{
 			const CryPathString editorDir = PathUtil::Make(CryPathString(engineRootDir.c_str()), CryPathString("Editor"));
 			m_env.pCryPak->SetAlias("%EDITOR%", editorDir.c_str(), true);
 		}
 	#endif
 	}
-#else
-	if (!m_env.pCryPak->OpenPack("Engine.pak"))
-		0;
-	//CryFatalError("Cannot open Engine.pak");
-	if (!m_env.pCryPak->OpenPack("Data.pak"))
-		0;
-	if (!m_env.pCryPak->OpenPacks("Textures*.pak"))
-		0;
-	//CryFatalError("Cannot open Engine.pak");
-#endif
 
 	// Now set up the log
 	InitLog();
@@ -946,7 +1240,7 @@ bool CSystem::InitFileSystem()
 	}
 
 	bool bRes = m_env.pCryPak->Init("");
-#if 0
+#if 1
 
 	if (bRes)
 	{
@@ -962,12 +1256,12 @@ bool CSystem::InitFileSystem()
 	// Create Engine folder mod mapping only for Engine assets
 	pCryPak->AddMod("%ENGINEROOT%/" CRYENGINE_ENGINE_FOLDER);
 
-	#if CRY_PLATFORM_ANDROID
+	#if BB_PLATFORM_ANDROID
 	pCryPak->AddMod(CryGetProjectStoragePath());
 		#if defined(ANDROID_OBB)
 	pCryPak->SetAssetManager(androidGetAssetManager());
 		#endif
-	#elif CRY_PLATFORM_LINUX
+	#elif BB_PLATFORM_LINUX
 	//apparently Linux needs the parent dir as a module for letting CryPak find the file system.cfg
 	pCryPak->AddMod("./");
 	#endif
