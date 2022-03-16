@@ -678,6 +678,12 @@ void CCryPak::FreePakInfo(PakInfo* pPakInfo)
 	free(pPakInfo);
 }
 
+namespace CIOWrapper
+{
+	inline FILE* FopenEx(string_view path, string_view mode) { return fopen(path.data(), mode.data()); }
+	#define FopenLocked FopenEx
+}
+
 FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags /* = 0*/)
 {
 	FILE* fp               = NULL;
@@ -776,6 +782,36 @@ FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags
 	CryPathString fullPath;
 	fullPath.resize(256);
 	AdjustFileName(pName, fullPath.data(), nAdjustFlags);
+
+	if (nOSFlags & (_O_WRONLY | _O_RDWR))
+	{
+		#if 0
+		CheckFileAccessDisabled(fullPath, szMode);
+		#endif
+
+		// we need to open the file for writing, but we failed to do so.
+		// the only reason that can be is that there are no directories for that file.
+		// now create those dirs
+		if (!MakeDir(PathUtil::GetParentDirectory(fullPath).c_str()))
+		{
+			return NULL;
+		}
+		FILE* file = NULL;
+		if (!bFileOpenLocked)
+			file = CIOWrapper::FopenEx(fullPath, szMode);
+		else
+			file = CIOWrapper::FopenLocked(fullPath, szMode);
+
+#if !defined(_RELEASE)
+		if (file && g_cvars.pakVars.nLogAllFileAccess)
+		{
+			CryLog("<PAK LOG FILE ACCESS> CCryPak::FOpen() has directly opened requested file %s for writing", fullPath.c_str());
+		}
+#endif
+
+		return file;
+	}
+
 
 	if (nVarPakPriority == ePakPriorityFileFirst ||
 	    (nVarPakPriority == ePakPriorityFileFirstModsOnly && IsModPath(fullPath.c_str()))) // if the file system files have priority now..

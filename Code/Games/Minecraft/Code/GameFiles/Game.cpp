@@ -24,6 +24,8 @@
 #include <WeaponClass.h>
 #include <CMovieUser.h>
 
+#include <BlackBox/System/File/CryFile.h>
+
 //#include "CMovieUser.h"
 #if 1
 	#define EDITOR_IMPLEMENT_LOAD_LEVEL
@@ -929,6 +931,21 @@ bool CXGame::Update()
 	//////////////////////////////////////////////////////////////////////////
 	FUNCTION_PROFILER(PROFILE_GAME);
 
+	#if 0
+	ICVar* test = gEnv->pConsole->GetCVar("sys_PakPriority");
+	if (test && test->GetIVal() == 1)
+	{
+		CCryFile file("test/game.project", "wb");
+		if (file)
+		{
+			std::string_view data{"test string\n"};
+			for (int i = 0; i < 1000; i++)
+				file.Write((void*)data.data(), data.length());
+		}
+		test->Set(0);
+	}
+	#endif
+
 #ifdef USE_STEAM
 	SteamAPI_RunCallbacks();
 #endif
@@ -1345,10 +1362,10 @@ void CXGame::InitVehicleCvars()
 
 	// show bboxes for static objects below helicopter
 	h_drawbelow              = pConsole->CreateVariable("h_drawbelow", "0", 0,
-                                           "Toggles bounding boxes below helicopters.\n"
-                                           "Usage: h_drawbelow [0/1]\n"
-                                           "Default is 0 (off). Set 1 to display the bounding\n"
-                                           "boxes of obstacles currently below a helicopter.");
+	                                                    "Toggles bounding boxes below helicopters.\n"
+                                                                     "Usage: h_drawbelow [0/1]\n"
+                                                                     "Default is 0 (off). Set 1 to display the bounding\n"
+                                                                     "boxes of obstacles currently below a helicopter.");
 }
 
 bool CXGame::LoadScene(std::string name)

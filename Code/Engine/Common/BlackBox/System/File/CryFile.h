@@ -76,6 +76,11 @@ public:
 	//! Get path of archive this file is in.
 	const char*    GetPakPath() const;
 
+	operator bool()
+	{
+		return m_file != nullptr;	
+	}
+
 private:
 	string   m_filename;
 	FILE*    m_file;
