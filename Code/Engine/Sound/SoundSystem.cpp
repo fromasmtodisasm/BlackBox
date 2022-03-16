@@ -27,9 +27,11 @@ IMusicSystem* CSoundSystem::CreateMusicSystem()
 {
 	return nullptr;
 }
+#include <string_view>
 
 ISound* CSoundSystem::LoadSound(const char* szFile, int nFlags)
 {
+	std::string_view sv;
 	auto Sound = CSound::Load(szFile, nFlags);
 	if (Sound)
 	{

@@ -234,14 +234,23 @@ struct ICryPak
 
 
 
-	// Used for widening FOpen functionality. They're ignored for the regular File System files.
-	enum EFOpenFlags
+	
+	//! Used for widening FOpen functionality. They're ignored for the regular File System files.
+	enum EFOpenFlags : uint32
 	{
-		// If possible, will prevent the file from being read from memory.
-		FOPEN_HINT_DIRECT_OPERATION = 1,
-		// Will prevent a "missing file" warnings to be created.
-		FOPEN_HINT_QUIET            = 1 << 1
+		//! Will prevent a "missing file" warnings to be created.
+		FOPEN_HINT_QUIET = BIT32(1),
+
+		//! File should be on disk.
+		FOPEN_ONDISK = BIT32(2),
+
+		//! Open is done by the streaming thread.
+		FOPEN_FORSTREAMING = BIT32(3),
+
+		//! On supported platforms, file is open in 'locked' mode.
+		FOPEN_LOCKED_OPEN = BIT32(4),
 	};
+
 
 	//! the size of the buffer that receives the full path to the file
 	enum

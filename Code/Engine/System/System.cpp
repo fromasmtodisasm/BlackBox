@@ -598,6 +598,21 @@ void CSystem::CreateSystemVars()
 	attachVariable("sys_PakSaveMenuCommonResourceList", &g_cvars.pakVars.nSaveMenuCommonResourceList, "Save resource list during front end menu flow");
 	attachVariable("sys_PakMessageInvalidFileAccess", &g_cvars.pakVars.nMessageInvalidFileAccess, "Message Box synchronous file access when in game");
 	attachVariable("sys_PakLogInvalidFileAccess", &g_cvars.pakVars.nLogInvalidFileAccess, "Log synchronous file access when in game");
+#ifndef _RELEASE
+	attachVariable("sys_PakLogAllFileAccess", &g_cvars.pakVars.nLogAllFileAccess, "Log all file access allowing you to easily see whether a file has been loaded directly, or which pak file.");
+#endif
+	attachVariable("sys_PakValidateFileHash", &g_cvars.pakVars.nValidateFileHashes, "Validate file hashes in pak files for collisions");
+	attachVariable("sys_LoadFrontendShaderCache", &g_cvars.pakVars.nLoadFrontendShaderCache, "Load frontend shader cache (on/off)");
+	attachVariable("sys_UncachedStreamReads", &g_cvars.pakVars.nUncachedStreamReads, "Enable stream reads via an uncached file handle");
+	attachVariable("sys_PakDisableNonLevelRelatedPaks", &g_cvars.pakVars.nDisableNonLevelRelatedPaks, "Disables all paks that are not required by specific level; This is used with per level splitted assets.");
+
+	REGISTER_CVAR2("sys_intromoviesduringinit", &g_cvars.sys_intromoviesduringinit, 0, VF_NULL, "Render the intro movies during game initialization");
+
+#ifndef CRY_PLATFORM_ORBIS
+	g_cvars.sys_splashscreen = REGISTER_STRING("sys_splashscreen", "", 0, "Specifies the path to the splashscreen texture to render at startup");
+#else
+	g_cvars.sys_splashscreen = nullptr;
+#endif
 }
 
 static string ConcatPath(const char* szPart1, const char* szPart2)
@@ -735,16 +750,6 @@ void CSystem::SaveConfiguration()
 float CSystem::GetDeltaTime()
 {
 	return static_cast<float>(m_DeltaTime);
-}
-
-const SFileVersion& CSystem::GetFileVersion()
-{
-	return m_FileVersion;
-}
-
-const SFileVersion& CSystem::GetProductVersion()
-{
-	return m_ProductVersion;
 }
 
 const char* CSystem::GetRootFolder() const

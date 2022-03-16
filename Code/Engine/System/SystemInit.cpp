@@ -251,6 +251,9 @@ bool CSystem::Init()
 #endif
 	m_pUserCallback = m_startupParams.pUserCallback;
 
+	// Get file version information.
+	QueryVersionInfo();
+
 	//====================================================
 #if BB_PLATFORM_DESKTOP
 	#if !defined(_RELEASE)
@@ -1207,6 +1210,10 @@ bool CSystem::InitFileSystem()
 
 	// Now set up the log
 	InitLog();
+
+	LogVersion();
+
+	((CCryPak*)m_env.pCryPak)->SetLog(m_env.pLog);
 	if (!InitScriptSystem())
 	{
 		return false;

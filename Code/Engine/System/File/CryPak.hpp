@@ -126,6 +126,8 @@ public:
 
 public:
 	void  RemoveRelativeParts(char* dst);
+	bool  AdjustAliases(CryPathString& dst);
+	void  SetLog(IMiniLog* pLog);
 	char* BeautifyPath(char* dst, bool bMakeLowercase);
 	CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes);
 	~CCryPak();
@@ -224,7 +226,7 @@ private:
 	using FileList = MapType<ZipFile::File>;
 
 private:
-	IMiniLog*                m_pLog;
+	IMiniLog*                m_pLog = gEnv->pLog;
 
 	// this is the list of MOD subdirectories that will be prepended to the actual relative file path
 	// they all have trailing forward slash. "" means the root dir
@@ -249,4 +251,12 @@ private:
 	FileList                         m_Files;
 
 	std::vector<ZipFile::MyFile*>    m_arrOpenFiles;
+
+	bool                             m_RecordFileOpen = true;
+
+	typedef std::set<string>         ResourceSet;
+	//CryCriticalSection               m_lock;
+	ResourceSet                      m_ResourceSet;
+
+	PakVars*                         m_pPakVars;
 };

@@ -474,7 +474,7 @@ void MinePlayer::placeBlockOnCursor()
 	    blockSideOnCursor(pos, side, pickDistance))
 	{
 		minecraft->world.set(side, MineWorld::Grass);
-		m_pSetBlockSound->Play();
+	m_pSetBlockSound->Play();
 	}
 }
 

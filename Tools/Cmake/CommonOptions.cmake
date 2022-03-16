@@ -22,6 +22,25 @@ option(OPTION_VK_RENDERER "Compile Vulkan library" OFF)
 
 option(OPTION_EDIT_AND_CONTINUE "Edit and continue MSVC feature" ON)
 
+option(OPTION_PROFILE "Enable Profiling" ON)
+option(OPTION_UNITY_BUILD "Enable Unity Build" ON)
+
+option(OPTION_PCH "Enable Precompiled Headers" OFF)
+
+option(OPTION_LTCG "Enable link-time code generation/optimization" OFF)
+set(OPTION_PGO "Off" CACHE STRING "Enable profile-guided optimization")
+set_property(CACHE OPTION_PGO PROPERTY STRINGS "Off" "Generate" "Use")
+
+option(OPTION_RELEASE_PROFILING "Enable basic profiling in Release builds" OFF)
+option(OPTION_RELEASE_LOGGING "Enable logging in Release builds" ON)
+
+if (WINDOWS)
+	option (OPTION_MEMREPLAY_USES_DETOURS "Use the Detours library to try capturing more allocations by hooking into malloc, etc." ON)
+else()
+	set (OPTION_MEMREPLAY_USES_DETOURS FALSE)
+endif ()
+
+
 if(ANDROID)
 	set(OPTION_STATIC_LINKING TRUE)
 else()

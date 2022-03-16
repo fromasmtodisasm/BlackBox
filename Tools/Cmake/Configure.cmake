@@ -93,6 +93,12 @@ get_property(global_defines DIRECTORY "${BLACKBOX_DIR}" PROPERTY COMPILE_DEFINIT
 get_property(global_includes DIRECTORY "${BLACKBOX_DIR}" PROPERTY INCLUDE_DIRECTORIES)
 get_property(global_links DIRECTORY "${BLACKBOX_DIR}" PROPERTY LINK_DIRECTORIES)
 
+if(OPTION_PROFILE)
+	set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Release>:_PROFILE>)
+else()
+	set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Release>:_RELEASE>)
+endif()
+
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h")
 	file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h" "")
 endif ()

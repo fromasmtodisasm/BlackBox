@@ -230,6 +230,10 @@ public:
 	virtual float                   GetDeltaTime() override;
 	virtual const SFileVersion&     GetFileVersion() override;
 	virtual const SFileVersion&     GetProductVersion() override;
+	const SFileVersion&             GetBuildVersion();
+	void                            SystemVersionChanged(ICVar* pCVar);
+	void                            SetVersionInfo(const char* const szVersion);
+	void                            QueryVersionInfo();
 	virtual const char*             GetRootFolder() const override;
 	void                            SetViewCamera(CCamera& Camera) override { m_ViewCamera = Camera; }
 	CCamera&                        GetViewCamera() override { return m_ViewCamera; }
@@ -335,6 +339,8 @@ private:
 	void   AddCVarGroupDirectory(const string& sPath);
 
 	void   ShutDown();
+
+	void   LogVersion();
 
 	void   UnloadSubsystems();
 
@@ -541,8 +547,10 @@ private:
 
 	//SSystemInitParams& m_startupParams;
 	SSystemInitParams    m_startupParams;
+
 	SFileVersion         m_FileVersion;
 	SFileVersion         m_ProductVersion;
+	SFileVersion         m_BuildVersion;
 
 	//! System to access zlib decompressor
 	IZLibDecompressor*   m_pIZLibDecompressor;

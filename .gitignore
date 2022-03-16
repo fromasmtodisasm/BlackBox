@@ -41,3 +41,6 @@ Thumbs.db
 /Data/Sounds
 /Engine/Textures
 /GameData
+
+*.pak
+*.zip

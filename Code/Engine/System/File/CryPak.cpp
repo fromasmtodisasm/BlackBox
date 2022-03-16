@@ -12,6 +12,54 @@
 
 using namespace ZipFile;
 
+//FIXME:
+using stack_string = string;
+
+namespace my
+{
+	bool replace(std::string& str, const std::string& from, const std::string& to)
+	{
+		size_t start_pos = str.find(from);
+		if (start_pos == std::string::npos)
+			return false;
+		str.replace(start_pos, from.length(), to);
+		return true;
+	}
+
+	//std::string string("hello $name");
+	//replace(string, "$name", "Somename");
+} // namespace my
+
+//////////////////////////////////////////////////////////////////////////
+bool CCryPak::AdjustAliases(CryPathString& dst)
+{
+	bool foundAlias = false;
+	for (tNameAlias* pAlias : m_arrAliases)
+	{
+		// Replace the alias if it's the first item in the path
+		if (strncmp(dst.c_str(), pAlias->szName, pAlias->nLen1) == 0 && dst[pAlias->nLen1] == g_cNativeSlash)
+		{
+			foundAlias = true;
+			dst.replace(0, pAlias->nLen1, pAlias->szAlias);
+		}
+
+		// Strip extra aliases from path
+		stack_string searchAlias(32, ' ');
+	#if 0
+		searchAlias.Format("%c%s%c", g_cNativeSlash, pAlias->szName, g_cNativeSlash);
+	#else
+		StringFormat(searchAlias, "%c%s%c", g_cNativeSlash, pAlias->szName, g_cNativeSlash);
+	#endif
+		my::replace(dst, searchAlias.c_str(), "");
+	}
+	return foundAlias;
+}
+
+void CCryPak::SetLog(IMiniLog* pLog)
+{
+	m_pLog = pLog;
+}
+
 // makes the path lower-case and removes the duplicate and non native slashes
 // may make some other fool-proof stuff
 // may NOT write beyond the string buffer (may not make it longer)
@@ -128,6 +176,8 @@ CCryPak::CCryPak(IMiniLog* pLog, PakVars* pPakVars, const bool bLvlRes)
 	std::replace(m_strDataRootWithSlash.begin(), m_strDataRootWithSlash.end(), g_cNativeSlash, g_cNonNativeSlash);
 	m_strDataRootWithSlash[m_strDataRootWithSlash.size() - 1] = g_cNativeSlash;
 	m_arrOpenFiles.resize(128);
+
+	m_pPakVars = pPakVars;
 }
 
 CCryPak::~CCryPak()
@@ -137,6 +187,26 @@ CCryPak::~CCryPak()
 bool CCryPak::Init(const char* szBasePath)
 {
 	return InitPack(szBasePath);
+}
+
+bool CCryPak::IsModPath(const char* szPath)
+{
+	#if !defined(PURE_CLIENT)
+	CryPathString path = szPath;
+	std::replace(path.begin(), path.end(), g_cNativeSlash, g_cNonNativeSlash);
+	for (auto it = m_arrMods.begin(); it != m_arrMods.end(); ++it)
+	{
+		#if 0
+		if (filehelpers::CheckPrefix(path.c_str(), it->path.c_str()))
+		#else
+		if (filehelpers::CheckPrefix(path.c_str(), it->c_str()))
+		#endif
+		{
+			return true;
+		}
+	}
+	#endif //!defined(PURE_CLIENT)
+	return false;
 }
 
 void CCryPak::Release()
@@ -306,7 +376,6 @@ bool CCryPak::OpenPacks(const char* pWildcardIn, unsigned nFlags /* = FLAGS_PATH
 
 bool CCryPak::OpenPacks(const char* szBindRoot, const char* pWildcardIn, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	
 	CryPathString wildcardPath;
 	wildcardPath.resize(_MAX_PATH);
 	AdjustFileName(pWildcardIn, wildcardPath.data(), nFlags | FLAGS_COPY_DEST_ALWAYS);
@@ -441,7 +510,7 @@ void CCryPak::SetAlias(const char* szName, const char* szAlias, bool bAdd)
 
 	// find out if it is already there
 	TAliasList::iterator it;
-	tNameAlias* tPrev = NULL;
+	tNameAlias*          tPrev = NULL;
 	for (it = m_arrAliases.begin(); it != m_arrAliases.end(); ++it)
 	{
 		tNameAlias* tTemp = (*it);
@@ -469,13 +538,13 @@ void CCryPak::SetAlias(const char* szName, const char* szAlias, bool bAdd)
 		if (stricmp(tPrev->szAlias, szAlias) != 0)
 		{
 			SAFE_DELETE(tPrev->szAlias);
-			tPrev->nLen2 = strlen(szAlias);
+			tPrev->nLen2   = strlen(szAlias);
 			tPrev->szAlias = new char[tPrev->nLen2 + 1]; // includes /0
 			strcpy(tPrev->szAlias, szAlias);
 			// make it lowercase
-#if !CRY_PLATFORM_IOS && !CRY_PLATFORM_LINUX && !CRY_PLATFORM_ANDROID
+	#if !CRY_PLATFORM_IOS && !CRY_PLATFORM_LINUX && !CRY_PLATFORM_ANDROID
 			strlwr(tPrev->szAlias);
-#endif
+	#endif
 		}
 	}
 	else
@@ -483,25 +552,23 @@ void CCryPak::SetAlias(const char* szName, const char* szAlias, bool bAdd)
 		// add a new one
 		tNameAlias* tNew = new tNameAlias;
 
-		tNew->nLen1 = strlen(szName);
-		tNew->szName = new char[tNew->nLen1 + 1]; // includes /0
+		tNew->nLen1      = strlen(szName);
+		tNew->szName     = new char[tNew->nLen1 + 1]; // includes /0
 		strcpy(tNew->szName, szName);
 		// make it lowercase
 		strlwr(tNew->szName);
 
-		tNew->nLen2 = strlen(szAlias);
+		tNew->nLen2   = strlen(szAlias);
 		tNew->szAlias = new char[tNew->nLen2 + 1]; // includes /0
 		strcpy(tNew->szAlias, szAlias);
 		// make it lowercase
-#if !CRY_PLATFORM_IOS && !CRY_PLATFORM_LINUX && !CRY_PLATFORM_ANDROID
+	#if !CRY_PLATFORM_IOS && !CRY_PLATFORM_LINUX && !CRY_PLATFORM_ANDROID
 		strlwr(tNew->szAlias);
-#endif
+	#endif
 		std::replace(tNew->szAlias, tNew->szAlias + tNew->nLen2 + 1, g_cNonNativeSlash, g_cNativeSlash);
 		m_arrAliases.push_back(tNew);
 	}
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 //! if bReturnSame==true, it will return the input name if an alias doesn't exist. Otherwise returns NULL
@@ -591,11 +658,11 @@ ICryPak::PakInfo* CCryPak::GetPakInfo()
 	for (unsigned i = 0; i < m_arrZips.size(); ++i)
 	{
 		pResult->arrPaks[i].szBindRoot = cry_strdup(m_arrZips[i].strBindRoot.c_str());
-		//FIXME:
-		#if 0
+	//FIXME:
+	#if 0
 		pResult->arrPaks[i].szFilePath = cry_strdup(m_arrZips[i].GetFullPath());
 		pResult->arrPaks[i].nUsedMem   = m_arrZips[i].sizeofThis();
-		#endif
+	#endif
 	}
 	return pResult;
 }
@@ -611,24 +678,165 @@ void CCryPak::FreePakInfo(PakInfo* pPakInfo)
 	free(pPakInfo);
 }
 
-
-FILE* CCryPak::FOpen(const char* pName, const char* mode, unsigned nFlags /* = 0*/)
+FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags /* = 0*/)
 {
+	FILE* fp               = NULL;
+
+	bool  bFileCanBeOnDisk = 0 != (nInputFlags & FOPEN_ONDISK);
+
+	bool  bFileOpenLocked  = 0 != (nInputFlags & FOPEN_LOCKED_OPEN);
+
+	// get the priority into local variable to avoid it changing in the course of
+	// this function execution (?)
+	int   nVarPakPriority  = m_pPakVars->nPriority;
+
+	int   nAdjustFlags     = 0;
+	#if CRY_PLATFORM_LINUX || CRY_PLATFORM_ANDROID || CRY_PLATFORM_APPLE
+	unsigned nOSFlags = _O_RDONLY;
+	#else
+	unsigned nOSFlags = _O_BINARY | _O_RDONLY;
+	#endif
+
+	// check the szMode
+	for (const char* pModeChar = szMode; *pModeChar; ++pModeChar)
+		switch (*pModeChar)
+		{
+		case 'r':
+			nOSFlags &= ~(_O_WRONLY | _O_RDWR);
+			// read mode is the only mode we can open the file in
+			break;
+		case 'w':
+			nOSFlags |= _O_WRONLY;
+			nAdjustFlags |= FLAGS_FOR_WRITING;
+			break;
+		case 'a':
+			nOSFlags |= _O_RDWR;
+			nAdjustFlags |= FLAGS_FOR_WRITING;
+			break;
+		case '+':
+			nOSFlags |= _O_RDWR;
+			nAdjustFlags |= FLAGS_FOR_WRITING;
+			break;
+
+		case 'b':
+			nOSFlags &= ~_O_TEXT;
+			nOSFlags |= _O_BINARY;
+			break;
+		case 't':
+			nOSFlags &= ~_O_BINARY;
+			nOSFlags |= _O_TEXT;
+			break;
+
+	//FIXME:
+	#if 0
+		case 'c':
+		case 'C':
+			nOSFlags |= (uint32)CZipPseudoFile::_O_COMMIT_FLUSH_MODE;
+			break;
+		case 'n':
+		case 'N':
+			nOSFlags &= ~CZipPseudoFile::_O_COMMIT_FLUSH_MODE;
+			break;
+	#endif
+
+		case 'S':
+			nOSFlags |= _O_SEQUENTIAL;
+			break;
+
+		case 'R':
+			nOSFlags |= _O_RANDOM;
+			break;
+
+		case 'T':
+			nOSFlags |= _O_SHORT_LIVED;
+			break;
+
+		case 'D':
+			nOSFlags |= _O_TEMPORARY;
+			break;
+
+		case 'x':
+		case 'X':
+			CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "Using deprecated file open mode 'x' on file %s.", pName);
+			break;
+		default:
+			CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "Using unknown file open mode '%c' on file %s.", *pModeChar, pName);
+		}
+
+	if (nInputFlags & FLAGS_PATH_REAL)
+	{
+		nAdjustFlags |= FLAGS_PATH_REAL;
+	}
+
+	if (nInputFlags & FLAGS_NO_LOWCASE)
+	{
+		nAdjustFlags |= FLAGS_NO_LOWCASE;
+	}
+
+	CryPathString fullPath;
+	fullPath.resize(256);
+	AdjustFileName(pName, fullPath.data(), nAdjustFlags);
+
+	if (nVarPakPriority == ePakPriorityFileFirst ||
+	    (nVarPakPriority == ePakPriorityFileFirstModsOnly && IsModPath(fullPath.c_str()))) // if the file system files have priority now..
+	{
+		fp = fopen(fullPath.data(), szMode);
+
+		if (fp)
+		{
+	#if !defined(_RELEASE)
+			if (g_cvars.pakVars.nLogAllFileAccess)
+			{
+				CryLog("$6<PAK LOG FILE ACCESS> CCryPak::FOpen() has directly opened requested file %s with FileFirst priority", fullPath.c_str());
+			}
+	#endif
+
+			RecordFile(pName);
+			return fp;
+		}
+	}
+
 	if (auto data = GetFileData(pName); data)
 	{
 		INT_PTR nFile = m_arrOpenFiles.size() + CCryPak::g_nPseudoFileIdxOffset;
 		m_arrOpenFiles.push_back((MyFile*)data);
+
+		CryLog("$3<PAK LOG FILE ACCESS> CCryPak::FOpen() has opened requested file %s from %s pak %s, disk offset %u",
+		       fullPath.c_str(),
+	#if 0
+			pZip->IsInMemory() ? "memory" : "disk", 
+			pZipFilePath, 
+			pFileData->GetFileEntry()->nFileDataOffset
+	#else
+			"memory",
+			pName,
+			((MyFile*)data)->m_File->offset
+	#endif
+		);
+
+		RecordFile(pName);
 		return (FILE*)nFile;
 	}
 	else
 	{
-		auto file = fopen(pName, mode);
-		if (!file)
+		if (nVarPakPriority != ePakPriorityPakOnly || bFileCanBeOnDisk)
 		{
-			string adjustedName = m_strDataRoot + pName;
-			file                = fopen(adjustedName.data(), mode);
+			fp = fopen(fullPath.data(), szMode);
+
+			if (fp)
+			{
+	#if !defined(_RELEASE)
+				if (g_cvars.pakVars.nLogAllFileAccess)
+				{
+					CryLog("$4<PAK LOG FILE ACCESS> CCryPak::FOpen() has directly opened requested file %s with FileFirst priority", fullPath.c_str());
+				}
+	#endif
+
+				RecordFile(pName);
+				return fp;
+			}
 		}
-		return file;
+		return NULL;
 	}
 }
 
@@ -781,10 +989,39 @@ int CCryPak::RawUncompress(void* pUncompressed, unsigned long* pDestSize, const 
 
 void CCryPak::RecordFileOpen(bool bEnable)
 {
+	m_RecordFileOpen = bEnable;
 }
 
 void CCryPak::RecordFile(const char* szFilename)
 {
+	if (m_pLog)
+		CryComment("File open: %s", szFilename);
+
+	if (m_RecordFileOpen)
+	{
+		if (strnicmp("%USER%", szFilename, 6) != 0) // ignore path to OS settings
+		{
+	#if 0
+			IResourceList* pList = GetResourceList(m_eRecordFileOpenList);
+
+			if (pList)
+				pList->Add(szFilename);
+	#else
+			m_ResourceSet.insert(szFilename);
+	#endif
+		}
+	}
+
+	#if 0
+	std::vector<ICryPakFileAcesssSink*>::iterator it, end = m_FileAccessSinks.end();
+
+	for (it = m_FileAccessSinks.begin(); it != end; ++it)
+	{
+		ICryPakFileAcesssSink* pSink = *it;
+
+		pSink->ReportFileOpen(in, szFilename);
+	}
+	#endif
 }
 
 void CCryPak::EnumerateRecordedFiles(RecordedFilesEnumCallback enumCallback)
@@ -797,14 +1034,13 @@ void CCryPak::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam
 
 bool CCryPak::InitPack(const char* szBasePath, unsigned nFlags)
 {
-	
-#if BB_PLATFORM_IOS
+	#if BB_PLATFORM_IOS
 	char buffer[1024];
 	if (AppleGetUserLibraryDirectory(buffer, sizeof(buffer)))
 	{
 		SetAlias("%USER%", buffer, true);
 	}
-#endif
+	#endif
 	CryFindEngineRootFolder(CRY_ARRAY_COUNT(m_szEngineRootDir), m_szEngineRootDir);
 	m_szEngineRootDirStrLen = strlen(m_szEngineRootDir);
 
@@ -899,7 +1135,15 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 		strcpy(szDestPath, szNewSrc);
 	}
 
-	const bool isAbsolutePath = IsAbsPath(szDestPath);
+	string     dst(szDestPath);
+	const bool bAliasWasUsed = AdjustAliases(dst);
+
+	if (nFlags & FLAGS_NO_FULL_PATH)
+	{
+		return szSourcePath;
+	}
+
+	const bool isAbsolutePath = IsAbsPath(dst.c_str());
 
 	//////////////////////////////////////////////////////////////////////////
 	// Strip ./ or .\\ at the beginning of the path when absolute path is given.
@@ -914,21 +1158,29 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 			szDestPath += 2;
 		}
 	}
-	//////////////////////////////////////////////////////////////////////////
-	if (
-	    (!filehelpers::CheckPrefix(szDestPath, m_strDataRootWithSlash.c_str()) &&
-	     !filehelpers::CheckPrefix(szDestPath, "." BB_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, ".." BB_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, "editor" BB_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, "gamedata" BB_NATIVE_PATH_SEPSTR) &&
-	     !filehelpers::CheckPrefix(szDestPath, "engine" BB_NATIVE_PATH_SEPSTR)))
+	if (!isAbsolutePath && !(nFlags & FLAGS_PATH_REAL) && !bAliasWasUsed && !IsModPath(dst.c_str()))
 	{
-		// Add data folder prefix.
-		string tmp = m_strDataRootWithSlash + szDestPath;
+		// This is a relative filename.
+		// 1) /root/system.cfg
+		// 2) /root/game/system.cfg
+		// 3) /root/game/config/system.cfg
 
-		strcpy(szDestPath, tmp.c_str());
+		//////////////////////////////////////////////////////////////////////////
+		if (
+		    (!filehelpers::CheckPrefix(szDestPath, m_strDataRootWithSlash.c_str()) &&
+		     !filehelpers::CheckPrefix(szDestPath, "." BB_NATIVE_PATH_SEPSTR) &&
+		     !filehelpers::CheckPrefix(szDestPath, ".." BB_NATIVE_PATH_SEPSTR) &&
+		     !filehelpers::CheckPrefix(szDestPath, "editor" BB_NATIVE_PATH_SEPSTR) &&
+		     !filehelpers::CheckPrefix(szDestPath, "gamedata" BB_NATIVE_PATH_SEPSTR) &&
+		     !filehelpers::CheckPrefix(szDestPath, "engine" BB_NATIVE_PATH_SEPSTR)))
+		{
+			// Add data folder prefix.
+			string tmp = m_strDataRootWithSlash + szDestPath;
+
+			strcpy(szDestPath, tmp.c_str());
+		}
 	}
 
-	return szSourcePath;
+	return dst.c_str();
 }
 #endif

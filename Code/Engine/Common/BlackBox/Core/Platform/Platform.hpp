@@ -473,6 +473,9 @@ bool InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngin
 	typedef std::weak_ptr<name>         name##WeakPtr;  \
 	typedef std::weak_ptr<const name>   name##ConstWeakPtr;
 
-#define fxopen fopen
+#define fxopen    fopen
 
 #define interface struct
+
+#define StringFormat(s, format, ...) \
+    sprintf(s.data(), format, __VA_ARGS__)

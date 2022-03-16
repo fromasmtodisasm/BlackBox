@@ -1178,6 +1178,7 @@ bool CXConsole::GetStatus()
 
 void CXConsole::Clear()
 {
+	return;
 	m_dqConsoleBuffer.clear();
 }
 
