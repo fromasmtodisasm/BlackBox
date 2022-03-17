@@ -275,12 +275,14 @@ namespace ZipFile
 		CDREnd*                       m_CentralDirectoryRecordEnd;
 
 		SArchiveHandle(std::string_view file)
-		    : SArchiveHandle(std::make_unique<CFileMapping>(file.data()))
+		    : SArchiveHandle(std::move(std::make_unique<CFileMapping>(file.data())))
 		{
 		}
-		SArchiveHandle(std::unique_ptr<CFileMapping> fm)
-		    : SArchiveHandle((void*)fm->getData(), fm->getSize(), std::move(fm))
+		SArchiveHandle(std::unique_ptr<CFileMapping>&& fm)
+		    : SArchiveHandle((void*)fm->getData(), fm->getSize())
 		{
+			// HACK!!!
+			this->fm =std::move(fm);
 		}
 
 		SArchiveHandle(void* data, size_t size, std::unique_ptr<CFileMapping> fm = nullptr)
