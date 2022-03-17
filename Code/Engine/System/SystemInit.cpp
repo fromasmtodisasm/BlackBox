@@ -251,6 +251,9 @@ bool CSystem::Init()
 #endif
 	m_pUserCallback = m_startupParams.pUserCallback;
 
+	// Now set up the log
+	InitLog();
+
 	// Get file version information.
 	QueryVersionInfo();
 
@@ -341,6 +344,9 @@ bool CSystem::Init()
 	// LOAD GAME PROJECT CONFIGURATION
 	//////////////////////////////////////////////////////////////////////////
 	InlineInitializationProcessing("CSystem::Init Load project configuration");
+
+	if (!InitScriptSystem())
+		return false;
 
 	// Load project directory early, since it relies on overriding current working folder
 	m_env.pProjectManager = new CProjectManager();
@@ -927,10 +933,10 @@ bool CSystem::InitFileSystem_LoadEngineFolders()
 //FIXME:
 #if 0
 	m_pProjectManager->MigrateFromLegacyWorkflowIfNecessary();
+#endif
 
 	// Load engine folders.
 	ChangeUserPath(m_sys_user_folder->GetString());
-#endif
 
 #if !defined(_RELEASE)
 	if (const ICmdLineArg* pModArg = GetICmdLine()->FindArg(eCLAT_Pre, "MOD"))
@@ -1208,31 +1214,35 @@ bool CSystem::InitFileSystem()
 	#endif
 	}
 
-	// Now set up the log
-	InitLog();
 
 	LogVersion();
 
 	((CCryPak*)m_env.pCryPak)->SetLog(m_env.pLog);
-	if (!InitScriptSystem())
-	{
-		return false;
-	}
 
-#if 0
-	LogVersion();
-
+	
 	((CCryPak*)m_env.pCryPak)->SetLog(m_env.pLog);
 
-	// Load value of sys_game_folder from system.cfg into the sys_game_folder console variable
-	ILoadConfigurationEntrySink* pCVarsWhiteListConfigSink = GetCVarsWhiteListConfigSink();
-	#if CRY_PLATFORM_ANDROID && !defined(ANDROID_OBB)
+	ILoadConfigurationEntrySink* pCVarsWhiteListConfigSink = nullptr;//GetCVarsWhiteListConfigSink();
+#if CRY_PLATFORM_ANDROID && !defined(ANDROID_OBB)
 	string path = string(CryGetProjectStoragePath()) + "/system.cfg";
-	LoadConfiguration(path.c_str(), pCVarsWhiteListConfigSink, eLoadConfigInit);
-	#else
-	LoadConfiguration("system.cfg", pCVarsWhiteListConfigSink, eLoadConfigInit);
-	#endif
+#else
+	string path = "%ENGINEROOT%/system.cfg";
 #endif
+
+#if defined(USE_RUNTIME_CVAR_OVERRIDES)
+	// We load the runtime CVar overrides before system.cfg
+	if (m_env.pConsole != nullptr)
+	{
+		const bool result = static_cast<CXConsole*>(m_env.pConsole)->ParseCVarOverridesFile(path.c_str());
+		if (!result)
+		{
+			CryMessageBox("Error: Failed to parse the runtime CVar overrides file, look for assert failure.", "ERROR", EMessageBox::eMB_Error);
+		}
+	}
+#endif
+
+	// Load value of sys_game_folder from system.cfg into the sys_project console variable
+	LoadConfiguration(path.c_str(), pCVarsWhiteListConfigSink, eLoadConfigInit, ELoadConfigurationFlags::SuppressConfigNotFoundWarning);
 
 	// Initialize console before the project system
 	// This ensures that "exec" and other early commands can be executed immediately on parsing

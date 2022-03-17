@@ -578,6 +578,9 @@ void CSystem::CreateSystemVars()
 	                                                                                " 0 = on PC if vsync is off auto throttles fps while in menu or game is paused (default)\n"
 	                                                                                "-1 = off");
 	g_cvars.sys_build_folder = REGISTER_STRING("sys_build_folder", "", 0, "Optionally specifies external full path to the build folder to read pak files from. Can be a full path to an external folder or a relative path to a folder inside of the local build.");
+
+	m_sys_user_folder = REGISTER_STRING("sys_user_folder", "", 0, "Specifies the name of the user folder inside the 'Users/<username>/Saved Games/' folder, otherwise if left blank the User folder will be stored inside the root.");
+
 	if (m_env.IsEditor())
 	{
 		// In Editor our Pak priority is always 0
@@ -1334,6 +1337,7 @@ XmlNodeRef CSystem::LoadXmlFromString(const char* sXmlString)
 {
 	return {};
 }
+
 
 XmlNodeRef CSystem::LoadXmlFile(const char* sFilename)
 {

@@ -122,7 +122,7 @@ bool CScriptSystem::Init(ISystem* pSystem)
 
 	m_stdScriptBinds.Init(pSystem, this);
 
-	pSystem->GetILog()->Log("Initializing ScriptSystem");
+	CryLog("Initializing ScriptSystem");
 
 	// Ensure the debugger is in the correct mode
 	//EnableDebugger((ELuaDebugMode)m_cvar_script_debugger->GetIVal());
@@ -142,16 +142,12 @@ bool CScriptSystem::Init(ISystem* pSystem)
 	    "2 to only trigger on errors\n"
 	    "Usage: lua_debugger [0/1/2]");
 
-	if (!gEnv->pCryPak->OpenPack("Scripts.pak"))
-	{
-		0;
-		//CryFatalError("Cannot open scripts folder");
-	}
-
 	//////////////////////////////////////////////////////////////////////////
 	// Execute common lua file.
 	//////////////////////////////////////////////////////////////////////////
+	#if 0
 	ExecuteFile("Scripts/common.lua", true, false);
+	#endif
 
 	return L ? true : false;
 }

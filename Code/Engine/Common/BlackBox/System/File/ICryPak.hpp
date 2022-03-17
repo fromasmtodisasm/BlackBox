@@ -84,7 +84,7 @@ struct ICryArchive : public _reference_target_t
 
 		//! Override pak - paks opened with this flag go at the end of the list and contents will be found before other paks.
 		//! Used for patching.
-		FLAGS_OVERRIDE_PAK = BIT32(10),
+		FLAGS_OVERRIDE_PAK        = BIT32(10),
 	};
 
 	virtual ~ICryArchive()
@@ -232,25 +232,21 @@ struct ICryPak
 		FLAGS_PAK_IN_MEMORY_CPU  = BIT32(30),
 	};
 
-
-
-	
 	//! Used for widening FOpen functionality. They're ignored for the regular File System files.
 	enum EFOpenFlags : uint32
 	{
 		//! Will prevent a "missing file" warnings to be created.
-		FOPEN_HINT_QUIET = BIT32(1),
+		FOPEN_HINT_QUIET   = BIT32(1),
 
 		//! File should be on disk.
-		FOPEN_ONDISK = BIT32(2),
+		FOPEN_ONDISK       = BIT32(2),
 
 		//! Open is done by the streaming thread.
 		FOPEN_FORSTREAMING = BIT32(3),
 
 		//! On supported platforms, file is open in 'locked' mode.
-		FOPEN_LOCKED_OPEN = BIT32(4),
+		FOPEN_LOCKED_OPEN  = BIT32(4),
 	};
-
 
 	//! the size of the buffer that receives the full path to the file
 	enum
@@ -281,20 +277,19 @@ struct ICryPak
 	//! removes a mod from the list
 	virtual void        RemoveMod(const char* szMod)                                                                  = 0;
 	//! returns indexed mod path, or NULL if out of range
-	virtual const char* GetMod(int index) = 0;
+	virtual const char* GetMod(int index)                                                                             = 0;
 
 	//! Processes an alias command line containing multiple aliases.
-	virtual void ParseAliases(const char* szCommandLine) = 0;
+	virtual void        ParseAliases(const char* szCommandLine)                                                       = 0;
 	//! adds or removes an alias from the list - if bAdd set to false will remove it
-	virtual void SetAlias(const char* szName, const char* szAlias, bool bAdd) = 0;
+	virtual void        SetAlias(const char* szName, const char* szAlias, bool bAdd)                                  = 0;
 	//! gets an alias from the list, if any exist.
 	//! if bReturnSame==true, it will return the input name if an alias doesn't exist. Otherwise returns NULL
-	virtual const char* GetAlias(const char* szName, bool bReturnSame = true) = 0;
+	virtual const char* GetAlias(const char* szName, bool bReturnSame = true)                                         = 0;
 
 	// Set and Get "Game" folder (/Game, /Game04, ...)
-	virtual void        SetGameFolder(const char* szFolder) = 0;
-	virtual const char* GetGameFolder() const = 0;
-
+	virtual void        SetGameFolder(const char* szFolder)                                                           = 0;
+	virtual const char* GetGameFolder() const                                                                         = 0;
 
 	struct PakInfo
 	{
@@ -385,6 +380,8 @@ struct ICryPak
 	virtual void RecordFile(const char* szFilename)                             = 0;
 	//! Get filenames of all recorded files.
 	virtual void EnumerateRecordedFiles(RecordedFilesEnumCallback enumCallback) = 0;
+
+	virtual bool IsAbsPath(const char* pPath)                                   = 0; //!< Determines if pPath is an absolute or relative path.
 };
 
 #endif

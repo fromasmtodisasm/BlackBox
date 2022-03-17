@@ -7,6 +7,7 @@ using std::wstring;
 #include <codecvt> // for std::codecvt_utf8
 #include <locale>  // for std::wstring_convert
 #include <string>
+#include <vector>
 
 //std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv_utf8_utf32;
 
@@ -101,6 +102,43 @@ void CryGetCurrentDirectory(unsigned int nBufferLength, char* lpBuffer)
 	{
 		*lpBuffer = 0;
 	}
+}
+#else
+//////////////////////////////////////////////////////////////////////////
+void CryGetCurrentDirectory(unsigned int nBufferLength, char* lpBuffer)
+{
+	if (nBufferLength <= 0 || !lpBuffer)
+	{
+		return;
+	}
+
+	*lpBuffer = 0;
+
+	// Get directory in UTF-16
+	std::vector<char> buffer;
+	{
+		const size_t requiredLength = ::GetCurrentDirectoryA(0, 0);
+
+		if (requiredLength <= 0)
+		{
+			return;
+		}
+
+		buffer.resize(requiredLength, 0);
+
+		if (::GetCurrentDirectoryA(requiredLength, &buffer[0]) != requiredLength - 1)
+		{
+			return;
+		}
+	}
+
+	#if 0
+	// Convert to UTF-8
+	if (Unicode::Convert<Unicode::eEncoding_UTF8, Unicode::eEncoding_UTF16>(lpBuffer, nBufferLength, &buffer[0]) > nBufferLength)
+	{
+		*lpBuffer = 0;
+	}
+	#endif
 }
 #endif
 //////////////////////////////////////////////////////////////////////////

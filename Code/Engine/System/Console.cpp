@@ -19,6 +19,11 @@
 #include "XConsoleVariable.h"
 #include <BlackBox/Core/StringUtils.h>
 
+#include <BlackBox/Core/Path.hpp>
+
+#include <sstream>
+#include <regex>
+
 #define BACKGROUND_SERVER_CHAR '/'
 #define CONST_TEMP_STRING(s)   s
 //#define DEFENCE_CVAR_HASH_LOGGING
@@ -359,6 +364,137 @@ CXConsole::~CXConsole()
 	}
 }
 
+bool CXConsole::ParseCVarOverridesFile(const char* szSysCVarOverridesPathConfigFile)
+{
+#if defined(USE_RUNTIME_CVAR_OVERRIDES) && defined(__NOTDEFINED__)
+	CRY_ASSERT(m_mapVariables.empty(), "There should not be any cvars registered before parsing the runtime CVar overrides file, num: %i", m_mapVariables.size());
+	
+	string sys_cvar_overrides_path;
+	{
+		CryPathString path;
+		gEnv->pCryPak->AdjustFileName(szSysCVarOverridesPathConfigFile, path, 0);
+		std::ifstream inFile;
+		inFile.open(path);
+		if (!inFile.is_open())
+		{
+			CRY_ASSERT(false, "Failed to open the system.cfg file containing sys_cvar_overrides_path: %s", path.c_str());
+			return false;
+		}
+		std::stringstream strStream;
+		strStream << inFile.rdbuf();
+		std::string content = strStream.str();
+
+		// remove commented out content ('--' or ';')
+		std::regex removeCommentsRegex(R"((;.*[\r\n])|(--.*[\r\n]))");
+		content = std::regex_replace(content, removeCommentsRegex, "");
+
+		const std::regex parseCfgRegex(R"(^[ \t]*sys_cvar_overrides_path[ \t]*[=][ \t]*(.+).*)");
+		std::smatch regexMatch;
+		if (std::regex_search(content, regexMatch, parseCfgRegex) && regexMatch.size() == 2)
+		{
+			sys_cvar_overrides_path = regexMatch[1].str().c_str();
+		}
+		else
+		{
+			CRY_ASSERT(false, "Failed to find/parse sys_cvar_overrides_path in system.cfg: %s", path.c_str());
+			return false;
+		}
+	}
+
+	std::string content;
+	{
+		const string fullPath = PathUtil::IsRelativePath(sys_cvar_overrides_path.c_str()) 
+			? PathUtil::Make(PathUtil::GetProjectFolder(), sys_cvar_overrides_path) 
+			: sys_cvar_overrides_path;
+
+		std::ifstream inFile;
+		inFile.open(fullPath);
+		if (!inFile.is_open())
+		{
+			CRY_ASSERT(false, "Failed to open the cvar overrides file in sys_cvar_overrides_path: %s", sys_cvar_overrides_path.c_str());
+			return false;
+		}
+		std::stringstream strStream;
+		strStream << inFile.rdbuf();
+		content = strStream.str();
+	}
+
+	// remove commented out content
+	std::regex removeCommentsRegex(R"((/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*[\r\n]))");
+	content = std::regex_replace(content, removeCommentsRegex, "");
+
+	const std::regex parseOverridesRegex(R"(^(ADD_CVAR_OVERRIDE_NUMERIC|ADD_CVAR_OVERRIDE_STRING)\([\s\t]*(.+?)[\s\t]*\,[\s\t]*(.+?)[\s\t]*\).*)");
+	std::smatch regexMatch;
+	while (std::regex_search(content, regexMatch, parseOverridesRegex))
+	{
+		if (regexMatch.size() == 4)
+		{
+			string cvarName = regexMatch[2].str().c_str();
+			cvarName = cvarName.Replace("\"", "");
+			string cvarValStr = regexMatch[3].str().c_str();
+
+			if (GetCVar(cvarName) != nullptr)
+			{
+				CRY_ASSERT(false, "Trying to override a CVar that was already registered: %s", cvarName.c_str());
+				return false;
+			}
+
+			if (cvarValStr.find("\"") != string::npos)
+			{
+				// Check for beginning & ending quotes and then remove them
+				const size_t firstQuotePos = cvarValStr.find_first_of("\"");
+				const size_t lastQuotePos = cvarValStr.find_last_of("\"");
+				if (firstQuotePos != string::npos && lastQuotePos != string::npos && lastQuotePos != firstQuotePos)
+				{
+					cvarValStr.erase(lastQuotePos, 1);
+					cvarValStr.erase(firstQuotePos, 1);
+					RegisterString(cvarName, cvarValStr, VF_COPYNAME | VF_CONST_CVAR);
+				}
+				else
+				{
+					CRY_ASSERT(false, "Error parsing runtime CVar override string: %s = %s", cvarName.c_str(), cvarValStr.c_str());
+					return false;
+				}
+			}
+			else if (cvarValStr.find(".") != string::npos)
+			{
+				char* end;
+				const float val = std::strtof(cvarValStr.c_str(), &end);
+				if (end == cvarValStr.end() || end == cvarValStr.end() - 1) // 'end' will be the f after the last decimal if it exists
+				{
+					RegisterFloat(cvarName, val, VF_COPYNAME | VF_CONST_CVAR);
+				}
+				else
+				{
+					CRY_ASSERT(false, "Failed to parse runtime CVar override float value: %s = %s", cvarName.c_str(), cvarValStr.c_str());
+					return false;
+				}
+			}
+			else
+			{
+				char* end;
+				const int val = static_cast<int>(std::strtol(cvarValStr.c_str(), &end, 0));
+				if (end == cvarValStr.end())
+				{
+					RegisterInt(cvarName.c_str(), val, VF_COPYNAME | VF_CONST_CVAR);
+				}
+				else
+				{
+					CRY_ASSERT(false, "Failed to parse runtime CVar override integer value: %s = %s", cvarName.c_str(), cvarValStr.c_str());
+					return false;
+				}
+			}
+		}
+		else
+		{
+			CRY_ASSERT(false, "Error matching regex while parsing CVar overrides file: %s", sys_cvar_overrides_path);
+			return false;
+		}
+		content = regexMatch.suffix();
+	}
+#endif // defined(USE_RUNTIME_CVAR_OVERRIDES)
+	return true;
+}
 void CXConsole::PreProjectSystemInit()
 {
 #if !defined(_RELEASE) || defined(ENABLE_DEVELOPER_CONSOLE_IN_RELEASE)

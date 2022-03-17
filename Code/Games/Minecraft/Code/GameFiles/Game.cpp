@@ -931,11 +931,11 @@ bool CXGame::Update()
 	//////////////////////////////////////////////////////////////////////////
 	FUNCTION_PROFILER(PROFILE_GAME);
 
-	#if 0
+	#if 1
 	ICVar* test = gEnv->pConsole->GetCVar("sys_PakPriority");
 	if (test && test->GetIVal() == 1)
 	{
-		CCryFile file("test/game.project", "wb");
+		CCryFile file("%USER%/test/game.project", "wb");
 		if (file)
 		{
 			std::string_view data{"test string\n"};

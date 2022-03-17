@@ -37,7 +37,8 @@ public:
 	CCryFile(const char* filename, const char* mode);
 	virtual ~CCryFile();
 
-	virtual bool   Open(const char* filename, const char* mode);
+	virtual bool   Open(std::string_view path, std::string_view mode, int nOpenFlagsEx = 0);
+	virtual bool   Open(const char* filename, const char* mode, int nOpenFlagsEx = 0);
 	virtual void   Close();
 
 	//! Writes data in a file to the current file position.
@@ -70,15 +71,21 @@ public:
 	// Retrieves the filename of the selected file.
 	const char*    GetFilename() const { return m_filename.c_str(); };
 
+	//! Retrieves the filename after adjustment to the real relative to engine root path.
+	//! Example:
+	//! Original filename "textures/red.dds" adjusted filename will look like "game/textures/red.dds"
+	//! \return Adjusted filename, this is a pointer to a static string, copy return value if you want to keep it.
+	const char* GetAdjustedFilename() const;
+
 	//! Check if file is opened from pak file.
 	bool           IsInPak() const;
 
 	//! Get path of archive this file is in.
 	const char*    GetPakPath() const;
 
-	operator bool()
+	               operator bool()
 	{
-		return m_file != nullptr;	
+		return m_file != nullptr;
 	}
 
 private:
@@ -120,17 +127,41 @@ inline CCryFile::~CCryFile()
 }
 
 //////////////////////////////////////////////////////////////////////////
-inline bool CCryFile::Open(const char* filename, const char* mode)
+inline bool CCryFile::Open(std::string_view path, std::string_view mode, int nOpenFlagsEx)
 {
-	if (m_file)
-		Close();
-	m_filename = filename;
-	m_file     = m_pIPak->FOpen(filename, mode);
-	if (!m_file)
+	return Open(path.data(), mode.data(), nOpenFlagsEx);
+}
+
+//////////////////////////////////////////////////////////////////////////
+inline bool CCryFile::Open(const char* filename, const char* mode, int nOpenFlagsEx)
+{
+	CryPathString tempfilename = filename;
+
+#if !defined(_RELEASE)
+	if (gEnv && gEnv->IsEditor())
 	{
-		string adjustedName = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/")).c_str(), filename);
-		m_file              = m_pIPak->FOpen(adjustedName.c_str(), mode);
+		ICVar* const pCvar = gEnv->pConsole->GetCVar("ed_lowercasepaths");
+		if (pCvar)
+		{
+			const int lowercasePaths = pCvar->GetIVal();
+			if (lowercasePaths)
+			{
+				assert(0);
+	//FIXME:
+	#if 0
+				tempfilename.MakeLower();
+	#endif
+			}
+		}
 	}
+#endif
+	if (m_file)
+	{
+		Close();
+	}
+	m_filename = tempfilename;
+
+	m_file     = m_pIPak ? m_pIPak->FOpen(tempfilename.c_str(), mode /*, nOpenFlagsEx*/) : fopen(tempfilename.c_str(), mode);
 	return m_file != NULL;
 }
 
@@ -247,6 +278,19 @@ inline const char* CCryFile::GetPakPath() const
 			return sPath;
 	}
 	return "";
+}
+
+//////////////////////////////////////////////////////////////////////////
+inline const char* CCryFile::GetAdjustedFilename() const
+{
+	assert(m_pIPak);
+	if (!m_pIPak)
+		return "";
+
+	//! Gets mod path to file.
+	static CryPathString adjustedFileName(MAX_PATH, 0);
+	m_pIPak->AdjustFileName(m_filename.c_str(), adjustedFileName.data(), 0);
+	return adjustedFileName.c_str();
 }
 
 #endif // __cryfile_h__

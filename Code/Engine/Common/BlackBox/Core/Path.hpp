@@ -840,5 +840,12 @@ namespace PathUtil
 
 		return projectFilePath;
 	}
+	//! Returns a normalized, absolute path to the directory containing .cryproject file in use.
+	//! This function may only be called after CrySystem has been initialized.
+	inline string GetProjectFolder()
+	{
+		return PathUtil::GetParentDirectory(GetProjectFile());
+	}
+
 } // namespace PathUtil
 using CryPathString = string;

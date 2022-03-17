@@ -495,6 +495,10 @@ struct ISystem
 	virtual IScriptSystem*            GetIScriptSystem()                                                                                                            = 0;
 	virtual ISoundSystem*             GetISoundSystem()                                                                                                             = 0;
 	virtual IStreamEngine*            GetStreamEngine()                                                                                                             = 0;
+
+	//! Changes current user sub path, the path is always relative to the user documents folder.
+	//! Example: "My Games\Crysis"
+	virtual void ChangeUserPath(const char* sUserPath) = 0;
 	//new
 	virtual ISystemEventDispatcher*   GetISystemEventDispatcher()                                                                                                   = 0;
 	//new

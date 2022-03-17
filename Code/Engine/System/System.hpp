@@ -477,6 +477,9 @@ public:
 	}
 
 	void RenderStats();
+#if BB_PLATFORM_WINDOWS
+	bool GetWinGameFolder(char* szMyDocumentsPath, int maxPathSize);
+#endif
 
 protected:
 	std::vector<_smart_ptr<SubsystemWrapper>> m_Subsystems;
@@ -584,6 +587,10 @@ private:
 	ICVar*               m_rDriver;
 	ICVar*               m_sysNoUpdate{};
 
+	// DLL names
+	ICVar* m_sys_dll_ai;
+	ICVar* m_sys_dll_response_system;
+	ICVar* m_sys_user_folder;
 #if !defined(_RELEASE)
 	ICVar* m_sys_resource_cache_folder;
 #endif
@@ -619,6 +626,10 @@ public:
 	virtual XmlNodeRef             CreateXmlNode(const char* sNodeName) override;
 	virtual XmlNodeRef             LoadXmlFile(const char* sFilename) override;
 	virtual XmlNodeRef             LoadXmlFromString(const char* sXmlString) override;
+
+	// Inherited via ISystem
+	virtual void                   ChangeUserPath(const char* sUserPath) override;
+	int                            GetApplicationInstance();
 };
 
 void AddInternalCommands(ISystem* pSystem);

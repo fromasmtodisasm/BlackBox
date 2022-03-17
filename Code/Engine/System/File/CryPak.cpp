@@ -782,6 +782,7 @@ FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags
 	CryPathString fullPath;
 	fullPath.resize(256);
 	AdjustFileName(pName, fullPath.data(), nAdjustFlags);
+	fullPath.shrink_to_fit();
 
 	if (nOSFlags & (_O_WRONLY | _O_RDWR))
 	{
@@ -1000,7 +1001,63 @@ FILETIME CCryPak::GetModificationTime(FILE* f)
 
 bool CCryPak::MakeDir(const char* szPath)
 {
-	return _mkdir(szPath);
+	return _mkdir(szPath) == 0;
+
+	// FIXME: need fix AdjustFileName for writing
+	bool bGamePathMapping = false;
+	
+	if (0 == szPath[0])
+	{
+		return true;
+	}
+
+	CryPathString tempPath;
+	tempPath.resize(MAX_PATH);
+	int nFlagsAdd = (!bGamePathMapping) ? FLAGS_PATH_REAL : 0;
+	AdjustFileName(szPath, tempPath.data(), FLAGS_FOR_WRITING | nFlagsAdd);
+
+	char newPath[MAX_PATH];
+	char* q = newPath;
+
+	memset(newPath, 0, sizeof(newPath));
+
+	auto p = tempPath.begin();
+
+	// Check for UNC path.
+	if (szPath[0] == g_cNativeSlash && szPath[1] == g_cNativeSlash)
+	{
+		// UNC path given, Skip first 2 slashes.
+		*q++ = *p++;
+		*q++ = *p++;
+	}
+
+	for (; *p; )
+	{
+		while (*p != g_cNonNativeSlash && *p != g_cNativeSlash && *p)
+		{
+			*q++ = *p++;
+		}
+
+		if (*newPath != 0 && !CryCreateDirectory(newPath))
+		{
+			return false;
+		}
+
+		if (*p)
+		{
+			if (*p != g_cNonNativeSlash)
+			{
+				*q++ = *p++;
+			}
+			else
+			{
+				*q++ = g_cNativeSlash;
+				p++;
+			}
+		}
+	}
+
+	return true;
 }
 
 ICryArchive* CCryPak::OpenArchive(const char* szPath, unsigned nFlags /* = FLAGS_PATH_REAL*/)
@@ -1147,7 +1204,7 @@ ILINE bool IsDirSep(const char c)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool /*CCryPak::*/ IsAbsPath(const char* pPath)
+bool CCryPak::IsAbsPath(const char* pPath)
 {
 	return (pPath && ((pPath[0] && pPath[1] == ':' && IsDirSep(pPath[2])) || IsDirSep(pPath[0])));
 }
@@ -1217,6 +1274,7 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 		}
 	}
 
+	strcpy(szDestPath, dst.c_str());
 	return dst.c_str();
 }
 #endif

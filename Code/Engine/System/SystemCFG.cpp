@@ -1,5 +1,7 @@
 #include "pch.hpp"
 #include "System.hpp"
+
+#include <BlackBox/System/File/CryFile.h>
 #include "SystemCFG.hpp"
 
 namespace detail
@@ -43,6 +45,7 @@ namespace detail
 #if _XDK_EDITION < 180400
 	#error "Outdated XDK, please update to at least XDK edition April 2018"
 #endif // #if _XDK_EDITION
+#include <BlackBox/System/File/CryFile.h>
 #endif // #if CRY_PLATFORM_DURANGO
 
 //////////////////////////////////////////////////////////////////////////
@@ -206,15 +209,135 @@ CSystemConfiguration::CSystemConfiguration(const string& strSysConfigFilePath, C
 	m_bError  = !ParseSystemConfig();
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool CSystemConfiguration::OpenFile(const string& filename, CCryFile& file, int flags)
+{
+	flags |= ICryPak::FOPEN_HINT_QUIET;
+
+	// Absolute paths first
+	if (gEnv->pCryPak->IsAbsPath(filename.c_str()) || filename[0] == '%')
+	{
+		if (file.Open(filename.c_str(), "rb", flags | ICryPak::FLAGS_PATH_REAL))
+		{
+			return true;
+		}
+		else
+		{
+			// the file is absolute and was not found, it is not useful to search further
+			return false;
+		}
+	}
+
+	// If the path is relative, search relevant folders in given order:
+	// First search in current folder.
+	if (file.Open((string("./") + filename).c_str(), "rb", flags | ICryPak::FLAGS_PATH_REAL))
+	{
+		return true;
+	}
+
+	string gameFolder = PathUtil::RemoveSlash(gEnv->pCryPak->GetGameFolder());
+	if (!filename.empty() && filename[0] == '%')
+	{
+		// When file name start with alias, not check game folder.
+		gameFolder = "";
+	}
+
+	// Next search inside game folder (ex, game/game.cfg)
+	if (!gameFolder.empty() && file.Open(gameFolder + "/" + filename, "rb", flags | ICryPak::FLAGS_PATH_REAL))
+	{
+		return true;
+	}
+
+	// Next Search in registered mod folders.
+	if (file.Open(filename, "rb", flags))
+	{
+		return true;
+	}
+
+	// Next Search in game/config subfolder.
+	if (!gameFolder.empty() && file.Open(gameFolder + "/config/" + filename, "rb", flags | ICryPak::FLAGS_PATH_REAL))
+	{
+		return true;
+	}
+
+	// Next Search in config subfolder.
+	if (file.Open(string("config/") + filename, "rb", flags | ICryPak::FLAGS_PATH_REAL))
+	{
+		return true;
+	}
+
+	// Next Search in engine root.
+	if (file.Open(string("%ENGINEROOT%/") + filename, "rb", flags))
+	{
+		return true;
+	}
+
+	// Next Search in engine folder.
+	if (file.Open(string("%ENGINEROOT%/Engine/") + filename, "rb", flags))
+	{
+		return true;
+	}
+
+	// Next Search in engine config subfolder, in case loosely stored on drive
+	if (file.Open(string("%ENGINEROOT%/Engine/config/") + filename, "rb", flags))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
 bool CSystemConfiguration::ParseSystemConfig()
 {
-	string        filename = m_strSysConfigFilePath;
-	std::ifstream t(filename);
-	std::string   szFullText((std::istreambuf_iterator<char>(t)),
-                           std::istreambuf_iterator<char>());
+	
+	string filename = m_strSysConfigFilePath;
+	if (strlen(PathUtil::GetExt(filename.c_str())) == 0)
+	{
+		filename = PathUtil::ReplaceExtension(filename.c_str(), "cfg");
+	}
 
-	auto          strLast = szFullText.c_str() + szFullText.size();
-	char*         str     = (char*)szFullText.c_str();
+	CCryFile file;
+
+	{
+		string filenameLog;
+
+		int flags = ICryPak::FOPEN_HINT_QUIET | ICryPak::FOPEN_ONDISK;
+
+		if (!OpenFile(filename, file, flags))
+		{
+			if (ELoadConfigurationFlags::None == ELoadConfigurationFlags((uint32(m_flags) & uint32(ELoadConfigurationFlags::SuppressConfigNotFoundWarning))))
+			{
+				CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "Config file %s not found!", filename.c_str());
+			}
+			return false;
+		}
+		filenameLog = file.GetAdjustedFilename();
+
+		CryLog("Loading Config file %s (%s)", filename.c_str(), filenameLog.c_str());
+	}
+
+	//INDENT_LOG_DURING_SCOPE();
+
+	int nLen = file.GetLength();
+	if (nLen == 0)
+	{
+		CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "Couldn't get length for Config file %s", filename.c_str());
+		return false;
+	}
+	char* szFullText = new char[nLen + 16];
+	if (file.ReadRaw(szFullText, nLen) < (size_t)nLen)
+	{
+		CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "Couldn't read Config file %s", filename.c_str());
+		return false;
+	}
+	szFullText[nLen] = '\0';
+	szFullText[nLen + 1] = '\0';
+
+	string strGroup; // current group e.g. "[General]"
+
+	char* strLast = szFullText + nLen;
+	char* str = szFullText;
 	while (str < strLast)
 	{
 		char* szLineStart = str;

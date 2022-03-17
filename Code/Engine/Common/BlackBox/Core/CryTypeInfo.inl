@@ -570,8 +570,6 @@ static STypeInfoTest _TypeInfoTest;
 
 void CTypeInfo::SwapEndian(void* pData, size_t nCount, bool bWriting) const
 {
-	// FIXME:
-	#if 0
 	switch (Size)
 	{
 	case 1:
@@ -588,9 +586,6 @@ void CTypeInfo::SwapEndian(void* pData, size_t nCount, bool bWriting) const
 	default:
 		assert(0);
 	}
-	#else
-	assert(0);
-	#endif
 }
 
 // If attr name is found, return pointer to start of value text; else 0.

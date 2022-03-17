@@ -135,6 +135,7 @@ public:
 	virtual bool         Init(const char* szBasePath) override;
 	bool                 IsModPath(const char* szPath);
 	void                 AdjustFileNameInternal(const char* src, CryPathString& dst, unsigned nFlags);
+	bool                 IsAbsPath(const char* pPath);
 	virtual const char*  AdjustFileName(const char* szSourcePath, char szDestPath[g_nMaxPath], unsigned nFlags = 0) override;
 	virtual void         Release() override;
 	virtual bool         OpenPack(const char* pName, unsigned nFlags = FLAGS_PATH_REAL) override;

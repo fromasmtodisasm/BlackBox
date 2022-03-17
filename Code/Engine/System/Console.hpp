@@ -482,6 +482,8 @@ public:
 	CXConsole(CSystem& system);
 	~CXConsole();
 
+	bool                ParseCVarOverridesFile(const char* szSysCVarOverridesPathConfigFile);
+
 	void                PreProjectSystemInit();
 	void                PostRendererInit();
 

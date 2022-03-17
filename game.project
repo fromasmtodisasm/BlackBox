@@ -26,6 +26,7 @@ project = {
     },
     console_variables = {
         --sys_target_platforms = "pc"
+        sys_user_folder = "MineCRY"
     },
     console_commands = {}
 }
