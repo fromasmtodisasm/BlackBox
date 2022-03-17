@@ -1,3 +1,5 @@
+#include "pch.hpp"
+
 #include "ResourceCompiler.h"
 #include "ZipFileFormat.h"
 

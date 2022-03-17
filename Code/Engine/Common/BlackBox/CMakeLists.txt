@@ -18,6 +18,7 @@ add_sources(
 		Core/BaseTypes.hpp
 		Core/Compiler/Clangspecific.h
 		Core/Compiler/MSVCspecific.h
+		Core/CryCustomTypes.h
 		Core/ICompressionHelper.hpp
 		Core/IMarkers.hpp
 		Core/Path.hpp
@@ -27,9 +28,12 @@ add_sources(
 		Core/TArrays.h
 		Core/Tarray.h
 		Core/TypeInfo_decl.h
+		Core/TypeInfo_impl.h
 		Core/Utils.hpp
 		Core/Version.hpp
 		Core/smartptr.hpp
+		Core/CryTypeInfo.h
+		Core/CryTypeInfo.inl
 	
 	SOURCE_GROUP "Math"
 		Math/MathHelper.hpp
