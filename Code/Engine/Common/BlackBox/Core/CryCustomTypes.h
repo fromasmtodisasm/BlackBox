@@ -8,7 +8,49 @@
 // -------------------------------------------------------------------------
 
 #include "CryTypeInfo.h"
+#if 0
 #include <CryString/CryFixedString.h>
+#else
+#include <array>
+template<class T>
+using Array = std::vector<T>;
+
+template<class T>
+using DynArray = std::vector<T>;
+
+// Type-inferring Array constructors (will not be needed with C++17)
+
+template<class T>
+ILINE Array<T> ArrayT(T* elems, int count)
+{
+	#if 0
+	return Array<T>(elems, count);
+	#else
+	return Array<T>(elems, elems + count);
+	#endif
+}
+
+template<class T>
+ILINE Array<T> ArrayT(T* start, T* finish)
+{
+	return Array<T>(start, finish);
+}
+
+template<class T>
+ILINE Array<T> ArrayT(T& obj)
+{
+	return Array<T>(&obj, 1);
+}
+
+template<class T, int N>
+ILINE Array<T> ArrayT(T (&start)[N])
+{
+	return Array<T>(start, N);
+}
+
+template<class T, size_t size>
+using CryStackStringT = std::basic_string<T>;
+#endif
 
 #pragma warning(push)
 #pragma warning(disable: 4800)
@@ -16,7 +58,11 @@
 #define STATIC_CONST(T, name, val) \
   static inline T name()  { static T t = val; return t; }
 
+#if 0
 #define CRY_ARRAY_VAR(arr) ArrayT(&(arr)[0], (int)CRY_ARRAY_COUNT(arr))
+#else
+#define CRY_ARRAY_VAR(arr) ArrayT(&(arr)[0], (int)CRY_ARRAY_COUNT(arr))
+#endif
 
 //! String helper function.
 template<class T>
@@ -50,8 +96,8 @@ struct CStructInfo : CTypeInfo
 {
 	CStructInfo(cstr name, size_t size, size_t align, Array<CVarInfo> vars = Array<CVarInfo>(), Array<CTypeInfo const*> templates = Array<CTypeInfo const*>());
 	virtual bool                    IsType(CTypeInfo const& Info) const;
-	virtual string                  ToString(const void* data, FToString flags = {}, const void* def_data = 0) const;
-	virtual bool                    FromString(void* data, cstr str, FFromString flags = {}) const;
+	virtual string                  ToString(const void* data, FToString flags = {}, const void* def_data = 0) const override;
+	virtual bool                    FromString(void* data, cstr str, FFromString flags = {}) const override;
 	virtual bool                    ToValue(const void* data, void* value, const CTypeInfo& typeVal) const;
 	virtual bool                    FromValue(void* data, const void* value, const CTypeInfo& typeVal) const;
 	virtual bool                    ValueEqual(const void* data, const void* def_data) const;
@@ -63,8 +109,14 @@ struct CStructInfo : CTypeInfo
 
 	virtual CTypeInfo const* const* NextTemplateType(CTypeInfo const* const* pPrev) const
 	{
+		// FIXME:
+		#if 0
 		pPrev = pPrev ? pPrev + 1 : TemplateTypes.begin();
 		return pPrev < TemplateTypes.end() ? pPrev : 0;
+		#else
+		assert(0);
+		return 0;
+		#endif
 	}
 
 protected:
@@ -262,13 +314,20 @@ template<> struct TIntType<8>
 	typedef int64 TType;
 };
 
+template<class T>
+T clamp_tpl(T X, T Min, T Max)
+{
+	return X < Min ? Min : X < Max ? X
+	                               : Max;
+}
+
 template<class D, class S>
 inline bool ConvertInt(D& dest, S src)
 {
 	if (TIntTraits<D>::nPOS_BITS < TIntTraits<S>::nPOS_BITS)
 		src = clamp_tpl(src, S(TIntTraits<D>::nMIN), S(TIntTraits<D>::nMAX));
 	else if (TIntTraits<D>::bSIGNED < TIntTraits<S>::bSIGNED)
-		src = max(src, S(0));
+		src = std::max(src, S(0));
 
 	dest = D(src);
 	assert(S(dest) == src);
@@ -937,11 +996,21 @@ struct CEnumDef
 		SInit()
 		{
 			TValue val = s_pElems->empty() ? 0 : s_pElems->back().Value + 1;
-			s_pElems->push_back()->Value = val;
+			#if 0
+			s_pElems->push_back({})->Value = val;
+			#else
+			s_pElems->push_back({});
+			s_pElems->back().Value = val;
+			#endif
 		}
 		SInit(TValue val)
 		{
-			s_pElems->push_back()->Value = val;
+			#if 0
+			s_pElems->push_back({})->Value = val;
+			#else
+			s_pElems->push_back({});
+			s_pElems->back().Value = val;
+			#endif
 		}
 	};
 

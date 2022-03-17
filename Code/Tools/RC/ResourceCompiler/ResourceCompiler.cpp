@@ -3,6 +3,8 @@
 #include "ResourceCompiler.h"
 #include "ZipFileFormat.h"
 
+#include <BlackBox/Core/Platform/platform_impl.inl>
+
 #include <cassert>
 #include <regex>
 
@@ -144,6 +146,7 @@ int main(int argc, char* argv[])
 	(void)RC;
 	//RC.RegisterConverters();
 
+	#if 1
 	if (g_Options.list)
 	{
 		List(g_Options.input_file);
@@ -192,6 +195,25 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
+	#endif
+
+	ZipFile::CDREnd t{0};
+
+	auto           ti = (CStructInfo*) &t.TypeInfo();
+
+	if (ti->HasSubVars())
+	{
+		//cstr name = "";
+		//for (int i = 0; (name = ti.EnumElem(i)) != 0; i++)
+		//{
+		//	printf("%s\n", name);
+		//}
+	}
+
+	printf("CDREnd str: %s", ti->ToString(&t, FToString().NamedFields(true).SkipDefault(false).Sub(true)).c_str());
+
+
+
 
 	return 0;
 }

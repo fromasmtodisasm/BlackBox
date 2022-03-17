@@ -14,9 +14,255 @@
 
 #include "CryTypeInfo.h"
 #include "CryCustomTypes.h"
+#if 0
 #include <CryMath/Cry_Math.h>
 #include <CryMemory/CrySizer.h>
 #include "CryEndian.h"
+#else
+#include <BlackBox/Math/Cry_Math.h>
+#endif
+
+#if 1 // CryEndian.h file
+// Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
+
+#pragma once
+
+//////////////////////////////////////////////////////////////////////////
+// Endian support
+//////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////
+// NEED_ENDIAN_SWAP is an older define still used in several places to toggle endian swapping.
+// It is only used when reading files which are assumed to be little-endian.
+// For legacy support, define it to swap on big endian platforms.
+/////////////////////////////////////////////////////////////////////////////////////
+
+typedef bool EEndian;
+
+#if defined(SYSTEM_IS_LITTLE_ENDIAN)
+	#undef SYSTEM_IS_LITTLE_ENDIAN
+#endif
+#if defined(SYSTEM_IS_BIG_ENDIAN)
+	#undef SYSTEM_IS_BIG_ENDIAN
+#endif
+
+#if 0 // no big-endian platforms right now, but keep the code
+// Big-endian platform
+	#define SYSTEM_IS_LITTLE_ENDIAN 0
+	#define SYSTEM_IS_BIG_ENDIAN    1
+#else
+// Little-endian platform
+	#define SYSTEM_IS_LITTLE_ENDIAN 1
+	#define SYSTEM_IS_BIG_ENDIAN    0
+#endif
+
+#if SYSTEM_IS_BIG_ENDIAN
+// Big-endian platform. Swap to/from little.
+	#define eBigEndian    false
+	#define eLittleEndian true
+	#define NEED_ENDIAN_SWAP
+#else
+// Little-endian platform. Swap to/from big.
+	#define eLittleEndian false
+	#define eBigEndian    true
+	#undef NEED_ENDIAN_SWAP
+#endif
+
+enum EEndianness
+{
+	eEndianness_Little,
+	eEndianness_Big,
+#if SYSTEM_IS_BIG_ENDIAN
+	eEndianness_Native    = eEndianness_Big,
+	eEndianness_NonNative = eEndianness_Little,
+#else
+	eEndianness_Native    = eEndianness_Little,
+	eEndianness_NonNative = eEndianness_Big,
+#endif
+};
+
+// Legacy macros
+#define GetPlatformEndian() false
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+inline bool IsSystemLittleEndian()
+{
+	const int a = 1;
+	return 1 == *(const char*)&a;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+//! SwapEndian function, using TypeInfo.
+struct CTypeInfo;
+void SwapEndian(const CTypeInfo& Info, size_t nSizeCheck, void* pData, size_t nCount = 1, bool bWriting = false);
+
+//! Default template utilizes TypeInfo.
+template<class T>
+ILINE void SwapEndianBase(T* t, size_t nCount = 1, bool bWriting = false)
+{
+	SwapEndian(TypeInfo(t), sizeof(T), t, nCount, bWriting);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// SwapEndianBase functions.
+// Always swap the data (the functions named SwapEndian swap based on an optional bSwapEndian parameter).
+// The bWriting parameter must be specified in general when the output is for writing,
+// but it matters only for types with bitfields.
+
+// Overrides for base types.
+
+template<>
+ILINE void SwapEndianBase(char* p, size_t nCount, bool bWriting)
+{}
+template<>
+ILINE void SwapEndianBase(uint8* p, size_t nCount, bool bWriting)
+{}
+template<>
+ILINE void SwapEndianBase(int8* p, size_t nCount, bool bWriting)
+{}
+
+template<>
+ILINE void SwapEndianBase(uint16* p, size_t nCount, bool bWriting)
+{
+	for (; nCount-- > 0; p++)
+		*p = (uint16) (((*p >> 8) + (*p << 8)) & 0xFFFF);
+}
+
+template<>
+ILINE void SwapEndianBase(int16* p, size_t nCount, bool bWriting)
+{ SwapEndianBase((uint16*)p, nCount); }
+
+template<>
+ILINE void SwapEndianBase(uint32* p, size_t nCount, bool bWriting)
+{
+	for (; nCount-- > 0; p++)
+		*p = (*p >> 24) + ((*p >> 8) & 0xFF00) + ((*p & 0xFF00) << 8) + (*p << 24);
+}
+template<>
+ILINE void SwapEndianBase(int32* p, size_t nCount, bool bWriting)
+{ SwapEndianBase((uint32*)p, nCount); }
+template<>
+ILINE void SwapEndianBase(float* p, size_t nCount, bool bWriting)
+{ SwapEndianBase((uint32*)p, nCount); }
+
+template<>
+ILINE void SwapEndianBase(uint64* p, size_t nCount, bool bWriting)
+{
+	for (; nCount-- > 0; p++)
+		*p = (*p >> 56) + ((*p >> 40) & 0xFF00) + ((*p >> 24) & 0xFF0000) + ((*p >> 8) & 0xFF000000)
+		     + ((*p & 0xFF000000) << 8) + ((*p & 0xFF0000) << 24) + ((*p & 0xFF00) << 40) + (*p << 56);
+}
+template<>
+ILINE void SwapEndianBase(int64* p, size_t nCount, bool bWriting)
+{ SwapEndianBase((uint64*)p, nCount); }
+template<>
+ILINE void SwapEndianBase(double* p, size_t nCount, bool bWriting)
+{ SwapEndianBase((uint64*)p, nCount); }
+
+//! ---------------------------------------------------------------------------.
+//! SwapEndian functions.
+//! \param bSwapEndian Optional, defaults to swapping from LittleEndian format.
+template<class T>
+ILINE void SwapEndian(T* t, size_t nCount, bool bSwapEndian = eLittleEndian)
+{
+	if (bSwapEndian)
+		SwapEndianBase(t, nCount);
+}
+
+//! Specify int and uint as well as size_t, to resolve overload ambiguities.
+//! \param bSwapEndian Optional, defaults to swapping from LittleEndian format.
+template<class T>
+ILINE void SwapEndian(T* t, int nCount, bool bSwapEndian = eLittleEndian)
+{
+	if (bSwapEndian)
+		SwapEndianBase(t, nCount);
+}
+
+//! \param bSwapEndian Optional, defaults to swapping from LittleEndian format.
+template<class T>
+ILINE void SwapEndian(T* t, unsigned int nCount, bool bSwapEndian = eLittleEndian)
+{
+	if (bSwapEndian)
+		SwapEndianBase(t, nCount);
+}
+
+//! \param bSwapEndian Optional, defaults to swapping from LittleEndian format.
+template<class T>
+ILINE void SwapEndian(T& t, bool bSwapEndian = eLittleEndian)
+{
+	if (bSwapEndian)
+		SwapEndianBase(&t, 1);
+}
+
+//! \param bSwapEndian Optional, defaults to swapping from LittleEndian format.
+template<class T>
+ILINE T SwapEndianValue(T t, bool bSwapEndian = eLittleEndian)
+{
+	if (bSwapEndian)
+		SwapEndianBase(&t, 1);
+	return t;
+}
+
+//! ---------------------------------------------------------------------------.
+//! Object-oriented data extraction for endian-swapping reading.
+//! \param bSwapEndian Optional, defaults to swapping from LittleEndian format.
+template<class T, class D>
+inline T* StepData(D*& pData, size_t nCount, bool bSwapEndian)
+{
+	T* Elems = (T*)pData;
+	SwapEndian(Elems, nCount, bSwapEndian);
+	pData = (D*)((T*)pData + nCount);
+	return Elems;
+}
+
+template<class T, class D>
+inline T* StepData(D*& pData, bool bSwapEndian)
+{
+	return StepData<T, D>(pData, 1, bSwapEndian);
+}
+
+template<class T, class D>
+inline void StepData(T*& Result, D*& pData, size_t nCount, bool bSwapEndian)
+{
+	Result = StepData<T, D>(pData, nCount, bSwapEndian);
+}
+
+template<class T, class D>
+inline void StepDataCopy(T* Dest, D*& pData, size_t nCount, bool bSwapEndian)
+{
+	memcpy(Dest, pData, nCount * sizeof(T));
+	SwapEndian(Dest, nCount, bSwapEndian);
+	pData = (D*)((T*)pData + nCount);
+}
+
+template<class T, class D>
+inline void StepDataWrite(D*& pDest, const T* aSrc, size_t nCount, bool bSwapEndian)
+{
+	memcpy(pDest, aSrc, nCount * sizeof(T));
+	if (bSwapEndian)
+		SwapEndianBase((T*)pDest, nCount, true);
+	(T*&)pDest += nCount;
+}
+
+template<class T, class D>
+inline void StepDataWrite(D*& pDest, const T& Src, bool bSwapEndian)
+{
+	StepDataWrite(pDest, &Src, 1, bSwapEndian);
+}
+#endif
+
+inline auto cry_sprintf(char* buf, size_t size, const char* format, ...)
+{
+	assert(0);
+}
+
+inline auto cry_sprintf(char* buf, const char* format, ...)
+{
+	assert(0);
+}
+
 
 #if CRY_PLATFORM_POSIX
 
@@ -324,6 +570,8 @@ static STypeInfoTest _TypeInfoTest;
 
 void CTypeInfo::SwapEndian(void* pData, size_t nCount, bool bWriting) const
 {
+	// FIXME:
+	#if 0
 	switch (Size)
 	{
 	case 1:
@@ -340,6 +588,9 @@ void CTypeInfo::SwapEndian(void* pData, size_t nCount, bool bWriting) const
 	default:
 		assert(0);
 	}
+	#else
+	assert(0);
+	#endif
 }
 
 // If attr name is found, return pointer to start of value text; else 0.
@@ -483,7 +734,7 @@ CStructInfo::CStructInfo(cstr name, size_t size, size_t align, Array<CVarInfo> v
 						}
 					}
 					assert(next_offset > size);
-					size_t wordsize = min(next_offset - size, var.Type.Size);
+					size_t wordsize = std::min(next_offset - size, var.Type.Size);
 					size = next_offset;
 					switch (wordsize)
 					{
@@ -564,7 +815,7 @@ size_t CStructInfo::AddEndianDesc(cstr desc, size_t dim, size_t elem_size)
 			if ((prevdesc & ~0x3F) == (desc[0] & ~0x3F))
 			{
 				// Combine with previous char.
-				size_t maxdim = min(dim, size_t(0x3F - (prevdesc & 0x3F)));
+				size_t maxdim = std::min(dim, size_t(0x3F - (prevdesc & 0x3F)));
 				prevdesc += check_cast<char>(maxdim);
 				EndianDesc.erase(EndianDesc.length() - 1, 1);
 				EndianDesc.append(1, prevdesc);
@@ -664,7 +915,7 @@ string CStructInfo::ToString(const void* data, FToString flags, const void* def_
 
 			if (flags.NamedFields())
 			{
-				if (*str)
+				if (!str.empty())
 					str += ",";
 				if (*var.Name)
 				{
@@ -755,21 +1006,21 @@ void ParseElement(cstr& src, cstr& varname, cstr& val, CTempStr& tempstr)
 		{
 			// Must copy sub string to temp.
 			tempstr.assign(varname, end);
-			val = (cstr)tempstr + (val - varname);
-			eq = (cstr)tempstr + (eq - varname);
+			val            = (cstr)tempstr.c_str() + (val - varname);
+			eq = (cstr)tempstr.c_str() + (eq - varname);
 			non_const(*eq) = 0;
-			varname = (cstr)tempstr;
+			varname = (cstr)tempstr.c_str();
 		}
 		else
 		{
 			// Copy just varname to temp, return val in place.
-			varname = tempstr.assign(varname, eq);
+			varname = tempstr.assign(varname, eq).c_str();
 		}
 	}
 	else if (*end)
 	{
 		// Must copy sub string to temp.
-		val = tempstr.assign(val, end);
+		val = tempstr.assign(val, end).c_str();
 	}
 
 	// Else can return val without copying.
@@ -852,7 +1103,7 @@ void CStructInfo::SwapEndian(void* data, size_t nCount, bool bWriting) const
 {
 	non_const(*this).MakeEndianDesc();
 
-	if (EndianDesc.length() == 1 && !HasBitfields && EndianDescSize(EndianDesc) == Size)
+	if (EndianDesc.length() == 1 && !HasBitfields && EndianDescSize(EndianDesc.c_str()) == Size)
 	{
 		// Optimised array swap.
 		size_t nElems = (EndianDesc[0u] & 0x3F) * nCount;
@@ -878,7 +1129,7 @@ void CStructInfo::SwapEndian(void* data, size_t nCount, bool bWriting) const
 		// First swap bits.
 		// Iterate the endian descriptor.
 		void* step = data;
-		for (cstr desc = EndianDesc; *desc; desc++)
+		for (cstr desc = EndianDesc.c_str(); *desc; desc++)
 		{
 			size_t nElems = *desc & 0x3F;
 			switch (*desc & 0xC0)
@@ -952,7 +1203,7 @@ void CStructInfo::MakeEndianDesc()
 				// Struct-computed endian desc.
 				CStructInfo const& infoSub = static_cast<CStructInfo const&>(var.Type);
 				non_const(infoSub).MakeEndianDesc();
-				subdesc = infoSub.EndianDesc;
+				subdesc = infoSub.EndianDesc.c_str();
 				if (!*subdesc)
 					// No swapping.
 					continue;
@@ -996,10 +1247,10 @@ void CStructInfo::GetMemoryUsage(ICrySizer* pSizer, void const* data) const
 
 const CTypeInfo::CVarInfo* CStructInfo::NextSubVar(const CVarInfo* pPrev, bool bRecurseBase) const
 {
-	if (pPrev >= Vars.begin() && pPrev < Vars.end())
+	if (pPrev >= &(* Vars.begin()) && pPrev < &(*Vars.end()))
 	{
 		// pPrev is within this struct's vars
-		if (++pPrev < Vars.end())
+		if (++pPrev < &(*Vars.end()))
 			return pPrev;
 		return 0;
 	}
@@ -1010,12 +1261,12 @@ const CTypeInfo::CVarInfo* CStructInfo::NextSubVar(const CVarInfo* pPrev, bool b
 	if (bRecurseBase)
 	{
 		// Recurse into inline base structs
-		const CVarInfo* pBase = Vars.begin();
+		const CVarInfo* pBase = &(*Vars.begin());
 		if (pBase->IsInline())
 		{
 			if (const CVarInfo* pNext = pBase->Type.NextSubVar(pPrev, true))
 				return pNext;
-			if (++pBase < Vars.end())
+			if (++pBase < &(*Vars.end()))
 				return pBase;
 			return 0;
 		}
@@ -1023,7 +1274,7 @@ const CTypeInfo::CVarInfo* CStructInfo::NextSubVar(const CVarInfo* pPrev, bool b
 
 	if (!pPrev)
 		// Return first var
-		return Vars.begin();
+		return &(* Vars.begin());
 
 	return 0;
 }
@@ -1153,7 +1404,7 @@ void CEnumDef::Init(Array<SElem> elems, char* enum_str)
 		{
 			if (Elems[i].Value != i + Elems[0].Value)
 				bRegular = false;
-			MinValue = min(MinValue, Elems[i].Value);
+			MinValue = std::min(MinValue, Elems[i].Value);
 
 			// Find common prefix.
 			cstr sElem = Elems[i].Name;

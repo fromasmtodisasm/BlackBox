@@ -1,7 +1,11 @@
 #include "pch.hpp"
 
 #include "ResourceCompiler.h"
+
+#include <BlackBox/Core/TypeInfo_impl.h>
+
 #include "ZipFileFormat.h"
+#include "ZipFileFormat_info.h"
 
 #include <regex>
 #include <fstream>
@@ -24,20 +28,20 @@ namespace ZipFile
 
 	void MakeLocalHeader(void* header, string_view path, uint32 offset, uint32 data_size, void* data)
 	{
-		LocalFileHeader& lfh = *(LocalFileHeader*)(char*)header;
+		LocalFileHeader& lfh  = *(LocalFileHeader*)(char*)header;
 
-		auto             crc = crc32(0, (const Bytef*)data, data_size);
+		auto             crc  = crc32(0, (const Bytef*)data, data_size);
 
-		lfh.Signature        = LocalFileHeader::SIGNATURE;
-		lfh.VersionNeeded    = SPakFileVersion{0, 10};
-		lfh.Flags            = 0;
-		lfh.Method           = 0;
-		lfh.nLastModTime     = 0;
-		lfh.nLastModDate     = 0;
+		lfh.lSignature        = LocalFileHeader::SIGNATURE;
+		lfh.nVersionNeeded    = SPakFileVersion{0, 10};
+		lfh.nFlags            = 0;
+		lfh.nMethod           = 0;
+		lfh.nLastModTime      = 0;
+		lfh.nLastModDate      = 0;
 		// If file uncompressed then sizeCompressed and sizeUncompressed should match
-		lfh.desc             = DataDescriptor{.CRC32 = crc, .SizeCompressed = data_size, .SizeUncompressed = data_size};
-		lfh.FileNameLength   = path.length();
-		lfh.ExtraFieldLength = 0;
+		lfh.desc              = DataDescriptor{.lCRC32 = crc, .lSizeCompressed = data_size, .lSizeUncompressed = data_size};
+		lfh.nFileNameLength   = path.length();
+		lfh.nExtraFieldLength = 0;
 
 		WriteTime(lfh);
 
@@ -126,10 +130,10 @@ namespace ZipFile
 	void WriteDirectoryEntry(std::ofstream& of, ZipFile::ArchiveInfo& ar, std::filesystem::directory_entry dir_entry)
 	{
 		{
-			auto path         = dir_entry.path().string();
+			auto path = dir_entry.path().string();
 			std::replace(path.begin(), path.end(), '\\', '/');
-			dir_entry         = fs::directory_entry(path);
-			path = remove_leading_ups(path);
+			dir_entry = fs::directory_entry(path);
+			path      = remove_leading_ups(path);
 
 			if (dir_entry.is_directory())
 			{
@@ -173,7 +177,11 @@ namespace ZipFile
 		LocalFileHeader* local_header = (LocalFileHeader*)&data[0];
 
 		MakeLocalHeader(local_header, path, 0, file_size, (void*)file_data);
-		of.write((const char*)local_header, sizeof LocalFileHeader + local_header->FileNameLength);
+
+		static CStructInfo* ti = (CStructInfo*)&local_header->TypeInfo();
+		printf("CentralDirectory str: %s\n", ti->ToString(local_header, FToString{false, true, true}).c_str());
+
+		of.write((const char*)local_header, sizeof LocalFileHeader + local_header->nFileNameLength);
 		of.write((const char*)file_data, file_size);
 
 		{
@@ -181,15 +189,18 @@ namespace ZipFile
 			auto              alloc_size = size + path.size();
 			CentralDirectory* header     = (CentralDirectory*)g_CentralDirArena.alloc(alloc_size);
 			MakeCentralDirectory(header, info.CurrentOffset, path, *local_header);
+
+			static CStructInfo* ti = (CStructInfo*)&header->TypeInfo();
+			//printf("CentralDirectory str: %s\n", ti->ToString(header, FToString{false, true, true}).c_str());
 		}
 
-		info.CurrentOffset += sizeof LocalFileHeader + local_header->ExtraFieldLength + local_header->FileNameLength + file_size;
+		info.CurrentOffset += sizeof LocalFileHeader + local_header->nExtraFieldLength + local_header->nFileNameLength + file_size;
 	}
 	LocalFileHeader make_archive()
 	{
 		LocalFileHeader ar{0};
-		ar.Signature     = LocalFileHeader::SIGNATURE;
-		ar.VersionNeeded = SPakFileVersion{14, 0};
+		ar.lSignature     = LocalFileHeader::SIGNATURE;
+		ar.nVersionNeeded = SPakFileVersion{14, 0};
 
 		return ar;
 	}
@@ -274,8 +285,8 @@ namespace ZipFile
 				}
 
 				auto& lh   = *(LocalFileHeader*)(data + cd->lLocalHeaderOffset);
-				auto  path = string_view((char*)(&lh + 1), lh.FileNameLength);
-				std::cout << path << "\t" << lh.desc.CRC32 << "\t" << lh.desc.SizeUncompressed << std::endl;
+				auto  path = string_view((char*)(&lh + 1), lh.nFileNameLength);
+				std::cout << path << "\t" << lh.desc.lCRC32 << "\t" << lh.desc.lSizeUncompressed << std::endl;
 
 				cd = (CentralDirectory*)((char*)(cd) + sizeof CentralDirectory + cd->nFileNameLength + cd->nExtraFieldLength + cd->nFileCommentLength);
 			}
@@ -304,7 +315,7 @@ namespace ZipFile
 
 	SRange file_range(CentralDirectory& entry)
 	{
-		return SRange{entry.lLocalHeaderOffset + uint32(sizeof LocalFileHeader) + entry.nFileNameLength, entry.desc.SizeUncompressed};
+		return SRange{entry.lLocalHeaderOffset + uint32(sizeof LocalFileHeader) + entry.nFileNameLength, entry.desc.lSizeUncompressed};
 	}
 
 	string_view file_name(CentralDirectory& entry, void* header)

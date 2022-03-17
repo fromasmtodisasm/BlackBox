@@ -99,8 +99,9 @@ namespace ZipFile
 			version = major << 8 | minor << 0;
 		}
 
-	public:
 		uint16 version;
+
+		AUTO_STRUCT_INFO;
 	};
 
 	struct MemoryArena
@@ -196,9 +197,11 @@ namespace ZipFile
 	// archives, the compressed and uncompressed sizes are 8 bytes each.
 	struct DataDescriptor
 	{
-		uint32 CRC32;            ///< crc-32                          4 bytes
-		uint32 SizeCompressed;   ///< compressed size                 4 bytes
-		uint32 SizeUncompressed; ///< uncompressed size               4 bytes
+		uint32 lCRC32;            ///< crc-32                          4 bytes
+		uint32 lSizeCompressed;   ///< compressed size                 4 bytes
+		uint32 lSizeUncompressed; ///< uncompressed size               4 bytes
+
+		AUTO_STRUCT_INFO;
 	};
 
 	// this is the local file header that appears before the compressed data
@@ -211,15 +214,15 @@ namespace ZipFile
 		{
 			SIGNATURE = 0x04034b50
 		};
-		uint32          Signature;     // local file header signature     4 bytes  (0x04034b50)
-		SPakFileVersion VersionNeeded; // version needed to extract       2 bytes
-		uint16          Flags;         // general purpose bit flag        2 bytes
-		uint16          Method;        // compression method              2 bytes
-		uint16          nLastModTime;  // last mod file time              2 bytes
-		uint16          nLastModDate;  // last mod file date              2 bytes
+		uint32          lSignature;     // local file header signature     4 bytes  (0x04034b50)
+		SPakFileVersion nVersionNeeded; // version needed to extract       2 bytes
+		uint16          nFlags;         // general purpose bit flag        2 bytes
+		uint16          nMethod;        // compression method              2 bytes
+		uint16          nLastModTime;   // last mod file time              2 bytes
+		uint16          nLastModDate;   // last mod file date              2 bytes
 		DataDescriptor  desc;
-		uint16          FileNameLength;   // file name length                2 bytes
-		uint16          ExtraFieldLength; // extra field length              2 bytes
+		uint16          nFileNameLength;   // file name length                2 bytes
+		uint16          nExtraFieldLength; // extra field length              2 bytes
 
 		AUTO_STRUCT_INFO;
 	};
@@ -272,12 +275,19 @@ namespace ZipFile
 		CDREnd*                       m_CentralDirectoryRecordEnd;
 
 		SArchiveHandle(std::string_view file)
-		    : fm{std::make_unique<CFileMapping>(file.data())}
+		    : SArchiveHandle(std::make_unique<CFileMapping>(file.data()))
 		{
-			header = (LocalFileHeader*)fm->getData();
-			auto     data{(char*)fm->getData()};
-			unsigned size{fm->getSize()};
-			m_CentralDirectoryRecordEnd = (CDREnd*)(data + size - sizeof CDREnd);
+		}
+		SArchiveHandle(std::unique_ptr<CFileMapping> fm)
+		    : SArchiveHandle((void*)fm->getData(), fm->getSize(), std::move(fm))
+		{
+		}
+
+		SArchiveHandle(void* data, size_t size, std::unique_ptr<CFileMapping> fm = nullptr)
+		    : fm(std::move(fm))
+		{
+			header = (LocalFileHeader*)data;
+			m_CentralDirectoryRecordEnd = (CDREnd*)((char*)data + size - sizeof CDREnd);
 		}
 
 		operator LocalFileHeader&()
@@ -502,8 +512,8 @@ namespace ZipFile
 		ZipFile::File create_file(ZipFile::CentralDirectory& entry, void* header)
 		{
 			auto name       = string_view((char*)header + entry.lLocalHeaderOffset + sizeof LocalFileHeader, entry.nFileNameLength); //
-			bool compressed = entry.desc.SizeCompressed != entry.desc.SizeUncompressed;
-			File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + name.length(), entry.desc.SizeUncompressed, entry.desc.SizeCompressed, name, (char*)header, compressed};
+			bool compressed = entry.desc.lSizeCompressed != entry.desc.lSizeUncompressed;
+			File file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + name.length(), entry.desc.lSizeUncompressed, entry.desc.lSizeCompressed, name, (char*)header, compressed};
 			return file;
 		}
 

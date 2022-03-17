@@ -85,11 +85,7 @@ inline const CTypeInfo& TypeInfo(const T* t)
 #endif // ENABLE_TYPE_INFO
 
 //! Specify automatic tool generation of TypeInfo bodies.
-#if 0
 #define AUTO_STRUCT_INFO STRUCT_INFO
-#else
-#define AUTO_STRUCT_INFO 
-#endif
 #define AUTO_TYPE_INFO   DECLARE_TYPE_INFO
 #define AUTO_TYPE_INFO_T DECLARE_TYPE_INFO_T
 

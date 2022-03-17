@@ -48,6 +48,16 @@ extern "C" DLL_EXPORT void CleanupModuleCVars()
 //////////////////////////////////////////////////////////////////////////
 // If not in static library.
 
+	#include <BlackBox/Math/Cry_Math.h>
+	#include <BlackBox/Core/TypeInfo_impl.h>
+
+	#define CRY_PLATFORM_IMPL_H_FILE 1
+	#include <BlackBox/Core/CryTypeInfo.inl>
+	#if CRY_PLATFORM_POSIX
+		#include "WinBase.inl"
+	#endif
+	#undef CRY_PLATFORM_IMPL_H_FILE
+
 	#if BB_PLATFORM_WINDOWS
 void CryPureCallHandler()
 {

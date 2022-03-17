@@ -277,7 +277,7 @@ namespace Cry
 //! ILINE always maps to CRY_FORCE_INLINE, which is the strongest possible inline preference.
 //! Note: Only use when shown that the end-result is faster when ILINE macro is used instead of inline.
 #if !defined(_DEBUG) && !defined(BB_UBSAN)
-	#define ILINE BB_FORCE_INLINE
+	#define ILINE __forceinline
 #else
 	#define ILINE inline
 #endif
@@ -360,6 +360,35 @@ template<class T>
 inline void ZeroStruct(T& t)
 {
 	memset(&t, 0, sizeof(t));
+}
+
+//! Cast one type to another, asserting there is no conversion loss.
+//! Usage: DestType dest = check_cast<DestType>(src);
+template<class D, class S>
+inline D check_cast(S const& s)
+{
+	D d = D(s);
+	assert(S(d) == s);
+	return d;
+}
+
+typedef const char* cstr;
+
+//! Declare a const and variable version of a function simultaneously.
+#define CONST_VAR_FUNCTION(head, body) \
+  ILINE head body                      \
+  ILINE const head const body          \
+
+template<class T>
+ILINE T& non_const(const T& t)
+{
+	return const_cast<T&>(t);
+}
+
+template<class T>
+ILINE T* non_const(const T* t)
+{
+	return const_cast<T*>(t);
 }
 
 //! Align function works on integer or pointer values. Only supports power-of-two alignment.
@@ -478,4 +507,4 @@ bool InitializeEngine(struct SSystemInitParams& startupParams, bool bManualEngin
 #define interface struct
 
 #define StringFormat(s, format, ...) \
-    sprintf(s.data(), format, __VA_ARGS__)
+	sprintf(s.data(), format, __VA_ARGS__)

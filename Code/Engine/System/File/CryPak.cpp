@@ -1093,9 +1093,9 @@ ZipFile::File CCryPak::create_file(ZipFile::CentralDirectory& entry, void* heade
 		//CryLog("Here");
 	}
 	#endif
-	bool  compressed = entry.desc.SizeCompressed != entry.desc.SizeUncompressed;
+	bool  compressed = entry.desc.lSizeCompressed != entry.desc.lSizeUncompressed;
 	auto& lfh        = *(LocalFileHeader*)((char*)header + entry.lLocalHeaderOffset);
-	File  file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + lfh.FileNameLength + lfh.ExtraFieldLength, entry.desc.SizeUncompressed, entry.desc.SizeCompressed, name, (char*)header, compressed};
+	File  file{entry.lLocalHeaderOffset + sizeof LocalFileHeader + lfh.nFileNameLength + lfh.nExtraFieldLength, entry.desc.lSizeUncompressed, entry.desc.lSizeCompressed, name, (char*)header, compressed};
 	return file;
 }
 
