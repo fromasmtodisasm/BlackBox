@@ -3,21 +3,37 @@ sources_platform(ALL)
 start_sources()
 add_sources(
 	"NoUberFile"
-	PROJECTS
-	3DEngine
 	SOURCE_GROUP "Source Files"
-	"3DEngine.cpp"
-	"MaterialManager.cpp"
-	"ObjectManager.cpp"
-	"Main.cpp"
+		"3DEngine.cpp"
+		"MaterialManager.cpp"
+		"ObjectManager.cpp"
+		"Main.cpp"
 	SOURCE_GROUP "Source Files\\\\Geometry"
-	"Geometry/Geometry.cpp"
-	"Geometry/StatObj.cpp"
-	"Geometry/Plane.cpp"
-	"Geometry/Primitives.cpp"
-	"Geometry/Quad.cpp"
+		"Geometry/Geometry.cpp"
+		"Geometry/StatObj.cpp"
+		"Geometry/Plane.cpp"
+		"Geometry/Primitives.cpp"
+		"Geometry/Quad.cpp"
 	SOURCE_GROUP "Source Files\\\\Scene"
-	"Scene/XmlSerialization.cpp"
+		"Scene/XmlSerialization.cpp"
+	SOURCE_GROUP "Assimp"
+		Assimp/CGFImporter.cpp
+		Assimp/CGFImporter.h
+	SOURCE_GROUP "Assimp\\\\CGF"
+		Assimp/CGF/CgfDump.cpp
+		Assimp/CGF/CgfUtils.cpp
+		Assimp/CGF/CgfUtils.h
+		Assimp/CGF/ChunkFileReader.cpp
+		Assimp/CGF/ChunkFileReader.h
+		Assimp/CGF/CryHeaders.h
+		Assimp/CGF/FileMapping.cpp
+		Assimp/CGF/FileMapping.h
+		Assimp/CGF/crc32.cpp
+		Assimp/CGF/crc32.h
+		Assimp/CGF/stdafx.cpp
+		Assimp/CGF/stdafx.h
+
+
 )
 end_sources()
 EngineModule(3DEngine PCH "pch.hpp" SOLUTION_FOLDER "Engine")
