@@ -508,7 +508,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 
 	ai.RegisterLoader(cgfImporter);
 
-	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
+	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes | aiProcess_GenNormals);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -533,7 +533,12 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 			auto RealFormat   = VertFormatForComponents(bNeedCol, false, bNeedNormals, bHasTC);
 			if (RealFormat != 9)
 			{
+				//FIXME:
+				#if 0
 				CryError("[ASSIMP] VertexFormat not eq 9");
+				#else
+				RealFormat = 9;
+				#endif
 			}
 
 			char* vb            = (char*)(m_VertexBuffer = CreateVertexBuffer(m_VertexFormat, mesh->mNumVertices));
@@ -549,7 +554,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 			for (size_t i = 0; i < m_nVertCount; i++)
 			{
 				memcpy(&vb[i * stride], &mesh->mVertices[i], sizeof(Legacy::Vec3));
-				if (TCOffset != -1)
+				if (TCOffset != -1 && bHasTC)
 				{
 					auto         _uv = UVs[i];
 					Legacy::Vec2 uv  = Legacy::Vec2(_uv.x, _uv.y);

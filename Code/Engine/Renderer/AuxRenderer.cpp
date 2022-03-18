@@ -102,7 +102,7 @@ HRESULT CRenderAuxGeom::InitCube()
 	// Set up rasterizer
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroStruct(rasterizerDesc);
-	rasterizerDesc.CullMode              = D3D11_CULL_BACK;
+	rasterizerDesc.CullMode              = D3D11_CULL_NONE;
 	rasterizerDesc.FillMode              = D3D11_FILL_SOLID;
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthBias             = false;

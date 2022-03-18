@@ -8,6 +8,11 @@
 //#include "StringUtils.h"
 #include <BlackBox/Core/StringUtils.h>
 
+#include <assimp/BaseImporter.h>
+#include <assimp/Importer.hpp>
+#include <assimp/IOSystem.hpp>
+#include <assimp/scene.h>
+
 #define printf CryLog
 
 template<class TMemoryBlob>
@@ -17,8 +22,9 @@ struct CCgfDump
 	using FileReader    = CChunkFileReader<TMemoryBlob>;
 	using FileReaderPtr = _smart_ptr<FileReader>;
 
-	CCgfDump(MemoryBlobPtr fileMapping)
+	CCgfDump(MemoryBlobPtr fileMapping, aiScene* scene)
 	    : m_FileMapping(fileMapping)
+	    , m_pScene(scene)
 	{
 	}
 
@@ -135,6 +141,8 @@ struct CCgfDump
 	// the reader of the file
 	FileReaderPtr                           m_pReader;
 	MemoryBlobPtr                           m_FileMapping;
+
+	aiScene*                                m_pScene;
 
 	typedef std::map<unsigned, std::string> ChunkTypeNameMap;
 	ChunkTypeNameMap                        g_mapChunkTypeName;
@@ -1497,6 +1505,50 @@ struct CCgfDump
 
 		printf("\"%s\"\n", pChunk->name);
 		printf("ObjectID: 0x%08X\tParentID: 0x%08X\n", pChunk->ObjectID, pChunk->ParentID);
+
+		if (pChunk->ParentID == -1)
+		{
+			m_pScene->mRootNode = new aiNode(pChunk->name);
+			auto root           = m_pScene->mRootNode;
+			root->mParent       = nullptr;
+
+			auto header         = m_pReader->getChunkHeader(pChunk->ObjectID);
+			if (header.ChunkType == ChunkType_Mesh)
+			{
+				auto mesh_chunk      = (MESH_CHUNK_DESC*)m_pReader->getChunkData(pChunk->ObjectID);
+				m_pScene->mMeshes    = new aiMesh*[1];
+				m_pScene->mNumMeshes = 1;
+				{
+					root->mNumMeshes   = 1;
+					root->mMeshes      = new unsigned int[1];
+
+					auto mesh          = new aiMesh;
+					mesh->mName        = getObjectName(pChunk->ObjectID);
+
+					mesh->mNumVertices = mesh_chunk->nVerts;
+					mesh->mVertices    = new aiVector3D[mesh->mNumVertices];
+					memcpy(mesh->mVertices, (mesh_chunk + 1), sizeof(aiVector3D) * mesh->mNumVertices);
+
+					mesh->mNumFaces = mesh_chunk->nFaces;
+					mesh->mFaces    = new aiFace[mesh->mNumFaces];
+
+					auto faces      = (CryFace*)((CryVertex*)(mesh_chunk + 1) + mesh_chunk->nVerts);
+					for (size_t i = 0; i < mesh->mNumFaces; i++)
+					{
+						auto& face        = mesh->mFaces[i];
+						face.mNumIndices = 3;
+						face.mIndices    = new unsigned int[3];
+
+						memcpy(face.mIndices, &faces[i], 3 * sizeof(unsigned int));
+						printf("");
+					}
+
+					m_pScene->mMeshes[0] = mesh;
+				}
+				//mesh->mNumVertices
+			}
+		}
+
 		if (pChunk->nChildren)
 		{
 			printf("Children: %d", pChunk->nChildren);

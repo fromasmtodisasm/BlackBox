@@ -1241,6 +1241,9 @@ bool CSystem::InitFileSystem()
 	// Load value of sys_game_folder from system.cfg into the sys_project console variable
 	LoadConfiguration(path.c_str(), pCVarsWhiteListConfigSink, eLoadConfigInit, ELoadConfigurationFlags::SuppressConfigNotFoundWarning);
 
+	const char* szConfigPakPath = "%ENGINEROOT%/config.pak";
+	m_env.pCryPak->OpenPack(szConfigPakPath);
+
 	// Initialize console before the project system
 	// This ensures that "exec" and other early commands can be executed immediately on parsing
 	if (m_env.pConsole != nullptr)

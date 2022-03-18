@@ -25,10 +25,10 @@ void MineWorld::init()
 {
 	auto loadAssets = [this]()
 	{
-		auto testbox = gEnv->p3DEngine->MakeObject("Objects/box.cgf");
-		auto grass = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
+		auto grass   = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
 		types.push_back(grass);
 	};
+
 
 	auto generateLevel = [this]()
 	{
@@ -70,6 +70,23 @@ void MineWorld::init()
 
 	loadAssets();
 	generateLevel();
+	{
+		//auto testbox = gEnv->p3DEngine->MakeObject("objects/editor/arrow.cgf");
+		//auto testbox = gEnv->p3DEngine->MakeObject("objects/editor/mtlbox.cgf");
+		auto testbox = gEnv->p3DEngine->MakeObject("objects/editor/mtlteapot.cgf");
+		//auto testbox = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
+		//auto        testbox = types[0];
+
+
+
+		CEntityDesc desc(0, 0);
+		auto        entity = gEnv->pEntitySystem->SpawnEntity(desc);
+		gEnv->p3DEngine->RegisterEntity(entity);
+
+		entity->SetIStatObj(testbox);
+		entity->SetPos({5,5,5});
+		entity->SetScale(glm::vec3(0.1f));
+	}
 
 	gEnv->pConsole->ExecuteString("load_level minecraft");
 	gEnv->pConsole->ShowConsole(false);
@@ -413,7 +430,7 @@ void MinePlayer::init()
 	entity = gEnv->pEntitySystem->SpawnEntity(desc);
 	gEnv->p3DEngine->RegisterEntity(entity);
 
-	entity->SetPos(glm::vec3(5, 20, 5));
+	entity->SetPos(glm::vec3(5, 40, 5));
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 
@@ -475,7 +492,7 @@ void MinePlayer::placeBlockOnCursor()
 	    blockSideOnCursor(pos, side, pickDistance))
 	{
 		minecraft->world.set(side, MineWorld::Grass);
-	m_pSetBlockSound->Play();
+		m_pSetBlockSound->Play();
 	}
 }
 

@@ -67,7 +67,7 @@ namespace Assimp
 					file.Read(buf.data(), file.GetLength());
 
 					auto                        mapping = _smart_ptr(new MemoryBlob((void*)buf.data(), file.GetLength()));
-					CCgfDump<MemoryBlob> dumper(mapping);
+					CCgfDump<MemoryBlob> dumper(mapping, pScene);
 					dumper.Dump(3, argv);
 				}
 			}
