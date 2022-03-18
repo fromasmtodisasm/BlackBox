@@ -412,9 +412,6 @@ bool CSystem::Init()
 	//====================================================
 	CryLog("Initializing Console");
 	//====================================================
-	CryLog("Loading config");
-	if (!ConfigLoad("system.cfg"))
-		return false;
 	CreateRendererVars(m_startupParams);
 	if (auto ovr = m_pCmdLine->FindArg(eCLAT_Pre, "override"); ovr)
 	{

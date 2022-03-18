@@ -19,7 +19,12 @@
 #endif
 #include <BlackBox/System/File/CryFile.h>
 
+#if !defined(SUPPORT_LOG_IDENTER)
+	#define INDENT_LOG_DURING_SCOPE(...)                   (void)(0)
+	#define CRY_DEFINE_ASSET_SCOPE(sAssetType, sAssetName) (void)(0)
+#else
 #define INDENT_LOG_DURING_SCOPE(i, format, ...) CryLog(format, __VA_ARGS__)
+#endif
 
 void*           g_pLuaDebugger{};
 

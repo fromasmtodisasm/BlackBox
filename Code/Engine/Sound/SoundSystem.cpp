@@ -35,7 +35,10 @@ ISound* CSoundSystem::LoadSound(const char* szFile, int nFlags)
 	auto Sound = CSound::Load(szFile, nFlags);
 	if (Sound)
 	{
+		//FIXME:
+		#if 0
 		CryLog("[SoundSystem] %s loaded", szFile);
+		#endif
 		m_SoundList.push_back(Sound);
 	}
 	return Sound;

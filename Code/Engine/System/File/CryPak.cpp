@@ -682,7 +682,7 @@ namespace CIOWrapper
 {
 	inline FILE* FopenEx(string_view path, string_view mode) { return fopen(path.data(), mode.data()); }
 	#define FopenLocked FopenEx
-}
+} // namespace CIOWrapper
 
 FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags /* = 0*/)
 {
@@ -786,9 +786,9 @@ FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags
 
 	if (nOSFlags & (_O_WRONLY | _O_RDWR))
 	{
-		#if 0
+	#if 0
 		CheckFileAccessDisabled(fullPath, szMode);
-		#endif
+	#endif
 
 		// we need to open the file for writing, but we failed to do so.
 		// the only reason that can be is that there are no directories for that file.
@@ -803,16 +803,15 @@ FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags
 		else
 			file = CIOWrapper::FopenLocked(fullPath, szMode);
 
-#if !defined(_RELEASE)
+	#if !defined(_RELEASE)
 		if (file && g_cvars.pakVars.nLogAllFileAccess)
 		{
 			CryLog("<PAK LOG FILE ACCESS> CCryPak::FOpen() has directly opened requested file %s for writing", fullPath.c_str());
 		}
-#endif
+	#endif
 
 		return file;
 	}
-
 
 	if (nVarPakPriority == ePakPriorityFileFirst ||
 	    (nVarPakPriority == ePakPriorityFileFirstModsOnly && IsModPath(fullPath.c_str()))) // if the file system files have priority now..
@@ -838,18 +837,23 @@ FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags
 		INT_PTR nFile = m_arrOpenFiles.size() + CCryPak::g_nPseudoFileIdxOffset;
 		m_arrOpenFiles.push_back((MyFile*)data);
 
-		CryLog("$3<PAK LOG FILE ACCESS> CCryPak::FOpen() has opened requested file %s from %s pak %s, disk offset %u",
-		       fullPath.c_str(),
-	#if 0
+	#if !defined(_RELEASE)
+		if (g_cvars.pakVars.nLogAllFileAccess)
+		{
+			CryLog("$3<PAK LOG FILE ACCESS> CCryPak::FOpen() has opened requested file %s from %s pak %s, disk offset %u",
+			       fullPath.c_str(),
+		#if 0
 			pZip->IsInMemory() ? "memory" : "disk", 
 			pZipFilePath, 
 			pFileData->GetFileEntry()->nFileDataOffset
-	#else
-			"memory",
-			pName,
-			((MyFile*)data)->m_File->offset
+		#else
+			       "memory",
+			       pName,
+			       ((MyFile*)data)->m_File->offset
+		#endif
+			);
+		}
 	#endif
-		);
 
 		RecordFile(pName);
 		return (FILE*)nFile;
@@ -1001,7 +1005,7 @@ FILETIME CCryPak::GetModificationTime(FILE* f)
 
 bool CCryPak::MakeDir(const char* szPath)
 {
-	auto result =  _mkdir(szPath) == 0;
+	auto result = _mkdir(szPath) == 0;
 	if (!result)
 	{
 		return errno == EEXIST;
@@ -1009,7 +1013,7 @@ bool CCryPak::MakeDir(const char* szPath)
 
 	// FIXME: need fix AdjustFileName for writing
 	bool bGamePathMapping = false;
-	
+
 	if (0 == szPath[0])
 	{
 		return true;
@@ -1020,7 +1024,7 @@ bool CCryPak::MakeDir(const char* szPath)
 	int nFlagsAdd = (!bGamePathMapping) ? FLAGS_PATH_REAL : 0;
 	AdjustFileName(szPath, tempPath.data(), FLAGS_FOR_WRITING | nFlagsAdd);
 
-	char newPath[MAX_PATH];
+	char  newPath[MAX_PATH];
 	char* q = newPath;
 
 	memset(newPath, 0, sizeof(newPath));
@@ -1035,7 +1039,7 @@ bool CCryPak::MakeDir(const char* szPath)
 		*q++ = *p++;
 	}
 
-	for (; *p; )
+	for (; *p;)
 	{
 		while (*p != g_cNonNativeSlash && *p != g_cNativeSlash && *p)
 		{
@@ -1091,8 +1095,11 @@ void CCryPak::RecordFileOpen(bool bEnable)
 
 void CCryPak::RecordFile(const char* szFilename)
 {
+	//FIXME:
+	#if 0
 	if (m_pLog)
 		CryComment("File open: %s", szFilename);
+	#endif
 
 	if (m_RecordFileOpen)
 	{
@@ -1275,7 +1282,7 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 			string tmp = m_strDataRootWithSlash + szDestPath;
 
 			//strcpy(szDestPath, tmp.c_str());
-			dst = tmp;
+			dst        = tmp;
 		}
 	}
 

@@ -104,6 +104,7 @@
         string Name;
     };
 
+    #define CryLog(...) 
 
 }
 
