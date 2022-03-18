@@ -1,12 +1,12 @@
 
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-// 
-//	File: 
 //
-//  Description:  
+//	File:
+//
+//  Description:
 //
 //	History:
 //
@@ -16,41 +16,39 @@
 #include <algorithm>
 
 #ifdef _DEBUG
-#undef THIS_FILE
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Initializes an empty file mapping object
-CFileMapping::CFileMapping():
-	m_nSize(0)
-	,m_pData(0)
+CFileMapping::CFileMapping()
+    : m_nSize(0)
+    , m_pData(0)
 #ifdef USE_FILE_MAPPING
-	,m_hFile (INVALID_HANDLE_VALUE)
-	,m_hMapping (0)	
+    , m_hFile(INVALID_HANDLE_VALUE)
+    , m_hMapping(0)
 #endif
 {
-
 }
 CFileMapping::CFileMapping(const CFileMapping& other)
 {
 	m_nSize = other.m_nSize;
 	m_pData = other.m_pData;
 #ifdef USE_FILE_MAPPING
-	m_hFile = other.m_hFile;
+	m_hFile    = other.m_hFile;
 	m_hMapping = other.m_hMapping;
 #endif
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CFileMapping::CFileMapping(CFileMapping&& other) 
+CFileMapping::CFileMapping(CFileMapping&& other)
     : CFileMapping()
 {
 	m_nSize = other.m_nSize;
 	m_pData = other.m_pData;
 #ifdef USE_FILE_MAPPING
-	m_hFile = other.m_hFile;
+	m_hFile    = other.m_hFile;
 	m_hMapping = other.m_hMapping;
 #endif
 
@@ -64,15 +62,15 @@ CFileMapping::CFileMapping(CFileMapping&& other)
 
 //////////////////////////////////////////////////////////////////////////////
 // initializes the object and tries to open the given file mapping
-CFileMapping::CFileMapping (const char* szFileName, unsigned nFlags):
-	m_nSize(0)
-	,m_pData(0)
+CFileMapping::CFileMapping(const char* szFileName, unsigned nFlags)
+    : m_nSize(0)
+    , m_pData(0)
 #ifdef USE_FILE_MAPPING
-	,m_hFile (INVALID_HANDLE_VALUE)
-	,m_hMapping (0)	
+    , m_hFile(INVALID_HANDLE_VALUE)
+    , m_hMapping(0)
 #endif
 {
-	open (szFileName, nFlags);
+	open(szFileName, nFlags);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,7 +82,7 @@ CFileMapping::~CFileMapping()
 
 //////////////////////////////////////////////////////////////////////////////
 // Retuns the size of the mapped file, or 0 if no file was mapped or the file is empty
-unsigned CFileMapping::getSize()const
+unsigned CFileMapping::getSize() const
 {
 	return m_nSize;
 }
@@ -102,7 +100,7 @@ CFileMapping::PData CFileMapping::getData() const
 CFileMapping::PData CFileMapping::getData(unsigned nOffset) const
 {
 	if (m_pData)
-		return ((char*)m_pData)+nOffset;
+		return ((char*)m_pData) + nOffset;
 	else
 		return NULL;
 }
@@ -110,7 +108,7 @@ CFileMapping::PData CFileMapping::getData(unsigned nOffset) const
 #ifndef USE_FILE_MAPPING
 // sets the given (already allocated) buffer to this object
 // the memory must be allocated with malloc()
-void CFileMapping::attach (PData pData, unsigned nSize)
+void CFileMapping::attach(PData pData, unsigned nSize)
 {
 	close();
 	m_pData = pData;
@@ -118,31 +116,29 @@ void CFileMapping::attach (PData pData, unsigned nSize)
 }
 #endif
 
-
 //////////////////////////////////////////////////////////////////////////////
 // initializes the object, opening the given file
 // if file open has failed, subsequent getData() and
 // getSize() will return zeros
 // Returns true if open was successful
-bool CFileMapping::open (const char* szFileName, unsigned nFlags)
+bool CFileMapping::open(const char* szFileName, unsigned nFlags)
 {
 	close();
 #ifdef USE_FILE_MAPPING
-	m_hFile = CreateFile (szFileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
+	m_hFile       = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
 	DWORD dwError = 0;
 	if (m_hFile != INVALID_HANDLE_VALUE)
 	{
-		m_nSize = GetFileSize(m_hFile, NULL);
-		m_hMapping = CreateFileMapping (m_hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+		m_nSize    = GetFileSize(m_hFile, NULL);
+		m_hMapping = CreateFileMapping(m_hFile, NULL, PAGE_READONLY, 0, 0, NULL);
 		if (m_hMapping != NULL)
 		{
-			m_pData = MapViewOfFile (m_hMapping, FILE_MAP_READ, 0, 0, 0);
+			m_pData = MapViewOfFile(m_hMapping, FILE_MAP_READ, 0, 0, 0);
 		}
 		else
 		{
-            dwError = GetLastError();
+			dwError = GetLastError();
 		}
-
 	}
 	else
 	{
@@ -150,46 +146,46 @@ bool CFileMapping::open (const char* szFileName, unsigned nFlags)
 	}
 #elif defined(_CRY_ANIMATION_BASE_HEADER_)
 	ICryPak* pPak = g_GetPak();
-	FILE* f = pPak->FOpen (szFileName, "rb", nFlags);
+	FILE*    f    = pPak->FOpen(szFileName, "rb", nFlags);
 	if (f != NULL)
 	{
-		if (0 == pPak->FSeek (f, 0, SEEK_END))
+		if (0 == pPak->FSeek(f, 0, SEEK_END))
 		{
-			m_nSize = pPak->FTell (f);
+			m_nSize = pPak->FTell(f);
 			if ((int)m_nSize >= 0)
 			{
-				if (0 == pPak->FSeek (f, 0, SEEK_SET))
+				if (0 == pPak->FSeek(f, 0, SEEK_SET))
 				{
-					void* pData = malloc (m_nSize);
-					if (pData != NULL && 1 != pPak->FRead (pData, m_nSize, 1, f))
-						free (pData);
+					void* pData = malloc(m_nSize);
+					if (pData != NULL && 1 != pPak->FRead(pData, m_nSize, 1, f))
+						free(pData);
 					else
 						m_pData = pData;
 				}
 			}
 		}
-		pPak->FClose (f);
+		pPak->FClose(f);
 	}
 #else
-	FILE* f = fxopen (szFileName, "rb");
+	FILE* f = fxopen(szFileName, "rb");
 	if (f != NULL)
 	{
-		if (0 == fseek (f, 0, SEEK_END))
+		if (0 == fseek(f, 0, SEEK_END))
 		{
-			m_nSize = ftell (f);
+			m_nSize = ftell(f);
 			if ((int)m_nSize >= 0)
 			{
-				if (0 == fseek (f, 0, SEEK_SET))
+				if (0 == fseek(f, 0, SEEK_SET))
 				{
-					void* pData = malloc (m_nSize);
-					if (pData != NULL && 1 != fread (pData, m_nSize, 1, f))
-						free (pData);
+					void* pData = malloc(m_nSize);
+					if (pData != NULL && 1 != fread(pData, m_nSize, 1, f))
+						free(pData);
 					else
 						m_pData = pData;
 				}
 			}
 		}
-		fclose (f);
+		fclose(f);
 	}
 #endif
 
@@ -219,20 +215,20 @@ void CFileMapping::close()
 
 	if (m_hMapping != NULL)
 	{
-		CloseHandle (m_hMapping);
+		CloseHandle(m_hMapping);
 		m_hMapping = NULL;
 	}
 
 	if (m_hFile != INVALID_HANDLE_VALUE)
 	{
-		CloseHandle (m_hFile);
+		CloseHandle(m_hFile);
 		m_hFile = INVALID_HANDLE_VALUE;
 	}
 #else
 	if (m_pData)
 	{
 		if (m_pData)
-			free (m_pData);
+			free(m_pData);
 		m_pData = NULL;
 	}
 #endif

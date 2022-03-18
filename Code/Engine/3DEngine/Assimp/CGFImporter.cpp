@@ -3,8 +3,7 @@
 #include <BlackBox/System/File/CryFile.h>
 
 #include "CGFImporter.h"
-
-void CgfDump(int argc, char* argv[]);
+#include "CGF/CgfDump.h"
 
 namespace Assimp
 {
@@ -61,19 +60,15 @@ namespace Assimp
 				{
 					char* argv[] = {
 					    "dummy.exe",
+					    "-mesh",
 					    (char*)file.GetAdjustedFilename()};
-					CCryFile outfile(argv[1], "wb");
-					if (outfile)
-					{
-						std::vector<char> buf(file.GetLength());
-						file.Read(buf.data(), file.GetLength());
-						outfile.Write(buf.data(), file.GetLength());
 
-						file.Close();
-						outfile.Close();
+					std::vector<char> buf(file.GetLength());
+					file.Read(buf.data(), file.GetLength());
 
-						CgfDump(2, argv);
-					}
+					auto                        mapping = _smart_ptr(new MemoryBlob((void*)buf.data(), file.GetLength()));
+					CCgfDump<MemoryBlob> dumper(mapping);
+					dumper.Dump(3, argv);
 				}
 			}
 		}

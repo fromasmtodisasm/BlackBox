@@ -1,11 +1,11 @@
 //////////////////////////////////////////////////////////////////////
 //
-//	Crytek Source code 
+//	Crytek Source code
 //	Copyright (c) Crytek 2001-2004
-// 
-//	File: 
 //
-//  Description:  
+//	File:
+//
+//  Description:
 //
 //	History:
 //
@@ -22,27 +22,38 @@
 //class CFileMapping;
 //TYPEDEF_AUTOPTR(CFileMapping);
 
-class MemoryFileMapping
+class MemoryBlob : public _reference_target_t
 {
-	MemoryFileMapping(void* data, size_t size)
+public:
+	MemoryBlob(void* data, size_t size)
 	    : m_Data(data)
 	    , m_Size(size)
 	{
 	}
-	MemoryFileMapping* operator->()
+	MemoryBlob* operator->()
 	{
 		return this;
 	}
 
-	void*  getData() { return m_Data; }
+	void* getData() { return m_Data; }
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the file data at the given offset
+	void* getData(unsigned nOffset) const
+	{
+		if (m_Data)
+			return ((char*)m_Data) + nOffset;
+		else
+			return NULL;
+	}
+
 	size_t getSize() { return m_Size; }
 
-	void* m_Data;
+	void*  m_Data;
 	size_t m_Size;
 };
 
 ////////////////////////////////////////////////////////////////////////
-// Chunk file reader. 
+// Chunk file reader.
 // Accesses a chunked file structure through file mapping object.
 // Opens a chunk file and checks for its validity.
 // If it's invalid, closes it as if there was no open operation.
@@ -50,15 +61,15 @@ class MemoryFileMapping
 // be true for successfully open files
 ////////////////////////////////////////////////////////////////////////
 
-//template<class CFileMapping = MemoryFileMapping>
-template<class CFileMapping = ::CFileMapping>
-class CChunkFileReader:
-	public _reference_target_t
+//template<class CFileMapping = MemoryBlob>
+template<class TMemoryStream = ::CFileMapping>
+class CChunkFileReader :
+    public _reference_target_t
 {
 public:
-	typedef FILE_HEADER FileHeader;
-	typedef CHUNK_HEADER ChunkHeader;
-	typedef _smart_ptr<CFileMapping> CFileMapping_AutoPtr;
+	typedef FILE_HEADER               FileHeader;
+	typedef CHUNK_HEADER              ChunkHeader;
+	typedef _smart_ptr<TMemoryStream> CFileMapping_AutoPtr;
 
 	CChunkFileReader()
 	    : m_pChunks(NULL)
@@ -75,14 +86,14 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// attaches the file mapping object to this file reader and checks
 	// whether the file is a valid chunked file
-	bool open(CFileMapping* pFile)
+	bool open(TMemoryStream* pFile)
 	{
 		close();
 		m_pFile       = pFile;
 
 		bool bSuccess = false;
 
-		if ((m_pFile != (CFileMapping*)NULL) && (m_pFile->getData() != NULL))
+		if ((m_pFile != (TMemoryStream*)NULL) && (m_pFile->getData() != NULL))
 		{
 			if (m_pFile->getSize() >= sizeof(FileHeader))
 			{ // the file must contain the header
@@ -161,7 +172,7 @@ public:
 	// whether the file is a valid chunked file
 	bool open(const char* szFileName, unsigned nFlags = 0)
 	{
-		auto pFileMapping = _smart_ptr<CFileMapping>(new CFileMapping(szFileName, nFlags));
+		auto pFileMapping = _smart_ptr<TMemoryStream>(new TMemoryStream(szFileName, nFlags));
 		if (!pFileMapping->getData())
 		{
 			gLastError = "Cannot open file";
@@ -185,10 +196,10 @@ public:
 
 	// returns the raw data of the file from the given offset
 	// returns the raw data of the file from the given offset
-	    const void*
-	    getRawData(unsigned nOffset) const
+	const void*
+	getRawData(unsigned nOffset) const
 	{
-		if ((m_pFile != (CFileMapping*)NULL) && m_pFile->getData())
+		if ((m_pFile != (TMemoryStream*)NULL) && m_pFile->getData())
 			return ((char*)m_pFile->getData()) + nOffset;
 		else
 			return NULL;
@@ -257,31 +268,31 @@ public:
 
 	bool isValid() const
 	{
-		return m_pFile != (CFileMapping*)NULL;
+		return m_pFile != (TMemoryStream*)NULL;
 	}
 
-    const char* getLastError() const { return gLastError; }
+	const char* getLastError() const { return gLastError; }
 
 protected:
 	// this variable contains the last error occured in this class
-	const char* gLastError;
+	const char*              gLastError;
 
-	CFileMapping_AutoPtr m_pFile;
+	CFileMapping_AutoPtr     m_pFile;
 	// array of offsets used by the chunks
 	typedef std::vector<int> ChunkSizeArray;
-	ChunkSizeArray m_arrChunkSize;
+	ChunkSizeArray           m_arrChunkSize;
 	// pointer to the array of chunks in the m_pFile
-	const ChunkHeader* m_pChunks;
+	const ChunkHeader*       m_pChunks;
 };
 
 using CChunkFileReader_AutoPtr = _smart_ptr<CChunkFileReader<>>;
 
 // this function eats the given number of elements from the raw data pointer pRawData
 // and increments the pRawData to point to the end of data just eaten
-template <typename T>
-void EatRawData (T*pArray, unsigned nSize, const void*&pRawData)
+template<typename T>
+void EatRawData(T* pArray, unsigned nSize, const void*& pRawData)
 {
-	memcpy (pArray, pRawData, sizeof(T)*nSize);
+	memcpy(pArray, pRawData, sizeof(T) * nSize);
 	pRawData = static_cast<const T*>(pRawData) + nSize;
 }
 
@@ -289,33 +300,32 @@ void EatRawData (T*pArray, unsigned nSize, const void*&pRawData)
 // and increments the pRawData to point to the end of data just eaten
 // RETURNS:
 //   false if failed to read the data
-template <typename T>
-bool EatRawData (T*pArray, unsigned nSize, const void*&pRawData, unsigned& nDataSize)
+template<typename T>
+bool EatRawData(T* pArray, unsigned nSize, const void*& pRawData, unsigned& nDataSize)
 {
-	if (sizeof(T)*nSize <= nDataSize)
+	if (sizeof(T) * nSize <= nDataSize)
 	{
-		memcpy (pArray, pRawData, sizeof(T)*nSize);
-		pRawData = static_cast <const T*> (pRawData) + nSize;
-		nDataSize -= sizeof(T)*nSize;
+		memcpy(pArray, pRawData, sizeof(T) * nSize);
+		pRawData = static_cast<const T*>(pRawData) + nSize;
+		nDataSize -= sizeof(T) * nSize;
 		return true;
 	}
 	else
 		return false;
 }
 
-template <typename T>
-bool EatRawData (T*pArray, unsigned nSize, const void*&pRawData, const void* pRawDataEnd)
+template<typename T>
+bool EatRawData(T* pArray, unsigned nSize, const void*& pRawData, const void* pRawDataEnd)
 {
-	if ((const char*)pRawData + sizeof(T)*nSize <= (const char*)pRawDataEnd)
+	if ((const char*)pRawData + sizeof(T) * nSize <= (const char*)pRawDataEnd)
 	{
-		memcpy (pArray, pRawData, sizeof(T)*nSize);
-		pRawData = static_cast <const T*> (pRawData) + nSize;
+		memcpy(pArray, pRawData, sizeof(T) * nSize);
+		pRawData = static_cast<const T*>(pRawData) + nSize;
 		return true;
 	}
 	else
 		return false;
 }
-
 
 // this function puts the pointer to the data to the given pointer, and moves
 // the raw data pointer further; if fails, nothing happens and false is returned
@@ -326,27 +336,27 @@ bool EatRawData (T*pArray, unsigned nSize, const void*&pRawData, const void* pRa
 //   nDataSize - reference to the data size counter, this will be decremented upon success
 // RETURNS:
 //   false if failed to read the data
-template <typename T>
-bool EatRawDataPtr(const T*&pArray, unsigned nSize, const void*&pRawData, unsigned& nDataSize)
+template<typename T>
+bool EatRawDataPtr(const T*& pArray, unsigned nSize, const void*& pRawData, unsigned& nDataSize)
 {
-	if (sizeof(T)*nSize <= nDataSize)
+	if (sizeof(T) * nSize <= nDataSize)
 	{
-		pArray = (const T*)pRawData;
-		pRawData = static_cast <const T*> (pRawData) + nSize;
-		nDataSize -= sizeof(T)*nSize;
+		pArray   = (const T*)pRawData;
+		pRawData = static_cast<const T*>(pRawData) + nSize;
+		nDataSize -= sizeof(T) * nSize;
 		return true;
 	}
 	else
 		return false;
 }
 
-template <typename T>
-bool EatRawDataPtr(const T*&pArray, unsigned nSize, const void*&pRawData, const void* pRawDataEnd)
+template<typename T>
+bool EatRawDataPtr(const T*& pArray, unsigned nSize, const void*& pRawData, const void* pRawDataEnd)
 {
-	if ((const char*)pRawData + sizeof(T)*nSize <= (const char*)pRawDataEnd)
+	if ((const char*)pRawData + sizeof(T) * nSize <= (const char*)pRawDataEnd)
 	{
-		pArray = (const T*)pRawData;
-		pRawData = static_cast <const T*> (pRawData) + nSize;
+		pArray   = (const T*)pRawData;
+		pRawData = static_cast<const T*>(pRawData) + nSize;
 		return true;
 	}
 	else

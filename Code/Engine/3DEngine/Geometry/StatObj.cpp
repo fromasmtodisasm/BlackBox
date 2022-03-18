@@ -500,12 +500,11 @@ public:
 
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
-	_smart_ptr<Assimp::CgfImporter> cgfImporter = new Assimp::CgfImporter;
+	auto             cgfImporter = new Assimp::CgfImporter;
 
 	Assimp::Importer ai;
 	auto             ioHandler = new MyIO;
 	ai.SetIOHandler(ioHandler);
-
 
 	ai.RegisterLoader(cgfImporter);
 
