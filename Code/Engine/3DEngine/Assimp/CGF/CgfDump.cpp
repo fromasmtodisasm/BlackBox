@@ -19,7 +19,10 @@
 #include "CryHeaders.h"
 #include "ChunkFileReader.h"
 #include "CgfUtils.h"
-#include "StringUtils.h"
+//#include "StringUtils.h"
+#include <BlackBox/Core/StringUtils.h>
+
+#define printf CryLog
 
 // OPTIONS
 // dumps animation keys as they are in the file (in the controller chunks)
@@ -1153,7 +1156,7 @@ void printSet (const char* szFormat, const std::set<T>& setMtls, const char* szP
 
 
 // helper to get order for Vec3d
-struct CVec3dOrder: public std::binary_function< Vec3d, Vec3d, bool>
+struct CVec3dOrder/*: public std::binary_function< Vec3d, Vec3d, bool>*/
 {
 	bool operator() ( const Vec3d &a, const Vec3d &b ) const
 	{
@@ -2150,7 +2153,7 @@ void printCollectedTextures(const char* szFormat)
 		printf (szFormat, it->c_str(), it->c_str(), it->c_str());
 }
 
-void main(int argc, char* argv[])
+void CgfDump(int argc, char* argv[])
 {
 	const char* szFileName = NULL;
 	if (argc < 2)
@@ -2268,7 +2271,7 @@ void main(int argc, char* argv[])
 
 	// create the object that reads the file
 	//
-	g_pReader = new CChunkFileReader();
+	g_pReader = new CChunkFileReader<CFileMapping>();
 	if (!g_pReader->open (szFileName))
 	{
 		printf ("Cannot open %s: unrecognized file format or corrupted file\n", szFileName);

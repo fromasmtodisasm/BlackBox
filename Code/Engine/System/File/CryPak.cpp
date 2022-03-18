@@ -1001,7 +1001,11 @@ FILETIME CCryPak::GetModificationTime(FILE* f)
 
 bool CCryPak::MakeDir(const char* szPath)
 {
-	return _mkdir(szPath) == 0;
+	auto result =  _mkdir(szPath) == 0;
+	if (!result)
+	{
+		return errno == EEXIST;
+	}
 
 	// FIXME: need fix AdjustFileName for writing
 	bool bGamePathMapping = false;
@@ -1270,7 +1274,8 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 			// Add data folder prefix.
 			string tmp = m_strDataRootWithSlash + szDestPath;
 
-			strcpy(szDestPath, tmp.c_str());
+			//strcpy(szDestPath, tmp.c_str());
+			dst = tmp;
 		}
 	}
 

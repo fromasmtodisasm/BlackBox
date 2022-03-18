@@ -138,6 +138,11 @@ bool CFileMapping::open (const char* szFileName, unsigned nFlags)
 		{
 			m_pData = MapViewOfFile (m_hMapping, FILE_MAP_READ, 0, 0, 0);
 		}
+		else
+		{
+            dwError = GetLastError();
+		}
+
 	}
 	else
 	{

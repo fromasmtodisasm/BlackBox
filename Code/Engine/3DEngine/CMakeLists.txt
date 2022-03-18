@@ -46,3 +46,6 @@ if(USE_ASSIMP)
 	add_package(assimp )
 	target_link_libraries(${THIS_PROJECT} PRIVATE assimp::assimp)
 endif()
+
+target_compile_definitions(${THIS_PROJECT} PRIVATE -DUSE_FILE_MAPPING)
+

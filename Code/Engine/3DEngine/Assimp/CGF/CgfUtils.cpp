@@ -12,7 +12,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "StringUtils.h"
+//#include "StringUtils.h"
+#include <BlackBox/Core/StringUtils.h>
 #include "CgfUtils.h"
  
 using namespace CryStringUtils;

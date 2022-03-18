@@ -36,6 +36,7 @@
 #include "CryHeaders.h"
 
 //#include "CryCompiledFile.h"
+#include <BlackBox/Core/Platform/Windows.hpp>
 
 #define cry std
 #define CRY_AS_STD

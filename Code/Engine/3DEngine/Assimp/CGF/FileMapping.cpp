@@ -1,4 +1,4 @@
-
+#if 0
 //////////////////////////////////////////////////////////////////////
 //
 //	Crytek Source code 
@@ -204,3 +204,4 @@ void CFileMapping::close()
 #endif
 	m_nSize = 0;
 }
+#endif

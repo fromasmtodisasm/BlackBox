@@ -25,6 +25,7 @@ void MineWorld::init()
 {
 	auto loadAssets = [this]()
 	{
+		auto testbox = gEnv->p3DEngine->MakeObject("Objects/box.cgf");
 		auto grass = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
 		types.push_back(grass);
 	};

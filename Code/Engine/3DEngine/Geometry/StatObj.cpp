@@ -13,6 +13,8 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include <Assimp/CGFImporter.h>
+
 #include <cctype>
 #include <cstdio>
 #include <fstream>
@@ -498,9 +500,14 @@ public:
 
 bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
+	_smart_ptr<Assimp::CgfImporter> cgfImporter = new Assimp::CgfImporter;
+
 	Assimp::Importer ai;
 	auto             ioHandler = new MyIO;
 	ai.SetIOHandler(ioHandler);
+
+
+	ai.RegisterLoader(cgfImporter);
 
 	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
 
