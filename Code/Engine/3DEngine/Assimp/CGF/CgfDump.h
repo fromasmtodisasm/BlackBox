@@ -13,7 +13,7 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/scene.h>
 
-#define printf CryLog
+#define printf(...) (void)0
 
 template<class TMemoryBlob>
 struct CCgfDump
@@ -1527,20 +1527,49 @@ struct CCgfDump
 
 					mesh->mNumVertices = mesh_chunk->nVerts;
 					mesh->mVertices    = new aiVector3D[mesh->mNumVertices];
-					memcpy(mesh->mVertices, (mesh_chunk + 1), sizeof(aiVector3D) * mesh->mNumVertices);
+
+					auto verts         = (CryVertex*)(mesh_chunk + 1);
+
+					for (size_t i = 0; i < mesh->mNumVertices; i++)
+					{
+						auto& vert = mesh->mVertices[i];
+						vert.x     = verts[i].p.x;
+						vert.y     = verts[i].p.y;
+						vert.z     = verts[i].p.z;
+
+						printf("");
+					}
 
 					mesh->mNumFaces = mesh_chunk->nFaces;
 					mesh->mFaces    = new aiFace[mesh->mNumFaces];
 
-					auto faces      = (CryFace*)((CryVertex*)(mesh_chunk + 1) + mesh_chunk->nVerts);
+					auto faces      = (CryFace*)(verts + mesh_chunk->nVerts);
 					for (size_t i = 0; i < mesh->mNumFaces; i++)
 					{
-						auto& face        = mesh->mFaces[i];
+						auto& face       = mesh->mFaces[i];
 						face.mNumIndices = 3;
 						face.mIndices    = new unsigned int[3];
 
 						memcpy(face.mIndices, &faces[i], 3 * sizeof(unsigned int));
 						printf("");
+					}
+
+					if (mesh_chunk->nTVerts != 0)
+					{
+						mesh->mNumUVComponents[0] = 2;
+						mesh->mTextureCoords[0]   = new aiVector3D[mesh->mNumVertices];
+
+						auto tfaces               = (CryUV*)(faces + mesh_chunk->nFaces);
+						for (size_t i = 0; i < mesh->mNumVertices; i++)
+						{
+							auto& face       = mesh->mTextureCoords[0];
+
+							face->x          = tfaces[i].u;
+							face->y          = tfaces[i].v;
+							face->z          = 0.f;
+
+							printf("");
+						}
 					}
 
 					m_pScene->mMeshes[0] = mesh;
@@ -2303,3 +2332,4 @@ struct CCgfDump
 		}
 	}
 };
+#undef printf
