@@ -3,7 +3,7 @@
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
-#include <BlackBox/3DEngine //IStatObj.hpp>
+#include <BlackBox/3DEngine/IStatObj.hpp>
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/Core/smartptr.hpp>
 

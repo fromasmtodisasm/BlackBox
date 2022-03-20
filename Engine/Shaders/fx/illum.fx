@@ -43,7 +43,8 @@ VS_OUTPUT VS(
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
     output.Pos = Transform(IN.Pos);
-    output.Normal = IN.Normal;
+    //output.Normal = IN.Normal;
+	output.Normal    = GetNormal(IN.Normal); // calculate view-space normal
     output.TC = IN.TC;
 
     return output;
@@ -62,7 +63,8 @@ float4 PS(VS_OUTPUT input)
     float4 color;
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
+	textureColor   = float4(0.5, 0.5, 0.5, 1);
+	//textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
 
 	// Invert the light direction for calculations.
     lightDir = SunDirection.xyz;

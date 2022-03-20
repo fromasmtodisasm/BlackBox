@@ -154,6 +154,7 @@ void CD3DRenderer::UpdateConstants()
 		                                  auto View                  = m_Camera.GetViewMatrix();
 		                                  pConstData->Projection     = Projection;
 		                                  pConstData->ViewProjection = Projection * View;
+		                                  pConstData->View           = View;
 	                                  });
 
 	ID3DBuffer* pBuffers[] = {

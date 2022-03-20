@@ -381,7 +381,7 @@ std::pair<ID3DBlob*, ID3DBlob*> CShader::Load(const std::string_view text, IShad
         &pErrorBlob);
 	if (FAILED(hr))
 	{
-#if 0
+#if 1
 		auto pBlob = _smart_ptr(pShaderBlob);
 		auto error = _smart_ptr(pErrorBlob);
 		if (pErrorBlob && pErrorBlob->GetBufferPointer())

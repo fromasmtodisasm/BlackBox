@@ -52,8 +52,11 @@ struct SimpleVertex
 
 struct CBChangesEveryFrame
 {
+	D3DXMATRIX Model;
 	D3DXMATRIX World;
 	D3DXMATRIX MVP;
+	D3DXMATRIX MV;
+
 	bool       ApplyGrayScale;
 };
 
@@ -126,6 +129,7 @@ void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 	CBChangesEveryFrame cb;
 	cb.World = DrawElement.transform;
 	cb.MVP   = g_ViewProjection * cb.World;
+	cb.MV    = g_View * cb.World;
 
 	m_ZPShader->Bind();
 	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
@@ -150,6 +154,8 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 	CBChangesEveryFrame cb;
 	cb.World = DrawElement.transform;
 	cb.MVP   = g_ViewProjection * cb.World;
+	cb.MV    = g_View * cb.World;
+	cb.Model = cb.World;
 
 	m_IllumShader->Bind();
 	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);

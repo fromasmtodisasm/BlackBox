@@ -508,7 +508,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 
 	ai.RegisterLoader(cgfImporter);
 
-	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes | aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals /* | aiProcess_FlipWindingOrder*/);
+	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes /*| aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals *//* | aiProcess_FlipWindingOrder*/);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -522,8 +522,8 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 		for (size_t i = 0; i < scene->mNumMeshes; i++)
 		{
 			auto mesh         = scene->mMeshes[i];
-			m_vBoxMin         = glm::vec3(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z);
-			m_vBoxMax         = glm::vec3(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z);
+			m_vBoxMin         = Legacy::Vec3(0, 0, 0); //glm::vec3(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z);
+			m_vBoxMax         = Legacy::Vec3(1, 1, 1); //glm::vec3(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z);
 
 			bool bNeedCol     = mesh->HasVertexColors(i);
 			bool bNeedNormals = mesh->HasNormals();

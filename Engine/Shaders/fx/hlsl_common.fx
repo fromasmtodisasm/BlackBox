@@ -42,8 +42,10 @@ cbuffer PerViewCB : register(PERVIEW_SLOT)
 
 cbuffer PerDrawCB : register(PERDRAW_SLOT)
 {
+    float4x4 Model;
     float4x4 World;
     float4x4 MVP;
+    float4x4 MV;
     bool ApplyGrayScale;
 };
 
@@ -52,6 +54,12 @@ cbuffer PerDrawCB : register(PERDRAW_SLOT)
 float4x4 GetOrthoProjMat()
 {
     return perViewCB.OrthoProjection;
+}
+
+[[fn]]
+float4x4 GetViewMatrix()
+{
+    return perViewCB.View;
 }
 
 [[fn]]
@@ -64,6 +72,13 @@ float4x4 GetProjMat()
 float4x4 GetViewProjMat()
 {
     return perViewCB.ViewProjection;
+}
+
+[[fn]]
+float3 GetNormal(float3 normal)
+{
+	float4x4 ModelView = mul(GetViewMatrix(), Model);
+	return normalize(mul((float3x3)Model, normal));
 }
 
 [[fn]]

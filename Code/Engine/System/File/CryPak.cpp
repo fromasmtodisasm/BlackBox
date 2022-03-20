@@ -459,6 +459,7 @@ void CCryPak::ParseAliases(const char* szCommandLine)
 
 		// get old folder name
 		strncpy(szName, szVal, (size_t)(szSep - szVal));
+		szName[(size_t)(szSep - szVal)] = 0;
 
 		// find next pair
 		const char* szSepNext = strchr(szSep + 1, ',');
