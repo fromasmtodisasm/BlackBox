@@ -3,7 +3,7 @@
 #include <BlackBox/System/File/CryFile.h>
 
 #include "CGFImporter.h"
-#include "CGF/Import.h"
+#include "CGF/Loader.h"
 
 namespace Assimp
 {
@@ -67,8 +67,8 @@ namespace Assimp
 					file.Read(buf.data(), file.GetLength());
 
 					_smart_ptr<IMemoryBlob> mapping = new CMemoryBlob((void*)buf.data(), file.GetLength());
-					CCgfDump                dumper(mapping, pScene);
-					dumper.Dump(2, argv);
+					CLoaderCGF              loader(mapping, pScene);
+					loader.Load(pFile.c_str());
 				}
 			}
 		}

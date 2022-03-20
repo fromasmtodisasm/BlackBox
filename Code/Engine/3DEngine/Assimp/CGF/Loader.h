@@ -24,25 +24,12 @@ public:
 
 	CLoaderCGF(MemoryBlobPtr fileMapping, aiScene* scene);
 
-	// OPTIONS
-	// dumps animation keys as they are in the file (in the controller chunks)
-	bool                          m_bDumpKeys            = false;
-	// dumps mesh details
-	bool                          m_bDumpMeshVerts       = false;
-	bool                          m_bDumpMeshFaces       = false;
-	bool                          m_bDumpMeshUVs         = false; // -meshUVs
-	bool                          m_bDumpMeshTexFaces    = false;
-	bool                          m_bDumpMeshBones       = false; // -meshBones
-	bool                          m_bDumpBoneInitPos     = false; // -boneInitPos
-	bool                          m_bDumpMeshVertCols    = false;
-	bool                          m_bBriefInfo           = false;
-
 	char                          g_szVertexSortOrder[4] = "", g_szFaceSortOrder[4] = "", g_szUVSortOrder[4] = "";
 
 	// print the texture set at the end?
-	bool                          m_bCollectTextures           = false;
+	bool                          m_bCollectTextures           = true;
 	// print as the copy command?
-	bool                          m_bCollectTexturesForCopying = false;
+	bool                          m_bCollectTexturesForCopying = true;
 
 	typedef std::set<std::string> StringArray;
 	// used textures: collection
@@ -124,12 +111,6 @@ public:
 
 	void         sortVertIndices(const SMeshMorphTargetVertex* pVerts, int nVerts, std::vector<int>& arrVertIndices);
 
-	void         printChunkMtl(const MTL_CHUNK_DESC_0746* pChunk, int nSize);
-
-	void         printChunkMtl(const MTL_CHUNK_DESC_0745* pChunk, int nSize);
-
-	void         printChunkMtl(const MTL_CHUNK_DESC_0744* pChunk, int nSize);
-
 	const char*  getCtrlName(unsigned nCtrl);
 
 	enum BoneIdentificationEnum
@@ -173,20 +154,6 @@ public:
 
 	std::string getHelperType(HelperTypes nType);
 
-	//
-	//
-	//
-	//////////////////////////////////////////////////////////////////////////
-	//
-	//
-	//
-
-	void        printChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, int nSize);
-
-	void        printChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, int nSize);
-
-	void        printChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize);
-
 	template<typename T>
 	void printSet(const char* szFormat, const std::set<T>& setMtls, const char* szPostfix = "");
 
@@ -216,33 +183,25 @@ public:
 	typedef std::map<Vec3d, std::set<unsigned>, CVec3dOrder> VertexWelderMapSet;
 
 public:
-	void printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize);
-
-	void printChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize);
-
-	void printChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0744* pChunk, int nSize);
-
-	void printChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0745* pChunk, int nSize);
-
-	void printChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize);
-
-	void printChunkHelper(const HELPER_CHUNK_DESC* pData, int nSize);
-
-	void printChunkLight(const LIGHT_CHUNK_DESC* pData, int nSize);
-
-	void printChunkBoneLightBinding(const BONELIGHTBINDING_CHUNK_DESC_0001* pChunk, int nSize);
-
-	void printChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001* pChunk, int nSize);
-
-	void printChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk, int nSize);
-
-	void printChunkSourceInfo(const char* pData, unsigned nSize);
-
-	void printChunkSceneProps(const char* pData, unsigned nSize);
-
-	void printChunk(int i);
-
-	void printCollectedTextures(const char* szFormat);
-
-	void Dump(int argc, char* argv[]);
+	void LoadChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, int nSize);
+	void LoadChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, int nSize);
+	void LoadChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize);
+	void LoadChunkMtl(const MTL_CHUNK_DESC_0746* pChunk, int nSize);
+	void LoadChunkMtl(const MTL_CHUNK_DESC_0745* pChunk, int nSize);
+	void LoadChunkMtl(const MTL_CHUNK_DESC_0744* pChunk, int nSize);
+	void LoadChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize);
+	void LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize);
+	void LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0744* pChunk, int nSize);
+	void LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0745* pChunk, int nSize);
+	void LoadChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize);
+	void LoadChunkHelper(const HELPER_CHUNK_DESC* pData, int nSize);
+	void LoadChunkLight(const LIGHT_CHUNK_DESC* pData, int nSize);
+	void LoadChunkBoneLightBinding(const BONELIGHTBINDING_CHUNK_DESC_0001* pChunk, int nSize);
+	void LoadChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001* pChunk, int nSize);
+	void LoadChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk, int nSize);
+	void LoadChunkSourceInfo(const char* pData, unsigned nSize);
+	void LoadChunkSceneProps(const char* pData, unsigned nSize);
+	void LoadChunk(int i);
+	void LoadCollectedTextures(const char* szFormat);
+	void Load(const char* filename);
 };

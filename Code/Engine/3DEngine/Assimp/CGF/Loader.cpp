@@ -17,9 +17,9 @@
 #include "Loader.h"
 
 #if 0
-#define PRINT_LOG CryLog;
+	#define PRINT_LOG(format, ...) CryLog(format, __VA_ARGS__);
 #else
-#define PRINT_LOG
+	#define PRINT_LOG
 #endif
 
 template<typename TVector, typename TComponent, int nComponents>
@@ -292,12 +292,12 @@ void CLoaderCGF::print(const char* szName, const TextureMap3& tex)
 	g_setTextures.insert(tex.name);
 
 	PRINT_LOG("%s \"%s\", Amount %d, Type %s (0x%02X) Flags 0x%02X",
-	       szName,
-	       tex.name,
-	       (int)tex.Amount,
-	       getTexType(tex.type),
-	       (int)tex.type,
-	       (int)tex.flags);
+	          szName,
+	          tex.name,
+	          (int)tex.Amount,
+	          getTexType(tex.type),
+	          (int)tex.type,
+	          (int)tex.flags);
 
 	if (tex.flags & TEXMAP_NOMIPMAP)
 		PRINT_LOG(" (TEXMAP_NOMIPMAP)");
@@ -331,14 +331,14 @@ void CLoaderCGF::print(const char* szName, const TextureMap3& tex)
 		PRINT_LOG("Reflection size %g, blur %g\n", tex.refSize, tex.refBlur);
 
 	PRINT_LOG("UV Scale (%g,%g), UV Offset (%g,%g), UVW Rotate (%g,%g,%g)\n",
-	       tex.uscl_val, tex.vscl_val,
-	       tex.uoff_val, tex.voff_val,
-	       tex.urot_val, tex.vrot_val, tex.wrot_val);
+	          tex.uscl_val, tex.vscl_val,
+	          tex.uoff_val, tex.voff_val,
+	          tex.urot_val, tex.vrot_val, tex.wrot_val);
 
 	PRINT_LOG("UV Scale Controller IDs (0x%08X,0x%08X), UV Offset Controller IDs (0x%08X,0x%08X), UVW Rotate Controller IDs (0x%08X,0x%08X,0x%08X)\n",
-	       tex.uscl_ctrlID, tex.vscl_ctrlID,
-	       tex.uoff_ctrlID, tex.voff_ctrlID,
-	       tex.urot_ctrlID, tex.vrot_ctrlID, tex.wrot_ctrlID);
+	          tex.uscl_ctrlID, tex.vscl_ctrlID,
+	          tex.uoff_ctrlID, tex.voff_ctrlID,
+	          tex.urot_ctrlID, tex.vrot_ctrlID, tex.wrot_ctrlID);
 }
 
 void CLoaderCGF::print(const char* szName, const TextureMap2& tex)
@@ -348,12 +348,12 @@ void CLoaderCGF::print(const char* szName, const TextureMap2& tex)
 	g_setTextures.insert(tex.name);
 
 	PRINT_LOG("%s \"%s\", Amount %d, Type %s (0x%02X) Flags 0x%02X",
-	       szName,
-	       tex.name,
-	       (int)tex.Amount,
-	       getTexType(tex.type),
-	       (int)tex.type,
-	       (int)tex.flags);
+	          szName,
+	          tex.name,
+	          (int)tex.Amount,
+	          getTexType(tex.type),
+	          (int)tex.type,
+	          (int)tex.flags);
 
 	if (tex.flags & TEXMAP_NOMIPMAP)
 		PRINT_LOG(" (TEXMAP_NOMIPMAP)");
@@ -387,14 +387,14 @@ void CLoaderCGF::print(const char* szName, const TextureMap2& tex)
 		PRINT_LOG("Reflection size %g, blur %g\n", tex.refSize, tex.refBlur);
 
 	PRINT_LOG("UV Scale (%g,%g), UV Offset (%g,%g), UVW Rotate (%g,%g,%g)\n",
-	       tex.uscl_val, tex.vscl_val,
-	       tex.uoff_val, tex.voff_val,
-	       tex.urot_val, tex.vrot_val, tex.wrot_val);
+	          tex.uscl_val, tex.vscl_val,
+	          tex.uoff_val, tex.voff_val,
+	          tex.urot_val, tex.vrot_val, tex.wrot_val);
 
 	PRINT_LOG("UV Scale Controller IDs (0x%08X,0x%08X), UV Offset Controller IDs (0x%08X,0x%08X), UVW Rotate Controller IDs (0x%08X,0x%08X,0x%08X)\n",
-	       tex.uscl_ctrlID, tex.vscl_ctrlID,
-	       tex.uoff_ctrlID, tex.voff_ctrlID,
-	       tex.urot_ctrlID, tex.vrot_ctrlID, tex.wrot_ctrlID);
+	          tex.uscl_ctrlID, tex.vscl_ctrlID,
+	          tex.uoff_ctrlID, tex.voff_ctrlID,
+	          tex.urot_ctrlID, tex.vrot_ctrlID, tex.wrot_ctrlID);
 }
 
 void CLoaderCGF::print(const char* szName, const TextureMap& tex)
@@ -404,8 +404,8 @@ void CLoaderCGF::print(const char* szName, const TextureMap& tex)
 	g_setTextures.insert(tex.name);
 
 	PRINT_LOG("%s \"%s\"\n",
-	       szName,
-	       tex.name);
+	          szName,
+	          tex.name);
 
 	if (tex.utile || tex.vtile)
 	{
@@ -428,14 +428,14 @@ void CLoaderCGF::print(const char* szName, const TextureMap& tex)
 	}
 
 	PRINT_LOG("UV Scale (%g,%g), UV Offset (%g,%g), UVW Rotate (%g,%g,%g)\n",
-	       tex.uscl_val, tex.vscl_val,
-	       tex.uoff_val, tex.voff_val,
-	       tex.urot_val, tex.vrot_val, tex.wrot_val);
+	          tex.uscl_val, tex.vscl_val,
+	          tex.uoff_val, tex.voff_val,
+	          tex.urot_val, tex.vrot_val, tex.wrot_val);
 
 	PRINT_LOG("UV Scale Controller IDs (0x%08X,0x%08X), UV Offset Controller IDs (0x%08X,0x%08X), UVW Rotate Controller IDs (0x%08X,0x%08X,0x%08X)\n",
-	       tex.uscl_ctrlID, tex.vscl_ctrlID,
-	       tex.uoff_ctrlID, tex.voff_ctrlID,
-	       tex.urot_ctrlID, tex.vrot_ctrlID, tex.wrot_ctrlID);
+	          tex.uscl_ctrlID, tex.vscl_ctrlID,
+	          tex.uoff_ctrlID, tex.voff_ctrlID,
+	          tex.urot_ctrlID, tex.vrot_ctrlID, tex.wrot_ctrlID);
 }
 
 void CLoaderCGF::initVertIndices(std::vector<int>& arrVertIndices, int nVerts)
@@ -471,7 +471,7 @@ void CLoaderCGF::sortVertIndices(const SMeshMorphTargetVertex* pVerts, int nVert
 		std::sort(arrVertIndices.begin(), arrVertIndices.end(), TVertexSorter<SMeshMorphTargetVertex>(pVerts, nVerts, g_szVertexSortOrder));
 }
 
-void CLoaderCGF::printChunkMtl(const MTL_CHUNK_DESC_0746* pChunk, int nSize)
+void CLoaderCGF::LoadChunkMtl(const MTL_CHUNK_DESC_0746* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -519,7 +519,7 @@ void CLoaderCGF::printChunkMtl(const MTL_CHUNK_DESC_0746* pChunk, int nSize)
 	}
 }
 
-void CLoaderCGF::printChunkMtl(const MTL_CHUNK_DESC_0745* pChunk, int nSize)
+void CLoaderCGF::LoadChunkMtl(const MTL_CHUNK_DESC_0745* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -566,7 +566,7 @@ void CLoaderCGF::printChunkMtl(const MTL_CHUNK_DESC_0745* pChunk, int nSize)
 	}
 }
 
-void CLoaderCGF::printChunkMtl(const MTL_CHUNK_DESC_0744* pChunk, int nSize)
+void CLoaderCGF::LoadChunkMtl(const MTL_CHUNK_DESC_0744* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -879,7 +879,7 @@ std::string CLoaderCGF::getHelperType(HelperTypes nType)
 	}
 }
 
-void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, int nSize)
+void CLoaderCGF::LoadChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -900,7 +900,12 @@ void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, 
 	{
 		int               i, numKeys = pChunk->nKeys;
 		const CryBoneKey* pKeys = (const CryBoneKey*)(pChunk + 1);
+		//FIXME:
+#if 0
 		if (m_bDumpKeys)
+#else
+		if (true)
+#endif
 		{
 			PRINT_LOG(":");
 			for (i = 0; i < numKeys; ++i)
@@ -914,12 +919,12 @@ void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, 
 				ptEuler.SetAnglesXYZ(Matrix33(q));
 				Vec3d ql = log(q).v;
 				PRINT_LOG("% 3d. frame %4.1f pos (%.3f,%.3f,%.3f)  quat (%.3f;%.3f,%.3f,%.3f) = 2*qlog (%.3fpi,%.3fpi,%.3fpi) = rotAA (%.1f deg axis %.3f,%.3f,%.3f) = euler (%.1f,%.1f,%.1f)",
-				       i, k.time / 160.0f,
-				       p.x, p.y, p.z,
-				       q.w, q.v.x, q.v.y, q.v.z,
-				       2 * ql.x / M_PI, 2 * ql.y / M_PI, 2 * ql.z / M_PI,
-				       qAngleAxis.angle * 180 / M_PI, qAngleAxis.axis.x, qAngleAxis.axis.y, qAngleAxis.axis.z,
-				       ptEuler.x * 180 / M_PI, ptEuler.y * 180 / M_PI, ptEuler.z * 180 / M_PI);
+				          i, k.time / 160.0f,
+				          p.x, p.y, p.z,
+				          q.w, q.v.x, q.v.y, q.v.z,
+				          2 * ql.x / M_PI, 2 * ql.y / M_PI, 2 * ql.z / M_PI,
+				          qAngleAxis.angle * 180 / M_PI, qAngleAxis.axis.x, qAngleAxis.axis.y, qAngleAxis.axis.z,
+				          ptEuler.x * 180 / M_PI, ptEuler.y * 180 / M_PI, ptEuler.z * 180 / M_PI);
 			}
 		}
 		else
@@ -935,7 +940,7 @@ void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, 
 	PRINT_LOG("\n");
 }
 
-void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, int nSize)
+void CLoaderCGF::LoadChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -948,7 +953,12 @@ void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, 
 
 	int                i, numKeys = pChunk->numKeys;
 	const CryKeyPQLog* pKeys = (const CryKeyPQLog*)(pChunk + 1);
-	if (m_bDumpKeys)
+
+#if 0
+		if (m_bDumpKeys)
+#else
+	if (true)
+#endif
 	{
 		PRINT_LOG(":");
 		for (i = 0; i < numKeys; ++i)
@@ -962,12 +972,12 @@ void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, 
 			Ang3               ptEuler;
 			ptEuler.SetAnglesXYZ(Matrix33(q));
 			PRINT_LOG("% 3d. frame %4.1f pos (%.3f,%.3f,%.3f)  quat (%.3f;%.3f,%.3f,%.3f) = 2*qlog (%.3fpi,%.3fpi,%.3fpi) = rotAA (%.1f deg axis %.3f,%.3f,%.3f) = euler (%.1f,%.1f,%.1f)",
-			       i, k.nTime / 160.0f,
-			       p.x, p.y, p.z,
-			       q.w, q.v.x, q.v.y, q.v.z,
-			       2 * ql.x / M_PI, 2 * ql.y / M_PI, 2 * ql.z / M_PI,
-			       qAngleAxis.angle * 180 / M_PI, qAngleAxis.axis.x, qAngleAxis.axis.y, qAngleAxis.axis.z,
-			       ptEuler.x * 180 / M_PI, ptEuler.y * 180 / M_PI, ptEuler.z * 180 / M_PI);
+			          i, k.nTime / 160.0f,
+			          p.x, p.y, p.z,
+			          q.w, q.v.x, q.v.y, q.v.z,
+			          2 * ql.x / M_PI, 2 * ql.y / M_PI, 2 * ql.z / M_PI,
+			          qAngleAxis.angle * 180 / M_PI, qAngleAxis.axis.x, qAngleAxis.axis.y, qAngleAxis.axis.z,
+			          ptEuler.x * 180 / M_PI, ptEuler.y * 180 / M_PI, ptEuler.z * 180 / M_PI);
 		}
 	}
 	else
@@ -982,7 +992,7 @@ void CLoaderCGF::printChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, 
 	PRINT_LOG("\n");
 }
 
-void CLoaderCGF::printChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize)
+void CLoaderCGF::LoadChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -993,9 +1003,9 @@ void CLoaderCGF::printChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize)
 	double fSecsPerFrame = double(pChunk->SecsPerTick) * pChunk->TicksPerFrame;
 
 	PRINT_LOG("Global range: %d .. %d frames (%g sec .. %g sec, length %g seconds)\n",
-	       pChunk->global_range.start, pChunk->global_range.end,
-	       pChunk->global_range.start * fSecsPerFrame, pChunk->global_range.end * fSecsPerFrame,
-	       (pChunk->global_range.end - pChunk->global_range.start) * fSecsPerFrame);
+	          pChunk->global_range.start, pChunk->global_range.end,
+	          pChunk->global_range.start * fSecsPerFrame, pChunk->global_range.end * fSecsPerFrame,
+	          (pChunk->global_range.end - pChunk->global_range.start) * fSecsPerFrame);
 	PRINT_LOG("%.3f MilliSecs/Tick, %d Ticks/Frame\n", pChunk->SecsPerTick * 1000, pChunk->TicksPerFrame);
 	const RANGE_ENTITY* pSubrange = (const RANGE_ENTITY*)(pChunk + 1);
 	for (int i = 0; i < pChunk->nSubRanges; ++i)
@@ -1008,7 +1018,7 @@ void CLoaderCGF::printChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize)
 	}
 }
 
-void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
+void CLoaderCGF::LoadChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1026,10 +1036,13 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 
 	PRINT_LOG("\"%s\" %d Verts, %d UVs, %d Faces", getObjectName(pChunk->chdr.ChunkID), pChunk->nVerts, pChunk->nTVerts, pChunk->nFaces);
 
+//FIXME:
+#if 0
 	if (pChunk->HasBoneInfo)
 		PRINT_LOG(", Has BONE INFO");
 	else if (m_bDumpMeshBones)
 		PRINT_LOG(", Has NO bone info");
+#endif
 
 	if (pChunk->HasVertexCol)
 		PRINT_LOG(", Has VERTEX COLORS");
@@ -1075,8 +1088,11 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 	Vec3d       ptMin, ptMax;
 	ptMin = ptMax = pVerts[0].p;
 	int i, j;
+//FIXME:
+#if 0
 	if (m_bDumpMeshVerts)
 		PRINT_LOG("Vertices: %d\n", pChunk->nVerts);
+#endif
 
 	std::vector<int> arrVertIndices;
 	if ((const char*)(pVerts + pChunk->nVerts) > pChunkEnd)
@@ -1117,17 +1133,23 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 		else
 			setNormals.insert(v.n);
 
+// FIXME:
+#if 0
 		if (m_bDumpMeshVerts)
 			PRINT_LOG("\t% 4d\tp=(%8.3f,%8.3f,%8.3f) n=(%7.3f,%7.3f,%7.3f)\n", i, v.p.x, v.p.y, v.p.z, v.n.x, v.n.y, v.n.z);
+#endif
 	}
 
 	if (numDuplicateVertices)
 	{
 		PRINT_LOG("%u Duplicate vertices; ", numDuplicateVertices);
+// FIXME:
+#if 0
 		if (m_bDumpMeshVerts)
-			for (VertexWelderMapSet::iterator it = mapWeldedVertices.begin(); it != mapWeldedVertices.end(); ++it)
-				if (it->second.size() > 1)
-					PRINT_LOG("\t%s {%g,%g,%g}\n", CryStringUtils::toString(it->second, "%d").c_str(), it->first.x, it->first.y, it->first.z);
+#endif
+		for (VertexWelderMapSet::iterator it = mapWeldedVertices.begin(); it != mapWeldedVertices.end(); ++it)
+			if (it->second.size() > 1)
+				PRINT_LOG("\t%s {%g,%g,%g}\n", CryStringUtils::toString(it->second, "%d").c_str(), it->first.x, it->first.y, it->first.z);
 	}
 
 	if (numDuplicateNormals)
@@ -1141,8 +1163,8 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 	for (i = 0; i < pChunk->nVerts; ++i)
 		setUnusedVerts.insert(i);
 
-	if (m_bDumpMeshFaces)
-		PRINT_LOG("Faces: %d\n", pChunk->nFaces);
+	//if (m_bDumpMeshFaces)
+	PRINT_LOG("Faces: %d\n", pChunk->nFaces);
 	for (i = 0; i < pChunk->nFaces; ++i)
 	{
 		if ((const char*)(pFaces + i + 1) > pChunkEnd)
@@ -1158,8 +1180,9 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 		setUnusedVerts.erase(f.v1);
 		setUnusedVerts.erase(f.v2);
 
-		if (m_bDumpMeshFaces)
-			PRINT_LOG("\t% 4d\tv=(% 4d,% 4d,% 4d) Smooth=0x%X MatID=%d\n", i, f.v0, f.v1, f.v2, f.SmGroup, f.MatID);
+		// FIXME:
+		//if (m_bDumpMeshFaces)
+		PRINT_LOG("\t% 4d\tv=(% 4d,% 4d,% 4d) Smooth=0x%X MatID=%d\n", i, f.v0, f.v1, f.v2, f.SmGroup, f.MatID);
 	}
 
 	if (!setUnusedVerts.empty())
@@ -1172,7 +1195,7 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 	}
 
 	PRINT_LOG("SmoothGroups: ORed: 0x%08X, Used: %d",
-	       nSmGroupsUsed, setSmGroups.size());
+	          nSmGroupsUsed, setSmGroups.size());
 	printSet("0x%X", setSmGroups);
 
 	if (setMtls.size() == 1)
@@ -1187,8 +1210,9 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 
 	if (pChunk->nTVerts)
 	{
-		if (m_bDumpMeshUVs)
-			PRINT_LOG("%d Texture Vertices\n", pChunk->nTVerts);
+		// FIXME:
+		//if (m_bDumpMeshUVs)
+		PRINT_LOG("%d Texture Vertices\n", pChunk->nTVerts);
 
 		CryUV uvMin, uvMax;
 		uvMin = uvMax = pUVs[0];
@@ -1212,13 +1236,14 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 			else if (uvMax.v < uv.v)
 				uvMax.v = uv.v;
 
-			if (m_bDumpMeshUVs)
-				PRINT_LOG("\t% 4d\t(%.4f, %.4f)\n", i, uv.u, uv.v);
+			//if (m_bDumpMeshUVs)
+			PRINT_LOG("\t% 4d\t(%.4f, %.4f)\n", i, uv.u, uv.v);
 		}
 		PRINT_LOG("UV BBox {%g..%g, %g..%g}\n", uvMin.u, uvMax.u, uvMin.v, uvMax.v);
 
-		if (m_bDumpMeshTexFaces)
-			PRINT_LOG("%d Texture Faces\n", pChunk->nFaces);
+		// FIXME:
+		//if (m_bDumpMeshTexFaces)
+		PRINT_LOG("%d Texture Faces\n", pChunk->nFaces);
 
 		std::set<int> setUnunsedUVs;
 		for (i = 0; i < pChunk->nTVerts; ++i)
@@ -1236,8 +1261,9 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 			setUnunsedUVs.erase(tf.t1);
 			setUnunsedUVs.erase(tf.t2);
 
-			if (m_bDumpMeshTexFaces)
-				PRINT_LOG("\t% 4d\t% 4d,% 4d,% 4d\n", i, tf.t0, tf.t1, tf.t2);
+			// FIXME:
+			//if (m_bDumpMeshTexFaces)
+			PRINT_LOG("\t% 4d\t% 4d,% 4d,% 4d\n", i, tf.t0, tf.t1, tf.t2);
 		}
 
 		if (!setUnunsedUVs.empty())
@@ -1255,12 +1281,13 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 		// hystogram: #Weights:#Vertices
 		std::vector<unsigned> arrWVH;
 
-		if (m_bDumpMeshBones)
-			PRINT_LOG("%d Bone Links:\n", pChunk->nVerts);
+		//if (m_bDumpMeshBones)
+		PRINT_LOG("%d Bone Links:\n", pChunk->nVerts);
 		for (i = 0; i < pChunk->nVerts; ++i)
 		{
-			if (m_bDumpMeshBones)
-				PRINT_LOG("\t% 4d  ", i);
+			// FIXME:
+			//if (m_bDumpMeshBones)
+			PRINT_LOG("\t% 4d  ", i);
 
 			const unsigned* pnumLinks = (const unsigned*)pBoneInfo;
 
@@ -1282,15 +1309,16 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 			float fSumWeight = 0;
 			for (unsigned nLink = 0; nLink < numLinks; ++nLink)
 			{
-				if (m_bDumpMeshBones && nLink)
-					PRINT_LOG(" ");
+				//if (m_bDumpMeshBones && nLink)
+				PRINT_LOG(" ");
 				const CryLink& l = pLinks[nLink];
 				fSumWeight += l.Blending;
-				if (m_bDumpMeshBones)
-					PRINT_LOG("w[%2d] = %.3f * TM (%-6.3f,%-6.3f,%-6.3f)", l.BoneID, l.Blending, l.offset.x, l.offset.y, l.offset.z);
+				//if (m_bDumpMeshBones)
+				PRINT_LOG("w[%2d] = %.3f * TM (%-6.3f,%-6.3f,%-6.3f)", l.BoneID, l.Blending, l.offset.x, l.offset.y, l.offset.z);
 			}
-			if (m_bDumpMeshBones)
-				PRINT_LOG("\n");
+			// FIXME:
+			//if (m_bDumpMeshBones)
+			PRINT_LOG("\n");
 
 			if (fSumWeight < 0.98f || fSumWeight > 1.02f)
 				PRINT_LOG("Warning: weights don't sum to 1: vertex %d, sum %.3f\n", i, fSumWeight);
@@ -1324,8 +1352,9 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 
 	if (pChunk->HasVertexCol)
 	{
-		if (m_bDumpMeshVertCols)
-			PRINT_LOG("%d Vertex Colors:\n", pChunk->nVerts);
+		// FIXME:
+		//if (m_bDumpMeshVertCols)
+		PRINT_LOG("%d Vertex Colors:\n", pChunk->nVerts);
 		CryIRGB* pVertColor = (CryIRGB*)pBoneInfo;
 
 		for (i = 0; i < pChunk->nVerts; ++i)
@@ -1337,8 +1366,9 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 			}
 
 			const CryIRGB& c = pVertColor[i];
-			if (m_bDumpMeshVertCols)
-				PRINT_LOG("\t% 4d  (% 3u,% 3u,% 3u)\n", i, (unsigned)c.r, (unsigned)c.g, (unsigned)c.b);
+			// FIXME:
+			//if (m_bDumpMeshVertCols)
+			PRINT_LOG("\t% 4d  (% 3u,% 3u,% 3u)\n", i, (unsigned)c.r, (unsigned)c.g, (unsigned)c.b);
 		}
 		pBoneInfo = pVertColor + pChunk->nVerts;
 	}
@@ -1350,7 +1380,7 @@ void CLoaderCGF::printChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize)
 	PRINT_LOG("\n");
 }
 
-void CLoaderCGF::printChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
+void CLoaderCGF::LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1376,13 +1406,13 @@ void CLoaderCGF::printChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 	//
 	// if (pChunk->ParentID == -1)
 	{
-		m_pScene->mRootNode   = new aiNode(pChunk->name);
-		auto root             = m_pScene->mRootNode;
-		root->mParent         = nullptr;
+		m_pScene->mRootNode = new aiNode(pChunk->name);
+		auto root           = m_pScene->mRootNode;
+		root->mParent       = nullptr;
 
 		memcpy(&root->mTransformation, &pChunk->tm, sizeof Matrix44);
 
-		auto header           = m_pReader->getChunkHeader(pChunk->ObjectID);
+		auto header = m_pReader->getChunkHeader(pChunk->ObjectID);
 		if (header.ChunkType == ChunkType_Mesh)
 		{
 			auto mesh_chunk      = (MESH_CHUNK_DESC*)m_pReader->getChunkData(pChunk->ObjectID);
@@ -1474,11 +1504,11 @@ void CLoaderCGF::printChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 	Ang3      ptEul;
 	ptEul.SetAnglesXYZ(Matrix33(qRot));
 	PRINT_LOG("pos (%g,%g,%g) scale (%g,%g,%g) rot(%g degrees around %g,%g,%g) == euler (%g,%g,%g) == quaternion (w=%g,x=%g,y=%g,z=%g)\n",
-	       pChunk->pos.x, pChunk->pos.y, pChunk->pos.z,
-	       pChunk->scl.x, pChunk->scl.y, pChunk->scl.z,
-	       aaRot.angle * 180 / M_PI, aaRot.axis.x, aaRot.axis.y, aaRot.axis.z,
-	       ptEul.x * 180 / M_PI, ptEul.y * 180 / M_PI, ptEul.z * 180 / M_PI,
-	       qRot.w, qRot.v.x, qRot.v.y, qRot.v.z);
+	          pChunk->pos.x, pChunk->pos.y, pChunk->pos.z,
+	          pChunk->scl.x, pChunk->scl.y, pChunk->scl.z,
+	          aaRot.angle * 180 / M_PI, aaRot.axis.x, aaRot.axis.y, aaRot.axis.z,
+	          ptEul.x * 180 / M_PI, ptEul.y * 180 / M_PI, ptEul.z * 180 / M_PI,
+	          qRot.w, qRot.v.x, qRot.v.y, qRot.v.z);
 
 	for (int i = 0; i < 4; ++i)
 	{
@@ -1491,12 +1521,12 @@ void CLoaderCGF::printChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 	}
 
 	PRINT_LOG("CtrlID: pos: 0x%08X,  rot: 0x%08X,  scl: 0x%08X",
-	       pChunk->pos_cont_id, pChunk->rot_cont_id, pChunk->scl_cont_id);
+	          pChunk->pos_cont_id, pChunk->rot_cont_id, pChunk->scl_cont_id);
 
 	PRINT_LOG("\n");
 }
 
-void CLoaderCGF::printChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0744* pChunk, int nSize)
+void CLoaderCGF::LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0744* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1527,7 +1557,7 @@ void CLoaderCGF::printChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0744* pChu
 	}
 }
 
-void CLoaderCGF::printChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0745* pChunk, int nSize)
+void CLoaderCGF::LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0745* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1551,7 +1581,7 @@ void CLoaderCGF::printChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0745* pChu
 		PRINT_LOG("Warning: Declared number of entites (%d) doesn't match the real number of substrings in the chunk (%d)\n", pChunk->numEntities, nBoneId);
 }
 
-void CLoaderCGF::printChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize)
+void CLoaderCGF::LoadChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1588,11 +1618,11 @@ void CLoaderCGF::printChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize
 		szProps[sizeof(szProps) - 1] = '\0';
 		memcpy(szProps, pBoneEntity->prop, sizeof(pBoneEntity->prop));
 		PRINT_LOG("Bone %d \"%s\": Parent %d, %d children, CtrlID 0x%08X",
-		       pBoneEntity->BoneID,
-		       getBoneName(pBoneEntity->BoneID),
-		       pBoneEntity->ParentID,
-		       pBoneEntity->nChildren,
-		       pBoneEntity->ControllerID);
+		          pBoneEntity->BoneID,
+		          getBoneName(pBoneEntity->BoneID),
+		          pBoneEntity->ParentID,
+		          pBoneEntity->nChildren,
+		          pBoneEntity->ControllerID);
 
 		if (szProps[0])
 			PRINT_LOG(", props: %s", szProps);
@@ -1624,10 +1654,10 @@ void CLoaderCGF::printChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize
 				PRINT_LOG("\n");
 			}
 			PRINT_LOG("%sSpring angle: (%g,%g,%g), tension: (%g,%g,%g), damping: (%g,%g,%g)\n",
-			       szTabs,
-			       phys.spring_angle[0], phys.spring_angle[1], phys.spring_angle[2],
-			       phys.spring_tension[0], phys.spring_tension[1], phys.spring_tension[2],
-			       phys.damping[0], phys.damping[1], phys.damping[2]);
+			          szTabs,
+			          phys.spring_angle[0], phys.spring_angle[1], phys.spring_angle[2],
+			          phys.spring_tension[0], phys.spring_tension[1], phys.spring_tension[2],
+			          phys.damping[0], phys.damping[1], phys.damping[2]);
 			for (int i = 0; i < 3; ++i)
 			{
 				if (!i)
@@ -1646,7 +1676,7 @@ void CLoaderCGF::printChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize
 	}
 }
 
-void CLoaderCGF::printChunkHelper(const HELPER_CHUNK_DESC* pData, int nSize)
+void CLoaderCGF::LoadChunkHelper(const HELPER_CHUNK_DESC* pData, int nSize)
 {
 	if (!checkChunk(pData, nSize))
 		return;
@@ -1655,7 +1685,7 @@ void CLoaderCGF::printChunkHelper(const HELPER_CHUNK_DESC* pData, int nSize)
 	PRINT_LOG("Size: {%.3f, %.3f, %.3f}\n", pData->size.x, pData->size.y, pData->size.z);
 }
 
-void CLoaderCGF::printChunkLight(const LIGHT_CHUNK_DESC* pData, int nSize)
+void CLoaderCGF::LoadChunkLight(const LIGHT_CHUNK_DESC* pData, int nSize)
 {
 	if (!checkChunk(pData, nSize))
 		return;
@@ -1682,7 +1712,7 @@ void CLoaderCGF::printChunkLight(const LIGHT_CHUNK_DESC* pData, int nSize)
 		PRINT_LOG("Far Attenuation ON: [%g..%g]\n", pData->attenStart, pData->attenEnd);
 }
 
-void CLoaderCGF::printChunkBoneLightBinding(const BONELIGHTBINDING_CHUNK_DESC_0001* pChunk, int nSize)
+void CLoaderCGF::LoadChunkBoneLightBinding(const BONELIGHTBINDING_CHUNK_DESC_0001* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1704,14 +1734,14 @@ void CLoaderCGF::printChunkBoneLightBinding(const BONELIGHTBINDING_CHUNK_DESC_00
 		const SBoneLightBind& bind = pBinds[i];
 		// print each binding
 		PRINT_LOG("Bone %2d \"%s\" Light 0x%08X \"%s\" offset (%.1f,%.1f,%.1f) rotation (%.2f,%.2f,%.2f) (%.1f degrees)\n",
-		       bind.nBoneId, getBoneName(bind.nBoneId),
-		       bind.nLightChunkId, getObjectName(bind.nLightChunkId),
-		       bind.vLightOffset.x, bind.vLightOffset.y, bind.vLightOffset.z,
-		       bind.vRotLightOrientation.x, bind.vRotLightOrientation.y, bind.vRotLightOrientation.z, bind.vRotLightOrientation.Length() * 180 / (M_PI * 2));
+		          bind.nBoneId, getBoneName(bind.nBoneId),
+		          bind.nLightChunkId, getObjectName(bind.nLightChunkId),
+		          bind.vLightOffset.x, bind.vLightOffset.y, bind.vLightOffset.z,
+		          bind.vRotLightOrientation.x, bind.vRotLightOrientation.y, bind.vRotLightOrientation.z, bind.vRotLightOrientation.Length() * 180 / (M_PI * 2));
 	}
 }
 
-void CLoaderCGF::printChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001* pChunk, int nSize)
+void CLoaderCGF::LoadChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1761,11 +1791,16 @@ void CLoaderCGF::printChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001
 		else
 			; // AddToBounds(rVertex.ptVertex, ptMin, ptMax);
 
+// FIXME:
+#if 0
 		if (m_bDumpMeshVerts)
+#else
+		if (true)
+#endif
 		{
 			PRINT_LOG("%4d. (%8.3f,%8.3f,%8.3f)",
-			       rVertex.nVertexId,
-			       rVertex.ptVertex.x, rVertex.ptVertex.y, rVertex.ptVertex.z);
+			          rVertex.nVertexId,
+			          rVertex.ptVertex.x, rVertex.ptVertex.y, rVertex.ptVertex.z);
 
 			if (Mesh.pVerts)
 			{
@@ -1774,8 +1809,8 @@ void CLoaderCGF::printChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001
 					Vec3d ptMeshVertex = Mesh.pVerts[rVertex.nVertexId].p;
 					Vec3d ptOffset     = rVertex.ptVertex - ptMeshVertex;
 					PRINT_LOG(" offset (%8.3f,%8.3f,%8.3f) from vtx %4d",
-					       ptOffset.x, ptOffset.y, ptOffset.z,
-					       rVertex.nVertexId);
+					          ptOffset.x, ptOffset.y, ptOffset.z,
+					          rVertex.nVertexId);
 				}
 				else
 					PRINT_LOG(" mesh vertex (%d) is out of range [0..%d)", rVertex.nVertexId, Mesh.nVerts);
@@ -1783,8 +1818,7 @@ void CLoaderCGF::printChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001
 
 			PRINT_LOG("\n");
 		}
-		else
-			setMorphedVertices.insert(rVertex.nVertexId);
+		else setMorphedVertices.insert(rVertex.nVertexId);
 	}
 
 	if (!setMorphedVertices.empty())
@@ -1795,7 +1829,7 @@ void CLoaderCGF::printChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001
 	}
 }
 
-void CLoaderCGF::printChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk, int nSize)
+void CLoaderCGF::LoadChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk, int nSize)
 {
 	if (nSize < sizeof(*pChunk))
 	{
@@ -1821,41 +1855,42 @@ void CLoaderCGF::printChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk
 	else
 		PRINT_LOG("ChunkId 0x%08X\n", pChunk->nChunkIdMesh);
 
-	if (m_bDumpMeshBones || m_bDumpBoneInitPos)
-		for (unsigned nBone = 0; nBone < pChunk->numBones; ++nBone)
+	// FIXME:
+	//if (m_bDumpMeshBones || m_bDumpBoneInitPos)
+	for (unsigned nBone = 0; nBone < pChunk->numBones; ++nBone)
+	{
+		const SBoneInitPosMatrix& matBone = pBones[nBone];
+		PRINT_LOG("%2d. \"%s\"", nBone, getBoneName(nBone));
+		// check for orthogonality and parity of the matrix
+		Vec3d            vX = matBone.getOrt(0);
+		Vec3d            vY = matBone.getOrt(1);
+		Vec3d            vZ = matBone.getOrt(2);
+		SBasisProperties BasisProps(vX, vY, vZ);
+
+		if (BasisProps.bMatrixDegraded)
+			PRINT_LOG(" Matrix Degraded");
+		else
 		{
-			const SBoneInitPosMatrix& matBone = pBones[nBone];
-			PRINT_LOG("%2d. \"%s\"", nBone, getBoneName(nBone));
-			// check for orthogonality and parity of the matrix
-			Vec3d            vX = matBone.getOrt(0);
-			Vec3d            vY = matBone.getOrt(1);
-			Vec3d            vZ = matBone.getOrt(2);
-			SBasisProperties BasisProps(vX, vY, vZ);
+			if (BasisProps.fErrorDeg > 0.5)
+				PRINT_LOG(" NOT Orthogonal (error=%4.1f°)", BasisProps.fErrorDeg);
 
-			if (BasisProps.bMatrixDegraded)
-				PRINT_LOG(" Matrix Degraded");
-			else
-			{
-				if (BasisProps.fErrorDeg > 0.5)
-					PRINT_LOG(" NOT Orthogonal (error=%4.1f°)", BasisProps.fErrorDeg);
-
-				if (BasisProps.bLeftHanded)
-					PRINT_LOG(" Left-handed %2d%%", (int)BasisProps.getLeftHandednessPercentage());
-			}
-
-			PRINT_LOG("\n");
-
-			for (int nRow = 0; nRow < 4; ++nRow)
-			{
-				PRINT_LOG("        ");
-				for (int nColumn = 0; nColumn < 3; ++nColumn)
-					PRINT_LOG("%11.4f", matBone[nRow][nColumn]);
-				PRINT_LOG("\n");
-			}
+			if (BasisProps.bLeftHanded)
+				PRINT_LOG(" Left-handed %2d%%", (int)BasisProps.getLeftHandednessPercentage());
 		}
+
+		PRINT_LOG("\n");
+
+		for (int nRow = 0; nRow < 4; ++nRow)
+		{
+			PRINT_LOG("        ");
+			for (int nColumn = 0; nColumn < 3; ++nColumn)
+				PRINT_LOG("%11.4f", matBone[nRow][nColumn]);
+			PRINT_LOG("\n");
+		}
+	}
 }
 
-void CLoaderCGF::printChunkSourceInfo(const char* pData, unsigned nSize)
+void CLoaderCGF::LoadChunkSourceInfo(const char* pData, unsigned nSize)
 {
 	const char* pDataEnd = pData + nSize;
 	while (pData < pDataEnd)
@@ -1865,7 +1900,7 @@ void CLoaderCGF::printChunkSourceInfo(const char* pData, unsigned nSize)
 	}
 }
 
-void CLoaderCGF::printChunkSceneProps(const char* pData, unsigned nSize)
+void CLoaderCGF::LoadChunkSceneProps(const char* pData, unsigned nSize)
 {
 	if (nSize < sizeof(SCENEPROPS_CHUNK_DESC))
 	{
@@ -1878,7 +1913,7 @@ void CLoaderCGF::printChunkSceneProps(const char* pData, unsigned nSize)
 	if (nSize != sizeof(*pDesc) + sizeof(SCENEPROP_ENTITY) * pDesc->nProps)
 	{
 		PRINT_LOG(" Unexpected chunk size: %d scene props declared, which is %d bytes total, but %d bytes are actually in the chunk",
-		       pDesc->nProps, sizeof(*pDesc) + sizeof(SCENEPROP_ENTITY) * pDesc->nProps, nSize);
+		          pDesc->nProps, sizeof(*pDesc) + sizeof(SCENEPROP_ENTITY) * pDesc->nProps, nSize);
 	}
 
 	for (int i = 0; i < pDesc->nProps; ++i)
@@ -1888,133 +1923,114 @@ void CLoaderCGF::printChunkSceneProps(const char* pData, unsigned nSize)
 	}
 }
 
-void CLoaderCGF::printChunk(int i)
+void CLoaderCGF::LoadChunk(int i)
 {
 	const CHUNK_HEADER& ch    = m_pReader->getChunkHeader(i);
 	int                 nSize = m_pReader->getChunkSize(i);
 
-	if (!m_bBriefInfo || ch.ChunkType == ChunkType_Timing)
-		PRINT_LOG("-------------------------------------------------------------------\n%s\tVersion: %04X\tChunkID: 0x%08X (%d)\tSize: %d bytes\tFileOffset: 0x%08X\n",
-		       getChunkName(ch.ChunkType).c_str(),
-		       ch.ChunkVersion,
-		       ch.ChunkID, ch.ChunkID,
-		       nSize,
-		       ch.FileOffset);
-
-	const void* pData = m_pReader->getChunkData(i);
+	const void*         pData = m_pReader->getChunkData(i);
 
 	addChunkToCount(ch.ChunkType, nSize);
 
 	switch (ch.ChunkType)
 	{
 	case ChunkType_Mtl:
-		if (!m_bBriefInfo)
-			switch (ch.ChunkVersion)
-			{
-			case 0x744:
-				printChunkMtl((const MTL_CHUNK_DESC_0744*)pData, nSize);
-				break;
-			case 0x745:
-				printChunkMtl((const MTL_CHUNK_DESC_0745*)pData, nSize);
-				break;
-			case 0x746:
-				printChunkMtl((const MTL_CHUNK_DESC_0746*)pData, nSize);
-				break;
-			}
+		switch (ch.ChunkVersion)
+		{
+		case 0x744:
+			LoadChunkMtl((const MTL_CHUNK_DESC_0744*)pData, nSize);
+			break;
+		case 0x745:
+			LoadChunkMtl((const MTL_CHUNK_DESC_0745*)pData, nSize);
+			break;
+		case 0x746:
+			LoadChunkMtl((const MTL_CHUNK_DESC_0746*)pData, nSize);
+			break;
+		}
 		break;
 	case ChunkType_Controller:
-		if (!m_bBriefInfo)
-			switch (ch.ChunkVersion)
-			{
-			case 0x826:
-				printChunkController((const CONTROLLER_CHUNK_DESC_0826*)pData, nSize);
-				break;
-			case 0x827:
-				printChunkController((const CONTROLLER_CHUNK_DESC_0827*)pData, nSize);
-				break;
-			}
+		switch (ch.ChunkVersion)
+		{
+		case 0x826:
+			LoadChunkController((const CONTROLLER_CHUNK_DESC_0826*)pData, nSize);
+			break;
+		case 0x827:
+			LoadChunkController((const CONTROLLER_CHUNK_DESC_0827*)pData, nSize);
+			break;
+		}
 		break;
 	case ChunkType_Timing:
-		printChunkTiming((const TIMING_CHUNK_DESC*)pData, nSize);
+		LoadChunkTiming((const TIMING_CHUNK_DESC*)pData, nSize);
 		break;
 	case ChunkType_Mesh:
-		if (!m_bBriefInfo)
-			printChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
+		LoadChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
 		break;
 	case ChunkType_Node:
-		if (!m_bBriefInfo)
-			printChunkNode((const NODE_CHUNK_DESC*)pData, nSize);
+		LoadChunkNode((const NODE_CHUNK_DESC*)pData, nSize);
 		break;
 
 	case ChunkType_BoneNameList:
-		if (!m_bBriefInfo)
+	{
+		switch (ch.ChunkVersion)
 		{
-			switch (ch.ChunkVersion)
-			{
-			case BONENAMELIST_CHUNK_DESC_0744::VERSION:
-				printChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0744*)pData, nSize);
-				break;
-			case BONENAMELIST_CHUNK_DESC_0745::VERSION:
-				printChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0745*)pData, nSize);
-				break;
-			}
+		case BONENAMELIST_CHUNK_DESC_0744::VERSION:
+			LoadChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0744*)pData, nSize);
+			break;
+		case BONENAMELIST_CHUNK_DESC_0745::VERSION:
+			LoadChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0745*)pData, nSize);
+			break;
 		}
-		break;
+	}
+	break;
 
 	case ChunkType_BoneInitialPos:
-		printChunkBoneInitialPos((BONEINITIALPOS_CHUNK_DESC_0001*)pData, nSize);
+		LoadChunkBoneInitialPos((BONEINITIALPOS_CHUNK_DESC_0001*)pData, nSize);
 		break;
 
 	case ChunkType_BoneAnim:
-		if (!m_bBriefInfo)
-			printChunkBoneAnim((const BONEANIM_CHUNK_DESC*)pData, nSize);
+		LoadChunkBoneAnim((const BONEANIM_CHUNK_DESC*)pData, nSize);
 		break;
 
 	case ChunkType_BoneMesh:
-		if (!m_bBriefInfo)
-			printChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
+		LoadChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
 		break;
 
 	case ChunkType_Light:
-		if (!m_bBriefInfo)
-			printChunkLight((const LIGHT_CHUNK_DESC*)pData, nSize);
+		LoadChunkLight((const LIGHT_CHUNK_DESC*)pData, nSize);
 		break;
 
 	case ChunkType_Helper:
-		if (!m_bBriefInfo)
-			printChunkHelper((const HELPER_CHUNK_DESC*)pData, nSize);
+		LoadChunkHelper((const HELPER_CHUNK_DESC*)pData, nSize);
 		break;
 
 	case ChunkType_BoneLightBinding:
-		if (!m_bBriefInfo)
+	{
+		switch (ch.ChunkVersion)
 		{
-			switch (ch.ChunkVersion)
-			{
-			case BONELIGHTBINDING_CHUNK_DESC_0001::VERSION:
-				printChunkBoneLightBinding((const BONELIGHTBINDING_CHUNK_DESC_0001*)pData, nSize);
-				break;
-			}
-		};
-		break;
+		case BONELIGHTBINDING_CHUNK_DESC_0001::VERSION:
+			LoadChunkBoneLightBinding((const BONELIGHTBINDING_CHUNK_DESC_0001*)pData, nSize);
+			break;
+		}
+	};
+	break;
 
 	case ChunkType_MeshMorphTarget:
-		if (!m_bBriefInfo)
+	{
+		switch (ch.ChunkVersion)
 		{
-			switch (ch.ChunkVersion)
-			{
-			case MESHMORPHTARGET_CHUNK_DESC_0001::VERSION:
-				printChunkMeshMorphTarget((const MESHMORPHTARGET_CHUNK_DESC_0001*)pData, nSize);
-				break;
-			}
+		case MESHMORPHTARGET_CHUNK_DESC_0001::VERSION:
+			LoadChunkMeshMorphTarget((const MESHMORPHTARGET_CHUNK_DESC_0001*)pData, nSize);
+			break;
 		}
-		break;
+	}
+	break;
 
 	case ChunkType_SourceInfo:
-		printChunkSourceInfo((const char*)pData, nSize);
+		LoadChunkSourceInfo((const char*)pData, nSize);
 		break;
 
 	case ChunkType_SceneProps:
-		printChunkSceneProps((const char*)pData, nSize);
+		LoadChunkSceneProps((const char*)pData, nSize);
 		break;
 
 	default:
@@ -2023,120 +2039,19 @@ void CLoaderCGF::printChunk(int i)
 	}
 }
 
-void CLoaderCGF::printCollectedTextures(const char* szFormat)
+void CLoaderCGF::LoadCollectedTextures(const char* szFormat)
 {
 	for (std::set<std::string>::const_iterator it = g_setTextures.begin(); it != g_setTextures.end(); ++it)
 		PRINT_LOG(szFormat, it->c_str(), it->c_str(), it->c_str());
 }
 
-void CLoaderCGF::Dump(int argc, char* argv[])
+void CLoaderCGF::Load(const char* filename)
 {
-	const char* szFileName = NULL;
-	if (argc < 2)
-	{
-		PRINT_LOG("Usage: %s -option1 -option2 ... file-name.cgf(caf) > Output-file-name.txt\n", argv[0]);
-		PRINT_LOG("Options:\n");
-		printOptionHelp("-briefInfo", "prints only the summary information about the file and the timing very essential chunks (timing)");
-		printOptionHelp("-keys", "prints detailed information about keys");
-		printOptionHelp("-mesh", "prints all detailed information about mesh.");
-		printOptionHelp("-meshVerts", "prints mesh chunk vertices");
-		printOptionHelp("-meshFaces", "prints mesh chunk face lists");
-		printOptionHelp("-meshUVs", "prints mesh chunk UV coordinate lists");
-		printOptionHelp("-meshTexFaces", "prints texture face lists");
-		printOptionHelp("-meshBones", "prints bone binding info");
-		printOptionHelp("-boneInitPos", "prints the initial bone position matrices, if the BoneInitialPos chunk is available");
-		printOptionHelp("-meshVertCols", "prints vertex color lists");
-		printOptionHelp("-collectTextures", "observes all textures used by cgf file and lists them at the bottom of the output");
-		printOptionHelp("-collectTexturesForCopying", "Outputs textures prepared to copy somewhere as a set of commands");
-		return;
-	}
-
-	// Detect the flags
-	//
-	for (int i = 1; i < argc; ++i)
-	{
-		if (argv[i][0] != '/' && argv[i][0] != '-')
-		{
-			if (szFileName)
-			{
-				PRINT_LOG("Only one file name is allowed\n");
-				return;
-			}
-			szFileName = argv[i];
-		}
-		else
-		{
-			const char* szOption = argv[i] + 1;
-			if (!strcmpi(szOption, "keys"))
-				m_bDumpKeys = true;
-			else if (!strcmpi(szOption, "mesh"))
-			{
-				m_bDumpMeshVerts    = true;
-				m_bDumpMeshFaces    = true;
-				m_bDumpMeshUVs      = true;
-				m_bDumpMeshTexFaces = true;
-				m_bDumpMeshBones    = true;
-				m_bDumpMeshVertCols = true;
-			}
-			else if (!strcmpi(szOption, "boneInitPos"))
-			{
-				m_bDumpBoneInitPos = true;
-			}
-			else if (!strcmpi(szOption, "meshVerts"))
-			{
-				m_bDumpMeshVerts = true;
-				if (i < argc - 1 && argv[i + 1][0] >= 'X' && argv[i + 1][0] <= 'Z')
-					strcpy(g_szVertexSortOrder, argv[++i]);
-			}
-			else if (!strcmpi(szOption, "meshFaces"))
-			{
-				m_bDumpMeshFaces = true;
-				if (i < argc - 1 && argv[i + 1][0] >= '0' && argv[i + 1][0] <= '2')
-					strcpy(g_szFaceSortOrder, argv[++i]);
-			}
-			else if (!strcmpi(szOption, "meshUVs"))
-			{
-				m_bDumpMeshUVs = true;
-				if (i < argc - 1 && argv[i + 1][0] >= 'U' && argv[i + 1][0] <= 'V')
-					strcpy(g_szUVSortOrder, argv[++i]);
-			}
-			else if (!strcmpi(szOption, "meshTexFaces"))
-			{
-				m_bDumpMeshTexFaces = true;
-			}
-			else if (!strcmpi(szOption, "meshBones"))
-			{
-				m_bDumpMeshBones = true;
-			}
-			else if (!strcmpi(szOption, "meshVertCols"))
-			{
-				m_bDumpMeshVertCols = true;
-			}
-			else if (!strcmpi(szOption, "collectTextures"))
-			{
-				m_bCollectTextures = true;
-			}
-			else if (!strcmpi(szOption, "collectTexturesForCopying"))
-			{
-				m_bCollectTextures           = true;
-				m_bCollectTexturesForCopying = true;
-			}
-			else if (!strcmpi(szOption, "briefInfo"))
-			{
-				m_bBriefInfo = true;
-			}
-		}
-	}
-
-	if (!szFileName)
-	{
-		PRINT_LOG("You must give me at least one file name, not only options\n");
-		return;
-	}
+	const char* szFileName = filename;
 
 	// create the object that reads the file
 	//
-	m_pReader = new FileReader();
+	m_pReader              = new FileReader();
 	if (!m_pReader->open(m_FileMapping))
 	{
 		PRINT_LOG("Cannot open %s: unrecognized file format or corrupted file\n", szFileName);
@@ -2152,36 +2067,15 @@ void CLoaderCGF::Dump(int argc, char* argv[])
 	PRINT_LOG("File: %s\n", szFileName);
 	getFileType(m_pReader->getFileHeader().FileType);
 	PRINT_LOG("  ChunkTableOffset = 0x%08X\t%s\tVersion = 0x%08X\t#Chunks = %d\n",
-	       m_pReader->getFileHeader().ChunkTableOffset,
-	       getFileType(m_pReader->getFileHeader().FileType),
-	       m_pReader->getFileHeader().Version,
-	       m_pReader->numChunks());
+	          m_pReader->getFileHeader().ChunkTableOffset,
+	          getFileType(m_pReader->getFileHeader().FileType),
+	          m_pReader->getFileHeader().Version,
+	          m_pReader->numChunks());
 
 	// print all chunks in sequence
 	//
 	for (int i = 0; i < m_pReader->numChunks(); ++i)
-		printChunk(i);
-
-	if (!m_bBriefInfo)
-		PRINT_LOG("------------------------------------------------------------------------------------\nSummary:\n");
-	else
-		PRINT_LOG("\n");
-
-	if (!g_setDuplicateNodeNames.empty())
-	{
-		PRINT_LOG("WARNING: duplicate node names {");
-		print(g_setDuplicateNodeNames);
-		PRINT_LOG("}\n");
-	}
-
-	if (g_numUnusedBytes)
-		PRINT_LOG("%u wasted bytes\n", g_numUnusedBytes);
-
-	if (!m_bBriefInfo)
-		printChunkCounts();
-
-	if (g_numUndupedChunks)
-		PRINT_LOG("%u undumped chunks\n", g_numUndupedChunks);
+		LoadChunk(i);
 
 	if (m_bCollectTextures)
 	{
@@ -2191,7 +2085,7 @@ void CLoaderCGF::Dump(int argc, char* argv[])
 		else
 		{
 			PRINT_LOG("%d Textures in use:\n", g_setTextures.size());
-			printCollectedTextures(m_bCollectTexturesForCopying ? "copy \"C:\\MasterCD\\%s\" \".\\%s\"\n" : "%s\n");
+			LoadCollectedTextures(m_bCollectTexturesForCopying ? "copy \"C:\\MasterCD\\%s\" \".\\%s\"\n" : "%s\n");
 			PRINT_LOG("\n");
 		}
 	}
