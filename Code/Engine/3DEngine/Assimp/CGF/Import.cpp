@@ -14,7 +14,7 @@
 // CgfDump.cpp : Defines the entry point for the console application.
 //
 
-#include "CgfDump.h"
+#include "Import.h"
 
 #if 0
 #define PRINT_LOG CryLog;

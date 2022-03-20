@@ -3,7 +3,7 @@
 #include <BlackBox/System/File/CryFile.h>
 
 #include "CGFImporter.h"
-#include "CGF/CgfDump.h"
+#include "CGF/Import.h"
 
 namespace Assimp
 {

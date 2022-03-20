@@ -136,11 +136,15 @@ void Minecraft::init()
 
 void Minecraft::update()
 {
-	Jack->SetAngles({-90, 0, 180});
+	auto time = gEnv->pTimer->GetRealFrameTime();
+	static float jack_rotation = 0;
+	Jack->SetAngles({-90, 0, jack_rotation});
     //Jack->SetAngles({45, 90, 0});
 	debug.update();
 	ui.draw();
 	player.update();
+
+	jack_rotation += 16 * time;
 }
 
 bool MineWorld::tryDestroy(glm::ivec3 pos)
