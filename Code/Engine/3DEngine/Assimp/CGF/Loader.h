@@ -75,7 +75,7 @@ public:
 	void                                    printChunkCounts();
 
 	// the reader of the file
-	FileReaderPtr                           m_pReader;
+	FileReaderPtr                           m_pChunkFile;
 	MemoryBlobPtr                           m_FileMapping;
 
 	aiScene*                                m_pScene;
@@ -137,7 +137,7 @@ public:
 
 	struct CMeshData
 	{
-		CMeshData(unsigned nChunkId, FileReaderPtr m_pReader);
+		CMeshData(unsigned nChunkId, FileReaderPtr ChunkFile);
 
 		unsigned         nVerts;
 		const CryVertex* pVerts;
@@ -203,5 +203,7 @@ public:
 	void LoadChunkSceneProps(const char* pData, unsigned nSize);
 	void LoadChunk(int i);
 	void LoadCollectedTextures(const char* szFormat);
+
 	void Load(const char* filename);
+	bool LoadChunks();
 };

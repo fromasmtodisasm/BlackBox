@@ -726,21 +726,21 @@ const char* CLoaderCGF::getBoneName(int nBone, BoneIdentificationEnum nIdentity)
 	const BONENAMELIST_CHUNK_DESC_0745* pChunk    = NULL;
 	unsigned                            i, nSize = 0;
 
-	for (i = 0; !pChunk && i < (unsigned)m_pReader->numChunks(); ++i)
+	for (i = 0; !pChunk && i < (unsigned)m_pChunkFile->numChunks(); ++i)
 	{
-		const CHUNK_HEADER& chunkHeader = m_pReader->getChunkHeader(i);
+		const CHUNK_HEADER& chunkHeader = m_pChunkFile->getChunkHeader(i);
 		if (chunkHeader.ChunkType == ChunkType_BoneNameList)
 		{
 			switch (chunkHeader.ChunkVersion)
 			{
 			case BONENAMELIST_CHUNK_DESC_0744::VERSION:
-				pChunk744 = (const BONENAMELIST_CHUNK_DESC_0744*)m_pReader->getChunkData(i);
+				pChunk744 = (const BONENAMELIST_CHUNK_DESC_0744*)m_pChunkFile->getChunkData(i);
 				break;
 			case BONENAMELIST_CHUNK_DESC_0745::VERSION:
-				pChunk = (const BONENAMELIST_CHUNK_DESC_0745*)m_pReader->getChunkData(i);
+				pChunk = (const BONENAMELIST_CHUNK_DESC_0745*)m_pChunkFile->getChunkData(i);
 				break;
 			}
-			nSize = m_pReader->getChunkSize(i);
+			nSize = m_pChunkFile->getChunkSize(i);
 		}
 	}
 
@@ -756,16 +756,16 @@ const char* CLoaderCGF::getBoneName(int nBone, BoneIdentificationEnum nIdentity)
 
 const char* CLoaderCGF::getObjectName(int nChunkId)
 {
-	for (unsigned i = 0; i < (unsigned)m_pReader->numChunks(); ++i)
+	for (unsigned i = 0; i < (unsigned)m_pChunkFile->numChunks(); ++i)
 	{
-		const CHUNK_HEADER& chunkHeader = m_pReader->getChunkHeader(i);
+		const CHUNK_HEADER& chunkHeader = m_pChunkFile->getChunkHeader(i);
 		if (chunkHeader.ChunkType == ChunkType_Node)
 		{
 			switch (chunkHeader.ChunkVersion)
 			{
 			case NODE_CHUNK_DESC::VERSION:
 			{
-				const NODE_CHUNK_DESC* pChunk = (const NODE_CHUNK_DESC*)m_pReader->getChunkData(i);
+				const NODE_CHUNK_DESC* pChunk = (const NODE_CHUNK_DESC*)m_pChunkFile->getChunkData(i);
 				if (pChunk->ObjectID == nChunkId)
 					return pChunk->name;
 			}
@@ -781,10 +781,10 @@ const char* CLoaderCGF::getObjectName(int nChunkId)
 const char* CLoaderCGF::getMaterialName(int nMtlId)
 {
 	int nStdMtlCounter = 0;
-	for (unsigned i = 0; i < (unsigned)m_pReader->numChunks(); ++i)
+	for (unsigned i = 0; i < (unsigned)m_pChunkFile->numChunks(); ++i)
 	{
-		const CHUNK_HEADER& chunkHeader = m_pReader->getChunkHeader(i);
-		const void*         pData       = m_pReader->getChunkData(i);
+		const CHUNK_HEADER& chunkHeader = m_pChunkFile->getChunkHeader(i);
+		const void*         pData       = m_pChunkFile->getChunkData(i);
 		if (chunkHeader.ChunkType == ChunkType_Mtl)
 		{
 			switch (chunkHeader.ChunkVersion)
@@ -1412,10 +1412,10 @@ void CLoaderCGF::LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 
 		memcpy(&root->mTransformation, &pChunk->tm, sizeof Matrix44);
 
-		auto header = m_pReader->getChunkHeader(pChunk->ObjectID);
+		auto header = m_pChunkFile->getChunkHeader(pChunk->ObjectID);
 		if (header.ChunkType == ChunkType_Mesh)
 		{
-			auto mesh_chunk      = (MESH_CHUNK_DESC*)m_pReader->getChunkData(pChunk->ObjectID);
+			auto mesh_chunk      = (MESH_CHUNK_DESC*)m_pChunkFile->getChunkData(pChunk->ObjectID);
 
 			m_pScene->mMeshes    = new aiMesh*[1];
 			m_pScene->mNumMeshes = 1;
@@ -1777,7 +1777,7 @@ void CLoaderCGF::LoadChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001*
 		return;
 	}
 
-	CMeshData     Mesh(pChunk->nChunkIdMesh, m_pReader);
+	CMeshData     Mesh(pChunk->nChunkIdMesh, m_pChunkFile);
 
 	std::set<int> setMorphedVertices;
 	Vec3d         ptMin, ptMax;
@@ -1925,118 +1925,6 @@ void CLoaderCGF::LoadChunkSceneProps(const char* pData, unsigned nSize)
 
 void CLoaderCGF::LoadChunk(int i)
 {
-	const CHUNK_HEADER& ch    = m_pReader->getChunkHeader(i);
-	int                 nSize = m_pReader->getChunkSize(i);
-
-	const void*         pData = m_pReader->getChunkData(i);
-
-	addChunkToCount(ch.ChunkType, nSize);
-
-	switch (ch.ChunkType)
-	{
-	case ChunkType_Mtl:
-		switch (ch.ChunkVersion)
-		{
-		case 0x744:
-			LoadChunkMtl((const MTL_CHUNK_DESC_0744*)pData, nSize);
-			break;
-		case 0x745:
-			LoadChunkMtl((const MTL_CHUNK_DESC_0745*)pData, nSize);
-			break;
-		case 0x746:
-			LoadChunkMtl((const MTL_CHUNK_DESC_0746*)pData, nSize);
-			break;
-		}
-		break;
-	case ChunkType_Controller:
-		switch (ch.ChunkVersion)
-		{
-		case 0x826:
-			LoadChunkController((const CONTROLLER_CHUNK_DESC_0826*)pData, nSize);
-			break;
-		case 0x827:
-			LoadChunkController((const CONTROLLER_CHUNK_DESC_0827*)pData, nSize);
-			break;
-		}
-		break;
-	case ChunkType_Timing:
-		LoadChunkTiming((const TIMING_CHUNK_DESC*)pData, nSize);
-		break;
-	case ChunkType_Mesh:
-		LoadChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
-		break;
-	case ChunkType_Node:
-		LoadChunkNode((const NODE_CHUNK_DESC*)pData, nSize);
-		break;
-
-	case ChunkType_BoneNameList:
-	{
-		switch (ch.ChunkVersion)
-		{
-		case BONENAMELIST_CHUNK_DESC_0744::VERSION:
-			LoadChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0744*)pData, nSize);
-			break;
-		case BONENAMELIST_CHUNK_DESC_0745::VERSION:
-			LoadChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0745*)pData, nSize);
-			break;
-		}
-	}
-	break;
-
-	case ChunkType_BoneInitialPos:
-		LoadChunkBoneInitialPos((BONEINITIALPOS_CHUNK_DESC_0001*)pData, nSize);
-		break;
-
-	case ChunkType_BoneAnim:
-		LoadChunkBoneAnim((const BONEANIM_CHUNK_DESC*)pData, nSize);
-		break;
-
-	case ChunkType_BoneMesh:
-		LoadChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
-		break;
-
-	case ChunkType_Light:
-		LoadChunkLight((const LIGHT_CHUNK_DESC*)pData, nSize);
-		break;
-
-	case ChunkType_Helper:
-		LoadChunkHelper((const HELPER_CHUNK_DESC*)pData, nSize);
-		break;
-
-	case ChunkType_BoneLightBinding:
-	{
-		switch (ch.ChunkVersion)
-		{
-		case BONELIGHTBINDING_CHUNK_DESC_0001::VERSION:
-			LoadChunkBoneLightBinding((const BONELIGHTBINDING_CHUNK_DESC_0001*)pData, nSize);
-			break;
-		}
-	};
-	break;
-
-	case ChunkType_MeshMorphTarget:
-	{
-		switch (ch.ChunkVersion)
-		{
-		case MESHMORPHTARGET_CHUNK_DESC_0001::VERSION:
-			LoadChunkMeshMorphTarget((const MESHMORPHTARGET_CHUNK_DESC_0001*)pData, nSize);
-			break;
-		}
-	}
-	break;
-
-	case ChunkType_SourceInfo:
-		LoadChunkSourceInfo((const char*)pData, nSize);
-		break;
-
-	case ChunkType_SceneProps:
-		LoadChunkSceneProps((const char*)pData, nSize);
-		break;
-
-	default:
-		printChunkUnknown(pData, nSize);
-		break;
-	}
 }
 
 void CLoaderCGF::LoadCollectedTextures(const char* szFormat)
@@ -2051,8 +1939,8 @@ void CLoaderCGF::Load(const char* filename)
 
 	// create the object that reads the file
 	//
-	m_pReader              = new FileReader();
-	if (!m_pReader->open(m_FileMapping))
+	m_pChunkFile           = new FileReader();
+	if (!m_pChunkFile->open(m_FileMapping))
 	{
 		PRINT_LOG("Cannot open %s: unrecognized file format or corrupted file\n", szFileName);
 		return;
@@ -2065,17 +1953,16 @@ void CLoaderCGF::Load(const char* filename)
 	// print the file header
 	//
 	PRINT_LOG("File: %s\n", szFileName);
-	getFileType(m_pReader->getFileHeader().FileType);
+	getFileType(m_pChunkFile->getFileHeader().FileType);
 	PRINT_LOG("  ChunkTableOffset = 0x%08X\t%s\tVersion = 0x%08X\t#Chunks = %d\n",
-	          m_pReader->getFileHeader().ChunkTableOffset,
-	          getFileType(m_pReader->getFileHeader().FileType),
-	          m_pReader->getFileHeader().Version,
-	          m_pReader->numChunks());
-
-	// print all chunks in sequence
-	//
-	for (int i = 0; i < m_pReader->numChunks(); ++i)
-		LoadChunk(i);
+	          m_pChunkFile->getFileHeader().ChunkTableOffset,
+	          getFileType(m_pChunkFile->getFileHeader().FileType),
+	          m_pChunkFile->getFileHeader().Version,
+	          m_pChunkFile->numChunks());
+	if (!LoadChunks())
+	{
+		CryFatalError("Cannot load chunks of %s", szFileName);
+	}
 
 	if (m_bCollectTextures)
 	{
@@ -2089,6 +1976,129 @@ void CLoaderCGF::Load(const char* filename)
 			PRINT_LOG("\n");
 		}
 	}
+}
+
+bool CLoaderCGF::LoadChunks()
+{
+	// load all chunks in sequence
+	//
+	for (int i = 0; i < m_pChunkFile->numChunks(); ++i)
+	{
+		const CHUNK_HEADER& ch    = m_pChunkFile->getChunkHeader(i);
+		int                 nSize = m_pChunkFile->getChunkSize(i);
+
+		const void*         pData = m_pChunkFile->getChunkData(i);
+
+		addChunkToCount(ch.ChunkType, nSize);
+
+		switch (ch.ChunkType)
+		{
+		case ChunkType_Mtl:
+			switch (ch.ChunkVersion)
+			{
+			case 0x744:
+				LoadChunkMtl((const MTL_CHUNK_DESC_0744*)pData, nSize);
+				break;
+			case 0x745:
+				LoadChunkMtl((const MTL_CHUNK_DESC_0745*)pData, nSize);
+				break;
+			case 0x746:
+				LoadChunkMtl((const MTL_CHUNK_DESC_0746*)pData, nSize);
+				break;
+			}
+			break;
+		case ChunkType_Controller:
+			switch (ch.ChunkVersion)
+			{
+			case 0x826:
+				LoadChunkController((const CONTROLLER_CHUNK_DESC_0826*)pData, nSize);
+				break;
+			case 0x827:
+				LoadChunkController((const CONTROLLER_CHUNK_DESC_0827*)pData, nSize);
+				break;
+			}
+			break;
+		case ChunkType_Timing:
+			LoadChunkTiming((const TIMING_CHUNK_DESC*)pData, nSize);
+			break;
+		case ChunkType_Mesh:
+			LoadChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
+			break;
+		case ChunkType_Node:
+			LoadChunkNode((const NODE_CHUNK_DESC*)pData, nSize);
+			break;
+
+		case ChunkType_BoneNameList:
+		{
+			switch (ch.ChunkVersion)
+			{
+			case BONENAMELIST_CHUNK_DESC_0744::VERSION:
+				LoadChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0744*)pData, nSize);
+				break;
+			case BONENAMELIST_CHUNK_DESC_0745::VERSION:
+				LoadChunkBoneNameList((const BONENAMELIST_CHUNK_DESC_0745*)pData, nSize);
+				break;
+			}
+		}
+		break;
+
+		case ChunkType_BoneInitialPos:
+			LoadChunkBoneInitialPos((BONEINITIALPOS_CHUNK_DESC_0001*)pData, nSize);
+			break;
+
+		case ChunkType_BoneAnim:
+			LoadChunkBoneAnim((const BONEANIM_CHUNK_DESC*)pData, nSize);
+			break;
+
+		case ChunkType_BoneMesh:
+			LoadChunkMesh((const MESH_CHUNK_DESC*)pData, nSize);
+			break;
+
+		case ChunkType_Light:
+			LoadChunkLight((const LIGHT_CHUNK_DESC*)pData, nSize);
+			break;
+
+		case ChunkType_Helper:
+			LoadChunkHelper((const HELPER_CHUNK_DESC*)pData, nSize);
+			break;
+
+		case ChunkType_BoneLightBinding:
+		{
+			switch (ch.ChunkVersion)
+			{
+			case BONELIGHTBINDING_CHUNK_DESC_0001::VERSION:
+				LoadChunkBoneLightBinding((const BONELIGHTBINDING_CHUNK_DESC_0001*)pData, nSize);
+				break;
+			}
+		};
+		break;
+
+		case ChunkType_MeshMorphTarget:
+		{
+			switch (ch.ChunkVersion)
+			{
+			case MESHMORPHTARGET_CHUNK_DESC_0001::VERSION:
+				LoadChunkMeshMorphTarget((const MESHMORPHTARGET_CHUNK_DESC_0001*)pData, nSize);
+				break;
+			}
+		}
+		break;
+
+		case ChunkType_SourceInfo:
+			LoadChunkSourceInfo((const char*)pData, nSize);
+			break;
+
+		case ChunkType_SceneProps:
+			LoadChunkSceneProps((const char*)pData, nSize);
+			break;
+
+		default:
+			printChunkUnknown(pData, nSize);
+			break;
+		}
+	}
+
+	return true;
 }
 
 CLoaderCGF::CChunkSizeProps::CChunkSizeProps()
@@ -2115,21 +2125,21 @@ unsigned CLoaderCGF::CChunkSizeProps::count() const { return m_nCount; }
 
 double   CLoaderCGF::CChunkSizeProps::mean() const { return double(m_nSize) / m_nCount; }
 
-CLoaderCGF::CMeshData::CMeshData(unsigned nChunkId, FileReaderPtr m_pReader)
+CLoaderCGF::CMeshData::CMeshData(unsigned nChunkId, FileReaderPtr pChunkFile)
 {
 	nVerts = 0;
 	pVerts = 0;
 
-	for (unsigned i = 0; i < (unsigned)m_pReader->numChunks(); ++i)
+	for (unsigned i = 0; i < (unsigned)pChunkFile->numChunks(); ++i)
 	{
-		const CHUNK_HEADER& chunkHeader = m_pReader->getChunkHeader(i);
+		const CHUNK_HEADER& chunkHeader = pChunkFile->getChunkHeader(i);
 		if (chunkHeader.ChunkType == ChunkType_Mesh && chunkHeader.ChunkID == nChunkId)
 		{
 			switch (chunkHeader.ChunkVersion)
 			{
 			case MESH_CHUNK_DESC::VERSION:
 			{
-				const MESH_CHUNK_DESC* pChunk = (const MESH_CHUNK_DESC*)m_pReader->getChunkData(i);
+				const MESH_CHUNK_DESC* pChunk = (const MESH_CHUNK_DESC*)pChunkFile->getChunkData(i);
 				this->nVerts                  = pChunk->nVerts;
 				this->pVerts                  = (const CryVertex*)(pChunk + 1);
 			}
