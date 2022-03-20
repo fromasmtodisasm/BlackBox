@@ -22,23 +22,30 @@
 //class CFileMapping;
 //TYPEDEF_AUTOPTR(CFileMapping);
 
-class MemoryBlob : public _reference_target_t
+struct IMemoryBlob : public _reference_target_t
+{
+	virtual void*  getData()                       = 0;
+	virtual void*  getData(unsigned nOffset) const = 0;
+	virtual size_t getSize()                       = 0;
+};
+
+class CMemoryBlob : public IMemoryBlob
 {
 public:
-	MemoryBlob(void* data, size_t size)
+	CMemoryBlob(void* data, size_t size)
 	    : m_Data(data)
 	    , m_Size(size)
 	{
 	}
-	MemoryBlob* operator->()
+	CMemoryBlob* operator->()
 	{
 		return this;
 	}
 
-	void* getData() { return m_Data; }
+	void* getData() override { return m_Data; }
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the file data at the given offset
-	void* getData(unsigned nOffset) const
+	void* getData(unsigned nOffset) const override
 	{
 		if (m_Data)
 			return ((char*)m_Data) + nOffset;
@@ -46,7 +53,7 @@ public:
 			return NULL;
 	}
 
-	size_t getSize() { return m_Size; }
+	size_t getSize() override { return m_Size; }
 
 	void*  m_Data;
 	size_t m_Size;
@@ -61,15 +68,14 @@ public:
 // be true for successfully open files
 ////////////////////////////////////////////////////////////////////////
 
-//template<class CFileMapping = MemoryBlob>
-template<class TMemoryStream = ::CFileMapping>
+template<typename MemoryBlob = ::CFileMapping>
 class CChunkFileReader :
     public _reference_target_t
 {
 public:
-	typedef FILE_HEADER               FileHeader;
-	typedef CHUNK_HEADER              ChunkHeader;
-	typedef _smart_ptr<TMemoryStream> CFileMapping_AutoPtr;
+	typedef FILE_HEADER            FileHeader;
+	typedef CHUNK_HEADER           ChunkHeader;
+	typedef _smart_ptr<MemoryBlob> MemoryBlobPtr;
 
 	CChunkFileReader()
 	    : m_pChunks(NULL)
@@ -81,31 +87,29 @@ public:
 		close();
 	}
 
-	// attaches the file mapping object to this file reader and checks
-	// whether the file is a valid chunked file
 	//////////////////////////////////////////////////////////////////////////
 	// attaches the file mapping object to this file reader and checks
 	// whether the file is a valid chunked file
-	bool open(TMemoryStream* pFile)
+	bool open(MemoryBlob* pFile)
 	{
 		close();
-		m_pFile       = pFile;
+		m_pMemoryBlob = pFile;
 
 		bool bSuccess = false;
 
-		if ((m_pFile != (TMemoryStream*)NULL) && (m_pFile->getData() != NULL))
+		if ((m_pMemoryBlob != (MemoryBlob*)NULL) && (m_pMemoryBlob->getData() != NULL))
 		{
-			if (m_pFile->getSize() >= sizeof(FileHeader))
+			if (m_pMemoryBlob->getSize() >= sizeof(FileHeader))
 			{ // the file must contain the header
 				const FileHeader& fileHeader = getFileHeader();
-				if (m_pFile->getSize() >= fileHeader.ChunkTableOffset + sizeof(int) && (int)fileHeader.ChunkTableOffset > (int)sizeof(fileHeader))
+				if (m_pMemoryBlob->getSize() >= fileHeader.ChunkTableOffset + sizeof(int) && (int)fileHeader.ChunkTableOffset > (int)sizeof(fileHeader))
 				{ // there must be room for the chunk table header
-					unsigned numChunks = *static_cast<const unsigned*>(m_pFile->getData(fileHeader.ChunkTableOffset));
+					unsigned numChunks = *static_cast<const unsigned*>(m_pMemoryBlob->getData(fileHeader.ChunkTableOffset));
 					unsigned nChunk;
-					if (m_pFile->getSize() >= fileHeader.ChunkTableOffset + sizeof(int) + numChunks * sizeof(ChunkHeader) && numChunks <= (pFile->getSize() - fileHeader.ChunkTableOffset - sizeof(int)) / sizeof(ChunkHeader))
+					if (m_pMemoryBlob->getSize() >= fileHeader.ChunkTableOffset + sizeof(int) + numChunks * sizeof(ChunkHeader) && numChunks <= (pFile->getSize() - fileHeader.ChunkTableOffset - sizeof(int)) / sizeof(ChunkHeader))
 					{
 						// the file must contain the full chunk table
-						m_pChunks                               = (const ChunkHeader*)m_pFile->getData(fileHeader.ChunkTableOffset + sizeof(int));
+						m_pChunks                               = (const ChunkHeader*)m_pMemoryBlob->getData(fileHeader.ChunkTableOffset + sizeof(int));
 
 						bool          bInvalidChunkOffsetsFound = false; // sets to true if there are chunks pointing outside the raw data section of the file
 
@@ -165,14 +169,12 @@ public:
 		return bSuccess;
 	}
 
-	// attaches a new file mapping object to this file reader and checks
-	// whether the file is a valid chunked file
 	//////////////////////////////////////////////////////////////////////////
 	// attaches a new file mapping object to this file reader and checks
 	// whether the file is a valid chunked file
 	bool open(const char* szFileName, unsigned nFlags = 0)
 	{
-		auto pFileMapping = _smart_ptr<TMemoryStream>(new TMemoryStream(szFileName, nFlags));
+		auto pFileMapping = _smart_ptr<MemoryBlob>(new MemoryBlob(szFileName, nFlags));
 		if (!pFileMapping->getData())
 		{
 			gLastError = "Cannot open file";
@@ -190,22 +192,20 @@ public:
 	void close()
 	{
 		m_arrChunkSize.clear();
-		m_pFile   = NULL;
-		m_pChunks = NULL;
+		m_pMemoryBlob = NULL;
+		m_pChunks     = NULL;
 	}
 
-	// returns the raw data of the file from the given offset
 	// returns the raw data of the file from the given offset
 	const void*
 	getRawData(unsigned nOffset) const
 	{
-		if ((m_pFile != (TMemoryStream*)NULL) && m_pFile->getData())
-			return ((char*)m_pFile->getData()) + nOffset;
+		if ((m_pMemoryBlob != (MemoryBlob*)NULL) && m_pMemoryBlob->getData())
+			return ((char*)m_pMemoryBlob->getData()) + nOffset;
 		else
 			return NULL;
 	}
 
-	// returns the raw data of the i-th chunk
 	// returns the raw data of the i-th chunk
 	const void* getChunkData(int nChunkIdx) const
 	{
@@ -215,13 +215,12 @@ public:
 			if (nOffset < sizeof(FileHeader) || nOffset >= getFileHeader().ChunkTableOffset)
 				return 0;
 			else
-				return m_pFile->getData(nOffset);
+				return m_pMemoryBlob->getData(nOffset);
 		}
 		else
 			return 0;
 	}
 
-	// retrieves the raw chunk header, as it appears in the file
 	// retrieves the raw chunk header, as it appears in the file
 	const ChunkHeader& getChunkHeader(int nChunkIdx) const
 	{
@@ -240,13 +239,11 @@ public:
 	}
 
 	// number of chunks
-	// number of chunks
 	int numChunks() const
 	{
 		return (int)m_arrChunkSize.size();
 	}
 
-	// number of chunks of the specified type
 	// number of chunks of the specified type
 	int numChunksOfType(ChunkTypes nChunkType) const
 	{
@@ -260,28 +257,27 @@ public:
 	}
 
 	// returns the file headers
-	// returns the file headers
 	const FileHeader& getFileHeader() const
 	{
-		return m_pFile ? *((const FileHeader*)(m_pFile->getData())) : *(const FileHeader*)NULL;
+		return m_pMemoryBlob ? *((const FileHeader*)(m_pMemoryBlob->getData())) : *(const FileHeader*)NULL;
 	}
 
 	bool isValid() const
 	{
-		return m_pFile != (TMemoryStream*)NULL;
+		return m_pMemoryBlob != (MemoryBlob*)NULL;
 	}
 
 	const char* getLastError() const { return gLastError; }
 
 protected:
 	// this variable contains the last error occured in this class
-	const char*              gLastError;
+	const char*              gLastError{};
 
-	CFileMapping_AutoPtr     m_pFile;
+	MemoryBlobPtr            m_pMemoryBlob;
 	// array of offsets used by the chunks
 	typedef std::vector<int> ChunkSizeArray;
 	ChunkSizeArray           m_arrChunkSize;
-	// pointer to the array of chunks in the m_pFile
+	// pointer to the array of chunks in the m_pMemoryBlob
 	const ChunkHeader*       m_pChunks;
 };
 

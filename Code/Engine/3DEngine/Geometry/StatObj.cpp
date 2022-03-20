@@ -508,7 +508,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 
 	ai.RegisterLoader(cgfImporter);
 
-	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes | aiProcess_GenNormals);
+	const aiScene* scene = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes/* | aiProcess_GenNormals*/);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -533,12 +533,12 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 			auto RealFormat   = VertFormatForComponents(bNeedCol, false, bNeedNormals, bHasTC);
 			if (RealFormat != 9)
 			{
-				//FIXME:
-				#if 0
+	//FIXME:
+	#if 0
 				CryError("[ASSIMP] VertexFormat not eq 9");
-				#else
+	#else
 				RealFormat = 9;
-				#endif
+	#endif
 			}
 
 			char* vb            = (char*)(m_VertexBuffer = CreateVertexBuffer(m_VertexFormat, mesh->mNumVertices));

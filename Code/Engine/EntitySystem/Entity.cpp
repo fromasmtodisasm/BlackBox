@@ -338,13 +338,17 @@ bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 	auto object = m_EntityObject.object;
 	if (object == nullptr)
 		return false;
-	glm::vec3 pos       = GetPos();
-	glm::vec3 rotation  = GetAngles();
-	glm::vec3 scale     = GetScale();
-	auto      transform = glm::mat4(1);
-//glm::mat4 transform = glm::rotate(glm::mat4(1), );
+	auto      pos       = GetPos();
+	auto      rotation  = GetAngles();
+	auto      scale     = GetScale();
+	glm::mat4 transform = glm::mat4(1);
 #if 1
 	transform = glm::translate(transform, pos);
+
+	transform = glm::rotate(transform, glm::radians(rotation.x), {1, 0, 0});
+	transform = glm::rotate(transform, glm::radians(rotation.y), {0, 1, 0});
+	transform = glm::rotate(transform, glm::radians(rotation.z), {0, 0, 1});
+
 	transform = glm::scale(transform, scale);
 #endif
 	SRendParams rp(EntDrawParams);

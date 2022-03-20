@@ -25,10 +25,9 @@ void MineWorld::init()
 {
 	auto loadAssets = [this]()
 	{
-		auto grass   = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
+		auto grass = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
 		types.push_back(grass);
 	};
-
 
 	auto generateLevel = [this]()
 	{
@@ -71,21 +70,34 @@ void MineWorld::init()
 	loadAssets();
 	generateLevel();
 	{
-		//auto testbox = gEnv->p3DEngine->MakeObject("objects/editor/arrow.cgf");
-		//auto testbox = gEnv->p3DEngine->MakeObject("objects/editor/mtlbox.cgf");
-		auto testbox = gEnv->p3DEngine->MakeObject("objects/editor/mtlteapot.cgf");
-		//auto testbox = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
-		//auto        testbox = types[0];
+		char* objects[] = {
+		    "objects/characters/pmodels/hero/hero.cgf",
+		    "objects/editor/mtlteapot.cgf",
+		    "objects/editor/mtlbox.cgf",
+		    "objects/weapons/m4/m4.cgf",
+		    "objects/vehicles/buggy/buggy.cgf",
+		    "objects/editor/arrow.cgf",
+		    "objects/editor/arrow.cgf",
+		    "minecraft/Grass_Block.obj",
+		};
 
+		auto        object = gEnv->p3DEngine->MakeObject(objects[0]);
 
+		//auto Jack = gEnv->p3DEngine->MakeObject();
+		//auto        Jack = types[0];
 
 		CEntityDesc desc(0, 0);
-		auto        entity = gEnv->pEntitySystem->SpawnEntity(desc);
-		gEnv->p3DEngine->RegisterEntity(entity);
+		desc.name       = "Hero";
+		minecraft->Jack = gEnv->pEntitySystem->SpawnEntity(desc);
+		auto* Jack = minecraft->Jack;
 
-		entity->SetIStatObj(testbox);
-		entity->SetPos({5,5,5});
-		entity->SetScale(glm::vec3(0.1f));
+		Jack->SetIStatObj(object);
+		Jack->SetPos({5, 5, 5});
+		Jack->SetScale(glm::vec3(0.01f));
+		Jack->SetAngles({45, 90, 0});
+
+		gEnv->p3DEngine->RegisterEntity(minecraft->Jack);
+
 	}
 
 	gEnv->pConsole->ExecuteString("load_level minecraft");
@@ -124,6 +136,8 @@ void Minecraft::init()
 
 void Minecraft::update()
 {
+	Jack->SetAngles({-90, 0, 180});
+    //Jack->SetAngles({45, 90, 0});
 	debug.update();
 	ui.draw();
 	player.update();
@@ -430,7 +444,7 @@ void MinePlayer::init()
 	entity = gEnv->pEntitySystem->SpawnEntity(desc);
 	gEnv->p3DEngine->RegisterEntity(entity);
 
-	entity->SetPos(glm::vec3(5, 40, 5));
+	entity->SetPos(glm::vec3(5, 20, 5));
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 

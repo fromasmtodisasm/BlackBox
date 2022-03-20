@@ -100,6 +100,8 @@ struct Minecraft
 	MineUI	   ui;
 	MinePlayer player;
 	MineDebug  debug;
+
+	IEntity*   Jack;
 };
 
 extern Minecraft* minecraft;

@@ -60,15 +60,15 @@ namespace Assimp
 				{
 					char* argv[] = {
 					    "dummy.exe",
-					    "-mesh",
+					    //"-mesh",
 					    (char*)file.GetAdjustedFilename()};
 
 					std::vector<char> buf(file.GetLength());
 					file.Read(buf.data(), file.GetLength());
 
-					auto                        mapping = _smart_ptr(new MemoryBlob((void*)buf.data(), file.GetLength()));
-					CCgfDump<MemoryBlob> dumper(mapping, pScene);
-					dumper.Dump(3, argv);
+					_smart_ptr<IMemoryBlob> mapping = new CMemoryBlob((void*)buf.data(), file.GetLength());
+					CCgfDump                dumper(mapping, pScene);
+					dumper.Dump(2, argv);
 				}
 			}
 		}
