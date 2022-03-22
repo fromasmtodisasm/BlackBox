@@ -67,7 +67,8 @@ namespace Assimp
 					file.Read(buf.data(), file.GetLength());
 
 					_smart_ptr<IMemoryBlob> mapping = new CMemoryBlob((void*)buf.data(), file.GetLength());
-					CLoaderCGF              loader(mapping, pScene);
+					CContentCGF             contentCGF(pFile.c_str());
+					CLoaderCGF              loader(mapping, pScene, &contentCGF);
 					loader.Load(pFile.c_str());
 				}
 			}

@@ -19,7 +19,12 @@
 #if 0
 	#define PRINT_LOG(format, ...) CryLog(format, __VA_ARGS__);
 #else
-	#define PRINT_LOG
+	#if 0
+		#define printf CryLog
+	#else
+		#define printf
+	#endif
+	#define PRINT_LOG printf
 #endif
 
 template<typename TVector, typename TComponent, int nComponents>
@@ -170,9 +175,10 @@ void CLoaderCGF::printSet(const char* szFormat, const std::set<T>& setMtls, cons
 	PRINT_LOG("%s", szPostfix);
 }
 
-CLoaderCGF::CLoaderCGF(MemoryBlobPtr fileMapping, aiScene* scene)
+CLoaderCGF::CLoaderCGF(MemoryBlobPtr fileMapping, aiScene* scene, CContentCGF* pContentCGF)
     : m_FileMapping(fileMapping)
     , m_pScene(scene)
+    , m_pCGF(pContentCGF)
 {
 }
 
@@ -1403,74 +1409,78 @@ void CLoaderCGF::LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 	PRINT_LOG("\"%s\"\n", pChunk->name);
 	PRINT_LOG("ObjectID: 0x%08X\tParentID: 0x%08X\n", pChunk->ObjectID, pChunk->ParentID);
 
-	//
-	// if (pChunk->ParentID == -1)
+	auto pNodeCGF = new CNodeCGF(pChunk->name);
+	m_pCGF->AddNode(pNodeCGF);
+
+	pNodeCGF->mParent = nullptr;
+
+	memcpy(&pNodeCGF->mTransformation, &pChunk->tm, sizeof Matrix44);
+
+	if (pChunk->MatID > 0)
 	{
-		m_pScene->mRootNode = new aiNode(pChunk->name);
-		auto root           = m_pScene->mRootNode;
-		root->mParent       = nullptr;
+		auto mat = LoadMaterialFromChunk(pChunk->MatID);
+		//m_pScene->mMaterials
+		//if ()
+	}
 
-		memcpy(&root->mTransformation, &pChunk->tm, sizeof Matrix44);
+	auto header = m_pChunkFile->getChunkHeader(pChunk->ObjectID);
+	if (header.ChunkType == ChunkType_Mesh)
+	{
+		auto meshChunk       = (MESH_CHUNK_DESC*)m_pChunkFile->getChunkData(pChunk->ObjectID);
 
-		auto header = m_pChunkFile->getChunkHeader(pChunk->ObjectID);
-		if (header.ChunkType == ChunkType_Mesh)
+		m_pScene->mMeshes    = new CMesh*[1];
+		m_pScene->mNumMeshes = 1;
 		{
-			auto mesh_chunk      = (MESH_CHUNK_DESC*)m_pChunkFile->getChunkData(pChunk->ObjectID);
+			pNodeCGF->mNumMeshes     = 1;
+			pNodeCGF->mMeshes        = new unsigned int[1];
 
-			m_pScene->mMeshes    = new aiMesh*[1];
-			m_pScene->mNumMeshes = 1;
+			auto assimpMesh          = new CMesh;
+			assimpMesh->mName        = getObjectName(pChunk->ObjectID);
+
+			assimpMesh->mNumVertices = meshChunk->nVerts;
+			assimpMesh->mVertices    = new aiVector3D[assimpMesh->mNumVertices];
+			assimpMesh->mNormals     = new aiVector3D[assimpMesh->mNumVertices];
+
+			auto verts               = (CryVertex*)(meshChunk + 1);
+
+			for (size_t i = 0; i < assimpMesh->mNumVertices; i++)
 			{
-				root->mNumMeshes   = 1;
-				root->mMeshes      = new unsigned int[1];
-
-				auto mesh          = new aiMesh;
-				mesh->mName        = getObjectName(pChunk->ObjectID);
-
-				mesh->mNumVertices = mesh_chunk->nVerts;
-				mesh->mVertices    = new aiVector3D[mesh->mNumVertices];
-				mesh->mNormals     = new aiVector3D[mesh->mNumVertices];
-
-				auto verts         = (CryVertex*)(mesh_chunk + 1);
-
-				for (size_t i = 0; i < mesh->mNumVertices; i++)
-				{
-					memcpy(&mesh->mVertices[i], &verts[i].p, sizeof aiVector3D);
-					memcpy(&mesh->mNormals[i], &verts[i].n, sizeof aiVector3D);
-				}
-
-				mesh->mNumFaces = mesh_chunk->nFaces;
-				mesh->mFaces    = new aiFace[mesh->mNumFaces];
-
-				auto faces      = (CryFace*)(verts + mesh_chunk->nVerts);
-				for (size_t i = 0; i < mesh->mNumFaces; i++)
-				{
-					auto& face       = mesh->mFaces[i];
-					face.mNumIndices = 3;
-					face.mIndices    = new unsigned int[3];
-
-					memcpy(face.mIndices, &faces[i], 3 * sizeof(unsigned int));
-				}
-
-				if (mesh_chunk->nTVerts != 0)
-				{
-					mesh->mNumUVComponents[0] = 2;
-					mesh->mTextureCoords[0]   = new aiVector3D[mesh->mNumVertices];
-
-					auto tfaces               = (CryUV*)(faces + mesh_chunk->nFaces);
-					for (size_t i = 0; i < mesh->mNumVertices; i++)
-					{
-						auto& face = mesh->mTextureCoords[0];
-
-						face->x    = tfaces[i].u;
-						face->y    = tfaces[i].v;
-						face->z    = 0.f;
-					}
-				}
-
-				m_pScene->mMeshes[0] = mesh;
+				memcpy(&assimpMesh->mVertices[i], &verts[i].p, sizeof aiVector3D);
+				memcpy(&assimpMesh->mNormals[i], &verts[i].n, sizeof aiVector3D);
 			}
-			//mesh->mNumVertices
+
+			assimpMesh->mNumFaces = meshChunk->nFaces;
+			assimpMesh->mFaces    = new aiFace[assimpMesh->mNumFaces];
+
+			auto faces            = (CryFace*)(verts + meshChunk->nVerts);
+			for (size_t i = 0; i < assimpMesh->mNumFaces; i++)
+			{
+				auto& face       = assimpMesh->mFaces[i];
+				face.mNumIndices = 3;
+				face.mIndices    = new unsigned int[3];
+
+				memcpy(face.mIndices, &faces[i], 3 * sizeof(unsigned int));
+			}
+
+			if (meshChunk->nTVerts != 0)
+			{
+				assimpMesh->mNumUVComponents[0] = 2;
+				assimpMesh->mTextureCoords[0]   = new aiVector3D[assimpMesh->mNumVertices];
+
+				auto tfaces                     = (CryUV*)(faces + meshChunk->nFaces);
+				for (size_t i = 0; i < assimpMesh->mNumVertices; i++)
+				{
+					auto& face = assimpMesh->mTextureCoords[0];
+
+					face->x    = tfaces[i].u;
+					face->y    = tfaces[i].v;
+					face->z    = 0.f;
+				}
+			}
+
+			m_pScene->mMeshes[0] = assimpMesh;
 		}
+		//assimpMesh->mNumVertices
 	}
 
 	if (pChunk->nChildren)
@@ -1964,6 +1974,24 @@ void CLoaderCGF::Load(const char* filename)
 		CryFatalError("Cannot load chunks of %s", szFileName);
 	}
 
+	// Set node parents.
+	for (int i = 0; i < m_pCGF->GetNodeCount(); ++i)
+	{
+		CryLog("i = %d", i);
+		//if (m_pCGF->GetNode(i)->nParentChunkId > 0)
+		//{
+		//	for (int j = 0; j < m_pCGF->GetNodeCount(); ++j)
+		//	{
+		//		if (m_pCGF->GetNode(i)->nParentChunkId == m_pCGF->GetNode(j)->nChunkId)
+		//		{
+		//			m_pCGF->GetNode(i)->pParent = m_pCGF->GetNode(j);
+		//			break;
+		//		}
+		//	}
+		//}
+	}
+	m_pScene->mRootNode = m_pCGF->GetNode(0);
+
 	if (m_bCollectTextures)
 	{
 		PRINT_LOG("---------------------------------------------------\n");
@@ -2099,6 +2127,11 @@ bool CLoaderCGF::LoadChunks()
 	}
 
 	return true;
+}
+
+CMaterialCGF* CLoaderCGF::LoadMaterialFromChunk(int nchunkId)
+{
+	return nullptr;
 }
 
 CLoaderCGF::CChunkSizeProps::CChunkSizeProps()
