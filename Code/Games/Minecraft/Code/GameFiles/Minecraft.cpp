@@ -9,6 +9,14 @@
 
 Minecraft* minecraft;
 
+enum class EEntityClass : int
+{
+	Block,
+	Character
+
+};
+
+
 AABB       entityWorldAABB(IEntity* entity)
 {
 	AABB aabb = {glm::vec3(0, 0, 0), glm::vec3(1, 1, 1)};
@@ -206,7 +214,7 @@ void MineWorld::set(glm::ivec3 pos, Type type)
 {
 	tryDestroy(pos);
 
-	CEntityDesc desc(0, 0);
+	CEntityDesc desc(minecraft->world.blocks.size() + 1, (int)EEntityClass::Character);
 	auto        entity = gEnv->pEntitySystem->SpawnEntity(desc);
 	gEnv->p3DEngine->RegisterEntity(entity);
 
@@ -465,11 +473,11 @@ void MinePlayer::init()
 
 	auto        steve = gEnv->p3DEngine->MakeObject("minecraft/minecraft_steve.obj");
 
-	CEntityDesc desc(0, 0);
+	CEntityDesc desc(minecraft->world.blocks.size() + 1, 0);
 	entity = gEnv->pEntitySystem->SpawnEntity(desc);
 	gEnv->p3DEngine->RegisterEntity(entity);
 
-	entity->SetPos(glm::vec3(5, 20, 5));
+	entity->SetPos(glm::vec3(5, 60, 5));
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 

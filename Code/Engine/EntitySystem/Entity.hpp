@@ -5,6 +5,7 @@ class CEntity : public IEntity
 {
 public:
 	CEntity();
+	~CEntity();
 	// Inherited via IEntity
 	virtual void                  GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) override;
 	virtual float                 GetRenderRadius() const override;

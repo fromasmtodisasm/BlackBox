@@ -6,11 +6,14 @@
 
 #define LOG_FUNCTION() CryLog("[EntitySystemLogging]: %s", __FUNCTION__)
 
+const int MAX_ENTITYES = 64 * 1024;
+
 inline CEntitySystem::CEntitySystem(ISystem* pSystem)
     : m_EntityIt(m_Entities)
 {
 #if 1
-	m_Entities.resize(16 * 16 * 256 + 1024);
+	//m_Entities.resize(16 * 16 * 256 + 1024);
+	m_Entities.resize(MAX_ENTITYES);
 #endif
 
 #define SET_SCRIPTEVENT(event) gEnv->pScriptSystem->SetGlobalValue("ScriptEvent_" #event, ScriptEvent_##event)
@@ -81,13 +84,33 @@ void CEntitySystem::Reset()
 
 IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool t)
 {
-	return &m_Entities[m_nSpawnedEntities++];
+	if (m_Entities.size() <= MAX_ENTITYES)
+	{
+		auto e = &m_Entities[ed.id];
+
+		if (t)
+		{
+			InitEntity(e, ed);
+		}
+		m_nSpawnedEntities++;
+		return e;
+	}
+
+	return nullptr;
 }
 
 bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)
 {
-	LOG_FUNCTION();
-	return false;
+	CEntity* e = (CEntity*)pEntity;
+	e->~CEntity();
+
+	new (e) CEntity();
+
+	e->m_Id = ed.id;
+
+	e->SetClassId(ed.ClassId);
+	e->SetName(ed.name);
+	return true;
 }
 
 IEntity* CEntitySystem::GetEntity(EntityId id)
@@ -112,6 +135,7 @@ void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 {
 	LOG_FUNCTION();
 	CryLog("Try remove entity with id: %d", entity);
+	m_nSpawnedEntities--;
 	gEnv->p3DEngine->UnRegisterEntity(&m_Entities[entity]);
 }
 

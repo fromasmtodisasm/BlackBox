@@ -6,6 +6,10 @@ CEntity::CEntity()
 {
 }
 
+CEntity::~CEntity()
+{
+}
+
 void CEntity::GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs)
 {
 }
@@ -45,7 +49,7 @@ void CEntity::PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevP
 
 EntityId CEntity::GetId() const
 {
-	return EntityId();
+	return m_Id;
 }
 
 void CEntity::Update(SEntityUpdateContext& updateContext)

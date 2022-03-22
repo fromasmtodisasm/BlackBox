@@ -6,7 +6,11 @@
 
 struct ICrySizer;
 typedef std::vector<CEntity>::iterator EntityIt;
+#if 0
 typedef std::vector<CEntity> Entities;
+#else
+typedef std::vector<CEntity> Entities;
+#endif
 
 
 class CEntityIterator : public IEntityIt, _reference_target_t
