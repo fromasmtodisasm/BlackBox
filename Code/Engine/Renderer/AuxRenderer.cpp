@@ -133,7 +133,7 @@ void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 
 	m_ZPShader->Bind();
 	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
-	::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
+	::GetDeviceContext()->VSSetConstantBuffers(PERDRAW_SLOT, 1, &g_pConstantBuffer);
 	auto ib         = DrawElement.m_Inices;
 	auto numindices = 0;
 	if (ib)

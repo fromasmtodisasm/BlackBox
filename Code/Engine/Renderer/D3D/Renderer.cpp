@@ -145,6 +145,7 @@ void CD3DRenderer::UpdateConstants()
 		                                   pConstData->SunDirection    = Legacy::Vec4(glm::normalize(Legacy::Vec3(2, 3, 4)), 1.f);
 		                                   pConstData->SunColor        = {r_SunColor, 1};
 		                                   pConstData->AmbientStrength = Legacy::Vec4(1, 1, 1, 1) * 0.3f;
+		                                   pConstData->NumLights       = m_LigthsList.size();
 		                                   pConstData->LightIntensity  = Legacy::Vec4(1, 1, 1, 1); });
 
 	ScopedMap<SPerViewConstantBuffer>(m_PerViewConstants, [&](auto pConstData)
@@ -157,9 +158,12 @@ void CD3DRenderer::UpdateConstants()
 
 	ID3DBuffer* pBuffers[] = {
 	    m_PerFrameConstants.Get(),
-	    m_PerViewConstants.Get()};
-	::GetDeviceContext()->VSSetConstantBuffers(0, 2, pBuffers);
-	::GetDeviceContext()->PSSetConstantBuffers(0, 1, pBuffers);
+	    m_Lights.Get(),
+	    m_PerViewConstants.Get(),
+	};
+	constexpr auto StartSlot = PERFRAME_SLOT;
+	::GetDeviceContext()->VSSetConstantBuffers(StartSlot, 3, pBuffers);
+	::GetDeviceContext()->PSSetConstantBuffers(StartSlot, 2, pBuffers);
 	//D3DPERF_EndEvent();
 }
 
@@ -418,6 +422,12 @@ bool CD3DRenderer::InitOverride()
 	}
 	cbDesc.ByteWidth = Memory::AlignedSizeCB<SPerFrameConstantBuffer>::value;
 	hr               = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerFrameConstants);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+	cbDesc.ByteWidth = Memory::AlignedSizeCB<SLights>::value;
+	hr               = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_Lights);
 	if (FAILED(hr))
 	{
 		return hr;

@@ -14,10 +14,10 @@ float unreal(float x) {
     return x / (x + 0.155) * 1.019;
 }
 
-struct Light
-{
-    float3 Position;
-};
+
+
+
+
 [[fn]]
 float diffuse(float3 lightPos, float3 fragPos, float3 N)
 {

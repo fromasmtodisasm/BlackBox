@@ -329,6 +329,7 @@ private:
 
 	ComPtr<ID3DBuffer>                                                m_PerFrameConstants;
 	ComPtr<ID3DBuffer>                                                m_PerViewConstants;
+	ComPtr<ID3DBuffer>                                                m_Lights;
 
 	std::vector<Image2D>                                              m_DrawImages;
 

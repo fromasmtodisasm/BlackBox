@@ -433,6 +433,7 @@ std::pair<ID3DBlob*, ID3DBlob*> CShader::Load(const std::string_view text, IShad
 				severity = VALIDATOR_ERROR_DBGBRK;
 			}
 			CryWarning(VALIDATOR_MODULE_RENDERER, severity, "Error and warning from compilation:\n%s", log.data());
+			CryError("%*.*s", text.length(), text.length(), text.data());
 		}
 #endif
 		return std::make_pair(nullptr, pErrorBlob);

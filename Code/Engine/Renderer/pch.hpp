@@ -209,4 +209,14 @@ struct CTexture
 	ID3D11Texture2D* m_pResource;
 };
 
+#ifdef HLSL
+	#define BSLOT(n) n##1
+#else
+	#define BSLOT(n) n
+#endif
+
+#define PERFRAME_SLOT BSLOT(0)
+#define LIGHTS_SLOT   BSLOT(1)
+#define PERVIEW_SLOT  BSLOT(2)
+#define PERDRAW_SLOT  BSLOT(3)
 

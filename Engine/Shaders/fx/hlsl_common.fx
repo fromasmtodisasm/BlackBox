@@ -3,14 +3,23 @@
 //#include "NoDraw.cfx"
 //#include "Common.cfx"
 
+typedef float2 vec2;
+typedef float3 vec3;
+
 #define PERFRAME_SLOT b0
-#define PERVIEW_SLOT b1
-#define PERDRAW_SLOT b2
+#define LIGHTS_SLOT   b1
+#define PERVIEW_SLOT  b2
+#define PERDRAW_SLOT  b3
 
 float global_float <string desc="Test global variable";> = 0.5;
 
 float global_float2 <string desc="Test global variable";> = float(0);
 float2 global_float3 <string desc="Test global variable";> = float2(0,0);
+
+///////////////////////////////////
+//static const float PI= 3.14159265f;
+#define PI 3.14159265f
+///////////////////////////////////
 
 //struct struct_definition
 //{
@@ -21,13 +30,28 @@ float2 global_float3 <string desc="Test global variable";> = float2(0,0);
 //
 //ConstantBuffer<struct_definition> cbTest;
 
+struct Light
+{
+	float3 Color;
+	float3 Pos;
+};
+
+
 cbuffer PerFrameCB : register(PERFRAME_SLOT)
 {
     float4 SunDirection;
     float4 SunColor;
     float4 AmbientStrength;
     float4 LightIntensity;
+	int    NumLights;
 }
+
+#define NUM_LIGHTS 4
+cbuffer LightsCB : register(LIGHTS_SLOT)
+{
+	float g_Lights[NUM_LIGHTS];
+};
+
 cbuffer PerViewCB : register(PERVIEW_SLOT)
 {
     struct PERVIEWCB
@@ -49,6 +73,14 @@ cbuffer PerDrawCB : register(PERDRAW_SLOT)
     bool ApplyGrayScale;
 };
 
+
+
+
+[[fn]]
+float3 GetEye()
+{
+    return perViewCB.Eye;
+}
 
 [[fn]]
 float4x4 GetOrthoProjMat()

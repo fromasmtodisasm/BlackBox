@@ -1,5 +1,10 @@
 #include "hlsl_common.fx"
 
+#include "pbr.fx"
+
+//static float gamma = 2.2;
+#define gamma 2.2f
+
 // Shader global descriptions
 float Script : STANDARDSGLOBAL
 <
@@ -16,6 +21,23 @@ float Script : STANDARDSGLOBAL
 
 //FIXME: shader parser
 //StructuredBuffer<float4x4> Transform;
+
+//namespace test
+//{
+//#define ALBEDO static vec3 albedo;
+//#define METALIC static float metallic;
+//#define ROUGHNESS static float roughness;
+//#define AO static float ao;
+//
+//ALBEDO    
+//METALIC   
+//ROUGHNESS 
+//AO        
+	//static vec3  albedo;
+	//static float metallic;
+	//static float roughness;
+	//static float ao;
+//}
 
 
 //--------------------------------------------------------------------------------------
@@ -54,13 +76,29 @@ VS_OUTPUT VS(
 float4 PS(VS_OUTPUT input)
 	: SV_Target
 {
+	static vec3  albedo;
+	static float metallic;
+	static float roughness;
+	static float ao;
+
     //FIXME: need recognize storage class in shader parser to place this declaration on top level
     float3 diffuseColor = float3(1, 1, 1);
 
     float4 textureColor;
-    float3 lightDir;
-    float lightIntensity;
-    float4 color;
+	float3 lightDir;
+	float  lightIntensity;
+	float3 color;
+
+	vec3   N       = normalize(input.Normal);
+	vec3   V       = normalize(GetEye() - input.Pos);
+
+    for (int i = 0; i < NumLights; i++)
+	{
+        vec3   N       = normalize(input.Normal);
+        vec3   V       = normalize(GetEye() - input.Pos);
+
+        //g_Lights[i]
+	}
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor   = float4(0.5, 0.5, 0.5, 1);
@@ -70,15 +108,18 @@ float4 PS(VS_OUTPUT input)
     lightDir = SunDirection.xyz;
 
 	// Calculate the amount of light on this pixel.
-    lightIntensity = saturate(dot(input.Normal, lightDir));
+    lightIntensity = saturate(dot(N, lightDir));
 
 	// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
-    color = float4(saturate(SunColor.rgb * diffuseColor * lightIntensity), 1);
+	color          = saturate(SunColor.rgb * diffuseColor * lightIntensity);
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-    color = (color + AmbientStrength) * textureColor;
+    //color = (color + AmbientStrength) * textureColor;
+	color          = color + fresnelSchlick(dot(N, lightDir), float3(0.01, 0.05, 0.01));
+	float tmp      = 1.0 / gamma;
+	color          = pow(color, vec3(tmp, tmp, tmp));
 
-    return color;
+    return float4(color, 1);
 }
 
 //--------------------------------------------------------------------------------------

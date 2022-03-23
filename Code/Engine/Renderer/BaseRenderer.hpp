@@ -378,6 +378,12 @@ protected:
 		Legacy::Vec4 SunColor;
 		Legacy::Vec4 AmbientStrength;
 		Legacy::Vec4 LightIntensity;
+		int          NumLights;
+	};
+	struct alignas(16) SLights
+	{
+		Legacy::Vec3 Color;
+		Legacy::Vec3 Pos;
 	};
 	struct alignas(16) SPerViewConstantBuffer
 	{
@@ -394,6 +400,8 @@ protected:
 		glm::vec4 Color;
 		float     Alpha;
 	};
+
+	std::vector<SLights> m_LigthsList;
 
 #ifndef VK_RENDERER
 	CTypedConstantBuffer<SPerViewConstantBuffer> perViewBuffer;

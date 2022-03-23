@@ -188,6 +188,10 @@
 /*------------------------------------------------------------------
   token for uniforms declared outside of any shader code
 */
+%token              TYPEDEF
+%token              STATIC
+%token              CONST
+
 %token              STRING_TYPE
 %token              VOID_TYPE
 %token              UNSIGNED
@@ -304,7 +308,7 @@ function_definition: function_declaration semantic '{' {
     //CryLog("FuncBody: %s", body.data());
 }
 
-object_type: TYPE_NAME | base_type;
+object_type: base_type | TYPE_NAME;
 
 function_declaration: object_type IDENTIFIER[name] '(' {}arguments ')'{
     CryLog("Parsed function declaration for: [%s]", $name.data());
@@ -468,11 +472,18 @@ basic_type_constructor:
 type_constructor: basic_type_constructor;
 
 
-var_decl: 
-object_type direct_declarator semantic
-{
-    //CryLog("TryParseVarDecl");
-}
+storage_class
+    : TYPEDEF
+    | STATIC
+    | CONST;
+
+var_decl
+    : storage_class object_type IDENTIFIER {CryLog("Typedef:  %s", $3.c_str()); scanner.register_type($3.data());}
+    | object_type direct_declarator semantic
+    {
+        //CryLog("TryParseVarDecl");
+    }
+    ;
 | object_type direct_declarator semantic annotations '=' type_constructor
 | object_type direct_declarator semantic annotations '=' value
 | object_type direct_declarator semantic annotations ';'

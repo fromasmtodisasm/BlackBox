@@ -97,6 +97,10 @@ float_number [+-]?([0-9]*[.])?[0-9]+
 
 %}
 
+typedef {
+    return yy::parser::make_TYPEDEF(loc);
+}
+
 FatalError {
 	return yy::parser::make_FATALERROR(loc);
 }
@@ -162,28 +166,16 @@ FatalError {
     float2 return yy::parser::make_FLOAT2_TYPE(loc);
     float3 return yy::parser::make_FLOAT3_TYPE(loc);
     float4 return yy::parser::make_FLOAT4_TYPE(loc);
-    vec2   return yy::parser::make_FLOAT2_TYPE(loc);
-    vec3   return yy::parser::make_FLOAT3_TYPE(loc);
-    vec4   return yy::parser::make_FLOAT4_TYPE(loc);
-    mat2   return yy::parser::make_MAT2_TYPE(loc);
-    mat3   return yy::parser::make_MAT3_TYPE(loc);
-    mat4   return yy::parser::make_MAT4_TYPE(loc);
     float2x2   return yy::parser::make_MAT2_TYPE(loc);
     float2x4   return yy::parser::make_MAT2x4_TYPE(loc);
     float3x3   return yy::parser::make_MAT3_TYPE(loc);
     float3x4   return yy::parser::make_MAT34_TYPE(loc);
     float4x4   return yy::parser::make_MAT4_TYPE(loc);
     bool   return yy::parser::make_BOOL_TYPE(loc);
-    bvec2  return yy::parser::make_BOOL2_TYPE(loc);
-    bvec3  return yy::parser::make_BOOL3_TYPE(loc);
-    bvec4  return yy::parser::make_BOOL4_TYPE(loc);
     int    return yy::parser::make_INT_TYPE(loc);
     int2   return yy::parser::make_INT2_TYPE(loc);
     int3   return yy::parser::make_INT3_TYPE(loc);
     int4   return yy::parser::make_INT4_TYPE(loc);
-    ivec2  return yy::parser::make_INT2_TYPE(loc);
-    ivec3  return yy::parser::make_INT3_TYPE(loc);
-    ivec4  return yy::parser::make_INT4_TYPE(loc);
     uniform return yy::parser::make_UNIFORM(loc);
     string return yy::parser::make_STRING_TYPE(loc);
 }
@@ -346,6 +338,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 		return CURRENT_SYMBOL;
     }
 }
+
 
 <INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>\n+ {
     loc.lines (yyleng); loc.step ();

@@ -263,6 +263,15 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	{
 		std::filesystem::create_directories(path);
 	}
+	///////////////////////////////////////////////////////
+	using color = Legacy::Vec3;
+	using pos = Legacy::Vec3;
+	m_LigthsList = {
+	    {color{}, pos{}},
+	    {color{}, pos{}},
+	    {color{}, pos{}},
+	    {color{}, pos{}},
+	};
 
 	return result;
 }
