@@ -54,7 +54,9 @@ void CSound::Play(float fVolumeScale /* = 1.0f*/, bool bForceActiveState /* = tr
 		m_Volume   = s_SFXVolume * MIX_MAX_VOLUME;
 		SetVolume((int)m_Volume);
 	}
+	#if 0
 	CryLog("[Sound] Playing at channel: %d", m_nChannel);
+	#endif
 }
 
 void CSound::PlayFadeUnderwater(float fVolumeScale /* = 1.0f*/, bool bForceActiveState /* = true*/, bool bSetRatio /* = true*/)
