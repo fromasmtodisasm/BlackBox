@@ -323,6 +323,10 @@ void RenderCVars::InitCVars()
 	               "To capture one screenshot (variable is set to 0 after capturing)\n"
 	               "0=do not take a screenshot (default), 1=save a screenshot (together with .HDR if enabled), 2=save a screenshot");
 	REGISTER_CVAR(r_GraphicsDeviceId, r_GraphicsDeviceId, VF_DUMPTODISK, "");
+
+	REGISTER_CVAR2("r_sun.r", &r_SunColor.r, 1.f, VF_DUMPTODISK, "");
+	REGISTER_CVAR2("r_sun.g", &r_SunColor.g, 1.f, VF_DUMPTODISK, "");
+	REGISTER_CVAR2("r_sun.b", &r_SunColor.b, 1.f, VF_DUMPTODISK, "");
 }
 
 RenderCVars::~RenderCVars()

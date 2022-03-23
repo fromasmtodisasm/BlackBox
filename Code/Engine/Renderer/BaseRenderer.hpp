@@ -5,12 +5,12 @@
 
 #include "Shaders/FxParser.h"
 #ifdef VK_RENDERER
-#	include "Vulkan/Shader.hpp"
+	#include "Vulkan/Shader.hpp"
 #elif DX_RENDERER
-#	include "D3D/Shader.hpp"
+	#include "D3D/Shader.hpp"
 #endif
 #ifndef VK_RENDERER
-#	include "TypedConstantBuffer.hpp"
+	#include "TypedConstantBuffer.hpp"
 #endif
 #include <Cry_Color4.h>
 #include "RenderThread.h"
@@ -29,7 +29,7 @@ class CBufferManager;
 
 class RenderDebugger
 {
-  public:
+public:
 	RenderDebugger() = default;
 	RenderDebugger(const char* file);
 	~RenderDebugger();
@@ -38,7 +38,7 @@ class RenderDebugger
 	{
 		ignore = v;
 	}
-	static void checkError(const char* file, int line, const char* expr);
+	static void        checkError(const char* file, int line, const char* expr);
 
 	static inline void PushGroup(uint id, int length, const char* message)
 	{
@@ -54,7 +54,7 @@ class RenderDebugger
 		//glPopDebugGroup();
 	}
 
-  private:
+private:
 #if 0
 	static void APIENTRY callBack(GLenum source, GLenum type, GLuint id,
 								  GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
@@ -116,7 +116,7 @@ class RenderDebugger
 		return "Unknown severity";
 	}
 
-  private:
+private:
 	//std::ofstream debug_file;
 	static bool isError;
 	static bool ignore;
@@ -129,7 +129,7 @@ class RenderDebugger
 //!
 class CDebugSection
 {
-  public:
+public:
 	inline CDebugSection(size_t length, const char* message)
 	{
 		RenderDebugger::PushGroup(0, static_cast<int>(length), message);
@@ -148,33 +148,32 @@ class CDebugSection
 
 class RenderCVars
 {
-  public:
+public:
 	void InitCVars();
 	~RenderCVars();
 
-	int r_Width		 = 0;
-	int r_Height	 = 0;
-	int r_Bpp		 = 0;
-	int r_Zbpp		 = 0;
-	int r_Sbpp		 = 0;
-	int r_Fullscreen = 0;
+	int          r_Width            = 0;
+	int          r_Height           = 0;
+	int          r_Bpp              = 0;
+	int          r_Zbpp             = 0;
+	int          r_Sbpp             = 0;
+	int          r_Fullscreen       = 0;
 
-	int r_MSAA		   = 1;
-	int r_MSAA_samples = 2;
+	int          r_MSAA             = 1;
+	int          r_MSAA_samples     = 2;
 
-	int r_Vsync			   = true;
-	int r_DisplayIndex	   = 0;
-	int r_GraphicsDeviceId = -1;
+	int          r_Vsync            = true;
+	int          r_DisplayIndex     = 0;
+	int          r_GraphicsDeviceId = -1;
 
-	static int CV_r_GetScreenShot;
+	static int   CV_r_GetScreenShot;
+
+	Legacy::Vec3 r_SunColor = Legacy::Vec3(1, 1, 1);
 };
 
-class CRenderer : public RenderCVars
-	, public IRenderer
-	, public IConsoleVarSink
-	, public ISystemEventListener
+class CRenderer : public RenderCVars, public IRenderer, public IConsoleVarSink, public ISystemEventListener
 {
-  public:
+public:
 	virtual float ScaleCoordX(float value) override
 	{
 #if 0
@@ -193,8 +192,8 @@ class CRenderer : public RenderCVars
 	}
 
 	// Inherited via IRendererCallbackServer
-	void RegisterCallbackClient(IRendererCallbackClient* pClient) override;
-	void UnregisterCallbackClient(IRendererCallbackClient* pClient) override;
+	void         RegisterCallbackClient(IRendererCallbackClient* pClient) override;
+	void         UnregisterCallbackClient(IRendererCallbackClient* pClient) override;
 
 	// Inherited via IConsoleVarSink
 	virtual bool OnBeforeVarChange(ICVar* pVar, const char* sNewValue) final;
@@ -205,181 +204,180 @@ class CRenderer : public RenderCVars
 	CRenderer();
 	virtual ~CRenderer();
 	//! Init the renderer, params are self-explanatory
-	virtual IWindow* Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) /* final*/;
-	virtual bool	 InitOverride() = 0;
+	virtual IWindow*       Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window = nullptr) /* final*/;
+	virtual bool           InitOverride()                                                                                         = 0;
 
 	//! Changes resolution of the window/device (doen't require to reload the level
-	virtual bool ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) = 0;
+	virtual bool           ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen) = 0;
 
 	//! Shut down the renderer
-	virtual void Release() final;
+	virtual void           Release() final;
 
 	//! Should be called at the beginning of every frame
-	virtual void BeginFrame(void) = 0;
+	virtual void           BeginFrame(void)                                                 = 0;
 
 	//! Should be called at the end of every frame
-	virtual void Update(void) = 0;
+	virtual void           Update(void)                                                     = 0;
 
-	virtual void GetViewport(int* x, int* y, int* width, int* height)			  = 0;
-	virtual void SetViewport(int x = 0, int y = 0, int width = 0, int height = 0) = 0;
-	virtual void SetScissor(int x = 0, int y = 0, int width = 0, int height = 0)  = 0;
+	virtual void           GetViewport(int* x, int* y, int* width, int* height)             = 0;
+	virtual void           SetViewport(int x = 0, int y = 0, int width = 0, int height = 0) = 0;
+	virtual void           SetScissor(int x = 0, int y = 0, int width = 0, int height = 0)  = 0;
 
 	//! Create a vertex buffer
 	virtual CVertexBuffer* CreateBuffer(int vertexcount, int vertexformat, const char* szSource, bool bDynamic = false) final;
 
 	//! Release a vertex buffer
-	virtual void ReleaseBuffer(CVertexBuffer* bufptr) final;
+	virtual void           ReleaseBuffer(CVertexBuffer* bufptr) final;
 
 	//! Draw a vertex buffer
-	virtual void DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start = 0, int vert_stop = 0, CMatInfo* mi = NULL) final;
+	virtual void           DrawBuffer(CVertexBuffer* src, SVertexStream* indicies, int numindices, int offsindex, int prmode, int vert_start = 0, int vert_stop = 0, CMatInfo* mi = NULL) final;
 
 	//! Update a vertex buffer
-	virtual void UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs = 0, int Type = 0) final;
+	virtual void           UpdateBuffer(CVertexBuffer* dest, const void* src, int vertexcount, bool bUnLock, int nOffs = 0, int Type = 0) final;
 
-	virtual void CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount) final;
+	virtual void           CreateIndexBuffer(SVertexStream* dest, const void* src, int indexcount) final;
 	//! Update indicies
-	virtual void UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock = true) final;
-	virtual void ReleaseIndexBuffer(SVertexStream* dest) final;
+	virtual void           UpdateIndexBuffer(SVertexStream* dest, const void* src, int indexcount, bool bUnLock = true) final;
+	virtual void           ReleaseIndexBuffer(SVertexStream* dest) final;
 
 	//! Draw a bbox specified by mins/maxs (debug puprposes)
-	virtual void Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) = 0;
+	virtual void           Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs) = 0;
 
 	//! Set the renderer camera
-	virtual void SetCamera(const CCamera& cam) final;
+	virtual void           SetCamera(const CCamera& cam) final;
 
 	//! Get the renderer camera
 	virtual const CCamera& GetCamera() final;
 
-	IShader* Sh_Load(const char* name, int flags, uint64 nMaskGen = 0) final;
+	IShader*               Sh_Load(const char* name, int flags, uint64 nMaskGen = 0) final;
 
-	void Set2DMode(bool enable, int ortox, int ortoy) final;
+	void                   Set2DMode(bool enable, int ortox, int ortoy) final;
 
 	//! Change display size
-	virtual bool ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp) = 0;
+	virtual bool           ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)               = 0;
 
 	//! Chenge viewport size
-	virtual void ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) = 0;
+	virtual void           ChangeViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) = 0;
 
 	//! Write a message on the screen with additional flags.
 	//! for flags @see
-	virtual void Draw2dText(float posX, float posY, const char* szText, const SDrawTextInfo& info) final;
+	virtual void           Draw2dText(float posX, float posY, const char* szText, const SDrawTextInfo& info) final;
 
 	//! Draw a 2d image on the screen (Hud etc.)
-	virtual void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1, float z = 1) = 0;
+	virtual void           Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0, float r = 1, float g = 1, float b = 1, float a = 1, float z = 1) = 0;
 
 	//! Draw a image using the current matrix
-	virtual void DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) final;
-	virtual void Draw2DQuad(float x, float y, float w, float h, int texture, color4f color, float s0, float t0, float s1, float t1) = 0;
+	virtual void           DrawImage(float xpos, float ypos, float w, float h, uint64 texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a) final;
+	virtual void           Draw2DQuad(float x, float y, float w, float h, int texture, color4f color, float s0, float t0, float s1, float t1) = 0;
 
-	virtual void DrawFullScreenImage(int texture_id) = 0;
+	virtual void           DrawFullScreenImage(int texture_id)                                                                                = 0;
 
 	//! Set the polygon mode (wireframe, solid)
-	virtual int SetPolygonMode(int mode) = 0;
+	virtual int            SetPolygonMode(int mode)                                                                                           = 0;
 
 	//! Get screen width
-	virtual int GetWidth() final;
+	virtual int            GetWidth() final;
 
 	//! Get screen height
-	virtual int GetHeight() final;
+	virtual int            GetHeight() final;
 
 	//! Memory status information
-	virtual void GetMemoryUsage(ICrySizer* Sizer) const = 0;
+	virtual void           GetMemoryUsage(ICrySizer* Sizer) const                                            = 0;
 
 	//! Get a screenshot and save to a file
-	virtual void ScreenShot(const char* filename = nullptr) = 0;
+	virtual void           ScreenShot(const char* filename = nullptr)                                        = 0;
 
-	virtual void RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
+	virtual void           RenderToViewport(const CCamera& cam, float x, float y, float width, float height) = 0;
 
-	virtual void PrintLine(const char* szText, SDrawTextInfo& info) final;
+	virtual void           PrintLine(const char* szText, SDrawTextInfo& info) final;
 
-	virtual int EnumDisplayFormats(SDispFormat* formats);
+	virtual int            EnumDisplayFormats(SDispFormat* formats);
 
-	virtual void SetState(State state, bool enable) = 0;
+	virtual void           SetState(State state, bool enable)                                         = 0;
 	//virtual void SetState(int State)						 = 0;
-	virtual void SetCullMode(CullMode mode = CullMode::BACK) = 0;
+	virtual void           SetCullMode(CullMode mode = CullMode::BACK)                                = 0;
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// Render-context management
 	/////////////////////////////////////////////////////////////////////////////////
-	virtual bool	 DeleteContext(WIN_HWND hWnd)												= 0;
-	virtual bool	 CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) = 0;
-	virtual bool	 SetCurrentContext(WIN_HWND hWnd)											= 0;
-	virtual void	 MakeMainContextActive()													= 0;
-	virtual WIN_HWND GetCurrentContextHWND()													= 0;
-	virtual bool	 IsCurrentContextMainVP()													= 0;
+	virtual bool           DeleteContext(WIN_HWND hWnd)                                               = 0;
+	virtual bool           CreateContext(WIN_HWND hWnd, bool bMainViewport, int SSX = 1, int SSY = 1) = 0;
+	virtual bool           SetCurrentContext(WIN_HWND hWnd)                                           = 0;
+	virtual void           MakeMainContextActive()                                                    = 0;
+	virtual WIN_HWND       GetCurrentContextHWND()                                                    = 0;
+	virtual bool           IsCurrentContextMainVP()                                                   = 0;
 
 	//! Gets height of the current viewport.
-	virtual int GetCurrentContextViewportHeight() const = 0;
+	virtual int            GetCurrentContextViewportHeight() const                                    = 0;
 
 	//! Gets width of the current viewport.
-	virtual int GetCurrentContextViewportWidth() const = 0;
+	virtual int            GetCurrentContextViewportWidth() const                                     = 0;
 	/////////////////////////////////////////////////////////////////////////////////
 
 	// 3d engine set this color to fog color
-	void SetClearColor(const Legacy::Vec3& vColor)
+	void                   SetClearColor(const Legacy::Vec3& vColor)
 	{
 		m_ClearColor = Legacy::Vec4(vColor, 1.f);
 	}
-	virtual void ClearDepthBuffer()							 = 0;
-	virtual void ClearColorBuffer(const Legacy::Vec3 vColor) = 0;
+	virtual void         ClearDepthBuffer()                          = 0;
+	virtual void         ClearColorBuffer(const Legacy::Vec3 vColor) = 0;
 
-	virtual void SetRenderTarget(int nHandle) = 0;
+	virtual void         SetRenderTarget(int nHandle)                = 0;
 
-	virtual void		 ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) final;
-	virtual int			 UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) final;
-	virtual int			 UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) final;
-	virtual void		 GetModelViewMatrix(float* mat) final;
-	virtual void		 GetModelViewMatrix(double* mat) final;
-	virtual void		 GetProjectionMatrix(double* mat) final;
-	virtual void		 GetProjectionMatrix(float* mat) final;
+	virtual void         ProjectToScreen(float ptx, float pty, float ptz, float* sx, float* sy, float* sz) final;
+	virtual int          UnProject(float sx, float sy, float sz, float* px, float* py, float* pz, const float modelMatrix[16], const float projMatrix[16], const int viewport[4]) final;
+	virtual int          UnProjectFromScreen(float sx, float sy, float sz, float* px, float* py, float* pz) final;
+	virtual void         GetModelViewMatrix(float* mat) final;
+	virtual void         GetModelViewMatrix(double* mat) final;
+	virtual void         GetProjectionMatrix(double* mat) final;
+	virtual void         GetProjectionMatrix(float* mat) final;
 	virtual Legacy::Vec3 GetUnProject(const Legacy::Vec3& WindowCoords, const CCamera& cam) final;
-	virtual int			 GetFrameID(bool bIncludeRecursiveCalls = true) final;
-	virtual int			 GetPolyCount() { return INT_MIN; }
-	virtual void		 GetPolyCount(int& nPolygons, int& nShadowVolPolys)
+	virtual int          GetFrameID(bool bIncludeRecursiveCalls = true) final;
+	virtual int          GetPolyCount() { return INT_MIN; }
+	virtual void         GetPolyCount(int& nPolygons, int& nShadowVolPolys)
 	{
-		nPolygons		= INT_MIN;
+		nPolygons       = INT_MIN;
 		nShadowVolPolys = INT_MIN;
 	}
 	IGraphicsDeviceConstantBuffer* CreateConstantBuffer(int size) final;
 
-	void			CreateQuad();
-	IFont*			GetIFont() final;
-	IRenderAuxGeom* GetIRenderAuxGeom() final;
+	void                           CreateQuad();
+	IFont*                         GetIFont() final;
+	IRenderAuxGeom*                GetIRenderAuxGeom() final;
 
 	// Inherited via IRenderer
-	virtual void			   ShareResources(IRenderer* renderer) override;
-	virtual void			   SetRenderCallback(IRenderCallback* pCallback) override;
-	virtual void			   PushProfileMarker(char* label) override;
-	virtual void			   PopProfileMarker(char* label) override;
-	virtual int				   CreateRenderTarget() override;
-	virtual void			   DrawFullscreenQuad() override;
-	virtual ITechniqueManager* GetITechniqueManager() final;
-	virtual float			   GetDepthValue(int x, int y) override;
-	virtual void			   Flush() final;
-	virtual void			   Sh_Reload() override;
-	virtual void*			   EF_Query(int Query, int Param)																													   = 0;
-	virtual unsigned int	   LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)					   = 0;
-	virtual void			   RemoveTexture(unsigned int TextureId)																											   = 0;
-	virtual void			   RemoveTexture(ITexPic* pTexPic)																													   = 0;
-	virtual ITexPic*		   EF_GetTextureByID(int Id)																														   = 0;
-	virtual ITexPic*		   EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) = 0;
-	virtual void			   SetTexture(int tnum, ETexType Type = eTT_Base)																									   = 0;
+	virtual void                   ShareResources(IRenderer* renderer) override;
+	virtual void                   SetRenderCallback(IRenderCallback* pCallback) override;
+	virtual void                   PushProfileMarker(char* label) override;
+	virtual void                   PopProfileMarker(char* label) override;
+	virtual int                    CreateRenderTarget() override;
+	virtual void                   DrawFullscreenQuad() override;
+	virtual ITechniqueManager*     GetITechniqueManager() final;
+	virtual float                  GetDepthValue(int x, int y) override;
+	virtual void                   Flush() final;
+	virtual void                   Sh_Reload() override;
+	virtual void*                  EF_Query(int Query, int Param)                                                                                                                      = 0;
+	virtual unsigned int           LoadTexture(const char* filename, int* tex_type = NULL, unsigned int def_tid = 0, bool compresstodisk = true, bool bWarn = true)                    = 0;
+	virtual void                   RemoveTexture(unsigned int TextureId)                                                                                                               = 0;
+	virtual void                   RemoveTexture(ITexPic* pTexPic)                                                                                                                     = 0;
+	virtual ITexPic*               EF_GetTextureByID(int Id)                                                                                                                           = 0;
+	virtual ITexPic*               EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) = 0;
+	virtual void                   SetTexture(int tnum, ETexType Type = eTT_Base)                                                                                                      = 0;
 
-	void ShutDown();
+	void                           ShutDown();
 	template<typename RenderThreadCallback>
 	void ExecuteRenderThreadCommand(RenderThreadCallback&& callback)
 	{
 		m_RenderThread->ExecuteRenderThreadCommand(std::forward<RenderThreadCallback>(callback));
 	}
 
-  protected:
+protected:
 	struct alignas(16) SPerFrameConstantBuffer
 	{
 		Legacy::Vec4 SunDirection;
 		Legacy::Vec4 SunColor;
 		Legacy::Vec4 AmbientStrength;
 		Legacy::Vec4 LightIntensity;
-
 	};
 	struct alignas(16) SPerViewConstantBuffer
 	{
@@ -394,35 +392,35 @@ class CRenderer : public RenderCVars
 		glm::mat4 Model;
 		glm::mat4 UvProjection;
 		glm::vec4 Color;
-		float	  Alpha;
+		float     Alpha;
 	};
 
 #ifndef VK_RENDERER
 	CTypedConstantBuffer<SPerViewConstantBuffer> perViewBuffer;
-	CTypedConstantBuffer<SScreenConstantBuffer>	 screenBuffer;
+	CTypedConstantBuffer<SScreenConstantBuffer>  screenBuffer;
 #endif
 
-	void InitConsoleCommands() const;
+	void                InitConsoleCommands() const;
 
 	//private:
-	IWindow* m_Window  = nullptr;
-	ISystem* m_pSystem = nullptr;
+	IWindow*            m_Window      = nullptr;
+	ISystem*            m_pSystem     = nullptr;
 
-	bool		 is_fullscreen = false;
-	Legacy::Vec4 m_viewPort;
-	unsigned int cbpp  = 0;
-	int			 zbpp  = 0;
-	int			 sbits = 0;
+	bool                is_fullscreen = false;
+	Legacy::Vec4        m_viewPort;
+	unsigned int        cbpp          = 0;
+	int                 zbpp          = 0;
+	int                 sbits         = 0;
 
-	bool bInFullScreen = false;
+	bool                bInFullScreen = false;
 	//============
-	CCamera m_Camera;
+	CCamera             m_Camera;
 	//============
 
-	IRenderAuxGeom* m_RenderAuxGeom = nullptr;
-	CBufferManager* m_BufferManager = nullptr;
+	IRenderAuxGeom*     m_RenderAuxGeom = nullptr;
+	CBufferManager*     m_BufferManager = nullptr;
 
-	CVertexBuffer*		m_VertexBuffer = nullptr;
+	CVertexBuffer*      m_VertexBuffer  = nullptr;
 	_smart_ptr<CShader> m_ScreenShader;
 
 #if 0
@@ -431,56 +429,55 @@ class CRenderer : public RenderCVars
 #endif
 
 	std::vector<Texture*> m_RenderTargets;
-	void*				  context;
+	void*                 context;
 
-	bool transit_to_FS = false;
-	bool bIsActive	   = true;
+	bool                  transit_to_FS = false;
+	bool                  bIsActive     = true;
 
-	int m_FrameID = 0;
+	int                   m_FrameID     = 0;
 
-  public:
+public:
 	// Windows context
-	char	 m_WinTitle[80];
-	WIN_HWND m_hWnd;		// The main app window
+	char     m_WinTitle[80];
+	WIN_HWND m_hWnd;        // The main app window
 	WIN_HWND m_hWndDesktop; // The desktop window
-	WIN_HWND m_hWndActive;	// The active window
+	WIN_HWND m_hWndActive;  // The active window
 #if BB_PLATFORM_WINDOWS
-	HICON	m_hIconBig;	  // Icon currently being used on the taskbar
-	HICON	m_hIconSmall; // Icon currently being used on the window
-	HCURSOR m_hCursor;	  // Cursor currently being used on the window
-	string	m_iconPath;	  // Path to the icon currently loaded
+	HICON   m_hIconBig;   // Icon currently being used on the taskbar
+	HICON   m_hIconSmall; // Icon currently being used on the window
+	HCURSOR m_hCursor;    // Cursor currently being used on the window
+	string  m_iconPath;   // Path to the icon currently loaded
 #endif
 
-	std::vector<IFont*> m_Fonts;
-	RenderBackend		m_Backend;
-	Legacy::Vec4		m_ClearColor{};
+	std::vector<IFont*>                   m_Fonts;
+	RenderBackend                         m_Backend;
+	Legacy::Vec4                          m_ClearColor{};
 
 	std::vector<IRendererCallbackClient*> m_RenderCallbackClients;
 
-	bool m_Is2DMode = false;
-	Vec2 ortho;
-	/////////////////////////////////////////////////////////////////////////////////
-	// Render-pipeline management
-	/////////////////////////////////////////////////////////////////////////////////
-	#if 0
+	bool                                  m_Is2DMode = false;
+	Vec2                                  ortho;
+/////////////////////////////////////////////////////////////////////////////////
+// Render-pipeline management
+/////////////////////////////////////////////////////////////////////////////////
+#if 0
 	std::shared_ptr<CGraphicsPipeline>								   m_pBaseGraphicsPipeline;
 	std::shared_ptr<CGraphicsPipeline>								   m_pActiveGraphicsPipeline;
 	std::map<SGraphicsPipelineKey, std::shared_ptr<CGraphicsPipeline>> m_graphicsPipelines;
 
-
-	#endif
+#endif
 	std::unique_ptr<SRenderThread> m_RenderThread;
 };
 
 class ShaderMan
 {
-  public:
+public:
 	void RT_ShaderLoad(const char* name, int flags, uint64 nMaskGen, CShader* p)
 	{
 		if (auto it = m_Shaders.find((name)); it != m_Shaders.end())
 		{
 			CryLog("Shader <%s> already cached", name);
-			it->second->AddRef();		
+			it->second->AddRef();
 			*p = *it->second;
 			return;
 		}
@@ -500,10 +497,9 @@ class ShaderMan
 	{
 		_smart_ptr<CShader> pShader = NewShader();
 		gRenDev->ExecuteRenderThreadCommand([=]
-											{
+		                                    {
 												CryLog("load shader: %s", name);
-												RT_ShaderLoad(name, flags, nMaskGen, pShader);
-											});
+												RT_ShaderLoad(name, flags, nMaskGen, pShader); });
 		return pShader;
 	}
 	bool Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen, CShader* p) const
@@ -514,26 +510,26 @@ class ShaderMan
 
 	bool Compile(std::string_view name, int flags, uint64 nMaskGen, CShader* p)
 	{
-		PEffect			  pEffect = nullptr;
+		PEffect           pEffect = nullptr;
 		std::stringstream path;
-		auto			  pos		= name.find_last_of('.');
+		auto              pos       = name.find_last_of('.');
 		std::string_view  real_name = name;
 		std::string_view  technique;
-		int				  pass = 0;
+		int               pass = 0;
 		if (pos != name.npos)
 		{
 			real_name = name.substr(0, pos);
 			technique = name.substr(pos + 1);
 		}
 		path << real_name << ".fx";
-        auto shader_path = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/shaders/fx")), path.str());
+		auto shader_path = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/shaders/fx")), path.str());
 		if (g_FxParser->Parse(shader_path.c_str(), &pEffect))
 		{
 			auto nTech = 0;
 			if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
 				nTech = tech->GetId();
 			p->m_NameShader = real_name.data();
-			p->m_NameFile	= path.str();
+			p->m_NameFile   = path.str();
 			if (CShader::LoadFromEffect(p, pEffect, nTech, pass))
 			{
 				p->AddRef();
@@ -543,11 +539,9 @@ class ShaderMan
 				delete pEffect;
 				m_Shaders[string(name)] = p;
 				return true;
-
 			}
 			p->m_Flags2 |= EF2_FAILED;
 			return false;
-
 		}
 		else
 		{
@@ -566,21 +560,21 @@ class ShaderMan
 	{
 	}
 
-	std::map<string,_smart_ptr<CShader>> m_Shaders;
+	std::map<string, _smart_ptr<CShader>> m_Shaders;
 };
 #undef NOT_IMPLEMENTED_V
 #ifndef NOT_IMPLEMENTED_V
-#	if defined(ASSERT_NOT_IMPLEMENTED)
-#		define NOT_IMPLEMENTED_V      \
+	#if defined(ASSERT_NOT_IMPLEMENTED)
+		#define NOT_IMPLEMENTED_V      \
 			assert(0 && __FUNCTION__); \
 			return {};
-#	else
-#		define NOT_IMPLEMENTED_V                                                          \
+	#else
+		#define NOT_IMPLEMENTED_V                                                          \
 			gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
 			return {};
-#	endif
+	#endif
 #endif
 #ifndef NOT_IMPLEMENTED
-#	define NOT_IMPLEMENTED \
+	#define NOT_IMPLEMENTED \
 		assert(0 && __FUNCTION__);
 #endif

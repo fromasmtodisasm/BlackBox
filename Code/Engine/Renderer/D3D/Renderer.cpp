@@ -143,10 +143,9 @@ void CD3DRenderer::UpdateConstants()
 	ScopedMap<SPerFrameConstantBuffer>(m_PerFrameConstants, [&](auto pConstData)
 	                                   {
 		                                   pConstData->SunDirection    = Legacy::Vec4(glm::normalize(Legacy::Vec3(2, 3, 4)), 1.f);
-		                                   pConstData->SunColor        = {1, 1, 1, 1};
+		                                   pConstData->SunColor        = {r_SunColor, 1};
 		                                   pConstData->AmbientStrength = Legacy::Vec4(1, 1, 1, 1) * 0.3f;
-		                                   pConstData->LightIntensity  = Legacy::Vec4(1, 1, 1, 1);
-	                                   });
+		                                   pConstData->LightIntensity  = Legacy::Vec4(1, 1, 1, 1); });
 
 	ScopedMap<SPerViewConstantBuffer>(m_PerViewConstants, [&](auto pConstData)
 	                                  {
@@ -154,8 +153,7 @@ void CD3DRenderer::UpdateConstants()
 		                                  auto View                  = m_Camera.GetViewMatrix();
 		                                  pConstData->Projection     = Projection;
 		                                  pConstData->ViewProjection = Projection * View;
-		                                  pConstData->View           = View;
-	                                  });
+		                                  pConstData->View           = View; });
 
 	ID3DBuffer* pBuffers[] = {
 	    m_PerFrameConstants.Get(),
@@ -401,8 +399,9 @@ bool CD3DRenderer::InitOverride()
 	m_Device->Get<ID3D11DeviceContext>()->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
 #endif
 
-	Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
+	//Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
 	//Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
+	Legacy::Vec3 c = Legacy::Vec3(50, 50, 50) / 255.f;
 	SetClearColor(c);
 
 	D3D11_BUFFER_DESC cbDesc;
@@ -517,7 +516,7 @@ ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(const char* name)
 	std::string_view str(name);
 	std::wstring     wstr(str.begin(), str.end());
 	auto             result = m_Device->CreateDDSTextureFromFile(
-        wstr.data());
+	                wstr.data());
 	//if (FAILED(HResult))
 	//{
 	//}
