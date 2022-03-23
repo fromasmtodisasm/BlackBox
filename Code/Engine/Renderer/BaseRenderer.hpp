@@ -487,6 +487,10 @@ public:
 			{
 				p->SaveBinaryShader(name, flags, nMaskGen);
 			}
+			else
+			{
+				p = nullptr;
+			}
 		}
 	}
 	CShader* NewShader()
@@ -500,6 +504,10 @@ public:
 		                                    {
 												CryLog("load shader: %s", name);
 												RT_ShaderLoad(name, flags, nMaskGen, pShader); });
+		if (pShader->GetFlags2() & EF2_FAILED)
+		{
+			pShader = nullptr;
+		}
 		return pShader;
 	}
 	bool Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen, CShader* p) const

@@ -109,7 +109,7 @@ int CShader::GetFlags()
 
 int CShader::GetFlags2()
 {
-	return 0;
+	return m_Flags2;
 }
 
 bool CShader::WaitUntilLoaded()
@@ -126,6 +126,33 @@ bool CShader::WaitUntilLoaded()
 
 void CShader::SaveBinaryShader(std::string_view name, int flags, uint64 nMaskGen)
 {
+	string   path = PathUtil::Make("%engineroot%/bin/shadercache", (string(name) + ".fxb").c_str());
+	CCryFile file(path.c_str(), "wb");
+	auto     Save = [&](CHWShader* pShader)->bool {
+		if (auto code = pShader->m_ByteCode; code->GetBufferPointer())
+		{
+            file.Write((void*)&pShader->m_Type, sizeof pShader->m_Type);
+			auto size = code->GetBufferSize();
+            file.Write((void*)&size, sizeof size);
+            file.Write(code->GetBufferPointer(), code->GetBufferSize());
+			return true;
+		}
+		return false;
+    };
+	if (m_Shaders[Type::E_VERTEX])
+	{
+		if (!Save(m_Shaders[Type::E_VERTEX]))
+		{
+			return;
+		}
+	}
+	if (m_Shaders[Type::E_FRAGMENT])
+	{
+		if (!Save(m_Shaders[Type::E_VERTEX]))
+		{
+			return;
+		}
+	}
 }
 
 CShader* CShader::LoadBinaryShader(std::string_view name, int flags, uint64 nMaskGen)
@@ -295,8 +322,10 @@ bool CShader::LoadFromEffect(CShader* pSH, PEffect pEffect, int nTechnique, int 
     };
 	for (auto st : Types)
 	{
-		auto entry = pass->EntryPoints[st].data();
-		if (auto res = LoadFromMemory(code, st, entry); res.first)
+		auto entry = pass->EntryPoints[st];
+		if (entry.empty())
+			continue;
+		if (auto res = LoadFromMemory(code, st, entry.data()); res.first)
 		{
 			auto shader        = new CHWShader(st, entry);
 			shader->m_ByteCode = res.first;
@@ -306,9 +335,16 @@ bool CShader::LoadFromEffect(CShader* pSH, PEffect pEffect, int nTechnique, int 
 			}
 			else
 			{
+				#if 0
 				res.second->Release();
+				#endif
 				delete shader;
+				return false;
 			}
+		}
+		else
+		{
+			return false;
 		}
 	}
 	//SaveHlslToDisk(code, type);
@@ -358,8 +394,8 @@ void SaveHlslToDisk(const std::vector<std::string>& code, IShader::Type type)
 
 std::pair<ID3DBlob*, ID3DBlob*> CShader::Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory)
 {
-	const char* profile = type == Type::E_VERTEX ? "vs_4_0" : type == Type::E_GEOMETRY ? "gs_4_0"
-	                                                                                   : "ps_4_0";
+	const char* profile = type == Type::E_VERTEX ? "vs_5_0" : type == Type::E_GEOMETRY ? "gs_5_0"
+	                                                                                   : "ps_5_0";
 	ID3DBlob*   pShaderBlob{};
 	ID3DBlob*   pErrorBlob{};
 	const char* code   = bFromMemory ? text.data() : nullptr;
@@ -368,17 +404,17 @@ std::pair<ID3DBlob*, ID3DBlob*> CShader::Load(const std::string_view text, IShad
 
 	auto        nFlags = D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
 	auto        hr     = D3DCompile(
-        code,
-        size,
-        file,
-        nullptr,
-        nullptr,
-        pEntry,
-        profile,
-        nFlags,
-        0, //flags2
-        &pShaderBlob,
-        &pErrorBlob);
+	               code,
+	               size,
+	               file,
+	               nullptr,
+	               nullptr,
+	               pEntry,
+	               profile,
+	               nFlags,
+	               0, //flags2
+	               &pShaderBlob,
+	               &pErrorBlob);
 	if (FAILED(hr))
 	{
 #if 1
@@ -386,7 +422,7 @@ std::pair<ID3DBlob*, ID3DBlob*> CShader::Load(const std::string_view text, IShad
 		auto error = _smart_ptr(pErrorBlob);
 		if (pErrorBlob && pErrorBlob->GetBufferPointer())
 		{
-			auto log	  = std::string_view((const char*)pErrorBlob->GetBufferPointer());
+			auto log      = std::string_view((const char*)pErrorBlob->GetBufferPointer());
 			auto severity = VALIDATOR_WARNING;
 			if (auto pos = log.find("warning"))
 			{
