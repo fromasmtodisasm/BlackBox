@@ -549,7 +549,7 @@ bool CSystem::Init()
 	if (!m_env.IsDedicated())
 	{
 		m_env.pInput->AddEventListener(this);
-		m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_env.pConsole));
+		//m_env.pInput->AddEventListener(static_cast<CXConsole*>(m_env.pConsole));
 	}
 
 	if (CreateGame(nullptr) == nullptr)
@@ -570,7 +570,7 @@ bool CSystem::Init()
 	if (IsDevMode())
 	{
 		CryLog("DEVMODE is Enabled");
-		auto ok = m_env.pScriptSystem->ExecuteFile("DevMode.lua");
+		auto ok = m_env.pScriptSystem->ExecuteFile("%engineroot%/DevMode.lua");
 		CryLog("\tLoading DevMode.lua: %s!", ok ? "Ok" : "Failed");
 	}
 

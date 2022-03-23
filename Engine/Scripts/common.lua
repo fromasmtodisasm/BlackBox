@@ -1183,3 +1183,7 @@ end
 -- gloabl to indicate that a ui reload was requested commited by UI:Reload( ... ), will be reset by UI:Init()
 g_reload_ui = 0;
 
+function toogle(var)
+	value = getglobal(var)
+	setglobal(~value)
+end

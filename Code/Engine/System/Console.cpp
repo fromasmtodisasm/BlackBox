@@ -1191,7 +1191,7 @@ void CXConsole::DumpCVars(ICVarDumpSink* pCallback, unsigned int nFlagsFilter /*
 
 void CXConsole::CreateKeyBind(const char* sCmd, const char* sRes, bool bExecute)
 {
-	m_mapBinds.insert({sCmd, sRes});
+	m_mapBinds.insert({sRes, sCmd});
 }
 
 void CXConsole::SetImage(ITexPic* pImage, bool bDeleteCurrent)
@@ -2063,7 +2063,7 @@ bool CXConsole::OnInputEvent(const SInputEvent& event)
 	if (event.state == eIS_Released && m_bConsoleActive)
 		m_nRepeatEvent.keyId = eKI_Unknown;
 
-	if (event.state != eIS_Pressed && event.state != eIS_Changed)
+	if (event.state != eIS_Pressed)
 		return false;
 
 	// restart cursor blinking

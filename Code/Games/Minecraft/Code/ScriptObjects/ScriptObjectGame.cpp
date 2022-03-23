@@ -1574,6 +1574,18 @@ int CScriptObjectGame::SetVariable(IFunctionHandler* pH)
 		pVar->Set(pVal);
 	}
 	break;
+	case svtBool:
+	{
+		bool  bVal;
+		if (pH->GetParam(2, bVal))
+			pVar->Set((int)bVal);
+		else
+		{
+			m_pScriptSystem->RaiseError("SetVariable cannot retrieve the variable %s boolean value", sName);
+			return pH->EndFunctionNull();
+		}
+	}
+	break;
 	case svtNumber:
 	{
 		int   nVal;

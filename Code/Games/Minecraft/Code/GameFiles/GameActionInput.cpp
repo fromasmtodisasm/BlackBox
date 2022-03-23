@@ -62,6 +62,12 @@ void CXGame::InitConsoleCommands()
 {
 	IConsole* pConsole = m_pSystem->GetIConsole();
 
+	pConsole->AddCommand("toogle", R"(
+	local name = %1;
+    local value = getglobal(name);
+	if (value == true) then value = false else value = true; end
+    setglobal(name, value);
+    )");
 	pConsole->AddCommand("reload_materials", "Game.ReloadMaterials()");
 	//if(!m_bEditor)
 	{
@@ -281,8 +287,7 @@ void CXGame::InitConsoleCommands()
 	                     {
 		                     static int trigger = 0;
 		                     trigger            = !(bool)trigger;
-		                     gEnv->pSoundSystem->Pause(trigger);
-	                     });
+		                     gEnv->pSoundSystem->Pause(trigger); });
 }
 
 //extern float CameraRayLength = 40.f;
@@ -295,14 +300,14 @@ void CXGame::InitConsoleVars()
 
 #ifdef _INTERNET_SIMULATOR
 	g_internet_simulator_maxping    = GetISystem()->GetIConsole()->CreateVariable("g_internet_simulator_maxping", "0", VF_CHEAT,
-                                                                               "Turn on ping.\n"
-                                                                               "Usage: g_internet_simulator_ping 300"
-                                                                               "Default value is 0.");
+	                                                                              "Turn on ping.\n"
+                                                                                     "Usage: g_internet_simulator_ping 300"
+                                                                                     "Default value is 0.");
 
 	g_internet_simulator_minping    = GetISystem()->GetIConsole()->CreateVariable("g_internet_simulator_minping", "0", VF_CHEAT,
-                                                                               "Turn on ping.\n"
-                                                                               "Usage: g_internet_simulator_ping 100"
-                                                                               "Default value is 0.");
+	                                                                              "Turn on ping.\n"
+                                                                                     "Usage: g_internet_simulator_ping 100"
+                                                                                     "Default value is 0.");
 
 	g_internet_simulator_packetloss = GetISystem()->GetIConsole()->CreateVariable("g_internet_simulator_packetloss", "0", VF_CHEAT,
 	                                                                              "Turn on packetloss.\n"
@@ -310,24 +315,24 @@ void CXGame::InitConsoleVars()
 	                                                                              "Default value is 0.");
 #endif
 	cl_scope_flare      = GetISystem()->GetIConsole()->CreateVariable("cl_scope_flare", "1", 0,
-                                                                 "Draw a flare at the weapon's scope.\n"
-                                                                 "Usage: cl_scope_flare 0/1"
-                                                                 "Default value is 1.");
+	                                                                  "Draw a flare at the weapon's scope.\n"
+                                                                           "Usage: cl_scope_flare 0/1"
+                                                                           "Default value is 1.");
 
 	cl_lazy_weapon      = GetISystem()->GetIConsole()->CreateVariable("cl_lazy_weapon", "0.6", VF_DUMPTODISK,
-                                                                 "Control if the weapon follows the camera in a lazy way.\n"
-                                                                 "Usage: cl_lazy_weapon [0..1]"
-                                                                 "Default value is 0.6.");
+	                                                                  "Control if the weapon follows the camera in a lazy way.\n"
+                                                                           "Usage: cl_lazy_weapon [0..1]"
+                                                                           "Default value is 0.6.");
 
 	cl_use_joypad       = GetISystem()->GetIConsole()->CreateVariable("cl_use_joypad", "0", VF_DUMPTODISK | VF_CHEAT,
-                                                                "Toggles use of joypad for movements.\n"
-                                                                "Usage: cl_use_joypad [0/1]\n"
-                                                                "Default is 0 (off).");
+	                                                                  "Toggles use of joypad for movements.\n"
+                                                                            "Usage: cl_use_joypad [0/1]\n"
+                                                                            "Default is 0 (off).");
 
 	cl_weapon_fx        = GetISystem()->GetIConsole()->CreateVariable("cl_weapon_fx", "2", VF_DUMPTODISK,
-                                                               "Control the complexity of weapon firing effects.\n"
-                                                               "Usage: cl_weapon_fx [0..2], 0=low,1=medium,2=high"
-                                                               "Default value is 2, but its autodetected the first time based on pc spec.");
+	                                                                  "Control the complexity of weapon firing effects.\n"
+                                                                             "Usage: cl_weapon_fx [0..2], 0=low,1=medium,2=high"
+                                                                             "Default value is 2, but its autodetected the first time based on pc spec.");
 
 	cl_projectile_light = GetISystem()->GetIConsole()->CreateVariable("cl_projectile_light", "0", VF_DUMPTODISK,
 	                                                                  "Controls if projectiles are allowed to use dynamic lights.\n"
@@ -335,9 +340,9 @@ void CXGame::InitConsoleVars()
 	                                                                  "Default value is 0, but it should be set to 1 on high and 2 on very high spec.");
 
 	cl_weapon_light     = GetISystem()->GetIConsole()->CreateVariable("cl_weapon_light", "0", VF_DUMPTODISK,
-                                                                  "Controls if weapons are allowed to use dynamic lights.\n"
-                                                                  "Usage: cl_weapon_light [0/1/2], 0=no light, 1=diffuse only, 2=diffuse and specular"
-                                                                  "Default value is 0, but it should be set to 1 on high and 2 on very high spec.");
+	                                                                  "Controls if weapons are allowed to use dynamic lights.\n"
+                                                                          "Usage: cl_weapon_light [0/1/2], 0=no light, 1=diffuse only, 2=diffuse and specular"
+                                                                          "Default value is 0, but it should be set to 1 on high and 2 on very high spec.");
 
 	GetISystem()->GetIConsole()->CreateVariable("g_timezone", "0", VF_DUMPTODISK, "");
 
@@ -352,63 +357,63 @@ void CXGame::InitConsoleVars()
 	                                               "Default is 0.");
 
 	g_maxfps            = pConsole->CreateVariable("g_maxfps", "500", 0,
-                                        "Sets the maximum frame rate.\n"
-                                        "Usage: g_maxfps 500"
-                                        "Default value is 500.");
+	                                               "Sets the maximum frame rate.\n"
+                                                              "Usage: g_maxfps 500"
+                                                              "Default value is 500.");
 	ai_num_of_bots      = pConsole->CreateVariable("ai_num_of_bots", "0", 0);
 
 	p_always_run        = pConsole->CreateVariable("p_always_run", "1", 0,
-                                            "Toggles the player's 'always run' setting.\n"
-                                            "Usage: p_always_run [0/1]\n"
-                                            "Default is 1 (on). Set to 0 to disable 'always run'.");
+	                                               "Toggles the player's 'always run' setting.\n"
+                                                          "Usage: p_always_run [0/1]\n"
+                                                          "Default is 1 (on). Set to 0 to disable 'always run'.");
 	g_language          = pConsole->CreateVariable("g_language", "english", VF_DUMPTODISK, //|VF_READONLY,
-                                          "Sets the game language.\n"
-                                          "Usage: g_language [english/other?]\n"
-                                          "Default is 'english'.");
+	                                               "Sets the game language.\n"
+                                                            "Usage: g_language [english/other?]\n"
+                                                            "Default is 'english'.");
 	g_playerprofile     = pConsole->CreateVariable("g_playerprofile", "default", VF_DUMPTODISK,
-                                               "Sets the player profile (to store player settings).\n"
-                                               "Leave this empty to get the defaults from the root directory.\n");
+	                                               "Sets the player profile (to store player settings).\n"
+                                                       "Leave this empty to get the defaults from the root directory.\n");
 	g_serverprofile     = pConsole->CreateVariable("g_serverprofile", "", VF_DUMPTODISK,
-                                               "Sets the server profile (to store server settings).\n"
-                                               "Leave this empty to get the server defaults.\n");
+	                                               "Sets the server profile (to store server settings).\n"
+                                                       "Leave this empty to get the server defaults.\n");
 	g_GC_Frequence      = pConsole->CreateVariable("g_GC_Frequence", "1200", 0,
-                                              "The maximum time in seconds a garbage collector pause can be.\n"
-                                              "Usage: g_GC_Frequence 1000\n"
-                                              "Default setting is 1200 s");
+	                                               "The maximum time in seconds a garbage collector pause can be.\n"
+                                                        "Usage: g_GC_Frequence 1000\n"
+                                                        "Default setting is 1200 s");
 	sv_port             = pConsole->CreateVariable("sv_port", DEFAULT_SERVERPORT_STR, 0,
-                                       "Sets the server port for a multiplayer game.\n"
-                                       "Usage: sv_port portnumber\n"
-                                       "Default is '49001'.");
+	                                               "Sets the server port for a multiplayer game.\n"
+                                                               "Usage: sv_port portnumber\n"
+                                                               "Default is '49001'.");
 	sv_mapcyclefile     = pConsole->CreateVariable("sv_mapcyclefile", "profiles/server/mapcycle.txt", VF_DUMPTODISK,
-                                               "Sets the server map cycle list for a multiplayer game.\n"
-                                               "Usage: sv_mapcyclefile <textfile>\n"
-                                               "Default is 'mapcycle.txt'.");
+	                                               "Sets the server map cycle list for a multiplayer game.\n"
+                                                       "Usage: sv_mapcyclefile <textfile>\n"
+                                                       "Default is 'mapcycle.txt'.");
 	sv_cheater_kick     = pConsole->CreateVariable("sv_cheater_kick", "1", 0, "Kick player suspected cheating.\n");
 	sv_cheater_ban      = pConsole->CreateVariable("sv_cheater_ban", "0", 0, "Ban player suspected cheating.\n");
 
 	cl_loadtimeout      = pConsole->CreateVariable("cl_loadtimeout", "120.0", 0,
-                                              "Sets the client timeout during loading (seconds).\n"
-                                              "Usage: cl_loadtimeout 120\n"
-                                              "The default loading timeout is 120 seconds. This is the time the\n"
-                                              "client waits for packets from the server when the server is changing map.");
+	                                               "Sets the client timeout during loading (seconds).\n"
+                                                        "Usage: cl_loadtimeout 120\n"
+                                                        "The default loading timeout is 120 seconds. This is the time the\n"
+                                                        "client waits for packets from the server when the server is changing map.");
 	cl_timeout          = pConsole->CreateVariable("cl_timeout", "5.0", 0,
-                                          "Sets the client timeout (seconds).\n"
-                                          "Usage: cl_timeout 5\n"
-                                          "The default timeout is 5 seconds. This is the time the\n"
-                                          "client waits for packets from the server.");
+	                                               "Sets the client timeout (seconds).\n"
+                                                            "Usage: cl_timeout 5\n"
+                                                            "The default timeout is 5 seconds. This is the time the\n"
+                                                            "client waits for packets from the server.");
 	cl_snooptimeout     = pConsole->CreateVariable("cl_snooptimeout", "1.0", 0,
-                                               "Sets the time to wait for a server, when pinging (seconds).\n"
-                                               "Usage: cl_snooptimeout 3\n"
-                                               "The default timeout is 1 second. This is the time the\n"
-                                               "pinger waits for response from the server.");
+	                                               "Sets the time to wait for a server, when pinging (seconds).\n"
+                                                       "Usage: cl_snooptimeout 3\n"
+                                                       "The default timeout is 1 second. This is the time the\n"
+                                                       "pinger waits for response from the server.");
 	cl_snoopretries     = pConsole->CreateVariable("cl_snoopretries", "2.0", 0,
-                                               "Sets the number or times to retry a timedout server when pinging.\n"
-                                               "Usage: cl_snoopretries 2\n"
-                                               "The default number of retries is 2.");
+	                                               "Sets the number or times to retry a timedout server when pinging.\n"
+                                                       "Usage: cl_snoopretries 2\n"
+                                                       "The default number of retries is 2.");
 	cl_snoopcount       = pConsole->CreateVariable("cl_snoopcount", "20.0", 0,
-                                             "Sets the number or servers to ping at the same time.\n"
-                                             "Usage: cl_snoopcount 20\n"
-                                             "The default number of servers is 20.");
+	                                               "Sets the number or servers to ping at the same time.\n"
+                                                         "Usage: cl_snoopcount 20\n"
+                                                         "The default number of servers is 20.");
 	// initalise the game infos
 	pConsole->CreateVariable("sv_maxupdaterate", "50", 0,
 	                         "Specify the max server network update rate\n"
@@ -466,22 +471,22 @@ void CXGame::InitConsoleVars()
 	                         "Specifies the server name in a multiplayer game.\n"
 	                         "Usage: sv_name name\n");
 	g_GameType                = pConsole->CreateVariable("g_GameType", "Default", VF_NET_SYNCED,
-                                          "Sets the game type.\n"
-                                          "Usage: g_GameType [Default/FFA/TDM/ASSAULT]\n"
-                                          "Default game type is 'default'.");
+	                                                     "Sets the game type.\n"
+                                                                        "Usage: g_GameType [Default/FFA/TDM/ASSAULT]\n"
+                                                                        "Default game type is 'default'.");
 	g_LeftHanded              = pConsole->CreateVariable("g_LeftHanded", "0", 0, "Sets left-handed 1st person weapons");
 
 	cl_ThirdPersonRange       = pConsole->CreateVariable("ThirdPersonRange", "7", VF_CHEAT,
-                                                   "Sets the range of the third person camera.\n"
-                                                   "Usage: cl_ThirdPersonRange 6\n"
-                                                   "Default is 7 metres.  This is the distance\n"
-                                                   "of the third person camera from the player.");
+	                                                     "Sets the range of the third person camera.\n"
+                                                               "Usage: cl_ThirdPersonRange 6\n"
+                                                               "Default is 7 metres.  This is the distance\n"
+                                                               "of the third person camera from the player.");
 
 	cl_ThirdPersonRangeBoat   = pConsole->CreateVariable("ThirdPersonRangeBoat", "12", VF_CHEAT,
-                                                       "Sets the range of the third person camera for boats.\n"
-                                                       "Usage: cl_ThirdPersonRangeBoat 6\n"
-                                                       "Default is 12 metres.  This is the distance\n"
-                                                       "of the third person camera from the player.");
+	                                                     "Sets the range of the third person camera for boats.\n"
+                                                           "Usage: cl_ThirdPersonRangeBoat 6\n"
+                                                           "Default is 12 metres.  This is the distance\n"
+                                                           "of the third person camera from the player.");
 
 	cl_ThirdPersonAngle       = pConsole->CreateVariable("ThirdPersonAngle", ".2", VF_CHEAT);
 
@@ -507,22 +512,22 @@ void CXGame::InitConsoleVars()
 	// -----------------------
 
 	g_Render            = pConsole->CreateVariable("g_Render", "1", 0,
-                                        "\n"
-                                        "Usage:\n"
-                                        "");
+	                                               "\n"
+                                                              "Usage:\n"
+                                                              "");
 
 	cl_ViewFace         = pConsole->CreateVariable("cl_ViewFace", "0", CVAR_FLOAT,
-                                           "\n"
-                                           "Usage: \n"
-                                           "");
+	                                               "\n"
+                                                           "Usage: \n"
+                                                           "");
 	cl_display_hud      = pConsole->CreateVariable("cl_display_hud", "1", 0,
-                                              "Toggles the head up display (HUD).\n"
-                                              "Usage: cl_display_hud [0/1]\n"
-                                              "Default is 1 (HUD on).");
+	                                               "Toggles the head up display (HUD).\n"
+                                                        "Usage: cl_display_hud [0/1]\n"
+                                                        "Default is 1 (HUD on).");
 	cl_motiontracker    = pConsole->CreateVariable("cl_motiontracker", "1", 0,
-                                                "Toggles the motion tracker.\n"
-                                                "Usage: cl_motiontracker [0/1]\n"
-                                                "Default is 1 (tracker on).");
+	                                               "Toggles the motion tracker.\n"
+                                                      "Usage: cl_motiontracker [0/1]\n"
+                                                      "Default is 1 (tracker on).");
 	cl_hud_pickup_icons = pConsole->CreateVariable("cl_hud_pickup_icons", "1", 0,
 	                                               "Toggles the display of pickup icons (HUD).\n"
 	                                               "Usage: cl_hud_pickup_icons [0/1]\n"
@@ -532,35 +537,35 @@ void CXGame::InitConsoleVars()
 	                                               "Usage: cl_msg_notification [0/1]\n"
 	                                               "Default is 1 (notification sound on).");
 	cl_hud_name         = pConsole->CreateVariable("cl_hud_name", "hud.lua", 0,
-                                           "Sets the name of the HUD script.\n"
-                                           "Usage: cl_hud_name Scriptname.lua\n"
-                                           "Default is 'hud.lua'.");
+	                                               "Sets the name of the HUD script.\n"
+                                                           "Usage: cl_hud_name Scriptname.lua\n"
+                                                           "Default is 'hud.lua'.");
 	pConsole->CreateVariable("cl_password", "", 0,
 	                         "Sets the client password to join a password protected server.\n"
 	                         "It must match the server password. Otherwise you will get disconnected\n");
 	p_name      = pConsole->CreateVariable("p_name", "Jack Carver", VF_DUMPTODISK,
-                                      "Sets the player's name.\n"
-                                      "Usage: p_name <playername>\n");
+	                                       "Sets the player's name.\n"
+                                                "Usage: p_name <playername>\n");
 	p_color     = pConsole->CreateVariable("p_color", "4", VF_DUMPTODISK,
-                                       "Sets the player's color in non team base multiplayer mods.\n"
-                                       "Usage: p_color [0|1|2|3|4|5|6|7|8|9]\n"
-                                       "Default is '4'.");
+	                                       "Sets the player's color in non team base multiplayer mods.\n"
+                                               "Usage: p_color [0|1|2|3|4|5|6|7|8|9]\n"
+                                               "Default is '4'.");
 	p_model     = pConsole->CreateVariable("p_model", "objects/characters/pmodels/hero/hero.cgf", VF_DUMPTODISK,
-                                       "Sets the player model.\n"
-                                       "Usage: p_model <modelpath>\n"
-                                       "Default is 'objects/characters/pmodels/hero/hero.cgf'.");
+	                                       "Sets the player model.\n"
+                                               "Usage: p_model <modelpath>\n"
+                                               "Default is 'objects/characters/pmodels/hero/hero.cgf'.");
 	mp_model    = pConsole->CreateVariable("mp_model", "objects/characters/pmodels/hero/hero_mp.cgf", VF_DUMPTODISK,
-                                        "Sets the multiplayer player model.\n"
-                                        "Usage: mp_model <modelpath>\n"
-                                        "Default is 'objects/characters/pmodels/hero/hero_mp.cgf'.");
+	                                       "Sets the multiplayer player model.\n"
+                                              "Usage: mp_model <modelpath>\n"
+                                              "Default is 'objects/characters/pmodels/hero/hero_mp.cgf'.");
 	g_LevelName = pConsole->CreateVariable("g_LevelName", "0.4", 0);
 	GetISystem()->GetIConsole()->CreateVariable("g_LevelStated", "0", 0, "");
 	sv_timeout     = pConsole->CreateVariable("sv_timeout", "60", 0, // until entity loading speeds up :)
-                                          "Sets the server timeout (seconds).\n"
-                                          "Usage: sv_timeout 60\n"
-                                          "The default timeout is 60 seconds. This is the time the\n"
-                                          "server waits while trying to establish a connection with\n"
-                                          "a client.");
+	                                          "Sets the server timeout (seconds).\n"
+                                                  "Usage: sv_timeout 60\n"
+                                                  "The default timeout is 60 seconds. This is the time the\n"
+                                                  "server waits while trying to establish a connection with\n"
+                                                  "a client.");
 
 	g_StartMission = pConsole->CreateVariable("g_StartMission", "", 0,
 	                                          "\n"
@@ -568,13 +573,13 @@ void CXGame::InitConsoleVars()
 	                                          "");
 
 	p_HitImpulse   = pConsole->CreateVariable("p_hit_impulse", "0.01", 0, // don't set to 0
-                                            "\n"
-                                            "Usage: \n"
-                                            "");
+	                                          "\n"
+                                                "Usage: \n"
+                                                "");
 	p_DeadBody     = pConsole->CreateVariable("p_deadbody", "1", 0,
-                                          "\n"
-                                          "Usage: \n"
-                                          "");
+	                                          "\n"
+                                                  "Usage: \n"
+                                                  "");
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -656,29 +661,29 @@ void CXGame::InitConsoleVars()
 	p_deathtime            = pConsole->CreateVariable("p_deathtime", "30.0", VF_NET_SYNCED | VF_DUMPTODISK);
 
 	p_waterbob_pitch       = pConsole->CreateVariable("p_waterbob_pitch", "0.1", 0,
-                                                "\n"
-                                                "Usage: \n"
-                                                "");
+	                                                  "\n"
+                                                            "Usage: \n"
+                                                            "");
 	p_waterbob_pitchspeed  = pConsole->CreateVariable("p_waterbob_pitchspeed", "0.2", 0,
-                                                     "\n"
-                                                     "Usage: \n"
-                                                     "");
+	                                                  "\n"
+                                                       "Usage: \n"
+                                                       "");
 	p_waterbob_roll        = pConsole->CreateVariable("p_waterbob_roll", "6.1", 0,
-                                               "\n"
-                                               "Usage: \n"
-                                               "");
+	                                                  "\n"
+                                                             "Usage: \n"
+                                                             "");
 	p_waterbob_rollspeed   = pConsole->CreateVariable("p_waterbob_rollspeed", "0.35", 0,
-                                                    "\n"
-                                                    "Usage: \n"
-                                                    "");
+	                                                  "\n"
+                                                        "Usage: \n"
+                                                        "");
 	p_waterbob_mindepth    = pConsole->CreateVariable("p_waterbob_mindepth", "0.5", 0,
-                                                   "\n"
-                                                   "Usage: \n"
-                                                   "");
+	                                                  "\n"
+                                                         "Usage: \n"
+                                                         "");
 	p_weapon_switch        = pConsole->CreateVariable("p_weapon_switch", "0", 0,
-                                               "Toggles auto switch when a player picks up a weapon.\n"
-                                               "Usage: p_weapon_switch [0/1]\n"
-                                               "Default is 0 (no automatic weapon switch).");
+	                                                  "Toggles auto switch when a player picks up a weapon.\n"
+                                                             "Usage: p_weapon_switch [0/1]\n"
+                                                             "Default is 0 (no automatic weapon switch).");
 
 	w_recoil_speed_up      = 10;
 	w_recoil_speed_down    = 20;
@@ -695,176 +700,176 @@ void CXGame::InitConsoleVars()
 			pConsole->Register("w_recoil_vertical_only",&w_recoil_vertical_only,0);
 			*/
 	p_ai_runspeedmult      = pConsole->CreateVariable("p_ai_runspeedmult", "3.63", 0,
-                                                 "\n"
-                                                 "Usage: \n"
-                                                 "");
+	                                                  "\n"
+                                                           "Usage: \n"
+                                                           "");
 	p_ai_crouchspeedmult   = pConsole->CreateVariable("p_ai_crouchspeedmult", "0.8", 0,
-                                                    "\n"
-                                                    "Usage: \n"
-                                                    "");
+	                                                  "\n"
+                                                        "Usage: \n"
+                                                        "");
 	p_ai_pronespeedmult    = pConsole->CreateVariable("p_ai_pronespeedmult", "0.5", 0,
-                                                   "\n"
-                                                   "Usage: \n"
-                                                   "");
+	                                                  "\n"
+                                                         "Usage: \n"
+                                                         "");
 	p_ai_rrunspeedmult     = pConsole->CreateVariable("p_ai_rrunspeedmult", "3.63", 0,
-                                                  "\n"
-                                                  "Usage: \n"
-                                                  "");
+	                                                  "\n"
+                                                          "Usage: \n"
+                                                          "");
 	p_ai_rwalkspeedmult    = pConsole->CreateVariable("p_ai_rwalkspeedmult", "0.81", 0,
-                                                   "\n"
-                                                   "Usage: \n"
-                                                   "");
+	                                                  "\n"
+                                                         "Usage: \n"
+                                                         "");
 	p_ai_xrunspeedmult     = pConsole->CreateVariable("p_ai_xrunspeedmult", "1.5", 0,
-                                                  "\n"
-                                                  "Usage: \n"
-                                                  "");
+	                                                  "\n"
+                                                          "Usage: \n"
+                                                          "");
 	p_ai_xwalkspeedmult    = pConsole->CreateVariable("p_ai_xwalkspeedmult", "0.94", 0,
-                                                   "\n"
-                                                   "Usage: \n"
-                                                   "");
+	                                                  "\n"
+                                                         "Usage: \n"
+                                                         "");
 
 	p_lightrange           = pConsole->CreateVariable("p_lightrange", "15.0", VF_DUMPTODISK,
-                                            "\n"
-                                            "Usage: \n"
-                                            "");
+	                                                  "\n"
+                                                                "Usage: \n"
+                                                                "");
 	p_lightfrustum         = pConsole->CreateVariable("p_lightfrustum", "30.0", 0,
-                                              "\n"
-                                              "Usage: \n"
-                                              "");
+	                                                  "\n"
+                                                              "Usage: \n"
+                                                              "");
 
 	// player animation control parametrs
 	pa_leg_idletime        = pConsole->CreateVariable("pa_leg_idletime", "1", 0,
-                                               "\n"
-                                               "Usage: \n"
-                                               "");
+	                                                  "\n"
+                                                             "Usage: \n"
+                                                             "");
 	pa_leg_velmoving       = pConsole->CreateVariable("pa_leg_velmoving", "350", 0,
-                                                "\n"
-                                                "Usage: \n"
-                                                "");
+	                                                  "\n"
+                                                            "Usage: \n"
+                                                            "");
 	pa_leg_velidle         = pConsole->CreateVariable("pa_leg_velidle", "170", 0,
-                                              "\n"
-                                              "Usage: \n"
-                                              "");
+	                                                  "\n"
+                                                              "Usage: \n"
+                                                              "");
 	pa_leg_limitidle       = pConsole->CreateVariable("pa_leg_limitidle", "110", 0,
-                                                "\n"
-                                                "Usage: \n"
-                                                "");
+	                                                  "\n"
+                                                            "Usage: \n"
+                                                            "");
 	pa_leg_limitaim        = pConsole->CreateVariable("pa_leg_limitaim", "45", 0,
-                                               "\n"
-                                               "Usage: \n"
-                                               "");
+	                                                  "\n"
+                                                             "Usage: \n"
+                                                             "");
 	pa_blend0              = pConsole->CreateVariable("pa_blend0", "0.3", 0,
-                                         "\n"
-                                         "Usage: \n"
-                                         "");
+	                                                  "\n"
+                                                                   "Usage: \n"
+                                                                   "");
 	pa_blend1              = pConsole->CreateVariable("pa_blend1", "0.1", 0,
-                                         "\n"
-                                         "Usage: \n"
-                                         "");
+	                                                  "\n"
+                                                                   "Usage: \n"
+                                                                   "");
 	//	pa_blend2 = pConsole->CreateVariable("pa_blend2","0.4",0);
 	pa_blend2              = pConsole->CreateVariable("pa_blend2", "-1.0", 0,
-                                         "\n"
-                                         "Usage: \n"
-                                         "");
+	                                                  "\n"
+                                                                   "Usage: \n"
+                                                                   "");
 	pa_forcerelax          = pConsole->CreateVariable("pa_forcerelax", "0", 0,
-                                             "\n"
-                                             "Usage: \n"
-                                             "");
+	                                                  "\n"
+                                                               "Usage: \n"
+                                                               "");
 	pa_spine               = pConsole->CreateVariable("pa_spine", ".3", 0,
-                                        "\n"
-                                        "Usage: \n"
-                                        "");
+	                                                  "\n"
+                                                                    "Usage: \n"
+                                                                    "");
 	pa_spine1              = pConsole->CreateVariable("pa_spine1", ".4", 0,
-                                         "\n"
-                                         "Usage: \n"
-                                         "");
+	                                                  "\n"
+                                                                   "Usage: \n"
+                                                                   "");
 
 	p_limp                 = pConsole->CreateVariable("p_limp", "0", 0,
-                                      "\n"
-                                      "Usage: \n"
-                                      "");
+	                                                  "\n"
+                                                                      "Usage: \n"
+                                                                      "");
 
 	pl_force               = pConsole->CreateVariable("pl_force", "0", 0,
-                                        "\n"
-                                        "Usage: \n"
-                                        "");
+	                                                  "\n"
+                                                                    "Usage: \n"
+                                                                    "");
 	pl_dist                = pConsole->CreateVariable("pl_dist", "600", 0,
-                                       "\n"
-                                       "Usage: \n"
-                                       "");
+	                                                  "\n"
+                                                                     "Usage: \n"
+                                                                     "");
 	pl_intensity           = pConsole->CreateVariable("pl_intensity", "1", 0,
-                                            "\n"
-                                            "Usage: \n"
-                                            "");
+	                                                  "\n"
+                                                                "Usage: \n"
+                                                                "");
 	pl_fadescale           = pConsole->CreateVariable("pl_fadescale", "1.3", 0,
-                                            "\n"
-                                            "Usage: \n"
-                                            "");
+	                                                  "\n"
+                                                                "Usage: \n"
+                                                                "");
 	pl_head                = pConsole->CreateVariable("pl_head", "0", 0,
-                                       "\n"
-                                       "Usage: \n"
-                                       "");
+	                                                  "\n"
+                                                                     "Usage: \n"
+                                                                     "");
 
 	p_RotateHead           = pConsole->CreateVariable("p_rotate_head", "1", 0,
-                                            "\n"
-                                            "Usage: \n"
-                                            "");
+	                                                  "\n"
+                                                                "Usage: \n"
+                                                                "");
 	p_RotateMove           = pConsole->CreateVariable("p_rotate_Move", "0", 0,
-                                            "\n"
-                                            "Usage: \n"
-                                            "");
+	                                                  "\n"
+                                                                "Usage: \n"
+                                                                "");
 	p_HeadCamera           = pConsole->CreateVariable("p_head_camera", "0", 0,
-                                            "\n"
-                                            "Usage: \n"
-                                            "");
+	                                                  "\n"
+                                                                "Usage: \n"
+                                                                "");
 	p_EyeFire              = pConsole->CreateVariable("p_eye_fire", "1", 0,
-                                         "\n"
-                                         "Usage: \n"
-                                         "");
+	                                                  "\n"
+                                                                   "Usage: \n"
+                                                                   "");
 	a_DrawArea             = pConsole->CreateVariable("a_draw_area", "0", VF_CHEAT,
-                                          "\n"
-                                          "Usage: \n"
-                                          "");
+	                                                  "\n"
+                                                                  "Usage: \n"
+                                                                  "");
 	a_LogArea              = pConsole->CreateVariable("a_log_area", "0", VF_CHEAT,
-                                         "\n"
-                                         "Usage: \n"
-                                         "");
+	                                                  "\n"
+                                                                   "Usage: \n"
+                                                                   "");
 	pConsole->CreateVariable("game_DifficultyLevel", "1", VF_SAVEGAME,
 	                         "0 = easy, 1 = normal, 2 = hard");
 	cv_game_Difficulty         = pConsole->CreateVariable("game_AdaptiveDifficulty", "0", VF_SAVEGAME,
-                                                  "0=off, 1=on\n"
-                                                  "Usage: \n"
-                                                  "");
+	                                                      "0=off, 1=on\n"
+                                                                  "Usage: \n"
+                                                                  "");
 	cv_game_Aggression         = pConsole->CreateVariable("game_Aggression", "1", VF_SAVEGAME,
-                                                  "Factor to scale the ai agression, default = 1.0\n"
-                                                  "Usage: cv_game_Aggression 1.2\n"
-                                                  "");
+	                                                      "Factor to scale the ai agression, default = 1.0\n"
+                                                                  "Usage: cv_game_Aggression 1.2\n"
+                                                                  "");
 	cv_game_Accuracy           = pConsole->CreateVariable("game_Accuracy", "1", VF_SAVEGAME,
-                                                "Factor to scale the ai accuracy, default = 1.0\n"
-                                                "Usage: game_Accuracy 1.2\n"
-                                                "");
+	                                                      "Factor to scale the ai accuracy, default = 1.0\n"
+                                                                    "Usage: game_Accuracy 1.2\n"
+                                                                    "");
 	cv_game_AllowAIMovement    = pConsole->CreateVariable("game_Allow_AI_Movement", "1", 0,
-                                                       "Allow or not allow actual AI movement - AI will still think its moving (default 1)\n"
-                                                       "Usage: game_Allow_AI_Movement (1/0)\n"
-                                                       "");
+	                                                      "Allow or not allow actual AI movement - AI will still think its moving (default 1)\n"
+                                                             "Usage: game_Allow_AI_Movement (1/0)\n"
+                                                             "");
 	cv_game_AllAIInvulnerable  = pConsole->CreateVariable("game_AI_Invulnerable", "0", 0,
-                                                         "When set to 1 all AI in the game will become invulnerable (default 0)\n"
-                                                         "Usage: game_AI_Invulnerable (1/0)\n"
-                                                         "");
+	                                                      "When set to 1 all AI in the game will become invulnerable (default 0)\n"
+                                                           "Usage: game_AI_Invulnerable (1/0)\n"
+                                                           "");
 
 	cv_game_Health             = pConsole->CreateVariable("game_Health", "1", VF_SAVEGAME,
-                                              "Factor to scale the ai health, default = 1.0\n"
-                                              "Usage: game_Health 1.2\n"
-                                              "");
+	                                                      "Factor to scale the ai health, default = 1.0\n"
+                                                                      "Usage: game_Health 1.2\n"
+                                                                      "");
 	cv_game_GliderGravity      = pConsole->CreateVariable("game_GliderGravity", "-0.1f", VF_DUMPTODISK,
-                                                     "Sets paraglider's gravity.\n"
-                                                     "Usage: game_GliderGravity -.1\n");
+	                                                      "Sets paraglider's gravity.\n"
+                                                               "Usage: game_GliderGravity -.1\n");
 	cv_game_GliderBackImpulse  = pConsole->CreateVariable("game_GliderBackImpulse", "2.5f", VF_DUMPTODISK,
-                                                         "Sets paraglider's back impulse (heading up).\n"
-                                                         "Usage: game_GliderBackImpulse 2.5\n");
+	                                                      "Sets paraglider's back impulse (heading up).\n"
+                                                           "Usage: game_GliderBackImpulse 2.5\n");
 	cv_game_GliderDamping      = pConsole->CreateVariable("game_GliderDamping", "0.15f", VF_DUMPTODISK,
-                                                     "Sets paraglider's damping (control/inertia).\n"
-                                                     "Usage: game_GliderDamping 0.15\n");
+	                                                      "Sets paraglider's damping (control/inertia).\n"
+                                                               "Usage: game_GliderDamping 0.15\n");
 	cv_game_GliderStartGravity = pConsole->CreateVariable("game_GliderStartGravity", "-0.8f", VF_DUMPTODISK,
 	                                                      "Sets initial paraglider's gravity.\n"
 	                                                      "Usage: game_GliderStartGravity -0.8");
@@ -878,9 +883,9 @@ void CXGame::InitConsoleVars()
 	cv_game_subtitles          = pConsole->CreateVariable("game_subtitles", "0", 0, "toggles game subtitles");
 
 	pl_JumpNegativeImpulse     = GetISystem()->GetIConsole()->CreateVariable("JumpNegativeImpulse", "0.0f", VF_NET_SYNCED,
-                                                                         "this represent the downward impulse power applied when the player reach the max height of the jump, 0 means no impulse.\n"
-                                                                         "Usage: JumpNegativeImpulse 0-100 is a good range to test.\n"
-                                                                         "Default value is 0, disabled.\n");
+	                                                                         "this represent the downward impulse power applied when the player reach the max height of the jump, 0 means no impulse.\n"
+                                                                                 "Usage: JumpNegativeImpulse 0-100 is a good range to test.\n"
+                                                                                 "Default value is 0, disabled.\n");
 
 	g_first_person_spectator   = pConsole->CreateVariable("gr_first_person_spectator", "0", VF_NET_SYNCED);
 }

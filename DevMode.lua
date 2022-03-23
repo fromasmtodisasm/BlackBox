@@ -1,4 +1,3 @@
-
 cl_display_hud = 1
 cl_drunken_cam = 0
 ThirdPersonView = 0
@@ -42,6 +41,8 @@ Input:BindCommandToKey("#System:ShowDebugger();", "f8", 1);
 --Input:BindCommandToKey("#TCM()",".",1);
 --Input:BindCommandToKey("#e_hires_screenshoot=4","f10",1);
 -- removed
+
+Input:BindCommandToKey("toogle r_DrawWirefame","alt_1",1);
 
 
 --- temp variables for functions below ---

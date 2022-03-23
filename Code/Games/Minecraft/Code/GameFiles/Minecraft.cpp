@@ -469,6 +469,8 @@ bool MineWorld::isIntersect(glm::ivec3 pos, AABB otherAABB) const
 
 void MinePlayer::init()
 {
+	gEnv->pScriptSystem->ExecuteFile("scripts/common.lua");
+
 	getCamera()->mode = CCamera::Mode::FPS;
 
 	auto        steve = gEnv->p3DEngine->MakeObject("minecraft/minecraft_steve.obj");
