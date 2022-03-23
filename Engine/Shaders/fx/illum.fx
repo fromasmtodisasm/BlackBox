@@ -5,6 +5,8 @@
 //static float gamma = 2.2;
 #define gamma 2.2f
 
+#define WorldPos input.Pos
+
 // Shader global descriptions
 float Script : STANDARDSGLOBAL
 <
@@ -92,13 +94,18 @@ float4 PS(VS_OUTPUT input)
 	vec3   N       = normalize(input.Normal);
 	vec3   V       = normalize(GetEye() - input.Pos);
 
-    for (int i = 0; i < NumLights; i++)
+    vec3         Lo      = vec3(0.0);
+    #if 0
+	for (int i = 0; i < 4; ++i)
 	{
-        vec3   N       = normalize(input.Normal);
-        vec3   V       = normalize(GetEye() - input.Pos);
+		vec3  L           = normalize(g_Lights[i].Pos - WorldPos);
+		vec3  H           = normalize(V + L);
 
-        //g_Lights[i]
+		float distance    = length(g_Lights[i].Pos - WorldPos);
+		float attenuation = 1.0 / (distance * distance);
+		vec3  radiance    = g_Lights[i].Color * attenuation;
 	}
+    #endif
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor   = float4(0.5, 0.5, 0.5, 1);
