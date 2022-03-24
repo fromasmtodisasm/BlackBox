@@ -122,29 +122,10 @@ float4 PS(VS_OUTPUT input) : SV_Target
 		float3 specular    = numerator / max(denominator, 0.001);
 
 		float  NdotL       = max(dot(N, L), 0.0);
-		//Lo += (kD * albedo / PI + specular) * radiance * NdotL;
-		Lo += kS;
-		//Lo = WorldPos;
+		// add to outgoing radiance Lo
+		Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}
 
-	//// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-	//textureColor   = float4(0.5, 0.5, 0.5, 1);
-	////textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
-
-	//// Invert the light direction for calculations.
-	//lightDir = SunDirection.xyz;
-
-	//// Calculate the amount of light on this pixel.
-	//lightIntensity = saturate(dot(N, lightDir));
-
-	//// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
-	//color          = saturate(SunColor.rgb * diffuseColor * lightIntensity);
-
-	//// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-	////color = (color + AmbientStrength) * textureColor;
-	//color          = color * fresnelSchlick(dot(N, lightDir), float3(0.1, 0.1, 0.1));
-	//float tmp      = 1.0 / gamma;
-	//color          = pow(color, vec3(tmp, tmp, tmp));
 	float3 ambient = float3(0.03, 0.03, 0.03) * albedo * ao;
 	float3 color   = ambient + Lo;
 

@@ -78,7 +78,7 @@ void MineWorld::init()
 	};
 
 	loadAssets();
-	//generateLevel();
+	generateLevel();
 	{
 		char* objects[] = {
 		    "objects/characters/story_characters/krieger_mutant/krieger_mutant.cgf",

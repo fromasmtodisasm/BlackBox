@@ -96,6 +96,7 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 
 void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
+	return;
 	auto         render = GetISystem()->GetIRenderer();
 	Legacy::Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4    projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
@@ -217,6 +218,7 @@ float FreeTypeFont::TextWidth(const std::string_view text)
 
 float FreeTypeFont::CharWidth(char symbol)
 {
+	return 1;
 	const float     scale = 1.0;
 	const Character ch    = Characters[symbol];
 
@@ -242,6 +244,7 @@ bool operator<(const STestSize& a, const STestSize& b)
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
+	return true;
 	m_Height = static_cast<float>(h);
 	std::set<STestSize> test;
 
@@ -549,6 +552,9 @@ void RegisterColorTable()
 
 void FreeTypeFont::Submit()
 {
+	m_CharBuffer.resize(0);
+	return;
+
 	auto vertex_cnt = 6 * m_CharBuffer.size();
 	if (!GlobalResources::SpriteShader || !vertex_cnt)
 	{

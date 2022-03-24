@@ -29,12 +29,6 @@ ID3D11BlendState*       GlobalResources::FontBlendState;
 _smart_ptr<CShader>     GlobalResources::TexturedQuadShader;
 _smart_ptr<CShader>     GlobalResources::SpriteShader;
 
-std::vector<HLSL_Light> g_Lights = {
-    {{-10.0f, 10.0f, 10.0f}, {300, 300, 300}},
-    {{10.0f, 10.0f, 10.0f}, {300, 300, 300}},
-    {{-10.0f, -10.0f, 10.0f}, {300, 300, 300}},
-    {{10.0f, -10.0f, 10.0f}, {300, 300, 300}}};
-
 namespace util
 {
 	template<class T>
@@ -121,6 +115,11 @@ void CD3DRenderer::Sh_Reload()
 
 IWindow* CD3DRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
 {
+	m_LigthsList.resize(4);
+	m_LigthsList[0] = {Legacy::Vec4{-10.0f, 10.0f, 10.0f,0}, Legacy::Vec4{900, 300, 300,300}};
+	m_LigthsList[1] = {Legacy::Vec4{10.0f, 10.0f, 10.0f,0}, Legacy::Vec4{300, 300, 300,300}};
+	m_LigthsList[2] = {Legacy::Vec4{-10.0f, -10.0f, 10.0f,0}, Legacy::Vec4{300, 300, 300,300}};
+	m_LigthsList[3] = {Legacy::Vec4{-10.0f, -10.0f, 10.0f,0}, Legacy::Vec4{300, 300, 300,300}};
 	return CRenderer::Init(x, y, width, height, cbpp, zbpp, sbits, fullscreen, window);
 }
 
@@ -162,10 +161,12 @@ void CD3DRenderer::UpdateConstants()
 		                                  auto View                  = m_Camera.GetViewMatrix();
 		                                  pConstData->Projection     = Projection;
 		                                  pConstData->ViewProjection = Projection * View;
-		                                  pConstData->View           = View; });
+		                                  pConstData->View           = View; 
+		                                  pConstData->Eye            = m_Camera.GetPos(); 
+		});
 	ScopedMap<HLSL_Light>(m_Lights, [&](auto pConstData)
 	                      { 
-                               memcpy(pConstData, &g_Lights[0], g_Lights.size() * sizeof HLSL_Light); 
+                               memcpy(pConstData, &m_LigthsList[0], m_LigthsList.size() * sizeof HLSL_Light); 
 		});
 
 	ID3DBuffer* pBuffers[] = {
@@ -438,7 +439,7 @@ bool CD3DRenderer::InitOverride()
 	{
 		return hr;
 	}
-	cbDesc.ByteWidth = Memory::AlignedSizeCB<SLights>::value;
+	cbDesc.ByteWidth = 4 * Memory::AlignedSizeCB<HLSL_Light>::value;
 	hr               = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_Lights);
 	if (FAILED(hr))
 	{

@@ -266,12 +266,12 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	///////////////////////////////////////////////////////
 	using color = Legacy::Vec3;
 	using pos = Legacy::Vec3;
-	m_LigthsList = {
-	    {color{}, pos{}},
-	    {color{}, pos{}},
-	    {color{}, pos{}},
-	    {color{}, pos{}},
-	};
+	//m_LigthsList = {
+	//    {color{}, pos{}},
+	//    {color{}, pos{}},
+	//    {color{}, pos{}},
+	//    {color{}, pos{}},
+	//};
 
 	return result;
 }

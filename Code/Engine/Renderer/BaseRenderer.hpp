@@ -15,6 +15,7 @@
 #include <Cry_Color4.h>
 #include "RenderThread.h"
 #include <BlackBox/Core/Path.hpp>
+#include "Common/Include_HLSL_CPP_Shared.h"
 //#include <BlackBox/Renderer/FrameBufferObject.hpp>
 
 extern FxParser* g_FxParser;
@@ -401,7 +402,7 @@ protected:
 		float     Alpha;
 	};
 
-	std::vector<SLights> m_LigthsList;
+	std::vector<HLSL_Light> m_LigthsList;
 
 #ifndef VK_RENDERER
 	CTypedConstantBuffer<SPerViewConstantBuffer> perViewBuffer;

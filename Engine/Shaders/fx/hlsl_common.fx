@@ -33,8 +33,8 @@ float2 global_float3 <string desc="Test global variable";> = float2(0,0);
 
 struct Light
 {
-	float3 Color;
-	float3 Pos;
+	float4 Pos;
+	float4 Color;
 };
 
 
@@ -139,8 +139,7 @@ float4 Transform(in float3 Pos)
 [[fn]]
 float4 WorldTransofrm(in float3 Pos)
 {
-	float4x4 ModelView = mul(GetViewMatrix(), Model);
-    return mul(ModelView, float4(Pos, 1));
+    return mul(Model, float4(Pos, 1));
 }
 
 [[fn]]

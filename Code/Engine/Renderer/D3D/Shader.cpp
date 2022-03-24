@@ -402,7 +402,7 @@ std::pair<ID3DBlob*, ID3DBlob*> CShader::Load(const std::string_view text, IShad
 	const char* file   = bFromMemory ? nullptr : text.data();
 	auto        size   = text.size();
 
-	auto        nFlags = D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
+	auto        nFlags = 0;	//D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
 	auto        hr     = D3DCompile(
 	               code,
 	               size,

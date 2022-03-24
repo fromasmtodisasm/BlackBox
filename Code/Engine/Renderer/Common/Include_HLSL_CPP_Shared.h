@@ -7,6 +7,8 @@
 	#define hlsl_cbuffer_register(name, reg, slot) \
 	  enum { SLOT_ ## name = slot };               \
 	  struct alignas(16) HLSL_ ## name
+	//#define default_ctr(name)     HLSL_##name() = default;
+	#define default_ctr(name)
 
 	#define hlsl_uint(member)     uint member
 	#define hlsl_float(member)    float member
@@ -34,12 +36,14 @@
 
 hlsl_cbuffer_register(Light, register(b1), 1)
 {
-	hlsl_float3(Color);
-	hlsl_float3(Pos);
+	default_ctr(Light);
+	hlsl_float4(Pos);
+	hlsl_float4(Color);
 };
 
 hlsl_cbuffer_register(PerDrawCB, register(b3), 3)
 {
+	default_ctr(PerDrawCB);
 	hlsl_matrix44(Model);
 	hlsl_matrix44(World);
 	hlsl_matrix44(MVP);
@@ -50,6 +54,7 @@ hlsl_cbuffer_register(PerDrawCB, register(b3), 3)
 
 hlsl_cbuffer_register(MaterialCB, register(b4), 4)
 {
+	default_ctr(MaterialCB);
 	hlsl_float3(albedo);
 	hlsl_float(metallic);
 	hlsl_float(roughness);
