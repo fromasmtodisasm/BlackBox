@@ -3,6 +3,10 @@
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 
+#include "Common/Include_HLSL_CPP_Shared.h"
+
+const UINT NUM_MAT = 4;
+
 #include <array>
 
 #define V_RETURN(cond) \
@@ -23,6 +27,13 @@ int                               CV_r_DisableZP    = 0;
 
 // auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 auto                              BB_VERTEX_FORMAT  = VERTEX_FORMAT_P3F_N_T2F;
+
+std::vector<HLSL_MaterialCB>      g_Materials       = {
+    {},
+    {},
+    {},
+    {},
+};
 
 void                              CreateBlendState()
 {
@@ -50,23 +61,14 @@ struct SimpleVertex
 	D3DXVECTOR4 Color;
 };
 
-struct CBChangesEveryFrame
-{
-	D3DXMATRIX Model;
-	D3DXMATRIX World;
-	D3DXMATRIX MVP;
-	D3DXMATRIX MV;
-
-	bool       ApplyGrayScale;
-};
-
 D3DXMATRIX  g_MVP;
 D3DXMATRIX  g_World;
 D3DXMATRIX  g_View;
 D3DXMATRIX  g_Projection;
 D3DXMATRIX  g_ViewProjection;
 
-ID3DBuffer* g_pConstantBuffer;
+ID3DBuffer* g_pPerDrawCB;
+ID3DBuffer* g_pMaterialCB;
 
 namespace
 {
@@ -88,10 +90,14 @@ HRESULT CRenderAuxGeom::InitCube()
 	ZeroMemory(&bd, sizeof(bd));
 	// Create the constant buffer
 	bd.Usage          = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth      = Memory::AlignedSizeCB<CBChangesEveryFrame>::value;
+	bd.ByteWidth      = Memory::AlignedSizeCB<HLSL_PerDrawCB>::value;
 	bd.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
-	hr                = GetDevice()->CreateBuffer(&bd, NULL, &g_pConstantBuffer);
+	hr                = GetDevice()->CreateBuffer(&bd, NULL, &g_pPerDrawCB);
+	if (FAILED(hr))
+		return hr;
+	bd.ByteWidth =  NUM_MAT * Memory::AlignedSizeCB<HLSL_MaterialCB>::value;
+	hr               = GetDevice()->CreateBuffer(&bd, NULL, &g_pMaterialCB);
 	if (FAILED(hr))
 		return hr;
 
@@ -126,14 +132,14 @@ HRESULT CRenderAuxGeom::InitCube()
 void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 {
 	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
-	CBChangesEveryFrame cb;
+	HLSL_PerDrawCB cb;
 	cb.World = DrawElement.transform;
 	cb.MVP   = g_ViewProjection * cb.World;
 	cb.MV    = g_View * cb.World;
 
 	m_ZPShader->Bind();
-	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
-	::GetDeviceContext()->VSSetConstantBuffers(PERDRAW_SLOT, 1, &g_pConstantBuffer);
+	::GetDeviceContext()->UpdateSubresource(g_pPerDrawCB, 0, nullptr, &cb, sizeof(cb), 0);
+	::GetDeviceContext()->VSSetConstantBuffers(PERDRAW_SLOT, 1, &g_pPerDrawCB);
 	auto ib         = DrawElement.m_Inices;
 	auto numindices = 0;
 	if (ib)
@@ -151,15 +157,20 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 	DWORD               dwTimeCur   = GetTickCount();
 
 	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
-	CBChangesEveryFrame cb;
+	HLSL_PerDrawCB cb;
 	cb.World = DrawElement.transform;
 	cb.MVP   = g_ViewProjection * cb.World;
 	cb.MV    = g_View * cb.World;
 	cb.Model = cb.World;
 
 	m_IllumShader->Bind();
-	::GetDeviceContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, sizeof(cb), 0);
-	::GetDeviceContext()->VSSetConstantBuffers(2, 1, &g_pConstantBuffer);
+	ID3DBuffer* pBuffers[] = {
+		g_pPerDrawCB,
+		g_pMaterialCB,
+	};
+
+	::GetDeviceContext()->UpdateSubresource(g_pPerDrawCB, 0, nullptr, &cb, sizeof(cb), 0);
+	::GetDeviceContext()->VSSetConstantBuffers(PERDRAW_SLOT, 2, pBuffers);
 	gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
 	auto ib         = DrawElement.m_Inices;
 	auto numindices = 0;

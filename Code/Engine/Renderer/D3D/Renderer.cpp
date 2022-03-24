@@ -4,6 +4,8 @@
 #include <BlackBox/System/File/CryFile.h>
 #include "AuxRenderer.hpp"
 
+#include "Common/Include_HLSL_CPP_Shared.h"
+
 #include "RenderThread.h"
 
 #define EDITOR (gEnv->IsEditing())
@@ -26,6 +28,12 @@ ID3D11BlendState*       GlobalResources::FontBlendState;
 
 _smart_ptr<CShader>     GlobalResources::TexturedQuadShader;
 _smart_ptr<CShader>     GlobalResources::SpriteShader;
+
+std::vector<HLSL_Light> g_Lights = {
+    {{-10.0f, 10.0f, 10.0f}, {300, 300, 300}},
+    {{10.0f, 10.0f, 10.0f}, {300, 300, 300}},
+    {{-10.0f, -10.0f, 10.0f}, {300, 300, 300}},
+    {{10.0f, -10.0f, 10.0f}, {300, 300, 300}}};
 
 namespace util
 {
@@ -155,6 +163,10 @@ void CD3DRenderer::UpdateConstants()
 		                                  pConstData->Projection     = Projection;
 		                                  pConstData->ViewProjection = Projection * View;
 		                                  pConstData->View           = View; });
+	ScopedMap<HLSL_Light>(m_Lights, [&](auto pConstData)
+	                      { 
+                               memcpy(pConstData, &g_Lights[0], g_Lights.size() * sizeof HLSL_Light); 
+		});
 
 	ID3DBuffer* pBuffers[] = {
 	    m_PerFrameConstants.Get(),
@@ -163,7 +175,7 @@ void CD3DRenderer::UpdateConstants()
 	};
 	constexpr auto StartSlot = PERFRAME_SLOT;
 	::GetDeviceContext()->VSSetConstantBuffers(StartSlot, 3, pBuffers);
-	::GetDeviceContext()->PSSetConstantBuffers(StartSlot, 2, pBuffers);
+	::GetDeviceContext()->PSSetConstantBuffers(StartSlot, 3, pBuffers);
 	//D3DPERF_EndEvent();
 }
 

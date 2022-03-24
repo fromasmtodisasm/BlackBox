@@ -5,7 +5,7 @@
 //static float gamma = 2.2;
 #define gamma 2.2f
 
-#define WorldPos input.Pos
+//#define WorldPos input.WorldPos
 
 // Shader global descriptions
 float Script : STANDARDSGLOBAL
@@ -53,6 +53,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
+	float3 WorldPos : WORLDPOS;
     float3 Normal : NORMAL;
     float2 TC : TEXCOORD0;
 };
@@ -67,6 +68,7 @@ VS_OUTPUT VS(
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
     output.Pos = Transform(IN.Pos);
+    output.WorldPos = WorldTransofrm(IN.Pos).xyz;
     //output.Normal = IN.Normal;
 	output.Normal    = GetNormal(IN.Normal); // calculate view-space normal
     output.TC = IN.TC;
@@ -75,59 +77,82 @@ VS_OUTPUT VS(
 }
 
 [[fn]]
-float4 PS(VS_OUTPUT input)
-	: SV_Target
+float4 PS(VS_OUTPUT input) : SV_Target
 {
-    typedef float2 vec2;
-    typedef float3 vec3;
+	//typedef float2 vec2;
+	//typedef float3 vec3;
+	//tmp
+	float  ao        = 1.f;
+	float3 albedo    = float3(0.5, 0, 0);
+	float  metalic   = 0.95;
+	float  roughness = 0.01;
+	/////////////////
+	float3 WorldPos  = input.WorldPos;
 
-	static vec3  albedo;
-	static float metallic;
-	static float roughness;
-	static float ao;
+	float3 N  = normalize(input.Normal);
+	float3 V  = normalize(GetEye() - WorldPos);
 
-    //FIXME: need recognize storage class in shader parser to place this declaration on top level
-    float3 diffuseColor = float3(1, 1, 1);
+	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
+	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
+	//float3 F0 = float3(0.04, 0.04, 0.04);
+	float3 F0 = float3(0.3, 0.3, 0.3);
+	F0        = lerp(F0, albedo, metallic);
 
-    float4 textureColor;
-	float3 lightDir;
-	float  lightIntensity;
-	float3 color;
-
-	vec3   N       = normalize(input.Normal);
-	vec3   V       = normalize(GetEye() - input.Pos);
-
-    vec3         Lo      = vec3(0,0,0);
+	float3 Lo = float3(0, 0, 0);
 	for (int i = 0; i < 4; ++i)
 	{
-		vec3  L           = normalize(g_Lights[i].Pos - WorldPos);
-		vec3  H           = normalize(V + L);
+		float3 L           = normalize(g_Lights[i].Pos - WorldPos);
+		float3 H           = normalize(V + L);
 
-		float distance    = length(g_Lights[i].Pos - WorldPos);
-		float attenuation = 1.0 / (distance * distance);
-		vec3  radiance    = g_Lights[i].Color * attenuation;
+		float  distance    = length(g_Lights[i].Pos - WorldPos);
+		float  attenuation = 1.0 / (distance * distance);
+		float3 radiance    = g_Lights[i].Color * attenuation;
+
+		// Cook-Torrance BRDF
+		float  NDF         = DistributionGGX(N, H, roughness);
+		float  G           = GeometrySmith(N, V, L, roughness);
+		float3 F           = fresnelSchlick(max(dot(H, V), 0.0), F0);
+
+		float3 kS          = F;
+		float3 kD          = float3(1, 1, 1) - kS;
+		kD *= 1.0 - metallic;
+
+		float3 numerator   = NDF * G * F;
+		float  denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+		float3 specular    = numerator / max(denominator, 0.001);
+
+		float  NdotL       = max(dot(N, L), 0.0);
+		//Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+		Lo += kS;
+		//Lo = WorldPos;
 	}
 
-	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-	textureColor   = float4(0.5, 0.5, 0.5, 1);
-	//textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
+	//// Sample the pixel color from the texture using the sampler at this texture coordinate location.
+	//textureColor   = float4(0.5, 0.5, 0.5, 1);
+	////textureColor = g_FontAtlas.Sample(g_LinearSampler, input.TC);
 
-	// Invert the light direction for calculations.
-    lightDir = SunDirection.xyz;
+	//// Invert the light direction for calculations.
+	//lightDir = SunDirection.xyz;
 
-	// Calculate the amount of light on this pixel.
-    lightIntensity = saturate(dot(N, lightDir));
+	//// Calculate the amount of light on this pixel.
+	//lightIntensity = saturate(dot(N, lightDir));
 
-	// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
-	color          = saturate(SunColor.rgb * diffuseColor * lightIntensity);
+	//// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
+	//color          = saturate(SunColor.rgb * diffuseColor * lightIntensity);
 
-	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-    //color = (color + AmbientStrength) * textureColor;
-	color          = color * fresnelSchlick(dot(N, lightDir), float3(0.1, 0.1, 0.1));
-	float tmp      = 1.0 / gamma;
-	color          = pow(color, vec3(tmp, tmp, tmp));
+	//// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
+	////color = (color + AmbientStrength) * textureColor;
+	//color          = color * fresnelSchlick(dot(N, lightDir), float3(0.1, 0.1, 0.1));
+	//float tmp      = 1.0 / gamma;
+	//color          = pow(color, vec3(tmp, tmp, tmp));
+	float3 ambient = float3(0.03, 0.03, 0.03) * albedo * ao;
+	float3 color   = ambient + Lo;
 
-    return float4(color, 1);
+	color          = color / (color + float3(1.0, 1.0, 1.0));
+	float invGamma = 1.0 / 2.2;
+	color          = pow(color, float3(invGamma, invGamma, invGamma));
+
+	return float4(color, 1);
 }
 
 //--------------------------------------------------------------------------------------

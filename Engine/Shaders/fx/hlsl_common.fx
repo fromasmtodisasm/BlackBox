@@ -10,6 +10,7 @@
 #define LIGHTS_SLOT   b1
 #define PERVIEW_SLOT  b2
 #define PERDRAW_SLOT  b3
+#define MATERIAL_SLOT  b4
 
 float global_float <string desc="Test global variable";> = 0.5;
 
@@ -73,6 +74,14 @@ cbuffer PerDrawCB : register(PERDRAW_SLOT)
     bool ApplyGrayScale;
 };
 
+cbuffer MaterialCB : register(MATERIAL_SLOT)
+{
+	float3 albedo;
+	float  metallic;
+	float  roughness;
+	float  ao;
+}
+
 
 
 
@@ -125,6 +134,13 @@ float4 Transform(in float3 Pos)
     //output.Pos = mul(float4(IN.Pos, 1), MVP);
 #endif
     return mul(MVP, float4(Pos, 1));
+}
+
+[[fn]]
+float4 WorldTransofrm(in float3 Pos)
+{
+	float4x4 ModelView = mul(GetViewMatrix(), Model);
+    return mul(ModelView, float4(Pos, 1));
 }
 
 [[fn]]

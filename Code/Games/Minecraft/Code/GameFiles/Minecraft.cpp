@@ -78,7 +78,7 @@ void MineWorld::init()
 	};
 
 	loadAssets();
-	generateLevel();
+	//generateLevel();
 	{
 		char* objects[] = {
 		    "objects/characters/story_characters/krieger_mutant/krieger_mutant.cgf",
@@ -479,7 +479,7 @@ void MinePlayer::init()
 	entity = gEnv->pEntitySystem->SpawnEntity(desc);
 	gEnv->p3DEngine->RegisterEntity(entity);
 
-	entity->SetPos(glm::vec3(5, 60, 5));
+	entity->SetPos(glm::vec3(5, 3, 5));
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 
@@ -493,7 +493,7 @@ void MinePlayer::update()
 
 	gEnv->pAuxGeomRenderer->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
 
-	auto const gravity = 4.f;
+	auto const gravity = 0.f;
 	auto       ft      = gEnv->pTimer->GetRealFrameTime();
 	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * ft);
 

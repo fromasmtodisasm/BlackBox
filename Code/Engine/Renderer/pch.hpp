@@ -219,4 +219,5 @@ struct CTexture
 #define LIGHTS_SLOT   BSLOT(1)
 #define PERVIEW_SLOT  BSLOT(2)
 #define PERDRAW_SLOT  BSLOT(3)
+#define MATERIAL_SLOT BSLOT(4)
 
