@@ -82,10 +82,12 @@ void MineWorld::init()
 	{
 		char* objects[] = {
 		    "objects/characters/story_characters/krieger_mutant/krieger_mutant.cgf",
+		    "objects/editor/MtlSphere.cgf",
+		    "objects/editor/mtlteapot.cgf",
 		    "objects/characters/pmodels/hero/hero.cgf",
 		    "objects/characters/animals/parrot/parrot.cgf",
 		    "objects/editor/mtlbox.cgf",
-		    "objects/editor/mtlteapot.cgf",
+		    "objects/editor/MtlSphere.cgf",
 		    "objects/weapons/m4/m4.cgf",
 		    "objects/vehicles/buggy/buggy.cgf",
 		    "objects/editor/arrow.cgf",

@@ -84,7 +84,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
 	//tmp
 	float  ao        = 1.f;
 	float3 albedo    = float3(0.5, 0, 0);
-	float  metalic   = 0.95;
+	float  metalic   = 0.99;
 	float  roughness = 0.01;
 	/////////////////
 	float3 WorldPos  = input.WorldPos;
@@ -94,8 +94,8 @@ float4 PS(VS_OUTPUT input) : SV_Target
 
 	// calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
 	// of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
-	//float3 F0 = float3(0.04, 0.04, 0.04);
-	float3 F0 = float3(0.3, 0.3, 0.3);
+	float3 F0 = float3(0.04, 0.04, 0.04);
+	//float3 F0 = float3(0.3, 0.3, 0.3);
 	F0        = lerp(F0, albedo, metallic);
 
 	float3 Lo = float3(0, 0, 0);
