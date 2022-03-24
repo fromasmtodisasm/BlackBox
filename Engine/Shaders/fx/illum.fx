@@ -78,6 +78,9 @@ VS_OUTPUT VS(
 float4 PS(VS_OUTPUT input)
 	: SV_Target
 {
+    typedef float2 vec2;
+    typedef float3 vec3;
+
 	static vec3  albedo;
 	static float metallic;
 	static float roughness;
@@ -94,8 +97,7 @@ float4 PS(VS_OUTPUT input)
 	vec3   N       = normalize(input.Normal);
 	vec3   V       = normalize(GetEye() - input.Pos);
 
-    vec3         Lo      = vec3(0.0);
-    #if 0
+    vec3         Lo      = vec3(0,0,0);
 	for (int i = 0; i < 4; ++i)
 	{
 		vec3  L           = normalize(g_Lights[i].Pos - WorldPos);
@@ -105,7 +107,6 @@ float4 PS(VS_OUTPUT input)
 		float attenuation = 1.0 / (distance * distance);
 		vec3  radiance    = g_Lights[i].Color * attenuation;
 	}
-    #endif
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor   = float4(0.5, 0.5, 0.5, 1);
@@ -122,7 +123,7 @@ float4 PS(VS_OUTPUT input)
 
 	// Multiply the texture pixel and the final diffuse color to get the final pixel color result.
     //color = (color + AmbientStrength) * textureColor;
-	color          = color + fresnelSchlick(dot(N, lightDir), float3(0.01, 0.05, 0.01));
+	color          = color * fresnelSchlick(dot(N, lightDir), float3(0.1, 0.1, 0.1));
 	float tmp      = 1.0 / gamma;
 	color          = pow(color, vec3(tmp, tmp, tmp));
 

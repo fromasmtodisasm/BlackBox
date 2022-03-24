@@ -3,8 +3,8 @@
 //#include "NoDraw.cfx"
 //#include "Common.cfx"
 
-typedef float2 vec2;
-typedef float3 vec3;
+//typedef float2 vec2;
+//typedef float3 vec3;
 
 #define PERFRAME_SLOT b0
 #define LIGHTS_SLOT   b1
@@ -49,7 +49,7 @@ cbuffer PerFrameCB : register(PERFRAME_SLOT)
 #define NUM_LIGHTS 4
 cbuffer LightsCB : register(LIGHTS_SLOT)
 {
-	float g_Lights[NUM_LIGHTS];
+	Light g_Lights[NUM_LIGHTS];
 };
 
 cbuffer PerViewCB : register(PERVIEW_SLOT)

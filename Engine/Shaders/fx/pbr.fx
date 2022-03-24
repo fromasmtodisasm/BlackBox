@@ -26,7 +26,7 @@ float GeometrySchlickGGX(float NdotV, float k)
 }
 
 [[fn]]
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float k)
+float GeometrySmith(float3 N, float3 V, float3 L, float k)
 {
 	float NdotV = max(dot(N, V), 0.0);
 	float NdotL = max(dot(N, L), 0.0);
@@ -37,7 +37,7 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float k)
 }
 
 [[fn]]
-float3 fresnelSchlick(float cosTheta, vec3 F0)
+float3 fresnelSchlick(float cosTheta, float3 F0)
 {
 	return F0 + mul((1.0 - F0) , pow(1.0 - cosTheta, 5.0));
 }
