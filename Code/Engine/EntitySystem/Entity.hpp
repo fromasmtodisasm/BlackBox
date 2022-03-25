@@ -2,8 +2,27 @@
 
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
+class CEntity;
+class CEntitySystem;
+
+class CEntityMotionState : public btMotionState
+{
+public:
+	CEntityMotionState(CEntity& entity)
+	    : m_Entity(entity)
+	{
+	}
+
+	// Inherited via btMotionState
+	virtual void getWorldTransform(btTransform& worldTrans) const override;
+	virtual void setWorldTransform(const btTransform& worldTrans) override;
+
+	CEntity&     m_Entity;
+};
+
 class CEntity : public IEntity
 {
+	friend class CEntityMotionState;
 public:
 	CEntity();
 	~CEntity();
@@ -181,6 +200,8 @@ public:
 	virtual void                  SwitchLights(bool bLights) override;
 	virtual void                  SinkRebind(IEntitySystemSink* pSink) override;
 
+	virtual void                  Physicalize(bool bInstant = false) override;
+
 	EntityId                      m_Id;
 	EntityClassId                 m_ClassId;
 	//string_view	  m_Name;
@@ -195,6 +216,7 @@ public:
 	IEntityCharacter*             m_pCharacter;
 
 	btRigidBody*                  m_pRigidBody;
+	CEntityMotionState            m_MotionState;
 
 	bool                          m_bIsStatic;
 	Legacy::Vec3                  m_Angles{0};
@@ -211,4 +233,6 @@ public:
 	virtual void                  OnEndAnimation(const char* sAnimation) override;
 
 	bool                          m_IsGarbage = false;
+
+	CEntitySystem*                m_pEntitySystem;
 };

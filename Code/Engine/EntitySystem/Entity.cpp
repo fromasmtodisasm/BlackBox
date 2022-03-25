@@ -3,6 +3,8 @@
 #include "IStatObj.h"
 
 CEntity::CEntity()
+    : m_MotionState(*this)
+    , m_pEntitySystem((CEntitySystem*)gEnv->pEntitySystem)
 {
 }
 
@@ -820,6 +822,18 @@ void CEntity::SinkRebind(IEntitySystemSink* pSink)
 {
 }
 
+void CEntity::Physicalize(bool bInstant)
+{
+	auto                                     half = (m_BoxMax - m_BoxMin);
+	btVector3                                ext(half.x, half.y, half.z);
+	btBoxShape*                              collsion = new btBoxShape(ext);
+	btRigidBody::btRigidBodyConstructionInfo ci(10, &m_MotionState, collsion);
+	m_pRigidBody = new btRigidBody(ci);
+
+	m_pEntitySystem->AddToPhysicalWorld(this);
+
+}
+
 void CEntity::OnStartAnimation(const char* sAnimation)
 {
 }
@@ -830,4 +844,27 @@ void CEntity::OnAnimationEvent(const char* sAnimation, AnimSinkEventData data)
 
 void CEntity::OnEndAnimation(const char* sAnimation)
 {
+}
+
+void CEntityMotionState::getWorldTransform(btTransform& worldTrans) const
+{
+	btTransform transform;
+	auto        a = m_Entity.m_Angles;
+	transform.setRotation(btQuaternion(a.x, a.y, a.z));
+	auto p = m_Entity.m_Pos;
+	transform.setOrigin(btVector3(p.x, p.y, p.z));
+
+	worldTrans = transform;
+}
+
+void CEntityMotionState::setWorldTransform(const btTransform& worldTrans)
+{
+	btTransform transform = worldTrans;
+	auto&       a         = m_Entity.m_Angles;
+	transform.getRotation().getEulerZYX(a.x, a.y, a.z);
+	auto& p = m_Entity.m_Pos;
+	auto  o = transform.getOrigin();
+	p.x     = o.x();
+	p.y     = o.y();
+	p.z     = o.z();
 }

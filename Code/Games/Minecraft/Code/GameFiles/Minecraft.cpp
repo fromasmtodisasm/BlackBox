@@ -85,7 +85,7 @@ void MineWorld::init()
 		entity->Physicalize();
 
 		entity->SetIStatObj(types[Grass]);
-		entity->SetPos({0, 0, 0});
+		entity->SetPos({0, 30, 0});
 		entity->SetScale(glm::vec3(20.f, 1.f, 20.f));
 
 #endif
@@ -119,7 +119,7 @@ void MineWorld::init()
 			auto* Jack = gEnv->pEntitySystem->SpawnEntity(desc);
 
 			Jack->SetIStatObj(object);
-			Jack->SetPos({-0, 4, -5});
+			Jack->SetPos({-0, 40, -5});
 			Jack->SetScale(glm::vec3(0.01f));
 			Jack->SetAngles({-90, 0, 0});
 			gEnv->p3DEngine->RegisterEntity(Jack);
@@ -137,7 +137,7 @@ void MineWorld::init()
 			auto* Jack      = minecraft->Jack;
 
 			Jack->SetIStatObj(object);
-			Jack->SetPos({-5, 0, -5});
+			Jack->SetPos({-5, 50, -5});
 			Jack->SetScale(glm::vec3(0.02f));
 			Jack->SetAngles({45, 90, 0});
 			gEnv->p3DEngine->RegisterEntity(Jack);
@@ -154,7 +154,7 @@ void MineWorld::init()
 			auto Jack      = gEnv->pEntitySystem->SpawnEntity(desc);
 
 			Jack->SetIStatObj(object);
-			Jack->SetPos({-5, 0, -5});
+			Jack->SetPos({-5, 20, -5});
 			Jack->SetScale(glm::vec3(3.f));
 			Jack->SetAngles({45, 90, 0});
 			gEnv->p3DEngine->RegisterEntity(Jack);
@@ -474,7 +474,9 @@ bool MinePlayer::moveOutsideCollision(glm::vec3& newPos)
 void MinePlayer::applyMovement()
 {
 	auto& world  = minecraft->world;
-	auto  newPos = entity->GetPos() + movement;
+	//auto  newPos = entity->GetPos() + movement;
+	auto&  newPos = myPos + movement;
+	//entity->GetPos() + movement;
 
 	// если мы передвинулись, то запускаем проверку пересечений опять
 	while (moveOutsideCollision(newPos))
@@ -486,7 +488,9 @@ void MinePlayer::applyMovement()
 		newPos[i] = round(newPos[i] * 10000) / 10000;
 	}
 
-	entity->SetPos(newPos);
+	myPos = newPos;
+
+	//entity->SetPos(newPos);
 }
 
 bool MineWorld::isIntersect(glm::ivec3 pos, AABB otherAABB) const
@@ -513,6 +517,8 @@ void MinePlayer::init()
 	gEnv->p3DEngine->RegisterEntity(entity);
 
 	entity->SetPos(glm::vec3(5, 3, 5));
+	myPos = entity->GetPos();
+
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 
@@ -531,7 +537,8 @@ void MinePlayer::update()
 	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * ft);
 
 	applyMovement();
-	getCamera()->SetPos(entity->GetPos());
+	//getCamera()->SetPos(entity->GetPos());
+	getCamera()->SetPos(myPos);
 	movement = glm::vec3(0.0f);
 }
 

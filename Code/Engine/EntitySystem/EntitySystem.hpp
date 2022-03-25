@@ -84,6 +84,8 @@ public:
 	virtual void           MarkId(EntityId id) override;
 	virtual void           ClearId(EntityId id) override;
 
+	void                   AddToPhysicalWorld(CEntity* pEntity);
+
 public:
 	Entities                          m_Entities;
 	std::map<EntityClassId, CEntity*> m_EntitiesMap;

@@ -77,6 +77,10 @@ void CEntitySystem::Update()
 {
 	auto time = gEnv->pTimer->GetFrameTime();
 	m_pPhysicalWorld->stepSimulation(time);
+
+	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3(0, 1, 0), -1);
+
+	m_pPhysicalWorld->addRigidBody(new btRigidBody(0.f, new btDefaultMotionState, floor));
 }
 
 IScriptSystem* CEntitySystem::GetScriptSystem()
@@ -118,6 +122,8 @@ bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)
 
 	e->SetClassId(ed.ClassId);
 	e->SetName(ed.name);
+
+	e->Physicalize();
 	return true;
 }
 
@@ -255,6 +261,11 @@ void CEntitySystem::MarkId(EntityId id)
 void CEntitySystem::ClearId(EntityId id)
 {
 	LOG_FUNCTION();
+}
+
+void CEntitySystem::AddToPhysicalWorld(CEntity* pEntity)
+{
+	m_pPhysicalWorld->addRigidBody(pEntity->m_pRigidBody);
 }
 
 extern "C"

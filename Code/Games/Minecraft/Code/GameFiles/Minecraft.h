@@ -2,40 +2,40 @@
 
 class MineWorld
 {
-  public:
+public:
 	enum Type
 	{
 		Grass,
 	};
 
-	void init();
+	void                                     init();
 
-	void set(glm::ivec3 pos, Type type);
+	void                                     set(glm::ivec3 pos, Type type);
 
-	void destroy(glm::ivec3 pos);
+	void                                     destroy(glm::ivec3 pos);
 
-	void highliteCubeTmp(glm::ivec3 pos);
+	void                                     highliteCubeTmp(glm::ivec3 pos);
 
-	bool has(glm::ivec3 pos);
+	bool                                     has(glm::ivec3 pos);
 
-	bool isIntersect(glm::ivec3 pos, AABB aabb) const;
+	bool                                     isIntersect(glm::ivec3 pos, AABB aabb) const;
 
-	bool pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float& pickDistance) const;
+	bool                                     pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float& pickDistance) const;
 
-  //private:
-	bool tryDestroy(glm::ivec3 pos);
+	//private:
+	bool                                     tryDestroy(glm::ivec3 pos);
 
 	int                                      nextEntity() { return entityCnt++; }
 
 	int                                      entityCnt = 1;
 
 	std::unordered_map<glm::ivec3, IEntity*> blocks;
-	std::vector<IStatObj*>					 types;
+	std::vector<IStatObj*>                   types;
 };
 
 class MineDebug
 {
-  public:
+public:
 	void init();
 
 	void update();
@@ -44,64 +44,66 @@ class MineDebug
 
 	void drawTmpBox(glm::vec3 pos1, glm::vec3 pos2);
 
-  private:
-	IStatObj*			  model = nullptr;
+private:
+	IStatObj*             model = nullptr;
 	std::vector<IEntity*> tmpBoxes;
 };
 
 class MinePlayer
 {
-  public:
-	void init();
+public:
+	void         init();
 
-	void update();
+	void         update();
 
-	void destroyBlockOnCursor();
+	void         destroyBlockOnCursor();
 
-	void placeBlockOnCursor();
+	void         placeBlockOnCursor();
 
-	void move(glm::vec3 direction, float value);
+	void         move(glm::vec3 direction, float value);
 
-	bool selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float& pickDistance) const;
+	bool         selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float& pickDistance) const;
 
-	bool blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float& pickDistance) const;
+	bool         blockSideOnCursor(glm::ivec3& outBlockPos, glm::ivec3& outSidePos, float& pickDistance) const;
 
-	void applyMovement();
+	void         applyMovement();
 
-	bool moveOutsideCollisionByPoint(glm::vec3& newPos, glm::vec3 point);
+	bool         moveOutsideCollisionByPoint(glm::vec3& newPos, glm::vec3 point);
 
-	bool moveOutsideCollision(glm::vec3& newPos);
+	bool         moveOutsideCollision(glm::vec3& newPos);
 
-	IEntity*  entity = nullptr;
-	glm::vec3 movement{};
+	IEntity*     entity = nullptr;
+	glm::vec3    movement{};
 
-	ISound* m_pSetBlockSound;
-	ISound* m_pDestroyBlockSound;
+	ISound*      m_pSetBlockSound;
+	ISound*      m_pDestroyBlockSound;
 
-	float cameraDistance = -4.0;
-	float destroyTime	 = 0.0;
-	float placeTime		 = 0.0;
+	float        cameraDistance = -4.0;
+	float        destroyTime    = 0.0;
+	float        placeTime      = 0.0;
+
+	Legacy::Vec3 myPos;
 };
 
 class MineUI
 {
-  public:
+public:
 	void init();
 
 	void draw() const;
 
-  private:
+private:
 	unsigned crossHairTexture = 0;
 };
 
 struct Minecraft
 {
-	void init();
+	void       init();
 
-	void update();
+	void       update();
 
 	MineWorld  world;
-	MineUI	   ui;
+	MineUI     ui;
 	MinePlayer player;
 	MineDebug  debug;
 
