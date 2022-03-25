@@ -16,8 +16,9 @@ enum class EEntityClass : int
 
 };
 
+int  nextEntity() { return minecraft->world.nextEntity(); }
 
-AABB       entityWorldAABB(IEntity* entity)
+AABB entityWorldAABB(IEntity* entity)
 {
 	AABB aabb = {glm::vec3(0, 0, 0), glm::vec3(1, 1, 1)};
 	entity->GetBBox(aabb.min, aabb.max);
@@ -45,6 +46,7 @@ void MineWorld::init()
 		g_World.size_z = 20;
 		g_World.height = -1;
 
+#if 0
 		for (int y = g_World.height; y < 0; y++)
 		{
 			for (int z = -g_World.size_x / 2; z < g_World.size_x / 2; z++)
@@ -75,6 +77,18 @@ void MineWorld::init()
 		{
 			set(glm::ivec3(i, 3, 0), Grass);
 		}
+#else
+		CEntityDesc desc(nextEntity(), (int)EEntityClass::Character);
+		auto        entity = gEnv->pEntitySystem->SpawnEntity(desc);
+		gEnv->p3DEngine->RegisterEntity(entity);
+
+		entity->Physicalize();
+
+		entity->SetIStatObj(types[Grass]);
+		entity->SetPos({0, 0, 0});
+		entity->SetScale(glm::vec3(20.f, 1.f, 20.f));
+
+#endif
 	};
 
 	loadAssets();
@@ -82,9 +96,9 @@ void MineWorld::init()
 	{
 		char* objects[] = {
 		    "objects/characters/story_characters/krieger_mutant/krieger_mutant.cgf",
+		    "objects/characters/pmodels/hero/hero.cgf",
 		    "objects/editor/MtlSphere.cgf",
 		    "objects/editor/mtlteapot.cgf",
-		    "objects/characters/pmodels/hero/hero.cgf",
 		    "objects/characters/animals/parrot/parrot.cgf",
 		    "objects/editor/mtlbox.cgf",
 		    "objects/editor/MtlSphere.cgf",
@@ -94,6 +108,22 @@ void MineWorld::init()
 		    "objects/editor/arrow.cgf",
 		    "minecraft/Grass_Block.obj",
 		};
+		{
+			auto        object = gEnv->p3DEngine->MakeObject(objects[1]);
+
+			//auto Jack = gEnv->p3DEngine->MakeObject();
+			//auto        Jack = types[0];
+
+			CEntityDesc desc(nextEntity(), 0);
+			desc.name  = "Hero";
+			auto* Jack = gEnv->pEntitySystem->SpawnEntity(desc);
+
+			Jack->SetIStatObj(object);
+			Jack->SetPos({-0, 4, -5});
+			Jack->SetScale(glm::vec3(0.01f));
+			Jack->SetAngles({-90, 0, 0});
+			gEnv->p3DEngine->RegisterEntity(Jack);
+		}
 
 		{
 			auto        object = gEnv->p3DEngine->MakeObject(objects[0]);
@@ -101,7 +131,7 @@ void MineWorld::init()
 			//auto Jack = gEnv->p3DEngine->MakeObject();
 			//auto        Jack = types[0];
 
-			CEntityDesc desc(0, 0);
+			CEntityDesc desc(nextEntity(), 0);
 			desc.name       = "Hero";
 			minecraft->Jack = gEnv->pEntitySystem->SpawnEntity(desc);
 			auto* Jack      = minecraft->Jack;
@@ -113,19 +143,20 @@ void MineWorld::init()
 			gEnv->p3DEngine->RegisterEntity(Jack);
 		}
 		{
-			auto        object = gEnv->p3DEngine->MakeObject(objects[1]);
+			auto object = types[0];
+			//gEnv->p3DEngine->MakeObject(objects[0]);
 
 			//auto Jack = gEnv->p3DEngine->MakeObject();
 			//auto        Jack = types[0];
 
-			CEntityDesc desc(0, 0);
-			desc.name  = "Hero";
-			auto* Jack = gEnv->pEntitySystem->SpawnEntity(desc);
+			CEntityDesc desc(nextEntity(), 0);
+			desc.name       = "Hero";
+			auto Jack      = gEnv->pEntitySystem->SpawnEntity(desc);
 
 			Jack->SetIStatObj(object);
-			Jack->SetPos({-0, 4, -5});
-			Jack->SetScale(glm::vec3(0.01f));
-			Jack->SetAngles({-90, 0, 0});
+			Jack->SetPos({-5, 0, -5});
+			Jack->SetScale(glm::vec3(3.f));
+			Jack->SetAngles({45, 90, 0});
 			gEnv->p3DEngine->RegisterEntity(Jack);
 		}
 	}
@@ -171,8 +202,8 @@ void Minecraft::update()
 	static float jack_rotation = 0;
 	Jack->SetAngles({-90, 0, jack_rotation});
 	//Jack->SetAngles({45, 90, 0});
-	debug.update();
-	ui.draw();
+	//debug.update();
+	//ui.draw();
 	player.update();
 
 	jack_rotation += 16 * time;
@@ -477,7 +508,7 @@ void MinePlayer::init()
 
 	auto        steve = gEnv->p3DEngine->MakeObject("minecraft/minecraft_steve.obj");
 
-	CEntityDesc desc(minecraft->world.blocks.size() + 1, 0);
+	CEntityDesc desc(nextEntity(), 0);
 	entity = gEnv->pEntitySystem->SpawnEntity(desc);
 	gEnv->p3DEngine->RegisterEntity(entity);
 
@@ -493,7 +524,7 @@ void MinePlayer::update()
 {
 	auto const aabb = entityWorldAABB(entity);
 
-	gEnv->pAuxGeomRenderer->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
+	//gEnv->pAuxGeomRenderer->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
 
 	auto const gravity = 0.f;
 	auto       ft      = gEnv->pTimer->GetRealFrameTime();

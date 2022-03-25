@@ -6,6 +6,7 @@
   "supports": "windows",
   "dependencies": [
     "assimp",
+    "bullet3",
     "crc32c",
     "freeimage",
     "freetype",

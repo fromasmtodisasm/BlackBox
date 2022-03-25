@@ -1,4 +1,5 @@
 #pragma once
+
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
 class CEntity : public IEntity
@@ -192,6 +193,8 @@ public:
 	CEntityObject                 m_EntityObject;
 	IScriptObject*                m_pScriptOject;
 	IEntityCharacter*             m_pCharacter;
+
+	btRigidBody*                  m_pRigidBody;
 
 	bool                          m_bIsStatic;
 	Legacy::Vec3                  m_Angles{0};

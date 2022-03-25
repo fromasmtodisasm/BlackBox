@@ -1,3 +1,7 @@
+#pragma warning(disable: 4266)     // no override available for virtual member function from base 'type'; function is hidden
+
+
+#include <btBulletDynamicsCommon.h>
 
 class CPhysicalWorld : public IPhysicalWorld
 {
@@ -167,4 +171,6 @@ public:
 	virtual int              SerializeGeometries(const char* fname, int bSave) override;
 
 	PhysicsVars              m_PhysVars;
+
+	btDiscreteDynamicsWorld* m_World;
 };

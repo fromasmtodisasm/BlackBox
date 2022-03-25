@@ -27,6 +27,33 @@ namespace
 #else
 	class CMaterialCGF : public _reference_target_t
 	{
+		string      name;
+		MtlTypes    MtlType; //one of the MtlTypes enum values
+
+		CryIRGB     col_d;     //diffuse color
+		CryIRGB     col_s;     //specular color
+		CryIRGB     col_a;     //ambient color
+		float       specLevel; // Specular level.
+		float       specShininess;
+		float       selfIllum; // self illumination.
+		float       opacity;   // Opacity 0-1.
+
+		TextureMap3 tex_a;       //Ambient Texture settings
+		TextureMap3 tex_d;       //Diffuse Texture settings
+		TextureMap3 tex_s;       //Specular Texture settings
+		TextureMap3 tex_o;       //Opacity Texture settings
+		TextureMap3 tex_b;       //Bump Texture settings
+		TextureMap3 tex_g;       //Gloss Texture settings
+		TextureMap3 tex_fl;      //Filter texture (Detail Texture settings)
+		TextureMap3 tex_rl;      //Reflection Texture settings
+		TextureMap3 tex_subsurf; //Subsurface scattering Texture settings
+		TextureMap3 tex_det;     //Detail Texture settings
+
+		int         flags;
+
+		float       Dyn_Bounce;
+		float       Dyn_StaticFriction;
+		float       Dyn_SlidingFriction;
 	};
 #endif
 
@@ -304,28 +331,28 @@ public:
 	void printSet(const char* szFormat, const std::set<T>& setMtls, const char* szPostfix = "");
 
 public:
-	void LoadChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, int nSize);
-	void LoadChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, int nSize);
-	void LoadChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize);
-	void LoadChunkMtl(const MTL_CHUNK_DESC_0746* pChunk, int nSize);
-	void LoadChunkMtl(const MTL_CHUNK_DESC_0745* pChunk, int nSize);
-	void LoadChunkMtl(const MTL_CHUNK_DESC_0744* pChunk, int nSize);
-	void LoadChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize);
-	void LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize);
-	void LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0744* pChunk, int nSize);
-	void LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0745* pChunk, int nSize);
-	void LoadChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize);
-	void LoadChunkHelper(const HELPER_CHUNK_DESC* pData, int nSize);
-	void LoadChunkLight(const LIGHT_CHUNK_DESC* pData, int nSize);
-	void LoadChunkBoneLightBinding(const BONELIGHTBINDING_CHUNK_DESC_0001* pChunk, int nSize);
-	void LoadChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001* pChunk, int nSize);
-	void LoadChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk, int nSize);
-	void LoadChunkSourceInfo(const char* pData, unsigned nSize);
-	void LoadChunkSceneProps(const char* pData, unsigned nSize);
-	void LoadChunk(int i);
-	void LoadCollectedTextures(const char* szFormat);
+	void          LoadChunkController(const CONTROLLER_CHUNK_DESC_0826* pChunk, int nSize);
+	void          LoadChunkController(const CONTROLLER_CHUNK_DESC_0827* pChunk, int nSize);
+	void          LoadChunkTiming(const TIMING_CHUNK_DESC* pChunk, int nSize);
+	void          LoadChunkMtl(const MTL_CHUNK_DESC_0746* pChunk, int nSize);
+	void          LoadChunkMtl(const MTL_CHUNK_DESC_0745* pChunk, int nSize);
+	void          LoadChunkMtl(const MTL_CHUNK_DESC_0744* pChunk, int nSize);
+	void          LoadChunkMesh(const MESH_CHUNK_DESC* pChunk, int nSize);
+	void          LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize);
+	void          LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0744* pChunk, int nSize);
+	void          LoadChunkBoneNameList(const BONENAMELIST_CHUNK_DESC_0745* pChunk, int nSize);
+	void          LoadChunkBoneAnim(const BONEANIM_CHUNK_DESC* pChunk, int nSize);
+	void          LoadChunkHelper(const HELPER_CHUNK_DESC* pData, int nSize);
+	void          LoadChunkLight(const LIGHT_CHUNK_DESC* pData, int nSize);
+	void          LoadChunkBoneLightBinding(const BONELIGHTBINDING_CHUNK_DESC_0001* pChunk, int nSize);
+	void          LoadChunkMeshMorphTarget(const MESHMORPHTARGET_CHUNK_DESC_0001* pChunk, int nSize);
+	void          LoadChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk, int nSize);
+	void          LoadChunkSourceInfo(const char* pData, unsigned nSize);
+	void          LoadChunkSceneProps(const char* pData, unsigned nSize);
+	void          LoadChunk(int i);
+	void          LoadCollectedTextures(const char* szFormat);
 
-	bool LoadChunks();
+	bool          LoadChunks();
 
 	CMaterialCGF* LoadMaterialFromChunk(int nchunkId);
 

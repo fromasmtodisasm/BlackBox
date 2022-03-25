@@ -1419,8 +1419,6 @@ void CLoaderCGF::LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 	if (pChunk->MatID > 0)
 	{
 		auto mat = LoadMaterialFromChunk(pChunk->MatID);
-		//m_pScene->mMaterials
-		//if ()
 	}
 
 	auto header = m_pChunkFile->getChunkHeader(pChunk->ObjectID);
@@ -1466,15 +1464,48 @@ void CLoaderCGF::LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 			{
 				assimpMesh->mNumUVComponents[0] = 2;
 				assimpMesh->mTextureCoords[0]   = new aiVector3D[assimpMesh->mNumVertices];
+				auto* uvs                       = (CryUV*)(faces + meshChunk->nFaces);
+				auto* tfaces                    = (CryTexFace*)(uvs + meshChunk->nTVerts);
 
-				auto tfaces                     = (CryUV*)(faces + meshChunk->nFaces);
-				for (size_t i = 0; i < assimpMesh->mNumVertices; i++)
+				auto* UVs                       = &assimpMesh->mTextureCoords[0];
+				//if (meshChunk->nTVerts != meshChunk->nVerts)
+				//{
+				//	for (size_t i = 0; i < meshChunk->nFaces; i++)
+				//	{
+				//		aiVector3D* UVs  = assimpMesh->mTextureCoords[0];
+				//		CryTexFace* tface  = &tfaces[i];
+				//		CryUV*      face[] = {
+                //            &uvs[tface->t0],
+                //            &uvs[tface->t1],
+                //            &uvs[tface->t2]};
+				//		aiVector3D* dstUv[] = {
+				//		    &UVs[tface->t0],
+				//		    &UVs[tface->t1],
+				//		    &UVs[tface->t2]};
+				//		dstUv[0]->x = face[0]->u;
+				//		dstUv[0]->y = face[0]->v;
+				//		dstUv[0]->z = 0.f;
+
+				//		dstUv[1]->x = face[1]->u;
+				//		dstUv[1]->y = face[1]->v;
+				//		dstUv[1]->z = 0.f;
+
+				//		dstUv[2]->x = face[2]->u;
+				//		dstUv[2]->y = face[2]->v;
+				//		dstUv[2]->z = 0.f;
+				//	}
+				//}
+				//else
 				{
-					auto& face = assimpMesh->mTextureCoords[0];
+					for (size_t i = 0; i < meshChunk->nTVerts; i++)
+					{
+						auto* uv = &UVs[0][i];
 
-					face->x    = tfaces[i].u;
-					face->y    = tfaces[i].v;
-					face->z    = 0.f;
+						uv->x    = uvs[i].u;
+						uv->y    = uvs[i].v;
+						uv->z    = 0.f;
+						break;
+					}
 				}
 			}
 
@@ -2131,6 +2162,47 @@ bool CLoaderCGF::LoadChunks()
 
 CMaterialCGF* CLoaderCGF::LoadMaterialFromChunk(int nchunkId)
 {
+	auto& header = m_pChunkFile->getChunkHeader(nchunkId);
+	assert(header.ChunkVersion == MTL_CHUNK_DESC_0746::VERSION && "Bad version of material!");
+	auto*            pChunk = (MTL_CHUNK_DESC_0746*)m_pChunkFile->getChunkData(nchunkId);
+	std::vector<int> mtlIds;
+	if (pChunk->MtlType == MTL_MULTI)
+	{
+		mtlIds.resize(pChunk->multi.nChildren);
+		memcpy(mtlIds.data(), (pChunk + 1), pChunk->multi.nChildren * sizeof(int));
+	}
+	for (size_t i = 0, length = pChunk->multi.nChildren; i < length; i++)
+	{
+		pChunk = (MTL_CHUNK_DESC_0746*)m_pChunkFile->getChunkData(mtlIds[i]);
+		switch (pChunk->MtlType)
+		{
+		case MTL_STANDARD:
+			PRINT_LOG("Colors: diffuse ");
+			print(pChunk->std.col_d);
+			PRINT_LOG(", specular ");
+			print(pChunk->std.col_s);
+			PRINT_LOG(", ambient ");
+			print(pChunk->std.col_a);
+			PRINT_LOG("\nSpecLevel %.2f, SpecShininess %.2f, SelfIllumination %.2f, Opacity %.2f\n", pChunk->std.specLevel, pChunk->std.specShininess, pChunk->std.selfIllum, pChunk->std.opacity);
+			print("Ambient", pChunk->std.tex_a);
+			print("Diffuse", pChunk->std.tex_d);
+			print("Specular", pChunk->std.tex_s);
+			print("Opacity", pChunk->std.tex_o);
+			print("Bump", pChunk->std.tex_b);
+			print("Gloss", pChunk->std.tex_g);
+			print("Reflection", pChunk->std.tex_rl);
+			print("Subsurface", pChunk->std.tex_subsurf);
+			print("Detail", pChunk->std.tex_det);
+			PRINT_LOG("Flags %08X %s ", pChunk->std.flags, getMtlFlags(pChunk->std.flags).c_str());
+			PRINT_LOG("Dyn: Bounce %.3f, StaticFriction %.3f, SlidingFriction %.3f\n", pChunk->std.Dyn_Bounce, pChunk->std.Dyn_StaticFriction, pChunk->std.Dyn_SlidingFriction);
+			break;
+
+		case MTL_MULTI:
+			PRINT_LOG("%d children\n", pChunk->multi.nChildren);
+			break;
+		}
+	}
+
 	return nullptr;
 }
 

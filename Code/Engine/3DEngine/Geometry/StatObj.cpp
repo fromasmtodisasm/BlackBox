@@ -551,6 +551,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 
 			auto  UVs           = mesh->mTextureCoords[0];
 			m_nVertCount        = mesh->mNumVertices;
+			m_nFaceCount        = mesh->mNumFaces;
 			for (size_t i = 0; i < m_nVertCount; i++)
 			{
 				memcpy(&vb[i * stride], &mesh->mVertices[i], sizeof(Legacy::Vec3));

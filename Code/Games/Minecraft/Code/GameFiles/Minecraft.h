@@ -25,6 +25,10 @@ class MineWorld
   //private:
 	bool tryDestroy(glm::ivec3 pos);
 
+	int                                      nextEntity() { return entityCnt++; }
+
+	int                                      entityCnt = 1;
+
 	std::unordered_map<glm::ivec3, IEntity*> blocks;
 	std::vector<IStatObj*>					 types;
 };

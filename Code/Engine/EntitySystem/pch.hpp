@@ -12,16 +12,9 @@
 
 #include <vector>
 #include <string_view>
-
-
-
-
-
-
-
-
-
-
-
-
 using std::string_view;
+
+#pragma warning(disable: 4266)     // no override available for virtual member function from base 'type'; function is hidden
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
+

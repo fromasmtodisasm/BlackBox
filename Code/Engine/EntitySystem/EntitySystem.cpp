@@ -1,6 +1,7 @@
 #include "EntitySystem.hpp"
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>
+#include <BlackBox/System/ITimer.hpp>
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
@@ -16,6 +17,7 @@ inline CEntitySystem::CEntitySystem(ISystem* pSystem)
 	m_Entities.resize(MAX_ENTITYES);
 #endif
 
+	{
 #define SET_SCRIPTEVENT(event) gEnv->pScriptSystem->SetGlobalValue("ScriptEvent_" #event, ScriptEvent_##event)
 	SET_SCRIPTEVENT(Activate);
 	SET_SCRIPTEVENT(Deactivate);
@@ -64,11 +66,17 @@ inline CEntitySystem::CEntitySystem(ISystem* pSystem)
 	SET_SCRIPTEVENT(ProcessCharacterEffects);
 	SET_SCRIPTEVENT(Jump);
 #undef SET_SCRIPTEVENT
+	}
+
+	m_PhysicsInitParams.Create();
+	auto [a, b, c, d] = m_PhysicsInitParams;
+	m_pPhysicalWorld = new btDiscreteDynamicsWorld(a,b,c,d);
 }
 
 void CEntitySystem::Update()
 {
-	//LOG_FUNCTION();
+	auto time = gEnv->pTimer->GetFrameTime();
+	m_pPhysicalWorld->stepSimulation(time);
 }
 
 IScriptSystem* CEntitySystem::GetScriptSystem()

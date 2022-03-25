@@ -4,6 +4,8 @@
 
 #include "Entity.hpp"
 
+#include "Physics.hpp"
+
 struct ICrySizer;
 typedef std::vector<CEntity>::iterator EntityIt;
 #if 0
@@ -12,11 +14,11 @@ typedef std::vector<CEntity> Entities;
 typedef std::vector<CEntity> Entities;
 #endif
 
-
 class CEntityIterator : public IEntityIt, _reference_target_t
 {
-  public:
-	CEntityIterator(Entities& ents) : m_Entities(ents)
+public:
+	CEntityIterator(Entities& ents)
+	    : m_Entities(ents)
 	{
 	}
 	// Inherited via IEntityIt
@@ -43,7 +45,7 @@ class CEntityIterator : public IEntityIt, _reference_target_t
 		m_It = m_Entities.begin();
 	}
 
-	EntityIt m_It;
+	EntityIt  m_It;
 	Entities& m_Entities;
 };
 
@@ -52,41 +54,45 @@ class CEntitySystem : public IEntitySystem
 public:
 	CEntitySystem(ISystem* pSystem);
 
-	virtual void Update() override;
+	virtual void           Update() override;
 	virtual IScriptSystem* GetScriptSystem() override;
-	virtual void Reset() override;
-	virtual IEntity* SpawnEntity(CEntityDesc& ed, bool bAutoInit = true) override;
-	virtual bool InitEntity(IEntity* pEntity, CEntityDesc& ed) override;
-	virtual IEntity* GetEntity(EntityId id) override;
-	virtual IEntity* GetEntity(const char* sEntityName) override;
-	virtual EntityId FindEntity(const char* name) const override;
-	virtual void RemoveEntity(EntityId entity, bool bRemoveNow = false) override;
-	virtual int GetNumEntities() const override;
-	virtual IEntityIt* GetEntityIterator() override;
-	virtual IEntityIt* GetEntityInFrustrumIterator(bool bFromPrevFrame = false) override;
-	virtual void GetEntitiesInRadius(const Legacy::Vec3& origin, float radius, std::vector<IEntity*>& entities, int physFlags = PHYS_ENTITY_ALL) const override;
-	virtual void SetSink(IEntitySystemSink* sink) override;
-	virtual void PauseTimers(bool bPause, bool bResume = false) override;
-	virtual void RemoveSink(IEntitySystemSink* sink) override;
+	virtual void           Reset() override;
+	virtual IEntity*       SpawnEntity(CEntityDesc& ed, bool bAutoInit = true) override;
+	virtual bool           InitEntity(IEntity* pEntity, CEntityDesc& ed) override;
+	virtual IEntity*       GetEntity(EntityId id) override;
+	virtual IEntity*       GetEntity(const char* sEntityName) override;
+	virtual EntityId       FindEntity(const char* name) const override;
+	virtual void           RemoveEntity(EntityId entity, bool bRemoveNow = false) override;
+	virtual int            GetNumEntities() const override;
+	virtual IEntityIt*     GetEntityIterator() override;
+	virtual IEntityIt*     GetEntityInFrustrumIterator(bool bFromPrevFrame = false) override;
+	virtual void           GetEntitiesInRadius(const Legacy::Vec3& origin, float radius, std::vector<IEntity*>& entities, int physFlags = PHYS_ENTITY_ALL) const override;
+	virtual void           SetSink(IEntitySystemSink* sink) override;
+	virtual void           PauseTimers(bool bPause, bool bResume = false) override;
+	virtual void           RemoveSink(IEntitySystemSink* sink) override;
 	virtual IEntityCamera* CreateEntityCamera() override;
-	virtual void EnableClient(bool bEnable) override;
-	virtual void EnableServer(bool bEnable) override;
-	virtual void Release() override;
-	virtual bool IsIDUsed(EntityId nID) override;
-	virtual void ResetEntities() override;
-	virtual void GetMemoryUsage(ICrySizer* pSizer) const override;
-	virtual void SetDynamicEntityIdMode(const bool bActivate) override;
-	virtual void SetDefaultEntityUpdateLevel(EEntityUpdateVisLevel eDefault) override;
-	virtual void SetPrecacheResourcesMode(bool bPrecaching) override;
-	virtual bool IsDynamicEntityId(EntityId id) override;
-	virtual void MarkId(EntityId id) override;
-	virtual void ClearId(EntityId id) override;
+	virtual void           EnableClient(bool bEnable) override;
+	virtual void           EnableServer(bool bEnable) override;
+	virtual void           Release() override;
+	virtual bool           IsIDUsed(EntityId nID) override;
+	virtual void           ResetEntities() override;
+	virtual void           GetMemoryUsage(ICrySizer* pSizer) const override;
+	virtual void           SetDynamicEntityIdMode(const bool bActivate) override;
+	virtual void           SetDefaultEntityUpdateLevel(EEntityUpdateVisLevel eDefault) override;
+	virtual void           SetPrecacheResourcesMode(bool bPrecaching) override;
+	virtual bool           IsDynamicEntityId(EntityId id) override;
+	virtual void           MarkId(EntityId id) override;
+	virtual void           ClearId(EntityId id) override;
 
-	Entities m_Entities;
+public:
+	Entities                          m_Entities;
 	std::map<EntityClassId, CEntity*> m_EntitiesMap;
 
-	CEntityIterator m_EntityIt;
+	CEntityIterator                   m_EntityIt;
 
-	int m_nSpawnedEntities = 0;
+	int                               m_nSpawnedEntities = 0;
 
+	btDiscreteDynamicsWorld*          m_pPhysicalWorld;
+
+	SPhysicsInitParams                m_PhysicsInitParams;
 };

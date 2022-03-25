@@ -74,6 +74,7 @@ int CPhysicalWorld::GetSurfaceParameters(int surface_idx, float& bounciness, flo
 
 void CPhysicalWorld::TimeStep(float time_interval, int flags)
 {
+
 }
 float CPhysicalWorld::GetPhysicsTime()
 {

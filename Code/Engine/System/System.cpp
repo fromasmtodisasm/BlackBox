@@ -1026,10 +1026,8 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		m_env.pConsole->Update();
 	if (m_pNetwork)
 		m_pNetwork->UpdateNetwork();
-	if (m_pWindow && m_pWindow->closed())
-	{
-		m_pGame->SendMessage("Quit");
-	}
+
+	m_env.pEntitySystem->Update();
 	if (!nPauseMode)
 	{
 		m_env.p3DEngine->Update();
