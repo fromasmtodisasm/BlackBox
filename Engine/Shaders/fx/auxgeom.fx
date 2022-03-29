@@ -1,4 +1,4 @@
-#include "hlsl_common.fx"
+#include "common.fx"
 
 struct VsOutput
 {

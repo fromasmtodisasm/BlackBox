@@ -1,4 +1,4 @@
-#include "hlsl_common.fx"
+#include "common.fx"
 
 #define TM_UNREAL
 // Unreal 3, Documentation: "Color Grading"

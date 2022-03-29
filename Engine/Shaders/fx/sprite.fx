@@ -1,4 +1,4 @@
-#include "hlsl_common.fx"
+#include "common.fx"
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
 // Shader global descriptions

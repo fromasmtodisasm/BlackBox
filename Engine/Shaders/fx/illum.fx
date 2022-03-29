@@ -1,6 +1,6 @@
-#include "hlsl_common.fx"
+#include "common.fx"
 
-#include "pbr.fx"
+#include "shadeLib.fx"
 
 //static float gamma = 2.2;
 #define gamma 2.2f

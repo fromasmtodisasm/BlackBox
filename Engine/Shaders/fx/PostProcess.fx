@@ -1,4 +1,4 @@
-#include "hlsl_common.fx"
+#include "common.fx"
 
 Texture2D RenderedScene : register(t0);
 SamplerState SceneSampler : register(s0);
