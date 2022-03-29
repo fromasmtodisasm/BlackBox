@@ -356,7 +356,7 @@ void CXGame::InitConsoleVars()
 	                                               "Usage: g_MP_fixed_timestep 0.01\n"
 	                                               "Default is 0.");
 
-	g_maxfps            = pConsole->CreateVariable("g_maxfps", "500", 0,
+	g_maxfps            = pConsole->CreateVariable("g_maxfps", "500", VF_DUMPTODISK,
 	                                               "Sets the maximum frame rate.\n"
                                                               "Usage: g_maxfps 500"
                                                               "Default value is 500.");
