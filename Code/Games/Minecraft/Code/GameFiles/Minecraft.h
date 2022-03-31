@@ -27,10 +27,14 @@ public:
 
 	int                                      nextEntity() { return entityCnt++; }
 
+	IEntity*                                 SpawnBox(Legacy::Vec3 pos);
+
 	int                                      entityCnt = 1;
 
 	std::unordered_map<glm::ivec3, IEntity*> blocks;
 	std::vector<IStatObj*>                   types;
+
+	IStatObj*                                m_pMtlBox;
 };
 
 class MineDebug

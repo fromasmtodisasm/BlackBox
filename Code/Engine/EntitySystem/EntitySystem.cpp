@@ -5,6 +5,8 @@
 
 #include <BlackBox/Core/Platform/platform_impl.inl>
 
+#include "PhysicalEntity.hpp"
+
 #define LOG_FUNCTION() CryLog("[EntitySystemLogging]: %s", __FUNCTION__)
 
 const int MAX_ENTITYES = 64 * 1024;
@@ -19,68 +21,69 @@ inline CEntitySystem::CEntitySystem(ISystem* pSystem)
 
 	{
 #define SET_SCRIPTEVENT(event) Env::ScriptSystem()->SetGlobalValue("ScriptEvent_" #event, ScriptEvent_##event)
-	SET_SCRIPTEVENT(Activate);
-	SET_SCRIPTEVENT(Deactivate);
-	SET_SCRIPTEVENT(FireModeChange);
-	SET_SCRIPTEVENT(DropItem);
-	SET_SCRIPTEVENT(Reset);
-	SET_SCRIPTEVENT(Contact);
-	SET_SCRIPTEVENT(Enter);
-	SET_SCRIPTEVENT(Leave);
-	SET_SCRIPTEVENT(Timer);
-	SET_SCRIPTEVENT(StartAnimation);
-	SET_SCRIPTEVENT(AnimationKey);
-	SET_SCRIPTEVENT(EndAnimation);
-	SET_SCRIPTEVENT(Respawn);
-	SET_SCRIPTEVENT(ItemActivated);
-	SET_SCRIPTEVENT(Hit);
-	SET_SCRIPTEVENT(Fire);
-	SET_SCRIPTEVENT(WeaponReady);
-	SET_SCRIPTEVENT(StopFiring);
-	SET_SCRIPTEVENT(Reload);
-	SET_SCRIPTEVENT(Command);
-	SET_SCRIPTEVENT(FireGrenade);
-	SET_SCRIPTEVENT(Die);
-	SET_SCRIPTEVENT(ZoomToggle);
-	SET_SCRIPTEVENT(ZoomIn);
-	SET_SCRIPTEVENT(ZoomOut);
-	SET_SCRIPTEVENT(Land);
-	SET_SCRIPTEVENT(FireCancel);
-	SET_SCRIPTEVENT(GameDefinedEvent);
-	SET_SCRIPTEVENT(ViewModeChange);
-	SET_SCRIPTEVENT(SelectWeapon);
-	SET_SCRIPTEVENT(Deafened);
-	SET_SCRIPTEVENT(StanceChange);
-	SET_SCRIPTEVENT(CycleGrenade);
-	SET_SCRIPTEVENT(Use);
-	SET_SCRIPTEVENT(MeleeAttack);
-	SET_SCRIPTEVENT(PhysicalizeOnDemand);
-	SET_SCRIPTEVENT(PhysCollision);
-	SET_SCRIPTEVENT(FlashLightSwitch);
-	SET_SCRIPTEVENT(EnterWater);
-	SET_SCRIPTEVENT(CycleVehiclePos);
-	SET_SCRIPTEVENT(AllClear);
-	SET_SCRIPTEVENT(Expression);
-	SET_SCRIPTEVENT(InVehicleAnimation);
-	SET_SCRIPTEVENT(InVehicleAmmo);
-	SET_SCRIPTEVENT(ProcessCharacterEffects);
-	SET_SCRIPTEVENT(Jump);
+		SET_SCRIPTEVENT(Activate);
+		SET_SCRIPTEVENT(Deactivate);
+		SET_SCRIPTEVENT(FireModeChange);
+		SET_SCRIPTEVENT(DropItem);
+		SET_SCRIPTEVENT(Reset);
+		SET_SCRIPTEVENT(Contact);
+		SET_SCRIPTEVENT(Enter);
+		SET_SCRIPTEVENT(Leave);
+		SET_SCRIPTEVENT(Timer);
+		SET_SCRIPTEVENT(StartAnimation);
+		SET_SCRIPTEVENT(AnimationKey);
+		SET_SCRIPTEVENT(EndAnimation);
+		SET_SCRIPTEVENT(Respawn);
+		SET_SCRIPTEVENT(ItemActivated);
+		SET_SCRIPTEVENT(Hit);
+		SET_SCRIPTEVENT(Fire);
+		SET_SCRIPTEVENT(WeaponReady);
+		SET_SCRIPTEVENT(StopFiring);
+		SET_SCRIPTEVENT(Reload);
+		SET_SCRIPTEVENT(Command);
+		SET_SCRIPTEVENT(FireGrenade);
+		SET_SCRIPTEVENT(Die);
+		SET_SCRIPTEVENT(ZoomToggle);
+		SET_SCRIPTEVENT(ZoomIn);
+		SET_SCRIPTEVENT(ZoomOut);
+		SET_SCRIPTEVENT(Land);
+		SET_SCRIPTEVENT(FireCancel);
+		SET_SCRIPTEVENT(GameDefinedEvent);
+		SET_SCRIPTEVENT(ViewModeChange);
+		SET_SCRIPTEVENT(SelectWeapon);
+		SET_SCRIPTEVENT(Deafened);
+		SET_SCRIPTEVENT(StanceChange);
+		SET_SCRIPTEVENT(CycleGrenade);
+		SET_SCRIPTEVENT(Use);
+		SET_SCRIPTEVENT(MeleeAttack);
+		SET_SCRIPTEVENT(PhysicalizeOnDemand);
+		SET_SCRIPTEVENT(PhysCollision);
+		SET_SCRIPTEVENT(FlashLightSwitch);
+		SET_SCRIPTEVENT(EnterWater);
+		SET_SCRIPTEVENT(CycleVehiclePos);
+		SET_SCRIPTEVENT(AllClear);
+		SET_SCRIPTEVENT(Expression);
+		SET_SCRIPTEVENT(InVehicleAnimation);
+		SET_SCRIPTEVENT(InVehicleAmmo);
+		SET_SCRIPTEVENT(ProcessCharacterEffects);
+		SET_SCRIPTEVENT(Jump);
 #undef SET_SCRIPTEVENT
 	}
 
 	m_PhysicsInitParams.Create();
 	auto [a, b, c, d] = m_PhysicsInitParams;
-	m_pPhysicalWorld = new btDiscreteDynamicsWorld(a,b,c,d);
+	m_pPhysicalWorld  = new btDiscreteDynamicsWorld(a, b, c, d);
+	m_pPhysicalWorld->setGravity(btVector3(0, -1, 0));
+
+	btStaticPlaneShape* floorShape = new btStaticPlaneShape(btVector3(0, 1, 0), -1);
+	auto                rigidFloor = new btRigidBody(0.f, new btDefaultMotionState, floorShape);
+	m_pPhysicalWorld->addRigidBody(rigidFloor);
 }
 
 void CEntitySystem::Update()
 {
 	auto time = Env::Timer()->GetFrameTime();
 	m_pPhysicalWorld->stepSimulation(time);
-
-	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3(0, 1, 0), -1);
-
-	m_pPhysicalWorld->addRigidBody(new btRigidBody(0.f, new btDefaultMotionState, floor));
 }
 
 IScriptSystem* CEntitySystem::GetScriptSystem()
@@ -104,6 +107,9 @@ IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool t)
 		{
 			InitEntity(e, ed);
 		}
+
+		if (m_pEntitySystemSink)
+			m_pEntitySystemSink->OnSpawnContainer(ed, e);
 		m_nSpawnedEntities++;
 		return e;
 	}
@@ -116,9 +122,7 @@ bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)
 	CEntity* e = (CEntity*)pEntity;
 	e->~CEntity();
 
-	new (e) CEntity();
-
-	e->m_Id = ed.id;
+	new (e) CEntity(ed);
 
 	e->SetClassId(ed.ClassId);
 	e->SetName(ed.name);
@@ -129,8 +133,7 @@ bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)
 
 IEntity* CEntitySystem::GetEntity(EntityId id)
 {
-	//LOG_FUNCTION();
-	return nullptr;
+	return &m_Entities[id];
 }
 
 IEntity* CEntitySystem::GetEntity(const char* sEntityName)
@@ -178,7 +181,7 @@ void CEntitySystem::GetEntitiesInRadius(const Legacy::Vec3& origin, float radius
 
 void CEntitySystem::SetSink(IEntitySystemSink* sink)
 {
-	LOG_FUNCTION();
+	m_pEntitySystemSink = sink;
 }
 
 void CEntitySystem::PauseTimers(bool bPause, bool e)
@@ -263,7 +266,7 @@ void CEntitySystem::ClearId(EntityId id)
 	LOG_FUNCTION();
 }
 
-void CEntitySystem::AddToPhysicalWorld(CEntity* pEntity)
+void CEntitySystem::AddToPhysicalWorld(CPhysicalEntity* pEntity)
 {
 	m_pPhysicalWorld->addRigidBody(pEntity->m_pRigidBody);
 }

@@ -677,7 +677,7 @@ namespace Env
 	inline auto System() { return gEnv->pSystem; }
 	//////////////////////////////////////////////////
 	inline auto AuxGeomRenderer() { return gEnv->pAuxGeomRenderer; }
-	inline auto I3DEngine() { return gEnv->p3DEngine; }
+	inline I3DEngine* I3DEngine() { return gEnv->p3DEngine; }
 	inline auto AISystem() { return nullptr; }
 	inline auto CmdLine() { return nullptr; }
 	inline auto Console() { return gEnv->pConsole; }

@@ -18,11 +18,11 @@
 #include "XSystemBase.h"
 #include "GameFiles/PlayerSystem.h"
 #include "WeaponSystemEx.h"
+#include "ScriptObjects/ScriptObjectPlayer.hpp"
 #if 0
-	#include "XVehicleSystem.h"
-	#include "ScriptObjects/ScriptObjectPlayer.h"
 	#include "ScriptObjects/ScriptObjectSpectator.h"    // ScriptObjectSpectator
 	#include "ScriptObjects/ScriptObjectAdvCamSystem.h" // ScriptObjectAdvCamSystem
+	#include "XVehicleSystem.h"
 	#include "ScriptObjects/ScriptObjectVehicle.h"
 #endif
 #include "UISystem.h"
@@ -1913,7 +1913,9 @@ void CXSystemBase::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
 		pSpectator->SetScriptObject(pSSpectator->GetScriptObject());
 		pEntity->SetContainer(pSpectator);
 	}
-	else if (m_pGame->GetPlayerSystem()->IsPlayerClass(ed.ClassId))
+	else 
+#endif
+	if (m_pGame->GetPlayerSystem()->IsPlayerClass(ed.ClassId))
 	{
 		//		if (pLog->GetVerbosityLevel()>5)
 		//			pLog->Log("Spawning PLAYER CLASS ID container");
@@ -1954,6 +1956,7 @@ void CXSystemBase::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
 		pEntity->SetContainer(pPlayer);
 		pPlayer->SetColor(ed.vColor);
 	}
+#if 0
 	else if (m_pGame->GetVehicleSystem()->IsVehicleClass(ed.ClassId))  
 	{
 		// create vehicle container

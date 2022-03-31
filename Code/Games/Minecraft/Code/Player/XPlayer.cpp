@@ -31,29 +31,6 @@
 #include <float.h>
 
 //////////////////////////////////////////////////////////////////////
-//! convert from degrees to radians and adjust the coordinate system
-inline Ang3 ConvertToRad(const Ang3& v)
-{
-	Ang3 angles;
-	angles.x = DEG2RAD(v.z + 180.0f);
-	angles.y = DEG2RAD(-v.x + 90.0f);
-	angles.z = DEG2RAD(v.y);
-	return angles;
-}
-
-//////////////////////////////////////////////////////////////////////
-//! convert a view angle from degrees to a normalized view-vector
-inline Vec3 ConvertToRadAngles(const Ang3& v)
-{
-	Vec3 vec = ConvertToRad(v);
-
-	Vec3 dir;
-	dir.x = -sin_tpl(vec.y) * sin_tpl(vec.x);
-	dir.y = sin_tpl(vec.y) * cos_tpl(vec.x);
-	dir.z = -cos_tpl(vec.y);
-	return dir;
-}
-//////////////////////////////////////////////////////////////////////
 //! Minimal time before player can be alive again.
 #define PLAYER_RESPAWN_TIME       1.0f
 //! Minimal time before player can be respawned.
@@ -73,7 +50,7 @@ bool CheckIfNAN(const Legacy::Vec3& vPos)
 	return false;
 }
 
-#if 0
+#if 1
 //////////////////////////////////////////////////////////////////////
 //! CPlayer implementation.
 CPlayer::CPlayer(CXGame *pGame) :
@@ -102,7 +79,11 @@ CPlayer::CPlayer(CXGame *pGame) :
 {
 	m_pLastUsedCharacter = NULL;
 	m_weaponPositionState = WEAPON_POS_UNDEFINED;
+	#if 0
 	m_vEyePos.Set(0,0,0);
+	#else
+	m_vEyePos = Legacy::Vec3(0,0,0);
+	#endif
 	m_bWeaponJustFired = false;
 	m_pLightTarget = 0;
 	float tm=.3f;	
@@ -342,11 +323,20 @@ CPlayer::CPlayer(CXGame *pGame) :
 	m_JTRun = .4f;
 	m_fLastCamUpdateTime = 0;
 
+	#if 0
 	m_vDeltaCamAngles.Set(0,0,0);
 	m_vDeltaCamPos.Set(0,0,0);
 	m_vPrevCamAngles.Set(0,0,0);
 	m_vPrevCamPos.Set(0,0,0);
 	m_vWeaponAngles.Set(0,0,0);
+	#else
+	m_vDeltaCamAngles = Legacy::Vec3(0,0,0);
+	m_vDeltaCamPos = Legacy::Vec3(0,0,0);
+	m_vPrevCamAngles = Legacy::Vec3(0,0,0);
+	m_vPrevCamPos = Legacy::Vec3(0,0,0);
+	m_vWeaponAngles = Legacy::Vec3(0,0,0);
+	#endif
+	
 
 	m_AniSpeedXRun[0] = -1.0f;
 	m_AniSpeedXRun[1] = -1.0f;
@@ -369,8 +359,13 @@ CPlayer::CPlayer(CXGame *pGame) :
 
 	m_SynchedRandomSeed.SetParent(this);
 
+	#if 0
 	m_vLadderPosition.Set(0,0,0);
 	m_vLadderAngles.Set(0,0,0);
+	#else
+	m_vLadderPosition = Legacy::Vec3(0,0,0);
+	m_vLadderAngles = Legacy::Vec3(0,0,0);
+	#endif
 	m_vHeadAngles.Set(0,0,0);
 
 	m_AreaUser.SetGame( pGame );
@@ -934,7 +929,7 @@ void CPlayer::Update()
 //////////////////////////////////////////////////////////////////////////
 void CPlayer::UpdatePhysics(float fDeltaTime)
 {
-#if 0
+#if 1
 	m_fLastDeltaTime = fDeltaTime;
 
 	IPhysicalEntity *physEnt = m_pEntity->GetPhysics();	
@@ -1000,7 +995,7 @@ void CPlayer::UpdatePhysics(float fDeltaTime)
 		movedyn.kAirControl=m_Dynamics.air_control;		// water should not affect control
 	}
 
-	Legacy::Vec3 vAngles = ConvertToRad(m_pEntity->GetAngles()), 
+	Vec3 vAngles = ConvertToRad(Legacy::from(m_pEntity->GetAngles())), 
 		vDir(-cry_sinf(vAngles[YAW])*cry_sinf(vAngles[PITCH]),cry_cosf(vAngles[YAW])*cry_sinf(vAngles[PITCH]),-cry_cosf(vAngles[PITCH]));
 	// make underwater movement smoother
 	if (m_stats.fKWater>=1.0f && sl.velRequested.len2()>0 && sqr(sl.velRequested*vDir)>sl.velRequested.len2()*0.5f
@@ -1021,7 +1016,7 @@ void CPlayer::UpdatePhysics(float fDeltaTime)
 	m_stats.running = false;
 	
 	// Calculate our current speed
-	Legacy::Vec3 vel = sl.vel;
+	auto vel = sl.vel;
 	if (sl.pGroundCollider)
 		vel -= sl.velGround;
 	float speed = vel.Length();
@@ -5922,7 +5917,7 @@ void CPlayer::GetBlendTime(const char* sAniName, float& fBlendTime)
 	fBlendTime = (curAni->second);
 }
 
-#if 0
+#if 1
 //////////////////////////////////////////////////////////////////////
 void	CPlayer::UpdateCollisionDamage( )
 {
@@ -5972,7 +5967,7 @@ void	CPlayer::UpdateCollisionDamage( )
 		if(damageValue>=1.0f)
 		{
 			_SmartScriptObject pTable(m_pScriptSystem,false);
-			CScriptObjectVector oDir(m_pScriptSystem); oDir=history[imax].n;
+			CScriptObjectVector oDir(m_pScriptSystem); oDir=Legacy::to(history[imax].n);
 			pTable->SetValue("dir",*oDir);
 			pTable->SetValue("damage",damageValue);
 			pTable->SetValue("collider_mass",history[imax].mass[1]);

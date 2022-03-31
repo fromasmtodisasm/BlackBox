@@ -6,8 +6,13 @@ add_sources("NoUberFile"
 		"EntitySystem.hpp"
 		"Entity.cpp"
 		"Entity.hpp"
+		"EntityCharacter.cpp"
+		"EntityCharacter.hpp"
+	SOURCE_GROUP "Physics"
 		"Physics.cpp"
 		"Physics.hpp"
+		"PhysicalEntity.cpp"
+		"PhysicalEntity.hpp"
 	)
 end_sources()
 

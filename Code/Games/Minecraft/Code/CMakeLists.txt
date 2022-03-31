@@ -25,7 +25,7 @@ add_sources(
 		GameSystem/XSystemServer.cpp
 		GameSystem/XSystemServer.h
 	SOURCE_GROUP "GameFiles"
-		#GameFiles/GameObject.h
+		GameFiles/GameObject.h
 		# GameFiles/GameGUI.cpp
 		GameFiles/DevMode.cpp
 		GameFiles/EntityClassRegistry.cpp
@@ -56,9 +56,14 @@ add_sources(
 	SOURCE_GROUP "Player"
 		Player/XPlayer.cpp
 		Player/XPlayerCamera.cpp
+		Player/Spectator.cpp
+		Player/Spectator.h
+		Player/AdvCamSystem.cpp
+		Player/AdvCamSystem.h
 	SOURCE_GROUP "ScriptObjects"
 		ScriptObjects/ScriptObjectClient.cpp
 		ScriptObjects/ScriptObjectGame.cpp
+		ScriptObjects/ScriptObjectPlayer.cpp
 		ScriptObjects/ScriptObjectInput.cpp
 		ScriptObjects/ScriptObjectServer.cpp
 		ScriptObjects/ScriptObjectServerSlot.cpp

@@ -1418,7 +1418,7 @@ void CLoaderCGF::LoadChunkNode(const NODE_CHUNK_DESC* pChunk, int nSize)
 
 	if (pChunk->MatID > 0)
 	{
-		auto mat = LoadMaterialFromChunk(pChunk->MatID);
+		//auto mat = LoadMaterialFromChunk(pChunk->MatID);
 	}
 
 	auto header = m_pChunkFile->getChunkHeader(pChunk->ObjectID);

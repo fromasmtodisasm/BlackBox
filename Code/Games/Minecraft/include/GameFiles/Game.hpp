@@ -386,16 +386,18 @@ typedef std::queue<string> StringQueue;
 typedef std::set<string>   StringSet;
 //using vector2f = Legacy::Vec2;
 
-class CXGame               final : public IXGame, public IInputEventListener // proxy for UI system
+class CXGame final :
+    public IXGame,
+    public IInputEventListener // proxy for UI system
     ,
-                     public IServerSnooperSink,
-                     public INETServerSnooperSink
+    public IServerSnooperSink,
+    public INETServerSnooperSink
     //, public IActionMapSink
     //, public ISystemEventListener
     ,
-                     public IRendererCallbackClient,
-                     public IPhysicsStreamer,
-                     public IPhysicsEventClient
+    public IRendererCallbackClient,
+    public IPhysicsStreamer,
+    public IPhysicsEventClient
 
 {
 public:

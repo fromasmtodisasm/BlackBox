@@ -1419,6 +1419,47 @@ IGAME_API IGame* CreateGameInstance()
 	CXGame* game = new CXGame();
 	return (game);
 }
+//////////////////////////////////////////////////////////////////////////
+bool CXGame::ConstrainToSandbox(IEntity *pEntity)
+{
+	bool bPosChanged = false;
+	if (IsMultiplayer())
+	{
+		Vec3 vPos, vBounds[2]={Vec3(0,0,0),Vec3(0,0,0)};
+		IPhysicalEntity *pPhysEnt = pEntity->GetPhysics();
+		if (pPhysEnt)
+		{
+			pe_status_pos sp;
+			pPhysEnt->GetStatus(&sp);
+			vPos = sp.pos;
+		}
+		else
+			vPos=Legacy::from(pEntity->GetPos());
+		
+		vBounds[1].x = vBounds[1].y = (float)m_p3DEngine->GetTerrainSize();
+		vBounds[0].z = -100; vBounds[1].z = 500;
+		for(int i=0;i<3;i++) 
+			if (!inrange(vPos[i], vBounds[0][i],vBounds[1][i]))
+			{
+				vPos[i] = vBounds[isneg((vBounds[0][i]+vBounds[1][i])*0.5f-vPos[i])][i];
+				bPosChanged = true;
+			}
+
+		if (bPosChanged)
+		{
+			if (pPhysEnt)
+			{
+				pe_params_pos pp;
+				pp.pos = vPos;
+				pPhysEnt->SetParams(&pp);
+			}
+			else
+				pEntity->SetPos(Legacy::to(vPos));
+		}
+	}
+	return bPosChanged;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 void CXGame::GotoMenu(bool bTriggerOnSwitch)

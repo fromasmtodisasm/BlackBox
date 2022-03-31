@@ -2,29 +2,19 @@
 
 #include <BlackBox/EntitySystem/IEntitySystem.hpp>
 
+#include "EntityCharacter.hpp"
+
 class CEntity;
 class CEntitySystem;
-
-class CEntityMotionState : public btMotionState
-{
-public:
-	CEntityMotionState(CEntity& entity)
-	    : m_Entity(entity)
-	{
-	}
-
-	// Inherited via btMotionState
-	virtual void getWorldTransform(btTransform& worldTrans) const override;
-	virtual void setWorldTransform(const btTransform& worldTrans) override;
-
-	CEntity&     m_Entity;
-};
+class CPhysicalEntity;
+class CEntityMotionState;
 
 class CEntity : public IEntity
 {
 	friend class CEntityMotionState;
 public:
-	CEntity();
+	CEntity() = default;
+	CEntity(CEntityDesc& desc);
 	~CEntity();
 	// Inherited via IEntity
 	virtual void                  GetRenderBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs) override;
@@ -210,13 +200,12 @@ public:
 	string                        m_ClassName{"Unknown"};
 
 	IMatInfo*                     m_pMatInfo;
-	IEntityCamera*                m_pEntityCamera;
+	IEntityCamera*                m_pEntityCamera{};
 	CEntityObject                 m_EntityObject;
 	IScriptObject*                m_pScriptOject;
+	#if 0
 	IEntityCharacter*             m_pCharacter;
-
-	btRigidBody*                  m_pRigidBody;
-	CEntityMotionState            m_MotionState;
+	#endif
 
 	bool                          m_bIsStatic;
 	Legacy::Vec3                  m_Angles{0};
@@ -235,4 +224,6 @@ public:
 	bool                          m_IsGarbage = false;
 
 	CEntitySystem*                m_pEntitySystem;
+	CPhysicalEntity*              m_pPhysics{};
+	CEntityCharacter*             m_EntityCharacter{};
 };

@@ -368,3 +368,142 @@ namespace Legacy
 	}
 }
 
+//////////////////////////////////////////////////////////////////////
+//! convert from degrees to radians and adjust the coordinate system
+inline Ang3 ConvertToRad( const Ang3& v )
+{
+	Ang3 angles;
+	angles.x=DEG2RAD( v.z+180.0f);
+	angles.y=DEG2RAD(-v.x+90.0f);
+	angles.z=DEG2RAD( v.y);
+	return angles; 
+}
+
+//////////////////////////////////////////////////////////////////////
+//! convert a view angle from degrees to a normalized view-vector
+inline Vec3 ConvertToRadAngles( const Ang3& v )	
+{	
+	Vec3 vec=ConvertToRad(v);	
+
+	Vec3 dir;
+	dir.x=-sin_tpl(vec.y)*sin_tpl(vec.x);
+	dir.y= sin_tpl(vec.y)*cos_tpl(vec.x);
+	dir.z=-cos_tpl(vec.y);			
+	return dir;
+}	
+
+//////////////////////////////////////////////////////////////////////
+inline Matrix44	ViewMatrix(const Ang3 &angle)	
+{
+	Matrix33 ViewMatZ=Matrix33::CreateRotationZ(-angle.x);
+	Matrix33 ViewMatX=Matrix33::CreateRotationX(-angle.y);
+	Matrix33 ViewMatY=Matrix33::CreateRotationY(+angle.z);
+	return GetTransposed44( ViewMatX*ViewMatY*ViewMatZ);
+}
+
+//////////////////////////////////////////////////////////////////////
+//ZXY
+inline Matrix33	CryViewMatrix(const Ang3 &angle)	
+{
+	Matrix33 ViewMatZ=Matrix33::CreateRotationZ(-angle.x);
+	Matrix33 ViewMatX=Matrix33::CreateRotationX(-angle.y);
+	Matrix33 ViewMatY=Matrix33::CreateRotationY(+angle.z);
+	return  Matrix33::CreateRotationX(gf_PI*0.5f)*ViewMatX*ViewMatY*ViewMatZ;
+}
+
+//////////////////////////////////////////////////////////////////////
+/*! convert a lenght unit vector to camera's angles:
+x camera axis is looking up/down
+y is roll
+z is left/right	
+*/
+inline Vec3 ConvertUnitVectorToCameraAngles(const Vec3& vec)	
+{
+	Vec3 v=vec;
+
+	float	fForward;
+	float	fYaw,fPitch;
+
+	if (v.y==0 && v.x==0) 
+	{
+		//looking up/down
+		fYaw=0;
+		if (v.z>0) 			
+			fPitch=90;			
+		else 			
+			fPitch=270;	
+	} 
+	else 
+	{
+		if (v.x!=0) 
+		{
+			fYaw=(float)(cry_atan2f((float)(v.y),(float)(v.x))*180.0f/gf_PI);
+		}
+		else 
+			//lokking left/right	
+			if (v.y>0) 							
+				fYaw=90;			
+			else 			
+				fYaw=270;			
+
+		if (fYaw<0) 			
+			fYaw+=360;			
+
+		fForward=(float)cry_sqrtf(v.x*v.x+v.y*v.y);
+		fPitch=(float)(cry_atan2f(v.z,fForward)*180.0f/gf_PI);
+		if (fPitch<0) 
+			fPitch+=360;			
+	}
+
+	//y = -fPitch;
+	//x = fYaw;
+	//z = 0;
+	v.x=-fPitch;
+	v.y=0; 
+	v.z=fYaw+90;
+
+	//clamp again
+	if (v.x>360)	
+		v.x-=360;
+	else
+		if (v.x<-360) 
+			v.x+=360;
+
+	if (v.z>360)	
+		v.z-=360;
+	else
+		if (v.z<-360) 
+			v.z+=360;
+
+	return v;
+}
+
+//////////////////////////////////////////////////////////////////////
+/*! convert a vector to camera's angles:
+x camera axis is looking up/down
+y is roll
+z is left/right	
+*/
+inline Vec3 ConvertVectorToCameraAngles(const Vec3& v) 
+{
+	return ConvertUnitVectorToCameraAngles( GetNormalized(v) );
+}
+
+//////////////////////////////////////////////////////////////////////
+/*! convert a vector to camera's angles:
+x camera axis is looking up/down
+y is roll
+z is left/right	
+*/
+inline Ang3 ConvertVectorToCameraAnglesSnap180(const Vec3& vec)
+{
+	Ang3 ang=ConvertUnitVectorToCameraAngles( GetNormalized(vec) );
+	ang.Snap180();
+	return ang;
+}
+
+#define YAW		(0)  
+#define PITCH	(1)    
+#define ROLL	(2)   
+
+

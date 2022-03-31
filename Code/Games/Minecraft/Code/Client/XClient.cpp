@@ -11,10 +11,8 @@
 #include "XSystemDummy.h"
 #include "IngameDialog.h"
 #include <IMovieSystem.h>
-
-#define YAW   (0)
-#define PITCH (1)
-#define ROLL  (0)
+#include <Player/Spectator.h>
+#include <Player/AdvCamSystem.h>
 
 //FIXME: remove it
 #ifndef max
@@ -715,10 +713,8 @@ void CXClient::UpdateSound(const float fFrameTime)
 void CXClient::Update()
 {
 	CPlayer* pPlayer = NULL;
-#if 0
 	CSpectator *pSpectator=NULL;
 	CAdvCamSystem *pAdvCamSystem=NULL;
-#endif
 
 	ITimer* pTimer     = m_pGame->m_pSystem->GetITimer();
 	float   time       = pTimer->GetCurrTime();
@@ -903,7 +899,7 @@ void CXClient::SendScriptHashResponse(const unsigned int dwHash)
 //////////////////////////////////////////////////////////////////////
 void CXClient::SendInputToServer(const bool bTimeToSend)
 {
-#if 0
+#if 1
 	if(m_wPlayerID==INVALID_WID)
 		return;
 
@@ -996,6 +992,8 @@ void CXClient::SendInputToServer(const bool bTimeToSend)
 
 			epc.Write(stm,pBitStream,true);
 		
+			//FIXME: support vehicle
+			#if 0
 			if(pVehicle && pPlayer->m_stats.inVehicleState==CPlayer::PVS_DRIVER && !m_pGame->IsServer())
 			{
 				stm.Write(true);
@@ -1006,6 +1004,7 @@ void CXClient::SendInputToServer(const bool bTimeToSend)
 				stm.Write(m_stmVehicle);
 			}
 			else
+			#endif
 				stm.Write(false);
 			stm.Write(false); // client pos (used for spectators)
 
@@ -1584,6 +1583,7 @@ void CXClient::TriggerMoveFB(float fValue, XActivationEvent ae)
 	}
 }
 
+#if 1
 #if 0
 ///////////////////////////////////////////////
 void CXClient::TriggerTurnLR(float fValue,XActivationEvent ae)
@@ -1668,7 +1668,6 @@ void CXClient::TriggerTurnLR(float fValue,XActivationEvent ae)
 		m_PlayerProcessingCmd.AddAction(ACTION_TURNLR);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////
 void CXClient::TriggerTurnUD(float fValue,XActivationEvent ae)
 {
@@ -1777,6 +1776,7 @@ void CXClient::TriggerTurnUD(float fValue,XActivationEvent ae)
 		m_PlayerProcessingCmd.AddAction(ACTION_TURNUD);
 	}
 }
+#endif
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -2302,7 +2302,7 @@ bool CXClient::ParseIncomingStream(CStream& stm)
 // XSERVERMSG_SETPLAYER
 bool CXClient::OnServerMsgSetPlayer(CStream& stm)
 {
-#if 0
+#if 1
 	m_wPlayerID = INVALID_WID;
 
 	EntityId id;
@@ -3267,7 +3267,7 @@ void CXClient::TriggerTurnLR(float fValue, XActivationEvent ae)
 {
 	{
 		float fFovMul = 1.0f;
-#if 0
+#if 1
 		IEntity *pPlayerEnt = m_pISystem->GetEntity( m_wPlayerID );
 		if (pPlayerEnt)
 		{
@@ -3289,7 +3289,7 @@ void CXClient::TriggerTurnUD(float fValue, XActivationEvent ae)
 {
 	{
 		float fFovMul = 1.0f;
-#if 0
+#if 1
 		IEntity *pPlayerEnt = m_pISystem->GetEntity( m_wPlayerID );
 		if (pPlayerEnt)
 		{

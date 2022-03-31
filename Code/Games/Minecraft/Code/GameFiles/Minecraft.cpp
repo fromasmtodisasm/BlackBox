@@ -98,9 +98,9 @@ void MineWorld::init()
 		    "objects/characters/story_characters/krieger_mutant/krieger_mutant.cgf",
 		    "objects/characters/pmodels/hero/hero.cgf",
 		    "objects/editor/MtlSphere.cgf",
+		    "objects/editor/mtlbox.cgf",
 		    "objects/editor/mtlteapot.cgf",
 		    "objects/characters/animals/parrot/parrot.cgf",
-		    "objects/editor/mtlbox.cgf",
 		    "objects/editor/MtlSphere.cgf",
 		    "objects/weapons/m4/m4.cgf",
 		    "objects/vehicles/buggy/buggy.cgf",
@@ -108,11 +108,12 @@ void MineWorld::init()
 		    "objects/editor/arrow.cgf",
 		    "minecraft/Grass_Block.obj",
 		};
+		m_pMtlBox   = Env::I3DEngine()->MakeObject(objects[2]);
+		auto camera = Env::System()->GetViewCamera();
+		auto box    = SpawnBox(camera.GetPos());
+		Env::I3DEngine()->RegisterEntity(box);
 		{
 			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
-
-			//auto Jack = Env::I3DEngine()->MakeObject();
-			//auto        Jack = types[0];
 
 			CEntityDesc desc(nextEntity(), 0);
 			desc.name  = "Hero";
@@ -200,7 +201,7 @@ void Minecraft::update()
 {
 	auto         time          = Env::Timer()->GetRealFrameTime();
 	static float jack_rotation = 0;
-	Jack->SetAngles({-90, 0, jack_rotation});
+	//Jack->SetAngles({-90, 0, jack_rotation});
 	//Jack->SetAngles({45, 90, 0});
 	//debug.update();
 	//ui.draw();
@@ -218,6 +219,26 @@ bool MineWorld::tryDestroy(glm::ivec3 pos)
 		return true;
 	}
 	return false;
+}
+
+IEntity* MineWorld::SpawnBox(Legacy::Vec3 pos)
+{
+	auto        object = m_pMtlBox;
+
+	CEntityDesc desc(nextEntity(), PLAYER_CLASS_ID);
+	desc.angles = {-90, 0, 0};
+	desc.pos    = pos;
+	desc.name   = "Box";
+
+	auto* Box   = Env::EntitySystem()->SpawnEntity(desc, false);
+
+	Box->SetIStatObj(object);
+	Box->SetScale(glm::vec3(0.1f));
+
+	Env::EntitySystem()->InitEntity(Box, desc);
+	Env::I3DEngine()->RegisterEntity(Box);
+
+	return Box;
 }
 
 void MineWorld::destroy(glm::ivec3 pos)
@@ -475,7 +496,7 @@ void MinePlayer::applyMovement()
 {
 	auto& world  = minecraft->world;
 	//auto  newPos = entity->GetPos() + movement;
-	auto&  newPos = myPos + movement;
+	auto& newPos = myPos + movement;
 	//entity->GetPos() + movement;
 
 	// если мы передвинулись, то запускаем проверку пересечений опять
@@ -512,7 +533,7 @@ void MinePlayer::init()
 
 	auto        steve = Env::I3DEngine()->MakeObject("minecraft/minecraft_steve.obj");
 
-	CEntityDesc desc(nextEntity(), 0);
+	CEntityDesc desc(nextEntity(), PLAYER_CLASS_ID);
 	entity = Env::EntitySystem()->SpawnEntity(desc);
 	Env::I3DEngine()->RegisterEntity(entity);
 
@@ -528,7 +549,7 @@ void MinePlayer::init()
 
 void MinePlayer::update()
 {
-	auto const aabb = entityWorldAABB(entity);
+	auto const aabb    = entityWorldAABB(entity);
 
 	//Env::AuxGeomRenderer()->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
 
@@ -568,6 +589,17 @@ void MinePlayer::destroyBlockOnCursor()
 	{
 		minecraft->world.destroy(pos);
 		m_pDestroyBlockSound->Play();
+	}
+
+	auto testEntity = Env::EntitySystem()->GetEntity(3);
+	if (testEntity)
+	{
+		auto p          = testEntity->GetPhysics();
+
+		auto impulse    = pe_action_impulse{};
+		impulse.impulse = vectorf(0, 0, 10);
+		impulse.point   = vectorf(0, 0, 0);
+		p->Action(&impulse);
 	}
 }
 
