@@ -78,7 +78,7 @@ void MineWorld::init()
 			set(glm::ivec3(i, 3, 0), Grass);
 		}
 #else
-		CEntityDesc desc(nextEntity(), (int)EEntityClass::Character);
+		/*CEntityDesc desc(nextEntity(), (int)EEntityClass::Character);
 		auto        entity = gEnv->pEntitySystem->SpawnEntity(desc);
 		gEnv->p3DEngine->RegisterEntity(entity);
 
@@ -86,7 +86,7 @@ void MineWorld::init()
 
 		entity->SetIStatObj(types[Grass]);
 		entity->SetPos({0, 30, 0});
-		entity->SetScale(glm::vec3(20.f, 1.f, 20.f));
+		entity->SetScale(glm::vec3(20.f, 1.f, 20.f));*/
 
 #endif
 	};
@@ -142,23 +142,23 @@ void MineWorld::init()
 			Jack->SetAngles({45, 90, 0});
 			gEnv->p3DEngine->RegisterEntity(Jack);
 		}
-		{
-			auto object = types[0];
-			//gEnv->p3DEngine->MakeObject(objects[0]);
+		//{
+		//	auto object = types[0];
+		//	//gEnv->p3DEngine->MakeObject(objects[0]);
 
-			//auto Jack = gEnv->p3DEngine->MakeObject();
-			//auto        Jack = types[0];
+		//	//auto Jack = gEnv->p3DEngine->MakeObject();
+		//	//auto        Jack = types[0];
 
-			CEntityDesc desc(nextEntity(), 0);
-			desc.name       = "Hero";
-			auto Jack      = gEnv->pEntitySystem->SpawnEntity(desc);
+		//	CEntityDesc desc(nextEntity(), 0);
+		//	desc.name       = "Hero";
+		//	auto Jack      = gEnv->pEntitySystem->SpawnEntity(desc);
 
-			Jack->SetIStatObj(object);
-			Jack->SetPos({-5, 20, -5});
-			Jack->SetScale(glm::vec3(3.f));
-			Jack->SetAngles({45, 90, 0});
-			gEnv->p3DEngine->RegisterEntity(Jack);
-		}
+		//	Jack->SetIStatObj(object);
+		//	Jack->SetPos({-5, 20, -5});
+		//	Jack->SetScale(glm::vec3(3.f));
+		//	Jack->SetAngles({45, 90, 0});
+		//	gEnv->p3DEngine->RegisterEntity(Jack);
+		//}
 	}
 
 	gEnv->pConsole->ExecuteString("load_level minecraft");

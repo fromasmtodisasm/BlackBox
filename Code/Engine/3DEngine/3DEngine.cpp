@@ -11,6 +11,8 @@
 
 #include "ObjectManager.hpp"
 
+#include "Terrain/Terrain.h"
+
 void loadModel(string path);
 C3DEngine::C3DEngine(ISystem* pSystem, const char* szInterfaceVersion)
     : m_pSystem(pSystem)
@@ -19,6 +21,7 @@ C3DEngine::C3DEngine(ISystem* pSystem, const char* szInterfaceVersion)
 
 C3DEngine::~C3DEngine()
 {
+	SAFE_DELETE(m_pTerrain);
 }
 
 void C3DEngine::Enable(bool bEnable)
@@ -30,6 +33,9 @@ bool C3DEngine::Init()
 {
 	//MakeObject("res/geom/cnek.obj", nullptr);
 	//MakeObject("res/geom/doggy.fbx", nullptr);
+
+	m_pTerrain = new CTerrain;
+
 	return true;
 }
 
@@ -66,6 +72,8 @@ void         C3DEngine::Draw()
 	if (!m_Enabled)
 		return;
 	gEnv->pRenderer->SetCamera(m_Camera);
+
+	m_pTerrain->Render(m_Camera);
 
 	static bool costil = true;
 

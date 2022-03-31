@@ -16,6 +16,9 @@ add_sources(
 		"Geometry/Quad.cpp"
 	SOURCE_GROUP "Source Files\\\\Scene"
 		"Scene/XmlSerialization.cpp"
+	SOURCE_GROUP "Terrain"
+		Terrain/Terrain.h
+		Terrain/Terrain.cpp
 	SOURCE_GROUP "Assimp"
 		Assimp/CGFImporter.cpp
 		Assimp/CGFImporter.h

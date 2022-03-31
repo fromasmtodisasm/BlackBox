@@ -498,7 +498,7 @@ struct ISystem
 
 	//! Changes current user sub path, the path is always relative to the user documents folder.
 	//! Example: "My Games\Crysis"
-	virtual void ChangeUserPath(const char* sUserPath) = 0;
+	virtual void                      ChangeUserPath(const char* sUserPath)                                                                                         = 0;
 	//new
 	virtual ISystemEventDispatcher*   GetISystemEventDispatcher()                                                                                                   = 0;
 	//new
@@ -790,3 +790,39 @@ inline void CryLogAlways(const char* format, ...)
 // Additional headers.
 //////////////////////////////////////////////////////////////////////////
 //#include <BlackBox/System/FrameProfiler.hpp>
+
+namespace Env
+{
+	inline auto AuxGeomRenderer() { return gEnv->pAuxGeomRenderer; }
+	inline auto I3DEngine() { return gEnv->p3DEngine; }
+	inline auto AISystem() { return nullptr; }
+	inline auto CmdLine() { return nullptr; }
+	inline auto Console() { return gEnv->pConsole; }
+	inline auto AnimationSystem() { return nullptr; }
+	inline auto CryFont() { return gEnv->pCryFont; }
+	inline auto Pak() { return gEnv->pCryPak; }
+	inline auto EntitySystem() { return gEnv->pEntitySystem; }
+	inline auto Font() { return gEnv->pCryFont; }
+	inline auto ProfileSystem() { return gEnv->pSystem->GetIProfileSystem(); }
+	inline auto Game() { return nullptr; }
+	inline auto HardwareMouse() { return gEnv->pHardwareMouse; }
+	inline auto Input() { return gEnv->pInput; }
+	inline auto Log() { return gEnv->pLog; }
+	inline auto MemoryManager() { return nullptr; }
+	inline auto MovieSystem() { return nullptr; }
+	inline auto MusicSystem() { return nullptr; }
+	inline auto Network() { return gEnv->pNetwork; }
+	inline auto PhysicalWorld() { return gEnv->pPhysicalWorld; }
+	inline auto ProjectManager() { return gEnv->pProjectManager; }
+	inline auto RemoteConsole() { return nullptr; }
+	inline auto Renderer() { return gEnv->pRenderer; }
+	inline auto ScriptSystem() { return gEnv->pScriptSystem; }
+	inline auto SoundSystem() { return nullptr; }
+	inline auto StreamEngine() { return nullptr; }
+	inline auto SystemEventDispatcher() { return gEnv->pSystem->GetISystemEventDispatcher(); }
+	inline auto TextModeConsole() { return gEnv->pSystem->GetITextModeConsole(); }
+	inline auto Timer() { return gEnv->pTimer; }
+	inline auto Validator() { return gEnv->pSystem->GetIValidator(); }
+	inline auto Window() { return gEnv->pSystem->GetIWindow(); }
+
+} // namespace Env

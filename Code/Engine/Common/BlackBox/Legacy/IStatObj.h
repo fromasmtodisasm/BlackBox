@@ -38,7 +38,7 @@ struct phys_geometry;
 //////////////////////////////////////////////////////////////////////
 // Summary:
 //     Interface to hold static object data
-struct IStatObj : public IBindable
+struct IStatObj : _reference_target_t, public IBindable
 {
 	// Description:
 	//     Provide access to the faces, vertices, texture coordinates, normals and

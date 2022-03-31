@@ -23,7 +23,7 @@ _smart_ptr<ID3D11RasterizerState> g_pRasterizerStateForZPrePass{};
 _smart_ptr<ID3D11BlendState>      m_pBlendState;
 
 int                               CV_r_DrawWirefame = 0;
-int                               CV_r_DisableZP    = 0;
+int                               CV_r_DisableZP    = 1;
 
 // auto BB_VERTEX_FORMAT = VERTEX_FORMAT_P3F_C4B_T2F;
 auto                              BB_VERTEX_FORMAT  = VERTEX_FORMAT_P3F_N_T2F;
@@ -184,6 +184,7 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 
 CRenderAuxGeom::CRenderAuxGeom()
 {
+	m_VB.resize(0);
 	CreateBlendState();
 	std::vector<BB_VERTEX> reference = {
 
@@ -335,7 +336,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 
 	m_ZPShader = (CShader*)gRenDev->Sh_Load("z.Main", 0, 0);
 	REGISTER_CVAR2("r_DrawWirefame", &CV_r_DrawWirefame, 0, 0, "[0/1] Draw in wireframe mode");
-	REGISTER_CVAR2("r_DisableZP", &CV_r_DisableZP, 0, 0, "[0/1] off/on zprepass");
+	REGISTER_CVAR2("r_DisableZP", &CV_r_DisableZP, 1, 0, "[0/1] off/on zprepass");
 }
 
 CRenderAuxGeom::~CRenderAuxGeom()
@@ -514,7 +515,7 @@ void CRenderAuxGeom::DrawAABBs()
 
 void CRenderAuxGeom::DrawLines()
 {
-	// m_AuxGeomShader->Bind();
+	m_AuxGeomShader->Bind();
 	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;
 	for (auto& pb : m_auxPushBuffer)
@@ -522,7 +523,6 @@ void CRenderAuxGeom::DrawLines()
 		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
 		offset += pb.m_numVertices;
 	}
-	// m_AuxGeomShader->Unuse();
 	m_VB.resize(0);
 	m_auxPushBuffer.resize(0);
 }
@@ -610,5 +610,7 @@ void CRenderAuxGeom::Flush()
 	else
 		g_pRasterizerStateForMeshCurrent = g_pRasterizerStateSolid;
 	DrawAABBs();
+	D3DPERF_BeginEvent(D3DC_Blue, L"DrawLines");
 	DrawLines();
+	D3DPERF_EndEvent();
 }
