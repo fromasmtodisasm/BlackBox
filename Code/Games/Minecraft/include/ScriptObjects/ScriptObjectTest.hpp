@@ -19,7 +19,7 @@ public:
 	}
 	const char* tm2(int i, int c)
 	{
-		//gEnv->pConsole->PrintLine("i = %d; c = %c", i, c);
+		//Env::Console()->PrintLine("i = %d; c = %c", i, c);
 		return "Test return value";
 	}
 

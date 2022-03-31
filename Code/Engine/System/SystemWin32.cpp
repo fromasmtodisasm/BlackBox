@@ -168,7 +168,7 @@ void CSystem::ChangeUserPath(const char* sUserPath)
 		tempBuffer = PathUtil::ToDosPath(tempBuffer);
 		userFolder = tempBuffer;
 
-		gEnv->pCryPak->MakeDir(userFolder.c_str());
+		Env::CryPak()->MakeDir(userFolder.c_str());
 	}
 
 #elif BB_PLATFORM_DURANGO

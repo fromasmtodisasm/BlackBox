@@ -68,18 +68,18 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 
 	SCRIPT_REG_FUNC(IsDevModeEnable);
 
-	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
-	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
-	gEnv->pScriptSystem->SetGlobalValue("SCANDIR_SUBDIRS", SCANDIR_SUBDIRS);
+	Env::ScriptSystem()->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
+	Env::ScriptSystem()->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
+	Env::ScriptSystem()->SetGlobalValue("SCANDIR_SUBDIRS", SCANDIR_SUBDIRS);
 }
 
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 {
 	m_pSystem = pSystem;
 	InitGlobal(pScriptSystem, "System", this);
-	if (gEnv->pRenderer)
+	if (Env::Renderer())
 	{
-		m_pFont = gEnv->pRenderer->GetIFont();
+		m_pFont = Env::Renderer()->GetIFont();
 		m_pFont->Init("VeraMono.ttf", 14, 14);
 	}
 }
@@ -90,7 +90,7 @@ void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
  */
 int CScriptObjectSystem::CreateDownload(IFunctionHandler* pH)
 {
-	auto download = ((CSystem*)(gEnv->pSystem))->m_pDownloadManager->CreateDownload();
+	auto download = ((CSystem*)(Env::System()))->m_pDownloadManager->CreateDownload();
 
 	return pH->EndFunction(download->GetScriptObject());
 }
@@ -98,7 +98,7 @@ int CScriptObjectSystem::CreateDownload(IFunctionHandler* pH)
 int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(0);
-	if (gEnv->IsDedicated())
+	if (Env::Get()->IsDedicated())
 	{
 		return pH->EndFunction();
 	}
@@ -189,21 +189,21 @@ int CScriptObjectSystem::DrawImage(IFunctionHandler* pH)
 	float h;
 	int   blending_mode;
 	pH->GetParams(id, xpos, ypos, w, h, blending_mode);
-	gEnv->pRenderer->DrawImage(xpos, ypos, w, h, id, 0, 0, 1, 1, 0, 1, 0, 1);
+	Env::Renderer()->DrawImage(xpos, ypos, w, h, id, 0, 0, 1, 1, 0, 1, 0, 1);
 	return pH->EndFunction();
 }
 
 int CScriptObjectSystem::LoadTexture(IFunctionHandler* pH)
 {
 	const char* name;
-	if (gEnv->pRenderer)
+	if (Env::Renderer())
 	{
 		if (pH->GetParams(name))
 		{
 #if 0
             CryLog("User ask load %s texture", name);
 #endif
-			int       t         = gEnv->pRenderer->LoadTexture(name, 0, 0);
+			int       t         = Env::Renderer()->LoadTexture(name, 0, 0);
 			USER_DATA pUserData = m_pScriptSystem->CreateUserData((int)t, USER_DATA_TEXTURE);
 			return pH->EndFunction(pUserData);
 		}
@@ -294,7 +294,7 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
 		_finddata_t c_file;
 		intptr_t    hFile;
 
-		if ((hFile = gEnv->pCryPak->FindFirst((string(pszFolderName) + "\\*.*").c_str(), &c_file)) == -1L)
+		if ((hFile = Env::CryPak()->FindFirst((string(pszFolderName) + "\\*.*").c_str(), &c_file)) == -1L)
 		{
 			return pH->EndFunction(*pObj);
 		}
@@ -307,9 +307,9 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
 					pObj->SetAt(k, c_file.name);
 					k++;
 				}
-			} while (gEnv->pCryPak->FindNext(hFile, &c_file) == 0);
+			} while (Env::CryPak()->FindNext(hFile, &c_file) == 0);
 
-			gEnv->pCryPak->FindClose(hFile);
+			Env::CryPak()->FindClose(hFile);
 		}
 	}
 
@@ -324,7 +324,7 @@ int CScriptObjectSystem::ExecuteCommand(IFunctionHandler* pH)
 
 	if (pH->GetParam(1, szCmd))
 	{
-		gEnv->pConsole->ExecuteString(szCmd);
+		Env::Console()->ExecuteString(szCmd);
 	}
 
 	return pH->EndFunction();
@@ -382,7 +382,7 @@ int CScriptObjectSystem::Error(IFunctionHandler* pH)
 	const char* sParam = "";
 	if (pH->GetParam(1, sParam))
 	{
-		gEnv->pSystem->Warning(VALIDATOR_MODULE_SCRIPTSYSTEM, VALIDATOR_ERROR, 0, NULL, "%s", sParam);
+		Env::System()->Warning(VALIDATOR_MODULE_SCRIPTSYSTEM, VALIDATOR_ERROR, 0, NULL, "%s", sParam);
 	}
 
 	return pH->EndFunction();
@@ -391,14 +391,14 @@ int CScriptObjectSystem::Error(IFunctionHandler* pH)
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::IsEditor(IFunctionHandler* pH)
 {
-	return pH->EndFunction(gEnv->IsEditor());
+	return pH->EndFunction(Env::Get()->IsEditor());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::GetCurrAsyncTime(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(0);
-	float fTime = gEnv->pTimer->GetAsyncCurTime();
+	float fTime = Env::Timer()->GetAsyncCurTime();
 	return pH->EndFunction(fTime);
 }
 
@@ -406,7 +406,7 @@ int CScriptObjectSystem::GetCurrAsyncTime(IFunctionHandler* pH)
 int CScriptObjectSystem::GetFrameTime(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(0);
-	float fTime = gEnv->pTimer->GetFrameTime();
+	float fTime = Env::Timer()->GetFrameTime();
 	return pH->EndFunction(fTime);
 }
 #if 0
@@ -478,7 +478,7 @@ int CScriptObjectSystem::CheckHeapValid(IFunctionHandler* pH)
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::GetConfigSpec(IFunctionHandler* pH)
 {
-	static ICVar* e_obj_quality(gEnv->pConsole->GetCVar("e_ObjQuality"));
+	static ICVar* e_obj_quality(Env::Console()->GetCVar("e_ObjQuality"));
 	int			  obj_quality = CONFIG_VERYHIGH_SPEC;
 	if (e_obj_quality)
 		obj_quality = e_obj_quality->GetIVal();
@@ -511,7 +511,7 @@ int CScriptObjectSystem::GetEntity(IFunctionHandler* pH)
 		eID = (EntityId)sh.n;
 	}
 
-	IEntity* pEntity = gEnv->pEntitySystem->GetEntity(eID);
+	IEntity* pEntity = Env::EntitySystem()->GetEntity(eID);
 
 	if (pEntity)
 	{
@@ -541,7 +541,7 @@ int CScriptObjectSystem::GetEntityClass(IFunctionHandler* pH)
 		eID = (EntityId)sh.n;
 	}
 
-	IEntity* pEntity = gEnv->pEntitySystem->GetEntity(eID);
+	IEntity* pEntity = Env::EntitySystem()->GetEntity(eID);
 
 	if (pEntity)
 		return pH->EndFunction(pEntity->GetClass()->GetName());
@@ -567,7 +567,7 @@ int CScriptObjectSystem::GetEntities(IFunctionHandler* pH)
 	SmartScriptTable pObj(m_pSS);
 	int				 k = 0;
 
-	IEntityItPtr pIIt	 = gEnv->pEntitySystem->GetEntityIterator();
+	IEntityItPtr pIIt	 = Env::EntitySystem()->GetEntityIterator();
 	IEntity*	 pEntity = NULL;
 
 	while (pEntity = pIIt->Next())
@@ -597,7 +597,7 @@ int CScriptObjectSystem::GetEntitiesByClass(IFunctionHandler* pH, const char* En
 	if (EntityClass == NULL || EntityClass[0] == '\0')
 		return pH->EndFunction();
 
-	IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(EntityClass);
+	IEntityClass* pClass = Env::EntitySystem()->GetClassRegistry()->FindClass(EntityClass);
 
 	if (!pClass)
 	{
@@ -605,7 +605,7 @@ int CScriptObjectSystem::GetEntitiesByClass(IFunctionHandler* pH, const char* En
 	}
 
 	SmartScriptTable pObj(m_pSS);
-	IEntityItPtr	 pIIt	 = gEnv->pEntitySystem->GetEntityIterator();
+	IEntityItPtr	 pIIt	 = Env::EntitySystem()->GetEntityIterator();
 	IEntity*		 pEntity = 0;
 	int				 k		 = 1;
 
@@ -632,7 +632,7 @@ int CScriptObjectSystem::GetEntitiesByClass(IFunctionHandler* pH, const char* En
 int CScriptObjectSystem::GetEntitiesInSphere(IFunctionHandler* pH, Vec3 center, float radius)
 {
 	SmartScriptTable pObj(m_pSS);
-	IEntityItPtr	 pIIt	 = gEnv->pEntitySystem->GetEntityIterator();
+	IEntityItPtr	 pIIt	 = Env::EntitySystem()->GetEntityIterator();
 	IEntity*		 pEntity = 0;
 	int				 k		 = 1;
 
@@ -661,7 +661,7 @@ int CScriptObjectSystem::GetEntitiesInSphereByClass(IFunctionHandler* pH, Vec3 c
 	if (EntityClass == NULL || EntityClass[0] == '\0')
 		return pH->EndFunction();
 
-	IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(EntityClass);
+	IEntityClass* pClass = Env::EntitySystem()->GetClassRegistry()->FindClass(EntityClass);
 
 	if (!pClass)
 	{
@@ -669,7 +669,7 @@ int CScriptObjectSystem::GetEntitiesInSphereByClass(IFunctionHandler* pH, Vec3 c
 	}
 
 	SmartScriptTable pObj(m_pSS);
-	IEntityItPtr	 pIIt	 = gEnv->pEntitySystem->GetEntityIterator();
+	IEntityItPtr	 pIIt	 = Env::EntitySystem()->GetEntityIterator();
 	IEntity*		 pEntity = 0;
 	int				 k		 = 1;
 
@@ -749,7 +749,7 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
 		_finddata_t c_file;
 		intptr_t	hFile;
 
-		if ((hFile = gEnv->pCryPak->FindFirst((string(pszFolderName) + "\\*.*").c_str(), &c_file)) == -1L)
+		if ((hFile = Env::CryPak()->FindFirst((string(pszFolderName) + "\\*.*").c_str(), &c_file)) == -1L)
 		{
 			return pH->EndFunction(*pObj);
 		}
@@ -762,9 +762,9 @@ int CScriptObjectSystem::ScanDirectory(IFunctionHandler* pH)
 					pObj->SetAt(k, c_file.name);
 					k++;
 				}
-			} while (gEnv->pCryPak->FindNext(hFile, &c_file) == 0);
+			} while (Env::CryPak()->FindNext(hFile, &c_file) == 0);
 
-			gEnv->pCryPak->FindClose(hFile);
+			Env::CryPak()->FindClose(hFile);
 		}
 	}
 
@@ -805,7 +805,7 @@ int CScriptObjectSystem::DrawLabel(IFunctionHandler* pH)
  */
 int CScriptObjectSystem::GetPhysicalEntitiesInBox(IFunctionHandler* pH, Vec3 center, float radius)
 {
-	IEntitySystem* pEntitySystem = gEnv->pEntitySystem;
+	IEntitySystem* pEntitySystem = Env::EntitySystem();
 
 	SEntityProximityQuery query;
 	query.box.min = center - Vec3(radius, radius, radius);
@@ -843,7 +843,7 @@ int CScriptObjectSystem::GetPhysicalEntitiesInBox(IFunctionHandler* pH, Vec3 cen
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::GetPhysicalEntitiesInBoxByClass(IFunctionHandler* pH, Vec3 center, float radius, const char* className)
 {
-	IEntitySystem* pEntitySystem = gEnv->pEntitySystem;
+	IEntitySystem* pEntitySystem = Env::EntitySystem();
 	IEntityClass*  pClass		 = pEntitySystem->GetClassRegistry()->FindClass(className);
 	if (!pClass)
 	{
@@ -886,7 +886,7 @@ int CScriptObjectSystem::GetPhysicalEntitiesInBoxByClass(IFunctionHandler* pH, V
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::GetNearestEntityByClass(IFunctionHandler* pH, Vec3 center, float radius, const char* className)
 {
-	IEntitySystem* pEntitySystem = gEnv->pEntitySystem;
+	IEntitySystem* pEntitySystem = Env::EntitySystem();
 	IEntityClass*  pClass		 = pEntitySystem->GetClassRegistry()->FindClass(className);
 	if (!pClass)
 		return pH->EndFunction();
@@ -935,7 +935,7 @@ int CScriptObjectSystem::GetNearestEntityByClass(IFunctionHandler* pH, Vec3 cent
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::GetEntityByName(IFunctionHandler* pH, const char* sEntityName)
 {
-	IEntity* pEntity = gEnv->pEntitySystem->FindEntityByName(sEntityName);
+	IEntity* pEntity = Env::EntitySystem()->FindEntityByName(sEntityName);
 	if (pEntity)
 	{
 		IScriptTable* pObject = pEntity->GetScriptTable();
@@ -947,7 +947,7 @@ int CScriptObjectSystem::GetEntityByName(IFunctionHandler* pH, const char* sEnti
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::GetEntityIdByName(IFunctionHandler* pH, const char* sEntityName)
 {
-	IEntity* pEntity = gEnv->pEntitySystem->FindEntityByName(sEntityName);
+	IEntity* pEntity = Env::EntitySystem()->FindEntityByName(sEntityName);
 	if (pEntity)
 	{
 		ScriptHandle handle;
@@ -1008,7 +1008,7 @@ int CScriptObjectSystem::ScreenToTexture(IFunctionHandler* pH)
 int CScriptObjectSystem::DrawLine(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(6);
-	IRenderAuxGeom* pRenderAuxGeom(gEnv->pRenderer->GetIRenderAuxGeom());
+	IRenderAuxGeom* pRenderAuxGeom(Env::Renderer()->GetIRenderAuxGeom());
 
 	Vec3 p1(0, 0, 0);
 	Vec3 p2(0, 0, 0);
@@ -1033,7 +1033,7 @@ int CScriptObjectSystem::DrawLine(IFunctionHandler* pH)
 int CScriptObjectSystem::Draw2DLine(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(8);
-	IRenderAuxGeom* pRenderAuxGeom(gEnv->pRenderer->GetIRenderAuxGeom());
+	IRenderAuxGeom* pRenderAuxGeom(Env::Renderer()->GetIRenderAuxGeom());
 
 	Vec3 p1(0, 0, 0);
 	Vec3 p2(0, 0, 0);
@@ -1123,7 +1123,7 @@ int CScriptObjectSystem::DrawText(IFunctionHandler* pH)
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::DrawSphere(IFunctionHandler* pH, float x, float y, float z, float radius, int r, int g, int b, int a)
 {
-	IRenderAuxGeom* pRenderAuxGeom = gEnv->pRenderer->GetIRenderAuxGeom();
+	IRenderAuxGeom* pRenderAuxGeom = Env::Renderer()->GetIRenderAuxGeom();
 	if (pRenderAuxGeom)
 	{
 		SAuxGeomRenderFlags oldFlags = pRenderAuxGeom->GetRenderFlags();
@@ -1144,7 +1144,7 @@ int CScriptObjectSystem::DrawSphere(IFunctionHandler* pH, float x, float y, floa
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::DrawAABB(IFunctionHandler* pH, float x, float y, float z, float x2, float y2, float z2, int r, int g, int b, int a)
 {
-	IRenderAuxGeom* pRenderAuxGeom = gEnv->pRenderer->GetIRenderAuxGeom();
+	IRenderAuxGeom* pRenderAuxGeom = Env::Renderer()->GetIRenderAuxGeom();
 	if (pRenderAuxGeom)
 	{
 		SAuxGeomRenderFlags oldFlags = pRenderAuxGeom->GetRenderFlags();
@@ -1165,7 +1165,7 @@ int CScriptObjectSystem::DrawAABB(IFunctionHandler* pH, float x, float y, float 
 /////////////////////////////////////////////////////////////////////////////////
 int CScriptObjectSystem::DrawOBB(IFunctionHandler* pH, float x, float y, float z, float w, float h, float d, float rx, float ry, float rz)
 {
-	IRenderAuxGeom* pRenderAuxGeom = gEnv->pRenderer->GetIRenderAuxGeom();
+	IRenderAuxGeom* pRenderAuxGeom = Env::Renderer()->GetIRenderAuxGeom();
 	if (pRenderAuxGeom)
 	{
 		SAuxGeomRenderFlags oldFlags = pRenderAuxGeom->GetRenderFlags();
@@ -1201,7 +1201,7 @@ int CScriptObjectSystem::SetPostProcessFxParam(IFunctionHandler* pH)
 	{
 		float fValue = -1;
 		pH->GetParam(2, fValue);
-		gEnv->p3DEngine->SetPostEffectParam(pszEffectParam, fValue);
+		Env::I3DEngine()->SetPostEffectParam(pszEffectParam, fValue);
 
 		break;
 	}
@@ -1209,7 +1209,7 @@ int CScriptObjectSystem::SetPostProcessFxParam(IFunctionHandler* pH)
 	{
 		Vec3 pValue = Vec3(0, 0, 0);
 		pH->GetParam(2, pValue);
-		gEnv->p3DEngine->SetPostEffectParamVec4(pszEffectParam, Vec4(pValue, 1));
+		Env::I3DEngine()->SetPostEffectParamVec4(pszEffectParam, Vec4(pValue, 1));
 
 		break;
 	}
@@ -1217,7 +1217,7 @@ int CScriptObjectSystem::SetPostProcessFxParam(IFunctionHandler* pH)
 	{
 		const char* pszValue = 0;
 		pH->GetParam(2, pszValue);
-		gEnv->p3DEngine->SetPostEffectParamString(pszEffectParam, pszValue);
+		Env::I3DEngine()->SetPostEffectParamString(pszEffectParam, pszValue);
 
 		break;
 	}

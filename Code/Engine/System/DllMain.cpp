@@ -44,7 +44,7 @@ ISystem* CreateSystemInterface(SSystemInitParams& startupParams)
 		CryMessageBox("System initialization failed!", "Engine initialization failed!");
 		pSystem.release();
 		startupParams.pSystem = nullptr;
-		gEnv->pSystem         = nullptr;
+		Env::Get()->pSystem   = nullptr;
 
 		return nullptr;
 	}

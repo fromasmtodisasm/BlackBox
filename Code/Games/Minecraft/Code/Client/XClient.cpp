@@ -27,7 +27,7 @@
 
 //////////////////////////////////////////////////////////////////////
 CXClient::CXClient()
-    : m_DummyClient((CXGame*)(gEnv->pSystem->GetIGame()))
+    : m_DummyClient((CXGame*)(Env::System()->GetIGame()))
 {
 	m_bConnected          = 0;
 	m_CameraParams        = 0;

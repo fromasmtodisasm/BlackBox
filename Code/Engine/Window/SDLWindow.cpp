@@ -1,4 +1,5 @@
 #define CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
+#include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
@@ -59,7 +60,7 @@ bool CSDLWindow::init(SInitParams* pInitParams)
 	}
 	if (SDL_GetDesktopDisplayMode(0, &m_DesktopMode) != 0)
 	{
-		gEnv->pLog->Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+		Env::Log()->Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 		return 1;
 	}
 	return true;
@@ -112,9 +113,9 @@ void CSDLWindow::show()
 
 void CSDLWindow::handleEvent(SDL_Event& event)
 {
-//#define SDL_Log(format, ...) gEnv->pLog->Log(format, __VA_ARGS__)
+//#define SDL_Log(format, ...) Env::Log()->Log(format, __VA_ARGS__)
 #define SDL_Log(format, ...)
-	auto& system = gEnv->pSystem;
+	//auto& system = Env::System();
 	if (event.type == SDL_WINDOWEVENT)
 	{
 		g_CurrentWindow = SDL_GetWindowFromID(event.window.windowID);
@@ -125,23 +126,23 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 			break;
 		case SDL_WINDOWEVENT_HIDDEN:
 			SDL_Log("Window %d hidden", event.window.windowID);
-			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
 			break;
 		case SDL_WINDOWEVENT_EXPOSED:
 			SDL_Log("Window %d exposed", event.window.windowID);
-			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
 			break;
 		case SDL_WINDOWEVENT_MOVED:
 			SDL_Log("Window %d moved to %d,%d",
 			        event.window.windowID, event.window.data1,
 			        event.window.data2);
-			system->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_MOVE, event.window.data1, event.window.data2);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_MOVE, event.window.data1, event.window.data2);
 			break;
 		case SDL_WINDOWEVENT_RESIZED:
 			SDL_Log("Window %d resized to %dx%d",
 			        event.window.windowID, event.window.data1,
 			        event.window.data2);
-			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, event.window.data1, event.window.data2);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, event.window.data1, event.window.data2);
 			break;
 		case SDL_WINDOWEVENT_SIZE_CHANGED:
 			SDL_Log("Window %d size changed to %dx%d",
@@ -150,11 +151,11 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 			break;
 		case SDL_WINDOWEVENT_MINIMIZED:
 			SDL_Log("Window %d minimized", event.window.windowID);
-			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
 			break;
 		case SDL_WINDOWEVENT_MAXIMIZED:
 			SDL_Log("Window %d maximized", event.window.windowID);
-			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
 			break;
 		case SDL_WINDOWEVENT_RESTORED:
 			SDL_Log("Window %d restored", event.window.windowID);
@@ -169,12 +170,12 @@ void CSDLWindow::handleEvent(SDL_Event& event)
 		case SDL_WINDOWEVENT_FOCUS_GAINED:
 			SDL_Log("Window %d gained keyboard focus",
 			        event.window.windowID);
-			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 1, 0);
 			break;
 		case SDL_WINDOWEVENT_FOCUS_LOST:
 			SDL_Log("Window %d lost keyboard focus",
 			        event.window.windowID);
-			gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
+			Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_GAMEWINDOW_ACTIVATE, 0, 0);
 			break;
 		case SDL_WINDOWEVENT_CLOSE:
 			SDL_Log("Window %d closed", event.window.windowID);
@@ -248,8 +249,8 @@ bool CSDLWindow::InitForGl()
 	};
 
 	GlVersion glVersion;
-	auto      gl_v_maj = gEnv->pConsole->GetCVar("r_gl_v_maj");
-	auto      gl_v_min = gEnv->pConsole->GetCVar("r_gl_v_min");
+	auto      gl_v_maj = Env::Console()->GetCVar("r_gl_v_maj");
+	auto      gl_v_min = Env::Console()->GetCVar("r_gl_v_min");
 	if (gl_v_maj && gl_v_min)
 	{
 		glVersion = GlVersion(gl_v_maj->GetIVal(), gl_v_min->GetIVal());
@@ -323,7 +324,7 @@ void CSDLWindow::SelectDisplay(int& x, int& y, int w, int h)
 {
 	// enumerate displays
 	int  displays = SDL_GetNumVideoDisplays();
-	auto display  = gEnv->pConsole->GetCVar("r_DisplayIndex")->GetIVal();
+	auto display  = Env::Console()->GetCVar("r_DisplayIndex")->GetIVal();
 	display       = std::max(displays - 1, 0);
 
 	// get display bounds for all displays

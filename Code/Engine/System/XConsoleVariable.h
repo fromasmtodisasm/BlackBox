@@ -413,7 +413,7 @@ protected:
 		{
 			if (std::find(m_allowedValues.cbegin(), m_allowedValues.cend(), value) == m_allowedValues.cend())
 			{
-				if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
+				if (ICVar* pCVarLogging = Env::Console()->GetCVar("sys_cvar_logging"))
 				{
 					if (pCVarLogging->GetIVal() > 0)
 					{
@@ -432,7 +432,7 @@ protected:
 		{
 			if (value > m_maxValue || value < m_minValue)
 			{
-				if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
+				if (ICVar* pCVarLogging = Env::Console()->GetCVar("sys_cvar_logging"))
 				{
 					if (pCVarLogging->GetIVal() > 0)
 					{
@@ -453,7 +453,7 @@ protected:
 
 		if (m_pConsole->OnBeforeVarChange(this, GetString()))
 		{
-			if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
+			if (ICVar* pCVarLogging = Env::Console()->GetCVar("sys_cvar_logging"))
 			{
 				if (pCVarLogging->GetIVal() >= 2)
 				{
@@ -540,7 +540,7 @@ public:
 			if (std::find_if(m_allowedValues.cbegin(), m_allowedValues.cend(),
 			                 [szValue](const string& allowedValue) { return stricmp(allowedValue.c_str(), szValue) == 0; }) == m_allowedValues.cend())
 			{
-				if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
+				if (ICVar* pCVarLogging = Env::Console()->GetCVar("sys_cvar_logging"))
 				{
 					if (pCVarLogging->GetIVal() > 0)
 						CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_ERROR, "[CVARS] '%s' is not a valid value of '%s'", szValue, GetName());
@@ -551,7 +551,7 @@ public:
 
 		if (m_pConsole->OnBeforeVarChange(this, szValue))
 		{
-			if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
+			if (ICVar* pCVarLogging = Env::Console()->GetCVar("sys_cvar_logging"))
 			{
 				if (pCVarLogging->GetIVal() >= 2)
 					CryLog("[CVARS] '%s' set to %s (was %s)", GetName(), szValue, m_value.c_str());

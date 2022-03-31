@@ -163,11 +163,11 @@ void Command_SetWaitSeconds(IConsoleCmdArgs* pCmd)
 #if WAIT_SECONDS
 	if (pCmd->GetArgCount() > 1)
 	{
-		CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+		CXConsole* pConsole = static_cast<CXConsole*>(Env::Console());
 		if (pConsole->m_waitSeconds.GetValue() != 0)
 			CryWarning(EValidatorModule::VALIDATOR_MODULE_SYSTEM, EValidatorSeverity::VALIDATOR_WARNING, "You are overwriting the current wait seconds!");
 		pConsole->m_waitSeconds.SetSeconds(atof(pCmd->GetArg(1)));
-		pConsole->m_waitSeconds += gEnv->pTimer->GetFrameStartTime();
+		pConsole->m_waitSeconds += Env::Timer()->GetFrameStartTime();
 	}
 #endif
 }
@@ -176,7 +176,7 @@ void Command_SetWaitFrames(IConsoleCmdArgs* pCmd)
 {
 	if (pCmd->GetArgCount() > 1)
 	{
-		CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+		CXConsole* pConsole = static_cast<CXConsole*>(Env::Console());
 		if (pConsole->m_waitFrames != 0)
 			CryWarning(EValidatorModule::VALIDATOR_MODULE_SYSTEM, EValidatorSeverity::VALIDATOR_WARNING, "You are overwriting the current wait frames!");
 		pConsole->m_waitFrames = std::max(0, atoi(pCmd->GetArg(1)));
@@ -188,17 +188,17 @@ void Command_Then(IConsoleCmdArgs* pCmd)
 	if (pCmd->GetArgCount() > 1)
 	{
 		const char* szTmpStr = pCmd->GetCommandLine() + sizeof("then");
-		gEnv->pConsole->ExecuteString(szTmpStr, true, true);
+		Env::Console()->ExecuteString(szTmpStr, true, true);
 	}
 }
 
 void ConsoleShow(IConsoleCmdArgs*)
 {
-	gEnv->pConsole->ShowConsole(true);
+	Env::Console()->ShowConsole(true);
 }
 void ConsoleHide(IConsoleCmdArgs*)
 {
-	gEnv->pConsole->ShowConsole(false);
+	Env::Console()->ShowConsole(false);
 }
 
 void Bind(IConsoleCmdArgs* cmdArgs)
@@ -211,7 +211,7 @@ void Bind(IConsoleCmdArgs* cmdArgs)
 			arg += cmdArgs->GetArg(i);
 			arg += " ";
 		}
-		gEnv->pConsole->CreateKeyBind(cmdArgs->GetArg(1), arg.c_str(), false);
+		Env::Console()->CreateKeyBind(cmdArgs->GetArg(1), arg.c_str(), false);
 	}
 }
 
@@ -230,7 +230,7 @@ void Command_DumpCommandsVars(IConsoleCmdArgs* Cmd)
 	if (Cmd->GetArgCount() > 1)
 		arg = Cmd->GetArg(1);
 
-	CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+	CXConsole* pConsole = static_cast<CXConsole*>(Env::Console());
 
 	// txt
 	pConsole->DumpCommandsVars(const_cast<char*>(arg));
@@ -255,7 +255,7 @@ void Command_DumpVars(IConsoleCmdArgs* Cmd)
 			includeCheat = true;
 	}
 
-	CXConsole* pConsole = static_cast<CXConsole*>(gEnv->pConsole);
+	CXConsole* pConsole = static_cast<CXConsole*>(Env::Console());
 	pConsole->DumpVarsTxt(includeCheat);
 	#endif
 }
@@ -334,8 +334,8 @@ void CXConsole::OnConsoleCommand(const char* cmd)
 
 CXConsole::~CXConsole()
 {
-	if (gEnv->pSystem)
-		gEnv->pSystem->GetIRemoteConsole()->UnregisterListener(this);
+	if (Env::System())
+		Env::System()->GetIRemoteConsole()->UnregisterListener(this);
 
 #if 0
 	CNotificationNetworkConsole::Shutdown();
@@ -372,7 +372,7 @@ bool CXConsole::ParseCVarOverridesFile(const char* szSysCVarOverridesPathConfigF
 	string sys_cvar_overrides_path;
 	{
 		CryPathString path;
-		gEnv->pCryPak->AdjustFileName(szSysCVarOverridesPathConfigFile, path, 0);
+		Env::CryPak()->AdjustFileName(szSysCVarOverridesPathConfigFile, path, 0);
 		std::ifstream inFile;
 		inFile.open(path);
 		if (!inFile.is_open())
@@ -522,7 +522,7 @@ void CXConsole::PreProjectSystemInit()
 	REGISTER_CVAR(con_restricted, con_restricted, VF_RESTRICTEDMODE, "0=normal mode / 1=restricted access to the console"); // later on VF_RESTRICTEDMODE should be removed (to 0)
 
 	if (m_system.IsDevMode()    // unrestricted console for -DEVMODE
-	    || gEnv->IsDedicated()) // unrestricted console for dedicated server
+	    || Env::Get()->IsDedicated()) // unrestricted console for dedicated server
 		con_restricted = 0;
 
 		// test cases -----------------------------------------------
@@ -597,7 +597,7 @@ void CXConsole::PostRendererInit()
 {
 	m_pFont     = GetFont("VeraMono.ttf", con_font_size, con_font_size);
 	m_pRenderer = m_system.GetIRenderer();
-	m_pNetwork  = gEnv->pNetwork; // EvenBalance - M. Quinn
+	m_pNetwork  = Env::Network(); // EvenBalance - M. Quinn
 	m_pInput    = m_system.GetIInput();
 	m_pTimer    = m_system.GetITimer();
 
@@ -623,7 +623,7 @@ void CXConsole::PostRendererInit()
 		m_nWhiteTexID       = -1;
 	}
 
-	if (gEnv->IsDedicated())
+	if (Env::Get()->IsDedicated())
 		m_bConsoleActive = true;
 
 	if (con_showonload)
@@ -667,9 +667,9 @@ void CXConsole::Paste()
 {
 	// FIX: This is ugly hack, event twice for frame sended
 	static auto last_frame = 0;
-	if (last_frame == gEnv->pRenderer->GetFrameID())
+	if (last_frame == Env::Renderer()->GetFrameID())
 		return;
-	last_frame = gEnv->pRenderer->GetFrameID();
+	last_frame = Env::Renderer()->GetFrameID();
 #if BB_PLATFORM_WINDOWS
 	const BOOL hasANSI    = IsClipboardFormatAvailable(CF_TEXT);
 	const BOOL hasUnicode = IsClipboardFormatAvailable(CF_UNICODETEXT);
@@ -728,9 +728,9 @@ ICVar* CXConsole::CreateVariable(const char* sName, const char* sValue, int nFla
 	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
-		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterString(const char*): variable [%s] is already registered", pCVar->GetName());
+		Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterString(const char*): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-		gEnv->pSystem->debug_LogCallStack();
+		Env::System()->debug_LogCallStack();
 #endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 		return pCVar;
 	}
@@ -748,9 +748,9 @@ ICVar* CXConsole::CreateVariable(const char* sName, int iValue, int nFlags, cons
 	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
-		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterInt(): variable [%s] is already registered", pCVar->GetName());
+		Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterInt(): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-		gEnv->pSystem->debug_LogCallStack();
+		Env::System()->debug_LogCallStack();
 #endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 		return pCVar;
 	}
@@ -768,9 +768,9 @@ ICVar* CXConsole::CreateVariable(const char* sName, float fValue, int nFlags, co
 	ICVar* pCVar = stl::find_in_map(m_mapVariables, sName, nullptr);
 	if (pCVar)
 	{
-		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterFloat(): variable [%s] is already registered", pCVar->GetName());
+		Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::RegisterFloat(): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-		gEnv->pSystem->debug_LogCallStack();
+		Env::System()->debug_LogCallStack();
 #endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 		return pCVar;
 	}
@@ -851,14 +851,14 @@ void CXConsole::RegisterVar(const string& name, ICVar* pCVar, ConsoleVarFunc pCh
 #endif // !CVAR_GROUPS_ARE_PRIVILEGED
 		    (isConst || isCheat || isReadOnly || isDeprecated))
 		{
-			allowChange = !isDeprecated && ((gEnv->pSystem->IsDevMode()) || (gEnv->IsEditor()));
+			allowChange = !isDeprecated && ((Env::System()->IsDevMode()) || (Env::Get()->IsEditor()));
 			if (pCVar->GetString() != var.m_value && !allowChange)
 			{
 #if LOG_CVAR_INFRACTIONS
 				LogChangeMessage(pCVar->GetName(), isConst, isCheat,
 				                 isReadOnly, isDeprecated, pCVar->GetString(), var.m_value.c_str(), m_bIsProcessingGroup, allowChange);
 	#if LOG_CVAR_INFRACTIONS_CALLSTACK
-				gEnv->pSystem->debug_LogCallStack();
+				Env::System()->debug_LogCallStack();
 	#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 #endif     // LOG_CVAR_INFRACTIONS
 			}
@@ -921,14 +921,14 @@ bool CXConsole::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 #endif
 	    (isConst || isCheat || isReadOnly || isDeprecated))
 	{
-		const bool allowChange = !isDeprecated && ((gEnv->pSystem->IsDevMode()) || (gEnv->IsEditor()));
-		if (!(gEnv->IsEditor()) || isDeprecated)
+		const bool allowChange = !isDeprecated && ((Env::System()->IsDevMode()) || (Env::Get()->IsEditor()));
+		if (!(Env::Get()->IsEditor()) || isDeprecated)
 		{
 #if LOG_CVAR_INFRACTIONS
 			LogChangeMessage(pVar->GetName(), isConst, isCheat,
 			                 isReadOnly, isDeprecated, pVar->GetString(), sNewValue, m_bIsProcessingGroup, allowChange);
 	#if LOG_CVAR_INFRACTIONS_CALLSTACK
-			gEnv->pSystem->debug_LogCallStack();
+			Env::System()->debug_LogCallStack();
 	#endif
 #endif
 		}
@@ -996,13 +996,13 @@ void CXConsole::ShowConsole(bool show)
 
 	if (show && !m_bConsoleActive)
 	{
-		if (gEnv->pHardwareMouse)
-			gEnv->pHardwareMouse->IncrementCounter();
+		if (Env::HardwareMouse())
+			Env::HardwareMouse()->IncrementCounter();
 	}
 	else if (!show && m_bConsoleActive)
 	{
-		if (gEnv->pHardwareMouse)
-			gEnv->pHardwareMouse->DecrementCounter();
+		if (Env::HardwareMouse())
+			Env::HardwareMouse()->DecrementCounter();
 	}
 
 	SetStatus(show);
@@ -1080,9 +1080,9 @@ ICVar* CXConsole::RegisterInternal(const char* sName, int* src, int iValue, int 
 		}
 		else
 		{
-			gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(int): variable [%s] is already registered", pCVar->GetName());
+			Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(int): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-			gEnv->pSystem->debug_LogCallStack();
+			Env::System()->debug_LogCallStack();
 #endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 		}
 		return pCVar;
@@ -1135,9 +1135,9 @@ ICVar* CXConsole::RegisterInternal(const char* sName, float* src, float fValue, 
 		}
 		else
 		{
-			gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
+			Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(float): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-			gEnv->pSystem->debug_LogCallStack();
+			Env::System()->debug_LogCallStack();
 #endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 		}
 		return pCVar;
@@ -1164,9 +1164,9 @@ ICVar* CXConsole::RegisterInternal(const char* sName, const char** src, const ch
 		}
 		else
 		{
-			gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(const char*): variable [%s] is already registered", pCVar->GetName());
+			Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::Register(const char*): variable [%s] is already registered", pCVar->GetName());
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-			gEnv->pSystem->debug_LogCallStack();
+			Env::System()->debug_LogCallStack();
 #endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 		}
 		return pCVar;
@@ -1334,8 +1334,8 @@ void CXConsole::Update()
 		const float fRepeatDelay = 1.0f / 40.0f; // in sec (similar to Windows default but might differ from actual setting)
 		const float fHitchDelay  = 1.0f / 10.0f; // in sec. Very low, but still reasonable frame-rate (debug builds)
 
-		m_fRepeatTimer -= gEnv->pTimer->GetRealFrameTime();              // works even when time is manipulated
-		m_fRepeatTimer -= gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI); // can be used once ETIMER_UI works even with t_FixedTime
+		m_fRepeatTimer -= Env::Timer()->GetRealFrameTime();              // works even when time is manipulated
+		m_fRepeatTimer -= Env::Timer()->GetFrameTime(ITimer::ETIMER_UI); // can be used once ETIMER_UI works even with t_FixedTime
 
 		if (m_fRepeatTimer <= 0.0f)
 		{
@@ -1392,8 +1392,8 @@ void CXConsole::Draw()
 	{
 		// cursor blinking
 		{
-			m_fCursorBlinkTimer += gEnv->pTimer->GetRealFrameTime(); // works even when time is manipulated
-			//m_fCursorBlinkTimer += gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI); // can be used once ETIMER_UI works even with t_FixedTime
+			m_fCursorBlinkTimer += Env::Timer()->GetRealFrameTime(); // works even when time is manipulated
+			//m_fCursorBlinkTimer += Env::Timer()->GetFrameTime(ITimer::ETIMER_UI); // can be used once ETIMER_UI works even with t_FixedTime
 
 			const float fCursorBlinkDelay = 0.5f; // in sec (similar to Windows default but might differ from actual setting)
 
@@ -1411,22 +1411,22 @@ void CXConsole::Draw()
 			{
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), 12, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
-				gEnv->pRenderer->Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_nScrollPos), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0.99);
+				Env::Renderer()->Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_nScrollPos), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0.99);
 			}
 			else
 			{
 				float fReferenceSize = 600.0f;
 				float fSizeX         = (float)m_pRenderer->GetWidth();
 				float s0, s1;
-				s0 = s1      = (float)fmod(gEnv->pTimer->GetCurrTime(), 800) / 800.f * 10;
+				s0 = s1      = (float)fmod(Env::Timer()->GetCurrTime(), 800) / 800.f * 10;
 				float fSizeY = m_nTempScrollMax * m_pRenderer->GetHeight() / fReferenceSize;
 
 #if 0
 				IRenderAuxImage::DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
 				IRenderAuxImage::DrawImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
 #else
-				gEnv->pRenderer->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 0.0f, s0 + 1, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.98f);
-				gEnv->pRenderer->Draw2dImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+				Env::Renderer()->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 0.0f, s0 + 1, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.98f);
+				Env::Renderer()->Draw2dImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 #endif
 			}
 		}
@@ -1455,9 +1455,9 @@ void CXConsole::AddCommand(const char* sCommand, const char* sScriptFunc, DWORD 
 	}
 	else
 	{
-		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): script command [%s] is already registered", sCommand);
+		Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): script command [%s] is already registered", sCommand);
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-		gEnv->pSystem->debug_LogCallStack();
+		Env::System()->debug_LogCallStack();
 #endif
 	}
 }
@@ -1468,7 +1468,7 @@ void CXConsole::AddCommand(const char* szCommand, ConsoleCommandFunc func, int n
 
 	if (m_configVars.find(szCommand) != m_configVars.end())
 	{
-		gEnv->pLog->LogWarning("The command '%s' appeared in a config file, but only CVars are allowed in config files.", szCommand);
+		Env::Log()->LogWarning("The command '%s' appeared in a config file, but only CVars are allowed in config files.", szCommand);
 	}
 
 	if (m_mapCommands.find(szCommand) == m_mapCommands.end())
@@ -1499,9 +1499,9 @@ void CXConsole::AddCommand(const char* szCommand, ConsoleCommandFunc func, int n
 	}
 	else
 	{
-		gEnv->pLog->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [%s] is already registered", szCommand);
+		Env::Log()->LogError("[CVARS]: [DUPLICATE] CXConsole::AddCommand(): console command [%s] is already registered", szCommand);
 #if LOG_CVAR_INFRACTIONS_CALLSTACK
-		gEnv->pSystem->debug_LogCallStack();
+		Env::System()->debug_LogCallStack();
 #endif
 	}
 }
@@ -1768,7 +1768,7 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 				for (int i = 0; i < nMatches; i++)
 				{
 					const string cmd = string(sVar) + " " + pArgumentAutoComplete->GetValue(i);
-					if (strnicmp(m_sPrevTab.c_str(), cmd.c_str(), m_sPrevTab.length()) == 0 && gEnv->pSystem->IsCVarWhitelisted(cmd.c_str(), true))
+					if (strnicmp(m_sPrevTab.c_str(), cmd.c_str(), m_sPrevTab.length()) == 0 && Env::System()->IsCVarWhitelisted(cmd.c_str(), true))
 					{
 						bArgumentAutoComplete = true;
 						matches.push_back(cmd);
@@ -1785,7 +1785,7 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 			const CConsoleCommand& cmd = pair.second;
 			if ((cmd.m_nFlags & VF_RESTRICTEDMODE) || !con_restricted) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
 			{
-				if (strnicmp(m_sPrevTab.c_str(), pair.first.c_str(), m_sPrevTab.length()) == 0 && gEnv->pSystem->IsCVarWhitelisted(pair.first.c_str(), true))
+				if (strnicmp(m_sPrevTab.c_str(), pair.first.c_str(), m_sPrevTab.length()) == 0 && Env::System()->IsCVarWhitelisted(pair.first.c_str(), true))
 				{
 					matches.push_back(pair.first);
 				}
@@ -1797,7 +1797,7 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 		{
 			const ICVar* pVar = pair.second;
 #ifdef _RELEASE
-			if (!gEnv->IsEditor())
+			if (!Env::Get()->IsEditor())
 			{
 				const bool isCheat = (pVar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0;
 				if (isCheat)
@@ -1809,7 +1809,7 @@ const char* CXConsole::ProcessCompletion(const char* szInputBuffer)
 
 			if ((pVar->GetFlags() & VF_RESTRICTEDMODE) || !con_restricted) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
 			{
-				if (strnicmp(m_sPrevTab.c_str(), pair.first.data(), m_sPrevTab.length()) == 0 && gEnv->pSystem->IsCVarWhitelisted(pair.first.data(), true))
+				if (strnicmp(m_sPrevTab.c_str(), pair.first.data(), m_sPrevTab.length()) == 0 && Env::System()->IsCVarWhitelisted(pair.first.data(), true))
 				{
 					matches.push_back(pair.first);
 				}
@@ -2155,7 +2155,7 @@ bool CXConsole::OnInputEvent(const SInputEvent& event)
 		}
 	}
 	// Normally, this will notify the editor to switch out of game mode, but in order to allow access to game functionality bound to the Escape key, we skip it if Shift is held down
-	if (event.keyId == eKI_Escape && ((event.modifiers & eMM_Shift) == 0 || !gEnv->IsEditor()))
+	if (event.keyId == eKI_Escape && ((event.modifiers & eMM_Shift) == 0 || !Env::Get()->IsEditor()))
 	{
 		//switch process or page or other things
 		m_sInputBuffer = "";
@@ -2197,13 +2197,13 @@ void CXConsole::FindVar(const char* substr)
 	{
 		if (CryStringUtils::stristr(cmds[i], substr))
 		{
-			if (gEnv->pSystem->IsCVarWhitelisted(cmds[i], true))
+			if (Env::System()->IsCVarWhitelisted(cmds[i], true))
 			{
-				ICVar* pCvar = gEnv->pConsole->GetCVar(cmds[i]);
+				ICVar* pCvar = Env::Console()->GetCVar(cmds[i]);
 				if (pCvar)
 				{
 #ifdef _RELEASE
-					if (!gEnv->IsEditor())
+					if (!Env::Get()->IsEditor())
 					{
 						const bool isCheat = (pCvar->GetFlags() & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0;
 						if (isCheat)
@@ -2352,7 +2352,7 @@ bool CXConsole::ProcessInput(const SInputEvent& event)
 		// i.e. OnInputEventUI will never be fired
 		// The below isn't true unicode, it's converted from ascii
 		// TODO: Rework windows processing of input (WM_CHAR) into CKeyboard (Both cases when in editor and not) and make all keyboard devices consistent and can remove the below code
-		if (gEnv->IsEditor())
+		if (Env::Get()->IsEditor())
 		{
 			const uint32 inputChar = m_pInput->GetInputCharUnicode(event);
 
@@ -2529,14 +2529,14 @@ void CXConsole::LoadConfigVar(const char* szVariable, const char* sValue)
 		        (isConst || isCheat || isReadOnly)) ||
 		    isDeprecated)
 		{
-			allowChange = (!isDeprecated && gEnv->pSystem->IsDevMode()) || gEnv->IsEditor();
-			if (!(gEnv->IsEditor()) || isDeprecated)
+			allowChange = (!isDeprecated && Env::System()->IsDevMode()) || Env::Get()->IsEditor();
+			if (!(Env::Get()->IsEditor()) || isDeprecated)
 			{
 #if LOG_CVAR_INFRACTIONS
 				LogChangeMessage(pCVar->GetName(), isConst, isCheat,
 				                 isReadOnly, isDeprecated, pCVar->GetString(), sValue, m_bIsProcessingGroup, allowChange);
 	#if LOG_CVAR_INFRACTIONS_CALLSTACK
-				gEnv->pSystem->debug_LogCallStack();
+				Env::System()->debug_LogCallStack();
 	#endif
 #endif
 			}
@@ -2764,7 +2764,7 @@ void CXConsole::ExecuteDeferredCommands()
 #if 0
 	if (m_waitSeconds.GetValue())
 	{
-		if (m_waitSeconds > gEnv->pTimer->GetFrameStartTime())
+		if (m_waitSeconds > Env::Timer()->GetFrameStartTime())
 			return;
 
 		m_waitSeconds.SetValue(0); 	// Help to avoid overflow problems
@@ -2881,7 +2881,7 @@ void CXConsole::ExecuteInputBuffer()
 	AddCommandToHistory(sTemp.c_str());
 
 #if 0
-	if (gEnv->pSystem->IsCVarWhitelisted(sTemp.c_str(), false))
+	if (Env::System()->IsCVarWhitelisted(sTemp.c_str(), false))
 #endif
 	ExecuteStringInternal(sTemp.c_str(), true); // from console
 
@@ -2931,15 +2931,15 @@ void CXConsole::ExecuteCommand(CConsoleCommand& cmd, string& str, bool bIgnoreDe
 		return;
 	}
 
-	if (((cmd.m_nFlags & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0) && !(gEnv->IsEditor()))
+	if (((cmd.m_nFlags & (VF_CHEAT | VF_CHEAT_NOCHECK | VF_CHEAT_ALWAYS_CHECK)) != 0) && !(Env::Get()->IsEditor()))
 	{
 #if LOG_CVAR_INFRACTIONS
-		gEnv->pLog->LogError("[CVARS]: [EXECUTE] command %s is marked [VF_CHEAT]", cmd.m_sName.c_str());
+		Env::Log()->LogError("[CVARS]: [EXECUTE] command %s is marked [VF_CHEAT]", cmd.m_sName.c_str());
 	#if LOG_CVAR_INFRACTIONS_CALLSTACK
-		gEnv->pSystem->debug_LogCallStack();
+		Env::System()->debug_LogCallStack();
 	#endif
 #endif
-		if (!(gEnv->IsEditor()) && !(m_system.IsDevMode()) && !bIgnoreDevMode)
+		if (!(Env::Get()->IsEditor()) && !(m_system.IsDevMode()) && !bIgnoreDevMode)
 			return;
 	}
 
@@ -3078,7 +3078,7 @@ void CXConsole::ConsoleLogInputResponse(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	gEnv->pLog->LogV(ILog::eInputResponse, format, args);
+	Env::Log()->LogV(ILog::eInputResponse, format, args);
 	va_end(args);
 }
 
@@ -3086,7 +3086,7 @@ void CXConsole::ConsoleLogInput(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	gEnv->pLog->LogV(ILog::eInput, format, args);
+	Env::Log()->LogV(ILog::eInput, format, args);
 	va_end(args);
 }
 
@@ -3094,7 +3094,7 @@ void CXConsole::ConsoleWarning(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	gEnv->pLog->LogV(ILog::eWarningAlways, format, args);
+	Env::Log()->LogV(ILog::eWarningAlways, format, args);
 	va_end(args);
 }
 
@@ -3171,7 +3171,7 @@ void CXConsole::DisplayVarValue(ICVar* pVar)
 #endif
 	}
 
-	if (gEnv->IsEditor())
+	if (Env::Get()->IsEditor())
 		ConsoleLogInputResponse("%s=%s [ %s ]%s", sVar.c_str(), sValue.c_str(), sFlagsString, szRealState);
 	else
 		ConsoleLogInputResponse("    $3%s = $6%s $5[%s]$4%s", sVar.c_str(), sValue.c_str(), sFlagsString, szRealState);
@@ -3214,11 +3214,11 @@ void CXConsole::SplitCommands(const char* line, std::list<string>& split)
 
 IFont* CXConsole::GetFont(const char* name, float w, float h)
 {
-	if (gEnv->IsDedicated())
+	if (Env::Get()->IsDedicated())
 		m_pFont = new CNullFont();
 	else
 	{
-		m_pFont   = gEnv->pRenderer->GetIFont();
+		m_pFont   = Env::Renderer()->GetIFont();
 		auto font = name;
 		auto var  = GetCVar("s_font");
 		if (var)

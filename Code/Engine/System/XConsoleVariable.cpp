@@ -41,9 +41,9 @@ void CXConsoleVariableCVarGroup::OnLoadConfigurationEntry(const char* szKey, con
 		}
 		else
 		{
-			gEnv->pLog->LogError("[CVARS]: [MISSING] [%s] is not a registered console variable group", szGroup);
+			Env::Log()->LogError("[CVARS]: [MISSING] [%s] is not a registered console variable group", szGroup);
 	#if LOG_CVAR_INFRACTIONS_CALLSTACK
-			gEnv->pSystem->debug_LogCallStack();
+			Env::System()->debug_LogCallStack();
 	#endif // LOG_CVAR_INFRACTIONS_CALLSTACK
 			return;
 		}
@@ -58,14 +58,14 @@ void CXConsoleVariableCVarGroup::OnLoadConfigurationEntry(const char* szKey, con
 	if (pGroup)
 	{
 		if (pGroup->m_KeyValuePair.find(szKey) != pGroup->m_KeyValuePair.end())
-			gEnv->pLog->LogError("[CVARS]: [DUPLICATE] [%s] specified multiple times in console variable group [%s] = [%s]", szKey, GetName(), szGroup);
+			Env::Log()->LogError("[CVARS]: [DUPLICATE] [%s] specified multiple times in console variable group [%s] = [%s]", szKey, GetName(), szGroup);
 
 		pGroup->m_KeyValuePair[szKey] = szValue;
 
 		if (checkIfInDefault)
 		{
 			if (m_CVarGroupDefault.m_KeyValuePair.find(szKey) == m_CVarGroupDefault.m_KeyValuePair.end())
-				gEnv->pLog->LogError("[CVARS]: [MISSING] [%s] specified in console variable group [%s] = [%s], but missing from default group", szKey, GetName(), szGroup);
+				Env::Log()->LogError("[CVARS]: [MISSING] [%s] specified in console variable group [%s] = [%s], but missing from default group", szKey, GetName(), szGroup);
 		}
 	}
 }
@@ -74,7 +74,7 @@ void CXConsoleVariableCVarGroup::OnLoadConfigurationEntry_End()
 {
 	if (!m_defaultValue.empty())
 	{
-		gEnv->pConsole->LoadConfigVar(GetName(), m_defaultValue.data());
+		Env::Console()->LoadConfigVar(GetName(), m_defaultValue.data());
 		m_defaultValue.clear();
 	}
 }
@@ -83,7 +83,7 @@ CXConsoleVariableCVarGroup::CXConsoleVariableCVarGroup(IConsole* pConsole, const
 	: CXConsoleVariableInt(pConsole, name, 0, flags, nullptr, true)
 {
 	#if 0
-	gEnv->pSystem->LoadConfiguration(szFileName, this, eLoadConfigSystemSpec);
+	Env::System()->LoadConfiguration(szFileName, this, eLoadConfigSystemSpec);
 	#endif
 }
 
@@ -118,7 +118,7 @@ string CXConsoleVariableCVarGroup::GetDetailedInfo() const
 			info += "/";
 		}
 		info += GetValueSpec(key);
-		ICVar* pCVar = gEnv->pConsole->GetCVar(key.data());
+		ICVar* pCVar = Env::Console()->GetCVar(key.data());
 		if (pCVar != nullptr)
 		{
 			info += " [";
@@ -246,7 +246,7 @@ void CXConsoleVariableCVarGroup::OnCVarChangeFunc(ICVar* pVar)
 	// only the global sys_spec should be clamped by the max available spec and not the individual sys_spec_*
 	if (stricmp(pThis->GetName(), "sys_spec") == 0)
 	{
-		int maxSpec = gEnv->pSystem->GetMaxConfigSpec();
+		int maxSpec = Env::System()->GetMaxConfigSpec();
 		if (value > maxSpec)
 		{
 			value = maxSpec;
@@ -300,7 +300,7 @@ bool CXConsoleVariableCVarGroup::_TestCVars(const SCVarGroup& group, const ICVar
 		}
 
 		
-		if (ICVar* pVar = gEnv->pConsole->GetCVar(key.c_str()))
+		if (ICVar* pVar = Env::Console()->GetCVar(key.c_str()))
 		{
 			if (pVar->GetFlags() & VF_CVARGRP_IGNOREINREALVAL) // Ignore the cvars which change often and shouldn't be used to determine state
 				continue;
@@ -377,7 +377,7 @@ bool CXConsoleVariableCVarGroup::_TestCVars(const SCVarGroup& group, const ICVar
 
 					case ICVar::eCLM_FileOnly:
 					case ICVar::eCLM_FullInfo:
-						gEnv->pLog->LogToFile("[CVARS]: [FAIL] [%s] = [%s] (expected [%s] in group [%s] = [%s])", key.c_str(), pVar->GetString(), value.c_str(), GetName(), GetString());
+						Env::Log()->LogToFile("[CVARS]: [FAIL] [%s] = [%s] (expected [%s] in group [%s] = [%s])", key.c_str(), pVar->GetString(), value.c_str(), GetName(), GetString());
 						break;
 
 					default:
@@ -386,7 +386,7 @@ bool CXConsoleVariableCVarGroup::_TestCVars(const SCVarGroup& group, const ICVar
 				}
 				else if (mode == ICVar::eCLM_FullInfo)
 				{
-					gEnv->pLog->LogToFile("[CVARS]: [FAIL] [%s] = [%s] (expected [%s] in group [%s] = [%s])", key.c_str(), pVar->GetString(), value.c_str(), GetName(), GetString());
+					Env::Log()->LogToFile("[CVARS]: [FAIL] [%s] = [%s] (expected [%s] in group [%s] = [%s])", key.c_str(), pVar->GetString(), value.c_str(), GetName(), GetString());
 				}
 
 				pVar->DebugLog(pVar->GetIVal(), mode); // recursion
@@ -395,12 +395,12 @@ bool CXConsoleVariableCVarGroup::_TestCVars(const SCVarGroup& group, const ICVar
 			if ((pVar->GetFlags() & (VF_CHEAT | VF_CHEAT_ALWAYS_CHECK | VF_CHEAT_NOCHECK)) != 0)
 			{
 				// either VF_CHEAT should be removed or the var should be not part of the CVarGroup
-				gEnv->pLog->LogError("[CVARS]: [%s] is cheat protected; referenced in console variable group [%s] = [%s] ", key.c_str(), GetName(), GetString());
+				Env::Log()->LogError("[CVARS]: [%s] is cheat protected; referenced in console variable group [%s] = [%s] ", key.c_str(), GetName(), GetString());
 			}
 		}
 		else
 		{
-			gEnv->pConsole->LoadConfigVar(key.c_str(), value.c_str());
+			Env::Console()->LoadConfigVar(key.c_str(), value.c_str());
 		}
 	}
 
@@ -434,7 +434,7 @@ string CXConsoleVariableCVarGroup::GetValueSpec(const string& key, const int* pS
 
 void CXConsoleVariableCVarGroup::ApplyCVars(const SCVarGroup& group, const SCVarGroup* pExclude)
 {
-	if (ICVar* pCVarLogging = gEnv->pConsole->GetCVar("sys_cvar_logging"))
+	if (ICVar* pCVarLogging = Env::Console()->GetCVar("sys_cvar_logging"))
 	{
 		if (pCVarLogging->GetIVal() >= 2)
 			CryLog("Applying CVar group '%s'", GetName());

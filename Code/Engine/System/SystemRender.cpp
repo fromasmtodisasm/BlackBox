@@ -54,7 +54,7 @@ void CSystem::RenderStats()
 			PrintMemoryUsage("EntitySystem", &IEntitySystem::GetMemoryUsage, m_env.pEntitySystem) ;
 #endif
 		}
-		//PrintRightAlignedText(gEnv->pRenderer->GetHeight() - 64.f, "$1BLACKBOX $8ENGINE", m_pBlackBoxFont);
+		//PrintRightAlignedText(Env::Renderer()->GetHeight() - 64.f, "$1BLACKBOX $8ENGINE", m_pBlackBoxFont);
 
 		int iDisplayInfo = m_rDisplayInfo;
 		if (iDisplayInfo == 0)

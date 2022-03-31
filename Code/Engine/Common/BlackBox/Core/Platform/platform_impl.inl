@@ -7,15 +7,18 @@
 //////////////////////////////////////////////////////////////////////////
 // Global environment variable.
 //////////////////////////////////////////////////////////////////////////
+namespace Env
+{
 #if defined(SYS_ENV_AS_STRUCT)
 	#if defined(_LAUNCHER)
-SSystemGlobalEnvironment gEnv;
+	SSystemGlobalEnvironment gEnv;
 	#else
-extern SSystemGlobalEnvironment gEnv;
+	extern SSystemGlobalEnvironment gEnv;
 	#endif
 #else
-struct SSystemGlobalEnvironment* gEnv = nullptr;
+	struct SSystemGlobalEnvironment* gEnv = nullptr;
 #endif
+}
 
 #if (defined(_LAUNCHER) && defined(IS_MONOLITHIC_BUILD)) || !defined(_LIB)
 //The reg factory is used for registering the different modules along the whole project
@@ -25,7 +28,7 @@ std::vector<const char*>   g_moduleCVars;
 
 extern "C" DLL_EXPORT void CleanupModuleCVars()
 {
-	if (auto pConsole = gEnv->pConsole)
+	if (auto pConsole = Env::Console())
 	{
 		// Unregister all commands that were registered from within the plugin/module
 		for (auto& it : g_moduleCommands)
@@ -88,7 +91,7 @@ void InitCRTHandlers()
 	_set_invalid_parameter_handler(CryInvalidParameterHandler);
 }
 	#else
-void                            InitCRTHandlers()
+void InitCRTHandlers()
 {
 }
 	#endif
@@ -98,7 +101,7 @@ void                            InitCRTHandlers()
 //////////////////////////////////////////////////////////////////////////
 extern "C" DLL_EXPORT void ModuleInitISystem(ISystem* pSystem, const char* moduleName)
 {
-	if (gEnv) // Already registered.
+	if (Env::Get()) // Already registered.
 		return;
 
 	#if defined(USE_CRY_ASSERT)
@@ -107,14 +110,14 @@ extern "C" DLL_EXPORT void ModuleInitISystem(ISystem* pSystem, const char* modul
 
 	#if !defined(SYS_ENV_AS_STRUCT)
 	if (pSystem) // DONT REMOVE THIS. ITS FOR RESOURCE COMPILER!!!!
-		gEnv = pSystem->GetGlobalEnvironment();
+		Env::Set(pSystem->GetGlobalEnvironment());
 	#endif
 
 	InitCRTHandlers();
 
 	#if !defined(SYS_ENV_AS_STRUCT)
 	if (pSystem) // DONT REMOVE THIS. ITS FOR RESOURCE COMPILER!!!!
-		gEnv = pSystem->GetGlobalEnvironment();
+		Env::Set(pSystem->GetGlobalEnvironment());
 	#endif
 }
 
@@ -257,15 +260,15 @@ EQuestionResult CryMessageBox(const char* szText, const char* szCaption, EMessag
 {
 	#if 1
 		#if 0
-	if (gEnv && gEnv->bUnattendedMode)
+	if (Env::Get() && Env::Get()->bUnattendedMode)
 	{
 		return eQR_None;
 	}
 		#endif
 
-	if (gEnv && gEnv->pSystem && gEnv->pSystem->GetUserCallback() != nullptr)
+	if (Env::Get() && Env::System() && Env::System()->GetUserCallback() != nullptr)
 	{
-		return gEnv->pSystem->GetUserCallback()->ShowMessage(szText, szCaption, type);
+		return Env::System()->GetUserCallback()->ShowMessage(szText, szCaption, type);
 	}
 	#endif
 
@@ -276,7 +279,7 @@ EQuestionResult CryMessageBox(const char* szText, const char* szCaption, EMessag
 	EQuestionResult result = eQR_None;
 	#endif
 
-	if (gEnv && gEnv->pSystem && gEnv->pLog)
+	if (Env::Get() && Env::System() && Env::Log())
 	{
 		CryLogAlways("Messagebox: cap: %s  text:%s\n", szCaption != nullptr ? szCaption : " ", szText != nullptr ? szText : " ");
 	}

@@ -20,18 +20,18 @@ struct ConsoleRegistrationHelper
 {
 	static void AddCommand(const char* szCommand, ConsoleCommandFunc func, int flags = 0, const char* szHelp = nullptr, bool bIsManagedExternally = false)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_COMMAND(szCommand);
-			gEnv->pConsole->AddCommand(szCommand, func, flags, szHelp, bIsManagedExternally);
+			Env::Console()->AddCommand(szCommand, func, flags, szHelp, bIsManagedExternally);
 		}
 	}
 	static void AddCommand(const char* szName, const char* szScriptFunc, int flags = 0, const char* szHelp = nullptr)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_COMMAND(szName);
-			IBaseConsole* bc = dynamic_cast<IBaseConsole*>(gEnv->pConsole);
+			IBaseConsole* bc = dynamic_cast<IBaseConsole*>(Env::Console());
 			if (NULL != bc)
 			{
 				bc->AddCommand(szName, szScriptFunc, (DWORD)flags, szHelp);
@@ -41,11 +41,11 @@ struct ConsoleRegistrationHelper
 
 	static ICVar* RegisterString(const char* szName, const char* szValue, int flags, const char* szHelp = "", ConsoleVarFunc pChangeFunc = nullptr)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_CVAR(szName);
-			return gEnv->pConsole->CreateVariable(szName, szValue, flags, szHelp /*, pChangeFunc*/);
-			//return gEnv->pConsole->RegisterInternal((szName), &(szValue), flags, (szHelp));
+			return Env::Console()->CreateVariable(szName, szValue, flags, szHelp /*, pChangeFunc*/);
+			//return Env::Console()->RegisterInternal((szName), &(szValue), flags, (szHelp));
 			return nullptr;
 		}
 		else
@@ -55,10 +55,10 @@ struct ConsoleRegistrationHelper
 	}
 	static ICVar* RegisterInt(const char* szName, int value, int flags, const char* szHelp = "", ConsoleVarFunc pChangeFunc = nullptr)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_CVAR(szName);
-			return gEnv->pConsole->CreateVariable(szName, value, flags, szHelp /*, pChangeFunc*/);
+			return Env::Console()->CreateVariable(szName, value, flags, szHelp /*, pChangeFunc*/);
 		}
 		else
 		{
@@ -68,10 +68,10 @@ struct ConsoleRegistrationHelper
 #if 0
 	static ICVar* RegisterInt64(const char* szName, int64 value, int flags, const char* szHelp = "", ConsoleVarFunc pChangeFunc = nullptr)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_CVAR(szName);
-			return gEnv->pConsole->RegisterInt64(szName, value, flags, szHelp, pChangeFunc);
+			return Env::Console()->RegisterInt64(szName, value, flags, szHelp, pChangeFunc);
 		}
 		else
 		{
@@ -81,10 +81,10 @@ struct ConsoleRegistrationHelper
 #endif
 	static ICVar* RegisterFloat(const char* szName, float value, int flags, const char* szHelp = "", ConsoleVarFunc pChangeFunc = nullptr)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_CVAR(szName);
-			return gEnv->pConsole->CreateVariable(szName, value, flags, szHelp /*, pChangeFunc*/);
+			return Env::Console()->CreateVariable(szName, value, flags, szHelp /*, pChangeFunc*/);
 		}
 		else
 		{
@@ -100,10 +100,10 @@ struct ConsoleRegistrationHelper
 
 	static ICVar* Register(ICVar* pVar)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_CVAR(pVar->GetName());
-			return gEnv->pConsole->RegisterInternal(pVar);
+			return Env::Console()->RegisterInternal(pVar);
 		}
 		else
 		{
@@ -113,9 +113,9 @@ struct ConsoleRegistrationHelper
 
 	static void Unregister(ICVar* pVar)
 	{
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
-			gEnv->pConsole->UnregisterVariable(pVar->GetName());
+			Env::Console()->UnregisterVariable(pVar->GetName());
 		}
 	}
 
@@ -145,10 +145,10 @@ private:
 	{
 		static_assert(std::is_same<T, int>::value || std::is_same<T, float>::value || std::is_same<T, const char*>::value, "Invalid template type!");
 		static_assert(std::is_convertible<U, T>::value, "Invalid default value type!");
-		if (CRY_VERIFY(gEnv && gEnv->pConsole))
+		if (CRY_VERIFY(Env::Get() && Env::Console()))
 		{
 			MODULE_REGISTER_CVAR(szName);
-			return gEnv->pConsole->RegisterInternal(szName, pSrc, static_cast<T>(defaultValue), flags, szHelp, pChangeFunc, bAllowModify);
+			return Env::Console()->RegisterInternal(szName, pSrc, static_cast<T>(defaultValue), flags, szHelp, pChangeFunc, bAllowModify);
 		}
 		else
 		{
@@ -307,7 +307,7 @@ namespace Detail
 				}                                                                                                         \
 				const char* GetName() const { return name; }                                                              \
 			} DummyStaticInstance;                                                                                        \
-			if (!CRY_VERIFY((gEnv->pConsole != nullptr) ? ConsoleRegistrationHelper::Register(&DummyStaticInstance) : 0)) \
+			if (!CRY_VERIFY((Env::Console() != nullptr) ? ConsoleRegistrationHelper::Register(&DummyStaticInstance) : 0)) \
 			{                                                                                                             \
 				CryFatalError("Can not register dummy CVar");                                                             \
 			}                                                                                                             \

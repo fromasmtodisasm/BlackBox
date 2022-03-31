@@ -19,7 +19,7 @@ public:
 	virtual void Ativate() override
 	{
 		SDL_SetCursor(m_Cursor);
-		gEnv->pInput->ShowCursor(true);
+		Env::Input()->ShowCursor(true);
 	}
 
 	SDL_Cursor* m_Cursor;

@@ -322,7 +322,7 @@ int CScriptObjectInput::SetMouseSensitivity(IFunctionHandler* pH)
   if (m_pInput->GetDevice(0, eIDT_Mouse))
     m_pInput->GetDevice(0, eIDT_Mouse)->SetSensitvity(fSensitivity);
 #endif
-	gEnv->pConsole->GetCVar("i_mouse_sensitivity")->Set(fSensitivity);
+	Env::Console()->GetCVar("i_mouse_sensitivity")->Set(fSensitivity);
 	return pH->EndFunction();
 }
 

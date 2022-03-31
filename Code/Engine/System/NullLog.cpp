@@ -35,7 +35,7 @@ CLog::CLog(ISystem* pSystem)
     , m_fLastLoadingUpdateTime(-1.0f)
     , m_logFormat("%Y-%m-%dT%H:%M:%S:fffzzz")
 {
-	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CLog");
+	Env::System()->GetISystemEventDispatcher()->RegisterListener(this, "CLog");
 
 	m_nMainThreadId   = std::this_thread::get_id();
 
@@ -343,8 +343,8 @@ void CLog::LogV(IMiniLog::ELogType nType, int flags, const char* szFormat, va_li
 	{
 #ifdef __WITH_PB__
 		// Send the console output to PB for audit purposes
-		if (gEnv->pNetwork)
-			gEnv->pNetwork->PbCaptureConsoleLog(szBuffer, strlen(szBuffer));
+		if (Env::Network())
+			Env::Network()->PbCaptureConsoleLog(szBuffer, strlen(szBuffer));
 #endif
 		LogStringToConsole(formatted.c_str());
 	}
@@ -635,7 +635,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 	tempString = m_indentWithString + tempString;
 #endif
 
-	if (m_pLogIncludeTime && gEnv->pTimer)
+	if (m_pLogIncludeTime && Env::Timer())
 	{
 		uint32 dwCVarState = m_pLogIncludeTime->GetIVal();
 		char   sTime[21];
@@ -657,7 +657,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 			if (dwCVarState & 2) // Log_IncludeTime
 			{
 				static CTimeValue lasttime;
-				const CTimeValue  currenttime = gEnv->pTimer->GetAsyncTime();
+				const CTimeValue  currenttime = Env::Timer()->GetAsyncTime();
 				if (lasttime != CTimeValue())
 				{
 					const uint32 dwMs = (uint32)((currenttime - lasttime).GetMilliSeconds());
@@ -671,7 +671,7 @@ void CLog::LogStringToFile(const char* szString, bool bAdd, bool bError)
 		{
 			static bool       bFirst = true;
 			static CTimeValue lasttime;
-			const CTimeValue  currenttime = gEnv->pTimer->GetAsyncTime();
+			const CTimeValue  currenttime = Env::Timer()->GetAsyncTime();
 			if (lasttime != CTimeValue())
 			{
 				const uint32 dwMs = (uint32)((currenttime - lasttime).GetMilliSeconds());
@@ -892,6 +892,6 @@ void CLog::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 #if KEEP_LOG_FILE_OPEN
 void CLog::LogFlushFile(IConsoleCmdArgs* pArgs)
 {
-	//gEnv->pLog->Flush();
+	//Env::Log()->Flush();
 }
 #endif

@@ -521,7 +521,7 @@ public:
 	}
 	bool Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen, CShader* p) const
 	{
-		//return gEnv->pConsole->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
+		//return Env::Console()->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
 		return false;
 	}
 
@@ -587,7 +587,7 @@ public:
 			return {};
 	#else
 		#define NOT_IMPLEMENTED_V                                                          \
-			gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
+			Env::Log()->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
 			return {};
 	#endif
 #endif

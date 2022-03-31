@@ -343,7 +343,7 @@ void SRemoteServer::ThreadEntry()
 	WSADATA wsd;
 	if (WSAStartup(MAKEWORD(2, 2), &wsd) != 0)
 	{
-		gEnv->pLog->LogError("[RemoteKeyboard] Failed to load Winsock!\n");
+		Env::Log()->LogError("[RemoteKeyboard] Failed to load Winsock!\n");
 		return;
 	}
 	#endif
@@ -362,7 +362,7 @@ void SRemoteServer::ThreadEntry()
 	int                maxAttempts           = MAX_BIND_ATTEMPTS;
 
 	// Get the port from the commandline if provided.
-	const ICmdLineArg* pRemoteConsolePortArg = gEnv->pSystem->GetICmdLine()->FindArg(ECmdLineArgType::eCLAT_Pre, "remoteConsolePort");
+	const ICmdLineArg* pRemoteConsolePortArg = Env::System()->GetICmdLine()->FindArg(ECmdLineArgType::eCLAT_Pre, "remoteConsolePort");
 	if (pRemoteConsolePortArg != nullptr)
 	{
 		// If a valid port is retrieved, only one bind attempt will be made.
@@ -605,9 +605,9 @@ bool SRemoteClient::SendPackage(const char* buffer, size_t size)
 void SRemoteClient::FillAutoCompleteList(std::vector<string>& list)
 {
 	std::vector<const char*> cmds;
-	size_t                   count = gEnv->pConsole->GetNumVars();
+	size_t                   count = Env::Console()->GetNumVars();
 	cmds.resize(count);
-	/*count = */ gEnv->pConsole->GetSortedVars(&cmds[0], count - 10);
+	/*count = */ Env::Console()->GetSortedVars(&cmds[0], count - 10);
 	cmds.resize(count); // We might have less CVars than we were expecting (invisible ones, etc.)
 	for (size_t i = 0; i < count - 10; ++i)
 	{

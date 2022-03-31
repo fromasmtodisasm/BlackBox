@@ -43,7 +43,7 @@ bool FxParser::Parse(const std::string& f, PEffect* pEffect)
 		PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(m_FxLibrary, DLL_MODULE_INIT_ISYSTEM);
 		if (pfnModuleInitISystem)
 		{
-			pfnModuleInitISystem(gEnv->pSystem, "FxParser");
+			pfnModuleInitISystem(Env::System(), "FxParser");
 		}
 		*pEffect = g_driver->parse(f.data());
 		return *pEffect != nullptr;

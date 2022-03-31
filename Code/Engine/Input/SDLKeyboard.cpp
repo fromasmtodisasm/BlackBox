@@ -12,7 +12,7 @@ CSDLKeyboard::CSDLKeyboard(CLinuxInput& input)
     : CLinuxInputDevice(input, "SDL Keyboard")
 {
 	m_deviceType  = eIDT_Keyboard;
-	KeyboardEvent = gEnv->pSystem->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);
+	KeyboardEvent = Env::System()->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);
 }
 
 CSDLKeyboard::~CSDLKeyboard()
@@ -43,7 +43,7 @@ void CSDLKeyboard::Update(bool focus)
 	nEvents               = SDL_PeepEvents(eventList, KEYBOARD_MAX_PEEP, SDL_GETEVENT, SDL_KEYDOWN, SDL_TEXTINPUT);
 	if (nEvents == -1)
 	{
-		//gEnv->pLog->LogError("SDL_GETEVENT error: %s", SDL_GetError());
+		//Env::Log()->LogError("SDL_GETEVENT error: %s", SDL_GetError());
 		GetISystem()->GetILog()->Log("SDL_GETEVENT error: %s", SDL_GetError());
 		return;
 	}
@@ -145,7 +145,7 @@ void CSDLKeyboard::Update(bool focus)
 			// Unexpected event type.
 			abort();
 		}
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESystemEvent(KeyboardEvent), UINT_PTR(gEnv->pRenderer->GetCurrentContextHWND()), UINT_PTR(&eventList[i]));
+		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESystemEvent(KeyboardEvent), UINT_PTR(Env::Renderer()->GetCurrentContextHWND()), UINT_PTR(&eventList[i]));
 	}
 }
 

@@ -34,8 +34,8 @@ void MineWorld::init()
 {
 	auto loadAssets = [this]()
 	{
-		auto grass = gEnv->p3DEngine->MakeObject("minecraft/Grass_Block.obj");
-		//auto grass = gEnv->p3DEngine->MakeObject("objects/editor/mtlbox.cgf");
+		auto grass = Env::I3DEngine()->MakeObject("minecraft/Grass_Block.obj");
+		//auto grass = Env::I3DEngine()->MakeObject("objects/editor/mtlbox.cgf");
 
 		types.push_back(grass);
 	};
@@ -79,8 +79,8 @@ void MineWorld::init()
 		}
 #else
 		/*CEntityDesc desc(nextEntity(), (int)EEntityClass::Character);
-		auto        entity = gEnv->pEntitySystem->SpawnEntity(desc);
-		gEnv->p3DEngine->RegisterEntity(entity);
+		auto        entity = Env::EntitySystem()->SpawnEntity(desc);
+		Env::I3DEngine()->RegisterEntity(entity);
 
 		entity->Physicalize();
 
@@ -109,77 +109,77 @@ void MineWorld::init()
 		    "minecraft/Grass_Block.obj",
 		};
 		{
-			auto        object = gEnv->p3DEngine->MakeObject(objects[1]);
+			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
 
-			//auto Jack = gEnv->p3DEngine->MakeObject();
+			//auto Jack = Env::I3DEngine()->MakeObject();
 			//auto        Jack = types[0];
 
 			CEntityDesc desc(nextEntity(), 0);
 			desc.name  = "Hero";
-			auto* Jack = gEnv->pEntitySystem->SpawnEntity(desc);
+			auto* Jack = Env::EntitySystem()->SpawnEntity(desc);
 
 			Jack->SetIStatObj(object);
 			Jack->SetPos({-0, 40, -5});
 			Jack->SetScale(glm::vec3(0.01f));
 			Jack->SetAngles({-90, 0, 0});
-			gEnv->p3DEngine->RegisterEntity(Jack);
+			Env::I3DEngine()->RegisterEntity(Jack);
 		}
 
 		{
-			auto        object = gEnv->p3DEngine->MakeObject(objects[0]);
+			auto        object = Env::I3DEngine()->MakeObject(objects[0]);
 
-			//auto Jack = gEnv->p3DEngine->MakeObject();
+			//auto Jack = Env::I3DEngine()->MakeObject();
 			//auto        Jack = types[0];
 
 			CEntityDesc desc(nextEntity(), 0);
 			desc.name       = "Hero";
-			minecraft->Jack = gEnv->pEntitySystem->SpawnEntity(desc);
+			minecraft->Jack = Env::EntitySystem()->SpawnEntity(desc);
 			auto* Jack      = minecraft->Jack;
 
 			Jack->SetIStatObj(object);
 			Jack->SetPos({-5, 50, -5});
 			Jack->SetScale(glm::vec3(0.02f));
 			Jack->SetAngles({45, 90, 0});
-			gEnv->p3DEngine->RegisterEntity(Jack);
+			Env::I3DEngine()->RegisterEntity(Jack);
 		}
 		//{
 		//	auto object = types[0];
-		//	//gEnv->p3DEngine->MakeObject(objects[0]);
+		//	//Env::I3DEngine()->MakeObject(objects[0]);
 
-		//	//auto Jack = gEnv->p3DEngine->MakeObject();
+		//	//auto Jack = Env::I3DEngine()->MakeObject();
 		//	//auto        Jack = types[0];
 
 		//	CEntityDesc desc(nextEntity(), 0);
 		//	desc.name       = "Hero";
-		//	auto Jack      = gEnv->pEntitySystem->SpawnEntity(desc);
+		//	auto Jack      = Env::EntitySystem()->SpawnEntity(desc);
 
 		//	Jack->SetIStatObj(object);
 		//	Jack->SetPos({-5, 20, -5});
 		//	Jack->SetScale(glm::vec3(3.f));
 		//	Jack->SetAngles({45, 90, 0});
-		//	gEnv->p3DEngine->RegisterEntity(Jack);
+		//	Env::I3DEngine()->RegisterEntity(Jack);
 		//}
 	}
 
-	gEnv->pConsole->ExecuteString("load_level minecraft");
-	gEnv->pConsole->ShowConsole(false);
+	Env::Console()->ExecuteString("load_level minecraft");
+	Env::Console()->ShowConsole(false);
 }
 
 void MineUI::init()
 {
-	crossHairTexture = gEnv->pRenderer->LoadTexture(
+	crossHairTexture = Env::Renderer()->LoadTexture(
 	    "Textures/crosshair.png", nullptr, false);
 }
 
 void MineUI::draw() const
 {
-	auto        centerX = (float)gEnv->pRenderer->GetWidth() / 2;
-	auto        centerY = (float)gEnv->pRenderer->GetHeight() / 2;
+	auto        centerX = (float)Env::Renderer()->GetWidth() / 2;
+	auto        centerY = (float)Env::Renderer()->GetHeight() / 2;
 
 	const float width   = 20;
 	const float height  = 20;
 
-	gEnv->pRenderer->Draw2dImage(
+	Env::Renderer()->Draw2dImage(
 	    centerX - 0.5f * width,
 	    centerY - 0.5f * height, 20, 20, (int)crossHairTexture,
 	    0, 0, 1, 1, 0, 0, 1, 0, 0.5);
@@ -187,7 +187,7 @@ void MineUI::draw() const
 
 void Minecraft::init()
 {
-	gEnv->pCryPak->OpenPack("% fcdata%/objects.pak");
+	Env::CryPak()->OpenPack("% fcdata%/objects.pak");
 	minecraft = this;
 
 	world.init();
@@ -198,7 +198,7 @@ void Minecraft::init()
 
 void Minecraft::update()
 {
-	auto         time          = gEnv->pTimer->GetRealFrameTime();
+	auto         time          = Env::Timer()->GetRealFrameTime();
 	static float jack_rotation = 0;
 	Jack->SetAngles({-90, 0, jack_rotation});
 	//Jack->SetAngles({45, 90, 0});
@@ -213,7 +213,7 @@ bool MineWorld::tryDestroy(glm::ivec3 pos)
 {
 	if (auto e = blocks.find(pos); e != blocks.end())
 	{
-		gEnv->pEntitySystem->RemoveEntity(e->second->GetId(), true);
+		Env::EntitySystem()->RemoveEntity(e->second->GetId(), true);
 		blocks.erase(pos);
 		return true;
 	}
@@ -234,7 +234,7 @@ void MineWorld::highliteCubeTmp(glm::ivec3 pos)
 	if (auto const e = blocks.find(pos); e != blocks.end())
 	{
 		auto const aabb = entityWorldAABB(e->second);
-		gEnv->pAuxGeomRenderer->DrawAABB(aabb.min - 0.1f, aabb.max + 0.1f, {1, 1, 1, 1});
+		Env::AuxGeomRenderer()->DrawAABB(aabb.min - 0.1f, aabb.max + 0.1f, {1, 1, 1, 1});
 	}
 }
 
@@ -248,8 +248,8 @@ void MineWorld::set(glm::ivec3 pos, Type type)
 	tryDestroy(pos);
 
 	CEntityDesc desc(minecraft->world.blocks.size() + 1, (int)EEntityClass::Character);
-	auto        entity = gEnv->pEntitySystem->SpawnEntity(desc);
-	gEnv->p3DEngine->RegisterEntity(entity);
+	auto        entity = Env::EntitySystem()->SpawnEntity(desc);
+	Env::I3DEngine()->RegisterEntity(entity);
 
 	entity->SetIStatObj(types[type]);
 	entity->SetPos(pos);
@@ -260,7 +260,7 @@ void MineWorld::set(glm::ivec3 pos, Type type)
 
 CCamera* getCamera()
 {
-	auto game   = dynamic_cast<CXGame*>(gEnv->pSystem->GetIGame());
+	auto game   = dynamic_cast<CXGame*>(Env::System()->GetIGame());
 	auto client = &game->GetClient()->m_DummyClient;
 	return client->m_CameraController.RenderCamera();
 }
@@ -311,15 +311,15 @@ bool MineWorld::pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeR
 
 bool MinePlayer::selectedPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, float& pickDistance) const
 {
-	auto  game              = dynamic_cast<CXGame*>(gEnv->pSystem->GetIGame());
+	auto  game              = dynamic_cast<CXGame*>(Env::System()->GetIGame());
 	auto  intersectionState = game->GetClient()->m_DummyClient.m_IntersectionState;
 
 	// начальная и конечная точки запуска луча
 	auto& start             = intersectionState.ray.start;
-	gEnv->pRenderer->UnProjectFromScreen(
+	Env::Renderer()->UnProjectFromScreen(
 	    intersectionState.mx, intersectionState.my, 0, &start.x, &start.y, &start.z);
 	auto& end = intersectionState.ray.end;
-	gEnv->pRenderer->UnProjectFromScreen(
+	Env::Renderer()->UnProjectFromScreen(
 	    intersectionState.mx, intersectionState.my, 1, &end.x, &end.y, &end.z);
 
 	Ray eyeRay{};
@@ -506,15 +506,15 @@ bool MineWorld::isIntersect(glm::ivec3 pos, AABB otherAABB) const
 
 void MinePlayer::init()
 {
-	gEnv->pScriptSystem->ExecuteFile("scripts/common.lua");
+	Env::ScriptSystem()->ExecuteFile("scripts/common.lua");
 
 	getCamera()->mode = CCamera::Mode::FPS;
 
-	auto        steve = gEnv->p3DEngine->MakeObject("minecraft/minecraft_steve.obj");
+	auto        steve = Env::I3DEngine()->MakeObject("minecraft/minecraft_steve.obj");
 
 	CEntityDesc desc(nextEntity(), 0);
-	entity = gEnv->pEntitySystem->SpawnEntity(desc);
-	gEnv->p3DEngine->RegisterEntity(entity);
+	entity = Env::EntitySystem()->SpawnEntity(desc);
+	Env::I3DEngine()->RegisterEntity(entity);
 
 	entity->SetPos(glm::vec3(5, 3, 5));
 	myPos = entity->GetPos();
@@ -522,18 +522,18 @@ void MinePlayer::init()
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
 	entity->SetBBox(min, max);
 
-	m_pSetBlockSound     = gEnv->pSoundSystem->LoadSound("sounds/doors/open.wav", 0);
-	m_pDestroyBlockSound = gEnv->pSoundSystem->LoadSound("sounds/doors/close.wav", 0);
+	m_pSetBlockSound     = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
+	m_pDestroyBlockSound = Env::SoundSystem()->LoadSound("sounds/doors/close.wav", 0);
 }
 
 void MinePlayer::update()
 {
 	auto const aabb = entityWorldAABB(entity);
 
-	//gEnv->pAuxGeomRenderer->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
+	//Env::AuxGeomRenderer()->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
 
 	auto const gravity = 0.f;
-	auto       ft      = gEnv->pTimer->GetRealFrameTime();
+	auto       ft      = Env::Timer()->GetRealFrameTime();
 	move(glm::vec3(0.0f, -1.0f, 0.0f), gravity * ft);
 
 	applyMovement();
@@ -544,7 +544,7 @@ void MinePlayer::update()
 
 bool timingAction(float& prevTime, float interval)
 {
-	auto const curTime = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+	auto const curTime = Env::Timer()->GetAsyncTime().GetMilliSeconds();
 	auto const delta   = curTime - prevTime;
 	//CryLog("delta time: %f", delta);
 	if (delta > interval)
@@ -592,7 +592,7 @@ void MinePlayer::move(glm::vec3 direction, float value)
 
 void MineDebug::init()
 {
-	model = gEnv->p3DEngine->MakeObject("minecraft/bbox.obj");
+	model = Env::I3DEngine()->MakeObject("minecraft/bbox.obj");
 	//drawBox({0, 0, 0}, {5, 5, 5});
 }
 
@@ -600,14 +600,14 @@ void MineDebug::update()
 {
 	//CryLog("MineDebug::update");
 	static float prevTime = 0;
-	auto const   curTime  = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+	auto const   curTime  = Env::Timer()->GetAsyncTime().GetMilliSeconds();
 	auto const   delta    = curTime - prevTime;
 	prevTime              = curTime;
 	//CryLog("delta time: %f", delta);
 	for (auto box : tmpBoxes)
 	{
-		//gEnv->p3DEngine->UnRegisterEntity(box);
-		gEnv->pEntitySystem->RemoveEntity(box->GetId());
+		//Env::I3DEngine()->UnRegisterEntity(box);
+		Env::EntitySystem()->RemoveEntity(box->GetId());
 	}
 	tmpBoxes.clear();
 }

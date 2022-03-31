@@ -147,7 +147,7 @@ void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 		numindices = ib->m_nItems;
 	}
 
-	gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
+	Env::Renderer()->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
 }
 
 void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
@@ -171,7 +171,7 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 
 	::GetDeviceContext()->UpdateSubresource(g_pPerDrawCB, 0, nullptr, &cb, sizeof(cb), 0);
 	::GetDeviceContext()->VSSetConstantBuffers(PERDRAW_SLOT, 2, pBuffers);
-	gEnv->pRenderer->SetTexture(DrawElement.m_DiffuseMap);
+	Env::Renderer()->SetTexture(DrawElement.m_DiffuseMap);
 	auto ib         = DrawElement.m_Inices;
 	auto numindices = 0;
 	if (ib)
@@ -179,7 +179,7 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 		numindices = ib->m_nItems;
 	}
 
-	gEnv->pRenderer->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
+	Env::Renderer()->DrawBuffer(DrawElement.m_pBuffer, DrawElement.m_Inices, numindices, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, 0, (CMatInfo*)-1);
 }
 
 CRenderAuxGeom::CRenderAuxGeom()
@@ -289,17 +289,17 @@ CRenderAuxGeom::CRenderAuxGeom()
 #endif
 	///////////////////////////////////////////////////////////////////////////////
 	// int cnt		  = sizeof vertices / sizeof BB_VERTEX;
-	m_BoundingBox = gEnv->pRenderer->CreateBuffer(vertices.size(), BB_VERTEX_FORMAT, "BoundingBox", false);
-	gEnv->pRenderer->UpdateBuffer(m_BoundingBox, vertices.data(), vertices.size(), false);
+	m_BoundingBox = Env::Renderer()->CreateBuffer(vertices.size(), BB_VERTEX_FORMAT, "BoundingBox", false);
+	Env::Renderer()->UpdateBuffer(m_BoundingBox, vertices.data(), vertices.size(), false);
 
 	m_BB_IndexBuffer = new SVertexStream;
-	gEnv->pRenderer->CreateIndexBuffer(m_BB_IndexBuffer, elements.data(), (3 * elements.size()));
+	Env::Renderer()->CreateIndexBuffer(m_BB_IndexBuffer, elements.data(), (3 * elements.size()));
 	///////////////////////////////////////////////////////////////////////////////
-	m_HardwareVB        = gEnv->pRenderer->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
-	m_BoundingBoxShader = gEnv->pRenderer->Sh_Load("bb", 0);
-	if (!(m_AuxGeomShader = gEnv->pRenderer->Sh_Load("auxgeom", 0)))
+	m_HardwareVB        = Env::Renderer()->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
+	m_BoundingBoxShader = Env::Renderer()->Sh_Load("bb", 0);
+	if (!(m_AuxGeomShader = Env::Renderer()->Sh_Load("auxgeom", 0)))
 	{
-		gEnv->pLog->Log("Error of loading auxgeom shader");
+		Env::Log()->Log("Error of loading auxgeom shader");
 	}
 
 	// m_aabbBufferPtr = SAABBBuffer::Create(10);
@@ -318,7 +318,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 	D3DXMatrixLookAtLH(&g_View, &Eye, &At, &Up);
 
 	// Initialize the projection matrix
-	D3DXMatrixPerspectiveFovLH(&g_Projection, (float)D3DX_PI * 0.5f, gEnv->pRenderer->GetWidth() / (FLOAT)gEnv->pRenderer->GetHeight(), 0.1f, 100.0f);
+	D3DXMatrixPerspectiveFovLH(&g_Projection, (float)D3DX_PI * 0.5f, Env::Renderer()->GetWidth() / (FLOAT)Env::Renderer()->GetHeight(), 0.1f, 100.0f);
 
 	D3D11_DEPTH_STENCIL_DESC desc;
 	ZeroStruct(desc);
@@ -354,7 +354,7 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 	// #unreferenced
 	// auto& shader = m_BoundingBoxShader;
 
-	const auto angle     = !stop ? static_cast<float>(0.01 * gEnv->pRenderer->GetFrameID()) : 0.f;
+	const auto angle     = !stop ? static_cast<float>(0.01 * Env::Renderer()->GetFrameID()) : 0.f;
 	const auto size      = glm::vec3(max.x - min.x, max.y - min.y, max.z - min.z);
 	const auto center    = glm::vec3((min.x + max.x) / 2, (min.y + max.y) / 2, (min.z + max.z) / 2);
 	const auto transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
@@ -463,7 +463,7 @@ void CRenderAuxGeom::DrawAABBs()
 {
 	D3DPERF_BeginEvent(D3DC_Blue, L"DrawAABB");
 	{
-		auto m_Camera    = gEnv->pSystem->GetViewCamera();
+		auto m_Camera    = Env::System()->GetViewCamera();
 		g_View           = m_Camera.GetViewMatrix();
 		g_Projection     = m_Camera.GetProjectionMatrix();
 		g_ViewProjection = g_Projection * g_View;
@@ -476,10 +476,10 @@ void CRenderAuxGeom::DrawAABBs()
 		::GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 		if (!m_BBVerts.empty())
 		{
-			gEnv->pRenderer->ReleaseBuffer(m_BoundingBox);
+			Env::Renderer()->ReleaseBuffer(m_BoundingBox);
 			auto size     = m_BBVerts.size() * 36;
-			m_BoundingBox = gEnv->pRenderer->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
-			gEnv->pRenderer->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
+			m_BoundingBox = Env::Renderer()->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
+			Env::Renderer()->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
 			DrawElement({m_BoundingBox, nullptr, glm::mat4(1), -1});
 		}
 
@@ -516,11 +516,11 @@ void CRenderAuxGeom::DrawAABBs()
 void CRenderAuxGeom::DrawLines()
 {
 	m_AuxGeomShader->Bind();
-	gEnv->pRenderer->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
+	Env::Renderer()->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;
 	for (auto& pb : m_auxPushBuffer)
 	{
-		gEnv->pRenderer->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
+		Env::Renderer()->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
 		offset += pb.m_numVertices;
 	}
 	m_VB.resize(0);
@@ -530,7 +530,7 @@ void CRenderAuxGeom::DrawLines()
 void CRenderAuxGeom::PushImage(const SRender2DImageDescription& image)
 {
 	auto& i = image;
-	gEnv->pRenderer->Draw2dImage(
+	Env::Renderer()->Draw2dImage(
 	    i.x, i.y, i.w, i.h,
 	    i.textureId,
 	    i.uv[0].x, i.uv[0].y, i.uv[1].x, i.uv[1].y,

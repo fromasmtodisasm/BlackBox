@@ -43,7 +43,7 @@ namespace utils
 				fclose(f);
 				continue;
 			}
-			gEnv->pLog->LogError("Cannot touch file \"%s\"", args->GetArg(i));
+			Env::Log()->LogError("Cannot touch file \"%s\"", args->GetArg(i));
 		}
 	}
 } // namespace utils
@@ -63,7 +63,7 @@ IProcess* CSystem::GetIProcess()
 CSystem::CSystem(SSystemInitParams& startupParams)
     :
 #if defined(SYS_ENV_AS_STRUCT)
-    m_env(gEnv)
+    m_env(Env::gEnv)
     ,
 #endif
     //m_startupParams(startupParams),
@@ -143,7 +143,7 @@ void CSystem::Error(const char* sFormat, ...)
 	va_start(ArgList, sFormat);
 	vsprintf(szBuffer, sFormat, ArgList);
 	va_end(ArgList);
-	gEnv->pLog->LogError(szBuffer);
+	Env::Log()->LogError(szBuffer);
 }
 
 void CSystem::Warning(EValidatorModule module, EValidatorSeverity severity, int flags, const char* file, const char* format, ...)
@@ -446,7 +446,7 @@ bool CSystem::InitScripts()
 	m_ScriptObjectConsole = new CScriptObjectConsole();
 	CScriptObjectConsole::InitializeTemplate(m_env.pScriptSystem);
 
-	m_ScriptObjectSystem = new CScriptObjectSystem(this, gEnv->pScriptSystem);
+	m_ScriptObjectSystem = new CScriptObjectSystem(this, Env::ScriptSystem());
 	//CScriptObjectSystem::InitializeTemplate(m_env.pScriptSystem);
 
 	m_ScriptObjectScript = new CScriptObjectScript();
@@ -645,7 +645,7 @@ void CSystem::AddCVarGroupDirectory(const string& sPath)
 
 	_finddata_t fd;
 
-	intptr_t    handle = gEnv->pCryPak->FindFirst(ConcatPath(sPath.data(), "*.cfg").c_str(), &fd);
+	intptr_t    handle = Env::CryPak()->FindFirst(ConcatPath(sPath.data(), "*.cfg").c_str(), &fd);
 
 	if (handle < 0)
 		return;
@@ -666,9 +666,9 @@ void CSystem::AddCVarGroupDirectory(const string& sPath)
 				((CXConsole*)m_env.pConsole)->RegisterCVarGroup(sCVarName.c_str(), sFilePath.c_str());
 			}
 		}
-	} while (gEnv->pCryPak->FindNext(handle, &fd) >= 0);
+	} while (Env::CryPak()->FindNext(handle, &fd) >= 0);
 
-	gEnv->pCryPak->FindClose(handle);
+	Env::CryPak()->FindClose(handle);
 }
 
 void CSystem::ShutDown()
@@ -848,7 +848,7 @@ void CSystem::ShowMessage(const char* message, const char* caption, MessageType 
 void CSystem::Log(const char* message)
 {
 	//std::cout << "-- " << message << std::endl;
-	gEnv->pLog->Log("%s", message);
+	Env::Log()->Log("%s", message);
 }
 
 IScriptSystem* CSystem::GetIScriptSystem()
@@ -1007,7 +1007,7 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 #endif //DOWNLOAD_MANAGER
 
 	//m_DeltaTime = (double)((NOW - LAST) * 1000 / (double)SDL_GetPerformanceFrequency()) * 0.001;
-	m_DeltaTime = gEnv->pTimer->GetFrameRate() * 0.001f;
+	m_DeltaTime = Env::Timer()->GetFrameRate() * 0.001f;
 
 	bool updateInput =
 	    !(updateFlags & ESYSUPDATE_EDITOR);
@@ -1149,7 +1149,7 @@ void CSystem::ExecuteCommandLine()
 		{
 			string sLine = pCmd->GetName();
 
-			if (gEnv->pSystem->IsCVarWhitelisted(sLine.c_str(), false))
+			if (Env::System()->IsCVarWhitelisted(sLine.c_str(), false))
 			{
 				if (pCmd->GetValue())
 					sLine += string(" ") + pCmd->GetValue();
@@ -1166,7 +1166,7 @@ void CSystem::ExecuteCommandLine()
 		}
 	}
 
-	//gEnv->pConsole->ExecuteString("sys_RestoreSpec test*"); // to get useful debugging information about current spec settings to the log file
+	//Env::Console()->ExecuteString("sys_RestoreSpec test*"); // to get useful debugging information about current spec settings to the log file
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1262,10 +1262,10 @@ void CSystem::SleepIfNeeded()
 	static ICVar* pSysMaxFPS = NULL;
 	static ICVar* pVSync     = NULL;
 
-	if (pSysMaxFPS == NULL && gEnv && gEnv->pConsole)
-		pSysMaxFPS = gEnv->pConsole->GetCVar("sys_MaxFPS");
-	if (pVSync == NULL && gEnv && gEnv->pConsole)
-		pVSync = gEnv->pConsole->GetCVar("r_Vsync");
+	if (pSysMaxFPS == NULL && Env::Get() && Env::Console())
+		pSysMaxFPS = Env::Console()->GetCVar("sys_MaxFPS");
+	if (pVSync == NULL && Env::Get() && Env::Console())
+		pVSync = Env::Console()->GetCVar("r_Vsync");
 
 	int32 maxFPS = 0;
 
@@ -1301,7 +1301,7 @@ void CSystem::SleepIfNeeded()
 		const int64  safeMarginMS = 5; // microseconds
 		const int64  thresholdMs  = (1000 * 1000) / (maxFPS);
 
-		ITimer*      pTimer       = gEnv->pTimer;
+		ITimer*      pTimer       = Env::Timer();
 		static int64 sTimeLast    = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
 		int64        currentTime  = pTimer->GetAsyncTime().GetMicroSecondsAsInt64();
 		for (;;)
@@ -1347,7 +1347,7 @@ void CSystem::UpdateScriptSink()
 	//PROFILE_SECTION(PROFILE_SCRIPT, "ScriptSystem: Update");
 	//MEMSTAT_FUNCTION_CONTEXT(EMemStatContextType::Other);
 
-	ITimer*    pTimer   = gEnv->pTimer;
+	ITimer*    pTimer   = Env::Timer();
 	CTimeValue nCurTime = pTimer->GetFrameStartTime();
 
 // Enable debugger if needed.

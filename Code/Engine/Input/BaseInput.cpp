@@ -537,7 +537,7 @@ bool CBaseInput::SendEventToListeners(const SInputEvent& event)
 	// If we're in the editor, Escape will leave game mode, so don't process the key press beyond that point
 	// If Shift is held down, allow the press to go through as a normal (non-shifted) press
 	SInputEvent e(event);
-	/*if (gEnv->IsEditor() && e.keyId == eKI_Escape)
+	/*if (Env::Get()->IsEditor() && e.keyId == eKI_Escape)
   {
     if (e.modifiers & eMM_Shift)
     {
@@ -704,7 +704,7 @@ bool CBaseInput::ShouldBlockInputEventPosting(const EKeyId keyId, const EInputDe
 void CBaseInput::UpdateBlockingInputs()
 {
 	return;
-	//const float fElapsedTime = gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);
+	//const float fElapsedTime = Env::Timer()->GetFrameTime(ITimer::ETIMER_UI);
 
 	//TInputBlockData::iterator iter = m_inputBlockData.begin();
 	//TInputBlockData::iterator iterEnd = m_inputBlockData.end();

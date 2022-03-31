@@ -366,7 +366,7 @@ public:
 			PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(NULL, DLL_MODULE_INIT_ISYSTEM);
 			if (pfnModuleInitISystem)
 			{
-				pfnModuleInitISystem(gEnv->pSystem, "");
+				pfnModuleInitISystem(Env::System(), "");
 			}
 			return f(P);
 		}
@@ -383,7 +383,7 @@ public:
 		auto initStatic = InitStatic(proc_name, f);
 		if (initStatic)
 			return true;
-		//gEnv->pSystem->Log("Loading...");
+		//Env::System()->Log("Loading...");
 		stack_string modulePath = szModulePath;
 		modulePath              = CrySharedLibraryPrefix + PathUtil::ReplaceExtension(modulePath.c_str(), CrySharedLibraryExtension);
 
@@ -392,9 +392,9 @@ public:
 		msg += modulePath;
 		msg += "...";
 
-		if (gEnv->pSystem->GetUserCallback())
+		if (Env::System()->GetUserCallback())
 		{
-			gEnv->pSystem->GetUserCallback()->OnInitProgress(msg.c_str());
+			Env::System()->GetUserCallback()->OnInitProgress(msg.c_str());
 		}
 
 		auto L = CryLoadLibrary(modulePath.c_str());
@@ -407,7 +407,7 @@ public:
 				PtrFunc_ModuleInitISystem pfnModuleInitISystem = (PtrFunc_ModuleInitISystem)CryGetProcAddress(L, DLL_MODULE_INIT_ISYSTEM);
 				if (pfnModuleInitISystem)
 				{
-					pfnModuleInitISystem(gEnv->pSystem, modulePath.c_str());
+					pfnModuleInitISystem(Env::System(), modulePath.c_str());
 				}
 				auto subsystem = _smart_ptr(new SubsystemWrapper(L, modulePath.c_str()));
 				m_Subsystems.push_back(subsystem);
@@ -433,11 +433,11 @@ public:
 				CryFatalError("Error loading dynamic library: %s, error code %d", modulePath.c_str(), GetLastError());
 #endif
 
-				gEnv->pSystem->Quit();
+				Env::System()->Quit();
 			}
 
 			return false;
-			gEnv->pSystem->Log("Library not found");
+			Env::System()->Log("Library not found");
 		}
 		return false;
 	}

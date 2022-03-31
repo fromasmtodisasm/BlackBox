@@ -724,7 +724,7 @@ struct Script
 		if (pH->GetParamCount() >= funcParam && pH->GetParamType(funcParam) == svtObject)
 			pH->GetParam(funcParam, out);
 		if (!out.GetPtr())
-			out = SmartScriptObject(gEnv->pScriptSystem);
+			out = SmartScriptObject(Env::ScriptSystem());
 		return out;
 	}
 
@@ -747,7 +747,7 @@ struct Script
 		if (table->GetValue(fieldName, out))
 			return out;
 
-		out = SmartScriptObject(gEnv->pScriptSystem);
+		out = SmartScriptObject(Env::ScriptSystem());
 		table->SetValue(fieldName, out);
 		return out;
 	}
@@ -771,7 +771,7 @@ struct Script
 		if (chain.GetValue(fieldName, out))
 			return out;
 
-		out = SmartScriptObject(gEnv->pScriptSystem);
+		out = SmartScriptObject(Env::ScriptSystem());
 		chain.SetValue(fieldName, out);
 
 		return out;
@@ -865,7 +865,7 @@ struct Script
 		////MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
 
 		assert(pTable);
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(pTable, sMethod))
 			return false;
 		PushParams(pSS, pTable);
@@ -878,7 +878,7 @@ struct Script
 		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
 
 		assert(pTable);
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(pTable, sMethod))
 			return false;
 		PushParams(pSS, pTable, p1);
@@ -890,7 +890,7 @@ struct Script
 	{
 		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
 
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(pTable, sMethod))
 			return false;
 		PushParams(pSS, pTable, p1, p2);
@@ -902,7 +902,7 @@ struct Script
 	{
 		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
 
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(pTable, sMethod))
 			return false;
 		PushParams(pSS, pTable, p1, p2, p3);
@@ -914,7 +914,7 @@ struct Script
 	{
 		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
 
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(pTable, sMethod))
 			return false;
 		PushParams(pSS, pTable, p1, p2, p3, p4);
@@ -927,7 +927,7 @@ struct Script
 	{
 		//MEMSTAT_CONTEXT_FMT(EMemStatContextTypes::MSC_ScriptCall, 0, "LUA call (%s)", sMethod);
 
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(pTable, sMethod))
 			return false;
 		PushParams(pSS, pTable, p1, p2, p3, p4, p5);
@@ -938,9 +938,9 @@ struct Script
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func)
 	{
 	#if 0
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 	#else
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 	#endif
 		if (!pSS->BeginCall(func))
 			return false;
@@ -951,7 +951,7 @@ struct Script
 	template<class P1>
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1)
 	{
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(func))
 			return false;
 		PushParams(pSS, pTable, p1);
@@ -961,7 +961,7 @@ struct Script
 	template<class P1, class P2>
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2)
 	{
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(func))
 			return false;
 		PushParams(pSS, pTable, p1, p2);
@@ -971,7 +971,7 @@ struct Script
 	template<class P1, class P2, class P3>
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3)
 	{
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(func))
 			return false;
 		PushParams(pSS, pTable, p1, p2, p3);
@@ -981,7 +981,7 @@ struct Script
 	template<class P1, class P2, class P3, class P4>
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4)
 	{
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(func))
 			return false;
 		PushParams(pSS, pTable, p1, p2, p3, p4);
@@ -992,7 +992,7 @@ struct Script
 	static bool CallMethod(IScriptObject* pTable, HSCRIPTFUNCTION func, const P1& p1, const P2& p2, const P3& p3, const P4& p4,
 	                       const P5& p5)
 	{
-		IScriptSystem* pSS = gEnv->pScriptSystem;
+		IScriptSystem* pSS = Env::ScriptSystem();
 		if (!pSS->BeginCall(func))
 			return false;
 		PushParams(pSS, pTable, p1, p2, p3, p4, p5);

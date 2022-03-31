@@ -206,14 +206,14 @@ void CWindowsConsole::OnInitProgress(const char* sProgressMsg)
 
 static BOOL WINAPI CtrlHandler(DWORD evt)
 {
-	gEnv->pLog->Log("ctrl_handler thread id: %d", std::this_thread::get_id());
+	Env::Log()->Log("ctrl_handler thread id: %d", std::this_thread::get_id());
 	switch (evt)
 	{
 	case CTRL_C_EVENT:
 	case CTRL_BREAK_EVENT:
 		return TRUE;
 	case CTRL_CLOSE_EVENT:
-		gEnv->pSystem->Quit();
+		Env::System()->Quit();
 		return TRUE;
 	}
 	return FALSE;
@@ -221,7 +221,7 @@ static BOOL WINAPI CtrlHandler(DWORD evt)
 
 void CWindowsConsole::OnInit(ISystem* pSystem)
 {
-	if (m_requireDedicatedServer && !gEnv->IsDedicated())
+	if (m_requireDedicatedServer && !Env::Get()->IsDedicated())
 	{
 		return;
 	}
@@ -1212,7 +1212,7 @@ void CNULLConsole::OnUpdate()
 	//INetNub::SStatistics netNub;
 
 		#if defined(UC_ENABLE_PLAYER_COUNT)
-	if (!gEnv->pSystem->IsQuitting())
+	if (!Env::System()->IsQuitting())
 	{
 		IGameFramework* pGameFramework = gEnv->pGameFramework;
 		if (pGameFramework)
@@ -1226,7 +1226,7 @@ void CNULLConsole::OnUpdate()
 		}
 	}
 		#endif
-	if (ITimer* pTimer = gEnv->pSystem->GetITimer())
+	if (ITimer* pTimer = Env::System()->GetITimer())
 		srvRate = pTimer->GetFrameRate();
 
 	//m_syslogStats.Update(srvRate, numPlayers, netNub);

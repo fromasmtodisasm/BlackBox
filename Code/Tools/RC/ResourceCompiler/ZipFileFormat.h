@@ -401,7 +401,7 @@ namespace ZipFile
 		static File* CopyToHeap(File* file)
 		{
 #ifndef RC_COMPILER
-			IZLibInflateStream* pInflateStream = ((CSystem*)(gEnv->pSystem))->GetIZLibDecompressor()->CreateInflateStream();
+			IZLibInflateStream* pInflateStream = ((CSystem*)(Env::System()))->GetIZLibDecompressor()->CreateInflateStream();
 
 			File*               result;
 			char*               BaseHeapAddres = (char*)malloc(file->size);

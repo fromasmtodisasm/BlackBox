@@ -48,7 +48,7 @@ CHardwareMouse::CHardwareMouse(bool bVisibleByDefault)
 #else
     , m_allowConfine(true)
 #endif // !defined(_RELEASE)
-    , m_shouldUseSystemCursor(gEnv->IsEditor())
+    , m_shouldUseSystemCursor(Env::Get()->IsEditor())
     , m_usingSystemCursor(true)
 #if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
     , m_hCursor(nullptr)
@@ -59,9 +59,9 @@ CHardwareMouse::CHardwareMouse(bool bVisibleByDefault)
 	atexit(ReleaseCursor);
 #endif
 
-	if (gEnv->pConsole)
+	if (Env::Console())
 	{
-		ICVar* pCursorTexturePath = gEnv->pConsole->GetCVar("r_MouseCursorTexture");
+		ICVar* pCursorTexturePath = Env::Console()->GetCVar("r_MouseCursorTexture");
 		if (pCursorTexturePath)
 		{
 			SetCursor(pCursorTexturePath->GetString());
@@ -69,19 +69,19 @@ CHardwareMouse::CHardwareMouse(bool bVisibleByDefault)
 	}
 
 #if !BB_PLATFORM_WINDOWS
-	if (gEnv->pRenderer)
-		SetHardwareMousePosition(gEnv->pRenderer->GetWidth() * 0.5f, gEnv->pRenderer->GetHeight() * 0.5f);
+	if (Env::Renderer())
+		SetHardwareMousePosition(Env::Renderer()->GetWidth() * 0.5f, Env::Renderer()->GetHeight() * 0.5f);
 	else
 		SetHardwareMousePosition(0.0f, 0.0f);
 #endif
 
 	Reset(bVisibleByDefault);
 
-	if (gEnv->pSystem)
-		gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CHardwareMouse");
+	if (Env::System())
+		Env::System()->GetISystemEventDispatcher()->RegisterListener(this, "CHardwareMouse");
 
 #if !defined(_RELEASE)
-	if (gEnv->pConsole)
+	if (Env::Console())
 		REGISTER_CVAR2("g_debugHardwareMouse", &m_debugHardwareMouse, 0, VF_CHEAT, "Enables debug mode for the hardware mouse.");
 #endif //!defined(_RELEASE)
 
@@ -100,24 +100,24 @@ CHardwareMouse::CHardwareMouse(bool bVisibleByDefault)
 
 CHardwareMouse::~CHardwareMouse()
 {
-	if (gEnv)
+	if (Env::Get())
 	{
-		if (gEnv->pRenderer)
+		if (Env::Renderer())
 		{
-			//gEnv->pRenderer->RemoveListener(this);
+			//Env::Renderer()->RemoveListener(this);
 #if !defined(DEDICATED_SERVER)
 			SAFE_RELEASE(m_pCursorTexture); // On dedicated server this texture is actually a static returned by NULL renderer.. can't release that.
 #endif
 		}
-		if (gEnv->pInput)
-			gEnv->pInput->RemoveEventListener(this);
+		if (Env::Input())
+			Env::Input()->RemoveEventListener(this);
 
-		if (gEnv->pSystem)
-			gEnv->pSystem->GetISystemEventDispatcher()->RemoveListener(this);
+		if (Env::System())
+			Env::System()->GetISystemEventDispatcher()->RemoveListener(this);
 
 #if !defined(_RELEASE)
-		if (gEnv->pConsole)
-			gEnv->pConsole->UnregisterVariable("g_debugHardwareMouse", true);
+		if (Env::Console())
+			Env::Console()->UnregisterVariable("g_debugHardwareMouse", true);
 #endif //!defined(_RELEASE)
 	}
 
@@ -166,7 +166,7 @@ void CHardwareMouse::ShowHardwareMouse(bool bShow)
 		GetHardwareMousePosition(&m_fCursorX, &m_fCursorY);
 	}
 
-	IInput* const pInput = gEnv->pInput;
+	IInput* const pInput = Env::Input();
 	if (pInput)
 	{
 		pInput->ShowCursor(bShow);
@@ -183,25 +183,25 @@ void CHardwareMouse::ConfineCursor(bool confine)
 	if (m_debugHardwareMouse)
 		CryLogAlways("HM: ConfineCursor = %d", confine);
 
-	if (!gEnv || gEnv->pRenderer == NULL || m_allowConfine == false || !m_bFocus)
+	if (!Env::Get() || Env::Renderer() == NULL || m_allowConfine == false || !m_bFocus)
 		return;
 
 #if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
 	HWND hWnd = 0;
 
-	if (gEnv->IsEditor())
-		hWnd = (HWND)gEnv->pRenderer->GetCurrentContextHWND();
+	if (Env::Get()->IsEditor())
+		hWnd = (HWND)Env::Renderer()->GetCurrentContextHWND();
 	else
-		hWnd = (HWND)gEnv->pRenderer->GetHWND();
+		hWnd = (HWND)Env::Renderer()->GetHWND();
 
 	if (hWnd)
 	{
 		// It's necessary to call ClipCursor AFTER the calls to
 		// CreateDevice/ResetDevice otherwise the clip area is reseted.
-		if (confine && !gEnv->IsEditing())
+		if (confine && !Env::Get()->IsEditing())
 		{
 			if (m_debugHardwareMouse)
-				gEnv->pLog->Log("HM:   Confining cursor");
+				Env::Log()->Log("HM:   Confining cursor");
 			RECT rcClient;
 			::GetClientRect(hWnd, &rcClient);
 			::ClientToScreen(hWnd, (LPPOINT)&rcClient.left);
@@ -211,17 +211,17 @@ void CHardwareMouse::ConfineCursor(bool confine)
 		else
 		{
 			if (m_debugHardwareMouse)
-				gEnv->pLog->Log("HM:   Releasing cursor");
+				Env::Log()->Log("HM:   Releasing cursor");
 			::ClipCursor(NULL);
 		}
 	}
 #elif BB_PLATFORM_LINUX || BB_PLATFORM_ANDROID || BB_PLATFORM_MAC
-	if (gEnv->pInput)
+	if (Env::Input())
 	{
-		if (confine && !gEnv->IsEditing())
-			gEnv->pInput->GrabInput(true);
+		if (confine && !Env::Get()->IsEditing())
+			Env::Input()->GrabInput(true);
 		else
-			gEnv->pInput->GrabInput(false);
+			Env::Input()->GrabInput(false);
 	}
 #endif
 }
@@ -334,7 +334,7 @@ bool CHardwareMouse::OnInputEvent(const SInputEvent& rInputEvent)
 		    m_fIncY < -fDeadZone || m_fIncY > +fDeadZone)
 		{
 			float fFrameTime = 0.016;
-			//gEnv->pTimer->GetFrameTime(ITimer::ETIMER_UI);
+			//Env::Timer()->GetFrameTime(ITimer::ETIMER_UI);
 			if (s_fAcceleration < 10.0f)
 			{
 				s_fAcceleration += fFrameTime * 5.0f;
@@ -355,7 +355,7 @@ bool CHardwareMouse::OnInputEvent(const SInputEvent& rInputEvent)
 
 void CHardwareMouse::HandleFocusEvent(bool bFocus)
 {
-	//gEnv->pLog->Log("Change focus - %d", bFocus);
+	//Env::Log()->Log("Change focus - %d", bFocus);
 
 	if (bFocus)
 	{
@@ -383,7 +383,7 @@ void CHardwareMouse::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR
 	// fine grained focus notifications to determine mouse visibility and capture
 	if (event == ESYSTEM_EVENT_ACTIVATE || event == ESYSTEM_EVENT_CHANGE_FOCUS)
 	{
-		if (!gEnv->IsEditor())
+		if (!Env::Get()->IsEditor())
 		{
 			bool bFocus = (wparam != 0);
 			HandleFocusEvent(bFocus);
@@ -421,10 +421,10 @@ void CHardwareMouse::Release()
 void CHardwareMouse::OnPreInitRenderer()
 {
 #if 0
-	ASSERT(gEnv->pRenderer);
+	ASSERT(Env::Renderer());
 
-	if (gEnv->pRenderer)
-		gEnv->pRenderer->AddListener(this);
+	if (Env::Renderer())
+		Env::Renderer()->AddListener(this);
 #endif
 }
 
@@ -432,10 +432,10 @@ void CHardwareMouse::OnPreInitRenderer()
 
 void CHardwareMouse::OnPostInitInput()
 {
-	CRY_ASSERT(gEnv->pInput);
+	CRY_ASSERT(Env::Input());
 
-	if (gEnv->pInput)
-		gEnv->pInput->AddEventListener(this);
+	if (Env::Input())
+		Env::Input()->AddEventListener(this);
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -444,7 +444,7 @@ void CHardwareMouse::Event(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEve
 {
 	// TODO: console event filtering should not be hardwired, it should use something like the exclusive event listener mechanism, maybe with some priority ordering capability added
 	// Ignore events while console is active
-	if (gEnv->pConsole->IsOpened())
+	if (Env::Console()->IsOpened())
 	{
 		return;
 	}
@@ -538,9 +538,9 @@ void CHardwareMouse::GetHardwareMousePosition(float* pfX, float* pfY)
 void CHardwareMouse::SetHardwareMousePosition(float fX, float fY)
 {
 #if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
-	if (gEnv->pRenderer)
+	if (Env::Renderer())
 	{
-		HWND hWnd = (HWND)gEnv->pRenderer->GetCurrentContextHWND();
+		HWND hWnd = (HWND)Env::Renderer()->GetCurrentContextHWND();
 		if (hWnd == ::GetFocus() && m_allowConfine)
 		{
 			// Move cursor position only if our window is focused.
@@ -550,10 +550,10 @@ void CHardwareMouse::SetHardwareMousePosition(float fX, float fY)
 #else
 	m_fVirtualX          = fX;
 	m_fVirtualY          = fY;
-	if (gEnv && gEnv->pRenderer)
+	if (Env::Get() && Env::Renderer())
 	{
-		float fWidth  = float(gEnv->pRenderer->GetWidth());
-		float fHeight = float(gEnv->pRenderer->GetHeight());
+		float fWidth  = float(Env::Renderer()->GetWidth());
+		float fHeight = float(Env::Renderer()->GetHeight());
 
 		if (m_fVirtualX < 0.0f)
 		{
@@ -582,10 +582,10 @@ void CHardwareMouse::SetHardwareMousePosition(float fX, float fY)
 void CHardwareMouse::GetHardwareMouseClientPosition(float* pfX, float* pfY)
 {
 #if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
-	if (gEnv == NULL || gEnv->pRenderer == NULL)
+	if (Env::Get() == NULL || Env::Renderer() == NULL)
 		return;
 
-	HWND hWnd = (HWND)gEnv->pRenderer->GetCurrentContextHWND();
+	HWND hWnd = (HWND)Env::Renderer()->GetCurrentContextHWND();
 	ASSERT(hWnd, "Impossible to get client coordinates from a non existing window!");
 
 	if (hWnd)
@@ -612,7 +612,7 @@ void CHardwareMouse::GetHardwareMouseClientPosition(float* pfX, float* pfY)
 void CHardwareMouse::SetHardwareMouseClientPosition(float fX, float fY)
 {
 #if !defined(USE_LINUXINPUT) && defined(BB_PLATFORM_WINDOWS)
-	HWND hWnd = (HWND)gEnv->pRenderer->GetCurrentContextHWND();
+	HWND hWnd = (HWND)Env::Renderer()->GetCurrentContextHWND();
 	ASSERT(hWnd, "Impossible to set position of the mouse relative to client coordinates from a non existing window!");
 
 	if (hWnd)
@@ -659,13 +659,13 @@ bool CHardwareMouse::SetCursor(int idc_cursor_id)
 	}
 	else // SW cursor
 	{
-		return SetCursor(gEnv->pConsole->GetCVar("r_MouseCursorTexture")->GetString());
+		return SetCursor(Env::Console()->GetCVar("r_MouseCursorTexture")->GetString());
 	}
 
 	return m_hCursor ? true : false;
 #else
 	CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "Setting cursor via windows resource id is not supported on this platform. Using default cursor.");
-	return SetCursor(gEnv->pConsole->GetCVar("r_MouseCursorTexture")->GetString());
+	return SetCursor(Env::Console()->GetCVar("r_MouseCursorTexture")->GetString());
 #endif
 }
 
@@ -682,7 +682,7 @@ bool CHardwareMouse::SetCursor(const char* path)
 	#endif
 
 	// Update the CVar value to match, in case this function was not called through CVar-change-callback
-	gEnv->pConsole->GetCVar("r_MouseCursorTexture")->Set(path);
+	Env::Console()->GetCVar("r_MouseCursorTexture")->Set(path);
 
 	// Load cursor
 	if (m_shouldUseSystemCursor)
@@ -691,7 +691,7 @@ bool CHardwareMouse::SetCursor(const char* path)
 		// HW cursor
 		if (!m_hCursor)
 		{
-			m_hCursor = CreateResourceFromTexture(gEnv->pRenderer, path, eResourceType_Cursor);
+			m_hCursor = CreateResourceFromTexture(Env::Renderer(), path, eResourceType_Cursor);
 			if (!m_hCursor)
 			{
 				CryWarning(VALIDATOR_MODULE_SYSTEM, VALIDATOR_WARNING, "Unable to load cursor from texture file. Path %s", path);
@@ -718,9 +718,9 @@ bool CHardwareMouse::SetCursor(const char* path)
 	}
 	else // SW cursor
 	{
-		if (gEnv->pRenderer && !m_pCursorTexture)
+		if (Env::Renderer() && !m_pCursorTexture)
 		{
-			m_pCursorTexture = gEnv->pRenderer->EF_LoadTexture(path, FT_DONT_RELEASE | FT_DONT_STREAM);
+			m_pCursorTexture = Env::Renderer()->EF_LoadTexture(path, FT_DONT_RELEASE | FT_DONT_STREAM);
 
 			if (!m_pCursorTexture)
 			{
@@ -775,16 +775,16 @@ void CHardwareMouse::Render()
 	if (m_shouldUseSystemCursor)
 		return;
 
-	if (gEnv && gEnv->pRenderer && m_iReferenceCounter && m_pCursorTexture && !m_hide)
+	if (Env::Get() && Env::Renderer() && m_iReferenceCounter && m_pCursorTexture && !m_hide)
 	{
-		float fScalerX = gEnv->pRenderer->ScaleCoordX(1.f);
-		float fScalerY = gEnv->pRenderer->ScaleCoordY(1.f);
+		float fScalerX = Env::Renderer()->ScaleCoordX(1.f);
+		float fScalerY = Env::Renderer()->ScaleCoordY(1.f);
 		const float fSizeX = float(m_pCursorTexture->GetWidth());
 		const float fSizeY = float(m_pCursorTexture->GetHeight());
 		float fPosX, fPosY;
 		GetHardwareMouseClientPosition(&fPosX, &fPosY);
-		gEnv->pRenderer->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
-		gEnv->pRenderer->Draw2dImage(fPosX / fScalerX, fPosY / fScalerY, fSizeX / fScalerX, fSizeY / fScalerY, m_pCursorTexture->GetTextureID(), 0, 1, 1, 0, 0, 1, 1, 1, 1, 0);
+		Env::Renderer()->SetState(GS_BLSRC_SRCALPHA | GS_BLDST_ONEMINUSSRCALPHA | GS_NODEPTHTEST);
+		Env::Renderer()->Draw2dImage(fPosX / fScalerX, fPosY / fScalerY, fSizeX / fScalerX, fSizeY / fScalerY, m_pCursorTexture->GetTextureID(), 0, 1, 1, 0, 0, 1, 1, 1, 1, 0);
 	}
 #endif
 }
@@ -794,13 +794,13 @@ void CHardwareMouse::Render()
 bool CHardwareMouse::IsFullscreen()
 {
 #if 0
-	assert(gEnv);
-	assert(gEnv->pRenderer || gEnv->IsDedicated());
+	assert(Env::Get());
+	assert(Env::Renderer() || Env::Get()->IsDedicated());
 
 	bool bFullScreen = false;
-	if (gEnv->pRenderer)
+	if (Env::Renderer())
 	{
-		gEnv->pRenderer->EF_Query(EFQ_Fullscreen, bFullScreen);
+		Env::Renderer()->EF_Query(EFQ_Fullscreen, bFullScreen);
 	}
 	return bFullScreen;
 #else
@@ -813,14 +813,14 @@ bool CHardwareMouse::IsFullscreen()
 void CHardwareMouse::Hide(bool hide)
 {
 	m_hide = hide;
-	if (m_calledShowHWMouse && gEnv->pInput)
+	if (m_calledShowHWMouse && Env::Input())
 	{
 		bool bShow = m_shouldUseSystemCursor && ((m_iReferenceCounter > 0 && !m_hide) || (m_allowConfine == false));
 
 		if (bShow != m_bPrevShowState)
 		{
 			m_bPrevShowState = bShow;
-			gEnv->pInput->ShowCursor(bShow);
+			Env::Input()->ShowCursor(bShow);
 		}
 	}
 }

@@ -72,14 +72,14 @@ void CConsoleBatchFile::ExecuteFileCmdFunc(IConsoleCmdArgs* args)
 		if (strLine[0] == ';' || strLine.find("--") == 0)
 			continue;
 
-		if (ignoreWhitelist || (gEnv->pSystem->IsCVarWhitelisted(strLine.data(), false)))
+		if (ignoreWhitelist || (Env::System()->IsCVarWhitelisted(strLine.data(), false)))
 		{
-			gEnv->pConsole->ExecuteString(strLine.data());
+			Env::Console()->ExecuteString(strLine.data());
 		}
 #if defined(DEDICATED_SERVER)
 		else
 		{
-			gEnv->pSystem->GetILog()->LogError("Failed to apply CVar/ execute command '%s' as it is not whitelisted\n", strLine.c_str());
+			Env::System()->GetILog()->LogError("Failed to apply CVar/ execute command '%s' as it is not whitelisted\n", strLine.c_str());
 		}
 #endif // defined(DEDICATED_SERVER)
 	}

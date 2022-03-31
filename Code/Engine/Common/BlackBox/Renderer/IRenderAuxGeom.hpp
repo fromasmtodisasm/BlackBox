@@ -16,7 +16,7 @@ struct IRenderAuxGeom
 	virtual void           PushImage(const SRender2DImageDescription& image)                                                                                             = 0;
 	static IRenderAuxGeom* GetAux()
 	{
-		return gEnv->pRenderer ? gEnv->pRenderer->GetIRenderAuxGeom() : gEnv->pAuxGeomRenderer;
+		return Env::Renderer() ? Env::Renderer()->GetIRenderAuxGeom() : Env::AuxGeomRenderer();
 	}
 	void DrawQuad(const Legacy::Vec3& v0, const UCol& colV0, const Legacy::Vec3& v1, const UCol& colV1, const Legacy::Vec3& v2, const UCol& colV2, const Legacy::Vec3& v3, const UCol& colV3)
 	{
@@ -71,7 +71,7 @@ public:
 	static void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0 = 0, float t0 = 0, float s1 = 1, float t1 = 1, float angle = 0,
 	                        float r = 1, float g = 1, float b = 1, float a = 1, float z = 1, float stereoDepth = 0)
 	{
-		if (gEnv->pRenderer)
+		if (Env::Renderer())
 		{
 			SRender2DImageDescription img;
 			img.x           = xpos;
@@ -94,7 +94,7 @@ public:
 	}
 	static void Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, const ColorF& col)
 	{
-		if (gEnv->pRenderer)
+		if (Env::Renderer())
 		{
 			SRender2DImageDescription img;
 			img.x           = xpos;
@@ -118,7 +118,7 @@ public:
 	//! Draws a image using the current matrix.
 	static void DrawImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float r, float g, float b, float a, bool filtered = true)
 	{
-		if (gEnv->pRenderer)
+		if (Env::Renderer())
 		{
 			SRender2DImageDescription img;
 			img.x           = xpos;

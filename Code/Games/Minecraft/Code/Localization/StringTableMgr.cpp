@@ -29,7 +29,7 @@ CStringTableMgr::CStringTableMgr()
 #if 0
 	m_pSystem = NULL;
 #else
-	m_pSystem = gEnv->pSystem;
+	m_pSystem = Env::System();
 #endif
 	m_pLanguageStriptObject = NULL;
 }

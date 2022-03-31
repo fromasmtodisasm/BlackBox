@@ -69,7 +69,7 @@ const SFileVersion& CSystem::GetBuildVersion()
 //////////////////////////////////////////////////////////////////////////
 void CSystem::SystemVersionChanged(ICVar* pCVar)
 {
-	if (CSystem* pThis = static_cast<CSystem*>(gEnv->pSystem))
+	if (CSystem* pThis = static_cast<CSystem*>(Env::System()))
 	{
 		pThis->SetVersionInfo(pCVar->GetString());
 	}
@@ -215,7 +215,7 @@ bool CSystemConfiguration::OpenFile(const string& filename, CCryFile& file, int 
 	flags |= ICryPak::FOPEN_HINT_QUIET;
 
 	// Absolute paths first
-	if (gEnv->pCryPak->IsAbsPath(filename.c_str()) || filename[0] == '%')
+	if (Env::CryPak()->IsAbsPath(filename.c_str()) || filename[0] == '%')
 	{
 		if (file.Open(filename.c_str(), "rb", flags | ICryPak::FLAGS_PATH_REAL))
 		{
@@ -235,7 +235,7 @@ bool CSystemConfiguration::OpenFile(const string& filename, CCryFile& file, int 
 		return true;
 	}
 
-	string gameFolder = PathUtil::RemoveSlash(gEnv->pCryPak->GetGameFolder());
+	string gameFolder = PathUtil::RemoveSlash(Env::CryPak()->GetGameFolder());
 	if (!filename.empty() && filename[0] == '%')
 	{
 		// When file name start with alias, not check game folder.
@@ -405,7 +405,7 @@ bool CSystemConfiguration::ParseSystemConfig()
 		}
 		else
 		{
-			gEnv->pLog->LogWarning("%s -> invalid configuration line: %s", filename.c_str(), strLine.c_str());
+			Env::Log()->LogWarning("%s -> invalid configuration line: %s", filename.c_str(), strLine.c_str());
 		}
 	}
 
@@ -417,11 +417,11 @@ bool CSystemConfiguration::ParseSystemConfig()
 //////////////////////////////////////////////////////////////////////////
 void CSystem::OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup)
 {
-	if (!gEnv->pConsole)
+	if (!Env::Console())
 		return;
 
 	if (*szKey != 0)
-		gEnv->pConsole->LoadConfigVar(szKey, szValue);
+		Env::Console()->LoadConfigVar(szKey, szValue);
 }
 
 void CSystem::LoadConfiguration(const char* sFilename, ILoadConfigurationEntrySink* pSink, ELoadConfigurationType configType, ELoadConfigurationFlags flags)

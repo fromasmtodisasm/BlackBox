@@ -78,10 +78,10 @@ int CScriptObjectSound::LoadSound(IFunctionHandler* pH)
 	if (pH->GetParam(1, szFileName))
 	{
 		pH->GetParam(2, Flags);
-		auto sound = gEnv->pSoundSystem->LoadSound(szFileName, Flags);
+		auto sound = Env::SoundSystem()->LoadSound(szFileName, Flags);
 		if (sound)
 		{
-			USER_DATA pUserData = gEnv->pScriptSystem->CreateUserData((INT_PTR)sound, USER_DATA_SOUND);
+			USER_DATA pUserData = Env::ScriptSystem()->CreateUserData((INT_PTR)sound, USER_DATA_SOUND);
 			return pH->EndFunction(pUserData);
 		}
 	}
@@ -99,10 +99,10 @@ int CScriptObjectSound::Load3DSound(IFunctionHandler* pH)
 	{
 		if (pH->GetParam(2, Flags))
 		{
-			auto sound = gEnv->pSoundSystem->LoadSound(szFileName, Flags);
+			auto sound = Env::SoundSystem()->LoadSound(szFileName, Flags);
 			if (sound)
 			{
-				USER_DATA pUserData = gEnv->pScriptSystem->CreateUserData((int)sound, USER_DATA_SOUND);
+				USER_DATA pUserData = Env::ScriptSystem()->CreateUserData((int)sound, USER_DATA_SOUND);
 				return pH->EndFunction(pUserData);
 			}
 		}
@@ -163,10 +163,10 @@ int CScriptObjectSound::LoadStreamSound(IFunctionHandler* pH)
 	{
 		if (pH->GetParam(2, Flags))
 		{
-			auto sound = gEnv->pSoundSystem->LoadSound(szFileName, Flags | FLAG_SOUND_STREAM);
+			auto sound = Env::SoundSystem()->LoadSound(szFileName, Flags | FLAG_SOUND_STREAM);
 			if (sound)
 			{
-				USER_DATA pUserData = gEnv->pScriptSystem->CreateUserData((INT_PTR)sound, USER_DATA_SOUND);
+				USER_DATA pUserData = Env::ScriptSystem()->CreateUserData((INT_PTR)sound, USER_DATA_SOUND);
 				return pH->EndFunction(pUserData);
 			}
 		}

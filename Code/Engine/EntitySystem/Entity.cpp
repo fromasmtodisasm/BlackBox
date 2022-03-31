@@ -4,7 +4,7 @@
 
 CEntity::CEntity()
     : m_MotionState(*this)
-    , m_pEntitySystem((CEntitySystem*)gEnv->pEntitySystem)
+    , m_pEntitySystem((CEntitySystem*)Env::EntitySystem())
 {
 }
 

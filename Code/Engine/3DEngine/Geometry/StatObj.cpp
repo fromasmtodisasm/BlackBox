@@ -98,11 +98,11 @@ void CStatObj::Render(const struct SRendParams& rParams, const Legacy::Vec3& t, 
 {
 	if (!m_VertexBuffer)
 	{
-		m_VertexBuffer = gEnv->pRenderer->CreateBuffer(m_IndexedMesh.m_nVertCount, m_IndexedMesh.m_VertexFormat, "stat_obj", false);
-		gEnv->pRenderer->UpdateBuffer(m_VertexBuffer, m_IndexedMesh.m_VertexBuffer, m_IndexedMesh.m_nVertCount, false);
+		m_VertexBuffer = Env::Renderer()->CreateBuffer(m_IndexedMesh.m_nVertCount, m_IndexedMesh.m_VertexFormat, "stat_obj", false);
+		Env::Renderer()->UpdateBuffer(m_VertexBuffer, m_IndexedMesh.m_VertexBuffer, m_IndexedMesh.m_nVertCount, false);
 
 		m_IndexBuffer = SVertexStream();
-		gEnv->pRenderer->CreateIndexBuffer(&m_IndexBuffer, m_IndexedMesh.m_Indices.data(), m_IndexedMesh.m_Indices.size());
+		Env::Renderer()->CreateIndexBuffer(&m_IndexBuffer, m_IndexedMesh.m_Indices.data(), m_IndexedMesh.m_Indices.size());
 	}
 
 	int texId = rParams.texture;
@@ -110,7 +110,7 @@ void CStatObj::Render(const struct SRendParams& rParams, const Legacy::Vec3& t, 
 	{
 		texId = m_IndexedMesh.m_DiffuseMap;
 	}
-	gEnv->pAuxGeomRenderer->DrawMesh(m_VertexBuffer, &m_IndexBuffer, *rParams.pMatrix, texId);
+	Env::AuxGeomRenderer()->DrawMesh(m_VertexBuffer, &m_IndexBuffer, *rParams.pMatrix, texId);
 	//GlobalResources::Bo
 }
 IStatObj* CStatObj::GetLodObject(int nLodLevel)
@@ -242,7 +242,7 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 {
 	Assimp::Importer ai;
 	const aiScene*   scene        = ai.ReadFile(szFileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes);
-	auto             shader       = gEnv->pRenderer->Sh_Load("test.Render", 0, 0);
+	auto             shader       = Env::Renderer()->Sh_Load("test.Render", 0, 0);
 	auto             vertexFormat = shader->GetDynVertexFormat();
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -338,11 +338,11 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 						aiString path;
 						m_DiffuseMap = mat->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
 						//path.C_Str()
-						m_DiffuseMap = gEnv->pRenderer->LoadTexture(path.C_Str());
+						m_DiffuseMap = Env::Renderer()->LoadTexture(path.C_Str());
 						if (m_DiffuseMap == -1)
 						{
 							auto new_path = PathUtil::GetParentDirectory(m_Name);
-							m_DiffuseMap  = gEnv->pRenderer->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
+							m_DiffuseMap  = Env::Renderer()->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
 						}
 					}
 				}
@@ -367,11 +367,11 @@ int GetMatInfo(aiMaterial* mat, const char* objName)
 			{
 				aiString path;
 				mat->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
-				auto map = gEnv->pRenderer->LoadTexture(path.C_Str());
+				auto map = Env::Renderer()->LoadTexture(path.C_Str());
 				if (map == -1)
 				{
 					auto new_path = PathUtil::GetParentDirectory(objName);
-					map           = gEnv->pRenderer->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
+					map           = Env::Renderer()->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
 				}
 				return map;
 				//matInfo.AddRef

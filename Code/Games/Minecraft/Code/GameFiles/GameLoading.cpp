@@ -223,7 +223,7 @@ void CXGame::LoadConfiguration(const string& sSystemCfg, const string& sGameCfg)
 		}
 		else
 		{
-			gEnv->pLog->LogError("Invalid game cfg:%s", szLine);
+			Env::Log()->LogError("Invalid game cfg:%s", szLine);
 		}
 	}
 

@@ -662,7 +662,7 @@ namespace Legacy
 	{
 		CKeyboard()
 		{
-			m_pKeyboard = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
+			m_pKeyboard = Env::Input()->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
 		}
 		virtual void ShutDown() override
 		{
@@ -743,7 +743,7 @@ namespace Legacy
 	{
 		CMouse()
 		{
-			m_pMouse = gEnv->pInput->GetDevice(0, EInputDeviceType::eIDT_Mouse);
+			m_pMouse = Env::Input()->GetDevice(0, EInputDeviceType::eIDT_Mouse);
 		}
 		virtual void Shutdown() override
 		{
@@ -819,7 +819,7 @@ namespace Legacy
 		virtual float GetVScreenX() override
 		{
 			float x, y;
-			gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&x, &y);
+			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
 			return x;
 		}
 
@@ -827,7 +827,7 @@ namespace Legacy
 		virtual float GetVScreenY() override
 		{
 			float x, y;
-			gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&x, &y);
+			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
 			return y;
 		}
 
@@ -964,7 +964,7 @@ namespace Legacy
 		virtual float MouseGetVScreenY() override
 		{
 			float x, y;
-			gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&x, &y);
+			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
 			return y;
 		}
 		virtual int GetKeyID(const char* sName) override

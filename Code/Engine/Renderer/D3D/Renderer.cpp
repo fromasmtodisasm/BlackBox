@@ -8,7 +8,7 @@
 
 #include "RenderThread.h"
 
-#define EDITOR (gEnv->IsEditing())
+#define EDITOR (Env::Get()->IsEditing())
 // Globals
 ID3DShaderResourceView* GlobalResources::FontAtlasRV{};
 ID3D11SamplerState*     GlobalResources::LinearSampler{};
@@ -202,7 +202,7 @@ void CD3DRenderer::Update(void)
 				{
 					m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
 					D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
-					if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+					if (IConsole* pConsole = Env::System()->GetIConsole())
 						pConsole->Draw();
 					D3DPERF_EndEvent();
 				}
@@ -232,7 +232,7 @@ void CD3DRenderer::Update(void)
 			}
 			//{
 			//	D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
-			//	if (IConsole* pConsole = gEnv->pSystem->GetIConsole())
+			//	if (IConsole* pConsole = Env::System()->GetIConsole())
 			//		pConsole->Draw();
 			//	D3DPERF_EndEvent();
 			//}
@@ -269,7 +269,7 @@ void CD3DRenderer::SetScissor(int x, int y, int width, int height)
 
 void CD3DRenderer::Draw3dBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs)
 {
-	gEnv->pAuxGeomRenderer->DrawAABB(mins, maxs, UCol{});
+	Env::AuxGeomRenderer()->DrawAABB(mins, maxs, UCol{});
 }
 
 bool CD3DRenderer::ChangeDisplay(unsigned int width, unsigned int height, unsigned int cbpp)
@@ -551,7 +551,7 @@ string CD3DRenderer::AdjustTexturePath(string filename)
 	string path(filename.c_str()), fn, ext;
 	int    texture_index = -1;
 	bool   is_dds        = false;
-	auto   Pack          = gEnv->pCryPak;
+	auto   Pack          = Env::CryPak();
 	auto   Ext           = PathUtil::GetExt(filename.c_str());
 	if (Ext[0] == 0)
 	{
@@ -814,8 +814,8 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderRe
 
 	if (!GlobalResources::TexturedQuadShader)
 	{
-		GlobalResources::TexturedQuadShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite.TexturedQuad", 0, 0);
-		//auto GrayScaleShader = (CShader*)gEnv->pRenderer->Sh_Load("PostProcess.GrayScale", 0, 0);
+		GlobalResources::TexturedQuadShader = (CShader*)Env::Renderer()->Sh_Load("sprite.TexturedQuad", 0, 0);
+		//auto GrayScaleShader = (CShader*)Env::Renderer()->Sh_Load("PostProcess.GrayScale", 0, 0);
 	}
 
 	auto vertex_cnt = 6;
@@ -840,7 +840,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderRe
 	m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
 	//m_pd3dDevice->OMSetDepthStencilState(m_pDSState, 0);
 
-	gEnv->pRenderer->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
+	Env::Renderer()->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 	ReleaseBuffer(VB);
 }
 

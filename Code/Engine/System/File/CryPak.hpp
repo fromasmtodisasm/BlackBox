@@ -227,7 +227,7 @@ private:
 	using FileList = MapType<ZipFile::File>;
 
 private:
-	IMiniLog*                m_pLog = gEnv->pLog;
+	IMiniLog*                m_pLog = Env::Log();
 
 	// this is the list of MOD subdirectories that will be prepended to the actual relative file path
 	// they all have trailing forward slash. "" means the root dir

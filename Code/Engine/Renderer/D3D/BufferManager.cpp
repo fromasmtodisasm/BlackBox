@@ -84,7 +84,7 @@ D3D_PRIMITIVE_TOPOLOGY ToDxPrimitive(RenderPrimitive rp)
 	case RenderPrimitive::LINES:
 		return D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	case RenderPrimitive::LINE_LOOP:
-		gEnv->pSystem->FatalError("Unsupported topology");
+		Env::System()->FatalError("Unsupported topology");
 		assert(0);
 		return D3D_PRIMITIVE_TOPOLOGY(-1);
 	case RenderPrimitive::LINE_STRIP:

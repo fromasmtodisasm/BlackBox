@@ -32,7 +32,7 @@ IEffect* Driver::parse(const char* f)
 	int res = parser.parse();
 	if (res == 0)
 	{
-		gEnv->pLog->Log("$3[FX] File %s passed", file.c_str());
+		Env::Log()->Log("$3[FX] File %s passed", file.c_str());
 		pEffect->m_Code = std::move(scanner->shader);
 	}
 	else
@@ -67,14 +67,14 @@ void Driver::ScanBegin(const char* _file)
 		stream.open(file);
 		if (!stream.is_open())
 		{
-			gEnv->pLog->LogError("[FX] File %s not found", file.c_str());
+			Env::Log()->LogError("[FX] File %s not found", file.c_str());
 		}
 		else
 		{
-			gEnv->pLog->Log("$3[FX] File %s opened", file.c_str());
+			Env::Log()->Log("$3[FX] File %s opened", file.c_str());
 		}
 		//std::cout << file << std::endl;
-		gEnv->pLog->Log(file.c_str());
+		Env::Log()->Log(file.c_str());
 		scanner->yyrestart(&stream);
 	}
 }

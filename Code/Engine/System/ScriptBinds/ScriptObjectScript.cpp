@@ -57,7 +57,7 @@ int CScriptObjectScript::ReloadScript(IFunctionHandler* pH)
 	if (!pH->GetParam(1, sFileName))
 		return pH->EndFunction();
 
-	m_pSS->ExecuteFile(sFileName, true /*, gEnv->IsEditor()*/, true); // Force reload if in editor mode
+	m_pSS->ExecuteFile(sFileName, true /*, Env::Get()->IsEditor()*/, true); // Force reload if in editor mode
 
 	return pH->EndFunction();
 }
@@ -65,7 +65,7 @@ int CScriptObjectScript::ReloadScript(IFunctionHandler* pH)
 #if FULL_SUPPORT
 int CScriptObjectScript::ReloadEntityScript(IFunctionHandler* pH, const char* className)
 {
-	IEntitySystem* pEntitySystem = gEnv->pEntitySystem;
+	IEntitySystem* pEntitySystem = Env::EntitySystem();
 
 	IEntityClass*  pClass        = pEntitySystem->GetClassRegistry()->FindClass(className);
 
@@ -181,7 +181,7 @@ int CScriptObjectScript::SetTimerForFunction(IFunctionHandler* pH, int nMillisec
 	timer.bUpdateDuringPause = bUpdateDuringPause;
 	if (strlen(sFunctionName) > (sizeof(timer.sFuncName) - 1))
 	{
-		gEnv->pLog->LogError("SetTimerForFunction: Function name too long - %s", sFunctionName);
+		Env::Log()->LogError("SetTimerForFunction: Function name too long - %s", sFunctionName);
 	}
 	else
 	{

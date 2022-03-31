@@ -96,7 +96,7 @@ public:
 	Legacy::Mat4 GetProjectionMatrix() const
 	{
 		Legacy::Vec4d v;
-		gEnv->pRenderer->GetViewport(&v.x, &v.y, &v.z, &v.w);
+		Env::Renderer()->GetViewport(&v.x, &v.y, &v.z, &v.w);
 		if (type == Type::Perspective)
 		{
 			//return glm::perspective(glm::radians(m_fov), (float)(v.z) / (float)(v.w), zNear, zFar);

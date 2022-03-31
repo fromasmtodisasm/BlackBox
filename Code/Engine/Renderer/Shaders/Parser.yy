@@ -124,7 +124,7 @@
     #include "Scanner.hpp"
     #include "location.hh"
 
-    #define GreenLog(...) gEnv->pLog->Log(__VA_ARGS__)
+    #define GreenLog(...) Env::Log()->Log(__VA_ARGS__)
 
     #include "Effect.hpp"
 

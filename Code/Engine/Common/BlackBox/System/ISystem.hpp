@@ -659,17 +659,61 @@ struct ISystem
 	virtual bool                DoFrame(int updateFlags = 0)                                                     = 0;
 };
 
+namespace Env
+{
 // Global environment variable.
 #if defined(SYS_ENV_AS_STRUCT)
-extern SSystemGlobalEnvironment gEnv;
+	extern SSystemGlobalEnvironment gEnv;
+	inline auto                     Set(const SSystemGlobalEnvironment& Env) { gEnv = Env; }
+	inline SSystemGlobalEnvironment* Get() { return &gEnv; }
 #else
-extern SSystemGlobalEnvironment* gEnv;
+	extern SSystemGlobalEnvironment* gEnv;
+	inline auto                      Set(SSystemGlobalEnvironment* Env) { gEnv = Env; }
+	inline SSystemGlobalEnvironment* Get() { return gEnv; }
 #endif
+
+
+	//////////////////////////////////////////////////
+	inline auto System() { return gEnv->pSystem; }
+	//////////////////////////////////////////////////
+	inline auto AuxGeomRenderer() { return gEnv->pAuxGeomRenderer; }
+	inline auto I3DEngine() { return gEnv->p3DEngine; }
+	inline auto AISystem() { return nullptr; }
+	inline auto CmdLine() { return nullptr; }
+	inline auto Console() { return gEnv->pConsole; }
+	inline auto AnimationSystem() { return nullptr; }
+	inline auto CryFont() { return gEnv->pCryFont; }
+	inline auto CryPak() { return gEnv->pCryPak; }
+	inline auto EntitySystem() { return gEnv->pEntitySystem; }
+	inline auto Font() { return gEnv->pCryFont; }
+	inline auto ProfileSystem() { return System()->GetIProfileSystem(); }
+	inline auto Game() { return nullptr; }
+	inline auto HardwareMouse() { return gEnv->pHardwareMouse; }
+	inline auto Input() { return gEnv->pInput; }
+	inline auto Log() { return gEnv->pLog; }
+	inline auto MemoryManager() { return nullptr; }
+	inline auto MovieSystem() { return nullptr; }
+	inline auto MusicSystem() { return nullptr; }
+	inline auto Network() { return gEnv->pNetwork; }
+	inline auto PhysicalWorld() { return gEnv->pPhysicalWorld; }
+	inline auto ProjectManager() { return gEnv->pProjectManager; }
+	inline auto RemoteConsole() { return nullptr; }
+	inline auto Renderer() { return gEnv->pRenderer; }
+	inline auto ScriptSystem() { return gEnv->pScriptSystem; }
+	inline auto SoundSystem() { return System()->GetISoundSystem(); }
+	inline auto StreamEngine() { return nullptr; }
+	inline auto SystemEventDispatcher() { return Env::System()->GetISystemEventDispatcher(); }
+	inline auto TextModeConsole() { return Env::System()->GetITextModeConsole(); }
+	inline auto Timer() { return gEnv->pTimer; }
+	inline auto Validator() { return System()->GetIValidator(); }
+	inline auto Window() { return System()->GetIWindow(); }
+
+} // namespace Env
 
 //! Gets the system interface.
 inline ISystem* GetISystem()
 {
-	return gEnv->pSystem;
+	return Env::System();
 };
 
 //! This function must be called once by each module at the beginning, to setup global pointers.
@@ -688,7 +732,7 @@ extern "C"
 void        CryFatalError(const char*, ...) PRINTF_PARAMS(1, 2);
 inline void CryFatalError(const char* format, ...)
 {
-	if (!gEnv || !gEnv->pSystem)
+	if (!Env::Get() || !Env::System())
 		return;
 
 	va_list ArgList;
@@ -697,7 +741,7 @@ inline void CryFatalError(const char* format, ...)
 	vsprintf(szBuffer, format, ArgList);
 	va_end(ArgList);
 
-	gEnv->pSystem->FatalError("%s", szBuffer);
+	Env::System()->FatalError("%s", szBuffer);
 }
 //////////////////////////////////////////////////////////////////////////
 // Display error message.
@@ -751,11 +795,11 @@ void        CryComment(const char*, ...) PRINTF_PARAMS(1, 2);
 inline void CryComment(const char* format, ...)
 {
 	// Fran: we need these guards for the testing framework to work
-	if (gEnv && gEnv->pSystem && gEnv->pLog)
+	if (Env::Get() && Env::System() && Env::Log())
 	{
 		va_list args;
 		va_start(args, format);
-		gEnv->pLog->LogV(ILog::eComment, format, args);
+		Env::Log()->LogV(ILog::eComment, format, args);
 		va_end(args);
 	}
 }
@@ -790,39 +834,3 @@ inline void CryLogAlways(const char* format, ...)
 // Additional headers.
 //////////////////////////////////////////////////////////////////////////
 //#include <BlackBox/System/FrameProfiler.hpp>
-
-namespace Env
-{
-	inline auto AuxGeomRenderer() { return gEnv->pAuxGeomRenderer; }
-	inline auto I3DEngine() { return gEnv->p3DEngine; }
-	inline auto AISystem() { return nullptr; }
-	inline auto CmdLine() { return nullptr; }
-	inline auto Console() { return gEnv->pConsole; }
-	inline auto AnimationSystem() { return nullptr; }
-	inline auto CryFont() { return gEnv->pCryFont; }
-	inline auto Pak() { return gEnv->pCryPak; }
-	inline auto EntitySystem() { return gEnv->pEntitySystem; }
-	inline auto Font() { return gEnv->pCryFont; }
-	inline auto ProfileSystem() { return gEnv->pSystem->GetIProfileSystem(); }
-	inline auto Game() { return nullptr; }
-	inline auto HardwareMouse() { return gEnv->pHardwareMouse; }
-	inline auto Input() { return gEnv->pInput; }
-	inline auto Log() { return gEnv->pLog; }
-	inline auto MemoryManager() { return nullptr; }
-	inline auto MovieSystem() { return nullptr; }
-	inline auto MusicSystem() { return nullptr; }
-	inline auto Network() { return gEnv->pNetwork; }
-	inline auto PhysicalWorld() { return gEnv->pPhysicalWorld; }
-	inline auto ProjectManager() { return gEnv->pProjectManager; }
-	inline auto RemoteConsole() { return nullptr; }
-	inline auto Renderer() { return gEnv->pRenderer; }
-	inline auto ScriptSystem() { return gEnv->pScriptSystem; }
-	inline auto SoundSystem() { return nullptr; }
-	inline auto StreamEngine() { return nullptr; }
-	inline auto SystemEventDispatcher() { return gEnv->pSystem->GetISystemEventDispatcher(); }
-	inline auto TextModeConsole() { return gEnv->pSystem->GetITextModeConsole(); }
-	inline auto Timer() { return gEnv->pTimer; }
-	inline auto Validator() { return gEnv->pSystem->GetIValidator(); }
-	inline auto Window() { return gEnv->pSystem->GetIWindow(); }
-
-} // namespace Env

@@ -788,8 +788,8 @@ namespace PathUtil
 
 	inline string GetGameFolder()
 	{
-		CRY_ASSERT(gEnv && gEnv->pCryPak);
-		return gEnv->pCryPak->GetGameFolder();
+		CRY_ASSERT(Env::Get() && Env::CryPak());
+		return Env::CryPak()->GetGameFolder();
 	}
 
 #define STACK_ARRAY(type, name, length) \
@@ -801,15 +801,15 @@ namespace PathUtil
 		static string projectFilePath;
 		if (!initializedProjectFilePath)
 		{
-			CRY_ASSERT(gEnv && gEnv->pSystem && gEnv->pSystem->GetICmdLine(), "PathUtil::GetProjectFolder() was called before system was initialized");
-			const ICmdLineArg* project = gEnv->pSystem->GetICmdLine()->FindArg(eCLAT_Pre, "project");
+			CRY_ASSERT(Env::Get() && Env::System() && Env::System()->GetICmdLine(), "PathUtil::GetProjectFolder() was called before system was initialized");
+			const ICmdLineArg* project = Env::System()->GetICmdLine()->FindArg(eCLAT_Pre, "project");
 			if (project)
 			{
 				projectFilePath = project->GetValue();
 			}
 			else
 			{
-				ICVar* pSysProject = gEnv->pConsole->GetCVar("sys_project");
+				ICVar* pSysProject = Env::Console()->GetCVar("sys_project");
 				if (pSysProject && pSysProject->GetString())
 				{
 					projectFilePath = pSysProject->GetString();

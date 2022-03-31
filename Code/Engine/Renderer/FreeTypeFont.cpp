@@ -40,10 +40,10 @@ struct ColorTable
 
 void PrintColorTable(IConsoleCmdArgs*)
 {
-	gEnv->pLog->Log("ColorTable codes");
+	Env::Log()->Log("ColorTable codes");
 	for (int i = 0; i < 10; i++)
 	{
-		gEnv->pLog->Log("$%d $$%d=%s", i, i, ColorTable[i].name.data());
+		Env::Log()->Log("$%d $$%d=%s", i, i, ColorTable[i].name.data());
 	}
 }
 
@@ -251,7 +251,7 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	_smart_ptr<CShader> shader;
 	if (!shader)
 	{
-		shader = GlobalResources::SpriteShader = (CShader*)gEnv->pRenderer->Sh_Load("sprite.Font", 0, 0);
+		shader = GlobalResources::SpriteShader = (CShader*)Env::Renderer()->Sh_Load("sprite.Font", 0, 0);
 	}
 
 	if (FT_Init_FreeType(&ft))
@@ -490,9 +490,9 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	};
 
 	#if 1
-	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
+	m_VB = Env::Renderer()->CreateBuffer(6, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
 	#else
-	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_T2F, "Font", false);
+	m_VB = Env::Renderer()->CreateBuffer(6, VERTEX_FORMAT_P3F_T2F, "Font", false);
 	#endif
 	#if 0
     Legacy::Vec3 vertices[] =
@@ -501,11 +501,11 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
         Legacy::Vec3( 0.5f, -0.5f, 0.5f ),
         Legacy::Vec3( -0.5f, -0.5f, 0.5f ),
     };
-	gEnv->pRenderer->UpdateBuffer(m_VB, vertices, 3, false);
+	Env::Renderer()->UpdateBuffer(m_VB, vertices, 3, false);
 	#endif
 
 	m_IB = new SVertexStream;
-	gEnv->pRenderer->CreateIndexBuffer(m_IB, indices, sizeof(indices));
+	Env::Renderer()->CreateIndexBuffer(m_IB, indices, sizeof(indices));
 	static bool UB_created         = false;
 
 	first_init                     = false;
@@ -546,7 +546,7 @@ void RegisterColorTable()
 {
 	if (!FreeTypeFont::printColorTableRegistered)
 	{
-		gEnv->pConsole->AddCommand("printcb", PrintColorTable, 0, "Print color font encoding");
+		Env::Console()->AddCommand("printcb", PrintColorTable, 0, "Print color font encoding");
 	}
 }
 
@@ -563,17 +563,17 @@ void FreeTypeFont::Submit()
 	}
 	// Activate corresponding render state
 	auto render = GetISystem()->GetIRenderer();
-	gEnv->pRenderer->ReleaseBuffer(m_VB);
+	Env::Renderer()->ReleaseBuffer(m_VB);
 
 	#if 1
-	m_VB = gEnv->pRenderer->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
+	m_VB = Env::Renderer()->CreateBuffer(vertex_cnt, VERTEX_FORMAT_P3F_C4B_T2F, "Font", false);
 	#else
-	m_VB = gEnv->pRenderer->CreateBuffer(6, VERTEX_FORMAT_P3F_T2F, "Font", false);
+	m_VB = Env::Renderer()->CreateBuffer(6, VERTEX_FORMAT_P3F_T2F, "Font", false);
 	#endif
 
 	// Render glyph texture over quad
 	// Update content of VBO memory
-	gEnv->pRenderer->UpdateBuffer(m_VB, m_CharBuffer.data(), vertex_cnt, false);
+	Env::Renderer()->UpdateBuffer(m_VB, m_CharBuffer.data(), vertex_cnt, false);
 
 	GlobalResources::SpriteShader->Bind();
 	GetDeviceContext()->PSSetSamplers(0, 1, &m_Sampler);
@@ -585,7 +585,7 @@ void FreeTypeFont::Submit()
 	GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 	GetDeviceContext()->OMSetDepthStencilState(m_pDSState, 0);
 
-	gEnv->pRenderer->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
+	Env::Renderer()->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 
 	m_CharBuffer.resize(0);
 }
@@ -596,8 +596,8 @@ FreeTypeFont::~FreeTypeFont()
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 	#endif
-	gEnv->pRenderer->ReleaseIndexBuffer(m_IB);
-	gEnv->pRenderer->ReleaseBuffer(m_VB);
+	Env::Renderer()->ReleaseIndexBuffer(m_IB);
+	Env::Renderer()->ReleaseBuffer(m_VB);
 }
 
 void FreeTypeFont::Release()

@@ -18,7 +18,7 @@ inline CEntitySystem::CEntitySystem(ISystem* pSystem)
 #endif
 
 	{
-#define SET_SCRIPTEVENT(event) gEnv->pScriptSystem->SetGlobalValue("ScriptEvent_" #event, ScriptEvent_##event)
+#define SET_SCRIPTEVENT(event) Env::ScriptSystem()->SetGlobalValue("ScriptEvent_" #event, ScriptEvent_##event)
 	SET_SCRIPTEVENT(Activate);
 	SET_SCRIPTEVENT(Deactivate);
 	SET_SCRIPTEVENT(FireModeChange);
@@ -75,7 +75,7 @@ inline CEntitySystem::CEntitySystem(ISystem* pSystem)
 
 void CEntitySystem::Update()
 {
-	auto time = gEnv->pTimer->GetFrameTime();
+	auto time = Env::Timer()->GetFrameTime();
 	m_pPhysicalWorld->stepSimulation(time);
 
 	btStaticPlaneShape* floor = new btStaticPlaneShape(btVector3(0, 1, 0), -1);
@@ -150,7 +150,7 @@ void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 	LOG_FUNCTION();
 	CryLog("Try remove entity with id: %d", entity);
 	m_nSpawnedEntities--;
-	gEnv->p3DEngine->UnRegisterEntity(&m_Entities[entity]);
+	Env::I3DEngine()->UnRegisterEntity(&m_Entities[entity]);
 }
 
 int CEntitySystem::GetNumEntities() const

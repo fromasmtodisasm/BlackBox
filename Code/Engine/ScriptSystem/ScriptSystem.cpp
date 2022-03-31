@@ -213,7 +213,7 @@ bool CScriptSystem::_ExecuteFile(const char* sFileName, bool bRaiseError, IScrip
 	// Translate pak alias filenames
 	CryPathString translated;
 	translated.resize(0x800);
-	gEnv->pCryPak->AdjustFileName(sFileName, translated.data() /*, ICryPak::FLAGS_NO_FULL_PATH*/);
+	Env::CryPak()->AdjustFileName(sFileName, translated.data() /*, ICryPak::FLAGS_NO_FULL_PATH*/);
 
 	CryPathString fileName("@");
 	fileName.append(translated);
@@ -1257,14 +1257,14 @@ void              CScriptSystem::PrintStack()
 SCRIPTSYSTEM_API IScriptSystem* CreateScriptSystem(ISystem* pSystem, bool bStdLibs)
 {
 	auto ss             = new CScriptSystem();
-	gEnv->pScriptSystem = ss;
+	Env::Get()->pScriptSystem = ss;
 	if (ss->Init(pSystem))
 	{
 		return ss;
 	}
 	else
 	{
-		gEnv->pScriptSystem = nullptr;
+		Env::Get()->pScriptSystem = nullptr;
 		return nullptr;
 	}
 }

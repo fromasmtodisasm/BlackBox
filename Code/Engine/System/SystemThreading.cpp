@@ -3,7 +3,7 @@
 
 void DumpThreads(IConsoleCmdArgs* args)
 {
-	static_cast<CThreadManager*>(gEnv->pThreadManager)->Dump();
+	static_cast<CThreadManager*>(Env::Get()->pThreadManager)->Dump();
 }
 
 IThreadConfigManager* CThreadManager::GetThreadConfigManager()

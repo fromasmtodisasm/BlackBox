@@ -127,7 +127,7 @@ void CActionMapManager::Update(unsigned int nTimeMSec)
 			}
 			else if (bind.bind.nKey == event)
 			{
-				gEnv->pLog->Log("fffffffffffffff");
+				Env::Log()->Log("fffffffffffffff");
 			}
 		}
 		i++;

@@ -25,16 +25,16 @@ public:
 	//! Example: Called when pressing ESC in game mode to go to Menu.
 	virtual void OnProcessSwitch()
 	{
-		auto proc  = gEnv->pSystem->GetIProcess();
+		auto proc  = Env::System()->GetIProcess();
 		auto flags = proc->GetFlags();
 		if (flags & PROC_MENU)
 		{
-			gEnv->pSystem->SetIProcess(this);
+			Env::System()->SetIProcess(this);
 		}
 		else
 		{
 			m_Process = proc;
-			gEnv->pSystem->SetIProcess(m_Process);
+			Env::System()->SetIProcess(m_Process);
 		}
 	}
 

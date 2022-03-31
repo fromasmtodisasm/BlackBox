@@ -12,5 +12,5 @@ inline void PrintRightAlignedText(float posY, const char* szText, IFont* pFont =
 		color[2]	= 1.0; //alpha
 		color[3]	= 0.0; //red
 #endif
-	gEnv->pRenderer->Draw2dText(gEnv->pRenderer->GetWidth() - info.font->TextWidth(szText) - rightMargin, posY, szText, info);
+	Env::Renderer()->Draw2dText(Env::Renderer()->GetWidth() - info.font->TextWidth(szText) - rightMargin, posY, szText, info);
 }

@@ -138,9 +138,9 @@ inline bool CCryFile::Open(const char* filename, const char* mode, int nOpenFlag
 	CryPathString tempfilename = filename;
 
 #if !defined(_RELEASE)
-	if (gEnv && gEnv->IsEditor())
+	if (Env::Get() && Env::Get()->IsEditor())
 	{
-		ICVar* const pCvar = gEnv->pConsole->GetCVar("ed_lowercasepaths");
+		ICVar* const pCvar = Env::Console()->GetCVar("ed_lowercasepaths");
 		if (pCvar)
 		{
 			const int lowercasePaths = pCvar->GetIVal();

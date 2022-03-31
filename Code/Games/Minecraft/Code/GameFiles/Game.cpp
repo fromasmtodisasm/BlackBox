@@ -88,7 +88,7 @@ namespace ImGui
 	{
 		if (ImGui::InputFloat(name, val))
 		{
-			gEnv->pConsole->ExecuteString(std::string(std::string(name) + " " + std::to_string(*val)).data());
+			Env::Console()->ExecuteString(std::string(std::string(name) + " " + std::to_string(*val)).data());
 			//v->Set(cvv.f);
 		}
 	}
@@ -96,7 +96,7 @@ namespace ImGui
 	{
 		if (ImGui::InputInt(name, val))
 		{
-			gEnv->pConsole->ExecuteString(std::string(std::string(name) + " " + std::to_string(*val)).data());
+			Env::Console()->ExecuteString(std::string(std::string(name) + " " + std::to_string(*val)).data());
 			//v->Set(cvv.f);
 		}
 	}
@@ -104,7 +104,7 @@ namespace ImGui
 	{
 		if (ImGui::InputText(name, val, 256))
 		{
-			gEnv->pConsole->ExecuteString(std::string(std::string(name) + " " + val).data());
+			Env::Console()->ExecuteString(std::string(std::string(name) + " " + val).data());
 			//v->Set(cvv.f);
 		}
 	}
@@ -185,7 +185,7 @@ void LoadHistory()
 		while (std::getline(is, line))
 		{
 			history.push(line);
-			gEnv->pConsole->AddCommandToHistory(line.data());
+			Env::Console()->AddCommandToHistory(line.data());
 		}
 		/*
 		while (!history.empty())
@@ -203,7 +203,7 @@ void SaveHistory()
 	std::stack<string> history;
 	if (is.is_open())
 	{
-		while (auto h = gEnv->pConsole->GetHistoryElement(true))
+		while (auto h = Env::Console()->GetHistoryElement(true))
 		{
 			history.push(h);
 		}
@@ -804,7 +804,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	// init key-bindings
 	if (!m_bDedicatedServer)
 	{
-		m_pLegacyInput = new Legacy::CInput(gEnv->pInput);
+		m_pLegacyInput = new Legacy::CInput(Env::Input());
 		InitInputMap();
 	}
 
@@ -903,7 +903,7 @@ bool MouseInQuad(int x, int y, int w, int h)
 	float fy = (float)y;
 	float fw = (float)w;
 	float fh = (float)h;
-	gEnv->pHardwareMouse->GetHardwareMousePosition(&mx, &my);
+	Env::HardwareMouse()->GetHardwareMousePosition(&mx, &my);
 
 	return (mx >= fx && mx <= (fx + fw)) && (my >= fy - fh && my <= (fy));
 }
@@ -932,7 +932,7 @@ bool CXGame::Update()
 	FUNCTION_PROFILER(PROFILE_GAME);
 
 	#if 1
-	ICVar* test = gEnv->pConsole->GetCVar("sys_PakPriority");
+	ICVar* test = Env::Console()->GetCVar("sys_PakPriority");
 	if (test && test->GetIVal() == 1)
 	{
 		CCryFile file("%USER%/test/game.project", "wb");
@@ -1372,12 +1372,12 @@ bool CXGame::LoadScene(std::string name)
 {
 	GetISystem()->Log("Scene loading");
 	std::string& path = name;
-	if (gEnv->p3DEngine->LoadLevel(path.data(), ""))
+	if (Env::I3DEngine()->LoadLevel(path.data(), ""))
 	{
-		if (!gEnv->IsDedicated())
+		if (!Env::Get()->IsDedicated())
 		{
 			//scene->setCamera("main", new CCamera());
-			//m_CameraController.m_Camera = &gEnv->pRenderer->GetCamera();
+			//m_CameraController.m_Camera = &Env::Renderer()->GetCamera();
 			CPlayer* player = nullptr; // static_cast<CPlayer*>(scene->getObject("MyPlayer"));
 			if (player != nullptr)
 			{
@@ -1406,9 +1406,9 @@ void CXGame::SaveScene(std::string name, std::string as)
 	// Need implement custom save file format to save needed state
 	#if 0
   std::string& path = name;
-  if (gEnv->pRenderer->GetISceneManager()->exist(path))
+  if (Env::Renderer()->GetISceneManager()->exist(path))
   {
-	auto scene = gEnv->pRenderer->GetISceneManager()->getScene(path, this);
+	auto scene = Env::Renderer()->GetISceneManager()->getScene(path, this);
 	scene->save(as.c_str());
   }
 	#endif
@@ -1811,10 +1811,10 @@ bool CXGame::SteamInit()
 		g_SteamAchievements = new CSteamAchievements(g_Achievements, 1);
 		// Получить имена профилей Steam текущих пользователей.
 		const char* name = SteamFriends()->GetPersonaName();
-		gEnv->pLog->Log("person name: %s", name);
+		Env::Log()->Log("person name: %s", name);
 	}
 
-	gEnv->pLog->Log("steam api init: %d", bRet);
+	Env::Log()->Log("steam api init: %d", bRet);
 	return bRet;
 	#endif // !USE_STEAM
 }

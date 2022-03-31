@@ -199,7 +199,7 @@ bool CSoundSystem::Init()
 	REGISTER_CVAR(s_MusicVolume, s_MusicVolume, VF_DUMPTODISK, "Music volume [0..1]");
 	REGISTER_CVAR(s_SFXVolume, s_SFXVolume, 0, "SFX volume [0..1]");
 
-	auto var = gEnv->pConsole->GetCVar("s_MusicVolume");
+	auto var = Env::Console()->GetCVar("s_MusicVolume");
 	var->AddOnChange([this]
 	                 {
 		                 //s_SFXVolume * MIX_MAX_VOLUME

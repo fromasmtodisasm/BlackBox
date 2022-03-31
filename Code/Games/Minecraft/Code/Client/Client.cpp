@@ -20,7 +20,7 @@ CClient::CClient(CXGame* pGame)
     , m_CameraController()
     , m_IntersectionState()
 {
-	gEnv->pRenderer->RegisterCallbackClient(this);
+	Env::Renderer()->RegisterCallbackClient(this);
 
 	struct cmds
 	{
@@ -52,14 +52,14 @@ void CClient::Update()
 	m_testObjects;
 	for (auto& o : m_testObjects)
 	{
-		o.m_Position.y += o.m_Position.y * cos(gEnv->pTimer->GetCurrTime());
+		o.m_Position.y += o.m_Position.y * cos(Env::Timer()->GetCurrTime());
 	}
 
 	const float FloorLevel = (float)g_World.height + 3;
 	//	auto		CamPos	   = Legacy::Vec3(m_CameraController.CurrentCamera()->GetPos());
 	//
-	//	m_CamSpeed -= gGravity * gEnv->pTimer->GetRealFrameTime();
-	//	CamPos.y += m_CamSpeed * gEnv->pTimer->GetRealFrameTime();
+	//	m_CamSpeed -= gGravity * Env::Timer()->GetRealFrameTime();
+	//	CamPos.y += m_CamSpeed * Env::Timer()->GetRealFrameTime();
 	//	if ((CamPos.x <= -(float)g_World.size_x / 2) || (CamPos.x >= (float)g_World.size_x / 2))
 	//	{
 	//		if ((CamPos.z <= -(float)g_World.size_z / 2) || (CamPos.z >= (float)g_World.size_z / 2))
@@ -70,8 +70,8 @@ void CClient::Update()
 	//
 	//	m_CameraController.CurrentCamera()->SetPos(CamPos);
 
-	auto        frame_time = gEnv->pTimer->GetRealFrameTime();
-	m_CurrentFrameID       = gEnv->pRenderer->GetFrameID();
+	auto        frame_time = Env::Timer()->GetRealFrameTime();
+	m_CurrentFrameID       = Env::Renderer()->GetFrameID();
 	m_NumHitsInFrame       = 0;
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_MOVE_LEFT))
 	{
@@ -117,11 +117,11 @@ void CClient::Update()
 		m_IntersectionState.m_NeedIntersect = true;
 		m_pGame->minePlayer->destroyBlockOnCursor();
 
-		gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
+		Env::HardwareMouse()->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 		//if (m_Mode != MENU)
 		{
-			m_IntersectionState.mx = (float)gEnv->pRenderer->GetWidth() / 2;
-			m_IntersectionState.my = (float)gEnv->pRenderer->GetHeight() / 2;
+			m_IntersectionState.mx = (float)Env::Renderer()->GetWidth() / 2;
+			m_IntersectionState.my = (float)Env::Renderer()->GetHeight() / 2;
 		}
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_ZOOM_TOGGLE))
@@ -129,11 +129,11 @@ void CClient::Update()
 		auto& lpp                           = m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
 		m_pGame->minePlayer->placeBlockOnCursor();
-		gEnv->pHardwareMouse->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
+		Env::HardwareMouse()->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 		//if (m_Mode != MENU)
 		{
-			m_IntersectionState.mx = (float)gEnv->pRenderer->GetWidth() / 2;
-			m_IntersectionState.my = (float)gEnv->pRenderer->GetHeight() / 2;
+			m_IntersectionState.mx = (float)Env::Renderer()->GetWidth() / 2;
+			m_IntersectionState.my = (float)Env::Renderer()->GetHeight() / 2;
 		}
 	}
 
@@ -147,7 +147,7 @@ void CClient::Update()
 			static IFont* font{};
 			if (!font)
 			{
-				font = gEnv->pRenderer->GetIFont();
+				font = Env::Renderer()->GetIFont();
 				font->Init("arial.ttf", 14, 14);
 			}
 			m_pGame->minecraft->world.highliteCubeTmp(pos);
@@ -160,7 +160,7 @@ void CClient::Update()
 
 	auto pos = m_CameraController.CurrentCamera()->GetPos();
 	auto cam = m_CameraController.CurrentCamera();
-	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Legacy::Vec3(2, -0.5, -1), pos + cam->Front*Legacy::Vec3(3, 0, 1), UCol(0,0,1,1));
+	//Env::Renderer()->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Legacy::Vec3(2, -0.5, -1), pos + cam->Front*Legacy::Vec3(3, 0, 1), UCol(0,0,1,1));
 
 	//m_CameraController.SetRenderCamera(0);
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
@@ -172,17 +172,17 @@ bool CClient::Init()
 	m_pIActionMapManager = m_pGame->GetActionMapManager();
 	if (m_pIActionMapManager)
 		m_pIActionMapManager->SetSink(this);
-	if (!gEnv->IsDedicated())
+	if (!Env::Get()->IsDedicated())
 		m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
-	m_PlayerScript.Create(gEnv->pScriptSystem);
-	if (!gEnv->pScriptSystem->GetGlobalValue("Player", *m_PlayerScript))
+	m_PlayerScript.Create(Env::ScriptSystem());
+	if (!Env::ScriptSystem()->GetGlobalValue("Player", *m_PlayerScript))
 	{
 		CryError("Player Error");
 		return false;
 	}
 
-	//m_pClient = gEnv->pNetwork->CreateClient(this);
+	//m_pClient = Env::Network()->CreateClient(this);
 
 	//m_testObjects.emplace_back(TestObject(AABB({-6, 0, 0}, {-1, 5, 5}), Legacy::Vec4(0, 0, 0, 10)));
 	//m_testObjects.emplace_back(TestObject(AABB({0, 0, 0}, {5, 5, 5}), Legacy::Vec4(10, 0, 0, 10)));
@@ -227,7 +227,7 @@ void CClient::OnXContextSetup(CStream& stmContext)
 
 void CClient::OnXData(CStream& stm)
 {
-	gEnv->pLog->Log("Client recived stream");
+	Env::Log()->Log("Client recived stream");
 }
 
 void CClient::OnXServerTimeout()
@@ -401,12 +401,12 @@ void CClient::DrawAux()
 	//m_RenderAuxGeom->DrawLine({-0, -0.0, 0}, col, {0.25, 0.1, 0.5}, col);
 	auto draw_quad = [](Legacy::Vec3 p1, Legacy::Vec3 p2, Legacy::Vec3 p3, Legacy::Vec3 p4, UCol col)
 	{
-		auto render = gEnv->pRenderer->GetIRenderAuxGeom();
+		auto render = Env::Renderer()->GetIRenderAuxGeom();
 		render->DrawTriangle(p1, col, p2, col, p3, col);
 		render->DrawTriangle(p3, col, p4, col, p1, col);
 	};
 	const UCol col(255, 255, 255, 255);
-	auto       render = gEnv->pRenderer->GetIRenderAuxGeom();
+	auto       render = Env::Renderer()->GetIRenderAuxGeom();
 	render->DrawLine(
 	    {-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 40, y = 0, z = -40;
@@ -454,8 +454,8 @@ void CClient::DrawAux()
 	size_t ch_w = 20;
 	size_t ch_h = 20;
 #if 0
-	if (gEnv->pRenderer)
-		gEnv->pRenderer->DrawImage(static_cast<float>(gEnv->pRenderer->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(gEnv->pRenderer->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair, 0, 0, 1, 1, 0, 1, 0, 0.5);
+	if (Env::Renderer())
+		Env::Renderer()->DrawImage(static_cast<float>(Env::Renderer()->GetWidth()) / 2 - 0.5f * ch_h, static_cast<float>(Env::Renderer()->GetHeight()) / 2 - 0.5f * ch_h, 20,20, m_CrossHair, 0, 0, 1, 1, 0, 1, 0, 0.5);
 #endif
 }
 
@@ -463,7 +463,7 @@ void CClient::DrawAxis(IRenderAuxGeom* render, Legacy::Vec3 axis)
 {
 	// Axis
 	///////////////////////////////////////
-	RSS(gEnv->pRenderer, DEPTH_TEST, false);
+	RSS(Env::Renderer(), DEPTH_TEST, false);
 	{
 		auto& a = axis;
 		{
@@ -496,10 +496,10 @@ void CClient::IntersectionTest()
 void CClient::IntersectionByRayCasting()
 {
 	auto& start = m_IntersectionState.ray.start;
-	gEnv->pRenderer->UnProjectFromScreen(
+	Env::Renderer()->UnProjectFromScreen(
 	    m_IntersectionState.mx, m_IntersectionState.my, 0, &start.x, &start.y, &start.z);
 	auto& end = m_IntersectionState.ray.end;
-	gEnv->pRenderer->UnProjectFromScreen(
+	Env::Renderer()->UnProjectFromScreen(
 	    m_IntersectionState.mx, m_IntersectionState.my, 1, &end.x, &end.y, &end.z);
 
 	float tMin = HUGE_VALF;
@@ -522,7 +522,7 @@ void CClient::IntersectionByRayCasting()
 			m_IntersectionState.m_LastPickedPos  = eyeRay.origin + eyeRay.direction * tMin;
 			m_IntersectionState.m_CurrentDistant = glm::distance(eyeRay.origin, m_IntersectionState.m_LastPickedPos);
 
-			auto num_hits                        = gEnv->pConsole->GetCVar("st_achivements_numHits");
+			auto num_hits                        = Env::Console()->GetCVar("st_achivements_numHits");
 
 			{
 				auto nh = num_hits->GetIVal();

@@ -287,7 +287,7 @@ void CXGame::InitConsoleCommands()
 	                     {
 		                     static int trigger = 0;
 		                     trigger            = !(bool)trigger;
-		                     gEnv->pSoundSystem->Pause(trigger); });
+		                     Env::SoundSystem()->Pause(trigger); });
 }
 
 //extern float CameraRayLength = 40.f;

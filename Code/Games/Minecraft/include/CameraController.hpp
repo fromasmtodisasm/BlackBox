@@ -26,7 +26,7 @@ public:
 	CCameraController(CCamera* pCamera)
 	    : m_Camera{pCamera}
 	{
-		gEnv->pSystem->GetIHardwareMouse()->AddListener(this);
+		Env::System()->GetIHardwareMouse()->AddListener(this);
 	}
 
 	std::vector<CCamera*> m_Camera;
@@ -37,7 +37,7 @@ public:
 	// Inherited via IInputEventListener
 	virtual bool          OnInputEvent(const SInputEvent& event) override
 	{
-		if (gEnv->pConsole->IsOpened())
+		if (Env::Console()->IsOpened())
 			return false;
 		bool mousePressed = event.deviceType == eIDT_Mouse && event.state == eIS_Pressed;
 		bool rotated      = false;
@@ -116,7 +116,7 @@ public:
 
 	void update(float deltatime)
 	{
-		if (gEnv->IsDedicated())
+		if (Env::Get()->IsDedicated())
 		{
 			return;
 		}
@@ -191,7 +191,7 @@ public:
 	{
 		assert(n < m_Camera.size());
 		m_RenderCamera = n;
-		gEnv->pRenderer->SetCamera(*m_Camera[n]);
+		Env::Renderer()->SetCamera(*m_Camera[n]);
 	}
 	void SetMovementCamera(size_t n)
 	{

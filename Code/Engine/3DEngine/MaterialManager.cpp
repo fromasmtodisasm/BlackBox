@@ -222,7 +222,7 @@ bool MaterialManager::loadMaterial(XMLElement* material)
   if (shader_name == nullptr)
     return false;
 
-  if (!(result->program = gEnv->pRenderer->Sh_Load(shader_name, 0)))
+  if (!(result->program = Env::Renderer()->Sh_Load(shader_name, 0)))
     return false;
   result->program_name = shader_name;
   cache[materialName] = result;

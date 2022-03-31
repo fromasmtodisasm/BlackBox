@@ -54,8 +54,8 @@ using stack_string = string;
 //////////////////////////////////////////////////////////////////////////
 static inline void InlineInitializationProcessing(const char* sDescription)
 {
-	if (gEnv->pLog)
-		gEnv->pLog->UpdateLoadingScreen(0);
+	if (Env::Log())
+		Env::Log()->UpdateLoadingScreen(0);
 }
 
 void CSystem::UnloadSubsystems()
@@ -187,7 +187,7 @@ void CNULLConsole::OnUpdate()
 	int   numPlayers = 0;
 	float srvRate    = 0;
 
-	if (ITimer* pTimer = gEnv->pSystem->GetITimer())
+	if (ITimer* pTimer = Env::System()->GetITimer())
 		srvRate = pTimer->GetFrameRate();
 
 	//m_syslogStats.Update(srvRate, numPlayers, netNub);
@@ -306,7 +306,7 @@ bool CSystem::Init()
 				m_pUserCallback = pConsole;
 				pConsole->SetRequireDedicatedServer(true);
 				headerName.append("Dedicated Server");
-				if (gEnv->bDedicatedArbitrator)
+				if (Env::Get()->bDedicatedArbitrator)
 				{
 					headerName.append(" Arbitrator");
 				}
@@ -364,9 +364,9 @@ bool CSystem::Init()
 	#ifdef GEN_PAK_CDR_CRC
 
 		const char* filename = m_pCmdLine->GetArg(1)->GetName();
-		gEnv->pCryPak->OpenPack(filename);
+		Env::CryPak()->OpenPack(filename);
 
-		int crc = gEnv->pCryPak->ComputeCachedPakCDR_CRC(filename, false);
+		int crc = Env::CryPak()->ComputeCachedPakCDR_CRC(filename, false);
 
 		exit(crc);
 	#endif
@@ -418,7 +418,7 @@ bool CSystem::Init()
 		LoadConfiguration(ovr->GetValue());
 	}
 	//====================================================
-	if (!OpenRenderLibrary(gEnv->pConsole->GetCVar("r_Driver")->GetString()))
+	if (!OpenRenderLibrary(Env::Console()->GetCVar("r_Driver")->GetString()))
 	{
 		return false;
 	}
@@ -451,23 +451,23 @@ bool CSystem::Init()
 		m_Font.ms_nullFont.m_pFont = m_pFont;
 		m_Font.ms_nullFont.m_Size  = font_size;
 
-		auto splash                = gEnv->pRenderer->LoadTexture("fcsplash.bmp", 0, 0);
+		auto splash                = Env::Renderer()->LoadTexture("fcsplash.bmp", 0, 0);
 		for (int i = 0; i < 3; i++)
 		{
 			RenderBegin();
-			//gEnv->pRenderer->DrawFullScreenImage(splash->getId());
-			gEnv->pRenderer->DrawImage(
+			//Env::Renderer()->DrawFullScreenImage(splash->getId());
+			Env::Renderer()->DrawImage(
 #if 0
-				gEnv->pRenderer->GetWidth() / 2.f - splash->getWidth() / 2,
-				gEnv->pRenderer->GetHeight() / 2.f - splash->getHeight() / 2,
+				Env::Renderer()->GetWidth() / 2.f - splash->getWidth() / 2,
+				Env::Renderer()->GetHeight() / 2.f - splash->getHeight() / 2,
 				(float)splash->getWidth(),
 				(float)splash->getHeight(),
 				splash->getBindlesId(),
 #else
 			    0,
 			    0,
-			    (float)gEnv->pRenderer->GetWidth(),
-			    (float)gEnv->pRenderer->GetHeight(),
+			    (float)Env::Renderer()->GetWidth(),
+			    (float)Env::Renderer()->GetHeight(),
 			    splash,
 			    0, 0, 1, 1, 1, 1, 1, 1);
 #endif
@@ -585,7 +585,7 @@ bool CSystem::Init()
 		GetIConsole()->ExecuteString("r_PrecacheShaderList");
 	}
 
-	gEnv->pLog->Log("Main thread : %d", std::this_thread::get_id());
+	Env::Log()->Log("Main thread : %d", std::this_thread::get_id());
 	return true;
 }
 
@@ -671,7 +671,7 @@ bool CSystem::InitRender()
 	{
 		int width  = m_rWidth;
 		int height = m_rHeight;
-		if (gEnv->IsEditor())
+		if (Env::Get()->IsEditor())
 		{
 			// In Editor base default Display Context is not really used, so it is allocated with the minimal resolution.
 			width  = 32;
@@ -841,7 +841,7 @@ bool CSystem::CloseRenderLibrary(std::string_view render)
 	const char* t_rend = render.data();
 	//CRY_PROFILE_FUNCTION(PROFILE_LOADING_ONLY);
 
-	if (gEnv->IsDedicated())
+	if (Env::Get()->IsDedicated())
 		return true;
 
 	if (stricmp(t_rend, STR_DX11_RENDERER) == 0)
@@ -914,7 +914,7 @@ bool CSystem::InitFileSystem_LoadEngineFolders()
 #endif
 
 	// We set now the correct "game" folder to use in Pak File
-	ICVar* pGameFolderCVar = gEnv->pConsole->GetCVar("sys_game_folder");
+	ICVar* pGameFolderCVar = Env::Console()->GetCVar("sys_game_folder");
 	CRY_ASSERT(pGameFolderCVar != nullptr);
 
 	m_env.pCryPak->SetGameFolder(pGameFolderCVar->GetString());
@@ -1139,7 +1139,7 @@ void CSystem::OpenBasicPaks(bool bLoadGamePaks)
 // Load paks required for game init to mem
 // FIXME:
 #if 0
-		gEnv->pCryPak->LoadPakToMemory("engine.pak", ICryPak::eInMemoryPakLocale_GPU);
+		Env::CryPak()->LoadPakToMemory("engine.pak", ICryPak::eInMemoryPakLocale_GPU);
 #endif
 		s_bEnginePakLoaded = true;
 	}
@@ -1202,7 +1202,7 @@ bool CSystem::InitFileSystem()
 		#if 0
 		if (m_bEditor)
 			#else
-		if (gEnv->IsEditor())
+		if (Env::Get()->IsEditor())
 		#endif
 		{
 			const CryPathString editorDir = PathUtil::Make(CryPathString(engineRootDir.c_str()), CryPathString("Editor"));
@@ -1308,7 +1308,7 @@ IGame* CSystem::CreateGame(IGame* game)
 	string gameDLLName = "Game";
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing Game...");
-	if (ICVar* pCVarGameDir = gEnv->pConsole->GetCVar("sys_dll_game"))
+	if (ICVar* pCVarGameDir = Env::Console()->GetCVar("sys_dll_game"))
 	{
 		gameDLLName = pCVarGameDir->GetString();
 	}

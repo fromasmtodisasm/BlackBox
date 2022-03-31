@@ -236,7 +236,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
         //FIXME:
         //fprintf(stderr,"\nunterminated  string  constant at line %d\n", line_num);
         //yyterminate();
-        gEnv->pLog->LogError("\nunterminated  string  constant at unknown line, FIXME!!!");
+        Env::Log()->LogError("\nunterminated  string  constant at unknown line, FIXME!!!");
 		return yy::parser::make_END (loc);
     }
     \\[0-7]{1,3}    {
@@ -508,12 +508,12 @@ bool Scanner::MakeInclude(const char* file_name)
 		//driver.stream = std::ifstream(file_name);
 		if (!includeFile->is_open())
 		{
-			gEnv->pLog->LogError("[FX] File %s not found", file_name);
+			Env::Log()->LogError("[FX] File %s not found", file_name);
 			LexerError("failure in including a file");
 			return result;
 		}
 		includes.emplace(includeFile);
-		gEnv->pLog->Log("$3[FX] File %s opened", file_name);
+		Env::Log()->Log("$3[FX] File %s opened", file_name);
 		yypush_buffer_state(yy_create_buffer(includes.top().get(), YY_BUF_SIZE));
 		//yyrestart(includeFile);
 		result = true;
@@ -524,7 +524,7 @@ bool Scanner::MakeInclude(const char* file_name)
 void Scanner::eof()
 {
 	yypop_buffer_state();
-	gEnv->pLog->LogError("$3[FX] File %s ended", driver.file.c_str());
+	Env::Log()->LogError("$3[FX] File %s ended", driver.file.c_str());
 	//yypop_buffer_state();
 	//driver.file = incData.file_name;
 	//driver.location.initialize(&driver.file);

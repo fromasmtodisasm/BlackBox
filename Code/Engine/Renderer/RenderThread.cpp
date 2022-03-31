@@ -7,7 +7,7 @@ void CRenderThread::ThreadEntry()
 	threadID renderThreadId                  = GetCurrentThreadId();
 	gRenDev->m_RenderThread->m_nRenderThread = renderThreadId;
 	//CNameTableR::m_nRenderThread	= renderThreadId;
-	//gEnv->pCryPak->SetRenderThreadId(renderThreadId);
+	//Env::CryPak()->SetRenderThreadId(renderThreadId);
 	//m_started.notify_all();
 	gRenDev->m_RenderThread->Process();
 #endif

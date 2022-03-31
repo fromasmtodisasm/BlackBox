@@ -50,9 +50,9 @@ void loadModel(string path)
 
 bool C3DEngine::LoadLevel(const char* szFolderName, const char* szMissionName, bool bEditorMode)
 {
-	if (gEnv->pRenderer)
+	if (Env::Renderer())
 	{
-		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(m_Qubes.min, m_Qubes.max);
+		//Env::Renderer()->GetIRenderAuxGeom()->DrawAABB(m_Qubes.min, m_Qubes.max);
 	}
 
 	return true;
@@ -71,7 +71,7 @@ void         C3DEngine::Draw()
 {
 	if (!m_Enabled)
 		return;
-	gEnv->pRenderer->SetCamera(m_Camera);
+	Env::Renderer()->SetCamera(m_Camera);
 
 	m_pTerrain->Render(m_Camera);
 
@@ -686,7 +686,7 @@ inline void PrintRightAlignedText(float posY, const char* szText, IFont* pFont =
 		color[2]	= 1.0; //alpha
 		color[3]	= 0.0; //red
 #endif
-	gEnv->pRenderer->Draw2dText(gEnv->pRenderer->GetWidth() - info.font->TextWidth(szText) - rightMargin, posY, szText, info);
+	Env::Renderer()->Draw2dText(Env::Renderer()->GetWidth() - info.font->TextWidth(szText) - rightMargin, posY, szText, info);
 }
 
 void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStepY)
@@ -700,7 +700,7 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	static IFont* pFont{};
 	if (!pFont)
 	{
-		pFont = gEnv->pRenderer->GetIFont();
+		pFont = Env::Renderer()->GetIFont();
 		pFont->Init("VeraMono.ttf", 16, 16);
 	}
 	auto PRINT = [=, &py](float y, const char* szFormat, ...)
@@ -722,7 +722,7 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	//PRINT(py, "Polygons 0,000");
 	//PRINT(py, "...");
 	static float prevTime = 0;
-	auto const   curTime  = gEnv->pTimer->GetAsyncTime().GetMilliSeconds();
+	auto const   curTime  = Env::Timer()->GetAsyncTime().GetMilliSeconds();
 	auto const   delta    = curTime - prevTime;
 	static float min      = std::numeric_limits<float>::max();
 	static float max      = 0;
@@ -734,9 +734,9 @@ void C3DEngine::DisplayInfo(float& fTextPosX, float& fTextPosY, float& fTextStep
 	PRINT(py, "FPS %.2f ( %.2f.. %.2f) / 60", 1000.f / delta, 1000.f / min, 1000.f / max);
 	//PRINT(py, "ViewDist = 1024/0.0");
 	//PRINT(py, "Render path = ...");
-	if (gEnv->pSystem->IsDevMode())
-		PRINT(py, gEnv->IsEditor() ? "DevMode (Editor)" : "DevMode");
-//PRINT(py, "Frame rate: %f\n                        Frame time: %f", gEnv->pTimer->GetFrameRate(), gEnv->pTimer->GetRealFrameTime());
+	if (Env::System()->IsDevMode())
+		PRINT(py, Env::Get()->IsEditor() ? "DevMode (Editor)" : "DevMode");
+//PRINT(py, "Frame rate: %f\n                        Frame time: %f", Env::Timer()->GetFrameRate(), Env::Timer()->GetRealFrameTime());
 #endif
 
 #undef PRINT

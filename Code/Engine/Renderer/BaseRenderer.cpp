@@ -97,15 +97,15 @@ bool CRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
 	if (!strcmp(pVar->GetName(), "r_Width"))
 	{
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, std::strtof(sNewValue, nullptr), GetHeight());
+		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, std::strtof(sNewValue, nullptr), GetHeight());
 	}
 	else if (!strcmp(pVar->GetName(), "r_Height"))
 	{
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, GetWidth(), std::strtof(sNewValue, nullptr));
+		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, GetWidth(), std::strtof(sNewValue, nullptr));
 	}
 	else if (!strcmp(pVar->GetName(), "r_Fullscreen"))
 	{
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, std::strtol(sNewValue, nullptr, 10), 0);
+		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, std::strtol(sNewValue, nullptr, 10), 0);
 	}
 	return true;
 }
@@ -166,7 +166,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 {
 	if (!gRenDev)
 		gRenDev = this;
-	m_pSystem = gEnv->pSystem;
+	m_pSystem = Env::System();
 	InitCVars();
 	IWindow* result = m_Window = window;
 	bInFullScreen              = fullscreen;
@@ -175,7 +175,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	//=======================
 	InitConsoleCommands();
 	//=======================
-	const char* sGameName = gEnv->pSystem->GetIProjectManager()->GetCurrentProjectName();
+	const char* sGameName = Env::System()->GetIProjectManager()->GetCurrentProjectName();
 	strcpy(m_WinTitle, sGameName);
 
 	CryLog("Creating window called '%s' (%dx%d)", m_WinTitle, width, height);
@@ -230,7 +230,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #else
 	m_RenderAuxGeom = new CRenderAuxGeomNull();
 #endif
-	gEnv->pAuxGeomRenderer = m_RenderAuxGeom;
+	Env::Get()->pAuxGeomRenderer = m_RenderAuxGeom;
 
 #if 0
 	CreateRenderTarget();
@@ -284,15 +284,15 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 	SDL_DisplayMode mode;
 	Uint32          f;
 
-	gEnv->pLog->Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
+	Env::Log()->Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
 
 	numModes = SDL_GetNumDisplayModes(displayInUse);
 	if (numModes < 1)
 	{
-		gEnv->pLog->Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
+		Env::Log()->Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
 		return 1;
 	}
-	gEnv->pLog->Log("SDL_GetNumDisplayModes: %i", numModes);
+	Env::Log()->Log("SDL_GetNumDisplayModes: %i", numModes);
 
 	if (formats != nullptr)
 	{
@@ -300,7 +300,7 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 		{
 			if (SDL_GetDisplayMode(displayInUse, i, &mode) != 0)
 			{
-				gEnv->pLog->Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
+				Env::Log()->Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
 				return 1;
 			}
 			f                   = mode.format;
@@ -397,7 +397,7 @@ void CRenderer::CreateQuad()
 	    {{0, 0, 0}, {0, 0}},
 	    {{1, 1, 0}, {1, 1}},
 	    {{1, 0, 0}, {1, 0}}};
-	m_VertexBuffer = gEnv->pRenderer->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "screen_quad", false);
+	m_VertexBuffer = Env::Renderer()->CreateBuffer(4, VERTEX_FORMAT_P3F_T2F, "screen_quad", false);
 	UpdateBuffer(m_VertexBuffer, verts, 4, false);
 }
 
@@ -640,7 +640,7 @@ void                       CRenderer::InitConsoleCommands() const
   */
 	REGISTER_CVAR(dump_shaders_on_load, false, VF_DUMPTODISK, "");
 	REGISTER_COMMAND("testfx", TestFx, 0, "Test fx parser");
-	gEnv->pConsole->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
+	Env::Console()->RegisterAutoComplete("testfx", &s_TestFXAutoComplete);
 }
 
 void CRenderer::ShareResources(IRenderer* renderer)
@@ -691,7 +691,7 @@ void CRenderer::Flush()
 	pvb->View            = m_Camera.GetViewMatrix();
 	pvb->OrthoProjection = glm::ortho(0.f, float(GetWidth()), float(GetHeight()), 0.f);
 	pvb->ViewProjection  = pvb->Projection * pvb->View;
-	pvb->Eye             = gEnv->pSystem->GetViewCamera().GetPos();
+	pvb->Eye             = Env::System()->GetViewCamera().GetPos();
 
 	pvb.CopyToDevice();
 #endif
@@ -715,7 +715,7 @@ void CRenderer::ShutDown()
 #if 0
 	PEffect effect{nullptr};
 	g_FxParser->Parse("123", &effect);
-	gEnv->pConsole->RemoveConsoleVarSink(this);
+	Env::Console()->RemoveConsoleVarSink(this);
 #endif
 	for (size_t i = 0; i < m_Fonts.size(); i++)
 	{

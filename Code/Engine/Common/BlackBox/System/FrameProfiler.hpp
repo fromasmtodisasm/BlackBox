@@ -405,11 +405,11 @@ public:
 	//!   // function body will be profiled.
 	//! }
 	#define FUNCTION_PROFILER(subsystem)                                                   \
-		static CFrameProfiler staticFrameProfiler(gEnv->pSystem, __FUNCTION__, subsystem); \
+		static CFrameProfiler staticFrameProfiler(Env::System(), __FUNCTION__, subsystem); \
 		CFrameProfilerSection frameProfilerSection(&staticFrameProfiler);
 
 	#define FUNCTION_PROFILER_FAST(subsystem, bProfileEnabled)                             \
-		static CFrameProfiler staticFrameProfiler(gEnv->pSystem, __FUNCTION__, subsystem); \
+		static CFrameProfiler staticFrameProfiler(Env::System(), __FUNCTION__, subsystem); \
 		CFrameProfilerSection frameProfilerSection((bProfileEnabled) ? &staticFrameProfiler : NULL);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -422,12 +422,12 @@ public:
 	//!		}
 	//! }
 	#define FRAME_PROFILER(szProfilerName, subsystem)                                        \
-		static CFrameProfiler staticFrameProfiler(gEnv->pSystem, szProfilerName, subsystem); \
+		static CFrameProfiler staticFrameProfiler(Env::System(), szProfilerName, subsystem); \
 		CFrameProfilerSection frameProfilerSection(&staticFrameProfiler);
 
 	//! Faster version of FRAME_PROFILE macro, also accept a pointer to boolean variable which turn on/off profiler.
 	#define FRAME_PROFILER_FAST(szProfilerName, subsystem, bProfileEnabled)                  \
-		static CFrameProfiler staticFrameProfiler(gEnv->pSystem, szProfilerName, subsystem); \
+		static CFrameProfiler staticFrameProfiler(Env::System(), szProfilerName, subsystem); \
 		CFrameProfilerSection frameProfilerSection((bProfileEnabled) ? &staticFrameProfiler : NULL);
 
 #else //#if !defined(_RELEASE) || defined(WIN64)

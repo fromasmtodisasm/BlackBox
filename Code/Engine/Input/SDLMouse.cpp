@@ -40,7 +40,7 @@ CSDLMouse::CSDLMouse(CLinuxInput& input)
 {
 	m_deviceType  = eIDT_Mouse;
 	m_pRenderer   = GetISystem()->GetIRenderer();
-	KeyboardEvent = gEnv->pSystem->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);
+	KeyboardEvent = Env::System()->GetISystemEventDispatcher()->RegisterEvent(InputNewFrame);
 }
 
 CSDLMouse::~CSDLMouse()
@@ -79,9 +79,9 @@ bool CSDLMouse::Init()
 void CSDLMouse::PostInit()
 {
 	SDL_WarpMouseInWindow(
-	    static_cast<SDL_Window*>(gEnv->pRenderer->GetCurrentContextHWND()),
-	    m_posX = gEnv->pRenderer->GetWidth() / 2,
-	    m_posY = gEnv->pRenderer->GetHeight() / 2);
+	    static_cast<SDL_Window*>(Env::Renderer()->GetCurrentContextHWND()),
+	    m_posX = Env::Renderer()->GetWidth() / 2,
+	    m_posY = Env::Renderer()->GetHeight() / 2);
 }
 
 void CSDLMouse::ClearKeyState()
@@ -127,7 +127,7 @@ void CSDLMouse::Update(bool focus)
 	}
 	for (int i = 0; i < nEvents; ++i)
 	{
-		bool bFlashUI = (gEnv && gEnv->pHardwareMouse);
+		bool bFlashUI = (Env::Get() && Env::HardwareMouse());
 		type          = eventList[i].type;
 		if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP)
 		{
@@ -159,7 +159,7 @@ void CSDLMouse::Update(bool focus)
 						mouseEvent = HARDWAREMOUSEEVENT_RBUTTONDOWN;
 						break;
 					}
-					gEnv->pHardwareMouse->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
+					Env::HardwareMouse()->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
 				}
 			}
 			else
@@ -184,7 +184,7 @@ void CSDLMouse::Update(bool focus)
 						mouseEvent = HARDWAREMOUSEEVENT_RBUTTONUP;
 						break;
 					}
-					gEnv->pHardwareMouse->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
+					Env::HardwareMouse()->Event(buttonEvent->x, buttonEvent->y, mouseEvent);
 				}
 			}
 		}
@@ -239,7 +239,7 @@ void CSDLMouse::Update(bool focus)
 
 			if (inertia > 0.0f)
 			{
-				float dt = gEnv->pTimer->GetFrameTime();
+				float dt = Env::Timer()->GetFrameTime();
 				if (dt > 0.1f) dt = 0.1f;
 				m_deltas = (m_deltasInertia += (m_deltas - m_deltasInertia) * inertia * dt);
 			}
@@ -248,8 +248,8 @@ void CSDLMouse::Update(bool focus)
 			// Update flashUI mouse:
 			if (bFlashUI)
 			{
-				gEnv->pHardwareMouse->Event(motionEvent->x, motionEvent->y, HARDWAREMOUSEEVENT_MOVE);
-				gEnv->pHardwareMouse->SetHardwareMousePosition((float)motionEvent->x, (float)motionEvent->y);
+				Env::HardwareMouse()->Event(motionEvent->x, motionEvent->y, HARDWAREMOUSEEVENT_MOVE);
+				Env::HardwareMouse()->SetHardwareMousePosition((float)motionEvent->x, (float)motionEvent->y);
 			}
 		}
 		else if (type == SDL_MOUSEWHEEL)
@@ -278,7 +278,7 @@ void CSDLMouse::Update(bool focus)
 			{
 				// 120 needs to be added manually to correctly integrate with mouse handling
 				// logic which assumes that the value comes in mulitples of 120.
-				gEnv->pHardwareMouse->Event(0, 0, HARDWAREMOUSEEVENT_WHEEL, pWheelEvent->y * 120);
+				Env::HardwareMouse()->Event(0, 0, HARDWAREMOUSEEVENT_WHEEL, pWheelEvent->y * 120);
 			}
 		}
 		else
@@ -286,7 +286,7 @@ void CSDLMouse::Update(bool focus)
 			// Unexpected event type.
 			abort();
 		}
-		gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent(ESystemEvent(KeyboardEvent), UINT_PTR(gEnv->pRenderer->GetCurrentContextHWND()), UINT_PTR(&eventList[i]));
+		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESystemEvent(KeyboardEvent), UINT_PTR(Env::Renderer()->GetCurrentContextHWND()), UINT_PTR(&eventList[i]));
 	}
 	// Generate mouse motion events when running without exclusive input.
 	/*if (!m_bGrabInput)
@@ -334,8 +334,8 @@ void CSDLMouse::GrabInput()
 		CryLogAlways("$4SDL: Could not set relative mouse mode: %s", SDL_GetError());
 	// Warp the cursor to the upper left corner of the screen.
 
-	/*width = gEnv->pRenderer->GetWidth();
-     height = gEnv->pRenderer->GetHeight();
+	/*width = Env::Renderer()->GetWidth();
+     height = Env::Renderer()->GetHeight();
      pSymbol = DevSpecIdToSymbol(MOUSE_AXIS_X);
      assert(pSymbol);
      pSymbol->state = eIS_Changed;
@@ -376,7 +376,7 @@ void CSDLMouse::GrabInput()
      }
      else//mouse smooth with acceleration
      {
-      float dt = min(gEnv->pTimer->GetFrameTime(),0.1f);
+      float dt = min(Env::Timer()->GetFrameTime(),0.1f);
 
       Legacy::Vec2 delta;
 
@@ -466,9 +466,9 @@ void CSDLMouse::SmoothDeltas(float accel, float decel)
 	}
 	else //mouse smooth with acceleration
 	{
-		//float dt = std::min(gEnv->pTimer->GetFrameTime(), 0.1f);
+		//float dt = std::min(Env::Timer()->GetFrameTime(), 0.1f);
 		float        dt = 0.1f;
-		//std::min(gEnv->pTimer->GetFrameTime(), 0.1f);
+		//std::min(Env::Timer()->GetFrameTime(), 0.1f);
 
 		Legacy::Vec2 delta;
 

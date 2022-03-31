@@ -91,15 +91,15 @@ public:
 	    , m_nPort(nPort)
 	    , m_bLocal(local)
 	{
-		gEnv->pLog->Log("NetworkServer Constructed");
+		Env::Log()->Log("NetworkServer Constructed");
 #if 0
 		handlers["info"] = [this](std::stringstream& ss, const string& args) {
 			auto& content = ss;
 			content << "CTmpNetworkServer: " << this << "</br>";
-			content << "ISystem: " << gEnv->pSystem << "</br>";
-			content << "IConsole: " << gEnv->pConsole << "</br>";
-			content << "IRenderer: " << gEnv->pRenderer << "</br>";
-			content << "ILog: " << gEnv->pLog << "</br>";
+			content << "ISystem: " << Env::System() << "</br>";
+			content << "IConsole: " << Env::Console() << "</br>";
+			content << "IRenderer: " << Env::Renderer() << "</br>";
+			content << "ILog: " << Env::Log() << "</br>";
 			content << R"(<a href="gaben">��� ���!!!</a>)";
 			content <<
 				R"(
@@ -113,12 +113,12 @@ public:
 			ss << "Main Page";
 		};
 		handlers["cmd"] = [this](std::stringstream& ss, const string& args) {
-			gEnv->pConsole->ExecuteString("remote_command = \"\"");
-			gEnv->pConsole->ExecuteString(args.c_str());
-			auto cmd = gEnv->pConsole->GetCVar("remote_command");
+			Env::Console()->ExecuteString("remote_command = \"\"");
+			Env::Console()->ExecuteString(args.c_str());
+			auto cmd = Env::Console()->GetCVar("remote_command");
 			if (cmd)
 			{
-				gEnv->pConsole->ExecuteString(cmd->GetString());
+				Env::Console()->ExecuteString(cmd->GetString());
 			}
 			ss <<
 				R"(
@@ -142,24 +142,24 @@ public:
 	~CTmpNetworkServer()
 	{
 		SDLNet_TCP_Close(m_Socket);
-		gEnv->pLog->Log("NetworkServer Desctruected");
+		Env::Log()->Log("NetworkServer Desctruected");
 		g_Network.UnregisterServer(this);
 	}
 	bool Init()
 	{
 		if (SDLNet_ResolveHost(&m_IP, nullptr, m_nPort) == -1)
 		{
-			gEnv->pLog->Log("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+			Env::Log()->Log("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
 			return false;
 		}
 
 		m_Socket = SDLNet_TCP_Open(&m_IP);
 		if (!m_Socket)
 		{
-			gEnv->pLog->Log("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
+			Env::Log()->Log("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
 			return false;
 		}
-		gEnv->pLog->Log("Conntection Opened");
+		Env::Log()->Log("Conntection Opened");
 		return true;
 	}
 	// Inherited via IServer
@@ -173,11 +173,11 @@ public:
 			new_tcpsock = SDLNet_TCP_Accept(m_Socket);
 			if (!new_tcpsock)
 			{
-				break; // gEnv->pLog->Log("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
+				break; // Env::Log()->Log("SDLNet_TCP_Accept: %s\n", SDLNet_GetError());
 			}
 			else
 			{
-				gEnv->pLog->Log("New connection");
+				Env::Log()->Log("New connection");
 				//m_ClientSockes.push_back(new_tcpsock);
 				size_t            length = 0, result;
 				std::stringstream response;
@@ -185,7 +185,7 @@ public:
 				int               reslen = 0;
 				if ((reslen = SDLNet_TCP_Recv(new_tcpsock, buf, 1000)) <= 0)
 				{
-					gEnv->pLog->Log("Error of read");
+					Env::Log()->Log("Error of read");
 				}
 				else
 				{
@@ -201,9 +201,9 @@ public:
   <body>
 		<h1>BlackBox</h1>
 )";
-					//gEnv->pLog->Log("Response %.*s:\n", reslen, buf);
+					//Env::Log()->Log("Response %.*s:\n", reslen, buf);
 					std::stringstream ss(buf);
-					//gEnv->pLog->Log("Response %s:\n", ss.str().data());
+					//Env::Log()->Log("Response %s:\n", ss.str().data());
 					string            line;
 					std::getline(ss, line);
 					const int len = line.size() - 14; // GET / HTTP/1.1
@@ -215,7 +215,7 @@ public:
 					line     = tmp;
 					//auto c = sscanf(line.data(), "GET /%s HTTP/1.1", location.data());
 					location = line.substr(5, line.size() - (5 + 10));
-					gEnv->pLog->Log("Location: %s", location.data());
+					Env::Log()->Log("Location: %s", location.data());
 
 					auto pos = location.find('?');
 					auto s   = location.size();
@@ -469,11 +469,11 @@ bool CNetwork::Init(ISystem* pSystem)
 	SDL_version        compile_version;
 	const SDL_version* link_version = SDLNet_Linked_Version();
 	SDL_NET_VERSION(&compile_version);
-	gEnv->pLog->Log("Compiled with SDL_net version: %d.%d.%d",
+	Env::Log()->Log("Compiled with SDL_net version: %d.%d.%d",
 	                compile_version.major,
 	                compile_version.minor,
 	                compile_version.patch);
-	gEnv->pLog->Log("Running with SDL_net version: %d.%d.%d",
+	Env::Log()->Log("Running with SDL_net version: %d.%d.%d",
 	                link_version->major,
 	                link_version->minor,
 	                link_version->patch);
@@ -482,13 +482,13 @@ bool CNetwork::Init(ISystem* pSystem)
 	{
 		if (SDLNet_Init() == -1)
 		{
-			gEnv->pLog->Log("SDLNet_Init: %s\n", SDLNet_GetError());
+			Env::Log()->Log("SDLNet_Init: %s\n", SDLNet_GetError());
 			res = false;
 		}
 	}
 	else
 	{
-		gEnv->pLog->Log("SDL_Init: %s\n", SDL_GetError());
+		Env::Log()->Log("SDL_Init: %s\n", SDL_GetError());
 		res = false;
 	}
 

@@ -156,11 +156,11 @@ class CBaseVariable : public ICVar
 	}
 	~CBaseVariable()
 	{
-		//gEnv->pLog->Log("Unregistering %s variable", m_Name.c_str());
+		//Env::Log()->Log("Unregistering %s variable", m_Name.c_str());
 	}
 	virtual void Release() override
 	{
-		gEnv->pConsole->UnregisterVariable(m_Name.c_str());
+		Env::Console()->UnregisterVariable(m_Name.c_str());
 	}
 
 	virtual const char* GetName() override
@@ -412,14 +412,14 @@ typedef std::vector<Text> CommandLine;
 
 struct ConsolePrompt
 {
-	std::string  user  = gEnv->pSystem->GetUserName();
+	std::string  user  = Env::System()->GetUserName();
 	std::string  pc    = "HackMan";
 	std::string  env   = "BlackBox";
 	std::string  cd    = "~"; //current directory
 	Legacy::Vec3 color = glm::vec3(0.0, 1.0, 0.0);
 
 	ConsolePrompt(
-	    std::string  user  = gEnv->pSystem->GetUserName(),
+	    std::string  user  = Env::System()->GetUserName(),
 	    std::string  pc    = "HackMan",
 	    std::string  env   = "BlackBox",
 	    std::string  cd    = "~", //current directory

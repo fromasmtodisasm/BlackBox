@@ -2,15 +2,15 @@
 
 CDevMode::CDevMode()
 {
-	if (gEnv->pInput) gEnv->pInput->AddEventListener(this);
+	if (Env::Input()) Env::Input()->AddEventListener(this);
 	m_bSlowDownGameSpeed = false;
 	m_bHUD               = false;
 }
 
 CDevMode::~CDevMode()
 {
-	if (gEnv->pInput)
-		gEnv->pInput->RemoveEventListener(this);
+	if (Env::Input())
+		Env::Input()->RemoveEventListener(this);
 }
 
 void CDevMode::GotoTagPoint(int i)
@@ -70,7 +70,7 @@ bool CDevMode::OnInputEvent(const SInputEvent& evt)
 
 	// tag-point functionality is provided by the editor already, so we should ignore it
 	// when running in the editor
-	if (!gEnv->IsEditor())
+	if (!Env::Get()->IsEditor())
 	{
 		if ((evt.state == eIS_Pressed) && canCheat)
 		{
@@ -135,10 +135,10 @@ bool CDevMode::OnInputEvent(const SInputEvent& evt)
 			{
 #if 0
 				//Legacy::Vec3 oldPos = pEntity->GetWorldPos();
-				if (gEnv->pScriptSystem->BeginCall("BasicActor", "OnNextSpawnPoint"))
+				if (Env::ScriptSystem()->BeginCall("BasicActor", "OnNextSpawnPoint"))
 				{
-					gEnv->pScriptSystem->PushFuncParam(pEntity->GetScriptObject());
-					gEnv->pScriptSystem->EndCall();
+					Env::ScriptSystem()->PushFuncParam(pEntity->GetScriptObject());
+					Env::ScriptSystem()->EndCall();
 
 	#if 0
 					if (gEnv->pStatoscope)
@@ -218,5 +218,5 @@ void CDevMode::GotoSpecialSpawnPoint(int i)
 {
 	char cmd[256];
 	sprintf(cmd, "#g_localActor:SpawnAtSpawnPoint(\"SpawnPoint%d\")", i);
-	gEnv->pConsole->ExecuteString(cmd);
+	Env::Console()->ExecuteString(cmd);
 }

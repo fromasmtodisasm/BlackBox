@@ -37,7 +37,7 @@ void CActionMap::BindAction(XACTIONID nActionID, uint32 nKey, EModifierMask nMod
 void CActionMap::BindAction(XACTIONID nActionID, const char* sKey, const char* sModifier /* = NULL*/, int iKeyPos /* = -1*/)
 {
 	XBind bind;
-	if (auto symbol = gEnv->pInput->GetSymbolByName(sKey); symbol)
+	if (auto symbol = Env::Input()->GetSymbolByName(sKey); symbol)
 	{
 		bind.nKey = symbol->keyId;
 		//bind.nModifier = ;
@@ -63,7 +63,7 @@ void CActionMap::GetBinding(XACTIONID nActionID, int nKeyPos, char* pszKey, char
 		{
 			if (bind.id == nActionID)
 			{
-				if (auto key = gEnv->pInput->GetKeyName(EKeyId(bind.bind.nKey)); key)
+				if (auto key = Env::Input()->GetKeyName(EKeyId(bind.bind.nKey)); key)
 				{
 					auto len = strlen(key);
 					strncpy(pszKey, key, len);

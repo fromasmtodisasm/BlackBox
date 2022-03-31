@@ -29,7 +29,7 @@ bool CProjectManager::ParseProjectFile()
 {
 	RegisterCVars();
 
-	const char* szEngineRootDirectory = gEnv->pSystem->GetRootFolder();
+	const char* szEngineRootDirectory = Env::System()->GetRootFolder();
 
 	// Assign project file path
 	{
@@ -52,25 +52,25 @@ bool CProjectManager::ParseProjectFile()
 
 		if (PathUtil::IsRelativePath(projectFile.c_str()))
 		{
-			projectFile = PathUtil::Make(gEnv->pSystem->GetRootFolder(), projectFile.c_str());
+			projectFile = PathUtil::Make(Env::System()->GetRootFolder(), projectFile.c_str());
 		}
 
 		m_project.filePath = projectFile;
 	}
-	if (gEnv->pScriptSystem->ExecuteFile(m_project.filePath.c_str()))
+	if (Env::ScriptSystem()->ExecuteFile(m_project.filePath.c_str()))
 	{
 		m_project.rootDirectory = PathUtil::RemoveSlash(PathUtil::ToUnixPath(PathUtil::GetPathWithoutFilename(m_project.filePath)));
 
 		const char*       sys_dll_game{};
-		SmartScriptObject project(gEnv->pScriptSystem);
-		if (gEnv->pScriptSystem->GetGlobalValue("project", project))
+		SmartScriptObject project(Env::ScriptSystem());
+		if (Env::ScriptSystem()->GetGlobalValue("project", project))
 		{
-			SmartScriptObject info(gEnv->pScriptSystem);
+			SmartScriptObject info(Env::ScriptSystem());
 			project->GetValue("info", info);
 			if (info->GetValue("name", sys_dll_game))
 			{
 				CryLog("sys_dll_game: %s", sys_dll_game);
-				gEnv->pConsole->LoadConfigVar("sys_dll_game", sys_dll_game);
+				Env::Console()->LoadConfigVar("sys_dll_game", sys_dll_game);
 				m_project.name           = sys_dll_game;
 				m_project.assetDirectory = "Assets";
 			}
@@ -111,12 +111,12 @@ bool CProjectManager::ParseProjectFile()
 
 		for (const std::pair<string, string>& consoleVariablePair : m_project.consoleVariables)
 		{
-			gEnv->pConsole->LoadConfigVar(consoleVariablePair.first.c_str(), consoleVariablePair.second.c_str());
+			Env::Console()->LoadConfigVar(consoleVariablePair.first.c_str(), consoleVariablePair.second.c_str());
 		}
 
 		for (const std::pair<string, string>& consoleCommandPair : m_project.consoleCommands)
 		{
-			gEnv->pConsole->LoadConfigCommand(consoleCommandPair.first.c_str(), consoleCommandPair.second.c_str());
+			Env::Console()->LoadConfigCommand(consoleCommandPair.first.c_str(), consoleCommandPair.second.c_str());
 		}
 
 		auto gameDllIt = m_project.legacyGameDllPaths.find("any");
@@ -140,11 +140,11 @@ bool CProjectManager::ParseProjectFile()
 		}
 
 #if 0
-		gEnv->pConsole->LoadConfigVar("sys_dll_game", legacyGameDllPath.c_str());
+		Env::Console()->LoadConfigVar("sys_dll_game", legacyGameDllPath.c_str());
 #else
 		auto path = PathUtil::Make(m_project.rootDirectory, string("bin/win_x64"));
 		path      = PathUtil::Make(path, m_project.name);
-		gEnv->pConsole->LoadConfigVar("sys_dll_game", path.c_str());
+		Env::Console()->LoadConfigVar("sys_dll_game", path.c_str());
 #endif
 
 #ifdef BB_PLATFORM_WINDOWS

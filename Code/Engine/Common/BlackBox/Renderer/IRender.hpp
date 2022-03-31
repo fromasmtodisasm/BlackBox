@@ -27,7 +27,7 @@ typedef unsigned short ushort;
 			return {};
 	#else
 		#define NOT_IMPLEMENTED_V                                                          \
-			gEnv->pLog->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
+			Env::Log()->LogError("[Renderer] Function [%s] not implemened", __FUNCTION__); \
 			return {};
 	#endif
 #endif
