@@ -72,8 +72,8 @@ int CPhysicalEntity::Action(pe_action* action)
 		//m_pRigidBody->applyImpulse(btVector3(v.x, v.y, v.z), btVector3(p.x, p.y, p.z));
 		//m_pRigidBody->applyCentralImpulse(btVector3(v.x, v.y, v.z));
 		m_pRigidBody->activate(true);
-		m_pRigidBody->applyTorqueImpulse(btVector3(v.x, v.y, v.z));
-		m_pRigidBody->applyCentralForce(btVector3(0, 1000, 0));
+		//m_pRigidBody->applyTorqueImpulse(btVector3(v.x, v.y, v.z) * 100);
+		m_pRigidBody->applyCentralForce(btVector3(v.x, v.y, v.z) * 100);
 		m_pRigidBody->applyGravity();
 		return 1;
 	}

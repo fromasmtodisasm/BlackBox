@@ -594,10 +594,11 @@ void MinePlayer::destroyBlockOnCursor()
 	auto testEntity = Env::EntitySystem()->GetEntity(3);
 	if (testEntity)
 	{
+		auto camera     = Env::System()->GetViewCamera();
 		auto p          = testEntity->GetPhysics();
 
 		auto impulse    = pe_action_impulse{};
-		impulse.impulse = vectorf(0, 10, 0);
+		impulse.impulse = Legacy::from(camera.Front);
 		impulse.point   = vectorf(0, 0, 0);
 		p->Action(&impulse);
 	}
