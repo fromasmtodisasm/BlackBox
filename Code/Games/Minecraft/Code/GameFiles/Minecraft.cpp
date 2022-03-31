@@ -597,7 +597,7 @@ void MinePlayer::destroyBlockOnCursor()
 		auto p          = testEntity->GetPhysics();
 
 		auto impulse    = pe_action_impulse{};
-		impulse.impulse = vectorf(0, 0, 10);
+		impulse.impulse = vectorf(0, 10, 0);
 		impulse.point   = vectorf(0, 0, 0);
 		p->Action(&impulse);
 	}

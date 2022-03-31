@@ -73,7 +73,7 @@ inline CEntitySystem::CEntitySystem(ISystem* pSystem)
 	m_PhysicsInitParams.Create();
 	auto [a, b, c, d] = m_PhysicsInitParams;
 	m_pPhysicalWorld  = new btDiscreteDynamicsWorld(a, b, c, d);
-	m_pPhysicalWorld->setGravity(btVector3(0, -1, 0));
+	m_pPhysicalWorld->setGravity(btVector3(0, -9.8, 0));
 
 	btStaticPlaneShape* floorShape = new btStaticPlaneShape(btVector3(0, 1, 0), -1);
 	auto                rigidFloor = new btRigidBody(0.f, new btDefaultMotionState, floorShape);
