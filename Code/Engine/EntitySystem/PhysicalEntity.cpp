@@ -69,11 +69,18 @@ int CPhysicalEntity::Action(pe_action* action)
 
 		auto               v       = impulse->impulse;
 		auto               p       = impulse->point;
-		//m_pRigidBody->applyImpulse(btVector3(v.x, v.y, v.z), btVector3(p.x, p.y, p.z));
-		//m_pRigidBody->applyCentralImpulse(btVector3(v.x, v.y, v.z));
 		m_pRigidBody->activate(true);
-		//m_pRigidBody->applyTorqueImpulse(btVector3(v.x, v.y, v.z) * 100);
-		m_pRigidBody->applyCentralForce(btVector3(v.x, v.y, v.z) * 100);
+		m_pRigidBody->applyCentralForce(btVector3(v.x, v.y, v.z));
+		m_pRigidBody->applyGravity();
+		return 1;
+	}
+	else if (action->type == 10) // velocity
+	{
+		auto* velocity = (pe_action_set_velocity*)action;
+
+		auto               v       = velocity->v;
+		m_pRigidBody->activate(true);
+		m_pRigidBody->setLinearVelocity(btVector3(v.x, v.y, v.z));
 		m_pRigidBody->applyGravity();
 		return 1;
 	}

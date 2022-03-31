@@ -53,6 +53,7 @@ class CEntitySystem : public IEntitySystem
 {
 public:
 	CEntitySystem(ISystem* pSystem);
+	~CEntitySystem();
 
 	virtual void           Update() override;
 	virtual IScriptSystem* GetScriptSystem() override;

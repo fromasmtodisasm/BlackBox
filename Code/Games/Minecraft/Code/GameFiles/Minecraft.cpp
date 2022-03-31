@@ -110,7 +110,7 @@ void MineWorld::init()
 		};
 		m_pMtlBox   = Env::I3DEngine()->MakeObject(objects[2]);
 		auto camera = Env::System()->GetViewCamera();
-		auto box    = SpawnBox(camera.GetPos());
+		auto box    = SpawnBox({5, 5, 5}, {0, 0, 0});
 		Env::I3DEngine()->RegisterEntity(box);
 		{
 			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
@@ -221,7 +221,7 @@ bool MineWorld::tryDestroy(glm::ivec3 pos)
 	return false;
 }
 
-IEntity* MineWorld::SpawnBox(Legacy::Vec3 pos)
+IEntity* MineWorld::SpawnBox(const Legacy::Vec3& pos, const Legacy::Vec3& velocity)
 {
 	auto        object = m_pMtlBox;
 
@@ -230,12 +230,16 @@ IEntity* MineWorld::SpawnBox(Legacy::Vec3 pos)
 	desc.pos    = pos;
 	desc.name   = "Box";
 
-	auto* Box   = Env::EntitySystem()->SpawnEntity(desc, false);
+	auto* Box   = Env::EntitySystem()->SpawnEntity(desc, true);
 
 	Box->SetIStatObj(object);
-	Box->SetScale(glm::vec3(0.1f));
+	Box->SetScale(glm::vec3(0.01f));
 
-	Env::EntitySystem()->InitEntity(Box, desc);
+	pe_action_set_velocity action;
+	action.v = Legacy::from(velocity);
+
+	//Env::EntitySystem()->InitEntity(Box, desc);
+	Box->GetPhysics()->Action(&action);
 	Env::I3DEngine()->RegisterEntity(Box);
 
 	return Box;
@@ -561,6 +565,20 @@ void MinePlayer::update()
 	//getCamera()->SetPos(entity->GetPos());
 	getCamera()->SetPos(myPos);
 	movement = glm::vec3(0.0f);
+
+	///////////////////////////////////////////////////////////
+	auto       camera      = Env::System()->GetViewCamera();
+	EntityList entities;
+	Env::EntitySystem()->GetEntitiesInRadius(camera.GetPos(), 20, entities);
+	for each (const auto& e in entities)
+	{
+		auto impulse    = pe_action_impulse{};
+		impulse.impulse = vectorf(0, 210, 0);
+		impulse.point   = vectorf(0, 0, 0);
+		if (auto p = e->GetPhysics(); p)
+			p->Action(&impulse);
+	}
+
 }
 
 bool timingAction(float& prevTime, float interval)
@@ -591,17 +609,28 @@ void MinePlayer::destroyBlockOnCursor()
 		m_pDestroyBlockSound->Play();
 	}
 
-	auto testEntity = Env::EntitySystem()->GetEntity(3);
-	if (testEntity)
+	auto       camera      = Env::System()->GetViewCamera();
+	auto       testEntity3 = Env::EntitySystem()->GetEntity(2);
+	auto       testEntity2 = Env::EntitySystem()->GetEntity(2);
+	if (testEntity3 && (m_ClickFrame < (Env::Renderer()->GetFrameID() - 5)))
 	{
-		auto camera     = Env::System()->GetViewCamera();
-		auto p          = testEntity->GetPhysics();
+		auto p          = testEntity3->GetPhysics();
 
 		auto impulse    = pe_action_impulse{};
 		impulse.impulse = Legacy::from(camera.Front);
 		impulse.point   = vectorf(0, 0, 0);
 		p->Action(&impulse);
+
+		p = testEntity2->GetPhysics();
+		impulse.impulse = vectorf(0, 0, 0);
+		p->Action(&impulse);
+
+		auto box = minecraft->world.SpawnBox(camera.GetPos(), camera.Front * 10.f);
+		Env::I3DEngine()->RegisterEntity(box);
 	}
+
+
+	m_ClickFrame = Env::Renderer()->GetFrameID();
 }
 
 void MinePlayer::placeBlockOnCursor()
@@ -616,6 +645,7 @@ void MinePlayer::placeBlockOnCursor()
 		minecraft->world.set(side, MineWorld::Grass);
 		m_pSetBlockSound->Play();
 	}
+
 }
 
 void MinePlayer::move(glm::vec3 direction, float value)

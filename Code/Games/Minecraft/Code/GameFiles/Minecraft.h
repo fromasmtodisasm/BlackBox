@@ -27,7 +27,7 @@ public:
 
 	int                                      nextEntity() { return entityCnt++; }
 
-	IEntity*                                 SpawnBox(Legacy::Vec3 pos);
+	IEntity*                                 SpawnBox(const Legacy::Vec3& pos, const Legacy::Vec3& velocity);
 
 	int                                      entityCnt = 1;
 
@@ -87,6 +87,7 @@ public:
 	float        placeTime      = 0.0;
 
 	Legacy::Vec3 myPos;
+	int          m_ClickFrame = 0;
 };
 
 class MineUI
