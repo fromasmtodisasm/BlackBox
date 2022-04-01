@@ -104,6 +104,11 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h")
 endif ()
 list(APPEND global_defines "BB_CVAR_OVERRIDE_FILE=\"${CMAKE_BINARY_DIR}/ProjectCVarOverrides.h\"")
 
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:USE_DEBUG_NEW>)
+if (OPTION_DEBUGALLOC)
+	list(APPEND global_defines "$<$<CONFIG:DEBUG>:USE_DEBUG_NEW>")
+endif()
+
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h")
 	file(WRITE "${CMAKE_BINARY_DIR}/ProjectCVarWhitelist.h" "")
 endif ()

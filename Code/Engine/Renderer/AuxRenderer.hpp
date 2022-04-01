@@ -81,27 +81,23 @@ class CRenderAuxGeom : public IRenderAuxGeom
 
 
   private:
-	CVertexBuffer*		m_BoundingBox	 = nullptr;
-	SVertexStream*		m_BB_IndexBuffer = nullptr;
+	CVertexBuffer*		m_BoundingBox;
 	AuxPushBuffer		m_auxPushBuffer;
 	AuxVertexBuffer		m_VB;
-	CVertexBuffer*		m_HardwareVB = nullptr;
+	CVertexBuffer*		m_HardwareVB;
 	_smart_ptr<IShader> m_BoundingBoxShader;
 	_smart_ptr<IShader> m_AuxGeomShader;
 
 	std::vector<SRender2DImageDescription> m_Images;
-
-	// SAABBBufferPtr  m_aabbBufferPtr;
 	std::vector<SDrawElement> m_Meshes;
-
 	std::vector<BoundingBox> m_BBVerts;
 
 	int m_CurrentVB_Size = INIT_VB_SIZE;
 	int dbg_mode		 = 0;
 	int stop			 = 0;
 
-	CShader* m_IllumShader{};
-	CShader* m_ZPShader{};
+	CShader* m_IllumShader;
+	CShader* m_ZPShader;
 
   public:
 	static ID3D11DepthStencilState* m_pDSStateZPrePass;

@@ -3,6 +3,17 @@
 
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
+
+#if defined(_DEBUG) && !defined(LINUX) && 0
+	#undef _CRTDBG_MAP_ALLOC
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
+	#include <crtdbg.h>
+	#define DEBUG_CLIENTBLOCK new (_NORMAL_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_CLIENTBLOCK
+#endif
+
+
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>

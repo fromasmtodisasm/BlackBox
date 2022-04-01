@@ -10,6 +10,8 @@
 
 #define _LAUNCHER
 #include <BlackBox/Core/Platform/platform_impl.inl>
+	#undef _CRTDBG_MAP_ALLOC
+	#define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #include "resource.h"
 
@@ -59,7 +61,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	auto result = EXIT_FAILURE;
 #if defined(DEBUG) || defined(_DEBUG)
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF/* | _CRTDBG_CHECK_ALWAYS_DF*/);
 	_CrtMemState s1, s2, s3;
 	_CrtMemCheckpoint(&s1);
 #endif

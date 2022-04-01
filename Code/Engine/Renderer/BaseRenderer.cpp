@@ -226,6 +226,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #endif
 
 #if 1
+	_CrtCheckMemory();
 	m_RenderAuxGeom = new CRenderAuxGeom();
 #else
 	m_RenderAuxGeom = new CRenderAuxGeomNull();
@@ -560,16 +561,22 @@ void CRenderer::Set2DMode(bool enable, int ortox, int ortoy)
 
 IFont* CreateIFont()
 {
+//#ifdef DEDICATED_SERVER
+#if 0
+	return new CNullFont();
+#else
 	return new FreeTypeFont();
+#endif // DEDICATED_SERVER
 }
 
 IFont* CRenderer::GetIFont()
 {
-#ifdef DEDICATED_SERVER
-	m_Fonts.push_back(new CNullFont());
-#else
+	_CrtCheckMemory();
 	m_Fonts.push_back(CreateIFont());
-#endif // DEDICATED_SERVER
+	_CrtCheckMemory();
+	FreeTypeFont* font = static_cast<FreeTypeFont*>(m_Fonts.back());
+	auto          map  = font->Characters;
+	map.insert(std::pair<char, FreeTypeFont::Character>(41, {}));
 	return m_Fonts.back();
 }
 

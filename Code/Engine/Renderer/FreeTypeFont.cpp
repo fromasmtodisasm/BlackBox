@@ -49,7 +49,7 @@ void PrintColorTable(IConsoleCmdArgs*)
 
 bool FreeTypeFont::printColorTableRegistered = false;
 
-void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<float>& image, std::vector<uint8>& _test)
+void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<float>& image)
 {
 	// Load character glyph
 	uint c = ch;
@@ -73,6 +73,7 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 	//UCHAR* pTexels = (UCHAR*)mappedTex.pData;
 	auto pTexels = image.data();
 	int  pos     = 0;
+	_CrtCheckMemory();
 	for (UINT row = 0; row < face->glyph->bitmap.rows; row++)
 	{
 		UINT rowStart = (row + cur_pos.y) * atlas_size; // * mappedTex.RowPitch;
@@ -80,9 +81,10 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 		{
 			UINT colStart                    = col * 1 + cur_pos.x;
 			pTexels[rowStart + colStart + 0] = face->glyph->bitmap.buffer[pos] / 255.0f; // Red
-			_test[rowStart + colStart + 0]   = face->glyph->bitmap.buffer[pos];          // Red
+			//_test[rowStart + colStart + 0]   = face->glyph->bitmap.buffer[pos];          // Red
 		}
 	}
+	_CrtCheckMemory();
 	// Set texture options
 	// Now store character for later use
 	Character character = {
@@ -96,7 +98,6 @@ void FreeTypeFont::RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t
 
 void FreeTypeFont::RenderText(const std::string_view text, float x, float y, float scale, float color[4])
 {
-	return;
 	auto         render = GetISystem()->GetIRenderer();
 	Legacy::Vec4 cur_c(color[0], color[1], color[2], color[3]);
 	glm::mat4    projection = glm::ortho(0.0f, (float)render->GetWidth(), (float)render->GetHeight(), 0.0f);
@@ -218,7 +219,6 @@ float FreeTypeFont::TextWidth(const std::string_view text)
 
 float FreeTypeFont::CharWidth(char symbol)
 {
-	return 1;
 	const float     scale = 1.0;
 	const Character ch    = Characters[symbol];
 
@@ -244,21 +244,23 @@ bool operator<(const STestSize& a, const STestSize& b)
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-	return true;
+	Characters.insert({});
+	Characters.insert({});
+	Characters.insert({});
+	Characters.insert({});
+	Characters.insert({});
+	Characters.insert({});
+	Characters.insert({});
+	Characters.insert({});
 	m_Height = static_cast<float>(h);
-	std::set<STestSize> test;
 
-	_smart_ptr<CShader> shader;
-	if (!shader)
-	{
-		shader = GlobalResources::SpriteShader = (CShader*)Env::Renderer()->Sh_Load("sprite.Font", 0, 0);
-	}
-
+	_CrtCheckMemory();
 	if (FT_Init_FreeType(&ft))
 	{
 		CryError("ERROR::FREETYPE: Could not init FreeType Library");
 		return false;
 	}
+	_CrtCheckMemory();
 
 	auto     path = PathUtil::Make(string("fonts/").c_str(), font);
 
@@ -266,13 +268,15 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	if (!file.Open(path.c_str(), "rb")) return false;
 
 	auto size = file.GetLength();
-	m_FaceData.resize(size);
+	auto m_FaceData = std::vector<uint8_t>(size);
 	file.ReadRaw(&m_FaceData[0], size);
+	_CrtCheckMemory();
 	if (FT_New_Memory_Face(ft, &m_FaceData[0], size, 0, &face))
 	{
 		CryError("ERROR::FREETYPE: Failed to load font");
 		return false;
 	}
+	_CrtCheckMemory();
 
 	FT_Set_Pixel_Sizes(face, 0, h);
 
@@ -330,10 +334,10 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	std::vector<uint8> _test(atlas_size * atlas_size);
 
 	uint8              ch = 0;
-	RenderGlyph(ch, cur_pos, t_size, image, _test);
+	RenderGlyph(ch, cur_pos, t_size, image/*, _test*/);
 	for (ch = 32; ch < num_glyphs; ch++)
 	{
-		RenderGlyph(ch, cur_pos, t_size, image, _test);
+		RenderGlyph(ch, cur_pos, t_size, image/*, _test*/);
 	}
 
 	{
@@ -504,6 +508,12 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	Env::Renderer()->UpdateBuffer(m_VB, vertices, 3, false);
 	#endif
 
+	_smart_ptr<CShader> shader;
+	if (!shader)
+	{
+		shader = GlobalResources::SpriteShader = (CShader*)Env::Renderer()->Sh_Load("sprite.Font", 0, 0);
+	}
+
 	m_IB = new SVertexStream;
 	Env::Renderer()->CreateIndexBuffer(m_IB, indices, sizeof(indices));
 	static bool UB_created         = false;
@@ -552,9 +562,6 @@ void RegisterColorTable()
 
 void FreeTypeFont::Submit()
 {
-	m_CharBuffer.resize(0);
-	return;
-
 	auto vertex_cnt = 6 * m_CharBuffer.size();
 	if (!GlobalResources::SpriteShader || !vertex_cnt)
 	{

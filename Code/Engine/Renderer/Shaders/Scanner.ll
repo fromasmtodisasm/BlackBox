@@ -10,7 +10,7 @@
 	#include <BlackBox/Core/Path.hpp>
 	#pragma warning(push, 0)
 	#include "Parser.hpp"
-    #define MAX_STR_CONST 16382 // TODO: Change this and make it dynamic... functions could be big
+    #define MAX_STR_CONST 10 * 16382 // TODO: Change this and make it dynamic... functions could be big
 
     int  bracket_level = 0;
     char  *string_buf_ptr;

@@ -8,6 +8,7 @@
     "assimp",
     "bullet3",
     "crc32c",
+    "dxsdk-d3dx",
     "freeimage",
     "freetype",
     "getopt",

@@ -47,6 +47,7 @@ else()
 	option(OPTION_STATIC_LINKING "Link all Engine modules as static libs to single exe" OFF)
 endif()
 option(OPTION_STATIC_LINKING_WITH_GAME_AS_DLL "Build game as DLL in a monolithic Engine build" OFF)
+option(OPTION_DEBUGALLOC "Use debug heap for memory bugs tracking" OFF)
 
 if (OPTION_CONFIGURATOR OR OPTION_SANDBOX)
 	set(OPTION_USE_GUI ON)

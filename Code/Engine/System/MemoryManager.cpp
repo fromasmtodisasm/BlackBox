@@ -3,6 +3,7 @@
 #undef malloc
 #undef realloc
 #undef free
+#include <crtdbg.h>
 //#endif
 
 CRYMEMORYMANAGER_API void* CrySystemCrtMalloc(size_t size)

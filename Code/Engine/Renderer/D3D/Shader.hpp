@@ -7,6 +7,7 @@
 
 #include "../Shaders/Effect.hpp"
 #include <d3dcompiler.h>
+#include <dxsdk-d3dx/D3DX11.h>
 
 enum class ShaderBinaryFormat
 {

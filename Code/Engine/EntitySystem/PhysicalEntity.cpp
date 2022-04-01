@@ -6,10 +6,11 @@
 void CEntityMotionState::getWorldTransform(btTransform& worldTrans) const
 {
 	btTransform transform;
+	transform.setIdentity();
 	auto        a = m_Entity.m_Angles;
-	transform.setRotation(btQuaternion(a.x, a.y, a.z));
 	auto p = m_Entity.m_Pos;
 	transform.setOrigin(btVector3(p.x, p.y, p.z));
+	transform.setRotation(btQuaternion(a.x, a.y, a.z));
 
 	worldTrans = transform;
 }

@@ -37,7 +37,7 @@ std::vector<HLSL_MaterialCB>      g_Materials       = {
     {},
 };
 
-void                              CreateBlendState()
+void CreateBlendState()
 {
 	D3D11_BLEND_DESC BlendState;
 	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
@@ -98,8 +98,8 @@ HRESULT CRenderAuxGeom::InitCube()
 	hr                = GetDevice()->CreateBuffer(&bd, NULL, &g_pPerDrawCB);
 	if (FAILED(hr))
 		return hr;
-	bd.ByteWidth =  NUM_MAT * Memory::AlignedSizeCB<HLSL_MaterialCB>::value;
-	hr               = GetDevice()->CreateBuffer(&bd, NULL, &g_pMaterialCB);
+	bd.ByteWidth = NUM_MAT * Memory::AlignedSizeCB<HLSL_MaterialCB>::value;
+	hr           = GetDevice()->CreateBuffer(&bd, NULL, &g_pMaterialCB);
 	if (FAILED(hr))
 		return hr;
 
@@ -155,8 +155,8 @@ void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 {
 	// Update our time
-	static DWORD        dwTimeStart = 0;
-	DWORD               dwTimeCur   = GetTickCount();
+	static DWORD   dwTimeStart = 0;
+	DWORD          dwTimeCur   = GetTickCount();
 
 	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
 	HLSL_PerDrawCB cb;
@@ -167,8 +167,8 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 
 	m_IllumShader->Bind();
 	ID3DBuffer* pBuffers[] = {
-		g_pPerDrawCB,
-		g_pMaterialCB,
+	    g_pPerDrawCB,
+	    g_pMaterialCB,
 	};
 
 	::GetDeviceContext()->UpdateSubresource(g_pPerDrawCB, 0, nullptr, &cb, sizeof(cb), 0);
@@ -185,126 +185,32 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 }
 
 CRenderAuxGeom::CRenderAuxGeom()
+    : m_BoundingBox((_CrtCheckMemory(), nullptr))
+    , m_auxPushBuffer((_CrtCheckMemory(), AuxPushBuffer{}))
+    , m_VB((_CrtCheckMemory(), AuxVertexBuffer{}))
+    , m_HardwareVB((_CrtCheckMemory(), nullptr))
+    , m_BoundingBoxShader((_CrtCheckMemory(), nullptr))
+    , m_AuxGeomShader((_CrtCheckMemory(), nullptr))
+
+    , m_Images((_CrtCheckMemory(), std::vector<SRender2DImageDescription>{}))
+    , m_Meshes((_CrtCheckMemory(), std::vector<SDrawElement>{}))
+    , m_BBVerts((_CrtCheckMemory(), std::vector<BoundingBox>{}))
+
+    //, m_IllumShader((_CrtCheckMemory(), nullptr))
+    //, m_ZPShader((_CrtCheckMemory(), nullptr))
+
 {
-	m_VB.resize(0);
+	_CrtCheckMemory();
 	CreateBlendState();
-	std::vector<BB_VERTEX> reference = {
 
-// front
-#if 0
-		BB_VERTEX{{-1.0, -1.0, 1.0}, {0, 0, 0}},
-		BB_VERTEX{{1.0, -1.0, 1.0}, {0, 0, 0}},
-		BB_VERTEX{{1.0, 1.0, 1.0}, {0, 0, 0}},
-		BB_VERTEX{{-1.0, 1.0, 1.0}, {0, 0, 0}},
-		// back
-		BB_VERTEX{{-1.0, -1.0, -1.0}, {0, 0, 0}},
-		BB_VERTEX{{1.0, -1.0, -1.0}, {0, 0, 0}},
-		BB_VERTEX{{1.0, 1.0, -1.0}, {0, 0, 0}},
-		BB_VERTEX{{-1.0, 1.0, -1.}, {0, 0, 0}}
-#endif
-	};
-
-	std::vector<BB_VERTEX> vertices(24);
-	auto                   get_idx = [&](glm::vec3 pos, glm::vec3 n) -> uint16
-	{
-		int idx = 0;
-#if 0
-		for (int i = 0; i < 24; i++)
-		{
-			if (vertices[i].xyz == pos && vertices[i].normal == n)
-			{
-				idx = i;
-				break;
-			}
-		}
-#endif
-		return idx;
-	};
-
-	std::vector<glm::u16vec3> reference_elements = {
-#if 0
-		0,
-		1,
-		2,
-		3,
-		4,
-		5,
-		6,
-		7,
-		0,
-		4,
-		1,
-		5,
-		2,
-		6,
-		3,
-		7
-#else
-		// front
-		{0, 1, 2},
-		{2, 3, 0},
-		// right
-		{1, 5, 6},
-		{6, 2, 1},
-		// back
-		{7, 6, 5},
-		{5, 4, 7},
-		// left
-		{4, 0, 3},
-		{3, 7, 4},
-		// bottom
-		{4, 5, 1},
-		{1, 0, 4},
-		// top
-		{3, 2, 6},
-		{6, 7, 3}
-	};
-#endif
-#if 0
-	for (int i = 0, j = 0; i < reference_elements.size(); i += 2, j += 4)
-	{
-		auto n			= glm::normalize(glm::cross(
-			 reference[reference_elements[i][1]].xyz - reference[reference_elements[i][0]].xyz,
-			 reference[reference_elements[i][2]].xyz - reference[reference_elements[i][1]].xyz));
-		vertices[j]		= BB_VERTEX{reference[reference_elements[i][0]].xyz, n};
-		vertices[j + 1] = BB_VERTEX{reference[reference_elements[i][1]].xyz, n};
-		vertices[j + 2] = BB_VERTEX{reference[reference_elements[i][2]].xyz, n};
-		vertices[j + 3] = BB_VERTEX{reference[reference_elements[i + 1][1]].xyz, n};
-	}
-#endif
-		std::vector<glm::u16vec3> elements(12);
-	std::cout << "elments:" << std::endl;
-#if 0
-	for (int i = 0; i < 12; i++)
-	{
-		elements[i] = {
-			(get_idx(reference[reference_elements[i][0]].xyz, vertices[2 * i].normal)),
-			(get_idx(reference[reference_elements[i][1]].xyz, vertices[2 * i].normal)),
-			(get_idx(reference[reference_elements[i][2]].xyz, vertices[2 * i].normal))};
-		std::cout << elements[i][0] << ", " << elements[i][1] << ", " << elements[i][2] << std::endl;
-	}
-	std::cout << std::endl;
-	for (int i = 0; i < 24; i++)
-	{
-		vertices[i].xyz *= 0.5;
-	}
-#endif
 	///////////////////////////////////////////////////////////////////////////////
-	// int cnt		  = sizeof vertices / sizeof BB_VERTEX;
-	m_BoundingBox = Env::Renderer()->CreateBuffer(vertices.size(), BB_VERTEX_FORMAT, "BoundingBox", false);
-	Env::Renderer()->UpdateBuffer(m_BoundingBox, vertices.data(), vertices.size(), false);
-
-	m_BB_IndexBuffer = new SVertexStream;
-	Env::Renderer()->CreateIndexBuffer(m_BB_IndexBuffer, elements.data(), (3 * elements.size()));
+	m_BoundingBox = Env::Renderer()->CreateBuffer(36, BB_VERTEX_FORMAT, "BoundingBox", false);
 	///////////////////////////////////////////////////////////////////////////////
-	m_HardwareVB        = Env::Renderer()->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
-	m_BoundingBoxShader = Env::Renderer()->Sh_Load("bb", 0);
+	m_HardwareVB  = Env::Renderer()->CreateBuffer(INIT_VB_SIZE, VERTEX_FORMAT_P3F_C4B_T2F, "AuxGeom", true);
 	if (!(m_AuxGeomShader = Env::Renderer()->Sh_Load("auxgeom", 0)))
 	{
 		Env::Log()->Log("Error of loading auxgeom shader");
 	}
-
-	// m_aabbBufferPtr = SAABBBuffer::Create(10);
 
 	REGISTER_CVAR(dbg_mode, 3, 0, "");
 	REGISTER_CVAR2("r_stop", &stop, 1, 0, "");
@@ -340,8 +246,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 	desc.DepthFunc      = D3D11_COMPARISON_ALWAYS;
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateLines);
 
-
-	m_ZPShader = (CShader*)gRenDev->Sh_Load("z.Main", 0, 0);
+	//m_ZPShader = (CShader*)gRenDev->Sh_Load("z.Main", 0, 0);
 	REGISTER_CVAR2("r_DrawWirefame", &CV_r_DrawWirefame, 0, 0, "[0/1] Draw in wireframe mode");
 	REGISTER_CVAR2("r_DisableZP", &CV_r_DisableZP, 1, 0, "[0/1] off/on zprepass");
 }
@@ -349,7 +254,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 CRenderAuxGeom::~CRenderAuxGeom()
 {
 	SAFE_DELETE(m_BoundingBox);
-	SAFE_DELETE(m_BB_IndexBuffer);
+	//SAFE_DELETE(m_BB_IndexBuffer);
 	SAFE_DELETE(m_HardwareVB);
 }
 
@@ -377,91 +282,47 @@ void CRenderAuxGeom::DrawAABB(Legacy::Vec3 min, Legacy::Vec3 max, const UCol& co
 
 	std::array<BB_VERTEX, 36> verts = {
 
-#if 0
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}),	UCol{Legacy::Vec4(col.bcolor[0], col.bcolor[1], col.bcolor[2], col.bcolor[3])}, Legacy::Vec2{0, 0}},
-#else
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, -0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
-		BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
-#endif
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 0}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{1, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, 0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 1}},
+	    BB_VERTEX{Legacy::Vec3(transform * Legacy::Vec4{-0.5f, 0.5f, -0.5f, 1.f}), Legacy::Vec3{1, 0, 0}, Legacy::Vec2{0, 0}},
 
 	};
 	m_BBVerts.emplace_back(verts);
@@ -484,7 +345,7 @@ void CRenderAuxGeom::DrawAABBs()
 		if (!m_BBVerts.empty())
 		{
 			Env::Renderer()->ReleaseBuffer(m_BoundingBox);
-			auto size     = m_BBVerts.size() * 36;
+			auto size     = m_BBVerts.size() * sizeof BoundingBox;
 			m_BoundingBox = Env::Renderer()->CreateBuffer(size, BB_VERTEX_FORMAT, "BoundingBox", false);
 			Env::Renderer()->UpdateBuffer(m_BoundingBox, m_BBVerts.data(), size, false);
 			DrawElement({m_BoundingBox, nullptr, glm::mat4(1), -1});
@@ -525,7 +386,7 @@ void CRenderAuxGeom::DrawLines()
 	m_AuxGeomShader->Bind();
 	Env::Renderer()->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;
-    ::GetDeviceContext()->OMSetDepthStencilState(m_pDSStateLines, 0);
+	::GetDeviceContext()->OMSetDepthStencilState(m_pDSStateLines, 0);
 	for (auto& pb : m_auxPushBuffer)
 	{
 		Env::Renderer()->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);

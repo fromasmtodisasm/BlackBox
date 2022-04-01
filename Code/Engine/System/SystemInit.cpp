@@ -540,6 +540,7 @@ bool CSystem::Init()
 
 	//====================================================
 	m_env.pConsole->AddConsoleVarSink(this);
+	_CrtCheckMemory();
 	ParseCMD();
 	LoadScreen();
 	//====================================================
@@ -554,6 +555,7 @@ bool CSystem::Init()
 
 	if (CreateGame(nullptr) == nullptr)
 		return false;
+	_CrtCheckMemory();
 	//====================================================
 
 	//====================================================
@@ -567,6 +569,7 @@ bool CSystem::Init()
 	{
 		return false;
 	}
+	_CrtCheckMemory();
 	if (IsDevMode())
 	{
 		CryLog("DEVMODE is Enabled");
@@ -586,6 +589,7 @@ bool CSystem::Init()
 	}
 
 	Env::Log()->Log("Main thread : %d", std::this_thread::get_id());
+	_CrtCheckMemory();
 	return true;
 }
 
