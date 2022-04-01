@@ -14,7 +14,6 @@ namespace Assimp
 		{
 		}
 		~CgfImporter() {
-			CryLog("CgfImporter destructed");
 		}
 
 		bool                          CanRead(const std::string& filename, IOSystem* pIOHandler, bool checkSig) const override;

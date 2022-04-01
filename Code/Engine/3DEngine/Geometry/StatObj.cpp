@@ -435,7 +435,6 @@ public:
 		}
 		~IOStreamImpl()
 		{
-			CryLog("Destruct IOStreamImpl");
 		}
 		// Inherited via IOStream
 		virtual size_t Read(void* pvBuffer, size_t pSize, size_t pCount) override
@@ -494,7 +493,6 @@ public:
 	}
 	~MyIO()
 	{
-		CryLog("Destruct MyIO");
 	}
 };
 
