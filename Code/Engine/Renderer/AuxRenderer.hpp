@@ -34,12 +34,20 @@ using SAABBBuffer = gl::ConstantBuffer<SAABBConstantBuffer>;
 using SAABBBufferPtr = std::shared_ptr<SAABBBuffer>;
 #endif
 
+struct Material
+{
+	UCol DiffuseColor{Legacy::Vec3{0, 1, 1}};
+	UCol SpecularColor{Legacy::Vec3{1,1,1}};
+	UCol Gloss;
+};
+
 struct SDrawElement
 {
-	CVertexBuffer*		m_pBuffer;
-	SVertexStream*		m_Inices;
-	glm::mat4			transform;
+	CVertexBuffer*      m_pBuffer{};
+	SVertexStream*      m_Inices{};
+	glm::mat4           m_Transform{1};
 	int					m_DiffuseMap;
+	Material            m_Material;
 	_smart_ptr<CShader> m_Shader;
 };
 
@@ -98,4 +106,5 @@ class CRenderAuxGeom : public IRenderAuxGeom
   public:
 	static ID3D11DepthStencilState* m_pDSStateZPrePass;
 	static ID3D11DepthStencilState* m_pDSStateMesh;
+	static ID3D11DepthStencilState* m_pDSStateLines;
 };

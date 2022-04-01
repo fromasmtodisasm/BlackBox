@@ -33,11 +33,16 @@ CPhysicalEntity::CPhysicalEntity(IEntity* pEntity)
 {
 	Legacy::Vec3 min, max;
 	pEntity->GetBBox(min, max);
+	float                                    mass = 4.f;
 	auto                                     half = (max - min);
 	btVector3                                ext(half.x, half.y, half.z);
 	btBoxShape*                              collsion = new btBoxShape(ext);
-	btRigidBody::btRigidBodyConstructionInfo ci(10, &m_MotionState, collsion);
+	btVector3                                localInertia(0, 0, 0);
+		collsion->calculateLocalInertia(mass, localInertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass, &m_MotionState, collsion, localInertia);
 	m_pRigidBody = new btRigidBody(ci);
+	//m_pRigidBody->setCollisionFlags(btRigidBody::CollisionFlags::CF_DYNAMIC_OBJECT);
+	//m_pRigidBody->set
 	//m_pRigidBody->applyImpulse(btVector3(100, 10, 10), btVector3(0, 0, 0));
 }
 

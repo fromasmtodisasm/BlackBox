@@ -108,10 +108,11 @@ void MineWorld::init()
 		    "objects/editor/arrow.cgf",
 		    "minecraft/Grass_Block.obj",
 		};
-		m_pMtlBox   = Env::I3DEngine()->MakeObject(objects[2]);
+		m_pMtlBox   = Env::I3DEngine()->MakeObject(objects[3]);
 		auto camera = Env::System()->GetViewCamera();
 		auto box    = SpawnBox({5, 5, 5}, {0, 0, 0});
 		Env::I3DEngine()->RegisterEntity(box);
+		#if 1
 		{
 			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
 
@@ -123,6 +124,7 @@ void MineWorld::init()
 			Jack->SetPos({-0, 40, -5});
 			Jack->SetScale(glm::vec3(0.01f));
 			Jack->SetAngles({-90, 0, 0});
+			Jack->Physicalize();
 			Env::I3DEngine()->RegisterEntity(Jack);
 		}
 
@@ -141,8 +143,10 @@ void MineWorld::init()
 			Jack->SetPos({-5, 50, -5});
 			Jack->SetScale(glm::vec3(0.02f));
 			Jack->SetAngles({45, 90, 0});
+			Jack->Physicalize();
 			Env::I3DEngine()->RegisterEntity(Jack);
 		}
+		#endif
 		//{
 		//	auto object = types[0];
 		//	//Env::I3DEngine()->MakeObject(objects[0]);
@@ -230,15 +234,15 @@ IEntity* MineWorld::SpawnBox(const Legacy::Vec3& pos, const Legacy::Vec3& veloci
 	desc.pos    = pos;
 	desc.name   = "Box";
 
-	auto* Box   = Env::EntitySystem()->SpawnEntity(desc, true);
+	auto* Box   = Env::EntitySystem()->SpawnEntity(desc);
 
 	Box->SetIStatObj(object);
-	Box->SetScale(glm::vec3(0.01f));
+	Box->SetScale(glm::vec3(0.02f));
+	Box->Physicalize();
 
 	pe_action_set_velocity action;
 	action.v = Legacy::from(velocity);
 
-	//Env::EntitySystem()->InitEntity(Box, desc);
 	Box->GetPhysics()->Action(&action);
 	Env::I3DEngine()->RegisterEntity(Box);
 
@@ -569,7 +573,7 @@ void MinePlayer::update()
 	///////////////////////////////////////////////////////////
 	auto       camera      = Env::System()->GetViewCamera();
 	EntityList entities;
-	Env::EntitySystem()->GetEntitiesInRadius(camera.GetPos(), 60, entities);
+	Env::EntitySystem()->GetEntitiesInRadius(camera.GetPos(), 25, entities);
 	for each (const auto& e in entities)
 	{
 		auto impulse    = pe_action_impulse{};
@@ -614,16 +618,16 @@ void MinePlayer::destroyBlockOnCursor()
 	auto       testEntity2 = Env::EntitySystem()->GetEntity(2);
 	if (testEntity3 && (m_ClickFrame < (Env::Renderer()->GetFrameID() - 5)))
 	{
-		auto p          = testEntity3->GetPhysics();
+		//auto p          = testEntity3->GetPhysics();
 
-		auto impulse    = pe_action_impulse{};
-		impulse.impulse = Legacy::from(camera.Front);
-		impulse.point   = vectorf(0, 0, 0);
-		p->Action(&impulse);
+		//auto impulse    = pe_action_impulse{};
+		//impulse.impulse = Legacy::from(camera.Front);
+		//impulse.point   = vectorf(0, 0, 0);
+		//p->Action(&impulse);
 
-		p = testEntity2->GetPhysics();
-		impulse.impulse = vectorf(0, 0, 0);
-		p->Action(&impulse);
+		//p = testEntity2->GetPhysics();
+		//impulse.impulse = vectorf(0, 0, 0);
+		//p->Action(&impulse);
 
 		auto box = minecraft->world.SpawnBox(camera.GetPos(), camera.Front * 10.f);
 		Env::I3DEngine()->RegisterEntity(box);

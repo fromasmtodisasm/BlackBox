@@ -3,6 +3,7 @@
 #include "IStatObj.h"
 
 #include "PhysicalEntity.hpp"
+#include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 
 CEntity::CEntity(CEntityDesc& desc)
     : m_pEntitySystem((CEntitySystem*)Env::EntitySystem())
@@ -332,8 +333,8 @@ void CEntity::SetBBox(const Legacy::Vec3& mins, const Legacy::Vec3& maxs)
 
 void CEntity::GetBBox(Legacy::Vec3& mins, Legacy::Vec3& maxs)
 {
-	mins = m_BoxMin * m_Scale;
-	maxs = m_BoxMax * m_Scale;
+	mins = m_BoxMin/* * m_Scale*/;
+	maxs = m_BoxMax/* * m_Scale*/;
 }
 
 void CEntity::GetLocalBBox(Legacy::Vec3& min, Legacy::Vec3& max)
@@ -363,6 +364,7 @@ bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 	transform = glm::rotate(transform, glm::radians(rotation.x), {1, 0, 0});
 	transform = glm::rotate(transform, glm::radians(rotation.y), {0, 1, 0});
 	transform = glm::rotate(transform, glm::radians(rotation.z), {0, 0, 1});
+	auto rotate = transform;
 
 	transform = glm::scale(transform, scale);
 #endif
@@ -371,6 +373,12 @@ bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 	rp.texture = object->GetTexture();
 
 	object->Render(rp, {});
+	Legacy::Vec3 min, max;
+	GetBBox(min, max);
+	transform = rotate;
+	auto tmin = transform * glm::vec4(min, 1);
+	auto tmax = transform * glm::vec4(max, 1);
+	//Env::AuxGeomRenderer()->DrawAABB(tmin, tmax, UCol({1, 1, 1}));
 	return true;
 }
 

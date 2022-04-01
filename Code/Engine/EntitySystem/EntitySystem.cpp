@@ -95,7 +95,7 @@ void CEntitySystem::Update()
 {
 	auto time = Env::Timer()->GetFrameTime();
 	m_pPhysicalWorld->stepSimulation(time);
-	//m_pPhysicalWorld->debugDrawWorld();
+	m_pPhysicalWorld->debugDrawWorld();
 }
 
 IScriptSystem* CEntitySystem::GetScriptSystem()
@@ -139,7 +139,6 @@ bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)
 	e->SetClassId(ed.ClassId);
 	e->SetName(ed.name);
 
-	e->Physicalize();
 	if (m_pEntitySystemSink)
 		m_pEntitySystemSink->OnSpawnContainer(ed, e);
 	return true;

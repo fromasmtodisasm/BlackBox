@@ -14,6 +14,8 @@ const UINT NUM_MAT = 4;
 
 ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateZPrePass;
 ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateMesh;
+ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateLines;
+
 ID3D11DepthStencilState*          m_pDSStateMeshCurrent;
 
 _smart_ptr<ID3D11RasterizerState> g_pRasterizerStateSolid{};
@@ -119,7 +121,7 @@ HRESULT CRenderAuxGeom::InitCube()
 	rasterizerDesc.SlopeScaledDepthBias  = 0;
 	rasterizerDesc.DepthClipEnable       = true;
 	rasterizerDesc.ScissorEnable         = false;
-	rasterizerDesc.MultisampleEnable     = false;
+	rasterizerDesc.MultisampleEnable     = true;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
 	GetDevice()->CreateRasterizerState(&rasterizerDesc, g_pRasterizerStateSolid.GetAddressOf());
@@ -133,7 +135,7 @@ void CRenderAuxGeom::DrawElementToZBuffer(const SDrawElement& DrawElement)
 {
 	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
 	HLSL_PerDrawCB cb;
-	cb.World = DrawElement.transform;
+	cb.World = DrawElement.m_Transform;
 	cb.MVP   = g_ViewProjection * cb.World;
 	cb.MV    = g_View * cb.World;
 
@@ -158,7 +160,7 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 
 	// NOTE: to avoid matrix transpose need follow specific order of arguments in mul function in HLSL
 	HLSL_PerDrawCB cb;
-	cb.World = DrawElement.transform;
+	cb.World = DrawElement.m_Transform;
 	cb.MVP   = g_ViewProjection * cb.World;
 	cb.MV    = g_View * cb.World;
 	cb.Model = cb.World;
@@ -333,6 +335,11 @@ CRenderAuxGeom::CRenderAuxGeom()
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	desc.DepthFunc      = D3D11_COMPARISON_EQUAL;
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateMesh);
+
+	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	desc.DepthFunc      = D3D11_COMPARISON_ALWAYS;
+	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateLines);
+
 
 	m_ZPShader = (CShader*)gRenDev->Sh_Load("z.Main", 0, 0);
 	REGISTER_CVAR2("r_DrawWirefame", &CV_r_DrawWirefame, 0, 0, "[0/1] Draw in wireframe mode");
@@ -518,6 +525,7 @@ void CRenderAuxGeom::DrawLines()
 	m_AuxGeomShader->Bind();
 	Env::Renderer()->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
 	int offset = 0;
+    ::GetDeviceContext()->OMSetDepthStencilState(m_pDSStateLines, 0);
 	for (auto& pb : m_auxPushBuffer)
 	{
 		Env::Renderer()->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
@@ -609,8 +617,8 @@ void CRenderAuxGeom::Flush()
 		g_pRasterizerStateForMeshCurrent = g_pRasterizerStateWire;
 	else
 		g_pRasterizerStateForMeshCurrent = g_pRasterizerStateSolid;
-	DrawAABBs();
 	D3DPERF_BeginEvent(D3DC_Blue, L"DrawLines");
 	DrawLines();
 	D3DPERF_EndEvent();
+	DrawAABBs();
 }
