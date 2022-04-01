@@ -451,7 +451,7 @@ bool CSystem::Init()
 		m_Font.ms_nullFont.m_pFont = m_pFont;
 		m_Font.ms_nullFont.m_Size  = font_size;
 
-		auto splash                = Env::Renderer()->LoadTexture("fcsplash.bmp", 0, 0);
+		auto splash                = Env::Renderer()->LoadTexture("textures/console/loadscreen_default.dds", 0, 0);
 		for (int i = 0; i < 3; i++)
 		{
 			RenderBegin();

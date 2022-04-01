@@ -186,15 +186,6 @@ void CD3DRenderer::Update(void)
 			UpdateConstants();
 
 			::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0);
-			Flush();
-			{
-				D3DPERF_BeginEvent(D3DC_Blue, L"DrawImages");
-				for (auto img : m_DrawImages)
-				{
-					Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
-				}
-				D3DPERF_EndEvent();
-			}
 			{
 				{
 					m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
@@ -226,6 +217,15 @@ void CD3DRenderer::Update(void)
 				//Draw2DQuad(float(x), float(y), float(z), float(w), srv, color4f{}, 1.f, 1.f, 1.f, 1.f);
 				//Draw2DQuad((float)x, (float)y, (float)z, (float)w, m_pMainRenderTargetView.Get(), c, 1.f, 1.f, 1.f, 1.f);
 				D3DPERF_EndEvent();
+			}
+			{
+				D3DPERF_BeginEvent(D3DC_Blue, L"DrawImages");
+				for (auto img : m_DrawImages)
+				{
+					Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
+				}
+				D3DPERF_EndEvent();
+                Flush();
 			}
 			//{
 			//	D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
