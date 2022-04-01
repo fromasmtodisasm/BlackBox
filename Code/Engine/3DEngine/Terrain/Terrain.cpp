@@ -13,14 +13,7 @@ CTerrain::~CTerrain()
 
 void CTerrain::Render(CCamera& Camera)
 {
-	auto  redColor   = Legacy::Vec3(0, 0, 1);
-	auto  greenColor = Legacy::Vec3(0, 1, 0);
-	auto  blueColor  = Legacy::Vec3(1, 0, 0);
-	float axisLength = 20;
-
-	//Env::AuxGeomRenderer()->DrawLine({0, -axisLength, 0}, {redColor}, {0, axisLength, 0}, {redColor});
-	//Env::AuxGeomRenderer()->DrawLine({-axisLength, 0, 0}, {greenColor}, {axisLength, 0, 0}, {greenColor});
-	//Env::AuxGeomRenderer()->DrawLine({0, 0, -axisLength}, {blueColor}, {0, 0, axisLength}, {blueColor});
+	DrawAxises();
 
 	for each (const auto& area in m_Areas)
 	{
@@ -31,4 +24,43 @@ void CTerrain::Render(CCamera& Camera)
 
 void CTerrain::Update()
 {
+}
+
+void CTerrain::DrawAxises()
+{
+	auto       redColor   = Legacy::Vec3(0, 0, 1);
+	auto       greenColor = Legacy::Vec3(0, 1, 0);
+	auto       blueColor  = Legacy::Vec3(1, 0, 0);
+	float      axisLength = 20;
+
+	const auto oX         = Legacy::Vec3{1, 0, 0};
+	const auto oY         = Legacy::Vec3{0, 1, 0};
+	const auto oZ         = Legacy::Vec3{0, 0, 1};
+
+	const auto A          = Legacy::Vec3{0, 1, 0};
+	const auto B          = Legacy::Vec3{0, 0, 1};
+	const auto C          = Legacy::Vec3{0, 1, 0};
+
+	Env::AuxGeomRenderer()->DrawLine({0, -axisLength, 0}, {blueColor}, {0, axisLength, 0}, {blueColor});
+	Env::AuxGeomRenderer()->DrawLine({-axisLength, 0, 0}, {redColor}, {axisLength, 0, 0}, {redColor});
+	Env::AuxGeomRenderer()->DrawLine({0, 0, -axisLength}, {greenColor}, {0, 0, axisLength}, {greenColor});
+
+	auto dir = Legacy::Vec3{1, 0, 0};
+	Nick(oX, A, -axisLength, axisLength, 1.f);
+	//Nick(oY, B, -axisLength, axisLength, 1.f);
+	Nick(oZ, C, -axisLength, axisLength, 1.f);
+}
+void CTerrain::Nick(Legacy::Vec3 dir, Legacy::Vec3 normal, float from, float to, float step)
+{
+	auto  color  = UCol(Legacy::Vec3(1, 1, 1) * 0.15f);
+	auto  v      = glm::normalize(glm::cross(dir, normal));
+	auto  length = glm::length(to - from);
+	float width  = 20;
+
+	for (auto origin = from; origin < length; origin += step)
+	{
+		auto p = dir + dir * origin;
+
+		Env::AuxGeomRenderer()->DrawLine(p + width * v, color, p - width * v, color);
+	}
 }

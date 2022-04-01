@@ -569,7 +569,7 @@ void MinePlayer::update()
 	///////////////////////////////////////////////////////////
 	auto       camera      = Env::System()->GetViewCamera();
 	EntityList entities;
-	Env::EntitySystem()->GetEntitiesInRadius(camera.GetPos(), 20, entities);
+	Env::EntitySystem()->GetEntitiesInRadius(camera.GetPos(), 60, entities);
 	for each (const auto& e in entities)
 	{
 		auto impulse    = pe_action_impulse{};

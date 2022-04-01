@@ -95,7 +95,7 @@ void CEntitySystem::Update()
 {
 	auto time = Env::Timer()->GetFrameTime();
 	m_pPhysicalWorld->stepSimulation(time);
-	m_pPhysicalWorld->debugDrawWorld();
+	//m_pPhysicalWorld->debugDrawWorld();
 }
 
 IScriptSystem* CEntitySystem::GetScriptSystem()
@@ -197,7 +197,7 @@ void CEntitySystem::GetEntitiesInRadius(const Legacy::Vec3& origin, float radius
 		auto* e = (CEntity*)&m_Entities[i];
 		Legacy::Vec3 min, max;
 		e->GetBBox(min, max);
-		if (glm::length(e->GetPos() + e->m_Scale*(max - min) - origin) <= radius)
+		if (glm::length(e->GetPos() - origin) <= radius)
 			entities.push_back((IEntity*)e);
 	}
 }
