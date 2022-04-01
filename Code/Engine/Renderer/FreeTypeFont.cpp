@@ -244,14 +244,6 @@ bool operator<(const STestSize& a, const STestSize& b)
 }
 bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 {
-	Characters.insert({});
-	Characters.insert({});
-	Characters.insert({});
-	Characters.insert({});
-	Characters.insert({});
-	Characters.insert({});
-	Characters.insert({});
-	Characters.insert({});
 	m_Height = static_cast<float>(h);
 
 	_CrtCheckMemory();
