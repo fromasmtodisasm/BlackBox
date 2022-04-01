@@ -1214,21 +1214,18 @@ void CXConsole::StaticBackground(bool bStatic)
 
 void CXConsole::SetLoadingImage(const char* szFilename)
 {
-#if 0
-	ITexture* pTex = m_system.GetIRenderer()->LoadTexture(szFilename, 0,0);
+	auto pTex = m_system.GetIRenderer()->LoadTexture(szFilename, 0,0);
 	if (!pTex/* || (pTex->GetFlags() & FT_FAILED)*/)
 	{
-		SAFE_RELEASE(pTex);
+		auto t = Env::Renderer()->EF_GetTextureByID(pTex);
+		SAFE_RELEASE(t);
 		pTex = m_system.GetIRenderer()->LoadTexture("Textures/Console/loadscreen_default.dds", 0,0);
 	}
 
 	if (pTex)
-		m_nLoadingBackTexID = pTex->getId();
+		m_nLoadingBackTexID = pTex;
 	else
 		m_nLoadingBackTexID = -1;
-#else
-	NOT_IMPLEMENTED;
-#endif
 }
 
 bool CXConsole::GetLineNo(const DWORD indwLineNo, char* outszBuffer, const DWORD indwBufferSize) const

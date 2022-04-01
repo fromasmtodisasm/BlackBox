@@ -219,6 +219,7 @@ void CD3DRenderer::Update(void)
 				D3DPERF_EndEvent();
 			}
 			{
+                m_RenderAuxGeom->Flush();
 				D3DPERF_BeginEvent(D3DC_Blue, L"DrawImages");
 				for (auto img : m_DrawImages)
 				{
