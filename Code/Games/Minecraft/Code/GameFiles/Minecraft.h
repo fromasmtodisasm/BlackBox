@@ -1,12 +1,29 @@
 #include <glm/gtx/hash.hpp>
 
-class MineWorld
+class MineWorld : public IEntitySystemSink
 {
 public:
 	enum Type
 	{
 		Grass,
 	};
+
+	virtual void OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)        {}
+
+	/*! This callback is called when this entity has finished spawning. The entity has been created and added to the list of entities,
+ but has not been initialized yet.
+	@param e The entity that was just spawned
+*/
+	virtual void OnSpawn(IEntity* e, CEntityDesc& ed)                       {}
+
+	/*! Called when an entity is being removed.
+	@param e The entity that is being removed. This entity is still fully valid.
+*/
+	virtual void OnRemove(IEntity* e)                                       {}
+
+	virtual void OnBind(EntityId id, EntityId child, unsigned char param)   {}
+
+	virtual void OnUnbind(EntityId id, EntityId child, unsigned char param) {}
 
 	void                                     init();
 

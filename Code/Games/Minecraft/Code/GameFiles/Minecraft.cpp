@@ -95,9 +95,15 @@ struct Snake
 		m_FakeEat = true;
 	}
 
+	void MakeFood()
+	{
+		auto x = rand() % 20;
+		auto y = rand() % 20;
+	}
+
 	IEntity* CreateCell(glm::vec3 pos)
 	{
-		auto        object = Env::I3DEngine()->MakeObject("minecraft/Grass_Block.obj");
+		auto        object = Env::I3DEngine()->MakeObject("minecraft/Snake.obj");
 
 		extern int  nextEntity();
 		CEntityDesc desc(nextEntity(), 0);
@@ -216,7 +222,7 @@ void MineWorld::init()
 		g_World.size_z = 20;
 		g_World.height = -1;
 
-#if 0
+#if 1
 		for (int y = g_World.height; y < 0; y++)
 		{
 			for (int z = -g_World.size_x / 2; z < g_World.size_x / 2; z++)
@@ -228,24 +234,6 @@ void MineWorld::init()
 					set(glm::ivec3(x, y, z), Grass);
 				}
 			}
-		}
-		int width = 5;
-		for (int y = 0; y < width; y++)
-		{
-			set(glm::ivec3(0, y, 0), Grass);
-		}
-		for (int i = 0; i < width; i++)
-		{
-			set(glm::ivec3(i, 0, 0), Grass);
-			set(glm::ivec3(i, width, 0), Grass);
-		}
-		for (int i = 1; i < 4; i++)
-		{
-			set(glm::vec3((width - 1), i, 0), Grass);
-		}
-		for (int i = width - 1; i > 4; i--)
-		{
-			set(glm::ivec3(i, 3, 0), Grass);
 		}
 #else
 		/*CEntityDesc desc(nextEntity(), (int)EEntityClass::Character);
@@ -280,8 +268,10 @@ void MineWorld::init()
 		};
 		m_pMtlBox   = Env::I3DEngine()->MakeObject(objects[3]);
 		auto camera = Env::System()->GetViewCamera();
+		#if 0
 		auto box    = SpawnBox({5, 5, 5}, {0, 0, 0});
 		Env::I3DEngine()->RegisterEntity(box);
+		#endif
 #if 0
 		{
 			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
