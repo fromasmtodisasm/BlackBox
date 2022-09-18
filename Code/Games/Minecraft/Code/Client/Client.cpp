@@ -89,6 +89,30 @@ void CClient::Update()
 	{
 		m_CameraController.ProcessKeyboard(Movement::BACKWARD, frame_time, m_PlayerProcessingCmd.GetMoveBack());
 	}
+#pragma region Snake move
+	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_1))
+	{
+		minecraft->MoveSnake(Movement::LEFT);
+	}
+	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_4))
+	{
+		minecraft->MoveSnake(Movement::RIGHT);
+	}
+	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_2))
+	{
+		minecraft->MoveSnake(Movement::FORWARD);
+	}
+	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_3))
+	{
+		minecraft->MoveSnake(Movement::BACKWARD);
+	}
+#pragma endregion
+
+	if (m_PlayerProcessingCmd.CheckAction(ACTION_USE))
+	{
+		minecraft->Pause();
+	}
+	
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_TURNLR))
 	{
 		auto ang = m_PlayerProcessingCmd.GetDeltaAngles()[YAW];
@@ -109,6 +133,7 @@ void CClient::Update()
 		auto pos      = m_CameraController.CurrentCamera()->GetPos();
 		//if (CamPos.y <= FloorLevel) m_CamSpeed = 5.f;
 		m_JumpPressed = true;
+		minecraft->FakeEat();
 		//m_CameraController.CurrentCamera()->SetPos(pos + Legacy::Vec3(0, 0.01,0));
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_FIRE0))
@@ -163,6 +188,7 @@ void CClient::Update()
 	//Env::Renderer()->GetIRenderAuxGeom()->DrawAABB(pos + cam->Front*Legacy::Vec3(2, -0.5, -1), pos + cam->Front*Legacy::Vec3(3, 0, 1), UCol(0,0,1,1));
 
 	//m_CameraController.SetRenderCamera(0);
+	//m_CameraController.RenderCamera()->updateCameraVectors();
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 	m_PlayerProcessingCmd.Reset();
 }
@@ -388,7 +414,8 @@ void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 
 void CClient::OnLoadScene()
 {
-	auto cam  = new CCamera(Legacy::Vec3(0, 40, 0));
+	auto cam  = new CCamera(Legacy::Vec3(8.50, 22, 17.11));
+	cam->SetAngles({-46.12, -112.28, 0});
 	cam->mode = CCamera::Mode::FLY;
 	m_CameraController.AddCamera(cam);
 	//m_CameraController.AddCamera(new CCamera(/*Legacy::Vec3(10,10,10)*/));
@@ -407,8 +434,7 @@ void CClient::DrawAux()
 	};
 	const UCol col(255, 255, 255, 255);
 	auto       render = Env::Renderer()->GetIRenderAuxGeom();
-	render->DrawLine(
-	    {-10, 10, -5}, col, {10, 10, -5}, col);
+	//render->DrawLine({-10, 10, -5}, col, {10, 10, -5}, col);
 	float x = 40, y = 0, z = -40;
 	{
 		const UCol col1(50, 125, 0, 100);
@@ -447,10 +473,12 @@ void CClient::DrawAux()
 	ray.origin    = m_CameraController.RenderCamera()->transform.position;
 	ray.direction = m_CameraController.RenderCamera()->Front;
 
+#if 0
 	render->DrawLine(
 	    ray.origin + ray.direction, col, ray.origin + ray.direction * 40.f, col);
+#endif
 
-	DrawAxis(render, Legacy::Vec3(40));
+	//DrawAxis(render, Legacy::Vec3(40));
 	size_t ch_w = 20;
 	size_t ch_h = 20;
 #if 0

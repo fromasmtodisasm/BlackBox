@@ -6,8 +6,178 @@
 #include <glm/glm.hpp>
 #include <array>
 #include <BlackBox/System/File/CryFile.h>
+#include <queue>
+#include <deque>
 
 Minecraft* minecraft;
+
+CCamera* getCamera()
+{
+	auto game   = dynamic_cast<CXGame*>(Env::System()->GetIGame());
+	auto client = &game->GetClient()->m_DummyClient;
+	return client->m_CameraController.RenderCamera();
+}
+
+
+void       DrawField(int size)
+{
+	auto color     = UCol(Legacy::Vec3(0, 1, 1));
+	//for (int i = -size / 2; size /2; i++)
+	auto step      = size / 2;
+	auto half_size = size / 2;
+	for (int i = 0; i <= size; i++)
+	{
+		Env::AuxGeomRenderer()->DrawLine({-half_size, 0, i - step}, color, {half_size, 0, i - step}, color);
+	}
+
+	for (int i = 0; i <= size; i++)
+	{
+		Env::AuxGeomRenderer()->DrawLine({i - step, 0, -half_size}, color, {i - step, 0, half_size}, color);
+	}
+
+	//for (int i = -size / 2; size /2; i++)
+	//{
+	//	Env::AuxGeomRenderer()->DrawLine(p + width * v, color, p - width * v, color);
+	//}
+}
+
+struct Snake
+{
+	//////////////
+	void Pause()
+	{
+		m_IsPause = !m_IsPause;
+	}
+	void ChangeDir(Movement dir)
+	{
+		switch (dir)
+		{
+		case Movement::FORWARD:
+			if (m_PrevDir == Movement::BACKWARD) return;
+			m_Dir = Legacy::Vec3{0, 0, 1};
+			break;
+		case Movement::BACKWARD:
+			if (m_PrevDir == Movement::FORWARD) return;
+			m_Dir = Legacy::Vec3{0, 0, -1};
+			break;
+		case Movement::LEFT:
+			if (m_PrevDir == Movement::RIGHT) return;
+			m_Dir = Legacy::Vec3{1, 0, 0};
+			break;
+		case Movement::RIGHT:
+			if (m_PrevDir == Movement::LEFT) return;
+			m_Dir = Legacy::Vec3{-1, 0, 0};
+			break;
+		default:
+			break;
+		}
+
+		m_PrevDir = dir;
+	}
+	void Move()
+	{
+		auto Head = m_Body.front();
+		auto Tail = m_Body.back();
+		m_Body.pop_back();
+		m_Body.push_front(Tail);
+		auto Pos = Head->GetPos();
+		Pos += m_Dir;
+
+		Tail->SetPos(Pos);
+	}
+
+	void Eat()
+	{
+	}
+
+	void FakeEat()
+	{
+		m_FakeEat = true;
+	}
+
+	IEntity* CreateCell(glm::vec3 pos)
+	{
+		auto        object = Env::I3DEngine()->MakeObject("minecraft/Grass_Block.obj");
+
+		extern int  nextEntity();
+		CEntityDesc desc(nextEntity(), 0);
+		desc.name = "Snake";
+		auto Head = Env::EntitySystem()->SpawnEntity(desc);
+
+		Head->SetIStatObj(object);
+		Head->SetPos(pos);
+		Head->SetScale(glm::vec3(1.f));
+		//Head->SetAngles({-90, 0, 0});
+		//Head->Physicalize();
+		Env::I3DEngine()->RegisterEntity(Head);
+
+		return Head;
+	}
+
+	void Init()
+	{
+		auto cell = CreateCell({0, 0, 0});
+		m_Body.push_back(cell);
+	}
+
+	IEntity* GetHead()
+	{
+		return m_Body.front();
+	}
+	IEntity* GetTail()
+	{
+		return m_Body.back();
+	}
+	void Update()
+	{
+		if (m_IsPause)
+			return;
+		m_Ticked += Env::Timer()->GetRealFrameTime();
+		if (m_Ticked >= m_TickTime)
+		{
+			if (m_FakeEat)
+			{
+				m_FakeEat = false;
+
+				auto cell = CreateCell(GetHead()->GetPos() + m_Dir);
+				m_Body.push_front(cell);
+			}
+			else
+			{
+				Move();
+			}
+			m_Ticked = 0.f;
+		}
+	}
+
+	Movement             m_PrevDir = Movement::FORWARD;
+	Legacy::Vec3         m_Dir     = Legacy::Vec3(0, 0, -1);
+	Legacy::Vec3         m_BlockSize;
+	glm::ivec2           m_HeadPos;
+	std::deque<IEntity*> m_Body;
+	bool                 m_NeedMove = false;
+	float                m_TickTime = 0.5f;
+	float                m_Ticked   = 0.f;
+	bool                 m_FakeEat  = false;
+	bool                 m_IsPause  = false;
+};
+
+Snake* g_Snake;
+
+void   Minecraft::Pause()
+{
+	g_Snake->Pause();
+}
+
+void Minecraft::MoveSnake(Movement dir)
+{
+	g_Snake->ChangeDir(dir);
+}
+
+void Minecraft::FakeEat()
+{
+	g_Snake->FakeEat();
+}
 
 enum class EEntityClass : int
 {
@@ -112,7 +282,7 @@ void MineWorld::init()
 		auto camera = Env::System()->GetViewCamera();
 		auto box    = SpawnBox({5, 5, 5}, {0, 0, 0});
 		Env::I3DEngine()->RegisterEntity(box);
-		#if 1
+#if 0
 		{
 			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
 
@@ -146,7 +316,7 @@ void MineWorld::init()
 			Jack->Physicalize();
 			Env::I3DEngine()->RegisterEntity(Jack);
 		}
-		#endif
+#endif
 		//{
 		//	auto object = types[0];
 		//	//Env::I3DEngine()->MakeObject(objects[0]);
@@ -199,6 +369,18 @@ void Minecraft::init()
 	ui.init();
 	player.init();
 	debug.init();
+
+	g_Snake = new Snake;
+	g_Snake->Init();
+
+	auto game   = dynamic_cast<CXGame*>(Env::System()->GetIGame());
+	auto client = &game->GetClient()->m_DummyClient;
+	auto& cc     = client->m_CameraController;
+
+	//-55,-111
+	getCamera()->SetAngles({-55, -111,0});
+	getCamera()->updateCameraVectors();
+	//cc.Freeze(true);
 }
 
 void Minecraft::update()
@@ -212,6 +394,9 @@ void Minecraft::update()
 	player.update();
 
 	jack_rotation += 16 * time;
+
+	DrawField(20);
+	g_Snake->Update();
 }
 
 bool MineWorld::tryDestroy(glm::ivec3 pos)
@@ -285,13 +470,6 @@ void MineWorld::set(glm::ivec3 pos, Type type)
 	entity->SetScale(glm::vec3(1.f));
 
 	blocks.emplace(pos, entity);
-}
-
-CCamera* getCamera()
-{
-	auto game   = dynamic_cast<CXGame*>(Env::System()->GetIGame());
-	auto client = &game->GetClient()->m_DummyClient;
-	return client->m_CameraController.RenderCamera();
 }
 
 bool MineWorld::pickPos(glm::ivec3& outBlockPos, glm::vec3& outPickPos, Ray eyeRay, float& pickDistance) const
@@ -537,7 +715,7 @@ void MinePlayer::init()
 {
 	Env::ScriptSystem()->ExecuteFile("scripts/common.lua");
 
-	getCamera()->mode = CCamera::Mode::FPS;
+	//getCamera()->mode = CCamera::Mode::FPS;
 
 	auto        steve = Env::I3DEngine()->MakeObject("minecraft/minecraft_steve.obj");
 
@@ -545,7 +723,7 @@ void MinePlayer::init()
 	entity = Env::EntitySystem()->SpawnEntity(desc);
 	Env::I3DEngine()->RegisterEntity(entity);
 
-	entity->SetPos(glm::vec3(5, 3, 5));
+	entity->SetPos(getCamera()->GetPos());
 	myPos = entity->GetPos();
 
 	glm::vec3 min{-0.4, -2.3, -0.4}, max{0.4, 0.4, 0.4};
@@ -568,10 +746,10 @@ void MinePlayer::update()
 	applyMovement();
 	//getCamera()->SetPos(entity->GetPos());
 	getCamera()->SetPos(myPos);
-	movement = glm::vec3(0.0f);
+	movement          = glm::vec3(0.0f);
 
 	///////////////////////////////////////////////////////////
-	auto       camera      = Env::System()->GetViewCamera();
+	auto       camera = Env::System()->GetViewCamera();
 	EntityList entities;
 	Env::EntitySystem()->GetEntitiesInRadius(camera.GetPos(), 25, entities);
 	for each (const auto& e in entities)
@@ -582,7 +760,6 @@ void MinePlayer::update()
 		if (auto p = e->GetPhysics(); p)
 			p->Action(&impulse);
 	}
-
 }
 
 bool timingAction(float& prevTime, float interval)
@@ -613,9 +790,9 @@ void MinePlayer::destroyBlockOnCursor()
 		m_pDestroyBlockSound->Play();
 	}
 
-	auto       camera      = Env::System()->GetViewCamera();
-	auto       testEntity3 = Env::EntitySystem()->GetEntity(2);
-	auto       testEntity2 = Env::EntitySystem()->GetEntity(2);
+	auto camera      = Env::System()->GetViewCamera();
+	auto testEntity3 = Env::EntitySystem()->GetEntity(2);
+	auto testEntity2 = Env::EntitySystem()->GetEntity(2);
 	if (testEntity3 && (m_ClickFrame < (Env::Renderer()->GetFrameID() - 5)))
 	{
 		//auto p          = testEntity3->GetPhysics();
@@ -633,7 +810,6 @@ void MinePlayer::destroyBlockOnCursor()
 		Env::I3DEngine()->RegisterEntity(box);
 	}
 
-
 	m_ClickFrame = Env::Renderer()->GetFrameID();
 }
 
@@ -649,7 +825,6 @@ void MinePlayer::placeBlockOnCursor()
 		minecraft->world.set(side, MineWorld::Grass);
 		m_pSetBlockSound->Play();
 	}
-
 }
 
 void MinePlayer::move(glm::vec3 direction, float value)

@@ -13,7 +13,7 @@ CTerrain::~CTerrain()
 
 void CTerrain::Render(CCamera& Camera)
 {
-	DrawAxises();
+	//DrawAxises();
 
 	for each (const auto& area in m_Areas)
 	{

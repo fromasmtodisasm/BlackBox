@@ -98,6 +98,8 @@ public:
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
 	{
+		//CurrentCamera()->updateCameraVectors();
+		//if (IsFreezed) return;
 		CurrentCamera()->transform.rotation.y -= xoffset;
 		CurrentCamera()->transform.rotation.x += yoffset;
 
@@ -207,6 +209,9 @@ public:
 	const float      SCROLL_SPEED    = 2.0f;
 	const float      MOUSE_SPEED     = 1.5f;
 	const float      MOUSE_SENSIVITY = 0.05f;
+	bool             IsFreezed       = false;
+
+	void             Freeze(bool val) { IsFreezed = val; }
 
 	// Inherited via IHardwareMouseEventListener
 

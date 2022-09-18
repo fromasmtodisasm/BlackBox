@@ -113,6 +113,10 @@ struct Minecraft
 	MineDebug  debug;
 
 	IEntity*   Jack;
+
+	void       MoveSnake(Movement dir);
+	void       FakeEat();
+	void       Pause();
 };
 
 extern Minecraft* minecraft;

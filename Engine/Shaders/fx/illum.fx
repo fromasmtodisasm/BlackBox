@@ -83,7 +83,8 @@ float4 PS(VS_OUTPUT input) : SV_Target
 	//typedef float3 vec3;
 	//tmp
 	float  ao        = 1.f;
-	float3 albedo    = float3(0.5, 0, 0);
+	//float3 albedo    = float3(0.5, 0, 0);
+    float3 albedo = g_FontAtlas.Sample(g_LinearSampler, input.TC);
 	float  metalic   = 0.99;
 	float  roughness = 0.01;
 	/////////////////

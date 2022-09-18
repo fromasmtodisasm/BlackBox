@@ -1022,6 +1022,7 @@ void CXGame::ResetInputMap()
 	SetCommonKeyBindings(pMap);
 
 	//change to distinct weapons
+	#if 0
 	pMap->BindAction(ACTION_WEAPON_0, eKI_0);
 	pMap->BindAction(ACTION_WEAPON_1, eKI_1);
 	pMap->BindAction(ACTION_WEAPON_2, eKI_2);
@@ -1032,6 +1033,12 @@ void CXGame::ResetInputMap()
   pMap->BindAction(ACTION_WEAPON_7,eKI_7);
   pMap->BindAction(ACTION_WEAPON_8,eKI_8);
   */
+	#else
+	pMap->BindAction(ACTION_WEAPON_1, eKI_H);
+	pMap->BindAction(ACTION_WEAPON_2, eKI_J);
+	pMap->BindAction(ACTION_WEAPON_3, eKI_K);
+	pMap->BindAction(ACTION_WEAPON_4, eKI_L);
+	#endif
 	//Scroll up through weapons
 	pMap->BindAction(ACTION_PREV_WEAPON, eKI_PgUp);
 	//Scroll down through weapons
@@ -1069,7 +1076,7 @@ void CXGame::ResetInputMap()
 	//(should not be enabled if already in zoom mode)
 
 	//drop weapon
-	pMap->BindAction(ACTION_DROPWEAPON, eKI_J);
+	//pMap->BindAction(ACTION_DROPWEAPON, eKI_J);
 
 	//vision modes
 	//binocular/motion tracker/listening device
@@ -1285,10 +1292,10 @@ void CXGame::SetCommonKeyBindings(IActionMap* pMap)
 	pMap->BindAction(ACTION_USE, eKI_NP_Enter);
 
 	//cycle grenade
-	pMap->BindAction(ACTION_CYCLE_GRENADE, eKI_H);
+	//pMap->BindAction(ACTION_CYCLE_GRENADE, eKI_H);
 
 	//flashlight
-	pMap->BindAction(ACTION_FLASHLIGHT, eKI_L);
+	//pMap->BindAction(ACTION_FLASHLIGHT, eKI_L);
 	pMap->BindAction(ACTION_FLASHLIGHT, eKI_NP_Divide);
 
 	////run
