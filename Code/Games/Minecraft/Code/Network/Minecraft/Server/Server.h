@@ -12,155 +12,102 @@ struct ServerSlot;
 
 struct Server
 {
-
 	Server(int numPlayers);
-	~Server()
-	{
-		Stop();
-	}
+	~Server();
 
+	bool                                  Start();
+	void                                  Stop();
 
-	bool Start();
-	void Stop();
+	void                                  OnNewConnection(network::Socket& socket);
 
-	void OnNewConnection(network::Socket& socket);
+	void                                  OnDisconnect(ServerSlot* slot, const char* why);
 
-	void OnDisconnect(ServerSlot* slot, const char* why);
+	void                                  DisconnectPending();
 
-	void DisconnectPending();
+	void                                  CheckConnections();
 
-	void CheckConnections();
+	void                                  ThreadFunc();
 
-	void ThreadFunc();
-
-	void Update();
+	void                                  Update();
 
 	std::function<bool(ServerSlot* slot)> OnCreateServerSlot;
 	std::function<bool(ServerSlot* slot)> OnDisconnectServerSlot;
 
-	network::Socket m_Socket;
+	network::Socket                       m_Socket;
 
-	int NumPlayers;
+	int                                   NumPlayers;
 
-	std::vector<ServerSlot*> clients;
-
+	std::vector<ServerSlot*>              clients;
 
 	//bool m_bRunning = true;
-	std::thread m_thread;
+	std::thread                           m_thread;
 
-
-	std::mutex m_ClientsLock;
-	std::vector<ServerSlot*> m_toDisconnect;
-
+	std::mutex                            m_ClientsLock;
+	std::vector<ServerSlot*>              m_toDisconnect;
 };
 
 struct ServerSlot
 {
 	ServerSlot() = default;
-	~ServerSlot()
-	{
-	}
+	~ServerSlot();
 
 	ServerSlot(network::Socket& socket, Server* server);
 
-	void Start();
-	void Stop()
-	{
-		m_bRunning = false;
-	}
-	void Disconnect()
-	{
-		m_server->OnDisconnect(this, "wtf");
-		Stop();
-	}
+	void                              Start();
+	void                              Stop();
+	void                              Disconnect();
 
-	void Update()
-	{
-		m_Socket.Update();
-	}
+	void                              Update();
 
 	///////////////////////
-	void ThreadFunc();
+	void                              ThreadFunc();
 	///////////////////////
-	void Send(char* data, size_t len)
-	{
-		m_Socket.Send(data, len);
-	}
+	void                              Send(CStream& stm);
 	///////////////////////
-	std::function<void(char* data, size_t len)> OnData;
+	std::function<void(CStream& stm)> OnData;
 	///////////////////////
 
-
-	network::Socket m_Socket;
-	Server* m_server;
-	bool m_bRunning = true;
-	std::string name;
-	size_t id;
-	std::thread m_thread;
-
+	network::Socket                   m_Socket;
+	Server*                           m_server;
+	bool                              m_bRunning = true;
+	std::string                       name;
+	size_t                            id;
+	std::thread                       m_thread;
 };
 
 struct GameServer;
 struct GameServerSlot
 {
-	GameServerSlot(ServerSlot* slot, GameServer* parent) : slot(slot), parent(parent)
-	{
-		slot->OnData = [this](char* data, size_t len) { ProcessIncomming(data, len); };
-	}
+	GameServerSlot(ServerSlot* slot, GameServer* parent);
 
-	~GameServerSlot()
-	{
-	}
+	~GameServerSlot();
 
-	void OnMessage(Stream& stm);
-	void NotifyConnect();
-	void OnAuth(Stream& stm);
+	void        OnMessage(CStream& stm);
+	void        NotifyConnect();
+	void        OnAuth(CStream& stm);
 
-	void Send(Writer& w);
-	void ProcessIncomming(char* data, size_t len)
-	{
-		Stream stm(data, len);
-#if 1
-		network::Client message;
-		if (!stm.Read(message))
-			return;
-		switch (message)
-		{
-		case network::Client::AUTH:
-			OnAuth(stm);
-			break;
-		case network::Client::MESSAGE:
-		{
-			OnMessage(stm);
-		}
-		break;
-		default:
-			break;
-		}
-#endif
-	}
+	void        Send(CStream& w);
+	void        ProcessIncomming(CStream& stm);
 
 	std::string name;
-	size_t id = 0;
+	size_t      id = 0;
 	ServerSlot* slot;
 	GameServer* parent;
 
-	bool isReady = false;
+	bool        isReady = false;
 };
 
 struct GameServer
 {
 	GameServer();
-	void Update();
-	void LoadUsers();
-	void BroadCast(Writer& w, GameServerSlot* exclude = nullptr);
+	void                         Update();
+	void                         LoadUsers();
+	void                         BroadCast(CStream& w, GameServerSlot* exclude = nullptr);
 
-	Server server;
-	bool isStarted;
+	Server                       server;
+	bool                         isStarted;
 
 	std::vector<GameServerSlot*> m_Slots;
 
-	std::vector<User> m_Users;
+	std::vector<User>            m_Users;
 };
-
-

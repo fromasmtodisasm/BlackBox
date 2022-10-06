@@ -47,6 +47,9 @@ add_sources(
 		GameFiles/XArea.h
 		GameFiles/XVehicleSystem.cpp
 		GameFiles/CameraController.cpp
+
+		GameFiles/Snake.cpp
+		GameFiles/Snake.h
 	SOURCE_GROUP "Network"
 		Network/NetEntityInfo.cpp
 		Network/SynchedRandomSeed.cpp

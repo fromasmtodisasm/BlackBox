@@ -1,4 +1,6 @@
 ﻿#include "Server.h"
+#include "Server.h"
+#include "Server.h"
 
 
 Server::Server(int numPlayers) : NumPlayers(numPlayers) {
@@ -240,6 +242,13 @@ void ServerSlot::ThreadFunc()
 		}
 
 	}
+}
+
+///////////////////////
+
+void ServerSlot::Send(char* data, size_t len)
+{
+	m_Socket.Send(data, len);
 }
 
 // Main code

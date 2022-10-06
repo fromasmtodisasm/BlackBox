@@ -1,30 +1,38 @@
-#include <vector>
-#include <thread>
+#pragma once
+#include <chrono>
+#include <functional>
+#include <future>
+#include <memory>
 #include <mutex>
 #include <sstream>
-#include <memory>
 #include <string_view>
-#include <functional>
+#include <thread>
+#include <vector>
 
 #include <Network/Minecraft/Common/Socket.h>
 
+using msg_type = uint8;
 namespace network
 {
-	enum class Server
+	namespace msg
 	{
-		MESSAGE,
-		NAME,
-		JOIN,
-		CONNECT,
-		CONNECTED,
-		DISCONNECT
-	};
-	enum class Client
-	{
-		AUTH,
-		MESSAGE,
-	};
-}
+		enum class Server : msg_type
+		{
+			MESSAGE,
+			NAME,
+			JOIN,
+			CONNECT,
+			CONNECTED,
+			DISCONNECT
+		};
+		enum class Client : msg_type
+		{
+			AUTH,
+			MESSAGE,
+		};
+
+	} // namespace msg
+} // namespace network
 
 struct BasicStream
 {
@@ -32,17 +40,18 @@ struct BasicStream
 	using SizeType = size_t;
 
 	DataType* data;
-	SizeType len;
-	SizeType pointer = 0;
+	SizeType  len;
+	SizeType  pointer = 0;
 };
 
 #include <type_traits>
 
+#if 0
 struct Stream : BasicStream
 {
-	Stream(char* data, size_t len) : BasicStream{ data,len }
+	Stream(char* data, size_t len)
+	    : BasicStream{data, len}
 	{
-
 	}
 
 	template<class T>
@@ -64,7 +73,7 @@ struct Stream : BasicStream
 	bool Read(T& val)
 	{
 		using pointer_type = T*;
-		using value_type = T;
+		using value_type   = T;
 		if ((pointer + sizeof(value_type)) <= len)
 		{
 			val = *(pointer_type(&data[pointer]));
@@ -72,14 +81,13 @@ struct Stream : BasicStream
 			return true;
 		}
 		return false;
-
 	}
 
 	template<class T>
 	bool ReadStr(T& val)
 	{
 		using value_type = T::value_type;
-		using size_type = T::size_type;
+		using size_type  = T::size_type;
 		{
 			size_type size;
 			Read(size);
@@ -101,18 +109,16 @@ struct Stream : BasicStream
 	{
 		return ReadStr(val);
 	}
-
-
-
 };
 
 struct Writer
 {
-	size_t len = 0;
+	size_t            len = 0;
 	std::vector<char> data;
-	size_t pointer = 0;
+	size_t            pointer = 0;
 
-	Writer(size_t len) : len(len)
+	Writer(size_t len)
+	    : len(len)
 	{
 		data.resize(len);
 	}
@@ -121,7 +127,7 @@ struct Writer
 	bool Write(VAL_TYPE& val)
 	{
 		using pointer_type = VAL_TYPE*;
-		using value_type = VAL_TYPE;
+		using value_type   = VAL_TYPE;
 		if ((pointer + sizeof(value_type)) <= len)
 		{
 			*(pointer_type(&data[pointer])) = val;
@@ -129,27 +135,25 @@ struct Writer
 			return true;
 		}
 		return false;
-
 	}
 
 	template<>
 	bool Write<std::string_view>(std::string_view& val)
 	{
 		using pointer_type = std::string_view::pointer;
-		using value_type = std::string_view::value_type;
+		using value_type   = std::string_view::value_type;
 		if ((pointer + val.length()) <= len)
 		{
 			auto size = val.length();
 			Write(size);
 			strcpy(&data[pointer], val.data());
-			pointer += val.length();//+1 for \0
+			pointer += val.length(); //+1 for \0
 			return true;
 		}
 		return false;
-
 	}
 };
-
+#endif
 
 namespace network
 {
@@ -168,7 +172,7 @@ namespace network
 		}
 		bool IsReady = false;
 	};
-}
+} // namespace network
 
 struct User
 {

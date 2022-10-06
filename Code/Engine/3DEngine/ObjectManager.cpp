@@ -13,7 +13,7 @@ IStatObj* CObjectManager::LoadStatObj(const char* szFileName, const char* szGeom
 
 		if (obj)
 		{
-			CryLog("[INFO] Object [%s] already cached\n", AdjastedFileName.c_str());
+			CryComment("[INFO] Object [%s] already cached\n", AdjastedFileName.c_str());
 		}
 		else
 		{

@@ -7,7 +7,7 @@
 
 #include "PhysicalEntity.hpp"
 
-#define LOG_FUNCTION() CryLog("[EntitySystemLogging]: %s", __FUNCTION__)
+#define LOG_FUNCTION() CryComment("[EntitySystemLogging]: %s", __FUNCTION__)
 
 const int MAX_ENTITYES = 64 * 1024;
 
@@ -164,7 +164,7 @@ EntityId CEntitySystem::FindEntity(const char* name) const
 void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 {
 	LOG_FUNCTION();
-	CryLog("Try remove entity with id: %d", entity);
+	CryComment("Try remove entity with id: %d", entity);
 	m_nSpawnedEntities--;
 	auto pEntity = &m_Entities[entity];
 	m_pEntitySystemSink->OnRemove(pEntity);

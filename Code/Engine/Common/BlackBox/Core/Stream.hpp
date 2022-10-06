@@ -32,6 +32,7 @@
 #include <BlackBox/System/IStreamEngine.h>      // IStreamEngine
 #include <BlackBox/System/ISystem.hpp>          // ISystem
 #include <string>
+#include <string_view>
 
 class CStream;
 
@@ -219,6 +220,7 @@ public:
 	bool Read(unsigned char& uc);
 	bool Read(unsigned short& us);
 	bool Read(unsigned int& ui);
+	bool Read(size_t& i);
 	bool Read(char& c);
 	bool Read(short& s);
 	bool Read(int& i);
@@ -246,6 +248,7 @@ public:
 	bool Write(unsigned char uc);
 	bool Write(unsigned short us);
 	bool Write(unsigned int ui);
+	bool Write(size_t ui);
 	bool Write(char c);
 	bool Write(short c);
 	bool Write(int i);
@@ -253,6 +256,7 @@ public:
 	bool Write(bool b);
 	bool Write(const char* psz);
 	bool Write(const std::string& str);
+	bool Write(std::string_view str);
 	bool Write(CStream& stm);
 	bool Write(const Legacy::Vec3& v);
 	bool _Write(unsigned char c); // not typechecked
@@ -721,6 +725,14 @@ inline bool CStream::Read(unsigned int& ul)
 }
 
 //////////////////////////////////////////////////////////////////////
+inline bool CStream::Read(size_t& i)
+{
+	STREAM_VERIFY_TYPE_READ(12);
+	return ReadBits((BYTE*)&i, BYTES2BITS(sizeof(size_t)));
+}
+
+
+//////////////////////////////////////////////////////////////////////
 inline bool CStream::Read(char& c)
 {
 	STREAM_VERIFY_TYPE_READ(13);
@@ -842,6 +854,13 @@ inline bool CStream::Write(unsigned int ul)
 }
 
 //////////////////////////////////////////////////////////////////////
+inline bool CStream::Write(size_t ul)
+{
+	STREAM_VERIFY_TYPE_WRITE(12);
+	return WriteBits((BYTE*)&ul, BYTES2BITS(sizeof(size_t)));
+}
+
+//////////////////////////////////////////////////////////////////////
 inline bool CStream::Write(char c)
 {
 	STREAM_VERIFY_TYPE_WRITE(13);
@@ -894,6 +913,13 @@ inline bool CStream::Write(const char* psz)
 inline bool CStream::Write(const std::string& str)
 {
 	return Write(str.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////
+inline bool CStream::Write(std::string_view str)
+{
+	auto len = str.length();
+	return WriteBits((BYTE*)str.data(), BYTES2BITS(len));
 }
 
 //////////////////////////////////////////////////////////////////////

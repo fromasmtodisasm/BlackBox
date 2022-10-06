@@ -8,22 +8,22 @@ public:
 		Grass,
 	};
 
-	virtual void OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)        {}
+	virtual void                             OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity) {}
 
 	/*! This callback is called when this entity has finished spawning. The entity has been created and added to the list of entities,
  but has not been initialized yet.
 	@param e The entity that was just spawned
 */
-	virtual void OnSpawn(IEntity* e, CEntityDesc& ed)                       {}
+	virtual void                             OnSpawn(IEntity* e, CEntityDesc& ed) {}
 
 	/*! Called when an entity is being removed.
 	@param e The entity that is being removed. This entity is still fully valid.
 */
-	virtual void OnRemove(IEntity* e)                                       {}
+	virtual void                             OnRemove(IEntity* e) {}
 
-	virtual void OnBind(EntityId id, EntityId child, unsigned char param)   {}
+	virtual void                             OnBind(EntityId id, EntityId child, unsigned char param) {}
 
-	virtual void OnUnbind(EntityId id, EntityId child, unsigned char param) {}
+	virtual void                             OnUnbind(EntityId id, EntityId child, unsigned char param) {}
 
 	void                                     init();
 
@@ -120,20 +120,22 @@ private:
 
 struct Minecraft
 {
-	void       init();
+	void                init();
 
-	void       update();
+	void                update();
 
-	MineWorld  world;
-	MineUI     ui;
-	MinePlayer player;
-	MineDebug  debug;
+	MineWorld           world;
+	MineUI              ui;
+	MinePlayer          player;
+	MineDebug           debug;
 
-	IEntity*   Jack;
+	IEntity*            Jack;
 
-	void       MoveSnake(Movement dir, int id);
-	void       RestartSnake(struct Snake* snake);
-	void       Pause();
+	void                MoveSnake(Movement dir, int id);
+	void                RestartSnake(struct Snake* snake);
+	void                Pause();
+
+	std::vector<Snake*> Snakes;
 };
 
 extern Minecraft* minecraft;

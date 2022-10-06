@@ -10,6 +10,12 @@
 #include <deque>
 
 #include <BlackBox/Network/Socks.hpp>
+#include <Network/Minecraft/Client/Client.h>
+#include <Network/Minecraft/Server/Server.h>
+
+#include "Snake.h"
+
+Minecraft* minecraft;
 
 enum class GameState
 {
@@ -19,273 +25,50 @@ enum class GameState
 	Loose,
 	Won,
 };
-
-Minecraft* minecraft;
-GameState  g_CurrentGameState = GameState::InMenu;
-CRYSOCKET  g_ClientSocket     = INVALID_SOCKET;
-
-CCamera*   getCamera()
+namespace
 {
-	auto game   = dynamic_cast<CXGame*>(Env::System()->GetIGame());
-	auto client = &game->GetClient()->m_DummyClient;
-	return client->m_CameraController.RenderCamera();
-}
+	GameState     g_CurrentGameState = GameState::InMenu;
+	CRYSOCKET     g_ClientSocket     = INVALID_SOCKET;
 
-void DrawField(int size)
+	GameServer*   g_GameServer;
+
+	constexpr int DEFAULT_PORT      = 9999;
+	constexpr int DEFAULT_BUFFER    = 4096;
+	constexpr int MAX_BIND_ATTEMPTS = 8; // it will try to connect using ports from DEFAULT_PORT to DEFAULT_PORT + MAX_BIND_ATTEMPTS - 1
+
+} // namespace
+namespace
 {
-	auto color     = UCol(Legacy::Vec3(0, 1, 1));
-	//for (int i = -size / 2; size /2; i++)
-	auto step      = size / 2;
-	auto half_size = size / 2;
-	for (int i = 0; i <= size; i++)
+	CCamera* getCamera()
 	{
-		Env::AuxGeomRenderer()->DrawLine({-half_size, 0, i - step}, color, {half_size, 0, i - step}, color);
+		auto game   = dynamic_cast<CXGame*>(Env::System()->GetIGame());
+		auto client = &game->GetClient()->m_DummyClient;
+		return client->m_CameraController.RenderCamera();
 	}
-
-	for (int i = 0; i <= size; i++)
+	void DrawField(int size)
 	{
-		Env::AuxGeomRenderer()->DrawLine({i - step, 0, -half_size}, color, {i - step, 0, half_size}, color);
-	}
-
-	//for (int i = -size / 2; size /2; i++)
-	//{
-	//	Env::AuxGeomRenderer()->DrawLine(p + width * v, color, p - width * v, color);
-	//}
-}
-
-struct Snake
-{
-	enum class CellType
-	{
-		Head,
-		Body,
-		Food,
-		Last
-	};
-
-	std::array<IStatObj*, size_t(CellType::Last)> m_CellObjects;
-
-	//////////////
-	void                                          Pause()
-	{
-		m_IsPause = !m_IsPause;
-	}
-	~Snake()
-	{
-		for (auto& body : m_Body)
+		auto color     = UCol(Legacy::Vec3(0, 1, 1));
+		//for (int i = -size / 2; size /2; i++)
+		auto step      = size / 2;
+		auto half_size = size / 2;
+		for (int i = 0; i <= size; i++)
 		{
-			Env::EntitySystem()->RemoveEntity(body->GetId(), true);
-		}
-		m_Body.clear();
-		Env::EntitySystem()->RemoveEntity(m_Food->GetId(), true);
-	}
-	void GameOver()
-	{
-	}
-	void ChangeDir(Movement dir)
-	{
-		switch (dir)
-		{
-		case Movement::FORWARD:
-			if (m_PrevDir == Movement::BACKWARD) return;
-			m_Dir = Legacy::Vec3{0, 0, 1};
-			break;
-		case Movement::BACKWARD:
-			if (m_PrevDir == Movement::FORWARD) return;
-			m_Dir = Legacy::Vec3{0, 0, -1};
-			break;
-		case Movement::LEFT:
-			if (m_PrevDir == Movement::RIGHT) return;
-			m_Dir = Legacy::Vec3{1, 0, 0};
-			break;
-		case Movement::RIGHT:
-			if (m_PrevDir == Movement::LEFT) return;
-			m_Dir = Legacy::Vec3{-1, 0, 0};
-			break;
-		default:
-			break;
+			Env::AuxGeomRenderer()->DrawLine({-half_size, 0, i - step}, color, {half_size, 0, i - step}, color);
 		}
 
-		m_PrevDir = dir;
-	}
-	void Move()
-	{
-		auto Head = m_Body.front();
-		auto Tail = m_Body.back();
-		m_Body.pop_back();
-		m_Body.push_front(Tail);
-		auto Pos = Head->GetPos();
-		Pos += m_Dir;
-
-		Tail->SetPos(Pos);
-		//Tail->SetIStatObj(m_CellObjects[size_t(CellType::Head)]);
-	}
-
-	void Eat()
-	{
-		auto HeadPos = GetHead()->GetPos();
-		MoveHead();
-		auto body = CreateCell(HeadPos, CellType::Body);
-		auto it   = m_Body.begin() + 1;
-		m_Body.insert(it, body);
-
-		MakeFood();
-		m_pEatSound->Play();
-	}
-
-	void FakeEat()
-	{
-		m_FakeEat = true;
-	}
-
-	void MakeFood()
-	{
-		auto x    = rand() % 20 - 10;
-		auto z    = rand() % 20 - 10;
-		m_FoodPos = glm::ivec2(x, z);
-		m_Food->SetPos({x, 0, z});
-	}
-
-	IEntity* CreateCell(glm::vec3 pos, CellType celType)
-	{
-		auto        object = m_CellObjects[size_t(celType)];
-
-		extern int  nextEntity();
-		CEntityDesc desc(nextEntity(), 0);
-		desc.name   = "Snake";
-		auto Result = Env::EntitySystem()->SpawnEntity(desc);
-
-		Result->SetIStatObj(object);
-		Result->SetPos(pos);
-		Result->SetScale(glm::vec3(1.f));
-		Env::I3DEngine()->RegisterEntity(Result);
-
-		return Result;
-	}
-
-	void Init()
-	{
-		const char* cellObjectPaths[] = {
-		    "minecraft/Snake.obj", //head
-		    "minecraft/Grass_Block.obj",
-		    "minecraft/Food.obj",
-		    //"minecraft/Food.obj"
-		};
-		for (size_t i = 0; i < size_t(CellType::Last); i++)
+		for (int i = 0; i <= size; i++)
 		{
-			auto object      = Env::I3DEngine()->MakeObject(cellObjectPaths[i]);
-			m_CellObjects[i] = object;
+			Env::AuxGeomRenderer()->DrawLine({i - step, 0, -half_size}, color, {i - step, 0, half_size}, color);
 		}
 
-		m_Body.push_back(CreateCell({0, 0, 0}, CellType::Body));
+		//for (int i = -size / 2; size /2; i++)
+		//{
+		//	Env::AuxGeomRenderer()->DrawLine(p + width * v, color, p - width * v, color);
+		//}
+	}
+} // namespace
 
-		m_Food = CreateCell({0, 0, 0}, CellType::Food);
-		MakeFood();
-		m_pEatSound           = Env::SoundSystem()->LoadSound("minecraft/eat.mp3", 0);
-		m_pSelfIntersectSound = Env::SoundSystem()->LoadSound("minecraft/self_intersect.mp3", 0);
-
-		//m_pSetBlockSound = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
-	}
-
-	IEntity* GetHead()
-	{
-		return m_Body.front();
-	}
-	IEntity* GetTail()
-	{
-		return m_Body.back();
-	}
-	void CreateHead(Legacy::Vec3 pos)
-	{
-		auto cell = CreateCell(pos, CellType::Head);
-		m_Body.push_front(cell);
-	}
-	void MoveHead()
-	{
-		auto pos = GetHead()->GetPos();
-		GetHead()->SetPos(pos + m_Dir);
-	}
-	bool SelfIntersect()
-	{
-		auto HeadPos = GetHead()->GetPos();
-		for (auto& it = m_Body.begin() + 1; it != m_Body.end(); it++)
-		{
-			if (HeadPos == (*it)->GetPos())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	bool OutOfBounds()
-	{
-		auto p3  = GetHead()->GetPos();
-		auto p2  = glm::ivec2(p3.x, p3.z);
-		auto h_x = g_World.size_x / 2;
-		auto h_z = g_World.size_z / 2;
-		if (p2.x > h_x || p2.x < -h_x)
-			return true;
-		if (p2.y > h_z || p2.y < -h_z)
-			return true;
-		return false;
-	}
-	bool FoodUnderHead()
-	{
-		auto HeadPos = GetHead()->GetPos();
-		return glm::ivec3(HeadPos + m_Dir) == glm::ivec3(m_FoodPos.x, 0, m_FoodPos.y);
-	}
-	void Update()
-	{
-		if (m_IsPause)
-			return;
-		m_Ticked += Env::Timer()->GetRealFrameTime();
-		if (m_Ticked >= m_TickTime)
-		{
-			Tick();
-			m_Ticked = 0.f;
-		}
-	}
-	void Tick()
-	{
-		if (SelfIntersect())
-		{
-			m_pSelfIntersectSound->Play();
-			minecraft->RestartSnake(this);
-		}
-		else if (OutOfBounds())
-		{
-			m_pSelfIntersectSound->Play();
-			minecraft->RestartSnake(this);
-		}
-		else if (FoodUnderHead())
-		{
-			Eat();
-		}
-		else
-		{
-			Move();
-		}
-	}
-
-	Movement             m_PrevDir = Movement::FORWARD;
-	Legacy::Vec3         m_Dir     = Legacy::Vec3(0, 0, -1);
-	Legacy::Vec3         m_BlockSize;
-	glm::ivec2           m_HeadPos;
-	std::deque<IEntity*> m_Body;
-	bool                 m_NeedMove = false;
-	float                m_TickTime = 0.1f;
-	float                m_Ticked   = 0.f;
-	bool                 m_FakeEat  = false;
-	bool                 m_IsPause  = false;
-
-	IEntity*             m_Food;
-	glm::ivec2           m_FoodPos;
-
-	ISound*              m_pEatSound;           //     = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
-	ISound*              m_pSelfIntersectSound; //     = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
-};
-
-std::vector<Snake*> Snakes;
+int nextEntity() { return minecraft->world.nextEntity(); }
 
 namespace network
 {
@@ -298,205 +81,68 @@ namespace network
 		MakeFood,
 		Eat,
 	};
-#define DEFAULT_PORT      9999
-#define DEFAULT_BUFFER    4096
-#define MAX_BIND_ATTEMPTS 8 // it will try to connect using ports from DEFAULT_PORT to DEFAULT_PORT + MAX_BIND_ATTEMPTS - 1
 } // namespace network
-struct SnakeServer;
 
-struct SnakeServerSlot : IServerSlotSink
+struct GameClient
 {
-	SnakeServerSlot(struct SnakeServer* server, CRYSOCKET client)
-	    : m_SnakeServer(server)
-	    , m_Client(client)
+	bool Connect()
 	{
-	}
-	// Inherited via IServerSlotSink
-	virtual void OnXServerSlotConnect(const uint8_t* pbAuthorizationID, unsigned int uiAuthorizationSize) override
-	{
-	}
-	virtual void OnXServerSlotDisconnect(const char* szCause) override
-	{
-	}
-	// When client connected, create his on server
-	virtual void OnContextReady(CStream& stm) override
-	{
-	}
-	virtual void OnData(CStream& stm) override
-	{
-		Sock::send(m_Client, (const char*)stm.GetPtr(), stm.GetSize(), 0);
-	}
-	virtual void OnXPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID, unsigned int uiGlobalIDSize) override
-	{
-	}
-	bool Update()
-	{
-#define DEFAULT_BUFLEN 512
-		int  iResult;
-		char recvbuf[DEFAULT_BUFLEN];
-		int  recvbuflen = DEFAULT_BUFLEN;
-		// Receive until the peer shuts down the connection
-		do {
-			iResult = recv(m_Client, recvbuf, recvbuflen, 0);
-			if (iResult > 0)
+		if (m_pClient->Connect(server))
+		{
 			{
-				printf("Bytes received: %d\n", iResult);
-
-				// Echo the buffer back to the sender
-				int iSendResult = send(m_Client, recvbuf, iResult, 0);
-				if (iSendResult == SOCKET_ERROR)
+				m_pClient->OnData = [this](CStream& stm)
 				{
-					printf("send failed with error: %d\n", WSAGetLastError());
-					closesocket(m_Client);
-					WSACleanup();
-					return 1;
-				}
-				printf("Bytes sent: %d\n", iSendResult);
-				break;
-			}
-			else if (iResult == 0)
-				printf("Connection closing...\n");
-			else
-			{
-				printf("recv failed with error: %d\n", WSAGetLastError());
-				closesocket(m_Client);
-				WSACleanup();
-				return 1;
-			}
+					ProcessIncomming(stm);
+				};
+				m_pClient->OnDisconnect = [this]
+				{
+					//m_state = NotConnected;
+					CryLog("Disconnection occur\n");
+				};
+				m_pClient->Start();
 
-		} while (iResult > 0);
-		return true;
+				//Auth(cd->mail, cd->password);
+				return true;
+			}
+		}
+		return false;
+	}
+	void SendInputToServer()
+	{
+	}
+	void ProcessIncomming(CStream& stm)
+	{
+#define HANDLE_MESSAGE(m, fn)     \
+	case network::msg::Server::m: \
+		(fn(stm));                \
+		break;
+		auto EmtpyHandle = [](CStream& stm)
+		{ assert(0); };
+
+		msg_type message;
+		if (!stm.Read(message))
+			return;
+		switch (network::msg::Server(message))
+		{
+			//HANDLE_MESSAGE(MESSAGE, OnMessage);
+			HANDLE_MESSAGE(NAME, EmtpyHandle);
+			HANDLE_MESSAGE(JOIN, EmtpyHandle);
+			//HANDLE_MESSAGE(CONNECT, OnConnect);
+			//HANDLE_MESSAGE(CONNECTED, [this](Stream& stm)
+			//               { this->m_state = Chat::Connected; });
+			//HANDLE_MESSAGE(DISCONNECT, OnDisconnect);
+		default:
+			break;
+		}
 	}
 
-	SnakeServer* m_SnakeServer;
-	CRYSOCKET    m_Client;
+	std::shared_ptr<network::Client> m_pClient;
+
+	std::string                      server = "127.0.0.1";
+	std::string                      port   = "27015";
 };
 
-struct SnakeServer
-{
-	bool Start()
-	{
-		m_bAcceptClients = true;
-		CRYSOCKADDR_IN local;
-
-#ifdef BB_PLATFORM_WINAPI
-		WSADATA wsd;
-		if (WSAStartup(MAKEWORD(2, 2), &wsd) != 0)
-		{
-			Env::Log()->LogError("[RemoteKeyboard] Failed to load Winsock!\n");
-			return false;
-		}
-#endif
-
-		m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (m_socket == CRY_SOCKET_ERROR)
-		{
-			CryLog("Remote console FAILED. socket() => CRY_SOCKET_ERROR");
-			return false;
-		}
-
-		//auto nRet = ioctlsocket(m_socket, FIONBIO, (unsigned long*)&ul);
-		//if (nRet == CRY_SOCKET_ERROR)
-		//{
-		//	CryLog("Failed to put the socket into non-blocking mode. ioctlsocket() => CRY_SOCKET_ERROR");
-		//	return false;
-		//}
-
-		local.sin_addr.s_addr                    = htonl(INADDR_ANY);
-		local.sin_family                         = AF_INET;
-
-		int                port                  = DEFAULT_PORT;
-		int                maxAttempts           = MAX_BIND_ATTEMPTS;
-
-		// Get the port from the commandline if provided.
-		const ICmdLineArg* pRemoteConsolePortArg = Env::System()->GetICmdLine()->FindArg(ECmdLineArgType::eCLAT_Pre, "remoteConsolePort");
-		if (pRemoteConsolePortArg != nullptr)
-		{
-			// If a valid port is retrieved, only one bind attempt will be made.
-			// Otherwise, use the default values.
-			port = pRemoteConsolePortArg->GetIValue();
-			if (port <= 0)
-			{
-				port = DEFAULT_PORT;
-			}
-			else
-			{
-				maxAttempts = 1;
-			}
-		}
-
-		bool bindOk = false;
-		for (int i = 0; i < maxAttempts; ++i)
-		{
-			local.sin_port   = htons(port + i);
-			const int result = Sock::bind(m_socket, (CRYSOCKADDR*)&local, sizeof(local));
-			if (Sock::TranslateSocketError(result) == Sock::eCSE_NO_ERROR)
-			{
-				bindOk = true;
-				break;
-			}
-		}
-		if (!bindOk)
-		{
-			CryLog("Remote console FAILED. bind() => CRY_SOCKET_ERROR. Faild ports from %d to %d", port, port + maxAttempts - 1);
-			return false;
-		}
-
-		Sock::listen(m_socket, 8);
-
-		CRYSOCKADDR_IN saIn;
-		CRYSOCKLEN_T   slen = sizeof(saIn);
-		if (Sock::getsockname(m_socket, (CRYSOCKADDR*)&saIn, &slen) == 0)
-		{
-			CryLog("Remote console listening on: %d\n", ntohs(saIn.sin_port));
-		}
-		else
-		{
-			CryLog("Remote console FAILED to listen on: %d\n", ntohs(saIn.sin_port));
-		}
-
-		IsStarted = true;
-		return true;
-	}
-	void Stop()
-	{
-		IsStarted = false;
-	}
-	void Update()
-	{
-		CRYSOCKLEN_T   iAddrSize;
-		CRYSOCKET      sClient;
-		CRYSOCKADDR_IN client;
-		while (m_bAcceptClients)
-		{
-			iAddrSize = sizeof(client);
-			sClient   = Sock::accept(m_socket, (CRYSOCKADDR*)&client, &iAddrSize);
-			if (!m_bAcceptClients || sClient == CRY_INVALID_SOCKET)
-			{
-				break;
-			}
-
-			auto pClient = new SnakeServerSlot(this, sClient);
-			m_clients.push_back(pClient);
-		}
-		for (auto& client : m_clients)
-		{
-			client->Update();
-		}
-	}
-
-	typedef std::vector<SnakeServerSlot*> TClients;
-	TClients                              m_clients;
-	CRYSOCKET                             m_socket;
-	CStream                               m_eventBuffer;
-	volatile bool                         m_bAcceptClients;
-	friend struct Snake;
-	bool IsStarted = false;
-};
-
-SnakeServer g_SnakeServer;
-
-void        Minecraft::Pause()
+void Minecraft::Pause()
 {
 	//g_Snake->Pause();
 }
@@ -522,8 +168,6 @@ enum class EEntityClass : int
 	Character
 
 };
-
-int  nextEntity() { return minecraft->world.nextEntity(); }
 
 AABB entityWorldAABB(IEntity* entity)
 {
@@ -599,62 +243,6 @@ void MineWorld::init()
 		};
 		m_pMtlBox   = Env::I3DEngine()->MakeObject(objects[3]);
 		auto camera = Env::System()->GetViewCamera();
-#if 0
-		auto box    = SpawnBox({5, 5, 5}, {0, 0, 0});
-		Env::I3DEngine()->RegisterEntity(box);
-#endif
-#if 0
-		{
-			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
-
-			CEntityDesc desc(nextEntity(), 0);
-			desc.name  = "Hero";
-			auto* Jack = Env::EntitySystem()->SpawnEntity(desc);
-
-			Jack->SetIStatObj(object);
-			Jack->SetPos({-0, 40, -5});
-			Jack->SetScale(glm::vec3(0.01f));
-			Jack->SetAngles({-90, 0, 0});
-			Jack->Physicalize();
-			Env::I3DEngine()->RegisterEntity(Jack);
-		}
-
-		{
-			auto        object = Env::I3DEngine()->MakeObject(objects[0]);
-
-			//auto Jack = Env::I3DEngine()->MakeObject();
-			//auto        Jack = types[0];
-
-			CEntityDesc desc(nextEntity(), 0);
-			desc.name       = "Hero";
-			minecraft->Jack = Env::EntitySystem()->SpawnEntity(desc);
-			auto* Jack      = minecraft->Jack;
-
-			Jack->SetIStatObj(object);
-			Jack->SetPos({-5, 50, -5});
-			Jack->SetScale(glm::vec3(0.02f));
-			Jack->SetAngles({45, 90, 0});
-			Jack->Physicalize();
-			Env::I3DEngine()->RegisterEntity(Jack);
-		}
-#endif
-		//{
-		//	auto object = types[0];
-		//	//Env::I3DEngine()->MakeObject(objects[0]);
-
-		//	//auto Jack = Env::I3DEngine()->MakeObject();
-		//	//auto        Jack = types[0];
-
-		//	CEntityDesc desc(nextEntity(), 0);
-		//	desc.name       = "Hero";
-		//	auto Jack      = Env::EntitySystem()->SpawnEntity(desc);
-
-		//	Jack->SetIStatObj(object);
-		//	Jack->SetPos({-5, 20, -5});
-		//	Jack->SetScale(glm::vec3(3.f));
-		//	Jack->SetAngles({45, 90, 0});
-		//	Env::I3DEngine()->RegisterEntity(Jack);
-		//}
 	}
 
 	//Env::Console()->ExecuteString("load_level minecraft");
@@ -703,7 +291,10 @@ bool SendStream(CStream& stm, CRYSOCKET s)
 	return false;
 }
 
-bool ClientConnect(const char* ip);
+bool ClientConnect(const char* ip)
+{
+	return true;
+}
 
 void SendClientConnect()
 {
@@ -714,11 +305,13 @@ void StartGame()
 {
 	if (GetGame()->StartupClient())
 	{
-		if (!g_SnakeServer.Start())
+#if 1
+		if (!g_GameServer->isStarted)
 		{
 			CryError("Failed to start server");
 			return;
 		}
+#endif
 		if (!ClientConnect("127.0.0.1"))
 		{
 			CryError("Failed to connect to server");
@@ -729,75 +322,6 @@ void StartGame()
 }
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT   "9999"
-bool ClientConnect(const char* ip)
-{
-	WSADATA          wsaData;
-	struct addrinfo *result = NULL,
-	                *ptr    = NULL,
-	                hints;
-	const char* sendbuf = "this is a test";
-	//char        recvbuf[DEFAULT_BUFLEN];
-	int         iResult;
-	int         recvbuflen = DEFAULT_BUFLEN;
-
-	// Initialize Winsock
-	iResult                = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != 0)
-	{
-		CryError("WSAStartup failed with error: %d\n", iResult);
-	}
-
-	ZeroMemory(&hints, sizeof(hints));
-	hints.ai_family   = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_protocol = IPPROTO_TCP;
-
-	// Resolve the server address and port
-	iResult           = getaddrinfo(ip, DEFAULT_PORT, &hints, &result);
-	if (iResult != 0)
-	{
-		CryError("getaddrinfo failed with error: %d\n", iResult);
-		WSACleanup();
-		return false;
-	}
-	// Attempt to connect to an address until one succeeds
-	for (ptr = result; ptr != NULL; ptr = ptr->ai_next)
-	{
-		// Create a SOCKET for connecting to server
-		g_ClientSocket = socket(ptr->ai_family, ptr->ai_socktype,
-		                        ptr->ai_protocol);
-		if (g_ClientSocket == INVALID_SOCKET)
-		{
-			CryError("socket failed with error: %ld\n", WSAGetLastError());
-			WSACleanup();
-			return false;
-		}
-
-		// Connect to server.
-		iResult = connect(g_ClientSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
-		if (iResult == SOCKET_ERROR)
-		{
-			closesocket(g_ClientSocket);
-			g_ClientSocket = INVALID_SOCKET;
-			continue;
-		}
-		break;
-	}
-
-	freeaddrinfo(result);
-
-	if (g_ClientSocket == INVALID_SOCKET)
-	{
-		CryError("Unable to connect to server!\n");
-		WSACleanup();
-		return false;
-	}
-	return true;
-}
-
-void UpdateClientNetwork()
-{
-}
 
 void StopGame()
 {
@@ -816,7 +340,7 @@ void Minecraft::init()
 	player.init();
 	debug.init();
 
-#if 0
+#if 1
 	auto player = new Snake;
 	player->Init();
 	Snakes.push_back(player);
@@ -851,6 +375,7 @@ void Minecraft::init()
 				    g_CurrentGameState = GameState::InGame;
 		    }
 	    });
+	g_GameServer = new GameServer;
 }
 
 void InMenuUpdate()
@@ -891,16 +416,18 @@ void InGameUpdate()
 	CStream NetworkStream;
 	ReadNetwork(NetworkStream);
 
-	if (g_SnakeServer.IsStarted)
+#if 1
+	if (g_GameServer->isStarted)
 	{
-		g_SnakeServer.Update();
+		g_GameServer->Update();
 	}
+#endif
 
 	getCamera()->SetPos({2, 25, 20});
 	getCamera()->SetAngles({-55, -111, 0});
 	getCamera()->updateCameraVectors();
 	DrawField(g_World.size_x);
-	for (auto& snake : Snakes)
+	for (auto& snake : minecraft->Snakes)
 	{
 		snake->Update();
 	}
