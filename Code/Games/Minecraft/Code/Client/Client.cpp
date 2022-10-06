@@ -7,6 +7,7 @@
 #define ROLL  (0)
 
 #include "../GameFiles/Minecraft.h"
+#include <algorithm>
 
 std::vector<Legacy::Vec3> lineBuffer;
 
@@ -41,6 +42,7 @@ CClient::CClient(CXGame* pGame)
 
 CClient::~CClient()
 {
+	Env::Renderer()->UnregisterCallbackClient(this);
 #if 0
 	SAFE_RELEASE(m_CrossHair);
 #endif
@@ -92,19 +94,19 @@ void CClient::Update()
 #pragma region Snake move
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_1))
 	{
-		minecraft->MoveSnake(Movement::LEFT);
+		minecraft->MoveSnake(Movement::LEFT, 0);
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_4))
 	{
-		minecraft->MoveSnake(Movement::RIGHT);
+		minecraft->MoveSnake(Movement::RIGHT, 0);
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_2))
 	{
-		minecraft->MoveSnake(Movement::FORWARD);
+		minecraft->MoveSnake(Movement::FORWARD, 0);
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_3))
 	{
-		minecraft->MoveSnake(Movement::BACKWARD);
+		minecraft->MoveSnake(Movement::BACKWARD, 0);
 	}
 #pragma endregion
 
@@ -133,7 +135,6 @@ void CClient::Update()
 		auto pos      = m_CameraController.CurrentCamera()->GetPos();
 		//if (CamPos.y <= FloorLevel) m_CamSpeed = 5.f;
 		m_JumpPressed = true;
-		minecraft->FakeEat();
 		//m_CameraController.CurrentCamera()->SetPos(pos + Legacy::Vec3(0, 0.01,0));
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_FIRE0))
@@ -421,6 +422,11 @@ void CClient::OnLoadScene()
 	//m_CameraController.AddCamera(new CCamera(/*Legacy::Vec3(10,10,10)*/));
 	//m_CameraController.SetRenderCamera(1);
 	m_CameraController.InitCVars();
+}
+
+void CClient::OnUnloadScene()
+{
+	m_CameraController.RemoveCameras();
 }
 
 void CClient::DrawAux()

@@ -131,8 +131,8 @@ struct Minecraft
 
 	IEntity*   Jack;
 
-	void       MoveSnake(Movement dir);
-	void       FakeEat();
+	void       MoveSnake(Movement dir, int id);
+	void       RestartSnake(struct Snake* snake);
 	void       Pause();
 };
 

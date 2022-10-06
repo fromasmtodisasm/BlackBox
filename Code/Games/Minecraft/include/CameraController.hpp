@@ -17,6 +17,10 @@ public:
 public:
 	~CCameraController()
 	{
+		RemoveCameras();
+	}
+	void RemoveCameras()
+	{
 		for (int i = 0; i < m_Camera.size(); i++)
 		{
 			delete m_Camera[i];
@@ -92,9 +96,7 @@ public:
 #endif
 	}
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	void ProcessKeyboard(Movement direction, float deltaTime, float value = 1.0f);
-	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
 	{
@@ -114,64 +116,6 @@ public:
 
 		// Update Front, Right and Up Vectors using the updated Eular angles
 		CurrentCamera()->updateCameraVectors();
-	}
-
-	void update(float deltatime)
-	{
-		if (Env::Get()->IsDedicated())
-		{
-			return;
-		}
-
-		//ImGui
-		// #unreferenced
-		//float mult			 = m_keys.find(eKI_LShift) != m_keys.end() ? 3.f : 1.f;
-		// #unreferenced
-		//float rotation_speed = 15.f * deltatime * mult;
-		//float rotSpeed = deltatime * 5.f;//m_rotAngle;
-		static Legacy::Vec3 impulse = Legacy::Vec3(0.f, 10.f, 0.f);
-		// #unreferenced
-		//float move_speed	= deltatime * mult;
-		for (auto& key : m_keys)
-		{
-			switch (key)
-			{
-			case eKI_Space:
-				velocity += impulse;
-				break;
-			case eKI_W:
-				//ProcessKeyboard(Movement::FORWARD, move_speed);
-				break;
-			case eKI_S:
-				//ProcessKeyboard(Movement::BACKWARD, move_speed);
-				break;
-			case eKI_A:
-				//ProcessKeyboard(Movement::LEFT, move_speed);
-				break;
-			case eKI_D:
-				//ProcessKeyboard(Movement::RIGHT, move_speed);
-				break;
-			case eKI_Up:
-				//ProcessMouseMovement(0.f, rotation_speed);
-				break;
-			case eKI_Down:
-				//ProcessMouseMovement(0.f, -rotation_speed);
-				break;
-			case eKI_Left:
-				//ProcessMouseMovement(-rotation_speed, 0.f);
-				break;
-			case eKI_Right:
-				//ProcessMouseMovement(rotation_speed, 0.f);
-				break;
-			default:; //GameObject::update(deltatime);
-			}
-		}
-#if 0
-    GetISystem()->GetIScriptSystem()->BeginCall("Player", "Update");
-    GetISystem()->GetIScriptSystem()->PushFuncParam(m_pScript);
-    GetISystem()->GetIScriptSystem()->PushFuncParam(deltatime);
-    GetISystem()->GetIScriptSystem()->EndCall();
-#endif
 	}
 
 	CCamera* CurrentCamera()

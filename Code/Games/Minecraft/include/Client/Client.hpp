@@ -80,6 +80,7 @@ public:
 	void         TriggerChangeCameraMode(float fValue, XActivationEvent ae);
 
 	void         OnLoadScene();
+	void         OnUnloadScene();
 
 	BEGIN_INPUTACTIONMAP()
 	REGISTER_INPUTACTIONMAP(ACTION_MOVE_LEFT, TriggerMoveLeft)

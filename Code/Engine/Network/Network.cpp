@@ -147,6 +147,7 @@ public:
 	}
 	bool Init()
 	{
+		#if 0
 		if (SDLNet_ResolveHost(&m_IP, nullptr, m_nPort) == -1)
 		{
 			Env::Log()->Log("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
@@ -160,6 +161,7 @@ public:
 			return false;
 		}
 		Env::Log()->Log("Conntection Opened");
+		#endif
 		return true;
 	}
 	// Inherited via IServer
@@ -170,6 +172,7 @@ public:
 
 		while (true)
 		{
+			break;
 			new_tcpsock = SDLNet_TCP_Accept(m_Socket);
 			if (!new_tcpsock)
 			{

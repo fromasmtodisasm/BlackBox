@@ -39,7 +39,7 @@ function(PrepareVcpkg)
 			FetchContent_Declare(
 			  vcpkg  
 			  GIT_REPOSITORY https://github.com/fromasmtodisasm/vcpkg.git
-			  GIT_TAG        2022.01.01
+			  GIT_TAG        2022.08.15
 			  SOURCE_DIR     ${BLACKBOX_DIR}/vcpkg
 			)
 

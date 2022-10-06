@@ -1034,10 +1034,12 @@ void CXGame::ResetInputMap()
   pMap->BindAction(ACTION_WEAPON_8,eKI_8);
   */
 	#else
-	pMap->BindAction(ACTION_WEAPON_1, eKI_H);
-	pMap->BindAction(ACTION_WEAPON_2, eKI_J);
-	pMap->BindAction(ACTION_WEAPON_3, eKI_K);
-	pMap->BindAction(ACTION_WEAPON_4, eKI_L);
+	pMap->BindAction(ACTION_WEAPON_1, eKI_H); pMap->BindAction(ACTION_WEAPON_1, eKI_XI_DPadLeft);
+	pMap->BindAction(ACTION_WEAPON_2, eKI_J); pMap->BindAction(ACTION_WEAPON_2, eKI_XI_DPadDown);
+	pMap->BindAction(ACTION_WEAPON_3, eKI_K); pMap->BindAction(ACTION_WEAPON_3, eKI_XI_DPadUp);
+	pMap->BindAction(ACTION_WEAPON_4, eKI_L); pMap->BindAction(ACTION_WEAPON_4, eKI_XI_DPadRight);
+
+	pMap->BindAction(ACTION_USE, eKI_XI_Back);
 	#endif
 	//Scroll up through weapons
 	pMap->BindAction(ACTION_PREV_WEAPON, eKI_PgUp);
@@ -1240,20 +1242,20 @@ void CXGame::SetCommonKeyBindings(IActionMap* pMap)
 	//eKI_Minus,
 	pMap->BindAction(ACTION_MOVE_LEFT, eKI_A);
 	pMap->BindAction(ACTION_MOVE_LEFT, eKI_NP_4);
-	pMap->BindAction(ACTION_MOVE_LEFT, eKI_XI_DPadLeft);
+	//pMap->BindAction(ACTION_MOVE_LEFT, eKI_XI_DPadLeft);
 	pMap->BindAction(ACTION_MOVE_LEFT, eKI_XI_ThumbRLeft);
 
 	//strafe right
 	pMap->BindAction(ACTION_MOVE_RIGHT, eKI_D);
 	pMap->BindAction(ACTION_MOVE_RIGHT, eKI_NP_6);
-	pMap->BindAction(ACTION_MOVE_RIGHT, eKI_XI_DPadRight);
+	//pMap->BindAction(ACTION_MOVE_RIGHT, eKI_XI_DPadRight);
 	pMap->BindAction(ACTION_MOVE_RIGHT, eKI_XI_ThumbRRight);
 
 	//run forward
 	pMap->BindAction(ACTION_MOVE_FORWARD, eKI_W);
 	pMap->BindAction(ACTION_MOVE_FORWARD, eKI_NP_8);
 	pMap->BindAction(ACTION_MOVE_FORWARD, eKI_NP_5);
-	pMap->BindAction(ACTION_MOVE_FORWARD, eKI_XI_DPadUp);
+	//pMap->BindAction(ACTION_MOVE_FORWARD, eKI_XI_DPadUp);
 	pMap->BindAction(ACTION_MOVE_FORWARD, eKI_XI_TriggerLBtn);
 
 #if 0
@@ -1265,7 +1267,7 @@ void CXGame::SetCommonKeyBindings(IActionMap* pMap)
 	pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_S);
 	pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_NP_5);
 	pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_NP_2);
-	pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_XI_DPadDown);
+	//pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_XI_DPadDown);
 	pMap->BindAction(ACTION_MOVE_BACKWARD, eKI_XI_TriggerRBtn);
 
 	//look around
