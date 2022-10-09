@@ -94,19 +94,19 @@ void CClient::Update()
 #pragma region Snake move
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_1))
 	{
-		minecraft->MoveSnake(Movement::LEFT, 0);
+		minecraft->MoveLocalSnake(Movement::LEFT);
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_4))
 	{
-		minecraft->MoveSnake(Movement::RIGHT, 0);
+		minecraft->MoveLocalSnake(Movement::RIGHT);
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_2))
 	{
-		minecraft->MoveSnake(Movement::FORWARD, 0);
+		minecraft->MoveLocalSnake(Movement::FORWARD);
 	}
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_WEAPON_3))
 	{
-		minecraft->MoveSnake(Movement::BACKWARD, 0);
+		minecraft->MoveLocalSnake(Movement::BACKWARD);
 	}
 #pragma endregion
 
@@ -114,7 +114,7 @@ void CClient::Update()
 	{
 		minecraft->Pause();
 	}
-	
+
 	if (m_PlayerProcessingCmd.CheckAction(ACTION_TURNLR))
 	{
 		auto ang = m_PlayerProcessingCmd.GetDeltaAngles()[YAW];
@@ -415,7 +415,7 @@ void CClient::TriggerChangeCameraMode(float fValue, XActivationEvent ae)
 
 void CClient::OnLoadScene()
 {
-	auto cam  = new CCamera(Legacy::Vec3(8.50, 22, 17.11));
+	auto cam = new CCamera(Legacy::Vec3(8.50, 22, 17.11));
 	cam->SetAngles({-46.12, -112.28, 0});
 	cam->mode = CCamera::Mode::FLY;
 	m_CameraController.AddCamera(cam);
@@ -441,7 +441,7 @@ void CClient::DrawAux()
 	const UCol col(255, 255, 255, 255);
 	auto       render = Env::Renderer()->GetIRenderAuxGeom();
 	//render->DrawLine({-10, 10, -5}, col, {10, 10, -5}, col);
-	float x = 40, y = 0, z = -40;
+	float      x = 40, y = 0, z = -40;
 	{
 		const UCol col1(50, 125, 0, 100);
 		//draw_quad({-1, -1, z}, {-1, 1, z}, {1, 1, z}, {1, -1, z}, col1);

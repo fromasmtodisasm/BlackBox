@@ -1,4 +1,7 @@
 #include <glm/gtx/hash.hpp>
+#include <array>
+
+#include <Network/Minecraft/Server/Server.h>
 
 class MineWorld : public IEntitySystemSink
 {
@@ -118,24 +121,86 @@ private:
 	unsigned crossHairTexture = 0;
 };
 
+struct Snake;
+struct GameClient;
+struct Player
+{
+	size_t                 id = 0;
+	string                 name;
+	std::shared_ptr<Snake> snake;
+};
+
 struct Minecraft
 {
-	void                init();
+	void       init();
 
-	void                update();
+	void       update();
 
-	MineWorld           world;
-	MineUI              ui;
-	MinePlayer          player;
-	MineDebug           debug;
+	MineWorld  world;
+	MineUI     ui;
+	MinePlayer player;
+	MineDebug  debug;
 
-	IEntity*            Jack;
+	IEntity*   Jack;
 
-	void                MoveSnake(Movement dir, int id);
-	void                RestartSnake(struct Snake* snake);
-	void                Pause();
+	void       MoveSnake(Movement dir, int id);
+	void       MoveLocalSnake(Movement dir);
+	void       RestartSnake(struct Snake* snake);
+	void       Pause();
 
-	std::vector<Snake*> Snakes;
+	void       AddPlayer(size_t id, const string& name, glm::ivec2 pos);
+	void       RemovePlayer(size_t id, bool now);
+
+	Player     GetPlayer(size_t id);
+	Player     GetLocalPlayer();
+	//////////////////////////////
+	bool       IsServer();
+	//////////////////////////////
+	enum class CellType
+	{
+		Head,
+		Body,
+		Food,
+		Last
+	};
+
+	std::array<IStatObj*, size_t(CellType::Last)> m_CellObjects;
+
+	IEntity*                                      CreateCell(glm::vec3 pos, CellType celType)
+	{
+		auto        object = m_CellObjects[size_t(celType)];
+
+		extern int  nextEntity();
+		CEntityDesc desc(nextEntity(), 0);
+		desc.name   = "Snake";
+		auto Result = Env::EntitySystem()->SpawnEntity(desc);
+
+		Result->SetIStatObj(object);
+		Result->SetPos(pos);
+		Result->SetScale(glm::vec3(1.f));
+		Env::I3DEngine()->RegisterEntity(Result);
+
+		return Result;
+	}
+	void                     MakeFood();
+	void                     Eat(size_t id);
+	////////////////////////////////////////////////////
+	bool                     StartupServer(bool listen, const char* szName = NULL);
+	void                     ShutdownServer();
+	GameServer&              Server() { return *m_pServer; }
+	bool                     ClientConnect(const char* ip);
+	////////////////////////////////////////////////////
+	CXGame*                  m_pGame      = nullptr;
+	GameServer*              m_pServer    = nullptr;
+	GameClient*              m_GameClient = nullptr;
+
+	std::map<size_t, Player> Players;
+	std::vector<size_t>      PlayersToDestruct;
+
+	size_t                   localPlayerId = 0;
+
+	IEntity*                 m_Food;
+	glm::ivec2               m_FoodPos{0, 0};
 };
 
 extern Minecraft* minecraft;

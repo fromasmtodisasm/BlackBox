@@ -12,9 +12,10 @@ namespace network
 {
 	struct Client
 	{
+		static constexpr std::string_view DEFAULT_PORT = "27015";
 		Client();
 		~Client();
-		bool                            Connect(std::string_view address, std::string_view port = DEFAULT_SERVERPORT_STR);
+		bool                            Connect(std::string_view address, std::string_view port = DEFAULT_PORT);
 		void                            Disconnect();
 		void                            Update();
 		void                            Send(CStream& stm);

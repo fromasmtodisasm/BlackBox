@@ -67,7 +67,7 @@ add_sources(
        #Network/Minecraft/Common/#imgui_impl_dx11.cpp
        #Network/Minecraft/Common/#imgui_impl_sdl.cpp
        Network/Minecraft/Common/#main.cpp
-       Network/Minecraft/Common/Socket.cpp
+       #Network/Minecraft/Common/Socket.cpp
        Network/Minecraft/Common/Socket.h
 	SOURCE_GROUP "Network\\\\Minecraft\\\\Server"
         Network/Minecraft/Server/imgui.ini

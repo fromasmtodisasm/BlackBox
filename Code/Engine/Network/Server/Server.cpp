@@ -35,7 +35,6 @@ namespace std
 	}
 } // namespace std
 
-#if 0
 Server::Server(int numPlayers)
     : NumPlayers(numPlayers)
 {
@@ -171,33 +170,56 @@ void ServerSlot::Send(CStream& stm)
 {
 	m_Socket.Send((char*)stm.GetPtr(), stm.GetSize() / 8);
 }
-#endif
 //////////////////////////////////////
-GameServer::GameServer(class Minecraft* pGame, WORD nPort, const char* szName, bool listen)
+GameServer::GameServer()
+    : m_NetworkServer(10)
 {
-	m_bListen  = listen;
-	// create the server
-	m_pIServer = ((CXGame*)(Env::System()->GetIGame()))->CreateServer(this, nPort, m_bListen);
-	if (!m_pIServer)
-	{
-		CryLog("!!---------Server creation failed---------!!");
-		m_bOK = false;
+	isStarted = m_NetworkServer.Start();
+	if (!isStarted)
 		return;
-	}
-	else
-		m_bOK = true;
-
 	LoadUsers();
+	m_NetworkServer.OnCreateServerSlot = [this](ServerSlot* slot)
+	{
+		auto gs = new GameServerSlot(slot, this);
+		gs->id  = m_Slots.size();
+		m_Slots.push_back(gs);
+
+		return true;
+	};
+	m_NetworkServer.OnDisconnectServerSlot = [this](ServerSlot* slot)
+	{
+		if (auto it = std::find_if(m_Slots.begin(), m_Slots.end(), [slot](GameServerSlot* other)
+		                           {
+			if (other->slot == slot)
+			{
+				return true;
+			}
+			return false; });
+		    it != m_Slots.end())
+		{
+			auto    msg = network::msg::Server::DISCONNECT;
+			auto    id  = (*it)->id;
+			CStream stm;
+			stm.Write(0);
+			stm.Write(uint8(msg));
+			stm.Write(id);
+			BroadCast(stm, (*it));
+
+			delete *it;
+			m_Slots.erase(it);
+		}
+		return true;
+	};
 }
 
 void GameServer::Update()
 {
-	m_pIServer->Update(0);
+	server.Update();
 
 	for (auto& player : minecraft->Players)
 	{
 		player.second.snake->Update();
-
+		
 		CStream stm;
 		auto    msg = network::msg::Server::UPDATE_SNAKE;
 		stm.Write(msg_type(msg));
@@ -241,11 +263,12 @@ void GameServer::LoadUsers()
 }
 
 //////////////////////////////////////
-GameServerSlot::GameServerSlot(GameServer* parent, IServerSlot* slot)
-    : m_pISSlot(slot)
-    , m_pParent(parent)
+GameServerSlot::GameServerSlot(ServerSlot* slot, GameServer* parent)
+    : slot(slot)
+    , parent(parent)
 {
-	slot->Advise(this);
+	slot->OnData = [this](CStream& stm)
+	{ ProcessIncomming(stm); };
 }
 GameServerSlot::~GameServerSlot()
 {
@@ -277,11 +300,11 @@ void GameServerSlot::NotifyConnect(bool sendOtherSlots)
 		PrepareConnect(wr, id, name);
 		wr.Write(0.f);
 		wr.Write(0.f);
-		m_pParent->BroadCast(wr, nullptr);
+		parent->BroadCast(wr, nullptr);
 	}
 	if (sendOtherSlots)
 	{
-		for (auto s : m_pParent->m_Slots)
+		for (auto s : parent->m_Slots)
 		{
 			if (s == this) continue;
 			auto    id   = s->id;
@@ -310,7 +333,7 @@ void GameServerSlot::OnAuth(CStream& stm)
 
 	bool isTestUser = false;
 
-	if (auto it = std::find_if(m_pParent->m_Users.begin(), m_pParent->m_Users.end(),
+	if (auto it = std::find_if(parent->m_Users.begin(), parent->m_Users.end(),
 	                           [&](const User& u)
 	                           {
 		                           if (u.mail == "test@mail.com")
@@ -323,7 +346,7 @@ void GameServerSlot::OnAuth(CStream& stm)
 			                           return true;
 		                           return false;
 	                           });
-	    it != m_pParent->m_Users.end())
+	    it != parent->m_Users.end())
 	{
 		CryLog("Client auth:\n\tmail: %s\n\tpassword: %s\n", mail.data(), password.data());
 		if (isTestUser || it->password == password)
@@ -336,18 +359,18 @@ void GameServerSlot::OnAuth(CStream& stm)
 		else
 		{
 			CryLog("Wrong password or email\n");
-			m_pISSlot->Disconnect("Wrong password or email\n");
+			slot->Disconnect();
 		}
 	}
 	else
 	{
 		CryLog("Wrong password or email\n");
-		m_pISSlot->Disconnect("Wrong password or email\n");
+		slot->Disconnect();
 	}
 }
 void GameServerSlot::Send(CStream& stm)
 {
-	m_pISSlot->SendReliable(stm);
+	slot->Send(stm);
 }
 void GameServerSlot::ProcessIncomming(CStream& stm)
 {
@@ -396,7 +419,8 @@ void GameServerSlot::ChangeDir(CStream& stm)
 	nstm.Write(id);
 	nstm.Write(d);
 
-	m_pParent->BroadCast(nstm, this);
+	parent->BroadCast(nstm, this);
+
 }
 void GameServerSlot::Loose(CStream& stm)
 {
@@ -409,7 +433,7 @@ void GameServerSlot::Loose(CStream& stm)
 	nstm.Write(msg_type(msg));
 	nstm.Write(id);
 
-	m_pParent->BroadCast(nstm, this);
+	parent->BroadCast(nstm, this);
 
 	NotifyConnect(false);
 }
@@ -424,7 +448,7 @@ void GameServerSlot::OnMessage(CStream& stm)
 		wr.Write(id);
 		auto txt = std::string_view(text);
 		wr.Write(txt);
-		m_pParent->BroadCast(wr, this);
+		parent->BroadCast(wr, this);
 		CryLog("client message: [%s]\n", text.data());
 	}
 }
@@ -439,7 +463,8 @@ void GameServer::BroadCast(CStream& w, GameServerSlot* exclude)
 
 GameServerSlot* GameServer::SlotById(size_t id)
 {
-	if (auto it = std::find_if(m_Slots.begin(), m_Slots.end(), [id](GameServerSlot* other)
+
+		if (auto it = std::find_if(m_Slots.begin(), m_Slots.end(), [id](GameServerSlot* other)
 	                           {
 			if (other->id == id)
 			{
@@ -448,62 +473,11 @@ GameServerSlot* GameServer::SlotById(size_t id)
 			return false; });
 	    it != m_Slots.end())
 	{
-		return *it;
+		    return *it;
 	}
 	return nullptr;
 }
 
-bool GameServer::CreateServerSlot(IServerSlot* pIServerSlot)
-{
-	auto gs = new GameServerSlot(this, pIServerSlot);
-	gs->id  = m_Slots.size();
-	m_Slots.push_back(gs);
-
-	return true;
-}
-bool GameServer::GetServerInfoStatus(std::string& szServerStatus) { return false; }
-bool GameServer::GetServerInfoStatus(std::string& szName, std::string& szGameType, std::string& szMap, std::string& szVersion, bool* pbPassword, int* piPlayers, int* piMaxPlayers) { return false; }
-bool GameServer::GetServerInfoRules(std::string& szServerRules) { return false; }
-bool GameServer::GetServerInfoPlayers(std::string* vszStrings[4], int& nStrings) { return false; }
-bool GameServer::ProcessXMLInfoRequest(const char* sRequest, const char* sRespone, int nResponseMaxLength) { return false; }
-
-void GameServerSlot::OnXServerSlotConnect(const uint8_t* pbAuthorizationID, unsigned int uiAuthorizationSize) {}
-void GameServerSlot::OnXServerSlotDisconnect(const char* szCause)
-{
-// if the player is not fully connected,
-// no action should be taken
-#if 0
-	if (isReady)
-	{
-		m_pParent->GetRules()->OnClientDisconnect(m_ScriptObjectServerSlot.GetScriptObject());
-	}
-#endif
-
-#if 0
-	m_wPlayerId = INVALID_WID;
-#endif
-	// Unregister this slot
-	m_pParent->UnregisterSlot(this);
-
-	// set as a garbage
-}
-void GameServerSlot::OnContextReady(CStream& stm) {} //<<FIXME>> add some level validation code
-void GameServerSlot::OnData(CStream& stm)
-{
-	ProcessIncomming(stm);
-}
-void GameServerSlot::OnXPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID,
-                                            unsigned int uiGlobalIDSize) {}
-//////////////////////////////////////////////////////////////////////
-BYTE GameServerSlot::GetID()
-{
-	return m_pISSlot->GetID();
-}
-
-void GameServer::UnregisterSlot(GameServerSlot* slot)
-{
-	m_SlotsToDisconnect.push_back(slot);
-}
 // Main code
 const auto DEFAULT_WIDTH  = 640;
 const auto DEFAULT_HEIGHT = 480;

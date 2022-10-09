@@ -30,11 +30,9 @@ namespace
 	GameState     g_CurrentGameState = GameState::InMenu;
 	CRYSOCKET     g_ClientSocket     = INVALID_SOCKET;
 
-	GameServer*   g_GameServer;
-
-	constexpr int DEFAULT_PORT      = 9999;
-	constexpr int DEFAULT_BUFFER    = 4096;
-	constexpr int MAX_BIND_ATTEMPTS = 8; // it will try to connect using ports from DEFAULT_PORT to DEFAULT_PORT + MAX_BIND_ATTEMPTS - 1
+	constexpr int DEFAULT_PORT       = 9999;
+	constexpr int DEFAULT_BUFFER     = 4096;
+	constexpr int MAX_BIND_ATTEMPTS  = 8; // it will try to connect using ports from DEFAULT_PORT to DEFAULT_PORT + MAX_BIND_ATTEMPTS - 1
 
 } // namespace
 namespace
@@ -83,8 +81,16 @@ namespace network
 	};
 } // namespace network
 
-struct GameClient
+namespace
 {
+} // namespace
+
+struct GameClient : public IClientSink
+{
+	GameClient()
+	    : m_pClient(std::make_shared<network::Client>())
+	{
+	}
 	bool Connect()
 	{
 		if (m_pClient->Connect(server))
@@ -101,14 +107,103 @@ struct GameClient
 				};
 				m_pClient->Start();
 
-				//Auth(cd->mail, cd->password);
+				Auth("test@mail.com", "123456");
 				return true;
 			}
 		}
 		return false;
 	}
-	void SendInputToServer()
+	void Auth(std::string mail, std::string password)
 	{
+#if 0
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+#endif
+#if 1
+		auto    message = network::msg::Client::AUTH;
+
+		CStream stm;
+		stm.Write(msg_type(message));
+		stm.Write(mail);
+		stm.Write(password);
+
+		m_pClient->Send(stm);
+#endif
+	}
+	void Update()
+	{
+		m_pClient->Update();
+	}
+	void SendInputToServer(Movement Dir)
+	{
+		CStream stm;
+		auto    msg = network::msg::Client::CHANGE_DIR;
+		auto    d   = uint8(Dir);
+
+		stm.Write(msg_type(msg));
+		stm.Write(d);
+
+		m_pClient->Send(stm);
+	}
+	void OnConnect(CStream& stm)
+	{
+		size_t id = 0;
+		string name;
+		float  x, y;
+		stm.Read(id);
+		stm.Read(name);
+		stm.Read(x);
+		stm.Read(y);
+
+		minecraft->AddPlayer(id, name, {x, y});
+	}
+	void OnConnected(CStream& stm)
+	{
+		stm.Read(playerId);
+	}
+	void OnDisconnect(CStream& stm)
+	{
+	}
+	void OnMessage(CStream& stm)
+	{
+		size_t      id;
+		std::string text;
+		stm.Read(id);
+		stm.Read(text);
+
+#if 0
+		if (auto it = std::find_if(m_online.begin(), m_online.end(), [id](const Friend& f)
+		                           { return f.id == id; });
+		    it != m_online.end())
+#endif
+		{
+			CryLog("msg: %s", text.data());
+		}
+	}
+	void OnNewDir(CStream& stm)
+	{
+		size_t id;
+		uint8  dir;
+		stm.Read(id);
+		stm.Read(dir);
+
+		auto p = minecraft->GetPlayer(id);
+		if (p.snake)
+		{
+			p.snake->ChangeDir(Movement(dir));
+		}
+	}
+	void OnUpdateSnake(CStream& stm)
+	{
+		//id,x,z
+		size_t id;
+		float  x, z;
+		stm.Read(id);
+		stm.Read(x);
+		stm.Read(z);
+
+		auto p = minecraft->GetPlayer(id);
+
+		p.snake->GetHead()->SetPos({x, 0, z});
 	}
 	void ProcessIncomming(CStream& stm)
 	{
@@ -119,27 +214,61 @@ struct GameClient
 		auto EmtpyHandle = [](CStream& stm)
 		{ assert(0); };
 
-		msg_type message;
-		if (!stm.Read(message))
-			return;
-		switch (network::msg::Server(message))
+		do
 		{
-			//HANDLE_MESSAGE(MESSAGE, OnMessage);
-			HANDLE_MESSAGE(NAME, EmtpyHandle);
-			HANDLE_MESSAGE(JOIN, EmtpyHandle);
-			//HANDLE_MESSAGE(CONNECT, OnConnect);
-			//HANDLE_MESSAGE(CONNECTED, [this](Stream& stm)
-			//               { this->m_state = Chat::Connected; });
-			//HANDLE_MESSAGE(DISCONNECT, OnDisconnect);
-		default:
-			break;
-		}
+			msg_type message;
+			if (!stm.Read(message))
+				return;
+			switch (network::msg::Server(message))
+			{
+				HANDLE_MESSAGE(MESSAGE, OnMessage);
+				HANDLE_MESSAGE(NAME, EmtpyHandle);
+				HANDLE_MESSAGE(JOIN, EmtpyHandle);
+				HANDLE_MESSAGE(CONNECT, OnConnect);
+				HANDLE_MESSAGE(CONNECTED, OnConnected);
+				HANDLE_MESSAGE(DISCONNECT, OnDisconnect);
+				HANDLE_MESSAGE(NEW_DIR, OnNewDir);
+				HANDLE_MESSAGE(UPDATE_SNAKE, OnUpdateSnake);
+				HANDLE_MESSAGE(NEW_FOOD, OnNewFood);
+				HANDLE_MESSAGE(EAT, OnEat);
+			default:
+				break;
+			}
+		} while (!stm.EOS());
+	}
+	void OnNewFood(CStream& stm)
+	{
+		float x, z;
+		stm.Read(x);
+		stm.Read(z);
+
+		minecraft->m_FoodPos = glm::ivec2(x, z);
+		minecraft->m_Food->SetPos({x, 0, z});
+	}
+	void OnEat(CStream& stm)
+	{
+		size_t id;
+		stm.Read(id);
+
+		auto p = minecraft->GetPlayer(id);
+		p.snake->Eat();
+	}
+
+	void Loose(size_t id)
+	{
+		CStream stm;
+		auto    msg = network::msg::Client::LOOSE;
+		stm.Write(msg_type(msg));
+		stm.Write(id);
+		m_pClient->Send(stm);
 	}
 
 	std::shared_ptr<network::Client> m_pClient;
 
-	std::string                      server = "127.0.0.1";
-	std::string                      port   = "27015";
+	std::string                      server   = "127.0.0.1";
+	std::string                      port     = "27015";
+
+	size_t                           playerId = 0;
 };
 
 void Minecraft::Pause()
@@ -147,19 +276,102 @@ void Minecraft::Pause()
 	//g_Snake->Pause();
 }
 
+void Minecraft::AddPlayer(size_t id, const string& name, glm::ivec2 pos)
+{
+	Player newPlayer;
+	newPlayer.id   = id;
+	newPlayer.name = name;
+
+	auto snake     = std::make_shared<Snake>();
+
+	snake->m_Owner = id;
+	snake->Init();
+	snake->GetHead()->SetPos({pos.x, 0, pos.y});
+
+	newPlayer.snake = snake;
+	Players[id]     = newPlayer;
+
+	auto p          = Players[id];
+}
+
+void Minecraft::RemovePlayer(size_t id, bool now)
+{
+	if (auto it = Players.find(id); it != Players.end())
+	{
+		if (!now)
+		{
+			PlayersToDestruct.push_back(id);
+		}
+		else
+		{
+			Players.erase(it);
+		}
+	}
+}
+
+Player Minecraft::GetPlayer(size_t id)
+{
+	if (auto it = Players.find(id); it != Players.end())
+	{
+		return it->second;
+	}
+	return Player();
+}
+
+Player Minecraft::GetLocalPlayer()
+{
+	return GetPlayer(localPlayerId);
+}
+
+bool Minecraft::IsServer()
+{
+	return m_pServer != nullptr;
+}
+
+void Minecraft::MakeFood()
+{
+	auto x    = rand() % 20 - 10;
+	auto z    = rand() % 20 - 10;
+	m_FoodPos = glm::ivec2(x, z);
+	m_Food->SetPos({x, 0, z});
+
+	CStream stm;
+	auto    msg = network::msg::Server::NEW_FOOD;
+	stm.Write(msg_type(msg));
+	stm.Write(float(x));
+	stm.Write(float(z));
+
+	m_pServer->BroadCast(stm);
+}
+
+void Minecraft::Eat(size_t id)
+{
+	CStream stm;
+	auto    msg = network::msg::Server::EAT;
+
+	stm.Write(msg_type(msg));
+	stm.Write(id);
+
+	auto s = m_pServer->SlotById(id);
+
+	m_pServer->BroadCast(stm, s);
+}
+
 void Minecraft::MoveSnake(Movement dir, int id)
 {
-	Snakes[id]->ChangeDir(dir);
+	auto p = GetPlayer(id);
+	p.snake->ChangeDir(dir);
+
+	m_GameClient->SendInputToServer(dir);
+}
+void Minecraft::MoveLocalSnake(Movement dir)
+{
+	MoveSnake(dir, localPlayerId);
 }
 void Minecraft::RestartSnake(Snake* snake)
 {
-	auto it = std::find(Snakes.begin(), Snakes.end(), snake);
-	if (it != Snakes.end())
-	{
-		delete snake;
-		*it = new Snake;
-		(*it)->Init();
-	}
+	RemovePlayer(snake->m_Owner, false);
+	m_GameClient->Loose(snake->m_Owner);
 }
 
 enum class EEntityClass : int
@@ -291,11 +503,6 @@ bool SendStream(CStream& stm, CRYSOCKET s)
 	return false;
 }
 
-bool ClientConnect(const char* ip)
-{
-	return true;
-}
-
 void SendClientConnect()
 {
 	CStream stm;
@@ -306,18 +513,20 @@ void StartGame()
 	if (GetGame()->StartupClient())
 	{
 #if 1
-		if (!g_GameServer->isStarted)
+
+		if (!minecraft->StartupServer(true))
 		{
 			CryError("Failed to start server");
 			return;
 		}
 #endif
-		if (!ClientConnect("127.0.0.1"))
+		if (!minecraft->ClientConnect("127.0.0.1"))
 		{
 			CryError("Failed to connect to server");
 			return;
 		}
 		g_CurrentGameState = GameState::InGame;
+		minecraft->MakeFood();
 	}
 }
 #define DEFAULT_BUFLEN 512
@@ -340,15 +549,29 @@ void Minecraft::init()
 	player.init();
 	debug.init();
 
-#if 1
+#if 0
 	auto player = new Snake;
 	player->Init();
 	Snakes.push_back(player);
+#else
+	const char* cellObjectPaths[] = {
+	    "minecraft/Snake.obj", //head
+	    "minecraft/Grass_Block.obj",
+	    "minecraft/Food.obj",
+	    //"minecraft/Food.obj"
+	};
+	for (size_t i = 0; i < size_t(Minecraft::CellType::Last); i++)
+	{
+		auto object = Env::I3DEngine()->MakeObject(cellObjectPaths[i]);
+		m_CellObjects[i] = object;
+	}
+	m_Food = minecraft->CreateCell({0, 0, 0}, Minecraft::CellType::Food);
+
 #endif
 
-	auto  game   = dynamic_cast<CXGame*>(Env::System()->GetIGame());
-	auto  client = &game->GetClient()->m_DummyClient;
-	auto& cc     = client->m_CameraController;
+	auto  game = m_pGame = dynamic_cast<CXGame*>(Env::System()->GetIGame());
+	auto  client         = &game->GetClient()->m_DummyClient;
+	auto& cc             = client->m_CameraController;
 
 #if 0
 	//-55,-111
@@ -359,7 +582,9 @@ void Minecraft::init()
 	Env::Console()->AddCommand(
 	    "game.start",
 	    [](IConsoleCmdArgs*)
-	    { StartGame(); });
+	    {
+		    StartGame();
+	    });
 	Env::Console()->AddCommand(
 	    "game.stop",
 	    [](IConsoleCmdArgs*)
@@ -371,11 +596,10 @@ void Minecraft::init()
 		    if (args->GetArgCount() > 1)
 		    {
 			    auto ip = args->GetArg(1);
-			    if (ClientConnect(ip))
+			    if (minecraft->ClientConnect(ip))
 				    g_CurrentGameState = GameState::InGame;
 		    }
 	    });
-	g_GameServer = new GameServer;
 }
 
 void InMenuUpdate()
@@ -413,13 +637,17 @@ void ReadNetwork(CStream& stm)
 
 void InGameUpdate()
 {
-	CStream NetworkStream;
-	ReadNetwork(NetworkStream);
-
-#if 1
-	if (g_GameServer->isStarted)
+	for (auto p : minecraft->PlayersToDestruct)
 	{
-		g_GameServer->Update();
+		minecraft->RemovePlayer(p, true);
+	}
+#if 1
+	minecraft->m_GameClient->Update();
+
+	auto server = minecraft->m_pServer;
+	if (server)
+	{
+		server->Update();
 	}
 #endif
 
@@ -427,10 +655,6 @@ void InGameUpdate()
 	getCamera()->SetAngles({-55, -111, 0});
 	getCamera()->updateCameraVectors();
 	DrawField(g_World.size_x);
-	for (auto& snake : minecraft->Snakes)
-	{
-		snake->Update();
-	}
 }
 
 void Minecraft::update()
@@ -922,3 +1146,61 @@ void MineDebug::drawTmpBox(glm::vec3 pos1, glm::vec3 pos2)
 	tmpBoxes.push_back(makeBox(model, pos1, pos2));
 }
 #endif
+
+bool Minecraft::StartupServer(bool listen, const char* szName)
+{
+	CryLog("Creating the server");
+
+	ShutdownServer(); // to be sure
+
+	int nPort = m_pGame->sv_port->GetIVal();
+
+	// set port and create server
+	if (!m_pServer)
+		m_pServer = new GameServer(this, nPort, szName, listen);
+
+	if (!m_pServer || !m_pServer->IsOK()) // Check if the server has been created
+	{
+		// failed, lets try a different port
+		CryLog("Server creation failed ! Try with another port");
+		SAFE_DELETE(m_pServer);
+#if 0
+		m_pServer = new GameServer(this, nPort + 1, szName, listen);
+		sv_port->Set(nPort + 1);
+		if (!m_pServer || !m_pServer->IsOK()) // Check if the server has been created
+		{
+			SAFE_DELETE(m_pServer);
+			m_pLog->Log("Server creation failed !");
+			return false;
+		}
+#else
+		return false;
+#endif
+	}
+
+#if 0
+	if (m_pRConSystem)
+		m_pRConSystem->OnServerCreated(m_pServer->m_pIServer);
+#endif
+
+	CryLog("Server created");
+
+	//m_pServer->Update(); // server is created but map wasn't set yet we don't want to allow connects before
+
+	return true;
+}
+void Minecraft::ShutdownServer()
+{
+	SAFE_DELETE(m_pServer);
+}
+
+bool Minecraft::ClientConnect(const char* ip)
+{
+	//if (GetGame()->StartupClient())
+	{
+		if (!m_GameClient)
+			m_GameClient = new GameClient();
+		return m_GameClient->Connect();
+	}
+	return false;
+}

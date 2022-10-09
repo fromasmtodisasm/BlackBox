@@ -9,7 +9,7 @@
 #include <thread>
 #include <vector>
 
-#include <Network/Minecraft/Common/Socket.h>
+#include "Common/Socket.h"
 
 using msg_type = uint8;
 namespace network

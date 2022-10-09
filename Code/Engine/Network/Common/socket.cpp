@@ -2,7 +2,7 @@
 
 namespace network
 {
-	Socket Socket::CreateListen()
+	Socket Socket::CreateListen(const char* port)
 	{
 		int     iResult;
 
@@ -17,8 +17,6 @@ namespace network
 			return Socket();
 		}
 		////////////////////////////
-#define DEFAULT_PORT "27015"
-
 		struct addrinfo *result = NULL, *ptr = NULL, hints;
 
 		ZeroMemory(&hints, sizeof(hints));
@@ -28,7 +26,7 @@ namespace network
 		hints.ai_flags    = AI_PASSIVE;
 
 		// Resolve the local address and port to be used by the server
-		iResult           = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+		iResult           = getaddrinfo(NULL, port, &hints, &result);
 		if (iResult != 0)
 		{
 			printf("getaddrinfo failed: %d\n", iResult);
@@ -175,8 +173,7 @@ namespace network
 
 	void Socket::Send(char* data, size_t len)
 	{
-		std::lock_guard         lock(m_SendLock);
-
+		std::lock_guard lock(m_SendLock);
 
 		m_sendBuffer.WriteData(data, len);
 	}
@@ -225,7 +222,8 @@ namespace network
 	void Socket::ThreadFunc()
 	{
 		//FD_SET WriteSet;
-		auto OnDisconnect = [this] { /*m_thread.join();*/ this->OnDisconnect(); };
+		std::string connectionError;
+		auto OnDisconnectTask = [this](const char* szCause) { /*m_thread.join();*/ this->OnDisconnect(szCause); };
 		while (m_bRunning)
 		{
 			{
@@ -261,10 +259,12 @@ namespace network
 					std::lock_guard         lock(m_RecvLock);
 					while (true)
 					{
-						auto len = recv(m_Socket, buf, BUF_LEN, 0);
+						auto        len = recv(m_Socket, buf, BUF_LEN, 0);
 						if (len == 0)
 						{
-							m_DifferedTasks.push_back(OnDisconnect);
+							connectionError = "Connection closed by remote peer";
+							m_DifferedTasks.push_back([OnDisconnectTask,connectionError]
+							                          { OnDisconnectTask(connectionError.c_str()); });
 							m_bRunning = false;
 							break;
 						}
@@ -278,8 +278,9 @@ namespace network
 						else
 						{
 							auto error = WSAGetLastError();
-							printf("recv error: %d", error);
-							m_DifferedTasks.push_back(OnDisconnect);
+							connectionError = "Unexpected connection error, error code: " + std::to_string(error);
+							m_DifferedTasks.push_back([OnDisconnectTask,connectionError]
+							                          { OnDisconnectTask(connectionError.c_str()); });
 							m_bRunning = false;
 							break;
 						}

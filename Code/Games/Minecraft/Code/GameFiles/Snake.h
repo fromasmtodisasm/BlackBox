@@ -2,18 +2,8 @@
 
 struct Snake
 {
-	enum class CellType
-	{
-		Head,
-		Body,
-		Food,
-		Last
-	};
-
-	std::array<IStatObj*, size_t(CellType::Last)> m_CellObjects;
-
 	//////////////
-	void                                          Pause()
+	void Pause()
 	{
 		m_IsPause = !m_IsPause;
 	}
@@ -24,7 +14,9 @@ struct Snake
 			Env::EntitySystem()->RemoveEntity(body->GetId(), true);
 		}
 		m_Body.clear();
+#if 0
 		Env::EntitySystem()->RemoveEntity(m_Food->GetId(), true);
+#endif
 	}
 	void GameOver()
 	{
@@ -72,64 +64,24 @@ struct Snake
 	{
 		auto HeadPos = GetHead()->GetPos();
 		MoveHead();
-		auto body = CreateCell(HeadPos, CellType::Body);
+		auto body = minecraft->CreateCell(HeadPos, Minecraft::CellType::Body);
 		auto it   = m_Body.begin() + 1;
 		m_Body.insert(it, body);
 
-		MakeFood();
-		m_pEatSound->Play();
-	}
-
-	void FakeEat()
-	{
-		m_FakeEat = true;
-	}
-
-	void MakeFood()
-	{
-		auto x    = rand() % 20 - 10;
-		auto z    = rand() % 20 - 10;
-		m_FoodPos = glm::ivec2(x, z);
-		m_Food->SetPos({x, 0, z});
-	}
-
-	IEntity* CreateCell(glm::vec3 pos, CellType celType)
-	{
-		auto        object = m_CellObjects[size_t(celType)];
-
-		extern int  nextEntity();
-		CEntityDesc desc(nextEntity(), 0);
-		desc.name   = "Snake";
-		auto Result = Env::EntitySystem()->SpawnEntity(desc);
-
-		Result->SetIStatObj(object);
-		Result->SetPos(pos);
-		Result->SetScale(glm::vec3(1.f));
-		Env::I3DEngine()->RegisterEntity(Result);
-
-		return Result;
+		if (minecraft->IsServer())
+		{
+			minecraft->Eat(m_Owner);
+			minecraft->MakeFood();
+		}
+		//m_pEatSound->Play();
 	}
 
 	void Init()
 	{
-		const char* cellObjectPaths[] = {
-		    "minecraft/Snake.obj", //head
-		    "minecraft/Grass_Block.obj",
-		    "minecraft/Food.obj",
-		    //"minecraft/Food.obj"
-		};
-		for (size_t i = 0; i < size_t(CellType::Last); i++)
-		{
-			auto object      = Env::I3DEngine()->MakeObject(cellObjectPaths[i]);
-			m_CellObjects[i] = object;
-		}
+		m_Body.push_back(minecraft->CreateCell({0, 0, 0}, Minecraft::CellType::Body));
 
-		m_Body.push_back(CreateCell({0, 0, 0}, CellType::Body));
-
-		m_Food = CreateCell({0, 0, 0}, CellType::Food);
-		MakeFood();
-		m_pEatSound           = Env::SoundSystem()->LoadSound("minecraft/eat.mp3", 0);
-		m_pSelfIntersectSound = Env::SoundSystem()->LoadSound("minecraft/self_intersect.mp3", 0);
+		//m_pEatSound           = Env::SoundSystem()->LoadSound("minecraft/eat.mp3", 0);
+		//m_pSelfIntersectSound = Env::SoundSystem()->LoadSound("minecraft/self_intersect.mp3", 0);
 
 		//m_pSetBlockSound = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
 	}
@@ -144,7 +96,7 @@ struct Snake
 	}
 	void CreateHead(Legacy::Vec3 pos)
 	{
-		auto cell = CreateCell(pos, CellType::Head);
+		auto cell = minecraft->CreateCell(pos, Minecraft::CellType::Head);
 		m_Body.push_front(cell);
 	}
 	void MoveHead()
@@ -179,7 +131,7 @@ struct Snake
 	bool FoodUnderHead()
 	{
 		auto HeadPos = GetHead()->GetPos();
-		return glm::ivec3(HeadPos + m_Dir) == glm::ivec3(m_FoodPos.x, 0, m_FoodPos.y);
+		return glm::ivec3(HeadPos + m_Dir) == glm::ivec3(minecraft->m_FoodPos.x, 0, minecraft->m_FoodPos.y);
 	}
 	void Update()
 	{
@@ -196,13 +148,22 @@ struct Snake
 	{
 		if (SelfIntersect())
 		{
-			m_pSelfIntersectSound->Play();
+//m_pSelfIntersectSound->Play();
+#if 0
 			minecraft->RestartSnake(this);
+#endif
 		}
 		else if (OutOfBounds())
 		{
-			m_pSelfIntersectSound->Play();
+//m_pSelfIntersectSound->Play();
+#if 0
 			minecraft->RestartSnake(this);
+#else
+			m_Dir  = -m_Dir;
+			auto p = GetHead()->GetPos();
+			p += m_Dir;
+			GetHead()->SetPos(p);
+#endif
 		}
 		else if (FoodUnderHead())
 		{
@@ -214,19 +175,18 @@ struct Snake
 		}
 	}
 
+	size_t               m_Owner   = 0;
+
 	Movement             m_PrevDir = Movement::FORWARD;
 	Legacy::Vec3         m_Dir     = Legacy::Vec3(0, 0, -1);
 	Legacy::Vec3         m_BlockSize;
 	glm::ivec2           m_HeadPos;
 	std::deque<IEntity*> m_Body;
 	bool                 m_NeedMove = false;
-	float                m_TickTime = 0.1f;
+	float                m_TickTime = 0.4f;
 	float                m_Ticked   = 0.f;
 	bool                 m_FakeEat  = false;
 	bool                 m_IsPause  = false;
-
-	IEntity*             m_Food;
-	glm::ivec2           m_FoodPos;
 
 	ISound*              m_pEatSound;           //     = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
 	ISound*              m_pSelfIntersectSound; //     = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);

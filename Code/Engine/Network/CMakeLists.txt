@@ -1,14 +1,19 @@
 start_sources()
 sources_platform(ALL)
-add_sources(
-	"NoUberFile"
+add_sources("NoUberFile"
 	PROJECTS
-	Network
-	SOURCE_GROUP
-	"Source Files"
-	"Client.cpp"
-	"Network.cpp"
-	"Server.cpp")
+		Network
+	SOURCE_GROUP "Source Files"
+		"Client.cpp"
+		"Client.hpp"
+		"Network.cpp"
+		"Server.cpp"
+		"Server.hpp"
+	SOURCE_GROUP "Common"
+		"Common/ClientServer.h"
+		"Common/Socket.h"
+		"Common/Socket.cpp"
+)
 end_sources()
 EngineModule(Network PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 add_sdl(${THIS_PROJECT})
