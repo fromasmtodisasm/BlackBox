@@ -182,13 +182,16 @@ struct Minecraft
 
 		return Result;
 	}
-	void                     MakeFood();
-	void                     Eat(size_t id);
+	void        MakeFood();
+	void        Eat(size_t id);
 	////////////////////////////////////////////////////
-	bool                     StartupServer(bool listen, const char* szName = NULL);
-	void                     ShutdownServer();
-	GameServer&              Server() { return *m_pServer; }
-	bool                     ClientConnect(const char* ip);
+	bool        StartupServer(bool listen, const char* szName = NULL);
+	void        ShutdownServer();
+	GameServer& Server() { return *m_pServer; }
+	//////////////////////////////////////////////////////////////////////
+	//! create the client for a multiplayer session
+	bool                     StartupClient();
+	void                     ShutdownClient();
 	////////////////////////////////////////////////////
 	CXGame*                  m_pGame      = nullptr;
 	GameServer*              m_pServer    = nullptr;

@@ -88,30 +88,41 @@ namespace
 struct GameClient : public IClientSink
 {
 	GameClient()
-	    : m_pClient(std::make_shared<network::Client>())
 	{
 	}
-	bool Connect()
+	void OnXConnect() override
 	{
-		if (m_pClient->Connect(server))
-		{
-			{
-				m_pClient->OnData = [this](CStream& stm)
-				{
-					ProcessIncomming(stm);
-				};
-				m_pClient->OnDisconnect = [this]
-				{
-					//m_state = NotConnected;
-					CryLog("Disconnection occur\n");
-				};
-				m_pClient->Start();
+		Auth("test@mail.com", "123456");
+	}
+	void OnXClientDisconnect(const char* szCause) override
+	{
+		CryLog("Disconnection occur\n");
+	}
+	void OnXContextSetup(CStream& stmContext) override {}
+	void OnXData(CStream& stm) override
+	{
+		ProcessIncomming(stm);
+	}
+	void         OnXServerTimeout() override {}
+	void         OnXServerRessurect() override {}
+	unsigned int GetTimeoutCompensation() override { return 0; }
+	void         MarkForDestruct() override {}
+	bool         DestructIfMarked() override { return true; }
 
-				Auth("test@mail.com", "123456");
-				return true;
-			}
-		}
-		return false;
+	bool         Init()
+	{
+		m_pClient = minecraft->m_pGame->CreateClient(this);
+
+		return m_pClient != nullptr;
+	}
+
+	bool Connect(const char* szAddr)
+	{
+		m_pClient->SetServerIP(szAddr);
+		//bDoSwitch = _bDoLateSwitch;
+
+		m_pClient->InitiateCDKeyAuthorization(false);
+		return true;
 	}
 	void Auth(std::string mail, std::string password)
 	{
@@ -126,12 +137,13 @@ struct GameClient : public IClientSink
 		stm.Write(mail);
 		stm.Write(password);
 
-		m_pClient->Send(stm);
+		m_pClient->SendReliable(stm);
 #endif
 	}
 	void Update()
 	{
-		m_pClient->Update();
+		uint time = 0;
+		m_pClient->Update(time);
 	}
 	void SendInputToServer(Movement Dir)
 	{
@@ -142,7 +154,7 @@ struct GameClient : public IClientSink
 		stm.Write(msg_type(msg));
 		stm.Write(d);
 
-		m_pClient->Send(stm);
+		m_pClient->SendReliable(stm);
 	}
 	void OnConnect(CStream& stm)
 	{
@@ -260,15 +272,14 @@ struct GameClient : public IClientSink
 		auto    msg = network::msg::Client::LOOSE;
 		stm.Write(msg_type(msg));
 		stm.Write(id);
-		m_pClient->Send(stm);
+		m_pClient->SendReliable(stm);
 	}
 
-	std::shared_ptr<network::Client> m_pClient;
+	IClient*    m_pClient;
 
-	std::string                      server   = "127.0.0.1";
-	std::string                      port     = "27015";
+	std::string server   = "127.0.0.1";
 
-	size_t                           playerId = 0;
+	size_t      playerId = 0;
 };
 
 void Minecraft::Pause()
@@ -510,24 +521,22 @@ void SendClientConnect()
 
 void StartGame()
 {
-	if (GetGame()->StartupClient())
+	if (!minecraft->StartupServer(true))
 	{
-#if 1
+		CryError("Failed to start server");
+		return;
+	}
 
-		if (!minecraft->StartupServer(true))
-		{
-			CryError("Failed to start server");
-			return;
-		}
-#endif
-		if (!minecraft->ClientConnect("127.0.0.1"))
+	if (GetGame()->StartupClient() && minecraft->StartupClient())
+	{
+		if (!minecraft->m_GameClient->Connect("127.0.0.1"))
 		{
 			CryError("Failed to connect to server");
 			return;
 		}
-		g_CurrentGameState = GameState::InGame;
-		minecraft->MakeFood();
 	}
+	g_CurrentGameState = GameState::InGame;
+	minecraft->MakeFood();
 }
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT   "9999"
@@ -591,14 +600,17 @@ void Minecraft::init()
 	    { StopGame(); });
 	Env::Console()->AddCommand(
 	    "game.connect",
-	    [](IConsoleCmdArgs* args)
-	    {
+	    [](IConsoleCmdArgs* args) {
+#if 0
 		    if (args->GetArgCount() > 1)
 		    {
 			    auto ip = args->GetArg(1);
 			    if (minecraft->ClientConnect(ip))
 				    g_CurrentGameState = GameState::InGame;
 		    }
+#else
+		    assert(0);
+#endif
 	    });
 }
 
@@ -1194,13 +1206,27 @@ void Minecraft::ShutdownServer()
 	SAFE_DELETE(m_pServer);
 }
 
-bool Minecraft::ClientConnect(const char* ip)
+bool Minecraft::StartupClient()
 {
-	//if (GetGame()->StartupClient())
+	CryLog("Creating the Client");
+
+	ShutdownClient(); // to be sure
+
+	m_GameClient = new GameClient;
+
+	if (!m_GameClient->Init(/*this*/)) // Check if the client has been created
 	{
-		if (!m_GameClient)
-			m_GameClient = new GameClient();
-		return m_GameClient->Connect();
+		ShutdownClient();
+
+		CryLog("Client creation failed !");
+		return false;
 	}
-	return false;
+
+	CryLog("Client created");
+
+	return true;
+}
+void Minecraft::ShutdownClient()
+{
+	SAFE_DELETE(m_GameClient);
 }

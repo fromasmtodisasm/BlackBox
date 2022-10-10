@@ -67,6 +67,7 @@ bool CNetworkClient::Update(unsigned int nTime)
 		{
 			task();
 		}
+		m_DeferedTasks.clear();
 	}
 	m_Socket.Update();
 #if 1
