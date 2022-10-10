@@ -146,9 +146,7 @@ struct GameClient : public IClientSink
 			pFont->Init("arial.ttf", 14, 14);
 		}
 
-		size_t i               = 0;
-
-		auto   drawPlayerStats = [](auto& player)
+		auto drawPlayerStats = [](auto& player, int row)
 		{
 			auto snake = player.snake;
 			if (snake)
@@ -156,15 +154,17 @@ struct GameClient : public IClientSink
 				auto pos = snake->GetHead()->GetPos();
 
 				char buffer[256];
-				sprintf(buffer, "<[%s] snake> pos: (%f,%f,%f); Foods: %d", player.name.c_str(), pos.x, pos.y, pos.z, snake->m_FoodsEaten);
+				sprintf(buffer, "<[%s] snake> pos: (%.0f,%.0f,%.0f); Foods: %d", player.name.c_str(), pos.x, pos.y, pos.z, snake->m_FoodsEaten);
 				float color[] = {1.f, 1.f, 1.f, 1.f};
-				pFont->RenderText(buffer, 0, 0, 1.f, color);
+				pFont->RenderText(buffer, 0, float(row * 14), 1.f, color);
 			}
 		};
 
-		for (auto [id,player] : minecraft->GetPlayers())
+		int i = 0;
+		for (auto [id, player] : minecraft->GetPlayers())
 		{
-			drawPlayerStats(player);
+			drawPlayerStats(player, i);
+			i++;
 		}
 	}
 	void SendInputToServer(Movement Dir)
@@ -400,7 +400,7 @@ void Minecraft::Eat(size_t id)
 
 	auto s = m_pServer->SlotById(id);
 
-	m_pServer->BroadCast(stm, s);
+	m_pServer->BroadCast(stm, nullptr);
 }
 
 void Minecraft::MoveSnake(Movement dir, int id)
@@ -574,7 +574,6 @@ void StartGame()
 		}
 	}
 	g_CurrentGameState = GameState::InGame;
-	//minecraft->MakeFood();
 }
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT   "9999"

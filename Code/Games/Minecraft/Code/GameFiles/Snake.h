@@ -67,12 +67,7 @@ struct Snake
 		auto body = minecraft->CreateCell(HeadPos, Minecraft::CellType::Body);
 		auto it   = m_Body.begin() + 1;
 		m_Body.insert(it, body);
-
-		if (minecraft->IsServer())
-		{
-			minecraft->Eat(m_Owner);
-			minecraft->MakeFood();
-		}
+		m_FoodsEaten++;
 	}
 
 	void Init()
@@ -160,16 +155,21 @@ struct Snake
 #if 0
 			minecraft->RestartSnake(this);
 #else
-			m_Dir  = -m_Dir;
+			//m_Dir  = -m_Dir;
 			auto p = GetHead()->GetPos();
-			p += m_Dir * Legacy::Vec3(2);
+			//p += m_Dir * Legacy::Vec3(2);
+			p -= m_Dir * Legacy::Vec3(20 + 1);
 			GetHead()->SetPos(p);
 #endif
 		}
 		else if (FoodUnderHead())
 		{
-			Eat();
-			m_FoodsEaten++;
+			//Eat();
+			if (minecraft->IsServer())
+			{
+				minecraft->Eat(m_Owner);
+				minecraft->MakeFood();
+			}
 		}
 	}
 
