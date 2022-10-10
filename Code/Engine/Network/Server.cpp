@@ -13,7 +13,7 @@ CNetworkServer::CNetworkServer(CNetwork& pParent, IServerSlotFactory* pFactory, 
 
 CNetworkServer::~CNetworkServer()
 {
-	m_Socket.Term();
+	m_Socket->Term();
 	if (m_thread.joinable())
 		m_thread.join();
 	m_pParent.UnregisterServer(this);
@@ -86,11 +86,11 @@ EMPServerType CNetworkServer::GetServerType() const
 bool CNetworkServer::Start()
 {
 	m_Socket = std::move(network::Socket::CreateListen(m_szPort));
-	if (m_Socket.IsValid())
+	if (m_Socket->IsValid())
 	{
-		m_Socket.OnNewConnection = [this](network::Socket& s)
+		m_Socket->OnNewConnection = [this](network::Socket::Ptr s)
 		{
-			OnNewConnection(s);
+			OnNewConnection(std::move(s));
 		};
 		m_thread = std::thread([this]
 		                       { ThreadFunc(); });
@@ -99,10 +99,10 @@ bool CNetworkServer::Start()
 	return false;
 }
 
-void CNetworkServer::OnNewConnection(network::Socket& client)
+void CNetworkServer::OnNewConnection(network::Socket::Ptr client)
 {
 	auto id   = m_Slots.size();
-	auto slot = new CServerSlot(*this, uchar(id), client);
+	auto slot = new CServerSlot(*this, uchar(id), std::move(client));
 
 	///
 
@@ -120,7 +120,7 @@ void CNetworkServer::OnNewConnection(network::Socket& client)
 
 void CNetworkServer::ThreadFunc()
 {
-	m_Socket.ListenThread();
+	m_Socket->ListenThread();
 }
 void CNetworkServer::OnDisconnect(CServerSlot* slot, const char* why)
 {
@@ -134,7 +134,7 @@ void CNetworkServer::OnDisconnect(CServerSlot* slot, const char* why)
 }
 // Inherited via IServerSlot
 
-CServerSlot::CServerSlot(CNetworkServer& parent, uchar ucID, network::Socket& socket)
+CServerSlot::CServerSlot(CNetworkServer& parent, uchar ucID, network::Socket::Ptr socket)
     : m_Parent(parent)
     , m_ID(ucID)
     , m_Socket(std::move(socket))
@@ -152,7 +152,7 @@ void CServerSlot::Advise(IServerSlotSink* pSink)
 
 void CServerSlot::Disconnect(const char* szCause)
 {
-	m_Socket.Disconnect();
+	m_Socket->Disconnect();
 }
 
 bool CServerSlot::ContextSetup(CStream& stm)
@@ -162,12 +162,12 @@ bool CServerSlot::ContextSetup(CStream& stm)
 
 void CServerSlot::SendReliable(CStream& stm, bool bSecondaryChannel)
 {
-	m_Socket.Send(stm);
+	m_Socket->Send(stm);
 }
 
 void CServerSlot::SendUnreliable(CStream& stm)
 {
-	m_Socket.Send(stm);
+	m_Socket->Send(stm);
 }
 
 bool CServerSlot::IsReady()
@@ -218,19 +218,19 @@ void CServerSlot::OnPlayerAuthorization(bool bAllow, const char* szError, const 
 }
 void CServerSlot::Update()
 {
-	m_Socket.Update();
+	m_Socket->Update();
 }
 
 void CServerSlot::Start()
 {
 	assert(m_pSink != nullptr);
-	m_Socket.OnData = [this](CStream& stm)
+	m_Socket->OnData = [this](CStream& stm)
 	{ m_pSink->OnData(stm); };
 
-	m_Socket.OnDisconnect = [this](const char* szCause)
+	m_Socket->OnDisconnect = [this](const char* szCause)
 	{ m_Parent.OnDisconnect(this, szCause); };
 
 
 	m_thread = std::thread([this]
-	                       { m_Socket.ThreadFunc(); });
+	                       { m_Socket->ThreadFunc(); });
 }

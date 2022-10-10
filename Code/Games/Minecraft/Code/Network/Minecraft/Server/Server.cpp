@@ -241,7 +241,6 @@ void GameServerSlot::Send(CStream& stm)
 }
 void GameServerSlot::ProcessIncomming(CStream& stm)
 {
-#if 1
 	do
 	{
 		msg_type message;
@@ -272,7 +271,6 @@ void GameServerSlot::ProcessIncomming(CStream& stm)
 			break;
 		}
 	} while (!stm.EOS());
-#endif
 }
 void GameServerSlot::ChangeDir(CStream& stm)
 {

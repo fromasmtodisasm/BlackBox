@@ -45,12 +45,12 @@ namespace
 		//for (int i = -size / 2; size /2; i++)
 		auto step      = size / 2;
 		auto half_size = size / 2;
-		for (int i = 0; i <= size; i++)
+		for (int i = 0; i <= size + 1; i++)
 		{
 			Env::AuxGeomRenderer()->DrawLine({-half_size, 0, i - step}, color, {half_size, 0, i - step}, color);
 		}
 
-		for (int i = 0; i <= size; i++)
+		for (int i = 0; i <= size + 1; i++)
 		{
 			Env::AuxGeomRenderer()->DrawLine({i - step, 0, -half_size}, color, {i - step, 0, half_size}, color);
 		}
@@ -138,6 +138,34 @@ struct GameClient : public IClientSink
 	{
 		uint time = 0;
 		m_pClient->Update(time);
+
+		static IFont* pFont{};
+		if (!pFont)
+		{
+			pFont = Env::Renderer()->GetIFont();
+			pFont->Init("arial.ttf", 14, 14);
+		}
+
+		size_t i               = 0;
+
+		auto   drawPlayerStats = [](auto& player)
+		{
+			auto snake = player.snake;
+			if (snake)
+			{
+				auto pos = snake->GetHead()->GetPos();
+
+				char buffer[256];
+				sprintf(buffer, "<[%s] snake> pos: (%f,%f,%f); Foods: %d", player.name.c_str(), pos.x, pos.y, pos.z, snake->m_FoodsEaten);
+				float color[] = {1.f, 1.f, 1.f, 1.f};
+				pFont->RenderText(buffer, 0, 0, 1.f, color);
+			}
+		};
+
+		for (auto [id,player] : minecraft->GetPlayers())
+		{
+			drawPlayerStats(player);
+		}
 	}
 	void SendInputToServer(Movement Dir)
 	{
@@ -336,6 +364,11 @@ Player Minecraft::GetLocalPlayer()
 	return GetPlayer(localPlayerId);
 }
 
+Minecraft::PlayersMap& Minecraft::GetPlayers()
+{
+	return Players;
+}
+
 bool Minecraft::IsServer()
 {
 	return m_pServer != nullptr;
@@ -425,9 +458,9 @@ void MineWorld::init()
 #if 1
 		for (int y = g_World.height; y < 0; y++)
 		{
-			for (int z = -g_World.size_x / 2; z < g_World.size_x / 2; z++)
+			for (int z = -g_World.size_x / 2; z <= g_World.size_x / 2; z++)
 			{
-				for (int x = -g_World.size_x / 2; x < g_World.size_x / 2; x++)
+				for (int x = -g_World.size_x / 2; x <= g_World.size_x / 2; x++)
 				{
 					//if (-10 * glm::perlin(glm::vec3(float(z) * .05f, float(z) * 0.005f, 0.f)) <= 2)
 					//	continue;

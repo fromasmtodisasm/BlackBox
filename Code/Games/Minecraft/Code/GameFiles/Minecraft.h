@@ -132,38 +132,41 @@ struct Player
 
 struct GameRules
 {
-	void OnStart();
-	void OnTick();
-	void OnStop();
+	void       OnStart();
+	void       OnTick();
+	void       OnStop();
 
 	Minecraft* m_pGame;
 };
 
 struct Minecraft
 {
-	void       init();
+	using PlayersMap = std::map<size_t, Player>;
 
-	void       update();
+	void        init();
 
-	MineWorld  world;
-	MineUI     ui;
-	MinePlayer player;
-	MineDebug  debug;
+	void        update();
 
-	IEntity*   Jack;
+	MineWorld   world;
+	MineUI      ui;
+	MinePlayer  player;
+	MineDebug   debug;
 
-	void       MoveSnake(Movement dir, int id);
-	void       MoveLocalSnake(Movement dir);
-	void       RestartSnake(struct Snake* snake);
-	void       Pause();
+	IEntity*    Jack;
 
-	void       AddPlayer(size_t id, const string& name, glm::ivec2 pos);
-	void       RemovePlayer(size_t id, bool now);
+	void        MoveSnake(Movement dir, int id);
+	void        MoveLocalSnake(Movement dir);
+	void        RestartSnake(struct Snake* snake);
+	void        Pause();
 
-	Player     GetPlayer(size_t id);
-	Player     GetLocalPlayer();
+	void        AddPlayer(size_t id, const string& name, glm::ivec2 pos);
+	void        RemovePlayer(size_t id, bool now);
+
+	Player      GetPlayer(size_t id);
+	Player      GetLocalPlayer();
+	PlayersMap& GetPlayers();
 	//////////////////////////////
-	bool       IsServer();
+	bool        IsServer();
 	//////////////////////////////
 	enum class CellType
 	{
@@ -191,28 +194,28 @@ struct Minecraft
 
 		return Result;
 	}
-	void        MakeFood();
-	void        Eat(size_t id);
+	void                MakeFood();
+	void                Eat(size_t id);
 	////////////////////////////////////////////////////
-	bool        StartupServer(bool listen, const char* szName = NULL);
-	void        ShutdownServer();
-	GameServer& Server() { return *m_pServer; }
+	bool                StartupServer(bool listen, const char* szName = NULL);
+	void                ShutdownServer();
+	GameServer&         Server() { return *m_pServer; }
 	//////////////////////////////////////////////////////////////////////
 	//! create the client for a multiplayer session
-	bool                     StartupClient();
-	void                     ShutdownClient();
+	bool                StartupClient();
+	void                ShutdownClient();
 	////////////////////////////////////////////////////
-	CXGame*                  m_pGame      = nullptr;
-	GameServer*              m_pServer    = nullptr;
-	GameClient*              m_GameClient = nullptr;
+	CXGame*             m_pGame      = nullptr;
+	GameServer*         m_pServer    = nullptr;
+	GameClient*         m_GameClient = nullptr;
 
-	std::map<size_t, Player> Players;
-	std::vector<size_t>      PlayersToDestruct;
+	PlayersMap          Players;
+	std::vector<size_t> PlayersToDestruct;
 
-	size_t                   localPlayerId = 0;
+	size_t              localPlayerId = 0;
 
-	IEntity*                 m_Food;
-	glm::ivec2               m_FoodPos{0, 0};
+	IEntity*            m_Food;
+	glm::ivec2          m_FoodPos{0, 0};
 };
 
 extern Minecraft* minecraft;

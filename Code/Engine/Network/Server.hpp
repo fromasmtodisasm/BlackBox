@@ -8,7 +8,7 @@ class CNetworkServer;
 class CServerSlot : public IServerSlot
 {
 public:
-	CServerSlot(CNetworkServer& parent, uchar ucID, network::Socket& socket);
+	CServerSlot(CNetworkServer& parent, uchar ucID, network::Socket::Ptr socket);
 	~CServerSlot();
 
 	// Inherited via IServerSlot
@@ -35,10 +35,10 @@ public:
 
 	CNetworkServer&       m_Parent;
 	CIPAddress            m_ClientIP;
-	network::Socket       m_Socket;
-	IServerSlotSink*      m_pSink    = nullptr;
-	uchar                 m_ID       = 0;
-	bool                  m_bIsReady = false;
+	network::Socket::Ptr  m_Socket;
+	IServerSlotSink*      m_pSink         = nullptr;
+	uchar                 m_ID            = 0;
+	bool                  m_bIsReady      = false;
 
 	bool                  m_bSelfDestruct = false;
 
@@ -66,12 +66,12 @@ public:
 	virtual EMPServerType          GetServerType() const override;
 	//////////
 	bool                           Start();
-	void                           OnNewConnection(network::Socket& client);
+	void                           OnNewConnection(network::Socket::Ptr client);
 	void                           ThreadFunc();
 	void                           OnDisconnect(CServerSlot* slot, const char* why);
 
 	CNetwork&                      m_pParent;
-	network::Socket                m_Socket;
+	network::Socket::Ptr           m_Socket;
 	IServerSlotFactory*            m_pFactory = nullptr;
 	uint16_t                       m_nPort    = DEFAULT_SERVERPORT;
 	const char*                    m_szPort   = DEFAULT_SERVERPORT_STR;

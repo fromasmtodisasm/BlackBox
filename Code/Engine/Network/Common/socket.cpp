@@ -1,20 +1,22 @@
 #include "ClientServer.h"
 
+#include <memory>
+
 namespace network
 {
-	Socket Socket::CreateListen(const char* port)
+	Socket::Ptr Socket::CreateListen(const char* port)
 	{
 		int     iResult;
 
-		Socket  Result;
+		auto    Result = std::make_unique<Socket>();
 		WSADATA wsaData;
 
 		// Initialize Winsock
 		iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 		if (iResult != 0)
 		{
-			printf("WSAStartup failed: %d\n", iResult);
-			return Socket();
+			CryLog("WSAStartup failed: %d\n", iResult);
+			return nullptr;
 		}
 		////////////////////////////
 		struct addrinfo *result = NULL, *ptr = NULL, hints;
@@ -29,43 +31,39 @@ namespace network
 		iResult           = getaddrinfo(NULL, port, &hints, &result);
 		if (iResult != 0)
 		{
-			printf("getaddrinfo failed: %d\n", iResult);
-			WSACleanup();
-			return Socket();
+			CryLog("getaddrinfo failed: %d\n", iResult);
+			return nullptr;
 		}
 
 		// Create a SOCKET for the server to listen for client connections
 
-		Result.m_Socket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-		if (Result.m_Socket == INVALID_SOCKET)
+		Result->m_Socket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+		if (Result->m_Socket == INVALID_SOCKET)
 		{
-			printf("Error at socket(): %ld\n", WSAGetLastError());
+			CryLog("Error at socket(): %ld\n", WSAGetLastError());
 			freeaddrinfo(result);
-			WSACleanup();
-			return Socket();
+			return nullptr;
 		}
 
 		// Setup the TCP listening socket
-		iResult = bind(Result.m_Socket, result->ai_addr, (int)result->ai_addrlen);
+		iResult = bind(Result->m_Socket, result->ai_addr, (int)result->ai_addrlen);
 		if (iResult == SOCKET_ERROR)
 		{
-			printf("bind failed with error: %d\n", WSAGetLastError());
+			CryLog("bind failed with error: %d\n", WSAGetLastError());
 			freeaddrinfo(result);
-			closesocket(Result.m_Socket);
-			WSACleanup();
-			return Socket();
+			closesocket(Result->m_Socket);
+			return nullptr;
 		}
 		freeaddrinfo(result);
 
-		if (listen(Result.m_Socket, SOMAXCONN) == SOCKET_ERROR)
+		if (listen(Result->m_Socket, SOMAXCONN) == SOCKET_ERROR)
 		{
-			printf("Listen failed with error: %ld\n", WSAGetLastError());
-			closesocket(Result.m_Socket);
-			WSACleanup();
-			return Socket();
+			CryLog("Listen failed with error: %ld\n", WSAGetLastError());
+			closesocket(Result->m_Socket);
+			return nullptr;
 		}
 
-		Result.m_bRunning = true;
+		Result->m_bRunning = true;
 		return Result;
 	}
 
@@ -86,7 +84,7 @@ namespace network
 		iResult           = getaddrinfo(address.data(), port.data(), &hints, &result);
 		if (iResult != 0)
 		{
-			printf("getaddrinfo failed: %d\n", iResult);
+			CryLog("getaddrinfo failed: %d\n", iResult);
 			return false;
 		}
 
@@ -100,7 +98,7 @@ namespace network
 
 		if (m_Socket == INVALID_SOCKET)
 		{
-			printf("Error at socket(): %ld\n", WSAGetLastError());
+			CryLog("Error at socket(): %ld\n", WSAGetLastError());
 			freeaddrinfo(result);
 			return false;
 		}
@@ -122,7 +120,7 @@ namespace network
 
 		if (m_Socket == INVALID_SOCKET)
 		{
-			printf("Unable to connect to server!\n");
+			CryLog("Unable to connect to server!\n");
 			return false;
 		}
 
@@ -178,20 +176,18 @@ namespace network
 		m_sendBuffer.WriteData(data, len);
 	}
 
-	Socket Socket::Acept()
+	Socket::Ptr Socket::Acept()
 	{
-		Socket result;
 		if (auto s = accept(m_Socket, NULL, NULL); s != INVALID_SOCKET)
 		{
-			result = Socket(s);
+			auto result        = std::make_unique<Socket>(s);
+			result->m_bRunning = true;
+			return result;
 		}
-		else
-		{
-			printf("accept failed: %d\n", WSAGetLastError());
-			closesocket(m_Socket);
-		}
-		result.m_bRunning = true;
-		return result;
+
+		CryLog("accept failed: %d\n", WSAGetLastError());
+		closesocket(m_Socket);
+		return nullptr;
 	}
 
 	void Socket::ListenThread()
@@ -210,9 +206,9 @@ namespace network
 			{
 				if (FD_ISSET(m_Socket, &ReadSet))
 				{
-					if (auto Socket = Acept(); Socket.IsValid())
+					if (auto Socket = Acept(); Socket->IsValid())
 					{
-						OnNewConnection(Socket);
+						OnNewConnection(std::move(Socket));
 					}
 				}
 			}

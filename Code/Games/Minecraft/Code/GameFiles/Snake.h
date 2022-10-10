@@ -73,7 +73,6 @@ struct Snake
 			minecraft->Eat(m_Owner);
 			minecraft->MakeFood();
 		}
-		//m_pEatSound->Play();
 	}
 
 	void Init()
@@ -146,6 +145,8 @@ struct Snake
 	}
 	void Tick()
 	{
+		Move();
+
 		if (SelfIntersect())
 		{
 //m_pSelfIntersectSound->Play();
@@ -161,17 +162,14 @@ struct Snake
 #else
 			m_Dir  = -m_Dir;
 			auto p = GetHead()->GetPos();
-			p += m_Dir;
+			p += m_Dir * Legacy::Vec3(2);
 			GetHead()->SetPos(p);
 #endif
 		}
 		else if (FoodUnderHead())
 		{
 			Eat();
-		}
-		else
-		{
-			Move();
+			m_FoodsEaten++;
 		}
 	}
 
@@ -190,4 +188,6 @@ struct Snake
 
 	ISound*              m_pEatSound;           //     = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
 	ISound*              m_pSelfIntersectSound; //     = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
+
+	size_t               m_FoodsEaten = 0;
 };

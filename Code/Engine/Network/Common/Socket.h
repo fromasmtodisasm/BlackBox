@@ -26,9 +26,10 @@ namespace network
 
 	struct Socket
 	{
+		using Ptr            = std::unique_ptr<network::Socket>;
 		using OnDataCb       = std::function<void(CStream& stm)>;
 		using OnDisconnectCB = std::function<void(const char* szCause)>;
-		using OnConnectCB    = std::function<void(network::Socket& s)>;
+		using OnConnectCB    = std::function<void(Socket::Ptr s)>;
 		enum Type
 		{
 			TCP,
@@ -50,79 +51,25 @@ namespace network
 		{
 			Disconnect();
 		}
-		static Socket CreateListen(const char* port);
+		static Socket::Ptr CreateListen(const char* port);
 
-		bool          Connect(std::string_view address, std::string_view port);
-		bool          Disconnect();
-		void          Term();
+		bool               Connect(std::string_view address, std::string_view port);
+		bool               Disconnect();
+		void               Term();
 
-		void          Update();
+		void               Update();
 
-		void          Send(char* data, size_t len);
-		void          Send(CStream& stm)
+		void               Send(char* data, size_t len);
+		void               Send(CStream& stm)
 		{
 			Send((char*)stm.GetPtr(), stm.GetSize() / 8);
 		}
 
-		bool   IsValid() { return m_Socket != INVALID_SOCKET; }
+		bool        IsValid() { return m_Socket != INVALID_SOCKET; }
 
-		Socket Acept();
-		void   ListenThread();
-		void   ThreadFunc();
-		//////////////////////////////////////////////
-		Socket(Socket&& other) noexcept
-		{
-			m_Socket        = other.m_Socket;
-			m_Initialized   = other.m_Initialized;
-			m_bRunning      = other.m_bRunning;
-			m_DifferedTasks = other.m_DifferedTasks;
-			m_DifferedTasks = std::move(other.m_DifferedTasks);
-
-//m_DifferedTasksLock = other.m_DifferedTasksLock;
-
-//m_RecvLock = std::move(other.m_RecvLock);
-//m_SendLock = std::move(other.m_SendLock);
-
-//FIXME: rewrite this!!!
-#if 0
-			m_recvBuffer    = std::move(other.m_recvBuffer);
-			m_sendBuffer    = std::move(other.m_sendBuffer);
-#else
-			m_recvBuffer = CStream(500, &sa);
-			m_sendBuffer = CStream(500, &sa);
-#endif
-
-			OnData          = std::move(other.OnData);
-			OnDisconnect    = std::move(other.OnDisconnect);
-			OnNewConnection = std::move(other.OnNewConnection);
-		}
-
-		Socket& operator=(Socket&& other)
-		{
-			m_Socket        = other.m_Socket;
-			m_Initialized   = other.m_Initialized;
-			m_bRunning      = other.m_bRunning;
-			m_DifferedTasks = other.m_DifferedTasks;
-			m_DifferedTasks = std::move(other.m_DifferedTasks);
-
-			//m_DifferedTasksLock = other.m_DifferedTasksLock;
-
-			//m_RecvLock = std::move(other.m_RecvLock);
-			//m_SendLock = std::move(other.m_SendLock);
-
-#if 0
-			m_recvBuffer    = std::move(other.m_recvBuffer);
-			m_sendBuffer    = std::move(other.m_sendBuffer);
-#else
-			m_recvBuffer = CStream(500, &sa);
-			m_sendBuffer = CStream(500, &sa);
-#endif
-
-			OnData          = std::move(other.OnData);
-			OnDisconnect    = std::move(other.OnDisconnect);
-			OnNewConnection = std::move(other.OnNewConnection);
-			return *this;
-		}
+		Socket::Ptr Acept();
+		void        ListenThread();
+		void        ThreadFunc();
 
 	protected:
 		void Close();
