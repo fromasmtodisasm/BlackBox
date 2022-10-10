@@ -1,3 +1,0 @@
-HackMan,test@mail.com,123456,localhost,27015
-Joe,joe@mail.com,123654,localhost,27015
-Rose,rose@mail.com,1111,localhost,27015

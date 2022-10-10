@@ -9,10 +9,7 @@
 #include <queue>
 #include <deque>
 
-#include <BlackBox/Network/Socks.hpp>
-#include <Network/Minecraft/Client/Client.h>
 #include <Network/Minecraft/Server/Server.h>
-
 #include "Snake.h"
 
 Minecraft* minecraft;
@@ -28,7 +25,6 @@ enum class GameState
 namespace
 {
 	GameState     g_CurrentGameState = GameState::InMenu;
-	CRYSOCKET     g_ClientSocket     = INVALID_SOCKET;
 
 	constexpr int DEFAULT_PORT       = 9999;
 	constexpr int DEFAULT_BUFFER     = 4096;
@@ -68,23 +64,6 @@ namespace
 
 int nextEntity() { return minecraft->world.nextEntity(); }
 
-namespace network
-{
-	enum Commands : uchar
-	{
-		Connect,
-		NewClient,
-		Disconnect,
-		Move,
-		MakeFood,
-		Eat,
-	};
-} // namespace network
-
-namespace
-{
-} // namespace
-
 struct GameClient : public IClientSink
 {
 	GameClient()
@@ -106,10 +85,21 @@ struct GameClient : public IClientSink
 	void         OnXServerTimeout() override {}
 	void         OnXServerRessurect() override {}
 	unsigned int GetTimeoutCompensation() override { return 0; }
-	void         MarkForDestruct() override {}
-	bool         DestructIfMarked() override { return true; }
+	void         MarkForDestruct() override
+	{
+		m_bSelfDestruct = true;
+	}
+	bool DestructIfMarked() override
+	{
+		if (m_bSelfDestruct)
+		{
+			delete this;
+			return true; // was deleted
+		}
+		return false; // was not deleted
+	}
 
-	bool         Init()
+	bool Init()
 	{
 		m_pClient = minecraft->m_pGame->CreateClient(this);
 
@@ -123,6 +113,10 @@ struct GameClient : public IClientSink
 
 		m_pClient->InitiateCDKeyAuthorization(false);
 		return true;
+	}
+	void Disconnect(const char* szCause)
+	{
+		m_pClient->Disconnect(szCause);
 	}
 	void Auth(std::string mail, std::string password)
 	{
@@ -171,9 +165,16 @@ struct GameClient : public IClientSink
 	void OnConnected(CStream& stm)
 	{
 		stm.Read(playerId);
+
+		g_CurrentGameState = GameState::InGame;
 	}
 	void OnDisconnect(CStream& stm)
 	{
+		size_t id;
+
+		stm.Read(id);
+
+		minecraft->RemovePlayer(id, true);
 	}
 	void OnMessage(CStream& stm)
 	{
@@ -275,11 +276,12 @@ struct GameClient : public IClientSink
 		m_pClient->SendReliable(stm);
 	}
 
-	IClient*    m_pClient;
+	IClient*    m_pClient       = nullptr;
+	bool        m_bSelfDestruct = false; //!< usually false, to make sure the client is only released in one place
 
-	std::string server   = "127.0.0.1";
+	std::string server          = "127.0.0.1";
 
-	size_t      playerId = 0;
+	size_t      playerId        = 0;
 };
 
 void Minecraft::Pause()
@@ -508,15 +510,18 @@ auto GetCameraController()
 	auto& cc = GetClient()->m_CameraController;
 }
 
-bool SendStream(CStream& stm, CRYSOCKET s)
+bool ConnectToGame(const char* ip)
 {
-	//Sock::send(s, (const char*)stm.GetPtr(), stm.GetSize(), 0);
-	return false;
-}
-
-void SendClientConnect()
-{
-	CStream stm;
+	if (GetGame()->StartupClient() && minecraft->StartupClient())
+	{
+		if (!minecraft->m_GameClient->Connect(ip))
+		{
+			CryError("Failed to connect to server");
+			return false;
+		}
+	}
+	g_CurrentGameState = GameState::InGame;
+	return true;
 }
 
 void StartGame()
@@ -536,7 +541,7 @@ void StartGame()
 		}
 	}
 	g_CurrentGameState = GameState::InGame;
-	minecraft->MakeFood();
+	//minecraft->MakeFood();
 }
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT   "9999"
@@ -545,6 +550,9 @@ void StopGame()
 {
 	g_CurrentGameState = GameState::InMenu;
 	GetGame()->ShutdownClient();
+	minecraft->ShutdownClient();
+	minecraft->ShutdownServer();
+
 	//GetClient()->OnUnloadScene();
 }
 
@@ -600,13 +608,14 @@ void Minecraft::init()
 	    { StopGame(); });
 	Env::Console()->AddCommand(
 	    "game.connect",
-	    [](IConsoleCmdArgs* args) {
-#if 0
+	    [](IConsoleCmdArgs* args)
+	    {
+#if 1
 		    if (args->GetArgCount() > 1)
 		    {
 			    auto ip = args->GetArg(1);
-			    if (minecraft->ClientConnect(ip))
-				    g_CurrentGameState = GameState::InGame;
+			    ;
+			    ConnectToGame(ip);
 		    }
 #else
 		    assert(0);
@@ -617,34 +626,6 @@ void Minecraft::init()
 void InMenuUpdate()
 {
 	Env::Console()->ShowConsole(true);
-}
-
-network::Commands ParseCommand()
-{
-	return network::NewClient;
-}
-
-void ReadNetwork(CStream& stm)
-{
-	network::Commands command;
-	stm.Read((uchar&)command);
-	switch (command)
-	{
-	case network::Connect:
-		break;
-	case network::NewClient:
-		break;
-	case network::Disconnect:
-		break;
-	case network::Move:
-		break;
-	case network::MakeFood:
-		break;
-	case network::Eat:
-		break;
-	default:
-		break;
-	}
 }
 
 void InGameUpdate()
@@ -1203,7 +1184,15 @@ bool Minecraft::StartupServer(bool listen, const char* szName)
 }
 void Minecraft::ShutdownServer()
 {
-	SAFE_DELETE(m_pServer);
+	if (!m_pServer)
+		return;
+
+	//if (!m_pServer->IsInDestruction())
+	{
+		CryLog("Shutdown CXServer");
+		SAFE_DELETE(m_pServer);
+		CryLog("CXServer shutdowned");
+	}
 }
 
 bool Minecraft::StartupClient()
@@ -1228,5 +1217,14 @@ bool Minecraft::StartupClient()
 }
 void Minecraft::ShutdownClient()
 {
-	SAFE_DELETE(m_GameClient);
+	if (!m_GameClient)
+		return;
+
+	CryLog("Disconnect the client");
+	m_GameClient->Disconnect("@ClientHasQuit");
+	CryLog("Shutdown the Client");
+
+	m_GameClient->MarkForDestruct();
+	m_GameClient->DestructIfMarked();
+	m_GameClient = NULL;
 }

@@ -1,3 +1,0 @@
-HackMan,test@mail.com,123456
-Joe,joe@mail.com,123654
-Rose,rose@mail.com,1111

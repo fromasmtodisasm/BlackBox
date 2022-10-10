@@ -28,6 +28,8 @@ public:
 	virtual void          GetBandwidthStats(SServerSlotBandwidthStats& out) const override;
 	virtual void          OnPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID, unsigned int uiGlobalIDSize) override;
 
+	void                  MarkForDestruct() { m_bSelfDestruct = true; }
+
 	void                  Update();
 	void                  Start();
 
@@ -37,6 +39,8 @@ public:
 	IServerSlotSink*      m_pSink    = nullptr;
 	uchar                 m_ID       = 0;
 	bool                  m_bIsReady = false;
+
+	bool                  m_bSelfDestruct = false;
 
 	std::thread           m_thread;
 };
@@ -79,5 +83,4 @@ public:
 	std::thread                    m_thread;
 
 	std::mutex                     m_SlotsLock;
-	std::vector<CServerSlot*>      m_SlotsToDisconnect;
 };

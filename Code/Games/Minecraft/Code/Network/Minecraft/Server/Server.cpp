@@ -35,143 +35,6 @@ namespace std
 	}
 } // namespace std
 
-#if 0
-Server::Server(int numPlayers)
-    : NumPlayers(numPlayers)
-{
-}
-Server::~Server()
-{
-	Stop();
-}
-
-void Server::DisconnectPending()
-{
-	//std::lock_guard lock(m_ClientsLock);
-	for (size_t i = 0; i < m_toDisconnect.size(); i++)
-	{
-		auto slot = m_toDisconnect[i];
-		CryLog("Connection closed  for %s", slot->name.c_str());
-		slot->Stop();
-
-		OnDisconnectServerSlot(slot);
-
-		slot->m_thread.join();
-		delete slot;
-	}
-	m_toDisconnect.clear();
-}
-void Server::Stop()
-{
-	//m_bRunning = false;
-	for (auto& c : clients)
-	{
-		c->Disconnect();
-	}
-	DisconnectPending();
-
-	m_Socket.Disconnect();
-	m_thread.join();
-}
-bool Server::Start()
-{
-	m_Socket = std::move(network::Socket::CreateListen());
-	if (m_Socket.IsValid())
-	{
-		m_Socket.OnNewConnection = [this](network::Socket& s)
-		{ OnNewConnection(s); };
-		m_thread = std::thread([this]
-		                       { ThreadFunc(); });
-		return true;
-	}
-	return false;
-}
-void Server::OnNewConnection(network::Socket& client)
-{
-	auto              slot = new ServerSlot(client, this);
-
-	///
-	std::stringstream ss;
-	//ss << "New user connected with id: " << clients.size() << "\n";
-	//for (auto& c : clients)
-	//{
-	//	send(c->m_socket, ss.str().c_str(), ss.str().size(), 0);
-	//}
-
-	CryLog("%s", ss.str().c_str());
-	///
-
-	if (!OnCreateServerSlot(slot))
-	{
-		//OnDisconnect(slot, "Server full");
-		delete slot;
-		return;
-	}
-
-	slot->Start();
-	std::lock_guard lock(m_ClientsLock);
-	clients.emplace_back(slot);
-}
-void Server::OnDisconnect(ServerSlot* slot, const char* why)
-{
-	std::lock_guard lock(m_ClientsLock);
-	m_toDisconnect.push_back(slot);
-	if (auto it = std::find(clients.begin(), clients.end(), slot); it != clients.end())
-	{
-		clients.erase(it);
-	}
-}
-void Server::CheckConnections()
-{
-}
-void Server::ThreadFunc()
-{
-	m_Socket.ListenThread();
-}
-void Server::Update()
-{
-	DisconnectPending();
-	for (auto& slot : clients)
-	{
-		slot->Update();
-	}
-}
-//////////////////////////////////////
-ServerSlot::~ServerSlot()
-{
-}
-ServerSlot::ServerSlot(network::Socket& socket, Server* server)
-    : m_Socket(std::move(socket))
-    , m_server(server)
-{
-}
-
-void ServerSlot::Start()
-{
-	m_Socket.OnData       = std::move(OnData);
-	m_Socket.OnDisconnect = [this]
-	{ m_server->OnDisconnect(this, "WTF??"); };
-	m_thread = std::thread([this]
-	                       { m_Socket.ThreadFunc(); });
-}
-void ServerSlot::Stop()
-{
-	m_bRunning = false;
-}
-void ServerSlot::Disconnect()
-{
-	m_server->OnDisconnect(this, "wtf");
-	Stop();
-}
-void ServerSlot::Update()
-{
-	m_Socket.Update();
-}
-void ServerSlot::Send(CStream& stm)
-{
-	m_Socket.Send((char*)stm.GetPtr(), stm.GetSize() / 8);
-}
-#endif
 //////////////////////////////////////
 GameServer::GameServer(class Minecraft* pGame, WORD nPort, const char* szName, bool listen)
 {
@@ -190,9 +53,36 @@ GameServer::GameServer(class Minecraft* pGame, WORD nPort, const char* szName, b
 	LoadUsers();
 }
 
+GameServer::~GameServer()
+{
+	// update the network, to process any pending disconnect
+	UpdateXServerNetwork();
+
+	// shut down server game rules. (incorrect place but left for SP stability)
+	//m_ServerRules.ShutDown();
+
+	// delele the entity system sink
+	//m_pGame->GetSystem()->GetIEntitySystem()->RemoveSink(this);
+
+	// remove the slots which are still connected
+	ClearSlots();
+
+	// update the network, to process any pending disconnect
+	UpdateXServerNetwork();
+
+	// shut down server game rules. (correct place)
+	// m_ServerRules.ShutDown();
+	//m_pGame->GetScriptSystem()->SetGlobalToNull("GameRules"); // workaround to minimize risk
+
+	// release the IServer interface
+	SAFE_RELEASE(m_pIServer);
+
+	// release the system interface
+}
+
 void GameServer::Update()
 {
-	m_pIServer->Update(0);
+	UpdateXServerNetwork();
 
 	for (auto& player : minecraft->Players)
 	{
@@ -281,7 +171,7 @@ void GameServerSlot::NotifyConnect(bool sendOtherSlots)
 	}
 	if (sendOtherSlots)
 	{
-		for (auto s : m_pParent->m_Slots)
+		for (auto [first, s] : m_pParent->m_mapXSlots)
 		{
 			if (s == this) continue;
 			auto    id   = s->id;
@@ -430,7 +320,7 @@ void GameServerSlot::OnMessage(CStream& stm)
 }
 void GameServer::BroadCast(CStream& w, GameServerSlot* exclude)
 {
-	for (auto s : m_Slots)
+	for (auto [first, s] : m_mapXSlots)
 	{
 		if (s != exclude && s->isReady)
 			s->Send(w);
@@ -439,25 +329,18 @@ void GameServer::BroadCast(CStream& w, GameServerSlot* exclude)
 
 GameServerSlot* GameServer::SlotById(size_t id)
 {
-	if (auto it = std::find_if(m_Slots.begin(), m_Slots.end(), [id](GameServerSlot* other)
-	                           {
-			if (other->id == id)
-			{
-				return true;
-			}
-			return false; });
-	    it != m_Slots.end())
+	if (auto it = m_mapXSlots.find(id); it != m_mapXSlots.end())
 	{
-		return *it;
+		return it->second;
 	}
 	return nullptr;
 }
 
 bool GameServer::CreateServerSlot(IServerSlot* pIServerSlot)
 {
-	auto gs = new GameServerSlot(this, pIServerSlot);
-	gs->id  = m_Slots.size();
-	m_Slots.push_back(gs);
+	auto gs             = new GameServerSlot(this, pIServerSlot);
+	gs->id              = m_mapXSlots.size();
+	m_mapXSlots[gs->id] = (gs);
 
 	return true;
 }
@@ -494,6 +377,11 @@ void GameServerSlot::OnData(CStream& stm)
 }
 void GameServerSlot::OnXPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID,
                                             unsigned int uiGlobalIDSize) {}
+void GameServerSlot::Disconnect(const char* szCause)
+{
+	if (m_pISSlot)
+		m_pISSlot->Disconnect(szCause);
+}
 //////////////////////////////////////////////////////////////////////
 BYTE GameServerSlot::GetID()
 {
@@ -503,6 +391,58 @@ BYTE GameServerSlot::GetID()
 void GameServer::UnregisterSlot(GameServerSlot* slot)
 {
 	m_SlotsToDisconnect.push_back(slot);
+}
+void GameServer::DisconnectSlot(GameServerSlot* slot)
+{
+	if (auto it = m_mapXSlots.find(slot->GetID()); it != m_mapXSlots.end())
+	{
+		auto    msg = network::msg::Server::DISCONNECT;
+		auto    id  = it->second->id;
+		CStream stm;
+		stm.Write(0);
+		stm.Write(uint8(msg));
+		stm.Write(id);
+		BroadCast(stm, (it->second));
+
+		delete it->second;
+		m_mapXSlots.erase(it);
+	}
+}
+inline void GameServer::ClearSlots()
+{
+	//Disconnect all slots
+	auto itor = m_mapXSlots.begin();
+	while (itor != m_mapXSlots.end())
+	{
+		CXServerSlot* pSlot = itor->second;
+
+		//if (m_pGame->IsMultiplayer() && !pSlot->IsLocalHost())
+		pSlot->Disconnect("@ServerShutdown");
+
+		++itor;
+	}
+
+	//Update The network to send the disconnection
+	UpdateXServerNetwork();
+
+	itor = m_mapXSlots.begin();
+	while (itor != m_mapXSlots.end())
+	{
+		delete itor->second;
+		++itor;
+	}
+	m_mapXSlots.clear();
+}
+inline void GameServer::UpdateXServerNetwork()
+{
+	FUNCTION_PROFILER(PROFILE_GAME);
+	if (m_pIServer)
+		m_pIServer->Update(GetCurrentTime());
+}
+void GameServer::RegisterSlot(GameServerSlot* pSlot)
+{
+	NET_TRACE("<<NET>>CXServer::RegisterSlot %d", pSlot->GetID());
+	m_mapXSlots.insert(XSlotMap::iterator::value_type(pSlot->GetID(), pSlot));
 }
 // Main code
 const auto DEFAULT_WIDTH  = 640;

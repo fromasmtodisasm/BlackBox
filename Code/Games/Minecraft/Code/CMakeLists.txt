@@ -56,21 +56,9 @@ add_sources(
 		Network/XEntityProcessingCmd.cpp
 		Network/XNetwork.cpp
 		Network/XNetworkStats.cpp
-	SOURCE_GROUP "Network\\\\Minecraft\\\\Client"
-        Network/Minecraft/Client/Client.cpp
-        Network/Minecraft/Client/Client.h
-        Network/Minecraft/Client/imgui.ini
-        Network/Minecraft/Client/users.txt
 	SOURCE_GROUP "Network\\\\Minecraft\\\\Common"
        Network/Minecraft/Common/ClientServer.h
-       Network/Minecraft/Common/Console.h
-       #Network/Minecraft/Common/#imgui_impl_dx11.cpp
-       #Network/Minecraft/Common/#imgui_impl_sdl.cpp
-       Network/Minecraft/Common/#main.cpp
-       #Network/Minecraft/Common/Socket.cpp
-       Network/Minecraft/Common/Socket.h
 	SOURCE_GROUP "Network\\\\Minecraft\\\\Server"
-        Network/Minecraft/Server/imgui.ini
         Network/Minecraft/Server/Server.cpp
         Network/Minecraft/Server/Server.h
         Network/Minecraft/Server/users.txt

@@ -27,7 +27,7 @@ namespace network
 	struct Socket
 	{
 		using OnDataCb       = std::function<void(CStream& stm)>;
-		using OnDisconnectCB = std::function<void(const char *szCause)>;
+		using OnDisconnectCB = std::function<void(const char* szCause)>;
 		using OnConnectCB    = std::function<void(network::Socket& s)>;
 		enum Type
 		{
@@ -124,6 +124,10 @@ namespace network
 			return *this;
 		}
 
+	protected:
+		void Close();
+
+	public:
 		/// <summary>
 		/// /////////////////////////////////////////////////////////////////////////////
 		/// </summary>

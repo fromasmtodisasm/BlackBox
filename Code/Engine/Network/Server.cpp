@@ -1,6 +1,7 @@
 #include "Server.hpp"
-#include <Common/Socket.h>
 #include "Network.hpp"
+
+#include <Common/Socket.h>
 
 CNetworkServer::CNetworkServer(CNetwork& pParent, IServerSlotFactory* pFactory, uint16_t nPort, bool bLocal)
     : m_pParent(pParent)
@@ -12,6 +13,10 @@ CNetworkServer::CNetworkServer(CNetwork& pParent, IServerSlotFactory* pFactory, 
 
 CNetworkServer::~CNetworkServer()
 {
+	m_Socket.Term();
+	if (m_thread.joinable())
+		m_thread.join();
+	m_pParent.UnregisterServer(this);
 }
 
 void CNetworkServer::Update(unsigned int nTime)
@@ -120,12 +125,11 @@ void CNetworkServer::ThreadFunc()
 void CNetworkServer::OnDisconnect(CServerSlot* slot, const char* why)
 {
 	std::lock_guard lock(m_SlotsLock);
-	m_SlotsToDisconnect.push_back(slot);
 	if (auto it = std::find_if(m_Slots.begin(), m_Slots.end(), [slot](const decltype(m_Slots)::value_type& val)
 	                           { return val.second == slot; });
 	    it != m_Slots.end())
 	{
-		m_Slots.erase(it);
+		it->second->MarkForDestruct();
 	}
 }
 // Inherited via IServerSlot
@@ -148,6 +152,7 @@ void CServerSlot::Advise(IServerSlotSink* pSink)
 
 void CServerSlot::Disconnect(const char* szCause)
 {
+	m_Socket.Disconnect();
 }
 
 bool CServerSlot::ContextSetup(CStream& stm)

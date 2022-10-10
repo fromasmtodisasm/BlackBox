@@ -149,7 +149,7 @@ namespace network
 
 	void Socket::Term()
 	{
-		WSACleanup();
+		Disconnect();
 	}
 
 	void Socket::Update()
@@ -217,13 +217,14 @@ namespace network
 				}
 			}
 		}
+		Close();
 	}
 
 	void Socket::ThreadFunc()
 	{
 		//FD_SET WriteSet;
 		std::string connectionError;
-		auto OnDisconnectTask = [this](const char* szCause) { /*m_thread.join();*/ this->OnDisconnect(szCause); };
+		auto        OnDisconnectTask = [this](const char* szCause) { /*m_thread.join();*/ this->OnDisconnect(szCause); };
 		while (m_bRunning)
 		{
 			{
@@ -259,11 +260,11 @@ namespace network
 					std::lock_guard         lock(m_RecvLock);
 					while (true)
 					{
-						auto        len = recv(m_Socket, buf, BUF_LEN, 0);
+						auto len = recv(m_Socket, buf, BUF_LEN, 0);
 						if (len == 0)
 						{
 							connectionError = "Connection closed by remote peer";
-							m_DifferedTasks.push_back([OnDisconnectTask,connectionError]
+							m_DifferedTasks.push_back([OnDisconnectTask, connectionError]
 							                          { OnDisconnectTask(connectionError.c_str()); });
 							m_bRunning = false;
 							break;
@@ -277,9 +278,9 @@ namespace network
 						}
 						else
 						{
-							auto error = WSAGetLastError();
+							auto error      = WSAGetLastError();
 							connectionError = "Unexpected connection error, error code: " + std::to_string(error);
-							m_DifferedTasks.push_back([OnDisconnectTask,connectionError]
+							m_DifferedTasks.push_back([OnDisconnectTask, connectionError]
 							                          { OnDisconnectTask(connectionError.c_str()); });
 							m_bRunning = false;
 							break;
@@ -290,6 +291,11 @@ namespace network
 				}
 			}
 		}
+		Close();
+	}
+
+	void Socket::Close()
+	{
 		shutdown(m_Socket, SD_BOTH);
 		closesocket(m_Socket);
 	}

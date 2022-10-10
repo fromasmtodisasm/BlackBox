@@ -2,6 +2,7 @@
 #include <BlackBox/Network/INetwork.hpp>
 
 #include "Common/ClientServer.h"
+
 #include <vector>
 #include <functional>
 

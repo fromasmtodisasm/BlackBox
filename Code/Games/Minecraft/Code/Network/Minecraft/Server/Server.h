@@ -90,6 +90,8 @@ struct GameServerSlot : public IServerSlotSink
 	virtual void OnXPlayerAuthorization(bool bAllow, const char* szError, const uint8_t* pGlobalID,
 	                                    unsigned int uiGlobalIDSize);
 
+	void         Disconnect(const char* szCause);
+
 	void         SpawnPlayer();
 
 	void         OnMessage(CStream& stm);
@@ -105,16 +107,21 @@ struct GameServerSlot : public IServerSlotSink
 	BYTE         GetID();
 
 	std::string  name;
-	size_t       id = 0;
+	size_t       id        = 0;
 	IServerSlot* m_pISSlot = nullptr;
 	GameServer*  m_pParent = nullptr;
 
-	bool         isReady = false;
+	bool         isReady   = false;
 };
 
 struct GameServer : public IServerSlotFactory
 {
+	typedef std::map<BYTE, GameServerSlot*> SlotsMap;
+	using XSlotMap     = SlotsMap;
+	using CXServerSlot = GameServerSlot;
+	//////////////////////////////////////////
 	GameServer(class Minecraft* pGame, WORD nPort, const char* szName, bool listen);
+	~GameServer();
 
 	bool                         CreateServerSlot(IServerSlot* pIServerSlot) override;
 	bool                         GetServerInfoStatus(std::string& szServerStatus) override;
@@ -131,30 +138,12 @@ struct GameServer : public IServerSlotFactory
 
 	void                         UnregisterSlot(GameServerSlot* slot);
 
-	void                         DisconnectSlot(GameServerSlot* slot)
-	{
-		if (auto it = std::find_if(m_Slots.begin(), m_Slots.end(), [slot](GameServerSlot* other)
-		                           {
-			if (other == slot)
-			{
-				return true;
-			}
-			return false; });
-		    it != m_Slots.end())
-		{
-			auto    msg = network::msg::Server::DISCONNECT;
-			auto    id  = (*it)->id;
-			CStream stm;
-			stm.Write(0);
-			stm.Write(uint8(msg));
-			stm.Write(id);
-			BroadCast(stm, (*it));
-
-			delete *it;
-			m_Slots.erase(it);
-		}
-	}
-
+	void                         DisconnectSlot(GameServerSlot* slot);
+	void                         ClearSlots();
+	void                         UpdateXServerNetwork();
+	//////////////////////////////////////////
+	void                         RegisterSlot(GameServerSlot* pSlot);
+	//////////////////////////////////////////
 	IServer*                     m_pIServer = nullptr;
 
 	bool                         m_bOK;     //!< true=server creation was successful, false otherwise
@@ -162,7 +151,7 @@ struct GameServer : public IServerSlotFactory
 
 	Minecraft*                   m_pGame;
 
-	std::vector<GameServerSlot*> m_Slots;
+	XSlotMap                     m_mapXSlots;
 	std::vector<GameServerSlot*> m_SlotsToDisconnect;
 
 	std::vector<User>            m_Users;

@@ -36,6 +36,7 @@ void CNetworkClient::Connect(const char* szIP, uint16_t wPort, const uint8_t* pb
 
 void CNetworkClient::Disconnect(const char* szCause)
 {
+	m_Socket.Disconnect();
 }
 
 void CNetworkClient::SendReliable(CStream& stm)

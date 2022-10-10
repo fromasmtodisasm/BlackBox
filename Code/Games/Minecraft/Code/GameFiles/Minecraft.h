@@ -130,6 +130,15 @@ struct Player
 	std::shared_ptr<Snake> snake;
 };
 
+struct GameRules
+{
+	void OnStart();
+	void OnTick();
+	void OnStop();
+
+	Minecraft* m_pGame;
+};
+
 struct Minecraft
 {
 	void       init();
