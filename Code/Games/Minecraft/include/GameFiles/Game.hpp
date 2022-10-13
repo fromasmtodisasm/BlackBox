@@ -52,7 +52,6 @@ enum
 };
 
 #include <Network/XNetwork.hpp>
-#include "../../Code/Engine/Renderer/MineRenderer/renderer.h"
 
 //#include "BitStream_Base.h"						// CBitStream_Base
 //#include "BitStream_Compressed.h"			// CBitStream_Compressed
@@ -632,9 +631,10 @@ public:
 	{
 		NOT_IMPLEMENTED;
 	}
-#if 0
 	bool AddEquipPack(XDOM::IXMLDOMNode* pPack)
-#endif
+	{
+		NOT_IMPLEMENTED_V
+	}
 	bool AddEquipPack(const char* pszXML)
 	{
 		NOT_IMPLEMENTED_V

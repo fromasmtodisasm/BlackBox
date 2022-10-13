@@ -195,7 +195,7 @@ struct Minecraft
 		return Result;
 	}
 	void                MakeFood();
-	void                Eat(size_t id);
+	void                Eat(size_t id, int x, int y);
 	////////////////////////////////////////////////////
 	bool                StartupServer(bool listen, const char* szName = NULL);
 	void                ShutdownServer();

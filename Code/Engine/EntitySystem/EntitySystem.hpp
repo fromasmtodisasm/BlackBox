@@ -7,17 +7,13 @@
 #include "Physics.hpp"
 
 struct ICrySizer;
-typedef std::vector<CEntity>::iterator EntityIt;
-#if 0
-typedef std::vector<CEntity> Entities;
-#else
-typedef std::vector<CEntity> Entities;
-#endif
+typedef std::map<EntityId, CEntity> EntitiesMap;
+typedef EntitiesMap::iterator       EntityIt;
 
 class CEntityIterator : public IEntityIt, _reference_target_t
 {
 public:
-	CEntityIterator(Entities& ents)
+	CEntityIterator(EntitiesMap& ents)
 	    : m_Entities(ents)
 	{
 	}
@@ -36,8 +32,16 @@ public:
 	}
 	virtual IEntity* Next() override
 	{
-		auto result = IsEnd() ? NULL : static_cast<IEntity*>(&(*m_It++));
-		return result;
+		if (IsEnd())
+		{
+			return NULL;
+		}
+		else
+		{
+			auto result = m_It;
+			m_It++;
+			return &result->second;
+		}
 	}
 
 	virtual void MoveFirst() override
@@ -45,8 +49,8 @@ public:
 		m_It = m_Entities.begin();
 	}
 
-	EntityIt  m_It;
-	Entities& m_Entities;
+	EntityIt     m_It;
+	EntitiesMap& m_Entities;
 };
 
 class CEntitySystem : public IEntitySystem
@@ -88,8 +92,8 @@ public:
 	void                   AddToPhysicalWorld(CPhysicalEntity* pEntity);
 
 public:
-	Entities                          m_Entities;
-	std::map<EntityClassId, CEntity*> m_EntitiesMap;
+	EntitiesMap                       m_Entities;
+	//std::map<EntityClassId, CEntity*> m_EntitiesMap;
 	CEntityIterator                   m_EntityIt;
 	int                               m_nSpawnedEntities = 0;
 	IEntitySystemSink*                m_pEntitySystemSink{};

@@ -60,14 +60,13 @@ struct Snake
 		//Tail->SetIStatObj(m_CellObjects[size_t(CellType::Head)]);
 	}
 
-	void Eat()
+	void Eat(int x, int y)
 	{
-		auto HeadPos = GetHead()->GetPos();
+		auto HeadPos = glm::vec3(x, 0, y); //GetHead()->GetPos();
 		MoveHead();
 		auto body = minecraft->CreateCell(HeadPos, Minecraft::CellType::Body);
 		auto it   = m_Body.begin() + 1;
 		m_Body.insert(it, body);
-		m_FoodsEaten++;
 	}
 
 	void Init()
@@ -78,6 +77,43 @@ struct Snake
 		//m_pSelfIntersectSound = Env::SoundSystem()->LoadSound("minecraft/self_intersect.mp3", 0);
 
 		//m_pSetBlockSound = Env::SoundSystem()->LoadSound("sounds/doors/open.wav", 0);
+	}
+
+	void Write(CStream& stm)
+	{
+		auto p = GetHead()->GetPos();
+		stm.Write(m_Body.size());
+		stm.Write(p.x);
+		stm.Write(p.z);
+		for (auto& cell : m_Body)
+		{
+			auto p = cell->GetPos();
+			stm.Write(p);
+		}
+	}
+	void Read(CStream& stm)
+	{
+		Legacy::Vec3 p = GetHead()->GetPos();
+		size_t       size;
+		stm.Read(size);
+		stm.Read(p.x);
+		stm.Read(p.z);
+
+		CreateHead(p);
+		auto diff = size - m_Body.size();
+		if (diff > 0)
+		{
+			p = glm::vec3(0);
+			for (int i = 0; i < diff; i++)
+			{
+				auto body = minecraft->CreateCell(p, Minecraft::CellType::Body);
+			}
+		}
+		for (auto cell : m_Body)
+		{
+			stm.Read(p);
+			cell->SetPos(p);
+		}
 	}
 
 	IEntity* GetHead()
@@ -165,9 +201,11 @@ struct Snake
 		else if (FoodUnderHead())
 		{
 			//Eat();
+			m_FoodsEaten++;
 			if (minecraft->IsServer())
 			{
-				minecraft->Eat(m_Owner);
+				auto p = GetHead()->GetPos();
+				minecraft->Eat(m_Owner, int(p.x), int(p.y));
 				minecraft->MakeFood();
 			}
 		}

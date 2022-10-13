@@ -172,7 +172,6 @@ bool CXSystemBase::LoadLevelEntities(SMissionInfo& missionInfo)
 	// is missing it will erroneuosly reuse the previous mission script!
 	m_pGame->GetScriptSystem()->SetGlobalToNull("Mission");
 
-#if 0
 	XDOM::IXMLDOMNodePtr pScriptName = missionInfo.pMissionXML->getAttribute("Script");						
 	if (pScriptName)
 	{		
@@ -198,12 +197,11 @@ bool CXSystemBase::LoadLevelEntities(SMissionInfo& missionInfo)
 		while((pEnt=pEntities->Next())!=NULL)
 			pEnt->PostLoad();		
 	}
-#endif
 
 	return true;
 }
 
-#if 0
+#if 1
 //////////////////////////////////////////////////////////////////////
 bool CXSystemBase::LoadMaterials(XDOM::IXMLDOMDocument *doc)
 {	
@@ -371,16 +369,14 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 			pName=pNode->getAttribute("Name");
 			pPos=pNode->getAttribute("Pos");
 			XDOM::IXMLDOMNodePtr pAngles = pNode->getAttribute("Angles");
-			Vec3 angles;
+			Legacy::Vec3         angles(0,0,0);
 			if (pAngles)
-				angles = StringToVector(pAngles->getText());
-			else 
-				angles(0,0,0);
+				angles = Legacy::to(StringToVector(pAngles->getText()));
 
 			if((pType!=NULL) && (pName!=NULL) && (pPos!=NULL))
 			{
 				// <<FIXME>> fixed height... maybe should be sent in ??
-				Vec3 pos = StringToVector(pPos->getText());
+				Legacy::Vec3 pos = Legacy::to(StringToVector(pPos->getText()));
 				if (!stricmp(pType->getText(),"TagPoint"))
 				{
 					ITagPoint *pPoint = m_pGame->CreateTagPoint(pName->getText(),pos, angles);
@@ -395,7 +391,7 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 							params.fEyeHeight = 1.7f;
 							pObject->ParseParameters(params);
 
-							pObject->SetPos(pos);
+							pObject->SetPos(Legacy::from(pos));
 							pObject->SetAngles(Vec3(0,0,0));
 							pObject->SetName(pName->getText());
 						}
@@ -497,13 +493,13 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 						pThePoints->reset();
 						int sz = pThePoints->length();
 						int	cntr=0;
-						Vec3 *borderPoints = new Vec3[sz];
+						Legacy::Vec3 *borderPoints = new Legacy::Vec3[sz];
 
 						while(pThePoint=pThePoints->nextNode())
 						{
 							pPos=pThePoint->getAttribute("Pos");
 							Vec3 pos = StringToVector(pPos->getText());
-							borderPoints[cntr++] = StringToVector(pPos->getText());
+							borderPoints[cntr++] = Legacy::to(StringToVector(pPos->getText()));
 						}
 
 						m_pGame->CreateArea(borderPoints, sz, entitiesName, areaID, groupID, areaWidth, areaHeight);
@@ -583,20 +579,20 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 							entitiesName.push_back(pName->getText());
 						}
 					}
-					Vec3 MinBox;
-					Vec3 MaxBox;
-					Vec3 size;
+					Legacy::Vec3 MinBox;
+					Legacy::Vec3 MaxBox;
+					Legacy::Vec3 size;
 					size.x = areaWidth;
 					size.y = areaLength;
 					size.z = areaHeight;
-					MinBox = -size/2;
-					MaxBox = size/2;
+					MinBox = -size/2.f;
+					MaxBox = size/2.f;
 					MinBox.z = 0.0f;
 					MaxBox.z = size.z;
 					Matrix44 TM=Matrix34::CreateRotationXYZ( Deg2Rad(Angles), Pos );	//set rotation and translation in one function call
 					TM	=	GetTransposed44(TM); //TODO: remove this after E3 and use Matrix34 instead of Matrix44
 
-					m_pGame->CreateArea(MinBox, MaxBox, TM, entitiesName, areaID, groupID, edgeWidth);
+					m_pGame->CreateArea(MinBox, MaxBox, Legacy::to(TM), entitiesName, areaID, groupID, edgeWidth);
 				}
 				else if (!stricmp(pType->getText(),"AreaSphere"))
 				{	
@@ -613,7 +609,7 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 					XDOM::IXMLDOMNodePtr pRadius;
 					float		fRadius = 0.0f;
 					XDOM::IXMLDOMNodePtr pPos;
-					Vec3		Pos(0.0f, 0.0f, 0.0f);
+					Legacy::Vec3		Pos(0.0f, 0.0f, 0.0f);
 
 					XDOM::IXMLDOMNodeListPtr pEntitiesTagList;
 					XDOM::IXMLDOMNodePtr pEntitiesTag;
@@ -626,7 +622,7 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 						groupID = atoi(pGroupID->getText());
 					pPos=pNode->getAttribute("Pos");
 					if (pPos)
-						Pos=StringToVector(pPos->getText());
+						Pos=Legacy::to(StringToVector(pPos->getText()));
 					pEdgeWidth=pNode->getAttribute("FadeInZone");
 					if(pEdgeWidth!=NULL)
 					{
@@ -871,7 +867,7 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 }
 #endif
 
-#if 0
+#if 1
 //////////////////////////////////////////////////////////////////////////
 bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStreamData *pData)
 {
@@ -948,7 +944,7 @@ bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStre
 				ed.name = pName->getText();
 				if (pPos != NULL)
 				{
-					ed.pos = StringToVector(pPos->getText());
+					ed.pos = Legacy::to(StringToVector(pPos->getText()));
 				}
 				ed.netPresence = false;
 				if(pId!=NULL)
@@ -959,10 +955,10 @@ bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStre
 				if(pAngles!=NULL)
 				{
 					Vec3 vAngles=StringToVector(pAngles->getText());
-					ed.angles = vAngles;
+					ed.angles = Legacy::to(vAngles);
 				}
 				else
-					ed.angles = Vec3(0,0,0);
+					ed.angles = Legacy::to(Vec3(0,0,0));
 
 				if (pScale != NULL)
 				{
@@ -1069,7 +1065,7 @@ bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStre
 }
 #endif
 
-#if 0
+#if 1
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SetEntityProperties( IEntity *entity,XDOM::IXMLDOMNode * pEntityTag )
 {
@@ -1113,7 +1109,6 @@ void CXSystemBase::SetEntityProperties( IEntity *entity,XDOM::IXMLDOMNode * pEnt
 }
 #endif
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::RecursiveSetEntityProperties(_SmartScriptObject *pRoot, XDOM::IXMLDOMNodeList* pAttrList)
 {
@@ -1175,9 +1170,7 @@ void CXSystemBase::RecursiveSetEntityProperties(_SmartScriptObject *pRoot, XDOM:
 			}
 		}
 }
-#endif
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SetEntityEvents( IEntity *entity,XDOM::IXMLDOMNodeList* pEventsNode)
 {
@@ -1247,7 +1240,6 @@ void CXSystemBase::SetEntityEvents( IEntity *entity,XDOM::IXMLDOMNodeList* pEven
 		}
 	}	
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::StartLoading(bool bEditor)
@@ -1336,7 +1328,6 @@ void CXSystemBase::BindChildren()
 		child->SetPos(pos, false);
 	}
 }
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::GetMission( XDOM::IXMLDOMDocument *doc,const char *sRequestedMission,SMissionInfo &missionInfo )
 {
@@ -1407,7 +1398,6 @@ void CXSystemBase::GetMission( XDOM::IXMLDOMDocument *doc,const char *sRequested
 	if (stricmp(sRequestedMission, missionInfo.sMissionName.c_str())!=0)
 		m_pLog->Log("[ERROR] Map does not contain mission %s, using %s instead.",sRequestedMission,missionInfo.sMissionName.c_str());
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////
 // Do common things for Client and Server when loading a new level.
@@ -1568,10 +1558,8 @@ bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 // Start loading common stuff.
 //////////////////////////////////////////////////////////////////////////
 //load the materials names
-#if 0
 	if(!LoadMaterials(missionInfo.pLevelDataXML))
 		return false;
-#endif
 
 	// reload the previously unloaded models since the materials are now reloaded
 	if (m_pGame->m_pUISystem)
@@ -1613,10 +1601,8 @@ bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 	}
 
 // Init Weapon system.
-#if 0
 	if (m_pGame->GetWeaponSystemEx())
 		m_pGame->GetWeaponSystemEx()->Init(m_pGame, false);
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load Movie Data.
@@ -1688,8 +1674,6 @@ bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 
 	return true;
 }
-#if 0
-#endif
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::LoadMusic(SMissionInfo& musicInfo)
@@ -1807,6 +1791,7 @@ void CXSystemBase::OnSpawn(IEntity* ent, CEntityDesc& ed)
 
 	ent->SetClassName(pClass->strClassName.c_str());
 
+	//FIXME: 
 #if 0
 	m_pSystem->CreateEntityScriptBinding(ent);
 #endif
@@ -1833,13 +1818,11 @@ void CXSystemBase::OnSpawn(IEntity* ent, CEntityDesc& ed)
 		}
 	}
 
-#if 0
 	// then just parse out the properties
 	if (ed.pUserData)
 	{
 		SetEntityProperties(ent, (XDOM::IXMLDOMNode*) ed.pUserData);
 	}
-#endif
 
 	// FIXME [Alberto]
 	if (ed.pProperties)
@@ -1880,8 +1863,6 @@ void CXSystemBase::OnSpawn(IEntity* ent, CEntityDesc& ed)
 		ent->GetScriptObject()->SetValue("entity_type", "basic");
 	}
 }
-#if 0
-#endif
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
@@ -2013,8 +1994,6 @@ void CXSystemBase::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
 	}
 #endif
 }
-#if 0
-#endif
 #include <GameFiles\PlayerSystem.h>
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::OnRemove(IEntity* ent)

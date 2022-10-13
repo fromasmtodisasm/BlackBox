@@ -1,6 +1,10 @@
 #include <ScriptObjects/ScriptObjectStream.hpp>
 #include <BlackBox/System/IConsole.hpp>
 
+#include <ctype.h>
+#include <stdarg.h>
+#include <new.h>
+
 #if !defined(LINUX)
 //#	include <Windows.h>
 //#	include <dbghelp.h>

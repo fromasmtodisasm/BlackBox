@@ -366,6 +366,9 @@ namespace Legacy
 	inline Vec3 to(const vectorf& v) {
 		return Vec3{v.x, v.y, v.z};
 	}
+	inline Matrix44 to(const ::Matrix44& m) {
+		return Matrix44(m[0][0]);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////

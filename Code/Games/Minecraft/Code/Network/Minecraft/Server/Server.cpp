@@ -95,6 +95,7 @@ void GameServer::Update()
 		auto p = player.second.snake->GetHead()->GetPos();
 		stm.Write(p.x);
 		stm.Write(p.z);
+		stm.Write(player.second.snake->m_FoodsEaten);
 
 		BroadCast(stm);
 	}
@@ -176,12 +177,12 @@ void GameServerSlot::NotifyConnect(bool sendOtherSlots)
 			if (s == this) continue;
 			auto    id   = s->id;
 			auto&   name = s->name;
-			CStream wr;
-			PrepareConnect(wr, id, name);
+			CStream stm;
+			PrepareConnect(stm, id, name);
 			auto p = minecraft->GetPlayer(id).snake->GetHead()->GetPos();
-			wr.Write(p.x);
-			wr.Write(p.z);
-			Send(wr);
+			stm.Write(p.x);
+			stm.Write(p.z);
+			Send(stm);
 		}
 	}
 }

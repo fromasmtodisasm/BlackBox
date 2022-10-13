@@ -238,11 +238,14 @@ struct GameClient : public IClientSink
 		//id,x,z
 		size_t id;
 		float  x, z;
+		size_t    food;
 		stm.Read(id);
 		stm.Read(x);
 		stm.Read(z);
+		stm.Read(food);
 
 		auto p = minecraft->GetPlayer(id);
+		p.snake->m_FoodsEaten = food;
 
 		p.snake->GetHead()->SetPos({x, 0, z});
 	}
@@ -289,10 +292,13 @@ struct GameClient : public IClientSink
 	void OnEat(CStream& stm)
 	{
 		size_t id;
+		int x; int y;
 		stm.Read(id);
+		stm.Read(x);
+		stm.Read(y);
 
 		auto p = minecraft->GetPlayer(id);
-		p.snake->Eat();
+		p.snake->Eat(x, y);
 	}
 
 	void Loose(size_t id)
@@ -390,13 +396,15 @@ void Minecraft::MakeFood()
 	m_pServer->BroadCast(stm);
 }
 
-void Minecraft::Eat(size_t id)
+void Minecraft::Eat(size_t id, int x, int y)
 {
 	CStream stm;
 	auto    msg = network::msg::Server::EAT;
 
 	stm.Write(msg_type(msg));
 	stm.Write(id);
+	stm.Write(x);
+	stm.Write(y);
 
 	auto s = m_pServer->SlotById(id);
 

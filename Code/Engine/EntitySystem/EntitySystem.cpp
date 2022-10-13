@@ -14,11 +14,6 @@ const int MAX_ENTITYES = 64 * 1024;
 inline CEntitySystem::CEntitySystem(ISystem* pSystem)
     : m_EntityIt(m_Entities)
 {
-#if 1
-	//m_Entities.resize(16 * 16 * 256 + 1024);
-	m_Entities.resize(MAX_ENTITYES);
-#endif
-
 	{
 #define SET_SCRIPTEVENT(event) Env::ScriptSystem()->SetGlobalValue("ScriptEvent_" #event, ScriptEvent_##event)
 		SET_SCRIPTEVENT(Activate);
@@ -109,13 +104,13 @@ void CEntitySystem::Reset()
 	LOG_FUNCTION();
 }
 
-IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool t)
+IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool bAutoInit)
 {
 	if (m_Entities.size() <= MAX_ENTITYES)
 	{
 		auto e = &m_Entities[ed.id];
 
-		if (t)
+		if (bAutoInit)
 		{
 			InitEntity(e, ed);
 			if (m_pEntitySystemSink)
@@ -191,13 +186,13 @@ IEntityIt* CEntitySystem::GetEntityInFrustrumIterator(bool e)
 
 void CEntitySystem::GetEntitiesInRadius(const Legacy::Vec3& origin, float radius, std::vector<IEntity*>& entities, int s) const
 {
-	for (size_t i = 0; i < m_nSpawnedEntities; i++)
+	for (auto &[id,entity] : m_Entities)
 	{
-		auto* e = (CEntity*)&m_Entities[i];
+		auto&        e = (CEntity&)entity;
 		Legacy::Vec3 min, max;
-		e->GetBBox(min, max);
-		if (glm::length(e->GetPos() - origin) <= radius)
-			entities.push_back((IEntity*)e);
+		e.GetBBox(min, max);
+		if (glm::length(e.GetPos() - origin) <= radius)
+			entities.push_back((IEntity*)&e);
 	}
 }
 
@@ -240,14 +235,12 @@ void CEntitySystem::Release()
 
 bool CEntitySystem::IsIDUsed(EntityId nID)
 {
-	LOG_FUNCTION();
-	return false;
+	return m_Entities.count(nID) > 0;
 }
 
 void CEntitySystem::ResetEntities()
 {
 	LOG_FUNCTION();
-	m_Entities.clear();
 }
 
 void CEntitySystem::GetMemoryUsage(ICrySizer* pSizer) const

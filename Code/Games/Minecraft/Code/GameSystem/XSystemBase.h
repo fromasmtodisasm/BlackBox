@@ -103,10 +103,8 @@ public:
 		string sMissionName;
 		string sMissionFilename;
 		int    dwProgressBarRange;
-#if 0
 		XDOM::IXMLDOMDocumentPtr pLevelDataXML;
 		XDOM::IXMLDOMDocumentPtr pMissionXML;
-#endif
 		unsigned int m_dwLevelDataCheckSum;
 		unsigned int m_dwMissionCheckSum;
 
@@ -143,9 +141,7 @@ public:
 
 	//! Do common for Client and Server things when opening a new level.
 	bool           LoadLevelCommon(SMissionInfo& missionInfo);
-#if 0
 	bool LoadMaterials(XDOM::IXMLDOMDocument *doc);
-#endif
 	bool         LoadLanguageTable(const char* szLevelDir, const char* szMissionName);
 	bool         LoadLevelEntities(SMissionInfo& missionInfo);
 
@@ -165,10 +161,8 @@ public:
 	void         SetTeamScore(int nTeamId, short nScore);
 	void         SetTeamFlags(int nTeamId, int nFlags);
 	bool         ReadTeams(CStream& stm);
-#if 0
 	void	GetMission( XDOM::IXMLDOMDocument *doc,const char *sRequestedMission,SMissionInfo &missionInfo );
 	bool	SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStreamData *pData);
-#endif
 
 	CXGame*        m_pGame;         //!< the game ptr
 	ISystem*       m_pSystem;       //!<
@@ -188,19 +182,15 @@ protected:
 	virtual void OnReadyToLoadLevel(SMissionInfo& missionInfo){};
 
 	void         LoadMusic(SMissionInfo& missionInfo);
-#if 0
 	void LoadXMLNode(XDOM::IXMLDOMNode *pNode, bool bSpawn);
 	void AddWeaponPack(XDOM::IXMLDOMNode *pPack);
-#endif
 	void InitRegistry(const char* szLevelDir);
 
-#if 0
 	void SetEntityProperties( IEntity *entity, XDOM::IXMLDOMNode* pEntityTag );
 	void RecursiveSetEntityProperties(_SmartScriptObject *pRoot, XDOM::IXMLDOMNodeList* pProps);
 
 	void SetEntityEvents( IEntity *entity,struct XDOM::IXMLDOMNodeList* pEventsNode );	
 	void SpawnStaticEntity(	XDOM::IXMLDOMNodePtr pEntityNode );
-#endif
 	int                        EventNameToId(const char* str);
 	void                       BindChildren();
 	virtual void               AddRespawnPoint(ITagPoint* pt){};
