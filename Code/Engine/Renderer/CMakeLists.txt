@@ -6,12 +6,11 @@ add_subdirectory(Shaders)
 
 start_sources()
 sources_platform(ALL)
-add_sources(
-	"NoUberFile"
+add_sources("NoUberFile" 
 	PROJECTS
-	RenderD3D11
-	RendererGL
-	RendererVK
+		RenderD3D11
+		RendererGL
+		RendererVK
 	SOURCE_GROUP "Source Files"
 		"AuxRenderer.cpp"
 		"AuxRendererNull.cpp"
@@ -27,6 +26,7 @@ add_sources(
 		"Common/Include_HLSL_CPP_Shared.h"
 		"Common/ResourceManager.cpp"
 		"Common/ResourceManager.hpp"
+		"Common/Main.cpp"
 	SOURCE_GROUP "GraphicsPipeline"
 		"GraphicsPipeline/StandardGraphicsPipeline.cpp"
 		"GraphicsPipeline/StandardGraphicsPipeline.h"
@@ -37,10 +37,9 @@ add_sources(
 		"GraphicsPipeline/Common/GraphicsPipelineStage.h"
 )
 
-add_sources(
-	"NoUberFile"
+add_sources("NoUberFile"
 	PROJECTS
-	RenderD3D11
+		RenderD3D11
 	SOURCE_GROUP "D3D"
 		"D3D/BufferManager.cpp"
 		"D3D/CMakeLists.txt"
@@ -63,10 +62,9 @@ add_sources(
 	
 )
 
-add_sources(
-	"NoUberFile"
+add_sources("NoUberFile"
 	PROJECTS
-	RendererVK
+		RendererVK
 	SOURCE_GROUP "Vulkan"
 		"Vulkan/Renderer.cpp"
 		"Vulkan/Shader.cpp"
@@ -103,16 +101,28 @@ if(OPTION_DX_RENDERER)
 else()
 	cryfilecontainer(RenderD3D11 SOLUTION_FOLDER "Engine")
 endif()
-#if(OPTION_VK_RENDERER)
-#	EngineModule(RendererVK PCH "pch.hpp" SOLUTION_FOLDER
-#							 "Engine")
-#	add_common_libs()
-#	add_common_includes()
-#
-#	find_package(Vulkan REQUIRED)
-#	target_link_libraries(${THIS_PROJECT} PRIVATE Vulkan::Vulkan)
-#	target_compile_definitions(${THIS_PROJECT} PUBLIC VK_RENDERER)
-#	target_include_directories(${THIS_PROJECT} PUBLIC "Vulkan")
-#else()
-#	cryfilecontainer(RendererVK SOLUTION_FOLDER "Engine")
-#endif()
+if(OPTION_GL_RENDERER)
+	EngineModule(RendererGL PCH "pch.hpp" SOLUTION_FOLDER "Engine")
+	add_common_libs()
+	add_common_includes()
+
+	target_link_libraries(${THIS_PROJECT} PRIVATE Vulkan::Vulkan)
+	target_compile_definitions(${THIS_PROJECT} PUBLIC GL_RENDERER)
+	target_include_directories(${THIS_PROJECT} PUBLIC "OpenGL")
+else()
+	cryfilecontainer(RendererGL SOLUTION_FOLDER "Engine")
+endif()
+
+if(OPTION_VK_RENDERER)
+	EngineModule(RendererVK PCH "pch.hpp" SOLUTION_FOLDER
+							 "Engine")
+	add_common_libs()
+	add_common_includes()
+
+	find_package(Vulkan REQUIRED)
+	target_link_libraries(${THIS_PROJECT} PRIVATE Vulkan::Vulkan)
+	target_compile_definitions(${THIS_PROJECT} PUBLIC VK_RENDERER)
+	target_include_directories(${THIS_PROJECT} PUBLIC "Vulkan")
+else()
+	cryfilecontainer(RendererVK SOLUTION_FOLDER "Engine")
+endif()

@@ -17,6 +17,7 @@ option(OPTION_SANDBOX "Build editor" OFF)
 option(OPTION_BUILD_TOOLS "Build Tools" OFF)
 option(OPTION_VCPKG "Use vcpkg for libraries" ON)
 
+option(OPTION_GL_RENDERER "Compile OpenGL library" OFF)
 option(OPTION_DX_RENDERER "Compile D3D library" OFF)
 option(OPTION_VK_RENDERER "Compile Vulkan library" OFF)
 

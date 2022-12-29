@@ -280,6 +280,7 @@ struct Transform
 #define STR_DX11_RENDERER         "DX11"
 #define STR_DX12_RENDERER         "DX12"
 #define STR_VK_RENDERER           "VK"
+#define STR_GL_RENDERER           "GL"
 
 //////////////////////////////////////////////////////////////////////
 // Texture object interface

@@ -863,7 +863,6 @@ bool CD3DRenderer::CreateRenderTargets()
 
 IRENDER_API IRenderer* CreateIRender(ISystem* pSystem)
 {
-	pSystem->Log("Loading...");
 	return gcpRendD3D;
 
 	//  // Initializations:  //  // Here is a set of vertex definitions to support two streams.  // Vertex format:  //     stream 0 -> position + normal + color 0 + color 1  //     stream 1 -> 4 texture coordinate pairs

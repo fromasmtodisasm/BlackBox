@@ -27,17 +27,17 @@ using stack_string = string;
 // Where possible, these are defaults used to initialize cvars
 // System.cfg can then be used to override them
 // This includes the Game DLL, although it is loaded elsewhere
-#define DLL_AUDIOSYSTEM      "AudioSystem"
-#define DLL_NETWORK          "Network"
-#define DLL_ENTITYSYSTEM     "EntitySystem"
-#define DLL_SCRIPTSYSTEM     "ScriptSystem"
-#define DLL_INPUT            "Input"
-#define DLL_PHYSICS          "Physics"
-#define DLL_MOVIE            "Movie"
-#define DLL_AI               "AISystem"
-#define DLL_ANIMATION        "Animation"
-#define DLL_FONT             "Font"
-#define DLL_3DENGINE         "3DEngine"
+#define DLL_AUDIOSYSTEM                     "AudioSystem"
+#define DLL_NETWORK                         "Network"
+#define DLL_ENTITYSYSTEM                    "EntitySystem"
+#define DLL_SCRIPTSYSTEM                    "ScriptSystem"
+#define DLL_INPUT                           "Input"
+#define DLL_PHYSICS                         "Physics"
+#define DLL_MOVIE                           "Movie"
+#define DLL_AI                              "AISystem"
+#define DLL_ANIMATION                       "Animation"
+#define DLL_FONT                            "Font"
+#define DLL_3DENGINE                        "3DEngine"
 #if 1
 	#define DLL_RENDERER_DX11 "RenderD3D11"
 #else
@@ -45,6 +45,7 @@ using stack_string = string;
 #endif
 #define DLL_RENDERER_DX12 "RenderD3D12"
 #define DLL_RENDERER_VK   "RenderVulkan"
+#define DLL_RENDERER_GL   "RenderGL"
 #define DLL_RENDERER_GNM  "RenderGNM"
 #define DLL_LIVECREATE    "LiveCreate"
 #define DLL_MONO_BRIDGE   "MonoBridge"
@@ -381,11 +382,11 @@ bool CSystem::Init()
 		}
 	#endif
 
-		//FIXME:
-		#if 0
+	//FIXME:
+	#if 0
 		// Set this as soon as the system cvars got initialized.
 		static_cast<CCryPak* const>(m_env.pCryPak)->SetLocalizationFolder(g_cvars.sys_localization_folder->GetString());
-		#endif
+	#endif
 
 		//////////////////////////////////////////////////////////////////////////
 		//Load engine files
@@ -630,8 +631,8 @@ ICVar* CSystem::attachVariable(const char* szVarName, int* pContainer, const cha
 {
 	IConsole* pConsole = GetIConsole();
 
-	ICVar* pOldVar = pConsole->GetCVar(szVarName);
-	int nDefault;
+	ICVar*    pOldVar  = pConsole->GetCVar(szVarName);
+	int       nDefault;
 	if (pOldVar)
 	{
 		nDefault = pOldVar->GetIVal();
@@ -660,7 +661,6 @@ ICVar* CSystem::attachVariable(const char* szVarName, int* pContainer, const cha
 	}
 	return pVar;
 }
-
 
 bool CSystem::InitRender()
 {
@@ -817,13 +817,17 @@ bool CSystem::OpenRenderLibrary(std::string_view render)
 	//====================================================
 
 	const char* RenderLibrary = "RendererGL";
-	if (render == "DX11")
+	if (render == STR_DX11_RENDERER)
 	{
 		RenderLibrary = DLL_RENDERER_DX11;
 	}
-	else if (render == "VK")
+	else if (render == STR_VK_RENDERER)
 	{
 		RenderLibrary = DLL_RENDERER_VK;
+	}
+	else if (render == STR_GL_RENDERER)
+	{
+		RenderLibrary = DLL_RENDERER_GL;
 	}
 	return LoadSubsystem<PFNCREATERENDERERINTERFACE>(RenderLibrary, "CreateIRender", [&](PFNCREATERENDERERINTERFACE p)
 	                                                 {
@@ -923,13 +927,13 @@ bool CSystem::InitFileSystem_LoadEngineFolders()
 
 	m_env.pCryPak->SetGameFolder(pGameFolderCVar->GetString());
 
-	//FIXME:
-	#if 0
+//FIXME:
+#if 0
 	if (g_cvars.sys_build_folder->GetString() != nullptr && g_cvars.sys_build_folder->GetString()[0] != '\0')
 	{
 		m_env.pCryPak->AddMod(PathUtil::AddSlash(g_cvars.sys_build_folder->GetString()) + m_pProjectManager->GetCurrentAssetDirectoryRelative());
 	}
-	#endif
+#endif
 
 //FIXME:
 #if 0
@@ -1187,11 +1191,11 @@ bool CSystem::InitFileSystem()
 		fs::current_path(fs::path(temp.c_str()));
 #endif
 	}
-	//FIXME:
-	#if 0
+//FIXME:
+#if 0
 	if (m_bEditor || bLvlRes)
 		m_env.pCryPak->RecordFileOpen(ICryPak::RFOM_EngineStartup);
-	#endif
+#endif
 
 	{
 		char szEngineRootDir[_MAX_PATH];
@@ -1202,28 +1206,26 @@ bool CSystem::InitFileSystem()
 		const CryPathString engineDir = PathUtil::Make(CryPathString(engineRootDir.c_str()), CryPathString(CRYENGINE_ENGINE_FOLDER));
 		m_env.pCryPak->SetAlias("%ENGINE%", engineDir.c_str(), true);
 
-	#ifndef RELEASE
-		#if 0
+#ifndef RELEASE
+	#if 0
 		if (m_bEditor)
-			#else
+	#else
 		if (Env::Get()->IsEditor())
-		#endif
+	#endif
 		{
 			const CryPathString editorDir = PathUtil::Make(CryPathString(engineRootDir.c_str()), CryPathString("Editor"));
 			m_env.pCryPak->SetAlias("%EDITOR%", editorDir.c_str(), true);
 		}
-	#endif
+#endif
 	}
-
 
 	LogVersion();
 
 	((CCryPak*)m_env.pCryPak)->SetLog(m_env.pLog);
 
-	
 	((CCryPak*)m_env.pCryPak)->SetLog(m_env.pLog);
 
-	ILoadConfigurationEntrySink* pCVarsWhiteListConfigSink = nullptr;//GetCVarsWhiteListConfigSink();
+	ILoadConfigurationEntrySink* pCVarsWhiteListConfigSink = nullptr; //GetCVarsWhiteListConfigSink();
 #if CRY_PLATFORM_ANDROID && !defined(ANDROID_OBB)
 	string path = string(CryGetProjectStoragePath()) + "/system.cfg";
 #else

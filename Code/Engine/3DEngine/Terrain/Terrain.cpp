@@ -15,7 +15,7 @@ void CTerrain::Render(CCamera& Camera)
 {
 	//DrawAxises();
 
-	for each (const auto& area in m_Areas)
+	for(const auto& area : m_Areas)
 	{
 		SRendParams rp;
 		area->Render(rp, {});
