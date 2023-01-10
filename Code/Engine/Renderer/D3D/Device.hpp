@@ -2,7 +2,7 @@
 #include <Cry_Color4.h>
 
 class CD3DRenderer;
-#if 0
+#if 1
 extern CD3DRenderer gcpRendD3D;
 #else
 extern CD3DRenderer* gcpRendD3D;

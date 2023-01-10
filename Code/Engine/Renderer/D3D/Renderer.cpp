@@ -16,8 +16,8 @@ ID3D11SamplerState*     GlobalResources::LinearSampler{};
 ID3DShaderResourceView* GlobalResources::WiteTextureRV;
 ID3DShaderResourceView* GlobalResources::GreyTextureRV;
 
-static CD3DRenderer     _gcpRendD3D;
-CD3DRenderer*           gcpRendD3D = _gcpRendD3D;
+//static CD3DRenderer     _gcpRendD3D;
+CD3DRenderer           gcpRendD3D;
 
 //ID3D10EffectTechnique* GlobalResources::BoxTechnique;
 //ID3D10EffectTechnique* GlobalResources::MeshTechnique;
