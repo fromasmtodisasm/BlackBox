@@ -44,7 +44,9 @@ bool CCryPak::AdjustAliases(CryPathString& dst)
 		}
 
 		// Strip extra aliases from path
-		stack_string searchAlias(32, ' ');
+		//FIXME: 
+		//We need to implement a StringFormat function that is capable of automatically increasing the string size when necessary.
+		stack_string searchAlias(256, ' ');
 	#if 0
 		searchAlias.Format("%c%s%c", g_cNativeSlash, pAlias->szName, g_cNativeSlash);
 	#else

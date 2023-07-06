@@ -598,7 +598,11 @@ void StopGame()
 
 void Minecraft::init()
 {
-	Env::CryPak()->OpenPack("% fcdata%/objects.pak");
+	auto pakalias = "-pakalias % fcdata%,E:/SteamLibrary/steamapps/common/FarCry/FCData";
+	if (!Env::CryPak()->OpenPack("% fcdata%/objects.pak"))
+	{
+		CryFatalError("Add -pakalias for FCData, for example: %s", pakalias);
+	}
 	minecraft = this;
 
 	world.init();

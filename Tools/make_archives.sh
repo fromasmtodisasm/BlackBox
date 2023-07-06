@@ -1,4 +1,5 @@
-GAME_DATA=`pwd`/GameData
+#GAME_DATA=`pwd`/GameData
+GAME_DATA=`pwd`/Assets
 if [ ! -d $GAME_DATA ]; then
   mkdir $GAME_DATA
 fi
@@ -17,7 +18,14 @@ function create()
 }
 
 ##############################################################
-create Data
+#create Data
+pushd .
+cd Data
+for filename in Music Sounds minecraft; do
+    create $filename
+done
+
+popd
 ##############################################################
 pushd .
 ##############################################################
