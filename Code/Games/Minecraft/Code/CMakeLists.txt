@@ -160,18 +160,11 @@ add_sources(
 end_sources()
 GameModule(MineCRY PCH "pch.hpp" SOLUTION_FOLDER "Projects/Games")
 
-add_subdirectory(../thirdparty 3rdparty)
-
 target_link_libraries(${THIS_PROJECT} PRIVATE BlackBox)
 if(WINDOWS)
 	target_link_libraries(${THIS_PROJECT} PRIVATE Ws2_32)
 	target_link_libraries(${THIS_PROJECT} PRIVATE dbghelp)
 endif()
-if(USE_STEAM)
-	target_link_libraries(${THIS_PROJECT} PRIVATE Steam)
-	target_compile_definitions(${THIS_PROJECT} PRIVATE USE_STEAM)
-endif()
-
 set(OPTION_NOT_USE_DIVX_SDK ON)
 if(OPTION_NOT_USE_DIVX_SDK)
 	target_compile_definitions(${THIS_PROJECT} PRIVATE NOT_USE_DIVX_SDK)

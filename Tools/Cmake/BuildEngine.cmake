@@ -35,6 +35,8 @@ macro(setup_subsystems)
 
 		add_subsystem(AppMain)
 		add_subsystem(Common)
+		add_subsystem(GamePlatform)
+
 
 		if(EXISTS "${BLACKBOX_DIR}/Engine/Scripts")
 			add_subdirectory(Engine/Scripts)

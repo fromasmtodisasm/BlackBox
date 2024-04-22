@@ -1033,6 +1033,11 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 		m_env.p3DEngine->Update();
 	}
 
+	if (m_env.pGamePlatform)
+	{
+		m_env.pGamePlatform->Update();
+	}
+
 	return !m_bQuit;
 }
 

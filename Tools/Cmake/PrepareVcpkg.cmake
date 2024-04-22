@@ -38,8 +38,8 @@ function(PrepareVcpkg)
 			include(FetchContent)
 			FetchContent_Declare(
 			  vcpkg  
-			  GIT_REPOSITORY https://github.com/fromasmtodisasm/vcpkg.git
-			  GIT_TAG        2022.01.01
+			  GIT_REPOSITORY https://github.com/microsoft/vcpkg.git
+			  GIT_TAG        master
 			  SOURCE_DIR     ${BLACKBOX_DIR}/vcpkg
 			)
 

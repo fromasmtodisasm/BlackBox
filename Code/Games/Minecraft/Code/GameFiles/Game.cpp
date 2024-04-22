@@ -111,36 +111,6 @@ namespace ImGui
 } // namespace ImGui
 #endif
 
-namespace
-{
-#ifdef USE_STEAM
-	// определяем достижения
-	enum EAchievements
-	{
-		TEST_ACHIEVEMENT_1_0 = 0,
-	#if 0
-		ACH_WIN_100_GAMES = 1,
-		ACH_TRAVEL_FAR_ACCUM = 2,
-		ACH_TRAVEL_FAR_SINGLE = 3,
-	#endif
-	};
-
-	// массив достижений, содержащий данные о достижениях и их состоянии
-	Achievement_t g_Achievements[] =
-	    {
-	        _ACH_ID(TEST_ACHIEVEMENT_1_0, "10 Hits To Box"),
-	#if 0
-		_ACH_ID( ACH_WIN_100_GAMES, "Champion" ),
-		_ACH_ID( ACH_TRAVEL_FAR_ACCUM, "Interstellar" ),
-		_ACH_ID( ACH_TRAVEL_FAR_SINGLE, "Orbiter" ),
-	#endif
-	};
-
-	// глобальный доступ к объекту Achievements
-	CSteamAchievements* g_SteamAchievements = NULL;
-#endif
-} // namespace
-
 int   g_bRenderGame = true;
 
 World g_World;
@@ -884,13 +854,14 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	e_deformable_terrain = NULL;
 
 #ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
-	if (!m_bDedicatedServer)
+	//if (!m_bDedicatedServer)
 	{
 		minecraft = new Minecraft;
 		minecraft->init();
 		minePlayer = &minecraft->player;
 	}
 #endif
+
 	return (true);
 }
 
@@ -946,9 +917,6 @@ bool CXGame::Update()
 	}
 	#endif
 
-#ifdef USE_STEAM
-	SteamAPI_RunCallbacks();
-#endif
 	bool bRenderFrame = ((!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || true) || m_bMenuOverlay || m_bUIOverlay) && g_Render->GetIVal() != 0;
 	//////////////////////////////////////////////////////////////////////////
 	// Start Profiling frame
@@ -1755,13 +1723,6 @@ ITagPointManager* CXGame::GetTagPointManager()
 	return nullptr;
 }
 
-#ifdef USE_STEAM
-CSteamAchievements* CXGame::SteamAchivements()
-{
-	return g_SteamAchievements;
-}
-#endif
-
 void CXGame::GetMemoryStatistics(ICrySizer* pSizer)
 {
 	unsigned size = 0;
@@ -1830,36 +1791,6 @@ void CXGame::GetMemoryStatistics(ICrySizer* pSizer)
 #endif
 }
 
-#if 0
-bool CXGame::SteamInit()
-{
-	#ifndef USE_STEAM
-	return true;
-	#else
-
-	// инициализируем Steam
-	bool bRet = SteamAPI_Init();
-	if (!bRet)
-	{
-		if (!SteamAPI_IsSteamRunning()) {
-			MessageBox(NULL, "Steam not running", "Error", MB_OK);
-		}
-	}
-
-	// создаем объект SteamAchievements, если инициализация Steam удалась
-	if (bRet)
-	{
-		g_SteamAchievements = new CSteamAchievements(g_Achievements, 1);
-		// Получить имена профилей Steam текущих пользователей.
-		const char* name = SteamFriends()->GetPersonaName();
-		Env::Log()->Log("person name: %s", name);
-	}
-
-	Env::Log()->Log("steam api init: %d", bRet);
-	return bRet;
-	#endif // !USE_STEAM
-}
-#endif
 Legacy::IInput* GetLegacyInput()
 {
 	return gGame->GetLegacyInput();

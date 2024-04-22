@@ -95,7 +95,8 @@
         "OPTION_STATIC_LINKING": "ON",
         "QT_SDK_ROOT" : "C:",
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/Tools/CMake/toolchain/windows/WindowsPC-MSVC.cmake",
-        "USE_MSVC": "ON"
+        "USE_MSVC": "ON",
+        "USE_STEAM": "ON"
       }
     },
     {

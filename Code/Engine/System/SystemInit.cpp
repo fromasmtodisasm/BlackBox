@@ -480,6 +480,8 @@ bool CSystem::Init()
 		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
 	}
 
+	if (!InitGamePlatform())
+		return false;
 	if (!InitSoundSystem())
 		return false;
 	if (!Init3DEngine())
@@ -1335,4 +1337,18 @@ bool CSystem::InitPhysics()
 			                                       return false;
 		                                       m_env.pPhysicalWorld->Init();
 		                                       return true; });
+}
+
+bool CSystem::InitGamePlatform()
+{
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing Game Platform...");
+	using PFNCREATEGAMEPLATFORM = decltype(&CreateGamePlatformInterface);
+	return LoadSubsystem<PFNCREATEGAMEPLATFORM>("GamePlatform", "CreateGamePlatformInterface", [&](PFNCREATEGAMEPLATFORM p)
+	                                           {
+		                                           m_env.pGamePlatform = p(this);
+		                                           if (m_env.pGamePlatform == nullptr)
+			                                           return false;
+
+		                                           return m_env.pGamePlatform->Init(); });
 }

@@ -74,88 +74,6 @@ namespace ImGui
 } // namespace ImGui
 #endif
 
-namespace
-{
-#ifdef USE_STEAM
-	// определяем достижения
-	enum EAchievements
-	{
-		TEST_ACHIEVEMENT_1_0 = 0,
-#	if 0
-		ACH_WIN_100_GAMES = 1,
-		ACH_TRAVEL_FAR_ACCUM = 2,
-		ACH_TRAVEL_FAR_SINGLE = 3,
-#	endif
-	};
-
-	// массив достижений, содержащий данные о достижениях и их состоянии
-	Achievement_t g_Achievements[] =
-		{
-			_ACH_ID(TEST_ACHIEVEMENT_1_0, "10 Hits To Box"),
-#	if 0
-		_ACH_ID( ACH_WIN_100_GAMES, "Champion" ),
-		_ACH_ID( ACH_TRAVEL_FAR_ACCUM, "Interstellar" ),
-		_ACH_ID( ACH_TRAVEL_FAR_SINGLE, "Orbiter" ),
-#	endif
-	};
-
-	// глобальный доступ к объекту Achievements
-	CSteamAchievements* g_SteamAchievements = NULL;
-#endif
-} // namespace
-
-#if 0
-class CRender : public IQuadTreeRender {
-public:
-	CRender(IRenderer* pRender)
-	{
-
-	}
-  void draw_plane(double ox, double oy, double size, color3 color) override {
-		m_Plane->moveTo(Vec3(ox, 0, oy));
-		m_Plane->scale(Vec3(size, size, size));
-
-  }
-	std::shared_ptr<Object> m_Plane;
-};
-
-class TreeRender : public ITreeVisitorCallback {
-public:
-  TreeRender(IQuadTreeRender *render) : render(render) {}
-  // Inherited via ITreeVisitorCallback
-  virtual void BeforVisit(QuadTree *qt) override {
-
-  }
-  virtual void OnLeaf(QuadTree *qt, bool is_last, int level) override {
-	render->draw_plane(qt->m_x, qt->m_y, qt->m_size, qt->m_color);
-  }
-
-  IQuadTreeRender *render = nullptr;
-};
-
-class TreeObject : public Object
-{
-	TreeObject(TreeRender *treeRender) : m_TreeRender(std::unique_ptr<TreeRender>(treeRender)) {
-	
-	
-	}
-	virtual void draw(SRendParams& renderParams) final
-	{
-		Object::draw(renderParams);
-	}
-
-	std::unique_ptr<TreeRender> m_TreeRender;
-};
-namespace {
-#	if 0
-  sf::RenderWindow& getWindow()
-  {
-	return *static_cast<sf::RenderWindow*>(GetISystem()->GetIWindow()->getHandle());
-  }
-#	endif
-}
-#endif
-
 namespace gui
 {
 	void init()
@@ -258,13 +176,6 @@ CGame::~CGame()
 	// shutdown the server if there is one
 	ShutdownServer();
 
-#ifdef USE_STEAM
-	// Выключаем Steam
-	SteamAPI_Shutdown();
-	// Удаляем SteamAchievements
-	if (g_SteamAchievements)
-		delete g_SteamAchievements;
-#endif
 	CScriptObjectGame::ReleaseTemplate();
 	CScriptObjectInput::ReleaseTemplate();
 	CScriptObjectTest::ReleaseTemplate();
@@ -325,9 +236,6 @@ CGame::~CGame()
 			delete ti->second;
 	}
 }
-#if defined USE_STEAM && defined GLSL_EDITOR
-static GLSLEditor* glslEditor = nullptr;
-#endif //  USE_STEAM
 bool CGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const char* szGameMod)
 {
 	if (!SteamInit())
@@ -919,9 +827,6 @@ bool			 CGame::Update()
 	static int		   num_frames	= 0xffff;
 	//*m_CameraController.CurrentCamera() = m_pSystem->GetViewCamera();
 	m_pSystem->Update(0, IsInPause());
-#ifdef USE_STEAM
-	SteamAPI_RunCallbacks();
-#endif
 	{
 		// TODO: FIX IT
 		m_deltaTime = m_pSystem->GetDeltaTime();

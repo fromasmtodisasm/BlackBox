@@ -172,12 +172,18 @@ void MineWorld::init()
 
 void MineUI::init()
 {
-	crossHairTexture = Env::Renderer()->LoadTexture(
-	    "Textures/crosshair.png", nullptr, false);
+	if (Env::Renderer())
+	{
+		crossHairTexture = Env::Renderer()->LoadTexture(
+				"Textures/crosshair.png", nullptr, false);
+	}
 }
 
 void MineUI::draw() const
 {
+	if (!Env::Renderer()) {
+		return;
+	}
 	auto        centerX = (float)Env::Renderer()->GetWidth() / 2;
 	auto        centerY = (float)Env::Renderer()->GetHeight() / 2;
 
@@ -539,9 +545,13 @@ bool MineWorld::isIntersect(glm::ivec3 pos, AABB otherAABB) const
 
 void MinePlayer::init()
 {
+	auto renderer = Env::Renderer();
+
+
 	Env::ScriptSystem()->ExecuteFile("scripts/common.lua");
 
-	getCamera()->mode = CCamera::Mode::FPS;
+	if (renderer)
+		getCamera()->mode = CCamera::Mode::FPS;
 
 	auto        steve = Env::I3DEngine()->MakeObject("minecraft/minecraft_steve.obj");
 
@@ -561,6 +571,7 @@ void MinePlayer::init()
 
 void MinePlayer::update()
 {
+	auto renderer = Env::Renderer();
 	auto const aabb    = entityWorldAABB(entity);
 
 	//Env::AuxGeomRenderer()->DrawAABB(aabb.min, aabb.max, {1, 1, 1, 1});
@@ -571,8 +582,11 @@ void MinePlayer::update()
 
 	applyMovement();
 	//getCamera()->SetPos(entity->GetPos());
-	getCamera()->SetPos(myPos);
-	movement = glm::vec3(0.0f);
+	if (renderer)
+	{
+		getCamera()->SetPos(myPos);
+		movement = glm::vec3(0.0f);
+	}
 
 	///////////////////////////////////////////////////////////
 	auto       camera      = Env::System()->GetViewCamera();

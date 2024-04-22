@@ -65,11 +65,6 @@ enum
 #include <CameraController.hpp>
 #include <DevMode.hpp>
 
-#ifdef USE_STEAM
-#include <SteamHelper.hpp>
-#endif
-
-
 #include "GameShared.hpp"
 
 struct IStatObj;
@@ -326,10 +321,6 @@ class CGame final
 
 	bool OpenPacks(const char* szFolder);
 	bool ClosePacks(const char* szFolder);
-
-	#ifdef USE_STEAM
-	CSteamAchievements* SteamAchivements();
-	#endif
 private: // ------------------------------------------------------------
 
 	bool ParseLevelName(const char *szLevelName,char *szLevel,char *szMission);

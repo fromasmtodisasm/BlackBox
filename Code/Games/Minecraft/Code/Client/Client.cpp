@@ -528,10 +528,8 @@ void CClient::IntersectionByRayCasting()
 				auto nh = num_hits->GetIVal();
 				if (nh == 100)
 				{
-#ifdef USE_STEM
-					if (auto steamAchievements = m_pGame->SteamAchivements(); steamAchievements)
-						steamAchievements->SetAchievement("achievement_100_hits");
-#endif
+					if (auto Achievements = Env::GamePlatform()->GetAchievements(); Achievements)
+						Achievements->SetAchievement("achievement_100_hits");
 				}
 				num_hits->Set(nh + 1);
 			}

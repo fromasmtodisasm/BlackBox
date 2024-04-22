@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 #include <IXMLDOM.h>
 #include <IXml.h>
+#include <BlackBox/Core/Platform/IGamePlatform.hpp>
 
 struct I3DEngine;
 struct IAISystem;
@@ -362,6 +363,7 @@ struct SSystemGlobalEnvironment
 	IMovieSystem*        pMovieSystem        = nullptr;
 	IAISystem*           pAISystem           = nullptr;
 	ICryFont*            pCryFont            = nullptr;
+	IGamePlatform* pGamePlatform = nullptr;
 
 	ILINE void           SetIsDedicated(bool isDedicated)
 	{
@@ -707,6 +709,7 @@ namespace Env
 	inline auto Timer() { return gEnv->pTimer; }
 	inline auto Validator() { return System()->GetIValidator(); }
 	inline auto Window() { return System()->GetIWindow(); }
+	inline auto GamePlatform() { return gEnv->pGamePlatform; }
 
 } // namespace Env
 

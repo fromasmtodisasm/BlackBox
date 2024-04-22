@@ -363,10 +363,6 @@ struct TestObject
 #include <CameraController.hpp>
 #include <DevMode.hpp>
 
-#ifdef USE_STEAM
-	#include <SteamHelper.hpp>
-#endif
-
 #include <Cry_Math.h>
 
 #include "GameShared.hpp"

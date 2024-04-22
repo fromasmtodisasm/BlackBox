@@ -28,6 +28,7 @@ macro(setup_subsystems)
 	add_subdirectory(AppMain)
 	add_subdirectory(Entry)
 	add_subdirectory(Common)
+	add_subdirectory(GamePlatform)
 
 endmacro()
 

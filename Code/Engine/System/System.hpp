@@ -309,6 +309,7 @@ private:
 	bool   InitSoundSystem();
 	bool   InitSubSystem();
 	bool   InitPhysics();
+	bool	 InitGamePlatform();
 	bool   LoadCrynetwork();
 	bool   OpenRenderLibrary(std::string_view render);
 	bool   CloseRenderLibrary(std::string_view render);

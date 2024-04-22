@@ -367,13 +367,17 @@ int GetMatInfo(aiMaterial* mat, const char* objName)
 			{
 				aiString path;
 				mat->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
-				auto map = Env::Renderer()->LoadTexture(path.C_Str());
-				if (map == -1)
+				if (auto render	= Env::Renderer(); render)
 				{
-					auto new_path = PathUtil::GetParentDirectory(objName);
-					map           = Env::Renderer()->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
+					auto map = Env::Renderer()->LoadTexture(path.C_Str());
+					if (map == -1)
+					{
+						auto new_path = PathUtil::GetParentDirectory(objName);
+						map           = Env::Renderer()->LoadTexture((PathUtil::AddSlash(new_path) + path.C_Str()).c_str());
+					}
+					return map;
+
 				}
-				return map;
 				//matInfo.AddRef
 			}
 			return -1;

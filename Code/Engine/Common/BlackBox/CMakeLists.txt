@@ -66,6 +66,7 @@ add_sources(
 		Core/Platform/_CryLibrary.h
 		Core/Platform/platform_impl.inl
 		Core/Platform/platform_impl_winapi.inl
+		Core/Platform/IGamePlatform.hpp
 	SOURCE_GROUP "Core\\\\Platform"
 		Core/Platform/Project/ProjectDefines.hpp
 	SOURCE_GROUP "EntitySystem"

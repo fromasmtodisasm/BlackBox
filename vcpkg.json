@@ -18,7 +18,7 @@
     "lua",
     "sdl2",
     {
-      "name": "sdl2-mixer",
+      "name": "sdl2-mixer-ext",
       "features": [
         "mpg123",
         "libvorbis"
