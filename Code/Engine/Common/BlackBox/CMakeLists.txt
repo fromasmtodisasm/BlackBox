@@ -93,6 +93,7 @@ add_sources(
 		Legacy/CryHeaders.h
 		Legacy/CrySizer.h
 		Legacy/CryVersion.h
+		#[[
 		Legacy/Cry_Color4.h
 		Legacy/Cry_Geo.h
 		Legacy/Cry_GeoDistance.h
@@ -104,6 +105,7 @@ add_sources(
 		Legacy/Cry_Vector2.h
 		Legacy/Cry_Vector3.h
 		Legacy/Cry_XOptimise.h
+		]]
 		Legacy/Font.h
 		Legacy/IFont.h
 		Legacy/IAISystem.h

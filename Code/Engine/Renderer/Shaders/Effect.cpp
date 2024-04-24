@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Effect.hpp"
 //#include <BlackBox/Renderer/IRender.hpp>
 //#include <BlackBox/Renderer/BaseShader.hpp>

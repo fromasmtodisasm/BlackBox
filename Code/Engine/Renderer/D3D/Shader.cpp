@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Shader.hpp"
 #include "Renderer.h"
 #include <BlackBox/Core/Utils.hpp>

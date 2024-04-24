@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #if USE_SFML
 	#include <BlackBox/SFMLWindow.hpp>
 	#include <iostream>

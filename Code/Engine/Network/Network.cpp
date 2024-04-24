@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Client.hpp"
 #include "Network.hpp"
 #include "Server.hpp"

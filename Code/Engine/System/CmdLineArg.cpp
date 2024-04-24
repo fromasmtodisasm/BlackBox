@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "CmdLineArg.hpp"
 
 CCmdLineArg::CCmdLineArg(const char* name, const char* value, ECmdLineArgType type)

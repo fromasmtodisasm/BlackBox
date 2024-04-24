@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "BaseInput.hpp"
 #include "InputCVars.hpp"
 #include "InputDevice.hpp"

@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "SystemEventDispatcher.hpp"
 
 static const uint UserEventBase = 0x100;

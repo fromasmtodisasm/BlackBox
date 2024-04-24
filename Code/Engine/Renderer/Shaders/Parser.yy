@@ -119,6 +119,7 @@
 %define parse.error verbose
 
 %code top{
+    #include "pch.hpp"
 	#pragma warning(push, 0)
     #include "Driver.hpp"
     #include "Scanner.hpp"

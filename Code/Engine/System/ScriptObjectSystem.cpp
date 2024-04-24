@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "ScriptObjectSystem.hpp"
 #include <BlackBox\3DEngine\I3DEngine.hpp>
 #include <BlackBox\System\ITimer.hpp>

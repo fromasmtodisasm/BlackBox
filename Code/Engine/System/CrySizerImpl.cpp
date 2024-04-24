@@ -1,5 +1,6 @@
 // Copyright 2001-2019 Crytek GmbH / Crytek Group. All rights reserved.
 
+#include "pch.hpp"
 #include <BlackBox/System/ITimer.hpp>
 #include <BlackBox/System/CrySizer.hpp>
 #include "CrySizerImpl.h"

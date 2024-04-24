@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <BlackBox/Renderer/Camera.hpp>
 
 #include "3DEngine.hpp"

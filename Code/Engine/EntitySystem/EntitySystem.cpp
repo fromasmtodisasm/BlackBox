@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "EntitySystem.hpp"
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 #include <BlackBox/3DEngine/I3DEngine.hpp>

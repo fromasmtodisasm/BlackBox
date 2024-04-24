@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "SoundSystem.hpp"
 #include "Sound.hpp"
 

@@ -128,6 +128,7 @@ list(APPEND global_defines "BLACKBOX_DEFINE")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND global_includes "${BLACKBOX_DIR}/Code/Engine/Common/BlackBox/Legacy")
+list(APPEND global_includes "${BLACKBOX_DIR}/Code/Engine/Common/BlackBox/Math")
 
 # Apply global defines
 set_property(DIRECTORY "${BLACKBOX_DIR}" PROPERTY COMPILE_DEFINITIONS ${global_defines})

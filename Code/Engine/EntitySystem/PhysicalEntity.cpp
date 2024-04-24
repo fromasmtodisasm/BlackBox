@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "PhysicalEntity.hpp"
 #include "BlackBox/EntitySystem/IEntitySystem.hpp"
 #include "Entity.hpp"

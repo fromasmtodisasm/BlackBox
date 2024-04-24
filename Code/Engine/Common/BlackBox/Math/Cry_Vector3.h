@@ -61,10 +61,10 @@ struct Vec3_tpl
 public:
 	F x, y, z;
 
-	Vec3_tpl(){};
-	Vec3_tpl(type_zero) { x = y = z = 0; }
-	Vec3_tpl(type_min) { x = y = z = -100; }
-	Vec3_tpl(type_max) { x = y = z = 100; }
+	inline Vec3_tpl(){};
+	inline Vec3_tpl(type_zero) { x = y = z = 0; }
+	inline Vec3_tpl(type_min) { x = y = z = -100; }
+	inline Vec3_tpl(type_max) { x = y = z = 100; }
 
 	Vec3_tpl(const F vx, const F vy, const F vz)
 	{

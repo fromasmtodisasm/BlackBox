@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <BlackBox/ScriptSystem/ScriptObject.hpp>
 #include "ScriptSystem.hpp"
 #include "StackGuard.hpp"

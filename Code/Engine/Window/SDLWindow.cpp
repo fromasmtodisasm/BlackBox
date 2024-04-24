@@ -1,4 +1,5 @@
 #define CRY_SUPPRESS_CRYENGINE_WINDOWS_FUNCTION_RENAMING
+#include "pch.hpp"
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/Renderer/IRender.hpp>

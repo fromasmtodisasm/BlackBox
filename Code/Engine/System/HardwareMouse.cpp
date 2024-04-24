@@ -17,6 +17,7 @@
 
 *************************************************************************/
 
+#include "pch.hpp"
 #include "HardwareMouse.hpp"
 //#include <BlackBox/Core/Platform/WindowsUtils.hpp>
 

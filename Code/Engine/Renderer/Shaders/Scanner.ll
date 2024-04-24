@@ -1,4 +1,5 @@
 %{
+    #include "pch.hpp"
     #include <cerrno>
     #include <climits>
     #include <cstdlib>
@@ -465,6 +466,8 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 }
 
 %%
+
+#include "pch.hpp"
 
 yy::parser::symbol_type make_INT(
   const std::string &s,

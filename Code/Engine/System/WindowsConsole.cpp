@@ -10,6 +10,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
+#include "pch.hpp"
 #include "System.hpp"
 #include <BlackBox/System/CrySizer.hpp>
 #include "WindowsConsole.h"

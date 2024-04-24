@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Server.hpp"
 
 CNetworkServer::CNetworkServer()

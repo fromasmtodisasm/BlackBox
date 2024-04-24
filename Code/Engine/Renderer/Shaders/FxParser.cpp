@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <BlackBox/Core/Platform/CryLibrary.h>
 
 #include "FxParser.h"

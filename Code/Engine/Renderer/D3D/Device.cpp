@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Device.hpp"
 #include "Renderer.h"
 #include "FreeImage.h"

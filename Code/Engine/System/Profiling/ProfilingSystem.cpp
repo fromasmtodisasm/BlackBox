@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "ProfilingSystem.hpp"
 
 void ProfilingSystem::Reset()

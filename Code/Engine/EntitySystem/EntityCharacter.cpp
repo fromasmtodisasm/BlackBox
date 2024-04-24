@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "EntityCharacter.hpp"
 #include "EntitySystem.hpp"
 #include "IStatObj.h"

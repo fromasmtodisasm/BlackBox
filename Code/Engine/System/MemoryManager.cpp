@@ -1,3 +1,4 @@
+#include "pch.hpp"
 //#if !defined USE_DEBUG_NEW && !(defined(_DEBUG) && !defined(LINUX))
 // Undefine malloc for memory manager itself..
 #undef malloc

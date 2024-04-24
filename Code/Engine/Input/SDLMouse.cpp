@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "SDLMouse.hpp"
 #include "InputCVars.hpp"
 

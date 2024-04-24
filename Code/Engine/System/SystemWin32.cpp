@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "System.hpp"
 
 #if BB_PLATFORM_WINDOWS

@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "DeviceObjects.h"
 #include "D3D\Renderer.h"
 #include <BlackBox\Renderer\VertexFormats.hpp>

@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <SDL2/SDL.h>
 
 unsigned int GetCurrentTimeInternal()

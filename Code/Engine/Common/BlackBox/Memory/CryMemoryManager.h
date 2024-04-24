@@ -20,7 +20,7 @@
 //#include <platform.h>
 #include <stdlib.h>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 	#ifdef SYSTEM_EXPORTS
 		#define CRYMEMORYMANAGER_API __declspec(dllexport)
 	#else

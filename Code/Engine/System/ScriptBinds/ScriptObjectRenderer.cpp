@@ -14,6 +14,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pch.hpp"
 #include "ScriptObjectRenderer.hpp"
 
 //#define REG_FUNC(_class,_func) _class::RegisterFunction(pSS,#_func,&_class::_func);

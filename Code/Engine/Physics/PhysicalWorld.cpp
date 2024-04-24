@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "PhysicalWorld.hpp"
 void CPhysicalWorld::Init()
 {

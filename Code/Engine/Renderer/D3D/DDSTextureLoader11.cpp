@@ -14,6 +14,7 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 //--------------------------------------------------------------------------------------
 
+#include "pch.hpp"
 #include "DDSTextureLoader11.h"
 
 #include <algorithm>

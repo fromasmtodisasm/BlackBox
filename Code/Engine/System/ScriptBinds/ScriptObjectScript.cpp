@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "ScriptObjectScript.hpp"
 #include <BlackBox/ScriptSystem/IScriptSystem.hpp>
 

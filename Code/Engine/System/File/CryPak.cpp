@@ -1,12 +1,13 @@
 #ifndef LINUX
-	#include <BlackBox/Core/Platform/Platform.hpp>
-	#include <BlackBox/Core/Platform/Windows.hpp>
-	#include "CryPak.hpp"
+#include "pch.hpp"
+#include <BlackBox/Core/Platform/Platform.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
+#include "CryPak.hpp"
 
-	#include <algorithm>
-	#include <cctype>
-	#include <cstdarg>
-	#include <string>
+#include <algorithm>
+#include <cctype>
+#include <cstdarg>
+#include <string>
 
 	#define BB_NATIVE_PATH_SEPSTR "/"
 

@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
 #include <BlackBox/System/ISystem.hpp>

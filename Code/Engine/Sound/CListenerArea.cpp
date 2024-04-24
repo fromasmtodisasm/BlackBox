@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "CListenerArea.hpp"
 
 int CListenerArea::GetVisFrameId()

@@ -11,6 +11,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pch.hpp"
 #include "stdafx.h"
 //#include "StringUtils.h"
 #include <BlackBox/Core/StringUtils.h>

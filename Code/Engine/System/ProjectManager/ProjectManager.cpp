@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "ProjectManager.hpp"
 #include <BlackBox/Core/Path.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>

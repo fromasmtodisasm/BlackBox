@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "RenderThread.h"
 #include "BaseRenderer.hpp"
 

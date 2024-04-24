@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "CGF/stdafx.h"
 #include "CGF/ChunkFileReader.h"
 #include <BlackBox/System/File/CryFile.h>

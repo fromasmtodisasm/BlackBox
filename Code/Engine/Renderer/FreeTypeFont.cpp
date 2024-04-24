@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #ifndef VK_RENDERER
 	#include "D3D/Shader.hpp"
 	#include "FreeTypeFont.hpp"

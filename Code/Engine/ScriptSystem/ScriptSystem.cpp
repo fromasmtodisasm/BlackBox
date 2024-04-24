@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "FunctionHandler.hpp"
 #include "ScriptSystem.hpp"
 #include "StackGuard.hpp"

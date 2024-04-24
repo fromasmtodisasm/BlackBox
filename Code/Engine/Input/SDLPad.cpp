@@ -10,6 +10,7 @@
    - Jan 20,2014:	Created by Leander Beernaert
 
 *************************************************************************/
+#include "pch.hpp"
 #include "SDLPad.hpp"
 
 // NOTE: The current implementation is modled after the XI input

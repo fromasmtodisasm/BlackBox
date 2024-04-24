@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "ScriptBinding.hpp"
 #include <BlackBox/ScriptSystem/_ScriptableEx.hpp>
 #if 0

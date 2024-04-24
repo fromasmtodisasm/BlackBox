@@ -14,6 +14,7 @@
 // CgfDump.cpp : Defines the entry point for the console application.
 //
 
+#include "pch.hpp"
 #include "Loader.h"
 #include <set>
 

@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "AuxRendererNull.hpp"
 
 bool CTextureNull::load(const char* name)

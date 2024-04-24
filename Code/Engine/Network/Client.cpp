@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Client.hpp"
 #include <BlackBox/Network/IPAddress.hpp>
 
