@@ -15,6 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include "XPlayer.h"
 #include "WeaponClass.h"
 #include "WeaponSystemEx.h"

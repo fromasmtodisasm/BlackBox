@@ -13,6 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include <ScriptObjects/ScriptObjectClient.hpp>
 #include <Client/XClient.hpp>
 

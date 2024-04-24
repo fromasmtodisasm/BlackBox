@@ -177,19 +177,13 @@ class CRenderer : public RenderCVars, public IRenderer, public IConsoleVarSink, 
 public:
 	virtual float ScaleCoordX(float value) override
 	{
-#if 0
-		NOT_IMPLEMENTED_V;
-#else
-		return 1.f;
-#endif
+		value *= float(GetWidth()) / 800.0f;
+		return (value);
 	}
 	virtual float ScaleCoordY(float value) override
 	{
-#if 0
-		NOT_IMPLEMENTED_V;
-#else
-		return 1.f;
-#endif
+		value *= float(GetHeight()) / 600.0f;
+		return (value);
 	}
 
 	// Inherited via IRendererCallbackServer

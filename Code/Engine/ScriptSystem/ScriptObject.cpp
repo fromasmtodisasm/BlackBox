@@ -242,9 +242,9 @@ bool CScriptObject::GetUDValue(const char* sKey, USER_DATA& nValue, int& nCookie
 	auto result = GetValueAny(this, sKey, nValue);
 	if (result && nValue != nullptr)
 	{
-		UserDataInfo* ud = (UserDataInfo*)nValue;
-		nCookie          = ud->cookie;
-		nValue           = (void*)ud->ptr;
+		USER_DATA_CHUNK* ud = (USER_DATA_CHUNK*)nValue;
+		nCookie          = ud->nCookie;
+		nValue           = (void*)ud->nVal;
 	}
 	return result;
 }
@@ -480,10 +480,10 @@ bool CScriptObject::GetAtUD(int nIdx, USER_DATA& nValue, int& nCookie)
 {
 	// FIXME:
 	// ud was 0xFFFFF...
-	UserDataInfo* ud;
+	USER_DATA_CHUNK* ud;
 	auto          result = GetAtAny(this, nIdx, (USER_DATA&)ud);
-	nValue               = (USER_DATA&)ud->ptr;
-	nCookie              = ud->cookie;
+	nValue               = (USER_DATA&)ud->nVal;
+	nCookie              = ud->nCookie;
 	return result;
 }
 //////////////////////////////////////////////////////////////////////

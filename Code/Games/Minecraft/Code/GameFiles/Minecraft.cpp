@@ -1,8 +1,8 @@
 #undef min
 #undef max
 
+#include "stdafx.h"
 #include "Minecraft.h"
-#include <glm/gtc/noise.hpp>
 #include <glm/glm.hpp>
 #include <array>
 #include <BlackBox/System/File/CryFile.h>
@@ -94,7 +94,7 @@ void MineWorld::init()
 	loadAssets();
 	generateLevel();
 	{
-		char* objects[] = {
+		const char* objects[] = {
 		    "objects/characters/story_characters/krieger_mutant/krieger_mutant.cgf",
 		    "objects/characters/pmodels/hero/hero.cgf",
 		    "objects/editor/MtlSphere.cgf",
@@ -514,7 +514,7 @@ void MinePlayer::applyMovement()
 {
 	auto& world  = minecraft->world;
 	//auto  newPos = entity->GetPos() + movement;
-	auto& newPos = myPos + movement;
+	auto newPos = myPos + movement;
 	//entity->GetPos() + movement;
 
 	// если мы передвинулись, то запускаем проверку пересечений опять
@@ -592,7 +592,7 @@ void MinePlayer::update()
 	auto       camera      = Env::System()->GetViewCamera();
 	EntityList entities;
 	Env::EntitySystem()->GetEntitiesInRadius(camera.GetPos(), 25, entities);
-	for each (const auto& e in entities)
+	for (const auto& e : entities)
 	{
 		auto impulse    = pe_action_impulse{};
 		impulse.impulse = vectorf(0, 210, 0);

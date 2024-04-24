@@ -193,7 +193,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	m_hWnd = (HWND)window->getHandle();
 	CryLog("Init override before");
 	if (!InitOverride())
-		return false;
+		return nullptr;
 	CryLog("Init override after");
 #if 0
 	g_FxParser = &s_FxParser;

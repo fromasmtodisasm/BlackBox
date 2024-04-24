@@ -1,3 +1,5 @@
+#include "pch.hpp"
+
 bool CXGame::IsDevModeEnable()
 {
 #if 0

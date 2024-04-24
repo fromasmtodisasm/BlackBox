@@ -130,6 +130,7 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 /////////////////////////////////////////////////////////////////////////////
 // Interfaces ///////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+#include <BlackBox/Math/Cry_Math.h>
 #include <BlackBox/Renderer/IRender.hpp>
 
 #include <Cry_Color4.h>
@@ -392,14 +393,17 @@ inline Vec3 ConvertToRadAngles( const Ang3& v )
 	return dir;
 }	
 
+#if 0
 //////////////////////////////////////////////////////////////////////
 inline Matrix44	ViewMatrix(const Ang3 &angle)	
 {
+	CryFatalError("ViewMatrix is deprecated");
 	Matrix33 ViewMatZ=Matrix33::CreateRotationZ(-angle.x);
 	Matrix33 ViewMatX=Matrix33::CreateRotationX(-angle.y);
 	Matrix33 ViewMatY=Matrix33::CreateRotationY(+angle.z);
 	return GetTransposed44( ViewMatX*ViewMatY*ViewMatZ);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //ZXY

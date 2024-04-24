@@ -25,6 +25,8 @@ set(MSVC_COMMON_FLAGS
 	/wd4127
 	/wd4099
 	/wd4743     # Temporary disabling!!!
+
+	/experimental:module
 )
 if (OPTION_EDIT_AND_CONTINUE AND NOT OPTION_LTCG)
 	string(REPLACE "/Zi" "/ZI" MSVC_COMMON_FLAGS "${MSVC_COMMON_FLAGS}")

@@ -15,6 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include <ScriptObjects/ScriptObjectServerSlot.hpp>
 #include <XSystemBase.hpp>
 #include <Server/XServerSlot.hpp>

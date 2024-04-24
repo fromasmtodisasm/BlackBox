@@ -38,6 +38,7 @@ VsOutput VSMain(VsInput IN)
     VsOutput Output;
     Output.Position = float4(IN.Pos.x,IN.Pos.y, 0.0, 1.0);
     Output.TexCoords = IN.TC;
+    //Output.TexCoords = float2(IN.TC.x, 1.0 - IN.TC.y);
     Output.Color = IN.Color;
     return Output;
 }  

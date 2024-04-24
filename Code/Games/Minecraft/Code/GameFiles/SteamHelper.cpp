@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #ifdef USE_STEAM
 
 	#include <SteamHelper.hpp>

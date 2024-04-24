@@ -20,6 +20,7 @@
 #include <BlackBox/System/CVarOverrides.h>
 #include <BlackBox/System/ConsoleRegistration.h>
 //#include <BlackBox/Profiler/HP_Timer.h>
+#include <BlackBox/Core/Platform/IGamePlatform.hpp>
 #include <SDL2/SDL.h>
 
 #include "WindowsConsole.h"

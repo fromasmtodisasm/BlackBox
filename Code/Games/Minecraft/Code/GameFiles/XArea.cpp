@@ -14,6 +14,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pch.hpp"
 #include "XArea.h"
 #include "XPlayer.h"
 #include "TagPoint.hpp"

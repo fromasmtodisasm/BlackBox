@@ -1,6 +1,8 @@
-#include <BlackBox\System\ConsoleRegistration.h>
+#include "pch.hpp"
+#include <BlackBox/System/ConsoleRegistration.h>
 #include <Client/Client.hpp>
 #include <algorithm>
+#include <BlackBox/Core/Platform/IGamePlatform.hpp>
 
 #define YAW   (0)
 #define PITCH (1)

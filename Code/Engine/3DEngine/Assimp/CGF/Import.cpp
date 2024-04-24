@@ -14,6 +14,7 @@
 // CgfDump.cpp : Defines the entry point for the console application.
 //
 
+#include "pch.hpp"
 #include "Import.h"
 
 #if 0
@@ -56,6 +57,9 @@ template<typename TVector>
 class TVertexSorter : public TGeomSorter<TVector, float, 3>
 {
 public:
+	using BaseType = TGeomSorter<TVector, float, 3>;
+	using BaseType::m_arrSortOrder;
+	using BaseType::FixSortOrder;
 	TVertexSorter(const TVector* pVerts, int nVerts, char* szSortOrder);
 };
 
@@ -142,7 +146,7 @@ void CCgfDump::printSet(const char* szFormat, const std::set<T>& setMtls, const 
 	if (!setMtls.empty())
 	{
 		PRINT_LOG(" (");
-		for (std::set<T>::const_iterator it = setMtls.begin(); it != setMtls.end();)
+		for (auto it = setMtls.begin(); it != setMtls.end();)
 		{
 			if (it != setMtls.begin())
 				PRINT_LOG(", ");

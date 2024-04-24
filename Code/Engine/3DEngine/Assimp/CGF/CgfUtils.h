@@ -154,11 +154,11 @@ struct SBasisProperties
 		else
 		{
 			double fMaxCosXY = fabs(vX*vY)/(fXLength*fYLength);
-			fMaxCos = std::max (fMaxCos, fMaxCosXY);
+			fMaxCos = max (fMaxCos, fMaxCosXY);
 			double fMaxCosXZ = fabs(vX*vZ)/(fXLength*fZLength);
-			fMaxCos = std::max (fMaxCos, fMaxCosXZ);
+			fMaxCos = max (fMaxCos, fMaxCosXZ);
 			double fMaxCosYZ = fabs(vY*vZ)/(fYLength*fZLength);
-			fMaxCos = std::max (fMaxCos, fMaxCosYZ);
+			fMaxCos = max (fMaxCos, fMaxCosYZ);
 
 			fErrorDeg = maxCosToErrorDeg(fMaxCos);
 			fErrorDegTB = (float)maxCosToErrorDeg(fMaxCosXY);

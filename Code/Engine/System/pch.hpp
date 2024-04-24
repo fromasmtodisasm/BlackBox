@@ -16,6 +16,8 @@
 #include <BlackBox/System/IWindow.hpp>
 #include <ISound.h>
 
+#include "pch.h"
+
 #include "CmdLineArg.hpp"
 #include "Console.hpp"
 #include "HardwareMouse.hpp"
@@ -50,6 +52,8 @@ namespace fs = std::filesystem;
 
 template<typename T>
 using DynArray = std::vector<T>;
+
+#include "CrySizerImpl.h"
 
 #ifdef NOT_IMPLEMENTED_V
 #	undef NOT_IMPLEMENTED_V

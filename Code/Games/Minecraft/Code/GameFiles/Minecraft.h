@@ -77,7 +77,7 @@ public:
 	bool         moveOutsideCollision(glm::vec3& newPos);
 
 	IEntity*     entity = nullptr;
-	glm::vec3    movement{};
+	Legacy::Vec3				 movement{};
 
 	ISound*      m_pSetBlockSound;
 	ISound*      m_pDestroyBlockSound;

@@ -13,6 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include <BlackBox/EntitySystem/EntityDesc.hpp>
 #include <ScriptObjects/ScriptTimerMgr.hpp>
 

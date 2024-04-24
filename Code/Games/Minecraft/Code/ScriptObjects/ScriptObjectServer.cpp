@@ -14,6 +14,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include <IXSystem.hpp>
 #include <Server/XServer.hpp>
 #include <ScriptObjects/ScriptObjectServer.hpp>

@@ -820,7 +820,7 @@ namespace Legacy
 		{
 			float x, y;
 			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
-			return x;
+			return x / Env::Renderer()->ScaleCoordX(1.f);
 		}
 
 		//! get mouse Y screen corrdinate
@@ -828,7 +828,7 @@ namespace Legacy
 		{
 			float x, y;
 			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
-			return y;
+			return y / Env::Renderer()->ScaleCoordY(1.f);
 		}
 
 		//! set the mouse sensitivity

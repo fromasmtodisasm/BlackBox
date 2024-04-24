@@ -527,6 +527,16 @@ ILINE Vec3_tpl<F> GetOrthogonal(const Vec3_tpl<F>& v)
 	return res;
 }
 
+//! normalize the val to 0-360 range
+ILINE f32             Snap_s360(f32 val)
+{
+	if (val < 0.0f)
+		val = f32(360.0f + cry_fmod(val, 360.0f));
+	else if (val >= 360.0f)
+		val = f32(cry_fmod(val, 360.0f));
+	return val;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // struct Ang3_tpl
 ///////////////////////////////////////////////////////////////////////////////
@@ -554,13 +564,6 @@ struct Ang3_tpl : public Vec3_tpl<F>
 		this->y = vy;
 		this->z = vz;
 	}
-	//! normalize the vector ANGLE to -180, 180 range
-	ILINE void Snap180()
-	{
-		this->x = Snap_s180(this->x);
-		this->y = Snap_s180(this->y);
-		this->z = Snap_s180(this->z);
-	}
 
 	//! normalize the vector ANGLE to 0-360 range
 	ILINE void Snap360()
@@ -568,6 +571,25 @@ struct Ang3_tpl : public Vec3_tpl<F>
 		this->x = Snap_s360(this->x);
 		this->y = Snap_s360(this->y);
 		this->z = Snap_s360(this->z);
+	}
+
+	//! normalize the val to -180, 180 range
+	ILINE f32 Snap_s180(f32 val)
+	{
+		if (val > -180.0f && val < 180.0f)
+			return val;
+		val = Snap_s360(val);
+		if (val > 180.0f)
+			return -(360.0f - val);
+		return val;
+	}
+
+	//! normalize the vector ANGLE to -180, 180 range
+	ILINE void Snap180()
+	{
+		this->x = Snap_s180(this->x);
+		this->y = Snap_s180(this->y);
+		this->z = Snap_s180(this->z);
 	}
 
 	ILINE void Rad2Deg()
@@ -611,27 +633,6 @@ typedef Ang3_tpl<f32> Ang3;
 
 //ILINE Ang3 Rad2Deg(const Ang3& a)	{	return Ang3(RAD2DEG(a.x),RAD2DEG(a.y),RAD2DEG(a.z));	}
 ILINE Ang3            Deg2Rad(const Ang3& a) { return Ang3(DEG2RAD(a.x), DEG2RAD(a.y), DEG2RAD(a.z)); }
-
-//! normalize the val to 0-360 range
-ILINE f32             Snap_s360(f32 val)
-{
-	if (val < 0.0f)
-		val = f32(360.0f + cry_fmod(val, 360.0f));
-	else if (val >= 360.0f)
-		val = f32(cry_fmod(val, 360.0f));
-	return val;
-}
-
-//! normalize the val to -180, 180 range
-ILINE f32 Snap_s180(f32 val)
-{
-	if (val > -180.0f && val < 180.0f)
-		return val;
-	val = Snap_s360(val);
-	if (val > 180.0f)
-		return -(360.0f - val);
-	return val;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // struct CAngleAxis

@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 #include <IXMLDOM.h>
 #include <IXml.h>
-#include <BlackBox/Core/Platform/IGamePlatform.hpp>
 
 struct I3DEngine;
 struct IAISystem;
@@ -63,6 +62,7 @@ struct IValidator;
 struct IVisArea;
 struct IWindow;
 struct IWorld;
+struct IGamePlatform;
 
 class CFrameProfilerSection;
 

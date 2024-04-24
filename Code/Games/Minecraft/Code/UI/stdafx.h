@@ -1,4 +1,6 @@
 #pragma once
+
+#include "pch.hpp"
 #include <BlackBox/Core/Platform/Platform.hpp>
 
 #include <BlackBox/Math/MathHelper.hpp>

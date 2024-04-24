@@ -476,7 +476,7 @@ void CD3DRenderer::GetMemoryUsage(ICrySizer* Sizer) const
 
 void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int texture_id, float s0, float t0, float s1, float t1, float angle, float r, float g, float b, float a, float z)
 {
-#if 1
+#if 0
 	if (m_Is2DMode)
 	{
 		s0 *= ortho.x;
@@ -486,6 +486,8 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 		t1 *= ortho.y;
 	}
 #endif
+	xpos = (float)ScaleCoordX(xpos); w = (float)ScaleCoordX(w);
+	ypos = (float)ScaleCoordY(ypos); h = (float)ScaleCoordY(h);
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
 
 #if 0
@@ -523,6 +525,21 @@ void CD3DRenderer::SetTexture(int tnum, ETexType Type)
 		::GetDeviceContext()->PSSetShaderResources(0, 1, &t);
 	}
 }
+
+static TextureFormat GetTextureFormat(const char* filename)
+{
+	auto ext = PathUtil::GetExt(filename);
+	if (!strcmp(ext, "dds"))
+	{
+		return eTextureFormat_DDS;
+	}
+	else if (!strcmp(ext, "jpg"))
+	{
+		return eTextureFormat_JPG;
+	}
+	return eTextureFormat_Unknown;
+}
+
 ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(CCryFile file)
 {
 	file.Seek(0, SEEK_END);
@@ -530,7 +547,7 @@ ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(CCryFile file)
 	file.Seek(0, SEEK_SET);
 	std::vector<uint8_t> blob(texture_size);
 	file.Read(&blob[0], texture_size);
-	return CreateTexture(blob);
+	return CreateTexture(blob, file.GetFilename(), GetTextureFormat(file.GetFilename()));
 }
 
 ID3DShaderResourceView* CD3DRenderer::CreateTextureFromFile(const char* name)
@@ -589,18 +606,29 @@ bool CD3DRenderer::FindTexture(string filename, CCryFile& file, string& adjustet
 	return result;
 }
 
-ID3DShaderResourceView* CD3DRenderer::CreateTexture(std::vector<uint8_t>& blob)
+ID3DShaderResourceView* CD3DRenderer::CreateTexture(std::vector<uint8_t>& blob, const char* fileName,  TextureFormat format)
 {
 	int                     texture_index = -1;
 	ID3D11Resource*         pTexture{};
 	ID3DShaderResourceView* pSRView = NULL;
 	HRESULT                 HResult{};
 
-	HResult = m_Device->CreateDDSTextureFromMemory(
-	    &blob[0],
-	    blob.size(),
-	    &pTexture,
-	    &pSRView);
+	if (format == eTextureFormat_DDS)
+	{
+		HResult = m_Device->CreateDDSTextureFromMemory(
+				&blob[0],
+				blob.size(),
+				&pTexture,
+				&pSRView);
+	}
+	else
+	{
+		HResult = m_Device->CreateTextureFromJPGFile(
+			fileName, 
+			&blob[0],
+			blob.size(),
+			&pTexture, &pSRView);
+	}
 	return pSRView;
 }
 unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
@@ -758,6 +786,21 @@ void* CD3DRenderer::EF_Query(int Query, int Param)
 	return nullptr;
 }
 
+ID3DDepthStencilState* m_pDSState;
+static ID3DDepthStencilState* CreateDepthStencil()
+{
+
+	D3D11_DEPTH_STENCIL_DESC desc;
+	ZeroStruct(desc);
+	//desc.BackFace
+	desc.DepthEnable    = false;
+	desc.StencilEnable  = false;
+	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+
+	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
+	return m_pDSState;
+}
+
 void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderResourceView* view, color4f color, float s0, float t0, float s1, float t1)
 {
 	glm::mat4 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f);
@@ -835,9 +878,10 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderRe
 #if 0
 	m_Device->Get<ID3D11DeviceContext>()->IASetInputLayout(GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout);
 #endif
+	auto m_pDSState = ::CreateDepthStencil();
 	m_Device->Get<ID3D11DeviceContext>()->RSSetState(m_pRasterizerState.Get());
 	m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
-	//m_pd3dDevice->OMSetDepthStencilState(m_pDSState, 0);
+	m_Device->Get<ID3D11DeviceContext>()->OMSetDepthStencilState(m_pDSState, 0);
 
 	Env::Renderer()->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 	ReleaseBuffer(VB);

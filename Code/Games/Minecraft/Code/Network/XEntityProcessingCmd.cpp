@@ -13,6 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
+#include "pch.hpp"
 #include <Network/XEntityProcessingCmd.hpp>
 
 #define NO_QUANTIZED_ANGLES

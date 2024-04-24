@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <Client/XClient.hpp>
 #include <XPlayer.h>
 #include <Server\XServer.hpp>
@@ -13,6 +14,7 @@
 #include <IMovieSystem.h>
 #include <Player/Spectator.h>
 #include <Player/AdvCamSystem.h>
+#include <BlackBox/Core/Platform/IGamePlatform.hpp>
 
 //FIXME: remove it
 #ifndef max

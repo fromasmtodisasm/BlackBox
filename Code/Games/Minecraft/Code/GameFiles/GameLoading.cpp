@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <ScriptObjects/ScriptObjectStream.hpp>
 #include <BlackBox/System/IConsole.hpp>
 

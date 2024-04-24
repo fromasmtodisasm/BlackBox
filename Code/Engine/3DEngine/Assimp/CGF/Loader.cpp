@@ -15,6 +15,7 @@
 //
 
 #include "Loader.h"
+#include <set>
 
 #if 0
 	#define PRINT_LOG(format, ...) CryLog(format, __VA_ARGS__);
@@ -37,6 +38,7 @@ protected:
 	int m_arrSortOrder[nComponents];
 
 public:
+	using BaseType = TGeomSorter<TVector, TComponent, nComponents>;
 	TGeomSorter(const TVector* pVerts, int nVerts);
 
 	void FixSortOrder();
@@ -61,6 +63,9 @@ template<typename TVector>
 class TVertexSorter : public TGeomSorter<TVector, float, 3>
 {
 public:
+	using BaseType = TGeomSorter<TVector, float, 3>;
+	using BaseType::m_arrSortOrder;
+	using BaseType::FixSortOrder;
 	TVertexSorter(const TVector* pVerts, int nVerts, char* szSortOrder);
 };
 
@@ -147,7 +152,7 @@ void CLoaderCGF::printSet(const char* szFormat, const std::set<T>& setMtls, cons
 	if (!setMtls.empty())
 	{
 		PRINT_LOG(" (");
-		for (std::set<T>::const_iterator it = setMtls.begin(); it != setMtls.end();)
+		for (auto it = setMtls.begin(); it != setMtls.end();)
 		{
 			if (it != setMtls.begin())
 				PRINT_LOG(", ");
@@ -1913,7 +1918,7 @@ void CLoaderCGF::LoadChunkBoneInitialPos(BONEINITIALPOS_CHUNK_DESC_0001* pChunk,
 		else
 		{
 			if (BasisProps.fErrorDeg > 0.5)
-				PRINT_LOG(" NOT Orthogonal (error=%4.1f°)", BasisProps.fErrorDeg);
+				PRINT_LOG(" NOT Orthogonal (error=%4.1fï¿½)", BasisProps.fErrorDeg);
 
 			if (BasisProps.bLeftHanded)
 				PRINT_LOG(" Left-handed %2d%%", (int)BasisProps.getLeftHandednessPercentage());

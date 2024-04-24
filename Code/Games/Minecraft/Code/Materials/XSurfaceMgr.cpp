@@ -13,6 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pch.hpp"
 #include "XSurfaceMgr.h"
 #include <BlackBox/System/File/ICryPak.hpp>
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <Server/XServer.hpp>
 #include <IXSystem.hpp>
 #include <Server/XServerSlot.hpp>

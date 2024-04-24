@@ -8,7 +8,7 @@
 //  Description: UI System Window and Input Manager
 //
 //  History:
-//  - [3/6/2003]: File created by Márcio Martins
+//  - [3/6/2003]: File created by Mï¿½rcio Martins
 //	- February 2005: Modified by Marco Corbetta for SDK release
 //
 //////////////////////////////////////////////////////////////////////
@@ -341,7 +341,7 @@ void CUISystem::Update()
 		// reset idle timer
 		m_fLastInput = fTime;
 
-		return;
+		//return;
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -2983,7 +2983,7 @@ int CUISystem::CreateScreen(CUIScreen** pScreen, const string& szName)
 	(*pScreen)->m_szName    = szName;
 	(*pScreen)->m_pUISystem = this;
 
-	(*pScreen)->Init(m_pScriptSystem, *pScreen);
+	(*pScreen)->Init(m_pScriptSystem, *pScreen, true);
 
 	m_vScreenList.push_back(*pScreen);
 

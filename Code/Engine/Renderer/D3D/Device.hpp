@@ -102,6 +102,11 @@ public:
 		    textureView);
 		return HResult;
 	}
+	HRESULT CreateTextureFromJPGFile(const char* szFileName, 
+	    const uint8_t* ddsData,
+	     size_t                                  ddsDataSize,
+
+		ID3D11Resource** ppTexture, ID3D11ShaderResourceView** ppSRView);
 	ID3DTexture2D*                CreateEmptyTexture(vector2di size, color4f color, DXGI_FORMAT format, UINT bindFlags);
 
 	HWND                          m_Hwnd;

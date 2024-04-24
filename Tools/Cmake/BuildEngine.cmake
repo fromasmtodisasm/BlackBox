@@ -65,9 +65,6 @@ macro(main)
 		$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
 	)
 
-	set(CMAKE_CXX_STANDARD 17)
-	target_compile_features(BlackBox INTERFACE cxx_std_17)
-
 	set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 	###################################################
 	if (BB_TESET_ENABLE)

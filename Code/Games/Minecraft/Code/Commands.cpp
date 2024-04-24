@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #if 0
 	#ifdef _WIN32
 		#include <process.h>

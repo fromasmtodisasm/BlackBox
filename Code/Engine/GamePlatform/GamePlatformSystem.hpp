@@ -66,7 +66,7 @@ public:
 
 		delete m_pAchievements;
 		m_pAchievements = nullptr;
-		
+
 	}
 
 	IAchievements* GetAchievements() override
@@ -74,4 +74,13 @@ public:
 		return m_pAchievements;
 	}
 
+	void OpenOverlayToWebPage(const char* URL) override
+	{
+		SteamFriends()->ActivateGameOverlayToWebPage(URL);
+	}
+
+	void OpenGameOverlay( const char *pchDialog ) override
+	{
+		SteamFriends()->ActivateGameOverlay(pchDialog);
+	}
 };

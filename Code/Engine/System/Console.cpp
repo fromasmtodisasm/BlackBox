@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "System.hpp"
 #include "Console.hpp"
 #include "ConsoleBatchFile.h"
@@ -1404,18 +1405,18 @@ void CXConsole::Draw()
 		// TODO: relative/normalized coordinate system in screen-space
 		if (!m_nProgressRange)
 		{
-			if (m_bStaticBackground)
+			if (m_bStaticBackground || true)
 			{
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), 12, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
-				Env::Renderer()->Draw2dImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_nScrollPos), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0.99);
+				Env::Renderer()->Draw2dImage(0.0f, 0.0f, 800, float(320), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0.99);
 			}
 			else
 			{
 				float fReferenceSize = 600.0f;
-				float fSizeX         = (float)m_pRenderer->GetWidth();
+				float fSizeX = 800;// (float)m_pRenderer->GetWidth();
 				float s0, s1;
-				s0 = s1      = (float)fmod(Env::Timer()->GetCurrTime(), 800) / 800.f * 10;
+				s0 = s1      = (float)fmod(Env::Timer()->GetCurrTime(), 800) / 800.f;
 				float fSizeY = (float)m_nTempScrollMax; // * m_pRenderer->GetHeight() / fReferenceSize;
 
 #if 0

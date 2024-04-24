@@ -17,6 +17,13 @@ extern CD3DRenderer* gD3DRender;
 
 struct SRenderThread;
 
+enum TextureFormat : int
+{
+	eTextureFormat_Unknown = 0,
+	eTextureFormat_JPG,
+	eTextureFormat_DDS,
+};
+
 //template <class T, class... Types>
 //_smart_ptr<T> make_smart_ptr(Types&&... _Args)
 //{
@@ -239,7 +246,7 @@ public:
 	virtual ITexPic*        EF_LoadTexture(const char* nameTex, uint flags, uint flags2, byte eTT, float fAmount1 = -1.0f, float fAmount2 = -1.0f, int Id = -1, int BindId = 0) override;
 	virtual void            SetTexture(int tnum, ETexType Type = eTT_Base) override;
 
-	ID3DShaderResourceView* CreateTexture(std::vector<uint8_t>& blob);
+	ID3DShaderResourceView* CreateTexture(std::vector<uint8_t>& blob, const char* fileName, TextureFormat format);
 	ID3DShaderResourceView* CreateTextureFromFile(CCryFile file);
 	ID3DShaderResourceView* CreateTextureFromFile(const char* name);
 

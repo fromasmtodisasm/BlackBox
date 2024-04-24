@@ -1,10 +1,3 @@
-#include <ScriptObjects/ScriptObjectGame.hpp>
-#include <BlackBox/Core/Platform/Windows.hpp>
-#include <Server/XServer.hpp>
-#include <GameFiles/PlayerSystem.h>
-#include <GameFiles/GameMods.hpp>
-
-#include <ICryPak.h>
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -24,6 +17,13 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <ScriptObjects/ScriptObjectGame.hpp>
+#include <BlackBox/Core/Platform/Windows.hpp>
+#include <Server/XServer.hpp>
+#include <GameFiles/PlayerSystem.h>
+#include <GameFiles/GameMods.hpp>
+
+#include <ICryPak.h>
 #if defined LINUX
 	#include <sys/io.h>
 #else

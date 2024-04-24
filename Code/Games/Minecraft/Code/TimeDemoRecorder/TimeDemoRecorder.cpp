@@ -14,6 +14,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "stdafx.h"
 #include "TimeDemoRecorder.h"
 #include <BlackBox/System/File/CryFile.h>
 //#include "Game.h"

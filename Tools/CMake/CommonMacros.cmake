@@ -493,7 +493,7 @@ macro(apply_compile_settings)
 			# USE_MSVC_PRECOMPILED_HEADER( ${THIS_PROJECT} ${MODULE_PCH_H}
 			# ${MODULE_PCH} )
 			message(STATUS "target precompiled header = ${MODULE_PCH_H}")
-			target_precompile_headers(${THIS_PROJECT} PRIVATE ${MODULE_PCH_H})
+			#target_precompile_headers(${THIS_PROJECT} PRIVATE ${MODULE_PCH_H})
 		endif()
 		set_property(
 			TARGET ${THIS_PROJECT}
@@ -564,7 +564,7 @@ function(EngineModule target)
 		# string(REPLACE ".cpp" ".h" MODULE_PCH_HEADER_FILE ${MODULE_PCH})
 		# get_filename_component(MODULE_PCH_H ${MODULE_PCH_HEADER_FILE} NAME)
 		# target_precompile_headers()
-		target_precompile_headers(${THIS_PROJECT} PRIVATE ${MODULE_PCH})
+		# target_precompile_headers(${THIS_PROJECT} PRIVATE ${MODULE_PCH})
 	endif()
 
 	# message(STATUS "Adding sources for target ${THIS_PROJECT}")

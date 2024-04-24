@@ -1,4 +1,3 @@
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 start_sources()

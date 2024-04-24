@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "CameraController.hpp"
 #include "Minecraft.h"
 

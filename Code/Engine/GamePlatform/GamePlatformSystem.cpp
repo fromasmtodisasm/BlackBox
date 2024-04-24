@@ -104,7 +104,6 @@ void CSteamAchievements::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 
 void CSteamAchievements::OnUserStatsStored(UserStatsStored_t* pCallback)
 {
-	// ����� ���� �������� �������� ������ �� ������������ �� ������ ���, ����������� ��
 	if (m_iAppID == pCallback->m_nGameID)
 	{
 		if (k_EResultOK == pCallback->m_eResult)

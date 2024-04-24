@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <ScriptObjects\ScriptObjectServerSlot.hpp>
 #include <ScriptObjects\ScriptObjectStream.hpp>
 

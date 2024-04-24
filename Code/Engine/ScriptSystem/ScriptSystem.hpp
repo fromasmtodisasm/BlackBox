@@ -28,10 +28,11 @@ typedef ScriptFileList::iterator                    ScriptFileListItor;
 
 class CFunctionHandler;
 
-struct UserDataInfo
+struct USER_DATA_CHUNK
 {
-	INT_PTR ptr;
-	int cookie;
+	int nRef;
+	USER_DATA nVal;				//AMD Port
+	int nCookie;
 };
 
 inline ScriptVarType LuatypeToScriptVarType(int type)
@@ -232,10 +233,9 @@ class CScriptSystem : public IScriptSystem
 	{
 		if (!CheckType(LUA_TUSERDATA, nIdx) && !CheckType(LUA_TLIGHTUSERDATA, nIdx))
 			return false;
-		auto ud = (USER_DATA)lua_touserdata(L, nIdx);
+		auto ud = (USER_DATA_CHUNK*)lua_touserdata(L, nIdx);
 		#if 0
-		USER_DATA result = (USER_DATA)((UserDataInfo*)(ud))->ptr;
-		val				 = (void*)((UserDataInfo*)(ud))->ptr;
+		val				 = ud->nVal;
 		#else
 		val = ud;
 		#endif

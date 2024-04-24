@@ -556,7 +556,7 @@ void Scanner::eof()
 const char* state_to_string(int state)
 {
     static char buffer[256];
-    char* cState{};
+    const char* cState{};
     switch(state)
     {
         case ifdef: cState = "ifdef"; break; 

@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include <Game.hpp>
 #include <GameObject.hpp>
 #include <TagPoint.hpp>
@@ -800,7 +801,7 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	if (!m_bDedicatedServer)
 	{
 		m_pSystem->GetIConsole()->ShowConsole(0);
-		if (!bInEditor && 0)
+		if (!bInEditor)
 		{
 			//////////////////////////////////////////////////////////////////////
 			m_pUISystem = new CUISystem;
@@ -890,7 +891,7 @@ bool CXGame::Update()
 	}
 	if (!m_bEditor)
 	{
-		if (!m_bMenuOverlay || !m_pUISystem || m_pUISystem->GetScriptObjectUI()->CanRenderGame())
+		if (!m_bMenuOverlay || !m_pUISystem /*|| m_pUISystem->GetScriptObjectUI()->CanRenderGame()*/)
 		{
 			m_p3DEngine->Enable(1);
 		}
@@ -1684,7 +1685,9 @@ void CXGame::ProcessPMessages(const char* szMsg)
 			CPlayer* pPlayer = 0;
 			if (GetMyPlayer())
 			{
+#if 0
 				GetMyPlayer()->GetContainer()->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer);
+#endif
 			}
 
 			// there must be a client for us to be able to go out of the menu

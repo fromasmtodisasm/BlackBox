@@ -89,9 +89,9 @@ bool CFunctionHandler::GetParam(int nIdx, USER_DATA& nValue)
 	auto result = GetParamAny(nIdx, nValue);
 	if (result && nValue != nullptr)
 	{
-		UserDataInfo* ud      = (UserDataInfo*)nValue;
-		auto          nCookie = ud->cookie;
-		nValue                = (void*)ud->ptr;
+		USER_DATA_CHUNK* ud      = (USER_DATA_CHUNK*)nValue;
+		auto          nCookie = ud->nCookie;
+		nValue                = (void*)ud->nVal;
 	}
 	return result;
 }
@@ -169,7 +169,13 @@ void CFunctionHandler::Unref(HSCRIPTFUNCTION hFunc)
 
 bool CFunctionHandler::GetParamUDVal(int nIdx, USER_DATA& val, int& cookie)
 {
-	return GetParamAny(nIdx, val);
+	int nRealIdx = nIdx + m_paramIdOffset;
+	USER_DATA_CHUNK* udc = (USER_DATA_CHUNK*)lua_touserdata(L, nRealIdx);
+	if (!udc)
+		return false;
+	val = udc->nVal;
+	cookie = udc->nCookie;
+	return true;
 }
 
 int CFunctionHandler::EndFunction(USER_DATA ud)

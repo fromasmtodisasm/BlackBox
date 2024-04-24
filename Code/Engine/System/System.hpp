@@ -66,6 +66,8 @@ class CScriptObjectRenderer;
 
 typedef void* WIN_HMODULE;
 
+using stack_string = string;
+
 struct SSystemCVars
 {
 	int sys_no_crash_dialog = 0;
@@ -464,6 +466,7 @@ public:
 		Up,
 	};
 
+#if 0
 	template<class T>
 	void PrintMemoryUsageForName(const char* name, typename Sizer<T>::Func fn, T* This, float px, float py)
 	{
@@ -476,6 +479,7 @@ public:
 
 		PrintRightAlignedText(py, stats);
 	}
+#endif
 
 	void RenderStats();
 #if BB_PLATFORM_WINDOWS

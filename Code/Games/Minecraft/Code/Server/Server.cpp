@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <Server/Server.hpp>
 
 void CServer::OnXServerSlotConnect(const uint8_t* pbAuthorizationID, unsigned int uiAuthorizationSize)

@@ -11,6 +11,7 @@
 
 #include <BlackBox/Core/Path.hpp>
 #include <BlackBox/Core/Platform/CryLibrary.h>
+#include <BlackBox/Core/Platform/IGamePlatform.hpp>
 
 using stack_string = string;
 
@@ -412,6 +413,8 @@ bool CSystem::Init()
 	//====================================================
 	CryLog("Initializing Console");
 	//====================================================
+	if (!InitGamePlatform())
+		return false;
 	CreateRendererVars(m_startupParams);
 	if (auto ovr = m_pCmdLine->FindArg(eCLAT_Pre, "override"); ovr)
 	{
@@ -452,6 +455,7 @@ bool CSystem::Init()
 		m_Font.ms_nullFont.m_Size  = font_size;
 
 		auto splash                = Env::Renderer()->LoadTexture("textures/console/loadscreen_default.dds", 0, 0);
+		auto t = Env::Renderer()->EF_GetTextureByID(splash);
 		for (int i = 0; i < 3; i++)
 		{
 			RenderBegin();
@@ -466,8 +470,12 @@ bool CSystem::Init()
 #else
 			    0,
 			    0,
-			    (float)Env::Renderer()->GetWidth(),
-			    (float)Env::Renderer()->GetHeight(),
+					//(float)t->GetWidth(),
+					//(float)t->GetHeight(),
+					800,
+					600,
+			    //(float)Env::Renderer()->GetWidth(),
+			    //(float)Env::Renderer()->GetHeight(),
 			    splash,
 			    0, 0, 1, 1, 1, 1, 1, 1);
 #endif
@@ -480,8 +488,6 @@ bool CSystem::Init()
 		static_cast<CXConsole*>(m_env.pConsole)->PostRendererInit();
 	}
 
-	if (!InitGamePlatform())
-		return false;
 	if (!InitSoundSystem())
 		return false;
 	if (!Init3DEngine())

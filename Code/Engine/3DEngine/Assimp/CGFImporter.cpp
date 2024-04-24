@@ -58,7 +58,7 @@ namespace Assimp
 				CCryFile file(pFile.data(), "rb");
 				if (file)
 				{
-					char* argv[] = {
+					const char* argv[] = {
 					    "dummy.exe",
 					    //"-mesh",
 					    (char*)file.GetAdjustedFilename()};

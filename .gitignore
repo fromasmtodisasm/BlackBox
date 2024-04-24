@@ -45,3 +45,4 @@ Thumbs.db
 *.pak
 *.zip
 /Assets/raw
+/steam_api64.dll
