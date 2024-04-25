@@ -489,7 +489,7 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 #endif
 	xpos = (float)ScaleCoordX(xpos); w = (float)ScaleCoordX(w);
 	ypos = (float)ScaleCoordY(ypos); h = (float)ScaleCoordY(h);
-	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
+	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, 1 - t0, s1, 1 - t1, color4f{r, g, b, a}, z});
 
 #if 0
 	Image2D img = m_DrawImages.back();
@@ -805,7 +805,7 @@ static ID3DDepthStencilState* CreateDepthStencil()
 void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderResourceView* view, color4f color, float s0, float t0, float s1, float t1)
 {
 	glm::mat4 projection = glm::ortho(0.0f, (float)GetWidth(), (float)GetHeight(), 0.0f);
-	auto      cur_c      = Legacy::Vec4(color.r, color.g, color.b, color.a);
+	//auto      cur_c      = Legacy::Vec4(color.r, color.g, color.b, color.a);
 	auto      screen_size(Legacy::Vec2(GetWidth(), GetHeight()));
 	auto      xpos = x;
 	auto      ypos = y;
@@ -845,14 +845,16 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderRe
 	    tC{uv_pos.x + uv_size.x, uv_pos.y + uv_size.y};
 #endif
 
+	UCol cur_c;
+	cur_c.dcolor = color.pack32();
 	std::array<P3F_T2F, 6> vertices = {
-	    P3F_T2F{Legacy::Vec3(projection * pA), UCol((cur_c)), tA},
-	    P3F_T2F{Legacy::Vec3(projection * pB), UCol((cur_c)), tB},
-	    P3F_T2F{Legacy::Vec3(projection * pC), UCol((cur_c)), tC},
+	    P3F_T2F{Legacy::Vec3(projection * pA), cur_c, tA},
+	    P3F_T2F{Legacy::Vec3(projection * pB), cur_c, tB},
+	    P3F_T2F{Legacy::Vec3(projection * pC), cur_c, tC},
 
-	    P3F_T2F{Legacy::Vec3(projection * pC), UCol((cur_c)), tC},
-	    P3F_T2F{Legacy::Vec3(projection * pD), UCol((cur_c)), tD},
-	    P3F_T2F{Legacy::Vec3(projection * pA), UCol((cur_c)), tA},
+	    P3F_T2F{Legacy::Vec3(projection * pC), cur_c, tC},
+	    P3F_T2F{Legacy::Vec3(projection * pD), cur_c, tD},
+	    P3F_T2F{Legacy::Vec3(projection * pA), cur_c, tA},
 	};
 
 	if (!GlobalResources::TexturedQuadShader)
@@ -879,7 +881,7 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderRe
 #if 0
 	m_Device->Get<ID3D11DeviceContext>()->IASetInputLayout(GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout);
 #endif
-	auto m_pDSState = ::CreateDepthStencil();
+	static auto m_pDSState = ::CreateDepthStencil();
 	m_Device->Get<ID3D11DeviceContext>()->RSSetState(m_pRasterizerState.Get());
 	m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
 	m_Device->Get<ID3D11DeviceContext>()->OMSetDepthStencilState(m_pDSState, 0);
@@ -890,10 +892,10 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderRe
 
 void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, int texture, color4f color, float s0, float t0, float s1, float t1)
 {
-	auto                      cur_c          = color4f(texture != -1 ? color4f{1, 1, 1, 1} : color4f{color.r, color.g, color.b, color.a});
+	//auto                      cur_c          = color4f(texture != -1 ? color4f{1, 1, 1, 1} : color4f{color.r, color.g, color.b, color.a});
 
 	ID3D11ShaderResourceView* currentTexture = m_TexturesMap[texture].second;
-	Draw2DQuad(x, y, w, h, currentTexture, cur_c, s0, t0, s1, t1);
+	Draw2DQuad(x, y, w, h, currentTexture, color, s0, t0, s1, t1);
 }
 
 bool CD3DRenderer::CreateRenderTargets()

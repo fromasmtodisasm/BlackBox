@@ -4,11 +4,11 @@
 
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/Core/Platform/Windows.hpp>
-#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/Network/INetwork.hpp>
 #include <BlackBox/Renderer/Camera.hpp>
 #include <BlackBox/Renderer/IRender.hpp>
 #include <BlackBox/Renderer/IShader.hpp>
+#include <BlackBox/Input/IInput.hpp>
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <BlackBox/System/IConsole.hpp>
 #include <BlackBox/System/ILog.hpp>

@@ -563,8 +563,6 @@ struct SFFTriggerOutputData
 		SetFlag(Flags::RightTouchToActivate, IsFlagEnabled(Flags::RightTouchToActivate) || operand2.IsFlagEnabled(Flags::RightTouchToActivate));
 	}
 
-#define clamp_tpl(val, l, r) (std::max((l), std::min((val), (r))))
-
 	ILINE float GetClampedLeftGain() const
 	{
 		return clamp_tpl(leftGain, 0.0f, 1.0f);

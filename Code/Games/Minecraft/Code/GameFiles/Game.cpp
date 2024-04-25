@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "stdafx.h"
 #include <Game.hpp>
 #include <GameObject.hpp>
 #include <TagPoint.hpp>
@@ -148,42 +148,10 @@ bool AABB::IsCollideBox(const AABB& b) const
 
 void LoadHistory()
 {
-	std::ifstream      is("history.txt");
-	std::stack<string> history;
-	if (is.is_open())
-	{
-		std::string line;
-		while (std::getline(is, line))
-		{
-			history.push(line);
-			Env::Console()->AddCommandToHistory(line.data());
-		}
-		/*
-		while (!history.empty())
-		{
-			is << history.top() << std::endl;
-			history.pop();
-		}
-		*/
-	}
 }
 
 void SaveHistory()
 {
-	std::ofstream      is("history.txt");
-	std::stack<string> history;
-	if (is.is_open())
-	{
-		while (auto h = Env::Console()->GetHistoryElement(true))
-		{
-			history.push(h);
-		}
-		while (!history.empty())
-		{
-			is << history.top() << std::endl;
-			history.pop();
-		}
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -663,6 +631,9 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	m_pClient                 = NULL;
 	m_pServer                 = NULL;
 
+	if (!m_bDedicatedServer)
+		m_pLegacyInput = new Legacy::CInput(Env::Input());
+
 	m_pSystem->GetILog()->Log("Game Initialization");
 #if !defined(LINUX)
 	IMovieSystem* pMovieSystem = m_pSystem->GetIMovieSystem();
@@ -775,7 +746,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	// init key-bindings
 	if (!m_bDedicatedServer)
 	{
-		m_pLegacyInput = new Legacy::CInput(Env::Input());
 		InitInputMap();
 	}
 
@@ -1000,6 +970,7 @@ bool CXGame::Update()
 	// We use engine for update
 	if (!m_pSystem->Update(IsMultiplayer() ? ESYSUPDATE_MULTIPLAYER : 0, nPauseMode)) //Update returns false when quitting
 		return (false);
+	m_pLegacyInput->Update(false);
 
 	if (IsMultiplayer())
 	{

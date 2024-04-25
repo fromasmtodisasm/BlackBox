@@ -96,7 +96,7 @@ void CEntitySystem::Update()
 {
 	auto time = Env::Timer()->GetFrameTime();
 	m_pPhysicalWorld->stepSimulation(time);
-	if (Env::Renderer())
+	if (Env::Renderer() && false)
 		m_pPhysicalWorld->debugDrawWorld();
 }
 

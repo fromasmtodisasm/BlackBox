@@ -574,8 +574,10 @@ bool CScriptObject::MoveNext()
 			// => now see if we have a prototype table attached by inspecting our potential metatable
 			// => if we don't have a metatable, or have a metatable but no prototype table attached, finish the whole iteration
 
+#if 1
 #if 0
 			if (iter.internal.resolvePrototypeTableAsWell)
+#endif
 			{
 				if (lua_getmetatable(L, -1))
 				{
@@ -587,7 +589,7 @@ bool CScriptObject::MoveNext()
 						// yep, the metatable provides us with the prototype table
 						iter.internal.nStackMarker2 = lua_gettop(L);
 						lua_pushnil(L);
-						return MoveNext(iter);
+						return MoveNext(/*iter*/);
 					}
 				}
 			}

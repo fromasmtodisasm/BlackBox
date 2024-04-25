@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "stdafx.h"
 #include <ScriptObjects/ScriptObjectStream.hpp>
 #include <BlackBox/System/IConsole.hpp>
 

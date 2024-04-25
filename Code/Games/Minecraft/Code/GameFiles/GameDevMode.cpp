@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "stdafx.h"
 
 bool CXGame::IsDevModeEnable()
 {

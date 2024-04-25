@@ -446,10 +446,10 @@ inline unsigned int color4<T>::pack_argb8888()
 	unsigned char ca;
 	if (sizeof(r) == 1) // char and unsigned char
 	{
-		cr = r;
-		cg = g;
-		cb = b;
-		ca = a;
+		cr = (unsigned char)(r);
+		cg = (unsigned char)(g);
+		cb = (unsigned char)(b);
+		ca = (unsigned char)(a);
 	}
 	else if (sizeof(r) == 2) // short and unsigned short
 	{

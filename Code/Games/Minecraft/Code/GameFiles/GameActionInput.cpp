@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "stdafx.h"
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <ICryPak.h>
 

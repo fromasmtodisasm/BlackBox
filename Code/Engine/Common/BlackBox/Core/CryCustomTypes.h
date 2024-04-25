@@ -314,13 +314,6 @@ template<> struct TIntType<8>
 	typedef int64 TType;
 };
 
-template<class T>
-T clamp_tpl(T X, T Min, T Max)
-{
-	return X < Min ? Min : X < Max ? X
-	                               : Max;
-}
-
 template<class D, class S>
 inline bool ConvertInt(D& dest, S src)
 {

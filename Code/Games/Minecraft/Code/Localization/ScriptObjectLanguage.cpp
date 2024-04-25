@@ -15,7 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pch.hpp"
+#include "stdafx.h"
 #include "ScriptObjectLanguage.h"
 #include "StringTableMgr.h"
 

@@ -77,7 +77,8 @@ void CScriptObjectInput::Init(IScriptSystem* pScriptSystem, CXGame* pGame, ISyst
 {
 	m_pGame    = pGame;
 	m_pSystem  = pSystem;
-	m_pInput   = pSystem->GetIInput();
+	//m_pInput   = pSystem->GetIInput();
+	m_pInput = pGame->GetLegacyInput();
 	m_pConsole = pSystem->GetIConsole();
 	InitGlobal(pScriptSystem, "Input", this);
 }
@@ -473,7 +474,7 @@ int CScriptObjectInput::GetJoySensitivityVScale(IFunctionHandler* pH)
 int CScriptObjectInput::GetXKeyPressedName(IFunctionHandler* pH)
 {
 	if (!m_pInput) return pH->EndFunctionNull();
-	const char* pszKey = ""; // m_pInput->GetXKeyPressedName();
+	const char* pszKey = m_pInput->GetXKeyPressedName();
 	if (!pszKey)
 		return pH->EndFunctionNull();
 	return pH->EndFunction(pszKey);
@@ -487,7 +488,7 @@ int CScriptObjectInput::GetXKeyPressedName(IFunctionHandler* pH)
 int CScriptObjectInput::GetXKeyDownName(IFunctionHandler* pH)
 {
 	if (!m_pInput) return pH->EndFunctionNull();
-	const char* pszKey = ""; // m_pInput->GetKeyDownName();
+	const char* pszKey = m_pInput->GetKeyDownName();
 	if (!pszKey)
 		return pH->EndFunctionNull();
 	return pH->EndFunction(pszKey);
@@ -505,7 +506,8 @@ int CScriptObjectInput::ResetKeyState(IFunctionHandler* pH)
 
 		if (pH->GetParam(1, szKeyName))
 		{
-			m_pInput->GetDevice(0, eIDT_Keyboard)->ClearKeyState(); // ClearKey(m_pInput->GetKeyID(szKeyName));
+			//m_pInput->GetDevice(0, eIDT_Keyboard)->ClearKeyState();
+			//ClearKey(m_pInput->GetKeyID(szKeyName));
 
 			return pH->EndFunction();
 		}

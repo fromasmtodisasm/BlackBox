@@ -77,7 +77,7 @@ private:
 	CXGame*   m_pGame;
 	ISystem*  m_pSystem;
 	IConsole* m_pConsole;
-	IInput*   m_pInput;
+	Legacy::IInput*   m_pInput;
 };
 
 #endif // !defined(AFX_SCRIPTOBJECTINPUT_H__18286CA7_21F2_45E0_9DFF_9D67F6AE3BE8__INCLUDED_)

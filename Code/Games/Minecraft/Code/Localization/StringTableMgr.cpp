@@ -13,7 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pch.hpp"
+#include "stdafx.h"
 #include "StringTableMgr.h"
 #include "ScriptObjectLanguage.h"
 #include "IXMLDOM.h"

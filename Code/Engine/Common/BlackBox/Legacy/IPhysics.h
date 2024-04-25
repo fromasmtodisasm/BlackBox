@@ -17,7 +17,7 @@
 #define cryphysics_h
 #pragma once
 
-#ifdef WIN32
+#ifdef BB_PLATFORM_WINDOWS
 	#ifdef PHYSICS_EXPORTS
 		#define CRYPHYSICS_API __declspec(dllexport)
 	#else

@@ -660,79 +660,44 @@ namespace Legacy
 {
 	struct CKeyboard : public IKeyboard
 	{
-		CKeyboard()
-		{
-			m_pKeyboard = Env::Input()->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
-		}
-		virtual void ShutDown() override
-		{
-		}
+		EKeyId m_LastKey = eKI_Unknown;
+		CKeyboard();
+		virtual void ShutDown() override;
 
 		//! check for key pressed and held
-		virtual bool KeyDown(int p_key) override
-		{
-			auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));
-			return m_pKeyboard->InputState(key, EInputState::eIS_Down);
-		}
+		virtual bool KeyDown(int p_key) override;
 
 		//! check for key pressed only once
-		virtual bool KeyPressed(int p_key) override
-		{
-			auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));
-			return m_pKeyboard->InputState(key, EInputState::eIS_Pressed);
-		}
+		virtual bool KeyPressed(int p_key) override;
 
 		//! check if the key has been released
-		virtual bool KeyReleased(int p_key) override
-		{
-			auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));
-			return m_pKeyboard->InputState(key, EInputState::eIS_Released);
-		}
+		virtual bool KeyReleased(int p_key) override;
 
 		//! clear the key status
-		virtual void ClearKey(int p_key) override
-		{
-		}
+		virtual void ClearKey(int p_key) override;
 
 		//! return the code of the key pressed
-		virtual int GetKeyPressedCode() override
-		{
-			return XKEY_NULL;
-		}
+		virtual int GetKeyPressedCode() override;
 
 		//! return the name of the key pressed
-		virtual const char* GetKeyPressedName() override
-		{
-			return "XKEY_NULL";
-		}
+		virtual const char* GetKeyPressedName() override;
 
 		//! return the code of the key down
-		virtual int GetKeyDownCode() override
-		{
-			return XKEY_NULL;
-		}
+		virtual int GetKeyDownCode() override;
 
 		//! return the name of the key down
-		virtual const char* GetKeyDownName() override
-		{
-			return "XKEY_NULL";
-		}
+		virtual const char* GetKeyDownName() override;
 
 		//! set/unset directinput to exclusive mode
-		virtual void SetExclusive(bool value, void* hwnd = 0) override
-		{
-		}
+		virtual void SetExclusive(bool value, void* hwnd = 0) override;
 
 		//! wait for a key pressed
-		virtual void WaitForKey() override
-		{
-		}
+		virtual void WaitForKey() override;
 
 		//! clear the key (pressed) state
-		virtual void ClearKeyState() override
-		{
-			m_pKeyboard->ClearKeyState();
-		}
+		virtual void ClearKeyState() override;
+
+		void Update();
 		IInputDevice* m_pKeyboard{};
 	};
 
@@ -868,269 +833,73 @@ namespace Legacy
 		std::map<Legacy::IInputEventListener*, LegacyListener> m_Listeners;
 
 	public:
-		CInput(::IInput* pInput)
-		    : m_pInput(pInput)
-		{
-		}
-		virtual void AddEventListener(IInputEventListener* pListener) override
-		{
-			LegacyListener listener(pListener);
-			auto           result = m_Listeners.insert({pListener, listener});
-			if (result.second)
-			{
-				m_pInput->AddEventListener(&result.first->second);
-			}
-		}
-		virtual void RemoveEventListener(IInputEventListener* pListener) override
-		{
-			if (auto it = m_Listeners.find(pListener); it != m_Listeners.end())
-			{
-				m_pInput->RemoveEventListener(&it->second);
-				m_Listeners.erase(it);
-			}
-		}
-		virtual void EnableEventPosting(bool bEnable) override
-		{
-		}
-		virtual void AddConsoleEventListener(IInputEventListener* pListener) override
-		{
-		}
-		virtual void RemoveConsoleEventListener(IInputEventListener* pListener) override
-		{
-		}
-		virtual void SetExclusiveListener(IInputEventListener* pListener) override
-		{
-		}
-		virtual IInputEventListener* GetExclusiveListener() override
-		{
-			return nullptr;
-		}
-		virtual void Update(bool bFocus) override
-		{
-		}
-		virtual void ShutDown() override
-		{
-		}
-		virtual void SetMouseExclusive(bool exclusive, void* hwnd = 0) override
-		{
-		}
-		virtual void SetKeyboardExclusive(bool exclusive, void* hwnd = 0) override
-		{
-		}
-		virtual bool KeyDown(int p_key) override
-		{
-			return m_Keyboard.KeyDown(p_key);
-		}
-		virtual bool KeyPressed(int p_key) override
-		{
-			return m_Keyboard.KeyPressed(p_key);
-		}
-		virtual bool KeyReleased(int p_key) override
-		{
-			return m_Keyboard.KeyReleased(p_key);
-		}
-		virtual bool MouseDown(int p_numButton) override
-		{
-			return m_Mouse.MouseDown(p_numButton);
-		}
-		virtual bool MousePressed(int p_numButton) override
-		{
-			return m_Mouse.MousePressed(p_numButton);
-		}
-		virtual bool MouseDblClick(int p_numButton) override
-		{
-			return false;
-		}
-		virtual bool MouseReleased(int p_numButton) override
-		{
-			return m_Mouse.MouseReleased(p_numButton);
-		}
-		virtual float MouseGetDeltaX() override
-		{
-			return 0.0f;
-		}
-		virtual float MouseGetDeltaY() override
-		{
-			return 0.0f;
-		}
-		virtual float MouseGetDeltaZ() override
-		{
-			return 0.0f;
-		}
-		virtual float MouseGetVScreenX() override
-		{
-			return m_Mouse.GetVScreenX();
-		}
-		virtual float MouseGetVScreenY() override
-		{
-			float x, y;
-			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
-			return y;
-		}
-		virtual int GetKeyID(const char* sName) override
-		{
-			return 0;
-		}
-		virtual void EnableBufferedInput(bool bEnable) override
-		{
-		}
-		virtual void FeedVirtualKey(int nVirtualKey, long lParam, bool bDown) override
-		{
-		}
-		virtual int GetBufferedKey() override
-		{
-			return 0;
-		}
-		virtual const char* GetBufferedKeyName() override
-		{
-			return nullptr;
-		}
-		virtual void PopBufferedKey() override
-		{
-		}
-		virtual void SetMouseInertia(float) override
-		{
-		}
-		virtual int JoyGetDefaultControllerId() const override
-		{
-			return 0;
-		}
-		virtual bool JoyIsRawBtnDown(int idCtrl, int p_numButton) override
-		{
-			return false;
-		}
-		virtual bool JoyIsRawBtnPressed(int idCtrl, int p_numButton) override
-		{
-			return false;
-		}
-		virtual bool JoyIsRawBtnReleased(int idCtrl, int p_numButton) override
-		{
-			return false;
-		}
-		virtual int JoyGetDir(int idCtrl) override
-		{
-			return 0;
-		}
-		virtual int JoyGetDirPressed(int idCtrl) override
-		{
-			return 0;
-		}
-		virtual int JoyGetDirReleased(int idCtrl) override
-		{
-			return 0;
-		}
-		virtual int JoyGetHatDir(int idCtrl) override
-		{
-			return 0;
-		}
-		virtual int JoyGetHatDirPressed(int idCtrl) override
-		{
-			return 0;
-		}
-		virtual int JoyGetHatDirReleased(int idCtrl) override
-		{
-			return 0;
-		}
-		virtual Legacy::Vec3 JoyGetAnalog1Dir(int idCtrl) const override
-		{
-			return Legacy::Vec3();
-		}
-		virtual Legacy::Vec3 JoyGetAnalog2Dir(int idCtrl) const override
-		{
-			return Legacy::Vec3();
-		}
-		virtual bool JoyIsXKeyPressed(int idCtrl, int idXKey) override
-		{
-			return false;
-		}
-		virtual bool JoyIsXKeyDown(int idCtrl, int idXKey) override
-		{
-			return false;
-		}
-		virtual bool JoyIsXKeyReleased(int idCtrl, int idXKey) override
-		{
-			return false;
-		}
-		virtual float GetJoySensitivityHGain(int idCtrl) override
-		{
-			return 0.0f;
-		}
-		virtual float GetJoySensitivityHScale(int idCtrl) override
-		{
-			return 0.0f;
-		}
-		virtual float GetJoySensitivityVGain(int idCtrl) override
-		{
-			return 0.0f;
-		}
-		virtual float GetJoySensitivityVScale(int idCtrl) override
-		{
-			return 0.0f;
-		}
-		virtual void SetJoySensitivityHGain(int idCtrl, float fHGain) override
-		{
-		}
-		virtual void SetJoySensitivityHScale(int idCtrl, float fHScale) override
-		{
-		}
-		virtual void SetJoySensitivityVGain(int idCtrl, float fVGain) override
-		{
-		}
-		virtual void SetJoySensitivityVScale(int idCtrl, float fVScale) override
-		{
-		}
-		virtual IKeyboard* GetIKeyboard() override
-		{
-			return &m_Keyboard;
-		}
-		virtual IMouse* GetIMouse() override
-		{
-			return &m_Mouse;
-		}
-		virtual const char* GetKeyName(int nKey, int modifiers = 0, bool bGUI = 0) override
-		{
-			return nullptr;
-		}
-		virtual bool GetOSKeyName(int nKey, wchar_t* szwKeyName, int iBufSize) override
-		{
-			return false;
-		}
-		virtual int GetKeyPressedCode() override
-		{
-			return 0;
-		}
-		virtual const char* GetKeyPressedName() override
-		{
-			return nullptr;
-		}
-		virtual int GetKeyDownCode() override
-		{
-			return 0;
-		}
-		virtual const char* GetKeyDownName() override
-		{
-			return nullptr;
-		}
-		virtual void WaitForKey() override
-		{
-		}
-		virtual IActionMapManager* CreateActionMapManager() override
-		{
-			return nullptr;
-		}
-		virtual const char* GetXKeyPressedName() override
-		{
-			return nullptr;
-		}
-		virtual void ClearKeyState() override
-		{
-			m_Keyboard.ClearKeyState();
-			m_Mouse.ClearKeyState();
-		}
-		virtual unsigned char GetKeyState(int nKey) override
-		{
-			return 0;
-		}
+		CInput(::IInput* pInput);
+		virtual void AddEventListener(IInputEventListener* pListener) override;
+		virtual void RemoveEventListener(IInputEventListener* pListener) override;
+		virtual void EnableEventPosting(bool bEnable) override;
+		virtual void AddConsoleEventListener(IInputEventListener* pListener) override;
+		virtual void RemoveConsoleEventListener(IInputEventListener* pListener) override;
+		virtual void SetExclusiveListener(IInputEventListener* pListener) override;
+		virtual IInputEventListener* GetExclusiveListener() override;
+		virtual void Update(bool bFocus) override;
+		virtual void ShutDown() override;
+		virtual void SetMouseExclusive(bool exclusive, void* hwnd = 0) override;
+		virtual void SetKeyboardExclusive(bool exclusive, void* hwnd = 0) override;
+		virtual bool KeyDown(int p_key) override;
+		virtual bool KeyPressed(int p_key) override;
+		virtual bool KeyReleased(int p_key) override;
+		virtual bool MouseDown(int p_numButton) override;
+		virtual bool MousePressed(int p_numButton) override;
+		virtual bool MouseDblClick(int p_numButton) override;
+		virtual bool MouseReleased(int p_numButton) override;
+		virtual float MouseGetDeltaX() override;
+		virtual float MouseGetDeltaY() override;
+		virtual float MouseGetDeltaZ() override;
+		virtual float MouseGetVScreenX() override;
+		virtual float MouseGetVScreenY() override;
+		virtual int GetKeyID(const char* sName) override;
+		virtual void EnableBufferedInput(bool bEnable) override;
+		virtual void FeedVirtualKey(int nVirtualKey, long lParam, bool bDown) override;
+		virtual int GetBufferedKey() override;
+		virtual const char* GetBufferedKeyName() override;
+		virtual void PopBufferedKey() override;
+		virtual void SetMouseInertia(float) override;
+		virtual int JoyGetDefaultControllerId() const override;
+		virtual bool JoyIsRawBtnDown(int idCtrl, int p_numButton) override;
+		virtual bool JoyIsRawBtnPressed(int idCtrl, int p_numButton) override;
+		virtual bool JoyIsRawBtnReleased(int idCtrl, int p_numButton) override;
+		virtual int JoyGetDir(int idCtrl) override;
+		virtual int JoyGetDirPressed(int idCtrl) override;
+		virtual int JoyGetDirReleased(int idCtrl) override;
+		virtual int JoyGetHatDir(int idCtrl) override;
+		virtual int JoyGetHatDirPressed(int idCtrl) override;
+		virtual int JoyGetHatDirReleased(int idCtrl) override;
+		virtual Legacy::Vec3 JoyGetAnalog1Dir(int idCtrl) const override;
+		virtual Legacy::Vec3 JoyGetAnalog2Dir(int idCtrl) const override;
+		virtual bool JoyIsXKeyPressed(int idCtrl, int idXKey) override;
+		virtual bool JoyIsXKeyDown(int idCtrl, int idXKey) override;
+		virtual bool JoyIsXKeyReleased(int idCtrl, int idXKey) override;
+		virtual float GetJoySensitivityHGain(int idCtrl) override;
+		virtual float GetJoySensitivityHScale(int idCtrl) override;
+		virtual float GetJoySensitivityVGain(int idCtrl) override;
+		virtual float GetJoySensitivityVScale(int idCtrl) override;
+		virtual void SetJoySensitivityHGain(int idCtrl, float fHGain) override;
+		virtual void SetJoySensitivityHScale(int idCtrl, float fHScale) override;
+		virtual void SetJoySensitivityVGain(int idCtrl, float fVGain) override;
+		virtual void SetJoySensitivityVScale(int idCtrl, float fVScale) override;
+		virtual IKeyboard* GetIKeyboard() override;
+		virtual IMouse* GetIMouse() override;
+		virtual const char* GetKeyName(int nKey, int modifiers = 0, bool bGUI = 0) override;
+		virtual bool GetOSKeyName(int nKey, wchar_t* szwKeyName, int iBufSize) override;
+		virtual int GetKeyPressedCode() override;
+		virtual const char* GetKeyPressedName() override;
+		virtual int GetKeyDownCode() override;
+		virtual const char* GetKeyDownName() override;
+		virtual void WaitForKey() override;
+		virtual IActionMapManager* CreateActionMapManager() override;
+		virtual const char* GetXKeyPressedName() override;
+		virtual void ClearKeyState() override;
+		virtual unsigned char GetKeyState(int nKey) override;
 		::IInput* m_pInput;
 		CKeyboard m_Keyboard;
 		CMouse    m_Mouse;

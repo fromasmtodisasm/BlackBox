@@ -19,7 +19,7 @@
 
 //////////////////////////////////////////////////////////////////////
 // searches the given entry in the map by key, and if there is none, returns the default value
-#ifdef WIN32
+#if defined(WIN32) ||	defined(WIN64)
 	#include <map>
 	#define hash_map unordered_map
 template<typename Map, typename key_type, typename mapped_type>

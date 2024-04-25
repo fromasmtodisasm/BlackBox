@@ -2622,8 +2622,8 @@ int CUISystem::DrawImage(const UIRect& pRect, int iTextureID, const float* vTexC
 
 		if (vTexCoord)
 		{
-			fTexW = vTexCoord[2] - vTexCoord[0];
-			fTexH = vTexCoord[3] - vTexCoord[1];
+			fTexW = abs(vTexCoord[2] - vTexCoord[0]);
+			fTexH = abs(vTexCoord[3] - vTexCoord[1]);
 		}
 
 		if (vTexCoord)

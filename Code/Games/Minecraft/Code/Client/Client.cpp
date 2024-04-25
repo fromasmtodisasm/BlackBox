@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "stdafx.h"
 #include <BlackBox/System/ConsoleRegistration.h>
 #include <Client/Client.hpp>
 #include <algorithm>
@@ -22,7 +22,7 @@ CClient::CClient(CXGame* pGame)
     , m_CameraController()
     , m_IntersectionState()
 {
-	Env::Renderer()->RegisterCallbackClient(this);
+	//Env::Renderer()->RegisterCallbackClient(this);
 
 	struct cmds
 	{

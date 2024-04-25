@@ -67,7 +67,7 @@ float4 GrayScalePS(float3 color) : SV_Target0
 [[fn]]
 float4 TexturedQuad(VsOutput IN) : SV_Target0
 {    
-    float4 color = text.Sample(textSampler, IN.TexCoords);
+    float4 color = IN.Color * text.Sample(textSampler, IN.TexCoords);
     return color;
 }
 

@@ -13,7 +13,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pch.hpp"
+#include "stdafx.h"
 //#include "Netework/XNetwork.hpp"
 #include "Client/XClient.hpp"
 #include "UIHud.h"

@@ -326,7 +326,7 @@ void CSDLWindow::SelectDisplay(int& x, int& y, int w, int h)
 	// enumerate displays
 	int  displays = SDL_GetNumVideoDisplays();
 	auto display  = Env::Console()->GetCVar("r_DisplayIndex")->GetIVal();
-	display       = std::max(displays - 1, 0);
+	//display       = std::max(displays - 1, 0);
 
 	// get display bounds for all displays
 	std::vector<SDL_Rect> displayBounds;

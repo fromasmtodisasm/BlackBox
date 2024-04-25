@@ -29,8 +29,6 @@
 // No exceptions are thrown.
 ////////////////////////////////////////////////////////////////
 
-#include "pch.hpp"
-
 class CFileMapping//: public _reference_target_t
 {
 public:

@@ -1,8 +1,14 @@
 #pragma once
 
+#ifndef _PLATFORM_IMPL_H_
+#define _PLATFORM_IMPL_H_
+#endif
+
 #include <BlackBox/Core/Platform/Platform.hpp>
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox/Core/Platform/CryLibrary.h>
+
+#include <BlackBox/Math/Cry_Math.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Global environment variable.

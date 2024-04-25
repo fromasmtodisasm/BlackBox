@@ -1409,7 +1409,7 @@ void CXConsole::Draw()
 			{
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), 12, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
-				Env::Renderer()->Draw2dImage(0.0f, 0.0f, 800, float(320), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0.99);
+				Env::Renderer()->Draw2dImage(0.0f, 0.0f, 800, float(320), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 1, 1, 1, 1, 0.99);
 			}
 			else
 			{

@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "stdafx.h"
 #include <GameFiles/DevMode.hpp>
 
 CDevMode::CDevMode()

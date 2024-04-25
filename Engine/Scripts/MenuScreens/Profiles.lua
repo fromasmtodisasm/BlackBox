@@ -196,7 +196,7 @@ UI.PageProfiles=
 		local ProfileList = UI.PageProfiles.GUI.ProfileList;
 
 		ProfileList:Clear();
-		for i,filename in ProfileTable do
+		for i,filename in pairs(ProfileTable) do
 			local sPostFix="_system.cfg";
 			local iLen=strlen(sPostFix);
 

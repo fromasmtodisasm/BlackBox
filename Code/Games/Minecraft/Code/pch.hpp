@@ -100,22 +100,7 @@ _inline void __cdecl __DLL_TRACE(const char *sFormat, ... )
 // STL //////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 #pragma warning (disable : 4786)
-#include <algorithm>
-#include <cctype>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
-#include <iomanip>
-#include <list>
-#include <map>	
-#include <memory>
 #include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <string>
-#include <vector>
 
 #if 0
 #if defined USE_DEBUG_NEW
