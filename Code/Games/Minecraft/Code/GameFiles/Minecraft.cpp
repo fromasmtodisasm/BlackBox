@@ -166,8 +166,10 @@ void MineWorld::init()
 		//}
 	}
 
+#if 0
 	Env::Console()->ExecuteString("load_level minecraft");
 	Env::Console()->ShowConsole(false);
+#endif
 }
 
 void MineUI::init()
@@ -571,6 +573,8 @@ void MinePlayer::init()
 
 void MinePlayer::update()
 {
+	if (!getCamera())
+		return;
 	auto renderer = Env::Renderer();
 	auto const aabb    = entityWorldAABB(entity);
 

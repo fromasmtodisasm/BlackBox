@@ -628,9 +628,10 @@ public:
 	{
 		NOT_IMPLEMENTED;
 	}
-#if 0
 	bool AddEquipPack(XDOM::IXMLDOMNode* pPack)
-#endif
+	{
+		NOT_IMPLEMENTED_V
+	}
 	bool AddEquipPack(const char* pszXML)
 	{
 		NOT_IMPLEMENTED_V

@@ -123,7 +123,7 @@ void CSystem::Start()
 	{
 		m_pGame->Release();
 		m_pGame = CreateGame(nullptr);
-		if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "Normal"))
+		if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, m_szGameMOD))
 			break;
 		m_pGame->Run(bRelaunch);
 	}

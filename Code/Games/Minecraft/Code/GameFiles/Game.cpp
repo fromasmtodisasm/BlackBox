@@ -827,9 +827,6 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 #ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
 	//if (!m_bDedicatedServer)
 	{
-		minecraft = new Minecraft;
-		minecraft->init();
-		minePlayer = &minecraft->player;
 	}
 #endif
 
@@ -861,7 +858,7 @@ bool CXGame::Update()
 	}
 	if (!m_bEditor)
 	{
-		if (!m_bMenuOverlay || !m_pUISystem /*|| m_pUISystem->GetScriptObjectUI()->CanRenderGame()*/)
+		if (!m_bMenuOverlay || !m_pUISystem || m_pUISystem->GetScriptObjectUI()->CanRenderGame())
 		{
 			m_p3DEngine->Enable(1);
 		}
@@ -1172,9 +1169,6 @@ bool CXGame::Update()
 	m_pSystem->GetIProfileSystem()->EndFrame();
 	//////////////////////////////////////////////////////////////////////////
 
-#ifdef EDITOR_IMPLEMENT_LOAD_LEVEL
-	minecraft->update();
-#endif
 	return (m_bUpdateRet);
 }
 
@@ -1690,6 +1684,108 @@ void CXGame::ProcessPMessages(const char* szMsg)
 			MenuOn();
 		}
 	}
+	else if (strnicmp(szMsg, "StartLevel", 10) == 0)		 // start a level
+	{
+		if (!m_bEditor)
+		{
+			ICVar* g_LevelStated = GetISystem()->GetIConsole()->GetCVar("g_LevelStated");
+
+			if (g_LevelStated && g_LevelStated->GetIVal() && m_pClient && m_pClient->IsConnected())
+			{
+				HSCRIPTFUNCTION pfnDisplayLevelStats = m_pScriptSystem->GetFunctionPtr("Game", "DisplayTimeZone");
+
+				if (pfnDisplayLevelStats)
+				{
+					m_pScriptSystem->BeginCall(pfnDisplayLevelStats);
+					m_pScriptSystem->PushFuncParam(GetScriptObject());
+					m_pScriptSystem->EndCall();
+
+					m_pScriptSystem->ReleaseFunc(pfnDisplayLevelStats);
+				}
+			}
+			else
+			{
+				char szLevelName[32];
+				char szMissionName[32];
+
+				m_p3DEngine->ResetScreenFx();
+				// always disable cryvision at start
+				m_p3DEngine->SetScreenFx("NightVision", 0);
+
+				// reset fading in case someone will load a level
+				// while the current one is fading out
+				m_fFadingStartTime = -1;
+				m_p3DEngine->SetScreenFx("ScreenFade", 0);
+
+				ParseLevelName(szMsg, szLevelName, szMissionName);
+
+				bool listen = false;
+				if (strcmp(szMissionName, "listen") == 0)
+				{
+					szMissionName[0] = 0;
+
+					//strcpy( szMissionName,"" );
+					listen = true;
+				};
+
+				// disable input handling during load
+				m_pSystem->GetIInput()->EnableEventPosting(0);
+				//m_pSystem->GetIInput()->GetIKeyboard()->ClearKeyState();
+				LoadLevelCS(false, szLevelName, szMissionName, listen);
+				// finished loading, reenable input handling			
+				m_pSystem->GetIInput()->EnableEventPosting(1);
+				//m_pSystem->GetIInput()->GetIKeyboard()->ClearKeyState();
+			}
+		}
+		else
+			m_pSystem->GetILog()->Log("Skipping Load Level in editor (%s)", szMsg);
+	}
+	else
+		if (strnicmp(szMsg, "LoadGame", 8) == 0)		// load game
+		{
+			if (!m_bEditor)
+			{
+				m_p3DEngine->ResetScreenFx();
+				//clear the current message
+	//			m_pSystem->GetIProcess()->SetPMessage("");				
+				const char* sname = "quicksave";
+				if (strlen(szMsg) > 8)
+				{
+					sname = szMsg + 9;
+				}
+
+				// disable input handling during load
+				m_pSystem->GetIInput()->EnableEventPosting(0);
+				//m_pSystem->GetIInput()->GetIKeyboard()->ClearKeyState();
+				// get out of all the areas localplayer is in - on load it will be retrigererd
+				IEntity* pIMyPlayer = GetMyPlayer();
+				if (pIMyPlayer)
+				{
+					IEntityContainer* pIContainer = pIMyPlayer->GetContainer();
+					if (pIContainer)
+					{
+						CPlayer* pPlayer = NULL;
+						if (pIContainer->QueryContainerInterface(CIT_IPLAYER, (void**)&pPlayer))
+							m_XAreaMgr.ExitAllAreas(pPlayer->m_AreaUser);
+					}
+				}
+
+				if (Load(sname))
+				{
+					//if loaded successfull, switch to 3d engine 			
+					if (m_pClient)
+					{
+						m_pSystem->SetIProcess(m_p3DEngine);
+						m_pSystem->GetIProcess()->SetFlags(PROC_3DENGINE);
+					}
+				}
+
+				// finished loading, reenable input
+				m_pSystem->GetIInput()->EnableEventPosting(1);
+				//m_pSystem->GetIInput()->GetIKeyboard()->ClearKeyState();
+			}
+		}
+
 }
 
 ITagPointManager* CXGame::GetTagPointManager()

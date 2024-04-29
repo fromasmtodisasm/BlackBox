@@ -281,7 +281,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 	{
 		//posx = 0;
 		//posy = 0;
-		//flags |= SDL_WINDOW_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 	//  SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT
 	// Create window
@@ -308,6 +308,7 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 	}
 	if (fullscreen)
 	{
+#if 0
 		SDL_SetWindowFullscreen(m_MainWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		SDL_DisplayMode dm;
 		if (SDL_GetDesktopDisplayMode(0, &dm) != 0)
@@ -315,7 +316,10 @@ bool CSDLWindow::Create(int width, int height, bool fullscreen, RenderBackend ba
 			SDL_Log("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 			return false;
 		}
+		dm.w = width;
+		dm.h = height;
 		SDL_SetWindowDisplayMode(m_MainWindow, &dm);
+#endif
 	}
 	SDL_SetWindowInputFocus(m_MainWindow);
 	return true;

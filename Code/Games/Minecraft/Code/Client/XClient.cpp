@@ -124,6 +124,8 @@ bool CXClient::Init(CXGame* pGame, bool bLocal)
 	m_iPhysicalWorldTime = 0;
 	m_bIgnoreSnapshot    = false;
 
+	m_DummyClient.Init();
+
 	return true;
 }
 

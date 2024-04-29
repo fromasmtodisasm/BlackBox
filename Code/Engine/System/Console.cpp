@@ -1312,7 +1312,6 @@ bool CXConsole::GetStatus()
 
 void CXConsole::Clear()
 {
-	return;
 	m_dqConsoleBuffer.clear();
 }
 
@@ -1405,11 +1404,11 @@ void CXConsole::Draw()
 		// TODO: relative/normalized coordinate system in screen-space
 		if (!m_nProgressRange)
 		{
-			if (m_bStaticBackground || true)
+			if (m_bStaticBackground)
 			{
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), m_pImage ? m_pImage->getId() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
 				//IRenderAuxImage::DrawImage(0.0f, 0.0f, float(m_pRenderer->GetWidth()), float(m_pRenderer->GetHeight()), 12, 0.0f, 0.0f, 1.0f, 1.0f, 0,0,0,0.99);
-				Env::Renderer()->Draw2dImage(0.0f, 0.0f, 800, float(320), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 1, 1, 1, 1, 0.99);
+				Env::Renderer()->Draw2dImage(0.0f, 0.0f, 800, float(320), m_pImage ? m_pImage->GetTextureID() : m_nWhiteTexID, 0.0f, 1.0f, 1.0f, 0.0f, 1, 1, 1, 1, 0.99);
 			}
 			else
 			{
@@ -1423,8 +1422,8 @@ void CXConsole::Draw()
 				IRenderAuxImage::DrawImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.7f);
 				IRenderAuxImage::DrawImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 1.0f);
 #else
-				Env::Renderer()->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 0.0f, s0 + 1, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.98f);
-				Env::Renderer()->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 0.0f, s0 - 1, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.98f);
+				Env::Renderer()->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 1.0f, s0 + 1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.98f);
+				Env::Renderer()->Draw2dImage(0, 0, fSizeX, fSizeY, m_nWhiteTexID, s0, 1.0f, s0 - 1, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.98f);
 				//Env::Renderer()->Draw2dImage(0, fSizeY, fSizeX, 2.0f * m_pRenderer->GetHeight() / fReferenceSize, m_nWhiteTexID, 0, 0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 #endif
 			}

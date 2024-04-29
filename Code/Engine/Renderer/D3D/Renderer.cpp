@@ -416,8 +416,8 @@ bool CD3DRenderer::InitOverride()
 #endif
 
 	//Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
-	//Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
-	Legacy::Vec3 c = Legacy::Vec3(50, 50, 50) / 255.f;
+	Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
+	//Legacy::Vec3 c = Legacy::Vec3(50, 50, 50) / 255.f;
 	SetClearColor(c);
 
 	D3D11_BUFFER_DESC cbDesc;

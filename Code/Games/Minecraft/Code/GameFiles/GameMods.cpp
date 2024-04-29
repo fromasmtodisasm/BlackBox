@@ -409,7 +409,6 @@ bool CXGame::ClosePacks(const char* szFolder)
 string CXGame::GetLevelsFolder() const
 {
 	string sFolder = "Levels";
-	/*
 	if (strlen(m_pGameMods->GetCurrentMod()) > 0)
 	{
 		// We are using a MOD or TC
@@ -419,7 +418,6 @@ string CXGame::GetLevelsFolder() const
 			sFolder = pMod->sFolder + "/Levels";
 		}
 	}
-	*/
 	return sFolder;
 }
 

@@ -571,6 +571,9 @@ private:
 	string               m_root;
 	int                  m_iApplicationInstance;
 
+	//! game path folder
+	char	m_szGameMOD[MAX_PATH];
+
 	//! to hold the values stored in system.cfg
 	//! because editor uses it's own values,
 	//! and then saves them to file, overwriting the user's resolution.

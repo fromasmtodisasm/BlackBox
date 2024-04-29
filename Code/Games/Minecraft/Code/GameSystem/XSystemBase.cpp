@@ -203,7 +203,6 @@ bool CXSystemBase::LoadLevelEntities(SMissionInfo& missionInfo)
 	return true;
 }
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 bool CXSystemBase::LoadMaterials(XDOM::IXMLDOMDocument *doc)
 {	
@@ -383,7 +382,7 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 				Vec3 pos = StringToVector(pPos->getText());
 				if (!stricmp(pType->getText(),"TagPoint"))
 				{
-					ITagPoint *pPoint = m_pGame->CreateTagPoint(pName->getText(),pos, angles);
+					ITagPoint *pPoint = m_pGame->CreateTagPoint(pName->getText(),Legacy::to(pos), Legacy::to(angles));
 					// FIXME - check for case of multiple tagPoints with same name - see m_pGame->CreateTagPoint
 					if(pPoint)
 					{
@@ -408,7 +407,7 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 						sprintf(name,"Respawn%d",iRespawnCount);
 					else
 						strcpy(name,pName->getText());
-					ITagPoint *pPoint = m_pGame->CreateTagPoint(name,pos, angles);
+					ITagPoint *pPoint = m_pGame->CreateTagPoint(name,Legacy::to(pos), Legacy::to(angles));
 					//FIXME - check for case of multiple tagPoints with same name - see m_pGame->CreateTagPoint
 					if(pPoint)
 					{
@@ -497,13 +496,13 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 						pThePoints->reset();
 						int sz = pThePoints->length();
 						int	cntr=0;
-						Vec3 *borderPoints = new Vec3[sz];
+						Legacy::Vec3 *borderPoints = new Legacy::Vec3[sz];
 
 						while(pThePoint=pThePoints->nextNode())
 						{
 							pPos=pThePoint->getAttribute("Pos");
 							Vec3 pos = StringToVector(pPos->getText());
-							borderPoints[cntr++] = StringToVector(pPos->getText());
+							borderPoints[cntr++] = Legacy::to(StringToVector(pPos->getText()));
 						}
 
 						m_pGame->CreateArea(borderPoints, sz, entitiesName, areaID, groupID, areaWidth, areaHeight);
@@ -583,9 +582,10 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 							entitiesName.push_back(pName->getText());
 						}
 					}
-					Vec3 MinBox;
-					Vec3 MaxBox;
-					Vec3 size;
+#if 0
+					Legacy::Vec3 MinBox;
+					Legacy::Vec3 MaxBox;
+					Legacy::Vec3 size;
 					size.x = areaWidth;
 					size.y = areaLength;
 					size.z = areaHeight;
@@ -593,10 +593,11 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 					MaxBox = size/2;
 					MinBox.z = 0.0f;
 					MaxBox.z = size.z;
-					Matrix44 TM=Matrix34::CreateRotationXYZ( Deg2Rad(Angles), Pos );	//set rotation and translation in one function call
-					TM	=	GetTransposed44(TM); //TODO: remove this after E3 and use Matrix34 instead of Matrix44
+					Legacy::Matrix44 TM;// = Matrix34::CreateRotationXYZ(Deg2Rad(Angles), Pos);	//set rotation and translation in one function call
+					//TM	=	GetTransposed44(TM); //TODO: remove this after E3 and use Matrix34 instead of Matrix44
 
 					m_pGame->CreateArea(MinBox, MaxBox, TM, entitiesName, areaID, groupID, edgeWidth);
+#endif
 				}
 				else if (!stricmp(pType->getText(),"AreaSphere"))
 				{	
@@ -657,7 +658,10 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 							entitiesName.push_back(pName->getText());
 						}
 					}
+#pragma message ("TODO: Fix this")
+#if 0
 					m_pGame->CreateArea(Pos, fRadius, entitiesName, areaID, groupID, edgeWidth);
+#endif
 				}
 				else if (!stricmp(pType->getText(),"AIAnchor"))
 				{
@@ -869,9 +873,8 @@ void CXSystemBase::LoadXMLNode(XDOM::IXMLDOMNode *pInputNode, bool bSpawn)
 		}
 	}
 }
-#endif
 
-#if 0
+#if 1
 //////////////////////////////////////////////////////////////////////////
 bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStreamData *pData)
 {
@@ -948,7 +951,7 @@ bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStre
 				ed.name = pName->getText();
 				if (pPos != NULL)
 				{
-					ed.pos = StringToVector(pPos->getText());
+					ed.pos = Legacy::to(StringToVector(pPos->getText()));
 				}
 				ed.netPresence = false;
 				if(pId!=NULL)
@@ -958,11 +961,11 @@ bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStre
 
 				if(pAngles!=NULL)
 				{
-					Vec3 vAngles=StringToVector(pAngles->getText());
+					Legacy::Vec3 vAngles=Legacy::to(StringToVector(pAngles->getText()));
 					ed.angles = vAngles;
 				}
 				else
-					ed.angles = Vec3(0,0,0);
+					ed.angles = Legacy::Vec3(0,0,0);
 
 				if (pScale != NULL)
 				{
@@ -1177,7 +1180,6 @@ void CXSystemBase::RecursiveSetEntityProperties(_SmartScriptObject *pRoot, XDOM:
 }
 #endif
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SetEntityEvents( IEntity *entity,XDOM::IXMLDOMNodeList* pEventsNode)
 {
@@ -1247,7 +1249,6 @@ void CXSystemBase::SetEntityEvents( IEntity *entity,XDOM::IXMLDOMNodeList* pEven
 		}
 	}	
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::StartLoading(bool bEditor)
@@ -1336,7 +1337,7 @@ void CXSystemBase::BindChildren()
 		child->SetPos(pos, false);
 	}
 }
-#if 0
+#if 1
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::GetMission( XDOM::IXMLDOMDocument *doc,const char *sRequestedMission,SMissionInfo &missionInfo )
 {
@@ -1498,7 +1499,7 @@ bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 		}
 
 	string sEPath = missionInfo.sLevelFolder + "/LevelData.xml";
-#if 0
+#if 1
 	missionInfo.pLevelDataXML = m_pSystem->CreateXMLDocument();
 	if(!missionInfo.pLevelDataXML->load(sEPath.c_str()))
 	{

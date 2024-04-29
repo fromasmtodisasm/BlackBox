@@ -17,6 +17,21 @@ int                       interval     = 9000;
 
 int                       intervalLeft = interval;
 
+static Minecraft* minecraft;
+static MinePlayer* minePlayer;
+
+void InitMinecraft()
+{
+	minecraft = new Minecraft;
+	minecraft->init();
+	minePlayer = &minecraft->player;
+}
+
+void DeinitMinecraft()
+{
+	delete minecraft;
+}
+
 CClient::CClient(CXGame* pGame)
     : m_pGame(pGame)
     , m_CameraController()
@@ -47,6 +62,7 @@ CClient::~CClient()
 	SAFE_RELEASE(m_CrossHair);
 #endif
 	SAFE_RELEASE(m_pClient);
+	DeinitMinecraft();
 }
 
 void CClient::Update()
@@ -117,7 +133,7 @@ void CClient::Update()
 	{
 		auto& lpp                           = m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
-		m_pGame->minePlayer->destroyBlockOnCursor();
+		minePlayer->destroyBlockOnCursor();
 
 		Env::HardwareMouse()->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 		//if (m_Mode != MENU)
@@ -130,7 +146,7 @@ void CClient::Update()
 	{
 		auto& lpp                           = m_IntersectionState.m_LastPickedPos;
 		m_IntersectionState.m_NeedIntersect = true;
-		m_pGame->minePlayer->placeBlockOnCursor();
+		minePlayer->placeBlockOnCursor();
 		Env::HardwareMouse()->GetHardwareMousePosition(&m_IntersectionState.mx, &m_IntersectionState.my);
 		//if (m_Mode != MENU)
 		{
@@ -144,7 +160,7 @@ void CClient::Update()
 		const float interval     = 300;
 
 		glm::ivec3  pos, side;
-		if (m_pGame->minePlayer->blockSideOnCursor(pos, side, pickDistance))
+		if (minePlayer->blockSideOnCursor(pos, side, pickDistance))
 		{
 			static IFont* font{};
 			if (!font)
@@ -167,6 +183,8 @@ void CClient::Update()
 	//m_CameraController.SetRenderCamera(0);
 	m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 	m_PlayerProcessingCmd.Reset();
+
+	minecraft->update();
 }
 
 bool CClient::Init()
@@ -178,11 +196,13 @@ bool CClient::Init()
 		m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 
 	m_PlayerScript.Create(Env::ScriptSystem());
+#if 0
 	if (!Env::ScriptSystem()->GetGlobalValue("Player", *m_PlayerScript))
 	{
 		CryError("Player Error");
 		return false;
 	}
+#endif
 
 	//m_pClient = Env::Network()->CreateClient(this);
 
@@ -212,7 +232,10 @@ bool CClient::Init()
 	//m_testObjects.emplace_back(CameraBox);
 	m_IntersectionState.picked = m_testObjects.begin();
 
-	return Script::CallMethod(m_PlayerScript, "OnInit");
+	InitMinecraft();
+	//return Script::CallMethod(m_PlayerScript, "OnInit");
+
+	return true;
 }
 
 void CClient::OnXConnect()

@@ -360,6 +360,30 @@ bool CSystem::Init()
 		//////////////////////////////////////////////////////////////////////////
 		InlineInitializationProcessing("CSystem::Init InitFileSystem");
 
+		if (auto mod = m_pCmdLine->FindArg(eCLAT_Pre, "MOD"); mod)
+		//if (CmdlineSink.m_sMod != "")
+		{
+			auto name = mod->GetValue();
+			// [marco] prevent an hack from happening
+			if (stricmp(name, "FarCry") != 0)
+			{
+				// check for a command line MOD, before
+				// initializing the system
+				strcpy(m_szGameMOD, name);
+
+				// set this as game path for IPak, BEFORE
+				// starting initializing subsystems and
+				// AFTER the pak has been initialized
+				string sMOD = string("Mods/") + string(m_szGameMOD);
+				GetIPak()->AddMod(sMOD.c_str());
+		}
+			else
+				memset(m_szGameMOD, 0, MAX_PATH);
+	}
+		else
+			memset(m_szGameMOD, 0, MAX_PATH);
+
+
 		//here we should be good to ask Crypak to do something
 
 		//#define GEN_PAK_CDR_CRC
@@ -574,7 +598,7 @@ bool CSystem::Init()
 	//====================================================
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing Game...");
-	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, "FunCry"))
+	if (!m_pGame->Init(this, m_env.IsDedicated(), m_startupParams.bEditor, m_szGameMOD))
 	{
 		return false;
 	}
@@ -585,6 +609,15 @@ bool CSystem::Init()
 		auto ok = m_env.pScriptSystem->ExecuteFile("%engineroot%/DevMode.lua");
 		CryLog("\tLoading DevMode.lua: %s!", ok ? "Ok" : "Failed");
 	}
+
+	if (/*!m_bEditor &&*/ m_szGameMOD[0] && (stricmp(m_szGameMOD, "FarCry") != 0))
+	{
+		// execute modexe.lua, to for instance launch a map immediately
+		// for an sp game or a Total Conversion
+		// modexe.lua must be inside the pak, for mp security check		
+		m_env.pScriptSystem->ExecuteFile("ModExe.lua");
+	}
+
 
 	ExecuteCommandLine();
 	Tests();

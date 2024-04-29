@@ -54,7 +54,7 @@ void CTerrain::DrawAxises()
 }
 void CTerrain::Nick(Legacy::Vec3 dir, Legacy::Vec3 normal, float from, float to, float step)
 {
-	auto  color  = UCol(Legacy::Vec3(1, 1, 1) * 0.15f);
+	auto  color  = UCol(Legacy::Vec3(1, 1, 1));
 	auto  v      = glm::normalize(glm::cross(dir, normal));
 	auto  length = glm::length(to - from);
 	float width  = 20;
