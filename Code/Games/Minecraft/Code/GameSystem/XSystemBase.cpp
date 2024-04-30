@@ -1072,7 +1072,6 @@ bool CXSystemBase::SpawnEntityFromXMLNode(XDOM::IXMLDOMNodePtr pNode,CEntityStre
 }
 #endif
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SetEntityProperties( IEntity *entity,XDOM::IXMLDOMNode * pEntityTag )
 {
@@ -1114,9 +1113,7 @@ void CXSystemBase::SetEntityProperties( IEntity *entity,XDOM::IXMLDOMNode * pEnt
 	}
 	entity->SendScriptEvent(ScriptEvent_Reset,0);
 }
-#endif
 
-#if 0
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::RecursiveSetEntityProperties(_SmartScriptObject *pRoot, XDOM::IXMLDOMNodeList* pAttrList)
 {
@@ -1178,7 +1175,6 @@ void CXSystemBase::RecursiveSetEntityProperties(_SmartScriptObject *pRoot, XDOM:
 			}
 		}
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SetEntityEvents( IEntity *entity,XDOM::IXMLDOMNodeList* pEventsNode)
@@ -1808,9 +1804,7 @@ void CXSystemBase::OnSpawn(IEntity* ent, CEntityDesc& ed)
 
 	ent->SetClassName(pClass->strClassName.c_str());
 
-#if 0
 	m_pSystem->CreateEntityScriptBinding(ent);
-#endif
 
 	// property table stuff
 	// first clone the property table
@@ -1834,13 +1828,11 @@ void CXSystemBase::OnSpawn(IEntity* ent, CEntityDesc& ed)
 		}
 	}
 
-#if 0
 	// then just parse out the properties
 	if (ed.pUserData)
 	{
 		SetEntityProperties(ent, (XDOM::IXMLDOMNode*) ed.pUserData);
 	}
-#endif
 
 	// FIXME [Alberto]
 	if (ed.pProperties)

@@ -65,6 +65,12 @@ int CPhysicalEntity::GetParams(pe_params* params)
 
 int CPhysicalEntity::GetStatus(pe_status* status)
 {
+	if (status->type == pe_status_pos::type_id)
+	{
+		return 1;
+	}
+
+	return 1;
 	return 0;
 }
 

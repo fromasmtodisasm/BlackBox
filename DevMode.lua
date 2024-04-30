@@ -220,7 +220,7 @@ end
 function AddWeapon(Name)
 
 	Game:AddWeapon(Name)
-	for i, CurWeapon in WeaponClassesEx do
+	for i, CurWeapon in pairs(WeaponClassesEx) do
 		if (i == Name) then
 			_localplayer.cnt:MakeWeaponAvailable(CurWeapon.id);
 		end

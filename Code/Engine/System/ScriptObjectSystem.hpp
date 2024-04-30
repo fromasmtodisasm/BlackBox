@@ -18,6 +18,7 @@ public:
 	int         CreateDownload(IFunctionHandler* pH);
 
 	int         EnumDisplayFormats(IFunctionHandler* pH);
+	int					EnumAAFormats(IFunctionHandler* pH);
 	int         ScreenShot(IFunctionHandler* pH);
 	int         ClearConsole(IFunctionHandler* pH);
 	int         ShowConsole(IFunctionHandler* pH);
@@ -38,6 +39,7 @@ public:
 	int         GetCurrAsyncTime(IFunctionHandler* pH);
 	int         GetFrameTime(IFunctionHandler* pH);
 	int         IsDevModeEnable(IFunctionHandler* pH);
+	int					GetEntities(IFunctionHandler* pH);
 
 private:
 	ISystem*   m_pSystem;
@@ -45,4 +47,6 @@ private:
 	IRenderer* m_pRenderer;
 	IConsole*  m_pConsole;
 	IFont*     m_pFont;
+	IEntitySystem* m_pEntitySystem;
+
 };

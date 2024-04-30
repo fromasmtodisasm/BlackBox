@@ -613,6 +613,10 @@ void CSystem::CreateSystemVars()
 
 	REGISTER_CVAR2("sys_intromoviesduringinit", &g_cvars.sys_intromoviesduringinit, 0, VF_NULL, "Render the intro movies during game initialization");
 
+	m_sys_spec = GetIConsole()->CreateVariable("sys_spec", "1", VF_DUMPTODISK | VF_SAVEGAME,
+		"Tells the system cfg spec.\n");
+
+
 #ifndef CRY_PLATFORM_ORBIS
 	g_cvars.sys_splashscreen = REGISTER_STRING("sys_splashscreen", "", 0, "Specifies the path to the splashscreen texture to render at startup");
 #else
@@ -914,7 +918,7 @@ bool CSystem::OnInputEvent(const SInputEvent& event)
 				if (m_bCanSwitch)
 				{
 					//m_pProcess->SetFlags(PROC_MENU);
-					m_pGame->SendMessageA("Switch");
+					//m_pGame->SendMessageA("Switch");
 				}
 			}
 			else if (event.modifiers == eMM_Alt && event.modifiers == eMM_Shift)

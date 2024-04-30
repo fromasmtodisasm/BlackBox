@@ -47,6 +47,7 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 	// s/int \(\w\+\).*/SCRIPT_REG_FUNC(\1);/g
 	SCRIPT_REG_FUNC(CreateDownload);
 	SCRIPT_REG_FUNC(EnumDisplayFormats);
+	SCRIPT_REG_FUNC(EnumAAFormats);
 	SCRIPT_REG_FUNC(ScreenShot);
 	SCRIPT_REG_FUNC(ClearConsole);
 	SCRIPT_REG_FUNC(ShowConsole);
@@ -69,6 +70,8 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 
 	SCRIPT_REG_FUNC(IsDevModeEnable);
 
+	SCRIPT_REG_FUNC(GetEntities);
+
 	Env::ScriptSystem()->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
 	Env::ScriptSystem()->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
 	Env::ScriptSystem()->SetGlobalValue("SCANDIR_SUBDIRS", SCANDIR_SUBDIRS);
@@ -77,6 +80,7 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 void CScriptObjectSystem::Init(IScriptSystem* pScriptSystem, ISystem* pSystem)
 {
 	m_pSystem = pSystem;
+	m_pEntitySystem = (IEntitySystem*)m_pSystem->GetIEntitySystem();
 	InitGlobal(pScriptSystem, "System", this);
 	if (Env::Renderer())
 	{
@@ -153,6 +157,35 @@ int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 		delete[] Formats;
 	return pH->EndFunction(pDispArray);
 }
+
+int CScriptObjectSystem::EnumAAFormats(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(0);
+	m_pLog->Log("Enumerating FSAA modes...");
+	SmartScriptObject pAAArray(m_pScriptSystem);
+#if 0
+	TArray<SAAFormat> AAFormats;
+
+	m_pRenderer->EnumAAFormats(AAFormats, false);
+
+	for (int i = 0; i < AAFormats.Num(); i++)
+	{
+		SAAFormat* pAAForm = &AAFormats[i];
+		_SmartScriptObject pAA(m_pScriptSystem);
+
+		pAA->SetValue("desc", pAAForm->szDescr);
+		pAA->SetValue("samples", pAAForm->nSamples);
+		pAA->SetValue("quality", pAAForm->nQuality);
+
+		pAAArray->PushBack(pAA);
+	}
+
+	m_pRenderer->EnumAAFormats(AAFormats, true);
+#endif
+
+	return pH->EndFunction(pAAArray);
+}
+
 
 int CScriptObjectSystem::ScreenShot(IFunctionHandler* pH)
 {
@@ -550,44 +583,34 @@ int CScriptObjectSystem::GetEntityClass(IFunctionHandler* pH)
 	return pH->EndFunction();
 }
 
+#endif
 /////////////////////////////////////////////////////////////////////////////////
 /*!return a all entities currently present in the level
    @return a table filled with all entities currently present in the level
  */
 int CScriptObjectSystem::GetEntities(IFunctionHandler* pH)
 {
-	Vec3  center(0, 0, 0);
-	float radius(0);
+	CHECK_PARAMETERS(0);
+	SmartScriptObject pObj(m_pScriptSystem);
+	int k = 0;
 
-	if (pH->GetParamCount() > 1)
-	{
-		pH->GetParam(1, center);
-		pH->GetParam(2, radius);
-	}
-
-	SmartScriptTable pObj(m_pSS);
-	int				 k = 0;
-
-	IEntityItPtr pIIt	 = Env::EntitySystem()->GetEntityIterator();
-	IEntity*	 pEntity = NULL;
+#if 0
+	IEntityItPtr pIIt = m_pEntitySystem->GetEntityIterator();
+	IEntity* pEntity = NULL;
 
 	while (pEntity = pIIt->Next())
 	{
-		if (radius)
-			if ((pEntity->GetWorldPos() - center).len2() > radius * radius)
-				continue;
-
-		if (pEntity->GetScriptTable())
+		break;
+		if (pEntity->GetScriptObject())
 		{
-			/*ScriptHandle handle;
-			   handle.n = pEntity->GetId();*/
-
-			pObj->SetAt(k, pEntity->GetScriptTable());
+			pObj->SetAt(k, pEntity->GetScriptObject());
 			k++;
 		}
 	}
+#endif
 	return pH->EndFunction(*pObj);
 }
+#if 0
 
 /////////////////////////////////////////////////////////////////////////////////
 /*!return a all entities for a specified entity class

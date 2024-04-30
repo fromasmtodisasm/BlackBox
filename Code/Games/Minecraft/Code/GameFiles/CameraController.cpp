@@ -2,6 +2,18 @@
 #include "CameraController.hpp"
 #include "Minecraft.h"
 
+CCameraController::CCameraController()
+{
+	CryLog("CCameraController::CCameraController");
+}
+
+CCameraController::CCameraController(CCamera* pCamera)
+	: m_Camera{ pCamera }
+{
+	Env::System()->GetIHardwareMouse()->AddListener(this);
+	CryLog("CCameraController::CCameraController(pCamera)");
+}
+
 void CCameraController::ProcessKeyboard(Movement direction, float deltaTime, float value)
 {
 	float velocity      = CurrentCamera()->MovementSpeed * deltaTime * value;

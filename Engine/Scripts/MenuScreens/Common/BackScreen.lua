@@ -153,7 +153,6 @@ UI.PageBackScreen=
 
 		OnActivate = function(Sender)
 
-			System:Error("BackScreenActivated")
 			UI:ShowMouseCursor();
 
 			UI:PlayMusic();
@@ -193,9 +192,8 @@ UI.PageBackScreen=
 		end,
 
 		OnDeactivate = function(Sender)
-			System:Error("BackScreenActivated")
 			UI:StopMusic();
-			Sender.Video:ReleaseVideo();
+			--Sender.Video:ReleaseVideo();
 		end,
 	},
 

@@ -194,7 +194,6 @@ bool CCryPak::Init(const char* szBasePath)
 
 bool CCryPak::IsModPath(const char* szPath)
 {
-	#if !defined(PURE_CLIENT)
 	CryPathString path = szPath;
 	std::replace(path.begin(), path.end(), g_cNativeSlash, g_cNonNativeSlash);
 	for (auto it = m_arrMods.begin(); it != m_arrMods.end(); ++it)
@@ -208,7 +207,6 @@ bool CCryPak::IsModPath(const char* szPath)
 			return true;
 		}
 	}
-	#endif //!defined(PURE_CLIENT)
 	return false;
 }
 
@@ -820,7 +818,7 @@ FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags
 	if (nVarPakPriority == ePakPriorityFileFirst ||
 	    (nVarPakPriority == ePakPriorityFileFirstModsOnly && IsModPath(fullPath.c_str()))) // if the file system files have priority now..
 	{
-		fp = fopen(fullPath.data(), szMode);
+		fp = fopen(pName, szMode);
 
 		if (fp)
 		{

@@ -5,6 +5,7 @@ add_sources(
 	SOURCE_GROUP "Source Files"
 		"CListenerArea.cpp"
 		"CListenerArea.hpp"
+		"DummyMusic.h"
 		"Sound.cpp"
 		"Sound.hpp"
 		"SoundBase.hpp"

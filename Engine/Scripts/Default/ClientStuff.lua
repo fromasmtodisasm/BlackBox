@@ -43,13 +43,16 @@ function ClientStuff:OnInit()
 	NightVision:OnInit();
 	MoTrackLayer:OnInit();
 	SmokeBlur:OnInit();
-	HeatVision:OnInit();	
-	self.vlayers:AddLayer("HeatVision",HeatVision);
-	self.vlayers:AddLayer("NightVision",NightVision);
-	self.vlayers:AddLayer("MoTrack",MoTrackLayer);
-	self.vlayers:AddLayer("Binoculars",Binoculars);
-	self.vlayers:AddLayer("WeaponScope",WeaponScope);
-	self.vlayers:AddLayer("SmokeBlur",SmokeBlur);
+	-- @FIXME:
+	if false then
+		HeatVision:OnInit();	
+		self.vlayers:AddLayer("HeatVision",HeatVision);
+		self.vlayers:AddLayer("NightVision",NightVision);
+		self.vlayers:AddLayer("MoTrack",MoTrackLayer);
+		self.vlayers:AddLayer("Binoculars",Binoculars);
+		self.vlayers:AddLayer("WeaponScope",WeaponScope);
+		self.vlayers:AddLayer("SmokeBlur",SmokeBlur);
+	end
 end
 
 --------------------------------------------
@@ -167,7 +170,7 @@ function ClientStuff:OnPauseGame()
 
 	-- disable looping firing sounds
 	local ents=System:GetEntities();
-	for i, entity in ents do
+	for i, entity in pairs(ents) do
 		if (entity.type == "Player" and entity.cnt and entity.cnt.weapon) then
 			BasicWeapon.Client.OnStopFiring(entity.cnt.weapon, entity);
 		end
@@ -175,8 +178,8 @@ function ClientStuff:OnPauseGame()
 end
 --------------------------------------------
 function ClientStuff:OnResumeGame()
-	--System:Log("RESUME");
-	for i,val in self.temp_layers do
+	System:Log("RESUME");
+	for i,val in pairs(self.temp_layers) do
 		self.vlayers:ActivateLayer(i);
 	end
 end
@@ -185,7 +188,7 @@ function ClientStuff:OnUpdate()
 	-- Hack: sincronize stuff in case of reloading
 	if(self.bLoaded and self.bLoaded==1) then	  					  
 		self.temp_layers=self.temp_layers_save;
-		for i,val in self.temp_layers do
+		for i,val in pairs(self.temp_layers) do
 			self.vlayers:ActivateLayer(i);
 		end	
 		self.bLoaded=nil;
@@ -216,10 +219,13 @@ end
 function ClientStuff:OnMenuEnter() 
 	local stats = _localplayer.cnt;
 	
+	--FIXME:
+	if false then
 	if (stats.weapon and stats.weapon.AimMode==1) then
 		if(ClientStuff.vlayers:IsActive("WeaponScope"))then
 			ClientStuff.vlayers:DeactivateLayer("WeaponScope",1);
 		end
+	end
 	end
 end
 

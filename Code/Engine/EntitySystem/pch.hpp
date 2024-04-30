@@ -10,6 +10,8 @@
 #include <BlackBox/Core/Stream.hpp>
 #include <BlackBox/EntitySystem/EntityDesc.hpp>
 
+#include <BlackBox/System/FrameProfiler.hpp>
+
 #include <vector>
 #include <string_view>
 using std::string_view;
@@ -18,3 +20,4 @@ using std::string_view;
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
 
+extern bool g_bProfilerEnabled;

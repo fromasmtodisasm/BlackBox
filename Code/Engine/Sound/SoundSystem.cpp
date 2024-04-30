@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "SoundSystem.hpp"
 #include "Sound.hpp"
+#include "DummyMusic.h"
 
 #include <BlackBox/System/ISystem.hpp>
 #include <BlackBox\System\ConsoleRegistration.h>
@@ -26,7 +27,7 @@ void CSoundSystem::Update()
 
 IMusicSystem* CSoundSystem::CreateMusicSystem()
 {
-	return nullptr;
+	return new CDummyMusicSystem(NULL);
 }
 #include <string_view>
 

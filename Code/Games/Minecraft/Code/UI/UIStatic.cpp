@@ -608,7 +608,12 @@ int CUIStatic::LoadModel(const string& szModelName)
 	{
 		ReleaseModel();
 	}
+	//FIXME: rewrite this
+#if 0
 	m_pModel      = m_pUISystem->GetISystem()->GetIAnimationSystem()->MakeCharacter(szModelName.c_str());
+#else
+	m_pModel = nullptr;
+#endif
 	m_szModelName = szModelName;
 
 	return (m_pModel ? 1 : 0);

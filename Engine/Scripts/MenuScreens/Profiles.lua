@@ -246,7 +246,7 @@ UI.PageProfiles=
 			local SaveCVar = {};
 			local bRelaunch = 0;
 			
-			for szCVarName, i in UI.cvarsNeedingRelaunch do
+			for szCVarName, i in pairs(UI.cvarsNeedingRelaunch) do
 				SaveCVar[szCVarName] = getglobal(szCVarName);
 			end
 			
@@ -256,7 +256,7 @@ UI.PageProfiles=
 	
 			Game:LoadConfiguration(g_playerprofile);		-- load
 			
-			for szCVarName, i in UI.cvarsNeedingRelaunch do
+			for szCVarName, i in pairs(UI.cvarsNeedingRelaunch) do
 				if (SaveCVar[szCVarName] ~= getglobal(szCVarName)) then
 					bRelaunch = 1;
 				end

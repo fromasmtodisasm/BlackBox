@@ -204,6 +204,9 @@ void FreeTypeFont::RenderText(const std::string_view text, float x, float y, flo
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		posX = x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
+
+	//if (m_AutoSubmit)
+		Submit();
 }
 
 float FreeTypeFont::TextWidth(const std::string_view text)

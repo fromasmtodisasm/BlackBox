@@ -190,8 +190,8 @@ void CClient::Update()
 bool CClient::Init()
 {
 	m_pIActionMapManager = m_pGame->GetActionMapManager();
-	if (m_pIActionMapManager)
-		m_pIActionMapManager->SetSink(this);
+	/*if (m_pIActionMapManager)
+		m_pIActionMapManager->SetSink(this);*/
 	if (!Env::Get()->IsDedicated())
 		m_pGame->m_pSystem->SetViewCamera(*m_CameraController.RenderCamera());
 

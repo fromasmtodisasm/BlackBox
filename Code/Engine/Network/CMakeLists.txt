@@ -4,11 +4,13 @@ add_sources(
 	"NoUberFile"
 	PROJECTS
 	Network
-	SOURCE_GROUP
-	"Source Files"
-	"Client.cpp"
-	"Network.cpp"
-	"Server.cpp")
+	SOURCE_GROUP "Source Files"
+		"Client.cpp"
+		"Network.cpp"
+		"Server.cpp"
+		"NetServerSnooper.cpp"
+		"NetServerSnooper.h"
+)
 end_sources()
 EngineModule(Network PCH "pch.hpp" SOLUTION_FOLDER "Engine")
 add_sdl(${THIS_PROJECT})

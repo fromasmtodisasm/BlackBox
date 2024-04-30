@@ -9,6 +9,7 @@ add_sources(
 	SOURCE_GROUP "Source Files"
 		Main.cpp
 		Commands.cpp
+		CameraController.cpp
 	SOURCE_GROUP "GameClient"
 		Client/Client.cpp
 		Client/XClient.cpp

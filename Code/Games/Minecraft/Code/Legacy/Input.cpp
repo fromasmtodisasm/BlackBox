@@ -346,6 +346,11 @@ inline void Legacy::CKeyboard::ShutDown()
 inline bool Legacy::CKeyboard::KeyDown(int p_key)
 {
 	auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));
+	if (key == nullptr)
+	{
+		CryError("Key not found: %d", p_key);
+		return false;
+	}
 	assert(key != nullptr);
 	return m_pKeyboard->InputState(key, EInputState::eIS_Down);
 }

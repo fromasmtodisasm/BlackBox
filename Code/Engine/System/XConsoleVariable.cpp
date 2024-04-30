@@ -4,7 +4,6 @@
 #include "XConsole.h"
 #include "XConsoleVariable.h"
 
-#if 0
 void CXConsoleVariableCVarGroup::OnLoadConfigurationEntry(const char* szKey, const char* szValue, const char* szGroup)
 {
 	CRY_ASSERT(szGroup != nullptr);
@@ -80,6 +79,7 @@ void CXConsoleVariableCVarGroup::OnLoadConfigurationEntry_End()
 	}
 }
 
+#if 0
 CXConsoleVariableCVarGroup::CXConsoleVariableCVarGroup(IConsole* pConsole, const string& name, const char* szFileName, int flags)
 	: CXConsoleVariableInt(pConsole, name, 0, flags, nullptr, true)
 {

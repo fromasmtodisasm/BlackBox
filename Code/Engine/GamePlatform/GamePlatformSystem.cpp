@@ -140,7 +140,8 @@ inline bool CSteamPlatform::Init()
 	if (!bRet)
 	{
 		if (!SteamAPI_IsSteamRunning()) {
-			CryFatalError("Steam not running");
+			//CryFatalError("Steam not running");
+			return false;
 		}
 	}
 

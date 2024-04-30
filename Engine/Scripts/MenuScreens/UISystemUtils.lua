@@ -30,11 +30,12 @@ function UI:WillTerminate()
 		return nil;
 	else
 		if (ClientStuff) then
-			if (_localplayer and _localplayer.cnt.health <= 0) then
-			 	return nil;
-			else
+			-- @FIXME: cnt not worked on entity((
+			--if (_localplayer and _localplayer.cnt.health <= 0) then
+			-- 	return nil;
+			--else
 			 	return 1;
-			end
+			--end
 		else
 			return nil;
 		end

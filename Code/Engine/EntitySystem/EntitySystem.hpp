@@ -13,23 +13,20 @@ typedef std::vector<CEntity> Entities;
 #else
 typedef std::vector<CEntity> Entities;
 #endif
+typedef std::list<IEntitySystemSink*> SinkList;
 
-class CEntityIterator : public IEntityIt, _reference_target_t
+
+class CEntityIterator : public IEntityIt
 {
 public:
 	CEntityIterator(Entities& ents)
 	    : m_Entities(ents)
 	{
+		MoveFirst();
 	}
-	// Inherited via IEntityIt
-	virtual void AddRef() override
-	{
-		::_reference_target_t::AddRef();
-	}
-	virtual void Release() override
-	{
-		::_reference_target_t::Release();
-	}
+	void AddRef() override { m_nRefCount++; }
+	void Release() override { --m_nRefCount; if (m_nRefCount <= 0) { delete this; } };
+
 	virtual bool IsEnd() override
 	{
 		return m_Entities.end() == m_It;
@@ -45,6 +42,7 @@ public:
 		m_It = m_Entities.begin();
 	}
 
+	int m_nRefCount = 0;
 	EntityIt  m_It;
 	Entities& m_Entities;
 };
@@ -86,13 +84,17 @@ public:
 	virtual void           ClearId(EntityId id) override;
 
 	void                   AddToPhysicalWorld(CPhysicalEntity* pEntity);
-
+private:
+	// Return true if updated.
+	void UpdateEntity(CEntity *ce,SEntityUpdateContext &ctx);
 public:
 	Entities                          m_Entities;
 	std::map<EntityClassId, CEntity*> m_EntitiesMap;
 	CEntityIterator                   m_EntityIt;
 	int                               m_nSpawnedEntities = 0;
-	IEntitySystemSink*                m_pEntitySystemSink{};
+	//IEntitySystemSink*                m_pEntitySystemSink{};
+	SinkList													m_lstSinks;
+
 
 	btDiscreteDynamicsWorld*          m_pPhysicalWorld;
 

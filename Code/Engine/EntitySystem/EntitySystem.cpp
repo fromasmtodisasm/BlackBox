@@ -98,6 +98,25 @@ void CEntitySystem::Update()
 	m_pPhysicalWorld->stepSimulation(time);
 	if (Env::Renderer() && false)
 		m_pPhysicalWorld->debugDrawWorld();
+
+	SEntityUpdateContext ctx;
+	/*ctx.nFrameID = nRendererFrameID;
+	ctx.pCamera = &Cam;
+	ctx.fCurrTime = m_pISystem->GetITimer()->GetCurrTime();
+	ctx.fFrameTime = m_pISystem->GetITimer()->GetFrameTime();
+	ctx.bProfileToLog = bProfileEntitiesToLog;
+	ctx.numVisibleEntities = 0;
+	ctx.numUpdatedEntities = 0;
+	ctx.fMaxViewDist = Cam.GetZMax();
+	ctx.fMaxViewDistSquared = ctx.fMaxViewDist*ctx.fMaxViewDist;
+	ctx.vCameraPos = Cam.GetPos();*/
+
+	for (auto &it : m_Entities)
+	{
+		CEntity* ce = &it;
+		UpdateEntity(ce, ctx);
+	}
+
 }
 
 IScriptSystem* CEntitySystem::GetScriptSystem()
@@ -111,21 +130,35 @@ void CEntitySystem::Reset()
 	LOG_FUNCTION();
 }
 
-IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool t)
+IEntity* CEntitySystem::SpawnEntity(CEntityDesc& ed, bool bAutoInit)
 {
 	if (m_Entities.size() <= MAX_ENTITYES)
 	{
-		auto e = &m_Entities[ed.id];
+		auto* pEntity = &m_Entities[ed.id];
 
-		if (t)
+		new (pEntity) CEntity(ed);
+		pEntity->SetClassId(ed.ClassId);
+
+
+		//	if (m_pSink)
+		if (!m_lstSinks.empty())
 		{
-			InitEntity(e, ed);
-			if (m_pEntitySystemSink)
-				m_pEntitySystemSink->OnSpawnContainer(ed, e);
+			for (SinkList::iterator si = m_lstSinks.begin(); si != m_lstSinks.end(); si++)
+				(*si)->OnSpawnContainer(ed, pEntity);
 		}
 
+		if (!m_lstSinks.empty())
+		{
+			for (SinkList::iterator si = m_lstSinks.begin(); si != m_lstSinks.end(); si++)
+				(*si)->OnSpawn(pEntity, ed);
+		}
+		
+		if (bAutoInit)
+			InitEntity(pEntity, ed);
+
+
 		m_nSpawnedEntities++;
-		return e;
+		return pEntity;
 	}
 
 	return nullptr;
@@ -141,8 +174,8 @@ bool CEntitySystem::InitEntity(IEntity* pEntity, CEntityDesc& ed)
 	e->SetClassId(ed.ClassId);
 	e->SetName(ed.name);
 
-	if (m_pEntitySystemSink)
-		m_pEntitySystemSink->OnSpawnContainer(ed, e);
+	/*if (m_pEntitySystemSink)
+		m_pEntitySystemSink->OnSpawnContainer(ed, e);*/
 	return true;
 }
 
@@ -169,7 +202,12 @@ void CEntitySystem::RemoveEntity(EntityId entity, bool w)
 	CryLog("Try remove entity with id: %d", entity);
 	m_nSpawnedEntities--;
 	auto pEntity = &m_Entities[entity];
-	m_pEntitySystemSink->OnRemove(pEntity);
+	if (!m_lstSinks.empty())
+	{
+		for (SinkList::iterator si = m_lstSinks.begin(); si != m_lstSinks.end(); si++)
+			(*si)->OnRemove(pEntity);
+	}
+
 	Env::I3DEngine()->UnRegisterEntity(pEntity);
 }
 
@@ -182,6 +220,7 @@ int CEntitySystem::GetNumEntities() const
 IEntityIt* CEntitySystem::GetEntityIterator()
 {
 	LOG_FUNCTION();
+	m_EntityIt.MoveFirst();
 	return &m_EntityIt;
 }
 
@@ -203,9 +242,13 @@ void CEntitySystem::GetEntitiesInRadius(const Legacy::Vec3& origin, float radius
 	}
 }
 
-void CEntitySystem::SetSink(IEntitySystemSink* sink)
+void CEntitySystem::SetSink(IEntitySystemSink* pSink)
 {
-	m_pEntitySystemSink = sink;
+	if (pSink)
+	{
+		if (std::find(m_lstSinks.begin(), m_lstSinks.end(), pSink) == m_lstSinks.end())
+			m_lstSinks.push_back(pSink);
+	}
 }
 
 void CEntitySystem::PauseTimers(bool bPause, bool e)
@@ -213,9 +256,9 @@ void CEntitySystem::PauseTimers(bool bPause, bool e)
 	LOG_FUNCTION();
 }
 
-void CEntitySystem::RemoveSink(IEntitySystemSink* sink)
+void CEntitySystem::RemoveSink(IEntitySystemSink* pSink)
 {
-	m_pEntitySystemSink = nullptr;
+	m_lstSinks.remove(pSink);
 }
 
 IEntityCamera* CEntitySystem::CreateEntityCamera()
@@ -295,6 +338,11 @@ void CEntitySystem::AddToPhysicalWorld(CPhysicalEntity* pEntity)
 	m_pPhysicalWorld->addRigidBody(pEntity->m_pRigidBody);
 }
 
+void CEntitySystem::UpdateEntity(CEntity* ce, SEntityUpdateContext& ctx)
+{
+	ce->Update(ctx);
+}
+
 extern "C"
 {
 	ENTITYDLL_API struct IEntitySystem* CreateEntitySystem(ISystem* pISystem)
@@ -304,3 +352,6 @@ extern "C"
 }
 
 #undef LOG_FUNCTION
+// Local var to turn on/off profiler.
+bool g_bProfilerEnabled = false;
+

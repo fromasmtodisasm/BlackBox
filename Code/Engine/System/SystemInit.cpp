@@ -455,6 +455,15 @@ bool CSystem::Init()
 	{
 		return false;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	// Localization
+	//////////////////////////////////////////////////////////////////////////
+	//if (!startupParams.bMinimal)
+	LoadConfiguration("system.cfg");
+	{
+		InitLocalization();
+	}
+	InlineInitializationProcessing("CSystem::Init InitLocalizations");
 	//====================================================
 	Log("Initialize Render");
 	m_pSystemEventDispatcher->OnSystemEvent(ESYSTEM_EVENT_PRE_RENDERER_INIT, 0, 0);
@@ -828,11 +837,15 @@ bool CSystem::InitSoundSystem()
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing SoundSystem...");
 	return LoadSubsystem<PFNCREATESOUNDSYSTEM>("Sound", "CreateSoundSystem", [&](PFNCREATESOUNDSYSTEM p)
-	                                           {
-		                                           m_env.pSoundSystem = p(this, (void*)"0.0.0");
-		                                           if (m_env.pSoundSystem == nullptr)
-			                                           return false;
-		                                           return true; });
+		{
+			m_env.pSoundSystem = p(this, (void*)"0.0.0");
+			if (m_env.pSoundSystem == nullptr)
+				return false;
+
+			m_env.pMusicSystem = m_env.pSoundSystem->CreateMusicSystem();
+
+			return m_env.pMusicSystem != nullptr;
+		});
 }
 
 bool CSystem::InitSubSystem()
@@ -1182,6 +1195,7 @@ void CSystem::OpenBasicPaks(bool bLoadGamePaks)
 		}
 #endif // !defined(_RELEASE)
 
+
 // Load paks required for game init to mem
 // FIXME:
 #if 0
@@ -1189,6 +1203,51 @@ void CSystem::OpenBasicPaks(bool bLoadGamePaks)
 #endif
 		s_bEnginePakLoaded = true;
 	}
+}
+
+void CSystem::InitLocalization()
+{
+	const char* szLanguage = NULL;
+	//m_env.pScriptSystem->GetGlobalValue("g_language", szLanguage);
+	m_env.pConsole->CreateVariable("g_language", "english", VF_DUMPTODISK, "Language to use for localization");
+	auto pLanguage = m_env.pConsole->GetCVar("g_language");
+	if (pLanguage)
+		szLanguage = pLanguage->GetString();
+	//////////////////////////////////////////////////////////////////////////
+	// load language pak
+	if (!szLanguage)
+	{
+		// if the language value cannot be found, let's default to the english pak
+		OpenLanguagePak("english");
+}
+	else
+	{
+		OpenLanguagePak(szLanguage);
+	}
+}
+
+void CSystem::OpenLanguagePak(const char* sLanguage)
+{
+	auto m_pIPak = GetIPak();
+	// load language pak
+	char szPakName[_MAX_PATH];
+	sprintf(szPakName, "%s/Localized/%s.pak", DATA_FOLDER, sLanguage);
+	if (!m_pIPak->OpenPack("", szPakName))
+	{
+		// make sure the localized language is found - not really necessary, for TC		
+		CryLogAlways("Localized language content(%s - %s) not available or modified from the original installation.", sLanguage, szPakName);
+	}
+
+	// load patch language data
+	memset(szPakName, 0, _MAX_PATH);
+	sprintf(szPakName, "%s/Localized/%s1.pak", DATA_FOLDER, sLanguage);
+	m_pIPak->OpenPack("", szPakName);
+
+	// load patch language data
+	memset(szPakName, 0, _MAX_PATH);
+	sprintf(szPakName, "%s/Localized/%s2.pak", DATA_FOLDER, sLanguage);
+	m_pIPak->OpenPack("", szPakName);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -1385,10 +1444,10 @@ bool CSystem::InitGamePlatform()
 		m_pUserCallback->OnInitProgress("Initializing Game Platform...");
 	using PFNCREATEGAMEPLATFORM = decltype(&CreateGamePlatformInterface);
 	return LoadSubsystem<PFNCREATEGAMEPLATFORM>("GamePlatform", "CreateGamePlatformInterface", [&](PFNCREATEGAMEPLATFORM p)
-	                                           {
-		                                           m_env.pGamePlatform = p(this);
-		                                           if (m_env.pGamePlatform == nullptr)
-			                                           return false;
-
-		                                           return m_env.pGamePlatform->Init(); });
+		{
+			m_env.pGamePlatform = p(this);
+			if (m_env.pGamePlatform != nullptr)
+				m_env.pGamePlatform->Init(); 
+			return true;
+		});
 }

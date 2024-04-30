@@ -5,6 +5,7 @@
 
 #include <BlackBox/Renderer/Camera.hpp>
 
+#include <ScriptObjects/ScriptObjectPlayer.hpp>
 #include <ScriptObjects/ScriptObjectInput.hpp>
 #include <ScriptObjects/ScriptObjectStream.hpp>
 #include <ScriptObjects/ScriptObjectTest.hpp>
@@ -596,7 +597,6 @@ void CXGame::Reset()
 
 	if (GetMyPlayer())
 		GetMyPlayer()->SetNeedUpdate(true);
-	NOT_IMPLEMENTED;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -685,8 +685,8 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 #endif
 	CScriptObjectServer::InitializeTemplate(m_pScriptSystem);
 
-#if 0
 	CScriptObjectPlayer::InitializeTemplate(m_pScriptSystem);
+#if 0
 	CScriptObjectFireParam::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectWeaponClass::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectVehicle::InitializeTemplate(m_pScriptSystem);
@@ -1247,10 +1247,8 @@ bool CXGame::IsInPause(IProcess* pProcess)
 {
 	bool bPause = (m_bMenuOverlay && (!IsMultiplayer()));
 //check if the game is in pause or in menu mode
-#if 0
 	if ((pProcess->GetFlags() & PROC_MENU) && !IsMultiplayer())
 		bPause=true;
-#endif
 
 	return (bPause);
 }
@@ -1674,12 +1672,12 @@ void CXGame::ProcessPMessages(const char* szMsg)
 
 			if (pCvarNoMenu && pCvarNoMenu->GetIVal())
 			{
-				CryError("g_NoMenu enabled");
+				//CryError("g_NoMenu enabled");
 				m_pSystem->Quit();
 
 				return;
 			}
-			CryError("g_NoMenu disabled");
+			//CryError("g_NoMenu disabled");
 
 			MenuOn();
 		}

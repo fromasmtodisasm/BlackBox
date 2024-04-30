@@ -3,6 +3,8 @@
 #include "Network.hpp"
 #include "Server.hpp"
 
+#include "NetServerSnooper.h"
+
 #include <BlackBox/Core/ICompressionHelper.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
 #include <BlackBox/Network/IPAddress.hpp>
@@ -366,9 +368,11 @@ public:
 
 class CTmpNetworkClient : public IClient
 {
+	IClientSink* m_pSink{};
 public:
-	CTmpNetworkClient(CNetwork* pNetwork)
-	    : m_pNetwork(pNetwork)
+	CTmpNetworkClient(CNetwork* pNetwork, IClientSink* pSink)
+		: m_pNetwork(pNetwork)
+		, m_pSink(pSink)
 	{
 	}
 	~CTmpNetworkClient()
@@ -403,6 +407,19 @@ public:
 	}
 	virtual bool Update(unsigned int nTime) override
 	{
+		if (!m_bSetupSent)
+		{
+			m_pSink->OnXConnect();
+
+			CStream stm;
+			SXGameContext ctx;
+			ctx.strMod = "TestGame";
+			ctx.dwNetworkVersion = 5;
+			ctx.ucServerInfoVersion = 88;
+			ctx.Write(stm);
+			m_pSink->OnXContextSetup(stm);
+			m_bSetupSent = true;
+		}
 		return false;
 	}
 	virtual void GetBandwidth(float& fIncomingKbPerSec, float& fOutgoinKbPerSec, uint32_t& nIncomingPackets, uint32_t& nOutgoingPackets) override
@@ -410,8 +427,8 @@ public:
 	}
 	virtual void Release() override
 	{
-		if (this)
-			delete this;
+		g_Network.UnregisterClient(this);
+		delete this;
 	}
 	virtual unsigned int GetPing() override
 	{
@@ -444,6 +461,8 @@ public:
 	{
 	}
 	CNetwork* m_pNetwork{};
+
+	bool m_bSetupSent{ false };
 };
 
 CNetwork::CNetwork()
@@ -509,7 +528,7 @@ void CNetwork::SetLocalIP(const char* szLocalIP)
 
 IClient* CNetwork::CreateClient(IClientSink* pSink, bool bLocal)
 {
-	auto result = new CTmpNetworkClient(this);
+	auto result = new CTmpNetworkClient(this, pSink);
 	m_Clients.push_back(result);
 	return result;
 }
@@ -530,7 +549,16 @@ IRConSystem* CNetwork::CreateRConSystem()
 
 INETServerSnooper* CNetwork::CreateNETServerSnooper(INETServerSnooperSink* pSink)
 {
-	return nullptr;
+	CNETServerSnooper* pSnooper = new CNETServerSnooper;
+
+	if (!pSnooper->Create(GetISystem(), pSink))
+	{
+		delete pSnooper;
+		return 0;
+	}
+
+	return pSnooper;
+
 }
 
 IServerSnooper* CNetwork::CreateServerSnooper(IServerSnooperSink* pSink)
@@ -645,3 +673,5 @@ NETWORK_API INetwork* CreateNetwork(ISystem* pSystem)
 	}
 	return &g_Network;
 }
+
+

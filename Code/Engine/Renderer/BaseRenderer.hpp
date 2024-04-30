@@ -167,7 +167,22 @@ public:
 	int          r_DisplayIndex     = 0;
 	int          r_GraphicsDeviceId = -1;
 
-	static int   CV_r_GetScreenShot;
+	int					 CV_r_GetScreenShot = 0;
+	int					 CV_r_texresolution = 0;
+
+	float				 CV_r_gamma					= 1.f;
+	float				 CV_r_brightness		= 0.5f;
+	float				 CV_r_contrast			= 0.5f;
+
+	int					 CV_r_rendermode		= 0;
+	int					 CV_r_glare					= 0;
+	
+	int CV_r_hdrrendering = 0;
+	float CV_r_hdrlevel = 0.6f;
+	int CV_r_texskyresolution = 0;
+	int CV_r_texbumpresolution = 0;
+
+
 
 	Legacy::Vec3 r_SunColor = Legacy::Vec3(1, 1, 1);
 };

@@ -695,7 +695,6 @@ void CPlayer::Update()
 {
 	FUNCTION_PROFILER(PROFILE_GAME);
 
-#if 0
 	bool bMyPlayer = IsMyPlayer();
 	bool bPlayerVisible = bMyPlayer || IsVisible();
 
@@ -924,7 +923,6 @@ void CPlayer::Update()
 	UpdateCharacterAnimations( ctx );
 	UpdateFireAnimations();
 	//	UpdateJumpAnimations();
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -6093,6 +6091,10 @@ void CPlayer::GiveBinoculars(bool val)
 	// on the script side
 }
 
+void CPlayer::SwitchFlashLight(bool on)
+{
+}
+
 //////////////////////////////////////////////////////////////////////
 void CPlayer::PreloadInstanceResources(Legacy::Vec3 vPrevPortalPos, float fPrevPortalDistance, float fTime)
 {
@@ -6890,4 +6892,46 @@ bool CPlayer::Read_PATCH_1(CStream& stream)
 
 #endif
 	return true;
+}
+
+void CPlayer::UpdateWeapon()
+{
+
+}
+
+void CPlayer::UpdateMelee()
+{
+
+}
+
+void CPlayer::UpdateFireAnimations()
+{
+
+}
+void CPlayer::UpdateBonesRotation()
+{
+
+}
+void CPlayer::UpdateAutoCenter()
+{
+}
+
+void CPlayer::CounterUpdateAll(const float dt)
+{
+
+}
+
+void CPlayer::ProceedFLight()
+{
+
+}
+
+void CPlayer::UpdateLightBlinding()
+{
+
+}
+
+void CPlayer::UpdateCharacterAnimations(SPlayerUpdateContext& ctx)
+{
+
 }

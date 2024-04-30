@@ -11,6 +11,10 @@ function getn(t)
 	return #t
 end
 
+function tinsert(t,v)
+	table.insert(t,v)
+end
+
 function gsub(s, sp, rp)
 	return string.gsub(s, sp, rp)
 end
@@ -21,6 +25,9 @@ end
 function strlower(str, pos)
 	return string.lower(str, pos);
 end
+function strupper(str)
+	return string.upper(str)
+end
 
 function getglobal (varname)
 	-- access the table of globals
@@ -30,12 +37,29 @@ function getglobal (varname)
 	--end
 	local value = rawget(globals(), varname)
 	return value or Game:GetVariable(varname)
-  end
+end
 
-  function setglobal (varname, newvalue)
-	  rawset(globals(), varname, newvalue)
-	  Game:SetVariable(varname, newvalue)
-  end
+function setglobal (varname, newvalue)
+  rawset(globals(), varname, newvalue)
+  System:Log("Set " .. varname .. " = " .. tostring(newvalue))
+  Game:SetVariable(varname, newvalue)
+end
+
+function strlen(str)
+	return string.len(str)
+end
+
+function floor(num)
+	return math.floor(num)
+end
+
+function min(num)
+	return math.min(num)
+end
+
+function max(num)
+	return math.max(num)
+end
 
 ----------------------------------------------------------------------------------
 -- A set of useful vectors, so they don't have to be created on the fly everytime.
@@ -957,7 +981,7 @@ end
 ----------------------------------
 function count(_table)
 	local count=0;
-	for idx,i in _table do
+	for idx,i in pairs(_table) do
 		count=count+1;
 	end
 	return count;

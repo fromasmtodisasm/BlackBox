@@ -231,7 +231,7 @@ Legacy::Vec3 C3DEngine::GetSunColor()
 
 IEntityRenderState* C3DEngine::MakeEntityRenderState()
 {
-	return {};
+	return new IEntityRenderState;
 }
 
 void C3DEngine::FreeEntityRenderState(IEntityRender* pEntity)

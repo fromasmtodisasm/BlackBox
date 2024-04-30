@@ -101,17 +101,20 @@ UI.PageInGameSingle=
 			local SaveList = Game:GetSaveGameList(szProfileName);
 			local iCPCount = 0;
 			
-			for x, SaveGame in SaveList do
+			for x, SaveGame in pairs(SaveList) do
 				if (strlower(tostring(SaveGame.Level)) == strlower(tostring(szCurrentLevel))) then
 					iCPCount = iCPCount + 1;
 				end
 			end
 			
 			local iLastCheckpoint;
-			Sender.CheckpointList:Clear();
+			-- @FIXME:
+			if false then
+				Sender.CheckpointList:Clear();
+			end
 			
 			local i = 0;
-			for x, SaveGame in SaveList do
+			for x, SaveGame in pairs(SaveList) do
 				if (strlower(tostring(SaveGame.Level)) == strlower(tostring(szCurrentLevel))) then
 					i = i + 1;
 				

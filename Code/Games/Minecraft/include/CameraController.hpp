@@ -22,12 +22,8 @@ public:
 			delete m_Camera[i];
 		}
 	}
-	CCameraController() = default;
-	CCameraController(CCamera* pCamera)
-	    : m_Camera{pCamera}
-	{
-		Env::System()->GetIHardwareMouse()->AddListener(this);
-	}
+	CCameraController();
+	CCameraController(CCamera* pCamera);
 
 	std::vector<CCamera*> m_Camera;
 	size_t                m_CurrentCamera = 0;

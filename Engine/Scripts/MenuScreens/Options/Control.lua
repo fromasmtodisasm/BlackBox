@@ -388,7 +388,7 @@ function UI.PageOptionsControl.FillBindList()
 	local ActionList = Game:GetActions();
 	local ActionMap = {};
 
-	for i, Action in ActionList do
+	for i, Action in pairs(ActionList) do
 		if (Action.configurable and Action.configurable ~= 0) then
 			if (not ActionMap[Action.type]) then
 				ActionMap[Action.type] = {};
@@ -399,15 +399,15 @@ function UI.PageOptionsControl.FillBindList()
 		end
 	end
 
-	for szType, Map in ActionMap do
+	for szType, Map in pairs(ActionMap) do
 	
 		local szTypeTitle = "@CONTROLS_"..strupper(szType);
 		local MapOrder = UI.PageOptionsControl.KeyOrder[strupper(szType)];
 		
 		UI.PageOptionsControl.GUI.controllist:AddItem(szTypeTitle);
 	
-		for i, szActionName in MapOrder do
-			for j, Action in Map do
+		for i, szActionName in pairs(MapOrder) do
+			for j, Action in pairs(Map) do
 						
 				-- find the key in the list of keys with this szType
 				if (strlower(strsub(Action.desc, 2)) == strlower(szActionName)) or

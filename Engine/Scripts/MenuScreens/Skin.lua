@@ -34,11 +34,14 @@ function DefOnMouseEnterSideButton(self)
 end
 
 function DefOnGotFocusButton(self)
-	System:Log("GetFocus: ");
+	--System:Log("GetFocus: ");
+	--dump(self)
 	self:SetOverState(1);
 end
 
 function DefOnLostFocusButton(self)
+	--System:Log("LostFocus: ");
+	--dump(self)
 	self:SetOverState(0);
 end
 

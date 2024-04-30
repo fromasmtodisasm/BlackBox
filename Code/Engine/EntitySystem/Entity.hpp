@@ -4,6 +4,10 @@
 
 #include "EntityCharacter.hpp"
 
+#define ENTITY_PROFILER FUNCTION_PROFILER_FAST(PROFILE_ENTITY,g_bProfilerEnabled );
+#define ENTITY_PROFILER_NAME(str) FRAME_PROFILER_FAST( str,PROFILE_ENTITY,g_bProfilerEnabled );
+
+
 class CEntity;
 class CEntitySystem;
 class CPhysicalEntity;
@@ -191,6 +195,54 @@ public:
 	virtual void                  SinkRebind(IEntitySystemSink* pSink) override;
 
 	virtual void                  Physicalize(bool bInstant = false) override;
+	private:
+		//! Put entity into terrain sector.
+		void RegisterInSector();
+		//! Remove entity from terrain sector.
+		void UnregisterInSector();
+
+	private:
+		//////////////////////////////////////////////////////////////////////////
+// VARIABLES.
+//////////////////////////////////////////////////////////////////////////
+		friend class CEntitySystem;
+
+		//////////////////////////////////////////////////////////////////////////
+		// Flags first (Reduce cache misses on access to entity data).
+		//////////////////////////////////////////////////////////////////////////
+		unsigned int m_bUpdate : 1;
+		unsigned int m_bSleeping : 1;
+		unsigned int m_bGarbage : 1;
+		unsigned int m_bIsBound : 1;
+		//	unsigned int m_bForceBBox : 1; // moved into IEntityRender
+		unsigned int m_bRecalcBBox : 1;
+		unsigned int m_bInitialized : 1;						//!< If this entity already Initialized.
+		unsigned int m_netPresence : 1;							//!< Where entity should be present.
+		unsigned int m_bHidden : 1;
+		unsigned int m_bTrackable : 1;							//!< Trackable in MotionTracker...
+		unsigned int m_bHandIK : 1;
+		unsigned int m_bForceBindCalculation : 1;
+		unsigned int m_bSave : 1;										//!< Should be saved on disk(when the level is saved) by default is true
+		unsigned int m_bEntityHasLights : 1;				//!< entity objects has light sources
+		unsigned int m_bEntityLightsOn : 1;					//!< if the entity objects light sources are enabled
+		unsigned int m_bTrackColliders : 1;					//!< If entity want to track collider and generate Enter/Leave events.
+		unsigned int m_bUpdateSounds : 1;						//!< If true will update attached sounds.
+		unsigned int m_bUpdateAI : 1;								//!< If set will update AI objects.
+		unsigned int m_bUpdateEmitters : 1;					//!< Particle emitters present and active.
+		unsigned int m_bUpdateScript : 1;						//!< True if script update function should be called.
+		unsigned int m_bUpdateContainer : 1;				//!< True if container must be updated.
+		unsigned int m_bUpdateCharacters : 1;				//!< True if characters must be updated.
+		unsigned int m_bUpdateCamera : 1;						//!< True if must update entity camera.
+		unsigned int m_bUpdateBinds : 1;						//!< True if must update binded entities.
+		unsigned int m_bUpdateOnContact : 1;				//!< True if must check for OnContact collisions.
+		unsigned int m_bIsADeadBody : 1;						//!< True is entity is a dead body (set in KillCharacter)
+		unsigned int m_bVisible : 1;								//!< Remembers visibility state from the last update
+		unsigned int m_bWasVisible : 1;							//!< Remembers visibility state from the update before the last one
+		unsigned int m_bHasEnvLighting : 1;					//!< 
+		unsigned int m_bStateClientside : 1;				//!< prevents error when state changes on the client and does not sync state changes to the client 
+
+	public:
+
 
 	EntityId                      m_Id;
 	EntityClassId                 m_ClassId;
@@ -226,4 +278,16 @@ public:
 	CEntitySystem*                m_pEntitySystem;
 	CPhysicalEntity*              m_pPhysics{};
 	CEntityCharacter*             m_EntityCharacter{};
+
+	IEntityContainer* m_pContainer;
+
+	ISystem* m_pISystem{};
+
+
+	// Flags.
+	uint m_registeredInSector : 1; //when we get entity & script from server
+	//	uint m_static : 1; // when Entity is dtatic or moving object.
+	uint m_physicEnabled : 1; // when Entity have physics enabled.
+
+
 };

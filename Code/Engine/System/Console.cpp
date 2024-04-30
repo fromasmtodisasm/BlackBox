@@ -2161,6 +2161,11 @@ bool CXConsole::OnInputEvent(const SInputEvent& event)
 
 		ShowConsole(false);
 
+		if (!m_bConsoleActive)
+		{
+			GetISystem()->GetIGame()->SendMessage("Switch");
+		}
+
 		ISystemUserCallback* pCallback = m_system.GetUserCallback();
 		if (pCallback)
 			pCallback->OnProcessSwitch();

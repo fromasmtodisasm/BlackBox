@@ -47,11 +47,13 @@ add_sources(
 		"PakVars.h"
 	SOURCE_GROUP "ScriptBinds"
 		"ScriptBinds/ScriptObjectConsole.cpp"
+		"ScriptBinds/ScriptObjectEntity.cpp"
 		"ScriptBinds/ScriptObjectRenderer.cpp"
 		"ScriptBinds/ScriptObjectScript.cpp"
 		"ScriptBinds/ScriptObjectSound.cpp"
 
 		"ScriptBinds/ScriptObjectConsole.hpp"
+		"ScriptBinds/ScriptObjectEntity.hpp"
 		"ScriptBinds/ScriptObjectRenderer.hpp"
 		"ScriptBinds/ScriptObjectScript.hpp"
 		"ScriptBinds/ScriptObjectSound.hpp"

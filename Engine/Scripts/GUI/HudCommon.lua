@@ -309,7 +309,7 @@ function Hud:ProcessAddMessage(tMsgList, text, lifetime, beep, killmsg)
 	end
 	
 	-- sort table items by lifetime	
-	sort(tMsgList,message_compare);				
+	table.sort(tMsgList,message_compare);				
 	
 	-- remove old messages
 	while (count(tMsgList)>4) do
@@ -1209,7 +1209,7 @@ function Hud:AddPickup( pick_type, pick_amount)
 	end
 		
 	-- sort table items by lifetime	
-	sort(self.pPickupsTbl,pickup_compare);			
+	table.sort(self.pPickupsTbl,pickup_compare);			
 	
 	-- remove old pickups
 	while (count(self.pPickupsTbl)>4) do

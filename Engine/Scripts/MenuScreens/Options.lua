@@ -65,10 +65,10 @@ UI.PageOptions=
 			Sender.VideoOptions.OnCommand = UI.PageOptions.CommonOnCommand;
 			Sender.GameOptions.OnCommand = UI.PageOptions.CommonOnCommand;
 			
-			Sender.ControlOptions.skin.OnLostFocus(Sender.ControlOptions);
-			Sender.SoundOptions.skin.OnLostFocus(Sender.SoundOptions);
-			Sender.VideoOptions.skin.OnLostFocus(Sender.VideoOptions);
-			Sender.GameOptions.skin.OnLostFocus(Sender.GameOptions);
+			--Sender.ControlOptions.skin.OnLostFocus(Sender.ControlOptions);
+			--Sender.SoundOptions.skin.OnLostFocus(Sender.SoundOptions);
+			--Sender.VideoOptions.skin.OnLostFocus(Sender.VideoOptions);
+			--Sender.GameOptions.skin.OnLostFocus(Sender.GameOptions);
 			
 			Sender.GameOptions:OnCommand(Sender.GameOptions);
 		end
@@ -84,7 +84,10 @@ UI.PageOptions=
 		UI:DeactivateScreen("VideoOptions");
 		UI:DeactivateScreen("SoundOptions");
 		UI:DeactivateScreen("ControlOptions");
-		UI:ActivateScreen(Sender:GetName());
+
+		--dump(Sender)
+		--UI:ActivateScreen(Sender:GetName());
+		UI:ActivateScreen("VideoOptions");
 	end
 		
 	------------------------------------------------------------------------	

@@ -4,6 +4,17 @@
 --
 ----------------------------------------------------------------------------------------------
 
+if not System.IsHDRSupported then
+	function System:IsHDRSupported()
+		return true
+	end
+end
+if not System.IsPS20Supported then
+	function System:IsPS20Supported()
+		return true
+	end
+end
+
 UI.PageOptionsVideoAdv =
 {
 	GUI =
@@ -485,7 +496,7 @@ UI.PageOptionsVideoAdv =
 
 		UpdateGlobalsAssignedToWidgets = function( self, testOnly )
 			UI.PageOptionsVideoAdv.user.setglobalTestOnly = testOnly;
-			for key, val in UI.PageOptionsVideoAdv.GUI do
+			for key, val in pairs(UI.PageOptionsVideoAdv.GUI) do
 				if type( val ) == "table" and val.user and val.user.UpdateAssignedGlobals then
 					val.user.UpdateAssignedGlobals();
 				end
@@ -506,7 +517,7 @@ UI.PageOptionsVideoAdv =
 		end,
 
 		Initialize = function( self )
-			for key, val in UI.PageOptionsVideoAdv.GUI do
+			for key, val in pairs(UI.PageOptionsVideoAdv.GUI) do
 				if type( val ) == "table" and val.user and val.user.Initialize then
 					val.user.Initialize();
 				end
@@ -515,7 +526,7 @@ UI.PageOptionsVideoAdv =
 
 		SetToAutoDetect = function( self )
 			UI.PageOptionsVideoAdv.GUI:DumpMachineStats();
-			for key, val in UI.PageOptionsVideoAdv.GUI do
+			for key, val in pairs(UI.PageOptionsVideoAdv.GUI) do
 				if type( val ) == "table" and val.user and val.user.SetToSpec then
 					val.user.SetToSpec( "auto" );
 				end
@@ -523,7 +534,7 @@ UI.PageOptionsVideoAdv =
 		end,
 
 		SetToVeryHighSpec = function( self )
-			for key, val in UI.PageOptionsVideoAdv.GUI do
+			for key, val in pairs(UI.PageOptionsVideoAdv.GUI) do
 				if type( val ) == "table" and val.user and val.user.SetToSpec then
 					val.user.SetToSpec( "veryhigh" );
 				end
@@ -531,7 +542,7 @@ UI.PageOptionsVideoAdv =
 		end,
 
 		SetToHighSpec = function( self )
-			for key, val in UI.PageOptionsVideoAdv.GUI do
+			for key, val in pairs(UI.PageOptionsVideoAdv.GUI) do
 				if type( val ) == "table" and val.user and val.user.SetToSpec then
 					val.user.SetToSpec( "high" );
 				end
@@ -539,7 +550,7 @@ UI.PageOptionsVideoAdv =
 		end,
 
 		SetToMediumSpec = function( self )
-			for key, val in UI.PageOptionsVideoAdv.GUI do
+			for key, val in pairs(UI.PageOptionsVideoAdv.GUI) do
 				if type( val ) == "table" and val.user and val.user.SetToSpec then
 					val.user.SetToSpec( "medium" );
 				end
@@ -547,7 +558,7 @@ UI.PageOptionsVideoAdv =
 		end,
 
 		SetToLowSpec = function( self )
-			for key, val in UI.PageOptionsVideoAdv.GUI do
+			for key, val in pairs(UI.PageOptionsVideoAdv.GUI) do
 				if type( val ) == "table" and val.user and val.user.SetToSpec then
 					val.user.SetToSpec( "low" );
 				end

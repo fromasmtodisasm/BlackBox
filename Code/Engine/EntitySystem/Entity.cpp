@@ -6,6 +6,9 @@
 #include "PhysicalEntity.hpp"
 #include <BlackBox/Renderer/IRenderAuxGeom.hpp>
 
+#include <BlackBox/ScriptSystem/IScriptSystem.hpp>
+#include <BlackBox/3DEngine/I3DEngine.hpp>
+
 CEntity::CEntity(CEntityDesc& desc)
     : m_pEntitySystem((CEntitySystem*)Env::EntitySystem())
     , m_Desc(desc)
@@ -16,6 +19,7 @@ CEntity::CEntity(CEntityDesc& desc)
 	m_ClassName       = desc.className;
 	m_Name            = desc.name;
 	m_Id              = desc.id;
+	m_pISystem				= Env::System();
 }
 
 CEntity::~CEntity()
@@ -67,6 +71,15 @@ EntityId CEntity::GetId() const
 
 void CEntity::Update(SEntityUpdateContext& updateContext)
 {
+	// update container
+	if (m_bUpdateContainer)
+	{
+		//if (m_pContainer && m_pEntitySystem->m_pUpdateContainer->GetIVal())
+		{
+			ENTITY_PROFILER_NAME("CEntity:Update:Container")
+				m_pContainer->Update();
+		}
+	}
 }
 
 void CEntity::Reset()
@@ -385,7 +398,7 @@ bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 
 bool CEntity::CreateParticleEntity(float size, float mass, Legacy::Vec3 heading, float acc_thrust, float k_air_resistance, float acc_lift, float gravity, int surface_idx, bool bSingleContact)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 void CEntity::SetPos(const Legacy::Vec3& pos, bool bWorldOnly)
@@ -400,6 +413,7 @@ const Legacy::Vec3& CEntity::GetPos(bool bWorldOnly) const
 
 void CEntity::SetPhysAngles(const Legacy::Vec3& angl)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetAngles(const Legacy::Vec3& pos, bool bNotifyContainer, bool bUpdatePhysics, bool forceInWorld)
@@ -424,6 +438,7 @@ glm::vec3 CEntity::GetScale() const
 
 void CEntity::SetRadius(float r)
 {
+	NOT_IMPLEMENTED;
 }
 
 float CEntity::GetRadius() const
@@ -438,10 +453,13 @@ float CEntity::GetRadiusPhys() const
 
 void CEntity::SetSleep(bool bSleep)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetNeedUpdate(bool needUpdate)
 {
+	m_bUpdate = needUpdate;
+	if (needUpdate) m_bSleeping = false;
 }
 
 bool CEntity::NeedUpdate()
@@ -451,10 +469,30 @@ bool CEntity::NeedUpdate()
 
 void CEntity::SetRegisterInSectors(bool needToRegister)
 {
+	if (needToRegister)
+	{
+		if (!m_pEntityRenderState)
+			InitEntityRenderState();
+		ClearFlags(ETY_FLAG_NOT_REGISTER_IN_SECTORS);
+		if (!m_registeredInSector)
+		{
+			RegisterInSector();
+		}
+	}
+	else
+	{
+		SetFlags(ETY_FLAG_NOT_REGISTER_IN_SECTORS);
+		if (m_registeredInSector)
+		{
+			UnregisterInSector();
+		}
+	}
+
 }
 
 void CEntity::SetUpdateRadius(float fUpdateRadius)
 {
+	NOT_IMPLEMENTED;
 }
 
 float CEntity::GetUpdateRadius() const
@@ -464,49 +502,57 @@ float CEntity::GetUpdateRadius() const
 
 void CEntity::ForceRegisterInSectors()
 {
+	NOT_IMPLEMENTED;
 }
 
 bool CEntity::IsMoving() const
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 bool CEntity::IsBound()
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 void CEntity::Bind(EntityId id, unsigned char cBind, const bool bClientOnly, const bool bSetPos)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::Unbind(EntityId id, unsigned char cBind, const bool bClientOnly)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::ForceBindCalculation(bool bEnable)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetParentLocale(const Legacy::Matrix44& matParent)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::CalculateInWorld(void)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::AttachToBone(EntityId id, const char* boneName)
 {
+	NOT_IMPLEMENTED;
 }
 
 BoneBindHandle CEntity::AttachObjectToBone(int slot, const char* boneName, bool bMultipleAttachments, bool bUseZOffset)
 {
-	return BoneBindHandle();
+	NOT_IMPLEMENTED_V;
 }
 
 void CEntity::DetachObjectToBone(const char* boneName, BoneBindHandle objectBindHandle)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetScriptObject(IScriptObject* pObject)
@@ -516,17 +562,17 @@ void CEntity::SetScriptObject(IScriptObject* pObject)
 
 IScriptObject* CEntity::GetScriptObject()
 {
-	return m_pScriptOject;
+	return m_pScriptOject ? m_pScriptOject : (m_pScriptOject = Env::ScriptSystem()->CreateObject());
 }
 
 bool CEntity::Write(CStream&, EntityCloneState* cs)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 bool CEntity::Read(CStream&, bool bNoUpdate)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 bool CEntity::PostLoad()
@@ -536,31 +582,36 @@ bool CEntity::PostLoad()
 
 bool CEntity::Save(CStream& stm, IScriptObject* pStream)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 bool CEntity::Load(CStream& stm, IScriptObject* pStream)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 bool CEntity::LoadRELEASE(CStream& stm, IScriptObject* pStream)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 bool CEntity::LoadPATCH1(CStream& stm, IScriptObject* pStream)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 IEntityContainer* CEntity::GetContainer() const
 {
-	return nullptr;
+	return m_pContainer;
 }
 
 void CEntity::SetContainer(IEntityContainer* pContainer)
 {
+	m_pContainer = pContainer;
+	if (m_pContainer)
+		m_bUpdateContainer = true;
+	else
+		m_bUpdateContainer = false;
 }
 
 IEntityCharacter* CEntity::GetCharInterface() const
@@ -570,11 +621,12 @@ IEntityCharacter* CEntity::GetCharInterface() const
 
 bool CEntity::StartAnimation(int pos, const char* animname, int iLayerID, float fBlendTime, bool bStartWithLayer0Phase)
 {
-	return false;
+	NOT_IMPLEMENTED_V;
 }
 
 void CEntity::SetAnimationSpeed(const float scale)
 {
+	NOT_IMPLEMENTED;
 }
 
 int CEntity::GetCurrentAnimation(int pos, int iLayerID)
@@ -673,62 +725,77 @@ bool CEntity::IsStateClientside() const
 
 void CEntity::SetStateClientside(const bool bEnable)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnTimer(int nTimerId)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnDamage(IScriptObject* pObj)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnEnterArea(IEntity* entity, const int areaID)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnPhysicsBBoxOverlap(IEntity* pOther)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnPhysicsStateChange(int nNewSymClass, int nPrevSymClass)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetPhysicsState(const char* sPhysicsState)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnLeaveArea(IEntity* entity, const int areaID)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnProceedFadeArea(IEntity* entity, const int areaID, const float fadeCoeff)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnBind(IEntity* entity, const char par)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnUnBind(IEntity* entity, const char par)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetTimer(int msec)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::KillTimer()
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetScriptUpdateRate(float fUpdateEveryNSeconds)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::ApplyForceToEnvironment(const float radius, const float force)
 {
+	NOT_IMPLEMENTED;
 }
 
 int CEntity::GetSide(const Legacy::Vec3& direction)
@@ -738,6 +805,7 @@ int CEntity::GetSide(const Legacy::Vec3& direction)
 
 void CEntity::Hide(bool b)
 {
+	NOT_IMPLEMENTED;
 }
 
 bool CEntity::IsHidden() const
@@ -756,6 +824,7 @@ bool CEntity::IsDestroyable() const
 
 void CEntity::SetGarbageFlag(bool bGarbage)
 {
+	NOT_IMPLEMENTED;
 }
 
 bool CEntity::WasVisible()
@@ -780,18 +849,28 @@ int CEntity::GetBoneHitZone(int boneIdx) const
 
 void CEntity::GetHitParms(int& deathType, int& deathDir, int& deathZone) const
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::InitEntityRenderState()
 {
+	if (!m_pEntityRenderState)
+	{
+		m_pEntityRenderState = m_pISystem->GetI3DEngine()->MakeEntityRenderState();
+#if 0
+		CheckEntityLightSourcesInEntityObjects();
+#endif
+	}
 }
 
 void CEntity::ActivatePhysics(bool activate)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SetCommonCallbacks(IScriptSystem* pScriptSystem)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::GetMemoryUsage(ICrySizer* pSizer) const
@@ -802,6 +881,7 @@ void CEntity::GetMemoryUsage(ICrySizer* pSizer) const
 
 void CEntity::SetWaterDensity(float fWaterDensity)
 {
+	NOT_IMPLEMENTED;
 }
 
 float CEntity::GetWaterDensity()
@@ -811,6 +891,7 @@ float CEntity::GetWaterDensity()
 
 void CEntity::SetUpdateVisLevel(EEntityUpdateVisLevel nUpdateVisLevel)
 {
+	NOT_IMPLEMENTED;
 }
 
 EEntityUpdateVisLevel CEntity::GetUpdateVisLevel()
@@ -830,14 +911,17 @@ void CEntity::Remove()
 
 void CEntity::SetShaderFloat(const char* Name, float Val)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SwitchLights(bool bLights)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::SinkRebind(IEntitySystemSink* pSink)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::Physicalize(bool bInstant)
@@ -846,14 +930,42 @@ void CEntity::Physicalize(bool bInstant)
 	m_pEntitySystem->AddToPhysicalWorld(m_pPhysics);
 }
 
+void CEntity::RegisterInSector()
+{
+	// register this entity for rendering
+	if (!m_registeredInSector &&
+		GetRadius() &&
+		!IsHidden() &&
+		m_pEntityRenderState /*&&
+												 IsEntityHasSomethingToRender()*/)
+	{
+		m_pISystem->GetI3DEngine()->RegisterEntity(this);
+		m_registeredInSector = true;
+	}
+}
+
+
+void CEntity::UnregisterInSector()
+{
+	// unregister this entity from the list of sectors
+	if (m_registeredInSector)
+	{
+		m_pISystem->GetI3DEngine()->UnRegisterEntity(this);
+		m_registeredInSector = false;
+	}
+}
+
 void CEntity::OnStartAnimation(const char* sAnimation)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnAnimationEvent(const char* sAnimation, AnimSinkEventData data)
 {
+	NOT_IMPLEMENTED;
 }
 
 void CEntity::OnEndAnimation(const char* sAnimation)
 {
+	NOT_IMPLEMENTED;
 }

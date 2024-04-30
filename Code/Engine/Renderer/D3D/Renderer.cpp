@@ -491,7 +491,7 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 	ypos = (float)ScaleCoordY(ypos); h = (float)ScaleCoordY(h);
 	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, 1 - t0, s1, 1 - t1, color4f{r, g, b, a}, z});
 
-#if 0
+#if 1
 	Image2D img = m_DrawImages.back();
 	Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
 	m_DrawImages.pop_back();

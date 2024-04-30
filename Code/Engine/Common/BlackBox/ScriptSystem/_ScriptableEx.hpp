@@ -397,7 +397,7 @@ public:
 
 	static void InsertProperty(const char* sName, Property& prop)
 	{
-	#if 0
+	#if 1
     USER_DATA ud;
     Property* p = new Property;
     m_pvPropertiesVector->push_back(p);
@@ -406,7 +406,8 @@ public:
     m_pPropertiesTable->SetValue(sName, ud);
     //test
     int nTemp;
-    ULONG_PTR nP;
+    INT_PTR nP;
+    //USER_DATA* nP;
     if (!m_pPropertiesTable->GetUDValue(sName, nP, nTemp))
       CryError("Scriptable EX:Insert Property (GetUDValue)");
     p = (Property*)nP;

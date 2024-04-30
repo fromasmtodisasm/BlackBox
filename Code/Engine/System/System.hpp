@@ -239,6 +239,8 @@ public:
 	virtual const char*             GetRootFolder() const override;
 	void                            SetViewCamera(CCamera& Camera) override { m_ViewCamera = Camera; }
 	CCamera&                        GetViewCamera() override { return m_ViewCamera; }
+	virtual void										CreateEntityScriptBinding(IEntity* ent) override;
+
 	virtual bool                    DoFrame(int updateFlags = 0) override;
 	virtual void                    EnableGui(bool enable) override;
 	virtual void                    SaveConfiguration() override;
@@ -288,6 +290,10 @@ public:
 
 public:
 	void         OpenBasicPaks(bool bLoadGamePaks);
+
+	void				 InitLocalization();
+	void				 OpenLanguagePak(const char* sLanguage);
+
 	virtual bool IsMODValid(const char* szMODName) const
 	{
 		if (!szMODName || strstr(szMODName, ".") || strstr(szMODName, "\\") || stricmp(szMODName, PathUtil::GetGameFolder().c_str()) == 0)
@@ -602,6 +608,8 @@ private:
 #if !defined(_RELEASE)
 	ICVar* m_sys_resource_cache_folder;
 #endif
+	ICVar* m_sys_spec;
+
 
 	int              m_rDisplayInfo;
 	int              m_rDebug;

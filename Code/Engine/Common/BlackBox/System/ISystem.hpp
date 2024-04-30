@@ -32,6 +32,7 @@ struct ICryCharManager;
 struct ICryFont;
 struct ICryPak;
 struct IEntitySystem;
+struct IEntity;
 struct IFont;
 struct IFrameProfileSystem;
 struct IGame;
@@ -621,6 +622,8 @@ struct ISystem
 
 	virtual void     SetViewCamera(class CCamera& Camera)                                      = 0;
 	virtual CCamera& GetViewCamera()                                                           = 0;
+	virtual void     CreateEntityScriptBinding(IEntity* pEntity)															 = 0;
+
 	//////////////////////////////////////////////////////////////////////////
 
 	virtual void     Deltree(const char* szFolder, bool bRecurse)

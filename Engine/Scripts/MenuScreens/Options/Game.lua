@@ -266,7 +266,7 @@ UI.PageOptionsGame=
 			UI.PageOptionsGame.GUI.pmodel:Clear();
 			UI.PageOptionsGame.GUI.pcolor:Clear();
 
-			for i, Color in MultiplayerUtils.ModelColor do
+			for i, Color in pairs(MultiplayerUtils.ModelColor) do
 				local szColor = min(255, floor(Color[1]*255)).." "..min(255, floor(Color[2]*255)).." "..min(255, floor(Color[3]*255)).." 255";
 
 				UI.PageOptionsGame.GUI.pcolor:AddItem("", nil, nil, szColor);
@@ -280,7 +280,7 @@ UI.PageOptionsGame=
 			local iSelection = 1;
 
 			UI.PageOptionsGame.IDToModel = {};
-			for i, Model in MPModelList do
+			for i, Model in pairs(MPModelList) do
 				if (Model.name and strlen(Model.name) > 0) then
 					local iIndex = UI.PageOptionsGame.GUI.pmodel:AddItem(Model.name);
 					UI.PageOptionsGame.IDToModel[iIndex] = Model.model;

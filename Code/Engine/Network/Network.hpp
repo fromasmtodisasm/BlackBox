@@ -54,3 +54,34 @@ private:
 
   CCompressionHelper* m_pCompressionHelper{};
 };
+
+///////////////////////////////////////////////
+// Game context (sent to the client when connecting to a server)
+struct SXGameContext
+{
+  unsigned char		ucServerInfoVersion;	//!< SERVERINFO_FORMAT_VERSION (needed to prevent connects from old clients)
+  string					strMapFolder;					//!<
+  string					strMod;								//!< e.g. "FarCry", "Counterstrike" current TCM(Total Conversion Mod), specified with -MOD ...
+  string					strGameType;					//!< e.g. "ASSAULT", "FFA", "TDM"
+  string					strMission;						//!<
+  DWORD						dwNetworkVersion;			//!< NETWORK_FORMAT_VERSION
+  WORD						wLevelDataCheckSum;		//!<
+  bool						bForceNonDevMode;			//!< client is forced not to use the Devmode
+  bool						bInternetServer;			//!< true=requires UBI login, false=LAN
+  BYTE						nComputerType;        //!< HI:CPUType, LO:OSType
+
+  //! constructor
+  SXGameContext();
+
+  //!
+  bool Write(class CStream& stm);
+  //!
+  bool Read(class CStream& stm);
+  //!
+  bool IsVersionOk() const;
+  //! \return 0 if unknown, zero terminated string otherwise
+  const char* GetCPUTarget() const;
+  //! \return 0 if unknown, zero terminated string otherwise
+  const char* GetOSTarget() const;
+};
+

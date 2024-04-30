@@ -527,7 +527,7 @@ UI.PageOptionsVideo =
 
 		-- GUI methods
 		OnActivate = function( sender )
-			for key,val in UI.PageOptionsVideo.GUI do
+			for key,val in pairs(UI.PageOptionsVideo.GUI) do
 				if type( val ) == "table" and val.user and val.user.Initialize then
 					val.user.Initialize();
 				end
@@ -540,7 +540,7 @@ UI.PageOptionsVideo =
 		end,
 
 		UpdateGlobals = function( self )
-			for key,val in UI.PageOptionsVideo.GUI do
+			for key,val in pairs(UI.PageOptionsVideo.GUI) do
 				if type( val ) == "table" and val.user and val.user.UpdateAssignedGlobals then
 					val.user.UpdateAssignedGlobals();
 				end
@@ -624,14 +624,14 @@ UI.PageOptionsVideo.GUI.widget_resolution.user.Initialize = function( self )
 
 	local ref = UI.PageOptionsVideo.GUI.widget_resolution.user.ScreenResolutionAndBpp;
 	local j = 1;
-	for i, DispFmt in lTmpScreenResolutionAndBpp do
+	for i, DispFmt in pairs(lTmpScreenResolutionAndBpp) do
 		if( DispFmt.bpp == 32 and DispFmt.width > 640 and DispFmt.height > 480 ) then -- filter modes, 32 bit and higher than 640x480 only!
 			ref[ j ] = DispFmt;
 			j = j + 1;
 		end
 	end
 
-	for i, DispFmt in ref do
+	for i, DispFmt in pairs(ref) do
 		UI.PageOptionsVideo.GUI.widget_resolution:AddItem( DispFmt.width.."x"..DispFmt.height.."x"..DispFmt.bpp );
 	end
 
@@ -679,7 +679,7 @@ UI.PageOptionsVideo.GUI.widget_fsaa.user.Initialize = function( self )
 	
 	UI.PageOptionsVideo.GUI.widget_fsaa.user.FSAAModes = {};
 	
-	for n, mode in FSAAModes do
+	for n, mode in pairs(FSAAModes) do
 		local i = UI.PageOptionsVideo.GUI.widget_fsaa:AddItem(mode.desc);
 		
 		UI.PageOptionsVideo.GUI.widget_fsaa.user.FSAAModes[i] = mode;
@@ -691,7 +691,7 @@ UI.PageOptionsVideo.GUI.widget_fsaa.user.Initialize = function( self )
 	local fsaaQuality = tonumber(getglobal("r_FSAA_quality"));
 	if(fsaa ~= 0) then	
 		-- find the correct match
-		for n, mode in UI.PageOptionsVideo.GUI.widget_fsaa.user.FSAAModes do
+		for n, mode in pairs(UI.PageOptionsVideo.GUI.widget_fsaa.user.FSAAModes) do
 			if ((fsaaSamples == tonumber(mode.samples)) and (fsaaQuality == tonumber(mode.quality))) then
 				UI.PageOptionsVideo.GUI.widget_fsaa:SelectIndex(n);
 				break;
@@ -969,7 +969,7 @@ end
 
 
 function UI.PageOptionsVideo.ResetToDefaults()
-	for key,val in UI.PageOptionsVideo.GUI do
+	for key,val in pairs(UI.PageOptionsVideo.GUI) do
 		if type( val ) == "table" and val.user and val.user.Initialize then
 			val.user.Initialize();
 			if( val.user.DefInitialize ) then

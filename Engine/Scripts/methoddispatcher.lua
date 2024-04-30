@@ -21,23 +21,26 @@ end
 
 function MethodDispatcherPool.IndexHandler(table,index)
 	local f = function(...)
+		-- FIXME: this is hack
+		if false then
 		local pool=table._pool
-		for i,val in pool do
+		for i,val in pairs(pool) do
 			local pool_func=val[index];
 			if(pool_func)then
 				arg[1]=val;
 				call(pool_func,arg);
 			end
 		end
+		end
 	end
 	table[index]=f;
 	return f;
 end
 
-function MethodDispatcherPool:new()
-	local mmp=new(MethodDispatcherPool);
-	local tag=newtag()
-	settagmethod(tag,"index",MethodDispatcherPool.IndexHandler);
-	settag(mmp,tag);
-	return mmp;
+function MethodDispatcherPool.new()
+    local mmp = {}
+    setmetatable(mmp, {
+        __index = MethodDispatcherPool.IndexHandler  -- ”казываем, что использовать дл€ несуществующих ключей
+    })
+    return mmp
 end

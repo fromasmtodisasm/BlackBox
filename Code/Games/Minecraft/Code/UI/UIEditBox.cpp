@@ -531,9 +531,9 @@ int CUIEditBox::GetText(string& szText)
 //////////////////////////////////////////////////////////////////////
 int CUIEditBox::DrawCursor(const UIRect& pTextRect, IFFont* pFont, float fX, float fY, float fHeight)
 {
-#if 0
-	m_pUISystem->GetIRenderer()->SetMaterialColor(m_cCursorColor.v[0], m_cCursorColor.v[1], m_cCursorColor.v[2], m_cCursorColor.v[3]);
-	m_pUISystem->GetIRenderer()->Draw2dLine(fX, fY, fX, fY + fHeight);
+#if 1
+	//m_pUISystem->GetIRenderer()->SetMaterialColor(m_cCursorColor.v[0], m_cCursorColor.v[1], m_cCursorColor.v[2], m_cCursorColor.v[3]);
+	//m_pUISystem->GetIRenderer()->Draw2dLine(fX, fY, fX, fY + fHeight);
 
 	return 1;
 #else
@@ -1029,7 +1029,7 @@ int CUIEditBox::GetCursorCoord(float* fX, float* fY, float* fHeight, const UIRec
 		vTextSize = pFont->GetTextSizeW(pStr.c_str());
 	}
 
-#if 0
+#if 1
 	vTextSize.x /= m_pUISystem->GetIRenderer()->ScaleCoordX(1.0f);
 	vTextSize.y /= m_pUISystem->GetIRenderer()->ScaleCoordY(1.0f);
 #else
@@ -1047,7 +1047,7 @@ int CUIEditBox::GetCursorPosition(float fAtX, float fAtY, const UIRect& pTextRec
 {
 	if (m_pUISystem->PointInRect(pTextRect, fAtX, fAtY))
 	{
-#if 0
+#if 1
 		float fX, fY, fCharWidth;
 		float fRcpScaleX = 1.0f / m_pUISystem->GetIRenderer()->ScaleCoordX(1.0);
 		wchar_t pChar[2] = {0, 0};

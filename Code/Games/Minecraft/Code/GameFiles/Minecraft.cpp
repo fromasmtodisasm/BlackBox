@@ -116,7 +116,7 @@ void MineWorld::init()
 		{
 			auto        object = Env::I3DEngine()->MakeObject(objects[1]);
 
-			CEntityDesc desc(nextEntity(), 0);
+			CEntityDesc desc(nextEntity(), 1);
 			desc.name  = "Hero";
 			auto* Jack = Env::EntitySystem()->SpawnEntity(desc);
 
@@ -134,7 +134,7 @@ void MineWorld::init()
 			//auto Jack = Env::I3DEngine()->MakeObject();
 			//auto        Jack = types[0];
 
-			CEntityDesc desc(nextEntity(), 0);
+			CEntityDesc desc(nextEntity(), 1);
 			desc.name       = "Hero";
 			minecraft->Jack = Env::EntitySystem()->SpawnEntity(desc);
 			auto* Jack      = minecraft->Jack;
@@ -559,6 +559,7 @@ void MinePlayer::init()
 
 	CEntityDesc desc(nextEntity(), PLAYER_CLASS_ID);
 	entity = Env::EntitySystem()->SpawnEntity(desc);
+	entity->Physicalize();
 	Env::I3DEngine()->RegisterEntity(entity);
 
 	entity->SetPos(glm::vec3(5, 3, 5));

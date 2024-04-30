@@ -320,7 +320,7 @@ void CXGame::InitConsoleVars()
                                                                            "Usage: cl_scope_flare 0/1"
                                                                            "Default value is 1.");
 
-	cl_lazy_weapon      = GetISystem()->GetIConsole()->CreateVariable("cl_lazy_weapon", "0.6", VF_DUMPTODISK,
+	cl_lazy_weapon      = GetISystem()->GetIConsole()->CreateVariable("cl_lazy_weapon", 0.6f, VF_DUMPTODISK,
 	                                                                  "Control if the weapon follows the camera in a lazy way.\n"
                                                                            "Usage: cl_lazy_weapon [0..1]"
                                                                            "Default value is 0.6.");

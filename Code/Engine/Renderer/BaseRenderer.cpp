@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////
 CRenderer* gRenDev = NULL;
 
-int        RenderCVars::CV_r_GetScreenShot;
 static int dump_shaders_on_load = false;
 FxParser*  g_FxParser;
 ShaderMan* gShMan;
@@ -338,6 +337,60 @@ void RenderCVars::InitCVars()
 	REGISTER_CVAR2("r_sun.r", &r_SunColor.r, 1.f, VF_DUMPTODISK, "");
 	REGISTER_CVAR2("r_sun.g", &r_SunColor.g, 1.f, VF_DUMPTODISK, "");
 	REGISTER_CVAR2("r_sun.b", &r_SunColor.b, 1.f, VF_DUMPTODISK, "");
+
+	Env::Console()->Register("r_TexResolution", &CV_r_texresolution, 0, VF_DUMPTODISK,
+		"Halves or doubles texture resolution.\n"
+		"Usage: r_TexResolution [0/1]\n"
+		"When 0 (default) texture resolution is halved.");
+	Env::Console()->Register("r_Gamma", &CV_r_gamma, 1.0f, VF_DUMPTODISK,
+		"Sets gamma level.\n"
+		"Usage: r_Gamma 1.0\n"
+		"Default is 1.0.");
+	Env::Console()->Register("r_Brightness", &CV_r_brightness, 0.5f, VF_DUMPTODISK,
+		"Sets the diplay brightness.\n"
+		"Usage: r_Brightness 0.5\n"
+		"Default is 0.5.");
+	Env::Console()->Register("r_Contrast", &CV_r_contrast, 0.5f, VF_DUMPTODISK,
+		"Sets the diplay contrast.\n"
+		"Usage: r_Contrast 0.5\n"
+		"Default is 0.5.");
+
+	Env::Console()->Register("r_RenderMode", &CV_r_rendermode, 0, VF_DUMPTODISK,
+		"Defines type of post-processing rendering mode.\n"
+		"Usage: r_RenderMode #\n"
+		"Where # represents:\n"
+		" 0: Default rendering (default)\n"
+		" 1: Improved\n"
+		" 2: Paradisiacal\n"
+		" 3: Cold realism\n"
+		" 4: Cartoon\n"
+		" 5: Cinematic\n");
+
+	Env::Console()->Register("r_Glare", &CV_r_glare, 0, VF_DUMPTODISK,
+		"Activates the glare effect.\n"
+		"Usage: r_Glare #\n"
+		"Where # represents:\n"
+		" 0: Off\n"
+		" 1: On\n");
+
+	auto iConsole = Env::Console();
+
+	iConsole->Register("r_HDRRendering", &CV_r_hdrrendering, 0, VF_DUMPTODISK,
+		"Toggles HDR rendering.\n"
+		"Usage: r_HDRRendering [0/1]\n"
+		"Default is 1 (on). Set to 0 to disable HDR rendering.");
+	iConsole->Register("r_HDRLevel", &CV_r_hdrlevel, 0.6f, VF_DUMPTODISK,
+		"HDR rendering level.\n"
+		"Usage: r_HDRLevel [Value]\n"
+		"Default is 0.6f");
+	iConsole->Register("r_TexSkyResolution", &CV_r_texskyresolution, 0, VF_DUMPTODISK);
+	// changing default settings to reduce the insane amount of texture memory
+	iConsole->Register("r_TexBumpResolution", &CV_r_texbumpresolution, 0, VF_DUMPTODISK);
+
+
+
+
+
 }
 
 RenderCVars::~RenderCVars()

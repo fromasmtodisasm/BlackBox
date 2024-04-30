@@ -46,7 +46,9 @@ function Hud:OnUpdate()
 	local player=_localplayer;
 	
 	-- Update Dynamic music.
-	self:UpdateDynamicMusic();
+	if false then -- @FIXME:
+		self:UpdateDynamicMusic();
+	end
 
 	-- [marco] The environment can be affected by lightning, which blinds any player 
 	-- using Night Vision for a brief period. In case of the night vision
