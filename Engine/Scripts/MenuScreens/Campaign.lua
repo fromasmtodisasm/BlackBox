@@ -568,7 +568,7 @@ UI.PageCampaignLoad	=
 			UI.PageCampaignLoad.LevelList = {};
 			local LevelList = UI.PageCampaignLoad.LevelList;
 				
-			for i, SaveGame in UI.PageCampaignLoad.SaveList do
+			for i, SaveGame in pairs(UI.PageCampaignLoad.SaveList) do
 				if (not LevelList[SaveGame.Level]) then
 					LevelList[SaveGame.Level] = {};
 				end
@@ -636,8 +636,8 @@ UI.PageCampaignLoad	=
 		UI.PageCampaignLoad.DefiantTable = {};
 		-- this is needed so that the levels are in order of appearence
 		-- it's not efficient, but it's fast implemented, and no changes needed
-		for i, Level in DEFIANT do
-			for szLevelName, CheckPointList in LevelList do
+		for i, Level in pairs(DEFIANT) do
+			for szLevelName, CheckPointList in pairs(LevelList) do
 				if (strlower(tostring(szLevelName)) == strlower(tostring(Level[1]))) then
 					UI.PageCampaignLoad.DefiantTable[ListView:AddItem("@Level"..Level[1])] = Level;
 					break;
@@ -929,7 +929,9 @@ UI.PageTimeZone=
 			UI.PageTimeZone.GUI.MapList:Clear();
 			UI.PageTimeZone.DefiantTable = {};
 	
-			for i, Table in DEFIANT do
+			System:Log("DEFIANT")
+			for i, Table in pairs(DEFIANT) do
+				System:Log(i)
 				UI.PageTimeZone.DefiantTable[UI.PageTimeZone.GUI.MapList:AddItem("@Level"..Table[1])] = Table;				
 			end			
 			

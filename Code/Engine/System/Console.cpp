@@ -270,6 +270,8 @@ int            CXConsole::con_showonload            = 0;
 int            CXConsole::con_debug                 = 0;
 int            CXConsole::con_restricted            = 0;
 
+bool					 g_ImmediateMode = false;
+
 #pragma region CXConsole
 CXConsole::CXConsole(CSystem& system)
     : //m_managedConsoleCommandListeners(1)
@@ -326,6 +328,7 @@ CXConsole::CXConsole(CSystem& system)
 #if 0
 	CNotificationNetworkConsole::Initialize();
 #endif
+
 }
 
 void CXConsole::OnConsoleCommand(const char* cmd)
@@ -591,6 +594,16 @@ void CXConsole::PreProjectSystemInit()
 	                 "> then echo Goodbye world!\n"
 	                 "> then wait_seconds 5\n"
 	                 "> then quit");
+	// Добавим комманду immed аналогичную в Immediate Window Visual Studio
+	REGISTER_COMMAND("immed", [](IConsoleCmdArgs* args)
+		{
+			auto console = Env::Console();
+			g_ImmediateMode = true;
+			CryLog("Immed mode turned on");
+		},
+		VF_NULL, "Switch console to interprete lua directly"
+	);
+
 	CConsoleBatchFile::Init();
 }
 
@@ -2631,8 +2644,9 @@ void CXConsole::ExecuteStringInternal(const char* command, const bool bFromConso
 	}
 
 	// Execute as string
-	if (command[0] == '#' || command[0] == '@')
+	if (command[0] == '#' || command[0] == '@' || g_ImmediateMode)
 	{
+		auto offset = g_ImmediateMode ? 0 : 1;
 		if (!con_restricted || !bFromConsole) // in restricted mode we allow only VF_RESTRICTEDMODE CVars&CCmd
 		{
 			AddLine(command);
@@ -2640,7 +2654,7 @@ void CXConsole::ExecuteStringInternal(const char* command, const bool bFromConso
 			if (m_system.IsDevMode())
 			{
 				if (m_system.GetIScriptSystem())
-					m_system.GetIScriptSystem()->ExecuteBuffer(command + 1, strlen(command) - 1);
+					m_system.GetIScriptSystem()->ExecuteBuffer(command + offset, strlen(command) - offset);
 				m_bDrawCursor = false;
 			}
 			return;

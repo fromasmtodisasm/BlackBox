@@ -769,9 +769,10 @@ bool CSystem::InitScriptSystem()
 	if (m_pUserCallback)
 		m_pUserCallback->OnInitProgress("Initializing ScriptSystem...");
 	return LoadSubsystem<CREATESCRIPTSYSTEM_FNCPTR>("ScriptSystem", "CreateScriptSystem", [&](CREATESCRIPTSYSTEM_FNCPTR p)
-	                                                {
-		                                                m_env.pScriptSystem = p(this, true);
-		                                                return m_env.pScriptSystem != nullptr; });
+	{
+		m_env.pScriptSystem = p(this, true);
+		return m_env.pScriptSystem != nullptr; 
+	});
 }
 
 bool CSystem::InitEntitySystem()

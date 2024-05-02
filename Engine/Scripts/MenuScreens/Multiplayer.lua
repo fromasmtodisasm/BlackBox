@@ -527,10 +527,13 @@ UI.PageMultiplayer =
 				Sender.LAN.OnCommand(Sender.LAN);
 			end
 			
-			if (cl_punkbuster and tonumber(cl_punkbuster) ~= 0) then
-				Sender.PunkBuster:SetChecked(1);
-			else
-				Sender.PunkBuster:SetChecked(0);
+			-- @FIXME: problems in delegate methods from prototype tables in c++ side
+			if false then
+				if (cl_punkbuster and tonumber(cl_punkbuster) ~= 0) then
+					Sender.PunkBuster:SetChecked(1);
+				else
+					Sender.PunkBuster:SetChecked(0);
+				end
 			end
 
 			UI:DisableWidget(UI.PageMultiplayer.GUI.Join);
@@ -560,7 +563,7 @@ UI.PageMultiplayer =
 
 			UI.PageMultiplayer.GUI.FilterBlock.GameTypeCombo:Clear();
 			UI.PageMultiplayer.GUI.FilterBlock.GameTypeCombo:AddItem("All");
-			for name, MOD in AvailableMODList do
+			for name, MOD in pairs(AvailableMODList) do
 				UI.PageMultiplayer.GUI.FilterBlock.GameTypeCombo:AddItem(name);
 			end
 			UI.PageMultiplayer.GUI.FilterBlock.GameTypeCombo:SelectIndex(1);

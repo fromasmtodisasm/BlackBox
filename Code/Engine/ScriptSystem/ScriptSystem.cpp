@@ -433,8 +433,20 @@ void CScriptSystem::DumpLoadedScripts()
 
 IScriptObject* CScriptSystem::GetGlobalObject()
 {
-	return nullptr;
+	//Validate();
+	auto* pObj = CreateEmptyObject();
+
+	// Используем глобальную таблицу _G вместо lua_getglobals
+	lua_getglobal(L, "_G");  // Помещаем таблицу _G на вершину стека Lua
+
+	pObj->Attach();  // Скорее всего, это метод для привязки Lua-таблицы к объекту CScriptObject
+
+	// После использования глобальной таблицы _G, её нужно убрать со стека
+	lua_pop(L, 1);  // Удаляем _G из стека, чтобы поддерживать его чистоту
+
+	return pObj;
 }
+
 
 IScriptObject* CScriptSystem::CreateEmptyObject()
 {
@@ -682,20 +694,20 @@ void CScriptSystem::SetGlobalToNull(const char* sKey)
 
 bool CScriptSystem::GetGlobalValue(const char* sKey, IScriptObject* pObj)
 {
+	//Validate();
 	lua_getglobal(L, sKey);
-
-	if (!lua_istable(L, -1))
+	if (lua_istable(L, -1))
 	{
-		return false;
-		//pObj = CreateEmptyObject();
-		//pObj->AddRef();
+		pObj->Attach();
 	}
-	lua_pushvalue(L, -1);
-	pObj->Attach();
-	//AttachTable(pObj);
-
+	else
+	{
+		lua_pop(L, 1);
+		return false;
+	}
 	return true;
 }
+
 
 HTAG CScriptSystem::CreateTaggedValue(const char* sKey, int* pVal)
 {

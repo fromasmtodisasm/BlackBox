@@ -574,10 +574,7 @@ bool CScriptObject::MoveNext()
 			// => now see if we have a prototype table attached by inspecting our potential metatable
 			// => if we don't have a metatable, or have a metatable but no prototype table attached, finish the whole iteration
 
-#if 1
-#if 0
 			if (iter.internal.resolvePrototypeTableAsWell)
-#endif
 			{
 				if (lua_getmetatable(L, -1))
 				{
@@ -593,7 +590,6 @@ bool CScriptObject::MoveNext()
 					}
 				}
 			}
-#endif
 		}
 
 		EndIteration();
@@ -725,7 +721,7 @@ int CScriptObject::Count()
 bool CScriptObject::Clone(IScriptObject* pObj)
 {
 	int  top              = lua_gettop(L);
-	bool bDeepCopy        = true;
+	bool bDeepCopy        = false;
 	bool bCopyByReference = false;
 
 	PushRef(pObj); // src object at top + 1

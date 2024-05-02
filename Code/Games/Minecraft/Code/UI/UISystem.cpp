@@ -2540,10 +2540,10 @@ int CUISystem::DrawQuad(const UIRect& pRect, const color4f& cColor)
 {
 	color4f cClampColor;
 
-	cClampColor.v[0] = min(max(cColor.v[0], 0.0f), 1.0f);
-	cClampColor.v[1] = min(max(cColor.v[1], 0.0f), 1.0f);
-	cClampColor.v[2] = min(max(cColor.v[2], 0.0f), 1.0f);
-	cClampColor.v[3] = min(max(cColor.v[3], 0.0f), 1.0f);
+	cClampColor.r = std::clamp(cColor.r, 0.0f, 1.0f);
+	cClampColor.g = std::clamp(cColor.g, 0.0f, 1.0f);
+	cClampColor.b = std::clamp(cColor.b, 0.0f, 1.0f);
+	cClampColor.a = std::clamp(cColor.a, 0.0f, 1.0f);
 
 	DrawImage(pRect, -1, 0, cClampColor);
 
@@ -2983,7 +2983,7 @@ int CUISystem::CreateScreen(CUIScreen** pScreen, const string& szName)
 	(*pScreen)->m_szName    = szName;
 	(*pScreen)->m_pUISystem = this;
 
-	(*pScreen)->Init(m_pScriptSystem, *pScreen, true);
+	(*pScreen)->Init(m_pScriptSystem, *pScreen);
 
 	m_vScreenList.push_back(*pScreen);
 

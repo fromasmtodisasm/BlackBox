@@ -618,7 +618,7 @@ void CBaseInput::AddEventToHoldSymbols(const SInputEvent& event)
 {
 	if (!m_retriggering)
 	{
-		if (event.pSymbol && event.pSymbol->state == eIS_Pressed)
+		if (event.pSymbol && event.pSymbol->state & eIS_Pressed)
 		{
 			if (g_pInputCVars->i_debug)
 			{

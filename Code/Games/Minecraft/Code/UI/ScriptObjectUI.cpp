@@ -1763,7 +1763,7 @@ int CScriptObjectUI::CreateScreenFromTable(IFunctionHandler* pH)
 
 	CUIScreen* pScreen;
 
-	if (!strcmp(szName, "Credits"))
+	if (!strcmp(szName, "Options"))
 	{
 		CryLogAlways("Creating screen '%s'...", szName);
 	}

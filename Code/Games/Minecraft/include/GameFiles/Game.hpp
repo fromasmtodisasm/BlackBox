@@ -576,10 +576,7 @@ public:
 
 	CWeaponSystemEx*             GetWeaponSystemEx() { return m_pWeaponSystemEx; }
 	CUISystem*                   GetUISystem() { return m_pUISystem; };
-	void                         ReloadWeaponScripts()
-	{
-		NOT_IMPLEMENTED;
-	}
+	void                         ReloadWeaponScripts();
 	CVehicleSystem* GetVehicleSystem() { return m_pVehicleSystem; }
 	CPlayerSystem*  GetPlayerSystem() { return m_pPlayerSystem; }
 
@@ -608,42 +605,15 @@ public:
 
 	// Weapons -------------------------------------------------------------
 
-	INameIterator* GetAvailableWeaponNames()
-	{
-		NOT_IMPLEMENTED_V;
-	}
-	INameIterator* GetAvailableProjectileNames()
-	{
-		NOT_IMPLEMENTED_V;
-	}
-	bool AddWeapon(const char* pszName)
-	{
-		NOT_IMPLEMENTED_V
-	}
-	bool RemoveWeapon(const char* pszName)
-	{
-		NOT_IMPLEMENTED_V
-	}
-	void RemoveAllWeapons()
-	{
-		NOT_IMPLEMENTED;
-	}
-	bool AddEquipPack(XDOM::IXMLDOMNode* pPack)
-	{
-		NOT_IMPLEMENTED_V
-	}
-	bool AddEquipPack(const char* pszXML)
-	{
-		NOT_IMPLEMENTED_V
-	}
-	void SetPlayerEquipPackName(const char* pszPackName)
-	{
-		NOT_IMPLEMENTED;
-	}
-	void RestoreWeaponPacks()
-	{
-		NOT_IMPLEMENTED;
-	}
+	INameIterator* GetAvailableWeaponNames();
+	INameIterator* GetAvailableProjectileNames();
+	bool AddWeapon(const char* pszName);
+	bool RemoveWeapon(const char* pszName);
+	void RemoveAllWeapons();
+	bool AddEquipPack(XDOM::IXMLDOMNode* pPack);
+	bool AddEquipPack(const char* pszXML);
+	void SetPlayerEquipPackName(const char* pszPackName);
+	void RestoreWeaponPacks();
 
 	// Network -------------------------------------------------------------
 

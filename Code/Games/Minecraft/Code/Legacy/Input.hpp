@@ -706,123 +706,62 @@ namespace Legacy
 */
 	struct CMouse : public IMouse
 	{
-		CMouse()
-		{
-			m_pMouse = Env::Input()->GetDevice(0, EInputDeviceType::eIDT_Mouse);
-		}
-		virtual void Shutdown() override
-		{
-		}
+		CMouse();
+		virtual void Shutdown() override;
 
 		//! check for a mouse button pressed and held
-		virtual bool MouseDown(int p_numButton) override
-		{
-			auto key = m_pMouse->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_numButton));
-			return m_pMouse->InputState(key, EInputState::eIS_Down);
-			return true;
-		}
+		virtual bool MouseDown(int p_numButton) override;
 
 		//! check for a mouse button pressed only once
-		virtual bool MousePressed(int p_numButton) override
-		{
-			auto key = m_pMouse->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_numButton));
-			return m_pMouse->InputState(key, EInputState::eIS_Pressed);
-		}
+		virtual bool MousePressed(int p_numButton) override;
 
 		//! check if the mouse button has been released
-		virtual bool MouseReleased(int p_numButton) override
-		{
-			auto key = m_pMouse->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_numButton));
-			return m_pMouse->InputState(key, EInputState::eIS_Released);
-		}
+		virtual bool MouseReleased(int p_numButton) override;
 
 		//! force the mouse wheel rotation to a certain value
-		virtual void SetMouseWheelRotation(int value) override
-		{
-		}
+		virtual void SetMouseWheelRotation(int value) override;
 
 		//! set/reset Directinput to exclusive mode
-		virtual bool SetExclusive(bool value, void* hwnd = 0) override
-		{
-			return false;
-		}
+		virtual bool SetExclusive(bool value, void* hwnd = 0) override;
 
 		//! get mouse X delta (left-right)
-		virtual float GetDeltaX() override
-		{
-			return 0.f;
-		}
+		virtual float GetDeltaX() override;
 
 		//! get mouse Y delta (up-down)
-		virtual float GetDeltaY() override
-		{
-			return 0.f;
-		}
+		virtual float GetDeltaY() override;
 
 		//! get mouse Z delta (mouse wheel)
-		virtual float GetDeltaZ() override
-		{
-			return 0.f;
-		}
+		virtual float GetDeltaZ() override;
 
 		//! set mouse inertia
-		virtual void SetInertia(float) override
-		{
-		}
+		virtual void SetInertia(float) override;
 
 		//! set mouse X screen corrdinate
-		virtual void SetVScreenX(float fX) override
-		{
-		}
+		virtual void SetVScreenX(float fX) override;
 
 		//! set mouse Y screen corrdinate
-		virtual void SetVScreenY(float fY) override
-		{
-		}
+		virtual void SetVScreenY(float fY) override;
 
 		//! get mouse X screen corrdinate
-		virtual float GetVScreenX() override
-		{
-			float x, y;
-			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
-			return x / Env::Renderer()->ScaleCoordX(1.f);
-		}
+		virtual float GetVScreenX() override;
 
 		//! get mouse Y screen corrdinate
-		virtual float GetVScreenY() override
-		{
-			float x, y;
-			Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
-			return y / Env::Renderer()->ScaleCoordY(1.f);
-		}
+		virtual float GetVScreenY() override;
 
 		//! set the mouse sensitivity
-		virtual void SetSensitvity(float fSensitivity) override
-		{
-		}
+		virtual void SetSensitvity(float fSensitivity) override;
 
 		//! get the mouse sensitivity
-		virtual float GetSensitvity() override
-		{
-			return 0.f;
-		}
+		virtual float GetSensitvity() override;
 
 		//! set the mouse sensitivity scale (from 0 to 1)
-		virtual void SetSensitvityScale(float fSensScale) override
-		{
-		}
+		virtual void SetSensitvityScale(float fSensScale) override;
 
 		//! get the mouse sensitivity scale
-		virtual float GetSensitvityScale() override
-		{
-			return 0.f;
-		}
+		virtual float GetSensitvityScale() override;
 
 		//! clear the key states
-		virtual void ClearKeyState() override
-		{
-			m_pMouse->ClearKeyState();
-		}
+		virtual void ClearKeyState() override;
 
 		IInputDevice* m_pMouse;
 	};

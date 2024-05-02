@@ -28,6 +28,12 @@ end
 function strupper(str)
 	return string.upper(str)
 end
+function strfind(s, pattern, init, plain)
+    init = init or 1
+    local start, finish = s:find(pattern, init, plain)
+    return start, finish
+end
+
 
 function getglobal (varname)
 	-- access the table of globals
@@ -49,17 +55,19 @@ function strlen(str)
 	return string.len(str)
 end
 
-function floor(num)
-	return math.floor(num)
+floor = math.floor
+min = math.min
+max = math.max
+
+----------------------------------------------------------------------------------
+function openfile(name, attr)
+	return io.open(name, attr)
 end
 
-function min(num)
-	return math.min(num)
+function closefile(file)
+	file:close()
 end
-
-function max(num)
-	return math.max(num)
-end
+----------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------
 -- A set of useful vectors, so they don't have to be created on the fly everytime.
@@ -223,7 +231,7 @@ end
 function untokenize(toktable)
 	local fullstring="";
 
-	for i,tok in toktable do
+	for i,tok in pairs(toktable) do
 		if type(tok)=="string" then
 			if fullstring=="" then
 				fullstring=tok;
@@ -259,7 +267,7 @@ end
 --copy table source into the table dest skipping functions
 -------------------------------------------------------
 function merge(dest,source,recursive)
-	for i,v in source do
+	for i,v in pairs(source) do
 		if(type(v)~="function") then
 			if(recursive) then
 				if(type(v)=="table")then
@@ -279,7 +287,7 @@ end
 --copy table source into the table dest with functions
 -------------------------------------------------------
 function mergef(dest,source,recursive)
-	for i,v in source do
+	for i,v in pairs(source) do
 		if(recursive) then
 			if(type(v)=="table")then
 				dest[i]={};
@@ -338,7 +346,7 @@ function gdump()
 		for n=0,g_dump_tabs,1 do
 			str=str.."  ";
 		end
-		for i,field in _class do
+		for i,field in pairs(_class) do
 			if(type(field)=="table") then
 				if(not referenced[field])then
 					g_dump_tabs=g_dump_tabs+1;
@@ -526,7 +534,7 @@ function ConvertVectorToCameraAngles(dest,src)
 ----------------------------------
 function ResetEnemies()
 	local entities=System:GetEntities();
-	for i, entity in entities do
+	for i, entity in pairs(entities) do
 		if (entity.Behaviour) then
 			System:LogToConsole("$6Resetting "..entity.GetName().."...");
 			entity:OnReset();
@@ -682,7 +690,7 @@ function ExecuteMaterial(pos,normal,material,bSound, target_id, ipart, PlaySound
 	--PARTICLES----------------
 	if(particles ~= nil) then
 		if((particles.clippable==nil) or (particles.clippable and in_frustum))then
-			for i,particle in particles do
+			for i,particle in pairs(particles) do
 				--System:Log("g_gore="..getglobal("g_gore"));
 				if((not particle.gore) or (getglobal("g_gore")==1) or (getglobal("g_gore")==2)) then
 					Particle:CreateParticle(pos,normal,particle);
@@ -815,7 +823,7 @@ function ExecuteMaterial2(hit,mat_field)
 	--PARTICLES----------------
 	if(particles ~= nil) then
 		if((particles.clippable==nil) or (particles.clippable and in_frustum))then
-			for i,particle in particles do
+			for i,particle in pairs(particles) do
 				if((g_gore == "1") or (g_gore=="2") or (not particle.gore) ) then
 					Particle:CreateParticle(hit.pos,hit.normal,particle);
 				end
@@ -940,7 +948,7 @@ function BroadcastEvent( sender,Event  )
 		local eventTargets = sender.Events[Event];
 		if (eventTargets) then
 			--System:Log( "Events Targets found" );
-			for i, target in eventTargets do
+			for i, target in pairs(eventTargets) do
 				local TargetId = target[1];
 				local TargetEvent = target[2];
 				--System:Log( "Target: "..TargetId.."/"..TargetEvent );
@@ -1005,7 +1013,7 @@ end
 function DumpEntities()
 	local ents=System:GetEntities();
 	System:Log("Entities dump");
-	for idx,e in ents do
+	for idx,e in pairs(ents) do
 		local pos=e:GetPos();
 		local ang=e:GetAngles();
 		System:Log("["..tostring(e.id).."]..name="..e:GetName().." clsid="..tostring(e.classid)..format(" pos=%.03f,%.03f,%.03f",pos.x,pos.y,pos.z)..format(" ang=%.03f,%.03f,%.03f",ang.x,ang.y,ang.z));
@@ -1016,7 +1024,7 @@ end
 function SetEntitiesState(state,classid)
 	local ents=System:GetEntities();
 	System:Log("Entities dump");
-	for idx,e in ents do
+	for idx,e in pairs(ents) do
 		if(e.classid==classid)then
 			e:GotoState(state);
 			local pos=e:GetPos();

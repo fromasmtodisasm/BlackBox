@@ -121,6 +121,7 @@ void CLinuxInputDevice::PostEvent(SInputSymbol* pSymbol, unsigned keyMod)
 	event.modifiers  = CSDLKeyboard::ConvertModifiers(keyMod);
 	event.value      = pSymbol->value;
 	event.keyId      = pSymbol->keyId;
+	event.pSymbol		 = pSymbol;
 	GetLinuxInput().PostInputEvent(event);
 }
 

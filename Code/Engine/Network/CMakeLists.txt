@@ -10,6 +10,8 @@ add_sources(
 		"Server.cpp"
 		"NetServerSnooper.cpp"
 		"NetServerSnooper.h"
+		"ServerSnooper.cpp"
+		"ServerSnooper.h"
 )
 end_sources()
 EngineModule(Network PCH "pch.hpp" SOLUTION_FOLDER "Engine")

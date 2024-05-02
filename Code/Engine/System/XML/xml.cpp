@@ -199,6 +199,14 @@ bool CXMLDocument::appendChild(IXMLDOMNode* pNode)
 
 XDOM::IXMLDOMNode* CXMLDocument::getAttribute(const XMLCHAR* sName)
 {
+	for (const auto it : m_pChildNodes->m_lstNodes)
+	{
+		if (it->getNodeType() == XDOM::NODE_ATTRIBUTE)
+		{
+			if (strcmp(it->getName(), sName) == 0)
+				return it;
+		}
+	}
 	return nullptr;
 }
 
@@ -262,6 +270,11 @@ bool CXMLDocument::load(const XMLCHAR* sSource)
 			{
 				m_pChildNodes->AddNode(new CIXMLDOMNode(pNode));
 				pNode = pNode->NextSibling();
+			}
+			auto* pRootElement = pRoot->ToElement();
+			for (auto attr = pRootElement->FirstAttribute(); attr; attr = attr->Next())
+			{
+				m_pChildNodes->AddNode(new CIXMLDOMNode(attr));
 			}
 		}
 		return true;

@@ -36,6 +36,8 @@
 
 struct IWindow;
 
+//forward declarations
+class CScriptSink;
 class CScriptObjectConsole;
 class CScriptObjectSystem;
 class CScriptObjectScript;
@@ -543,6 +545,9 @@ private:
 
 	CTimeValue                                                             m_lastTickTime;
 
+	//////////////////////////////////////////////////////////////////////////
+
+	CScriptSink*																													 m_pScriptSink;
 	CScriptObjectConsole*                                                  m_ScriptObjectConsole  = nullptr;
 	CScriptObjectSystem*                                                   m_ScriptObjectSystem   = nullptr;
 	CScriptObjectSound*                                                    m_ScriptObjectSound    = nullptr;

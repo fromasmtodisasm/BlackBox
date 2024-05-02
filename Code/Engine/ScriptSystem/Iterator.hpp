@@ -22,7 +22,7 @@ struct Iterator
 	ScriptVarType value_type;
 	struct
 	{
-		bool resolvePrototypeTableAsWell;
+		bool resolvePrototypeTableAsWell = false;
 		int	 nStackMarker1; //!< Used for traversing our own table (this is typically the table that overrides properties from prototype tables).
 		int	 nStackMarker2; //!< Used after our own table is traversed; we then try to traverse the prototype table (gets retrieved via a potential metatable).
 	} internal;

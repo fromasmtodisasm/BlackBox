@@ -969,6 +969,16 @@ bool CSystem::Update(int updateFlags /* = 0*/, int nPauseMode /* = 0*/)
 	LAST = NOW;
 	NOW  = SDL_GetPerformanceCounter();
 
+	//////////////////////////////////////////////////////////////////////////
+// Update script system.
+	//if (m_pScriptSink)
+	{
+		FRAME_PROFILER("SysUpdate:ScriptSink", PROFILE_SYSTEM);
+
+		UpdateScriptSink();
+	}
+
+
 #if 0
 	if (!nPauseMode)
 #endif

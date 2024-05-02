@@ -172,7 +172,6 @@ bool CXSystemBase::LoadLevelEntities(SMissionInfo& missionInfo)
 	// is missing it will erroneuosly reuse the previous mission script!
 	m_pGame->GetScriptSystem()->SetGlobalToNull("Mission");
 
-#if 0
 	XDOM::IXMLDOMNodePtr pScriptName = missionInfo.pMissionXML->getAttribute("Script");						
 	if (pScriptName)
 	{		
@@ -186,6 +185,8 @@ bool CXSystemBase::LoadLevelEntities(SMissionInfo& missionInfo)
 			m_pGame->GetScriptSystem()->EndCall();
 		}															
 	}
+// FIXME: HACK!!!
+#if 0
 	LoadXMLNode( missionInfo.pMissionXML,bSpawn );
 	BindChildren();
 
@@ -1302,12 +1303,10 @@ void CXSystemBase::EndLoading(bool bEditor)
 		m_pEntitySystem->SetPrecacheResourcesMode(false);
 	}
 
-#if 0
-	m_pSystem->GetITimer()->Reset();	// reset timer (cause problems?)
+	m_pSystem->GetITimer()->ResetTimer();	// reset timer (cause problems?)
 
-	m_pSystem->GetITimer()->Update();	// refresh frametime - because the former frame was used for loading
+	//m_pSystem->GetITimer()->Update();	// refresh frametime - because the former frame was used for loading
 	m_pSystem->UpdateScriptSink();		// update _time and _frametime
-#endif
 
 	// Reset system Camera, (This camera will not render anything until set to correct values)
 	m_pSystem->GetViewCamera().SetPos(Legacy::Vec3(0, 0, 0));
@@ -1411,10 +1410,10 @@ void CXSystemBase::GetMission( XDOM::IXMLDOMDocument *doc,const char *sRequested
 //////////////////////////////////////////////////////////////////////
 bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 {
-#if 0
 	// Start time of level loading.
-	CTimeValue time0 = m_pSystem->GetITimer()->GetCurrTimePrecise();
-#endif
+	//CTimeValue time0 = m_pSystem->GetITimer()->GetCurrTimePrecise();
+	auto time0 = m_pSystem->GetITimer()->GetAsyncCurTime();
+
 	AutoSuspendTimeQuota AutoSuspender(m_pSystem->GetStreamEngine());
 
 	string               sPreviousLevelFolder = m_pGame->m_currentLevelFolder;
@@ -1565,10 +1564,8 @@ bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 // Start loading common stuff.
 //////////////////////////////////////////////////////////////////////////
 //load the materials names
-#if 0
 	if(!LoadMaterials(missionInfo.pLevelDataXML))
 		return false;
-#endif
 
 	// reload the previously unloaded models since the materials are now reloaded
 	if (m_pGame->m_pUISystem)
@@ -1610,10 +1607,8 @@ bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 	}
 
 // Init Weapon system.
-#if 0
 	if (m_pGame->GetWeaponSystemEx())
 		m_pGame->GetWeaponSystemEx()->Init(m_pGame, false);
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Load Movie Data.
@@ -1674,11 +1669,9 @@ bool CXSystemBase::LoadLevelCommon(SMissionInfo& missionInfo)
 //////////////////////////////////////////////////////////////////////////
 // Log to file level loading time.
 //////////////////////////////////////////////////////////////////////////
-#if 0
-	CTimeValue timeLoad = m_pSystem->GetITimer()->GetCurrTimePrecise() - time0;
+	CTimeValue timeLoad = m_pSystem->GetITimer()->GetAsyncCurTime() - time0;
 	// Log level load times.
 	m_pLog->LogToFile( "\001 Level %s loaded in %.3f seconds",missionInfo.sLevelName.c_str(),timeLoad.GetSeconds() );
-#endif
 	//////////////////////////////////////////////////////////////////////////
 
 	m_pGame->GetSystem()->GetIEntitySystem()->PauseTimers(false, true);

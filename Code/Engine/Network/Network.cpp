@@ -4,6 +4,7 @@
 #include "Server.hpp"
 
 #include "NetServerSnooper.h"
+#include "ServerSnooper.h"
 
 #include <BlackBox/Core/ICompressionHelper.hpp>
 #include <BlackBox/Core/Platform/platform_impl.inl>
@@ -563,7 +564,13 @@ INETServerSnooper* CNetwork::CreateNETServerSnooper(INETServerSnooperSink* pSink
 
 IServerSnooper* CNetwork::CreateServerSnooper(IServerSnooperSink* pSink)
 {
-	return nullptr;
+	CServerSnooper* pSnooper = new CServerSnooper;
+	if (!pSnooper->Init(pSink))
+	{
+		delete pSnooper;
+		return NULL;
+	}
+	return pSnooper;
 }
 
 const char* CNetwork::EnumerateError(uint32_t err)

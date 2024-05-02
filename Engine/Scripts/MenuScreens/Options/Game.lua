@@ -268,7 +268,6 @@ UI.PageOptionsGame=
 
 			for i, Color in pairs(MultiplayerUtils.ModelColor) do
 				local szColor = min(255, floor(Color[1]*255)).." "..min(255, floor(Color[2]*255)).." "..min(255, floor(Color[3]*255)).." 255";
-
 				UI.PageOptionsGame.GUI.pcolor:AddItem("", nil, nil, szColor);
 			end
 

@@ -30,6 +30,8 @@ add_sources(
 		"MemoryManager.cpp"
 		"NullLog.cpp"
 		"RemoteConsole/RemoteConsole.cpp"
+		"ScriptSink.cpp"
+		"ScriptSink.h"
 		"System.cpp"
 		"SystemCFG.cpp"
 		"SystemEventDispatcher.cpp"

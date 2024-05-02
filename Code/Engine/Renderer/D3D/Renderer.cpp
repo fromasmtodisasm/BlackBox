@@ -129,8 +129,18 @@ bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDe
 	return false;
 }
 
+static bool whiteTextureLoaded = false;
+
 void CD3DRenderer::BeginFrame(void)
 {
+	if (!whiteTextureLoaded)
+	{
+		auto id = LoadTexture("Textures/white");
+
+		auto& pT = m_TexturesMap[id];
+		m_TexturesMap[-1] = pT;
+		whiteTextureLoaded = true;
+	}
 	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
 	auto pDC = m_Device->Get<ID3D11DeviceContext>();
 	if (EDITOR)
@@ -489,7 +499,17 @@ void CD3DRenderer::Draw2dImage(float xpos, float ypos, float w, float h, int tex
 #endif
 	xpos = (float)ScaleCoordX(xpos); w = (float)ScaleCoordX(w);
 	ypos = (float)ScaleCoordY(ypos); h = (float)ScaleCoordY(h);
-	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, 1 - t0, s1, 1 - t1, color4f{r, g, b, a}, z});
+	if ((s0 == 0 && t0 == 0 && s1 == 0 && t1 == 0) || (s1==1.f && t1 ==1.f))
+	{
+		s1 = 1;
+		t1 = 1;
+	}
+	else
+	{
+		t0 = 1 - t0;
+		t1 = 1 - t1;
+	}
+	m_DrawImages.push_back({xpos, ypos, w, h, texture_id, s0, t0, s1, t1, color4f{r, g, b, a}, z});
 
 #if 1
 	Image2D img = m_DrawImages.back();

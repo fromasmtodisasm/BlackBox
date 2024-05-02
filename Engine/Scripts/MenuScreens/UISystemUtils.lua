@@ -378,8 +378,8 @@ function GotoPage(PageName, Back, HideBackground)
 		UI:DisableWidget("Video", "BackScreen");
 		UI:HideWidget("Video", "BackScreen");
 		UI:HideWidget("StaticImage","BackScreen");
-		--UI:HideWidget("Header", "BackScreen");
-		--UI:HideWidget("Footer", "BackScreen");
+		UI:HideWidget("Header", "BackScreen");
+		UI:HideWidget("Footer", "BackScreen");
 		UI:HideWidget("Ad", "BackScreen");
 		UI:HideBackground();
 	else
@@ -392,8 +392,8 @@ function GotoPage(PageName, Back, HideBackground)
 			UI:HideWidget("Video", "BackScreen");
 			UI:ShowWidget(UI.PageBackScreen.GUI.StaticImage);
 		end
-		--UI:ShowWidget("Header", "BackScreen");
-		--UI:ShowWidget("Footer", "BackScreen");
+		UI:ShowWidget("Header", "BackScreen");
+		UI:ShowWidget("Footer", "BackScreen");
 		UI:ShowWidget("Ad", "BackScreen");
 	end
 	-- FIXME: remove it

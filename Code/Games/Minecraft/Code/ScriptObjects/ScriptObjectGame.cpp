@@ -940,6 +940,13 @@ int CScriptObjectGame::GetServerList(IFunctionHandler* pH)
 	_SmartScriptObject pObj(m_pScriptSystem);
 	int                k = 1;
 
+	// FIXME: HACK!!!
+#if 1337 
+	auto& infos = m_pGame->m_ServersInfos;
+	infos.clear();
+	infos[CIPAddress(4444, "localhost")] = SXServerInfos();
+#endif
+
 	for (ServerInfosVecItor i = m_pGame->m_ServersInfos.begin(); i != m_pGame->m_ServersInfos.end(); i++)
 	{
 		SXServerInfos      tServInfo = (*i).second;

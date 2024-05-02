@@ -197,7 +197,7 @@ UI.PageLANServerList=
 
 		ServerListView:Clear();
 
-		for iIndex, Server in ServerList do		
+		for iIndex, Server in pairs(ServerList) do		
 			if (Server.CheatsEnabled and Server.CheatsEnabled ~= 0) then
 				Server.Name = "[cheats] " .. Server.Name;
 			end
@@ -314,7 +314,7 @@ UI.PageLANServerList=
 
 				end
 			else
-				printf("Not showing internet server: %s",Server.IP);
+				System:Log(string.format("Not showing internet server: %s",Server.IP));
 			end
 			
 		end

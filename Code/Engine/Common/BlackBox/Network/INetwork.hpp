@@ -14,6 +14,18 @@
 
 	#include <vector> // STL vector<>
 
+	#define NRESULT	DWORD
+
+	#define NET_OK		0x00000000
+	#define NET_FAIL	0x80000000
+
+	#define NET_FAILED(a)(((a)&NET_FAIL)?1:0)
+	#define NET_SUCCEDED(a)(((a)&NET_FAIL)?0:1)
+
+	#define MAKE_NRESULT(severity, facility, code)(severity | facility | code)
+	#define NET_FACILITY_SOCKET 0x01000000
+
+
 	#define DEFAULT_SERVERPORT       49001
 	#define DEFAULT_SERVERPORT_STR   "49001"
 

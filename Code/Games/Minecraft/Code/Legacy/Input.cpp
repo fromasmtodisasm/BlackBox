@@ -279,7 +279,7 @@ Legacy::IMouse* Legacy::CInput::GetIMouse()
 
 const char* Legacy::CInput::GetKeyName(int nKey, int modifiers, bool bGUI)
 {
-	return nullptr;
+	return m_Keyboard.m_pKeyboard->GetKeyName(EKeyId(nKey));
 }
 
 bool Legacy::CInput::GetOSKeyName(int nKey, wchar_t* szwKeyName, int iBufSize)
@@ -332,18 +332,18 @@ unsigned char Legacy::CInput::GetKeyState(int nKey)
 	return 0;
 }
 
-inline Legacy::CKeyboard::CKeyboard()
+Legacy::CKeyboard::CKeyboard()
 {
 	m_pKeyboard = Env::Input()->GetDevice(0, EInputDeviceType::eIDT_Keyboard);
 }
 
-inline void Legacy::CKeyboard::ShutDown()
+void Legacy::CKeyboard::ShutDown()
 {
 }
 
 //! check for key pressed and held
 
-inline bool Legacy::CKeyboard::KeyDown(int p_key)
+bool Legacy::CKeyboard::KeyDown(int p_key)
 {
 	auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));
 	if (key == nullptr)
@@ -357,7 +357,7 @@ inline bool Legacy::CKeyboard::KeyDown(int p_key)
 
 //! check for key pressed only once
 
-inline bool Legacy::CKeyboard::KeyPressed(int p_key)
+bool Legacy::CKeyboard::KeyPressed(int p_key)
 {
 	auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));
 	return m_pKeyboard->InputState(key, EInputState::eIS_Pressed);
@@ -365,7 +365,7 @@ inline bool Legacy::CKeyboard::KeyPressed(int p_key)
 
 //! check if the key has been released
 
-inline bool Legacy::CKeyboard::KeyReleased(int p_key)
+bool Legacy::CKeyboard::KeyReleased(int p_key)
 {
 	auto key = m_pKeyboard->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_key));
 	return m_pKeyboard->InputState(key, EInputState::eIS_Released);
@@ -373,20 +373,20 @@ inline bool Legacy::CKeyboard::KeyReleased(int p_key)
 
 //! clear the key status
 
-inline void Legacy::CKeyboard::ClearKey(int p_key)
+void Legacy::CKeyboard::ClearKey(int p_key)
 {
 }
 
 //! return the code of the key pressed
 
-inline int Legacy::CKeyboard::GetKeyPressedCode()
+int Legacy::CKeyboard::GetKeyPressedCode()
 {
 	return XKEY_NULL;
 }
 
 //! return the name of the key pressed
 
-inline const char* Legacy::CKeyboard::GetKeyPressedName()
+const char* Legacy::CKeyboard::GetKeyPressedName()
 {
 	auto name = m_pKeyboard->GetKeyName(m_LastKey);
 	if (m_LastKey == eKI_Space)
@@ -399,38 +399,38 @@ inline const char* Legacy::CKeyboard::GetKeyPressedName()
 
 //! return the code of the key down
 
-inline int Legacy::CKeyboard::GetKeyDownCode()
+int Legacy::CKeyboard::GetKeyDownCode()
 {
 	return XKEY_NULL;
 }
 
 //! return the name of the key down
 
-inline const char* Legacy::CKeyboard::GetKeyDownName()
+const char* Legacy::CKeyboard::GetKeyDownName()
 {
 	return "XKEY_NULL";
 }
 
 //! set/unset directinput to exclusive mode
 
-inline void Legacy::CKeyboard::SetExclusive(bool value, void* hwnd)
+void Legacy::CKeyboard::SetExclusive(bool value, void* hwnd)
 {
 }
 
 //! wait for a key pressed
 
-inline void Legacy::CKeyboard::WaitForKey()
+void Legacy::CKeyboard::WaitForKey()
 {
 }
 
 //! clear the key (pressed) state
 
-inline void Legacy::CKeyboard::ClearKeyState()
+void Legacy::CKeyboard::ClearKeyState()
 {
 	m_pKeyboard->ClearKeyState();
 }
 
-inline void Legacy::CKeyboard::Update()
+void Legacy::CKeyboard::Update()
 {
 	m_LastKey = eKI_Unknown;
 	for (auto key = KI_KEYBOARD_BASE; key < KI_MOUSE_BASE; key++)
@@ -441,4 +441,141 @@ inline void Legacy::CKeyboard::Update()
 			m_LastKey = EKeyId(key);
 		}
 	}
+}
+
+Legacy::CMouse::CMouse()
+{
+	m_pMouse = Env::Input()->GetDevice(0, EInputDeviceType::eIDT_Mouse);
+}
+
+void Legacy::CMouse::Shutdown()
+{
+}
+
+//! check for a mouse button pressed and held
+
+bool Legacy::CMouse::MouseDown(int p_numButton)
+{
+	auto key = m_pMouse->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_numButton));
+	return m_pMouse->InputState(key, EInputState::eIS_Down);
+	return true;
+}
+
+//! check for a mouse button pressed only once
+
+bool Legacy::CMouse::MousePressed(int p_numButton)
+{
+	auto key = m_pMouse->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_numButton));
+	return m_pMouse->InputState(key, EInputState::eIS_Pressed);
+}
+
+//! check if the mouse button has been released
+
+bool Legacy::CMouse::MouseReleased(int p_numButton)
+{
+	auto key = m_pMouse->GetKeyName(Input::kconvertKey((Legacy::KeyCodes)p_numButton));
+	return m_pMouse->InputState(key, EInputState::eIS_Released);
+}
+
+//! force the mouse wheel rotation to a certain value
+
+void Legacy::CMouse::SetMouseWheelRotation(int value)
+{
+}
+
+//! set/reset Directinput to exclusive mode
+
+bool Legacy::CMouse::SetExclusive(bool value, void* hwnd)
+{
+	return false;
+}
+
+//! get mouse X delta (left-right)
+
+float Legacy::CMouse::GetDeltaX()
+{
+	return 0.f;
+}
+
+//! get mouse Y delta (up-down)
+
+float Legacy::CMouse::GetDeltaY()
+{
+	return 0.f;
+}
+
+//! get mouse Z delta (mouse wheel)
+
+float Legacy::CMouse::GetDeltaZ()
+{
+	return 0.f;
+}
+
+//! set mouse inertia
+
+void Legacy::CMouse::SetInertia(float)
+{
+}
+
+//! set mouse X screen corrdinate
+
+void Legacy::CMouse::SetVScreenX(float fX)
+{
+}
+
+//! set mouse Y screen corrdinate
+
+void Legacy::CMouse::SetVScreenY(float fY)
+{
+}
+
+//! get mouse X screen corrdinate
+
+float Legacy::CMouse::GetVScreenX()
+{
+	float x, y;
+	Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
+	return x / Env::Renderer()->ScaleCoordX(1.f);
+}
+
+//! get mouse Y screen corrdinate
+
+float Legacy::CMouse::GetVScreenY()
+{
+	float x, y;
+	Env::HardwareMouse()->GetHardwareMouseClientPosition(&x, &y);
+	return y / Env::Renderer()->ScaleCoordY(1.f);
+}
+
+//! set the mouse sensitivity
+
+void Legacy::CMouse::SetSensitvity(float fSensitivity)
+{
+}
+
+//! get the mouse sensitivity
+
+float Legacy::CMouse::GetSensitvity()
+{
+	return 0.f;
+}
+
+//! set the mouse sensitivity scale (from 0 to 1)
+
+void Legacy::CMouse::SetSensitvityScale(float fSensScale)
+{
+}
+
+//! get the mouse sensitivity scale
+
+float Legacy::CMouse::GetSensitvityScale()
+{
+	return 0.f;
+}
+
+//! clear the key states
+
+void Legacy::CMouse::ClearKeyState()
+{
+	m_pMouse->ClearKeyState();
 }

@@ -26,28 +26,29 @@ add_sources(
 		GameSystem/XSystemServer.cpp
 		GameSystem/XSystemServer.h
 	SOURCE_GROUP "GameFiles"
-		GameFiles/GameObject.h
 		# GameFiles/GameGUI.cpp
+		GameFiles/CameraController.cpp
 		GameFiles/DevMode.cpp
 		GameFiles/EntityClassRegistry.cpp
 		GameFiles/Game.cpp
-		GameFiles/Minecraft.cpp
 		GameFiles/GameActionInput.cpp
 		GameFiles/GameCallbacks.cpp
 		GameFiles/GameClientServer.cpp
 		GameFiles/GameDevMode.cpp
+		GameFiles/GameEquipPacks.cpp
 		GameFiles/GameEvents.cpp
 		GameFiles/GameLoading.cpp
 		GameFiles/GameMemStats.cpp
 		GameFiles/GameMisc.cpp
 		GameFiles/GameMods.cpp
 		GameFiles/GameMovieUser.cpp
+		GameFiles/GameObject.h
 		GameFiles/GameTagPoints.cpp
+		GameFiles/Minecraft.cpp
 		GameFiles/SteamHelper.cpp
 		GameFiles/XArea.cpp
 		GameFiles/XArea.h
 		GameFiles/XVehicleSystem.cpp
-		GameFiles/CameraController.cpp
 	SOURCE_GROUP "Network"
 		Network/NetEntityInfo.cpp
 		Network/SynchedRandomSeed.cpp
