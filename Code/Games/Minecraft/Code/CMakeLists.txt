@@ -62,14 +62,17 @@ add_sources(
 		Player/Spectator.h
 		Player/AdvCamSystem.cpp
 		Player/AdvCamSystem.h
+	SOURCE_GROUP "ScoreBoard"
+		ScoreBoard/Synched2DTable.cpp
 	SOURCE_GROUP "ScriptObjects"
 		ScriptObjects/ScriptObjectClient.cpp
 		ScriptObjects/ScriptObjectGame.cpp
-		ScriptObjects/ScriptObjectPlayer.cpp
 		ScriptObjects/ScriptObjectInput.cpp
+		ScriptObjects/ScriptObjectPlayer.cpp
 		ScriptObjects/ScriptObjectServer.cpp
 		ScriptObjects/ScriptObjectServerSlot.cpp
 		ScriptObjects/ScriptObjectStream.cpp
+		ScriptObjects/ScriptObjectSynched2DTable.cpp
 		ScriptObjects/ScriptObjectTest.cpp
 		ScriptObjects/ScriptTimerMgr.cpp
 	SOURCE_GROUP "Server"

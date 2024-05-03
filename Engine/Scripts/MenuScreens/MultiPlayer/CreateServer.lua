@@ -541,7 +541,7 @@ UI.PageCreateServer=
 			else
 				UI.PageCreateServer.GUI.MODCombo:Clear();
 
-				for name, MOD in AvailableMODList do
+				for name, MOD in pairs(AvailableMODList) do
 					UI.PageCreateServer.GUI.MODCombo:AddItem(name);
 				end
 
@@ -576,7 +576,7 @@ UI.PageCreateServer=
 		UI.PageCreateServer.LevelList = {};
 		
 		-- create the tables
-		for name, MOD in AvailableMODList do
+		for name, MOD in pairs(AvailableMODList) do
 			local szMission = MOD.mission;
 			
 			UI.PageCreateServer.LevelList[szMission] = {};
@@ -586,11 +586,12 @@ UI.PageCreateServer=
 		local LevelList = Game:GetLevelList();
 	
 		-- go through all the levels
-		for LevelIndex, Level in LevelList do
+		for LevelIndex, Level in pairs(LevelList) do
 			-- all mission names
-			for MissionIndex, MissionName in Level.MissionList do
+			for MissionIndex, MissionName in pairs(Level.MissionList) do
+				System:Log("MissionName: " .. MissionName)
 				-- get the mission names that are supported, and insert them in the appropriate table
-				for name, AvailableMOD in AvailableMODList do
+				for name, AvailableMOD in pairs(AvailableMODList) do
 					local szMission = AvailableMOD.mission;
 			
 					if (strlower(MissionName) == strlower(szMission)) then
@@ -611,7 +612,7 @@ UI.PageCreateServer=
 		if (szMOD) then
 			local szMission = AvailableMODList[strupper(szMOD)].mission;
 			
-			for i, szLevelName in UI.PageCreateServer.LevelList[szMission] do
+			for i, szLevelName in pairs(UI.PageCreateServer.LevelList[szMission]) do
 				UI.PageCreateServer.GUI.LevelCombo:AddItem(szLevelName);
 			end
 		end
@@ -800,14 +801,14 @@ UI.PageCreateServer=
 
 		-- find the maximum length of varname
 		-- to output a pretty aligned file
-		for i, szVarName in VarNameList do
+		for i, szVarName in ipairs(VarNameList) do
 			iNameLen = strlen(szVarName);
 			if (iNameLen > iNameMaxLen) then
 				iNameMaxLen = iNameLen;
 			end
 		end
 		
-		for i, szVarName in VarNameList do
+		for i, szVarName in ipairs(VarNameList) do
 			local szValue = Game:GetVariable(szVarName);
 			
 			if (szValue == nil) then
@@ -1095,7 +1096,7 @@ UI.PageServerLoadProfile=
 		
 		local iSelection = 0;
 
-		for i, ProfileName in ProfileTable do
+		for i, ProfileName in pairs(ProfileTable) do
 			local szPattern = "_server.cfg";
 			local iPatternLen = strlen(szPattern);
 			if (strsub(ProfileName, -iPatternLen) == szPattern) then

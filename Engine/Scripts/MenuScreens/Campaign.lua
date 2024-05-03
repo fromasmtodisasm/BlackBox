@@ -209,7 +209,8 @@ UI.PageCampaignStart=
 		
 		LevelLabel=
 		{
-			skin = UI.skins.MenuBorder,
+			--skin = UI.skins.MenuBorder,
+			classname = "static";
 			left = 588, top = 147,
 			width = 184, height = 28,
 			
@@ -218,6 +219,8 @@ UI.PageCampaignStart=
 			halign = UIALIGN_CENTER,
 			
 			text = Localize("Level");
+
+			color = "255 255 255 255";
 		},
 
 		MapList=
@@ -288,20 +291,22 @@ UI.PageCampaignStart=
 		
 		OnActivate = function(Sender)
 		
-			if (UI.iStat or (System:IsDevModeEnable() == 1)) then
+			--if (UI.iStat or (System:IsDevModeEnable() == 1)) then
 				UI:ShowWidget(UI.PageCampaignStart.GUI.MapList);
 				UI:ShowWidget(UI.PageCampaignStart.GUI.LevelLabel);
-			else
-				UI:HideWidget(UI.PageCampaignStart.GUI.MapList);
-				UI:HideWidget(UI.PageCampaignStart.GUI.LevelLabel);
-			end
+			--else
+				--UI:HideWidget(UI.PageCampaignStart.GUI.MapList);
+				--UI:HideWidget(UI.PageCampaignStart.GUI.LevelLabel);
+			--end
 			
 			-- TEMPORARY
 			-- TEMPORARY
 			UI.PageCampaignStart.GUI.MapList:Clear();			
 			UI.PageCampaignStart.DefiantTable = {};
 			
-			for i, Table in pairs(DEFIANT) do
+			System:Log("DEFIANT2")
+			for i, Table in ipairs(DEFIANT) do
+				System:Log("Level: "..Table[1])
 				UI.PageCampaignStart.DefiantTable[UI.PageCampaignStart.GUI.MapList:AddItem("@Level"..Table[1])] = Table;
 			end
 
@@ -568,7 +573,7 @@ UI.PageCampaignLoad	=
 			UI.PageCampaignLoad.LevelList = {};
 			local LevelList = UI.PageCampaignLoad.LevelList;
 				
-			for i, SaveGame in pairs(UI.PageCampaignLoad.SaveList) do
+			for i, SaveGame in ipairs(UI.PageCampaignLoad.SaveList) do
 				if (not LevelList[SaveGame.Level]) then
 					LevelList[SaveGame.Level] = {};
 				end
@@ -636,8 +641,12 @@ UI.PageCampaignLoad	=
 		UI.PageCampaignLoad.DefiantTable = {};
 		-- this is needed so that the levels are in order of appearence
 		-- it's not efficient, but it's fast implemented, and no changes needed
-		for i, Level in pairs(DEFIANT) do
+		System:Log("DEFIANT3 PopulateLevelList")
+		for i, Level in ipairs(DEFIANT) do
+			System:Log("DEFIANT3: "..Level[1])
 			for szLevelName, CheckPointList in pairs(LevelList) do
+				
+				System:Log("DEFIANT4: "..szLevelName)
 				if (strlower(tostring(szLevelName)) == strlower(tostring(Level[1]))) then
 					UI.PageCampaignLoad.DefiantTable[ListView:AddItem("@Level"..Level[1])] = Level;
 					break;
@@ -930,7 +939,7 @@ UI.PageTimeZone=
 			UI.PageTimeZone.DefiantTable = {};
 	
 			System:Log("DEFIANT")
-			for i, Table in pairs(DEFIANT) do
+			for i, Table in ipairs(DEFIANT) do
 				System:Log(i)
 				UI.PageTimeZone.DefiantTable[UI.PageTimeZone.GUI.MapList:AddItem("@Level"..Table[1])] = Table;				
 			end			

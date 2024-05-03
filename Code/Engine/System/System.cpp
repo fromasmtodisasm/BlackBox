@@ -1360,7 +1360,9 @@ XmlNodeRef CSystem::LoadXmlFromString(const char* sXmlString)
 
 XmlNodeRef CSystem::LoadXmlFile(const char* sFilename)
 {
-	return {};
+	XmlParser parser;
+	XmlNodeRef node = parser.parse(sFilename);
+	return node;
 }
 
 void CSystem::UpdateScriptSink()

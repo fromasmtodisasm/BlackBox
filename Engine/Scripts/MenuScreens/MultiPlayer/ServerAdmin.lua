@@ -1358,7 +1358,7 @@ UI.PageServerAdmin=
         OnActivate = function(Sender)
             UI.PageServerAdmin.GUI.RCONMODList:Clear();
 
-            for name, MOD in AvailableMODList do
+            for name, MOD in pairs(AvailableMODList) do
                 UI.PageServerAdmin.GUI.RCONMODList:AddItem(name);
             end
             UI.PageServerAdmin.RefreshLevelList();
@@ -1379,7 +1379,7 @@ UI.PageServerAdmin=
         if (szMOD) then
             local szMission = AvailableMODList[strupper(szMOD)].mission;
             
-            for i, szLevelName in UI.PageServerAdmin.LevelList[szMission] do
+            for i, szLevelName in pairs(UI.PageServerAdmin.LevelList[szMission]) do
                 UI.PageServerAdmin.GUI.RCONMapList:AddItem(szLevelName);
             end
         end
@@ -1391,7 +1391,7 @@ UI.PageServerAdmin=
         UI.PageServerAdmin.LevelList = {};
         
         -- create the tables
-        for name, MOD in AvailableMODList do
+        for name, MOD in pairs(AvailableMODList) do
             local szMission = MOD.mission;
             
             UI.PageServerAdmin.LevelList[szMission] = {};
@@ -1401,11 +1401,11 @@ UI.PageServerAdmin=
         local LevelList = Game:GetLevelList();
 
         -- go through all the levels
-        for LevelIndex, Level in LevelList do
+        for LevelIndex, Level in pairs(LevelList) do
             -- all mission names
-            for MissionIndex, MissionName in Level.MissionList do
+            for MissionIndex, MissionName in pairs(Level.MissionList) do
                 -- get the mission names that are supported, and insert them in the appropriate table
-                for name, AvailableMOD in AvailableMODList do
+                for name, AvailableMOD in pairs(AvailableMODList) do
                     local szMission = AvailableMOD.mission;
 
                     if (strlower(MissionName) == strlower(szMission)) then

@@ -10,6 +10,8 @@
 #include <ScriptObjects/ScriptObjectStream.hpp>
 #include <ScriptObjects/ScriptObjectTest.hpp>
 #include <ScriptObjects/ScriptTimerMgr.hpp>
+#include <ScriptObjects/ScriptObjectSynched2DTable.h>			// CScriptObjectSynched2DTable
+
 #include <Localization/ScriptObjectLanguage.h>
 #include <Localization/StringTableMgr.h>
 
@@ -307,10 +309,10 @@ CXGame::~CXGame()
 	CScriptObjectVehicle::ReleaseTemplate();
 	CScriptObjectSpectator::ReleaseTemplate();
 	CScriptObjectAdvCamSystem::ReleaseTemplate();
-	CScriptObjectSynched2DTable::ReleaseTemplate();
 	CScriptObjectBoids::ReleaseTemplate();
 	CScriptObjectRenderer::ReleaseTemplate();
 #endif
+	CScriptObjectSynched2DTable::ReleaseTemplate();
 	CScriptObjectGame::ReleaseTemplate();
 	CScriptObjectInput::ReleaseTemplate();
 	CScriptObjectLanguage::ReleaseTemplate();
@@ -477,9 +479,7 @@ bool CXGame::InitClassRegistry()
 			if (strcmp("Projectile", entity_type) == 0)
 			{
 // cannot be loaded at that point - other scripts must be loaded before
-#if 0
 				pWeaponSystemEx->AddProjectileClass(ClassId);
-#endif
 			}
 		}
 	} while (entCls);
@@ -692,9 +692,9 @@ bool CXGame::Init(ISystem* pSystem, bool bDedicatedSrv, bool bInEditor, const ch
 	CScriptObjectVehicle::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectSpectator::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectAdvCamSystem::InitializeTemplate(m_pScriptSystem);
-	CScriptObjectSynched2DTable::InitializeTemplate(m_pScriptSystem);
 	CScriptObjectRenderer::InitializeTemplate(m_pScriptSystem);
 #endif
+	CScriptObjectSynched2DTable::InitializeTemplate(m_pScriptSystem);
 
 	m_pScriptObjectGame->Init(m_pScriptSystem, this);
 	m_pScriptObjectInput->Init(m_pScriptSystem, this, m_pSystem);
@@ -1409,7 +1409,6 @@ void CXGame::GotoMenu(bool bTriggerOnSwitch)
 	}
 	else if (bTriggerOnSwitch)
 	{
-		assert(0 && __FUNCTION__);
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(1);
 	}
 }
@@ -1429,7 +1428,6 @@ void CXGame::GotoGame(bool bTriggerOnSwitch)
 	}
 	else if (bTriggerOnSwitch)
 	{
-		assert(0 && __FUNCTION__);
 		m_pUISystem->GetScriptObjectUI()->OnSwitch(0);
 	}
 }
@@ -2031,6 +2029,37 @@ bool CXGame::GetLevelMissions(const char* szLevelDir, std::vector<string>& missi
 				}
 			}
 		}
+	}
+#else
+	XDOM::IXMLDOMDocumentPtr pDoc = m_pSystem->CreateXMLDocument();
+	if (!pDoc->load(sEPath.c_str()))
+		return false;
+	XDOM::IXMLDOMNodeListPtr pNodes = pDoc->getChildNodes();
+	if (pNodes)
+	{
+		pNodes->reset();
+		XDOM::IXMLDOMNodePtr current;
+		while (current = pNodes->nextNode())
+		{
+			if (strcmp(current->getName(), "Missions") == 0)
+			{
+				bResult = true;
+				auto missionsNodes = current->getChildNodes();
+
+				XDOM::IXMLDOMNodePtr current;
+				missionsNodes->reset();
+				while (current = missionsNodes->nextNode())
+				{
+					auto name = current->getAttribute("Name");
+					if (name)
+						missions.push_back(name->getText());
+				}
+			}
+		}
+		/*XDOM::IXMLDOMNodePtr pEquipNode;
+		pNodes->reset();
+		while (pEquipNode = pNodes->nextNode())
+			AddEquipPack(pEquipNode);*/
 	}
 #endif
 

@@ -41,6 +41,10 @@ function getglobal (varname)
 	--if (varname == "g_language") then
 	--	System:Error("g_language!!!!!!!!!!!")
 	--end
+	if varname == nil then 
+		System:Log(debug.traceback())
+		return 	nil 
+	end
 	local value = rawget(globals(), varname)
 	return value or Game:GetVariable(varname)
 end
@@ -66,6 +70,10 @@ end
 
 function closefile(file)
 	file:close()
+end
+
+function write(file, str)
+	file:write(str)
 end
 ----------------------------------------------------------------------------------
 
@@ -198,7 +206,7 @@ end
 -- C like printf
 -------------------------------------------------------
 function printf(...)
-  System:LogToConsole(string:format(arg))
+  System:Log(string.format(...))
 end
 -------------------------------------------------------
 -- C like sprintf

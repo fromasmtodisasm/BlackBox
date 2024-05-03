@@ -621,17 +621,19 @@ UI.PageOptionsVideo.GUI.widget_resolution.user.Initialize = function( self )
 
 	UI.PageOptionsVideo.GUI.widget_resolution.user.ScreenResolutionAndBpp = {};
 	local lTmpScreenResolutionAndBpp = System:EnumDisplayFormats();
+	System:Log("Numformats: "..getn(lTmpScreenResolutionAndBpp))
 
 	local ref = UI.PageOptionsVideo.GUI.widget_resolution.user.ScreenResolutionAndBpp;
 	local j = 1;
-	for i, DispFmt in pairs(lTmpScreenResolutionAndBpp) do
+	for i, DispFmt in ipairs(lTmpScreenResolutionAndBpp) do
 		if( DispFmt.bpp == 32 and DispFmt.width > 640 and DispFmt.height > 480 ) then -- filter modes, 32 bit and higher than 640x480 only!
 			ref[ j ] = DispFmt;
 			j = j + 1;
 		end
 	end
 
-	for i, DispFmt in pairs(ref) do
+	System:Log("Num refs: "..getn(ref))
+	for i, DispFmt in ipairs(ref) do
 		UI.PageOptionsVideo.GUI.widget_resolution:AddItem( DispFmt.width.."x"..DispFmt.height.."x"..DispFmt.bpp );
 	end
 

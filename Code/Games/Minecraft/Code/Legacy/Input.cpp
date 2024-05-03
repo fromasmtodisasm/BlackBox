@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "Input.hpp"
 
+float gLastMouseClickTime = 0.0f;
+bool gDblClick = false;
 Legacy::CInput::CInput(::IInput* pInput)
 	: m_pInput(pInput)
 {
+	gLastMouseClickTime = Env::System()->GetITimer()->GetAsyncCurTime();
 }
 
 void Legacy::CInput::AddEventListener(IInputEventListener* pListener)
@@ -49,6 +52,20 @@ Legacy::IInputEventListener* Legacy::CInput::GetExclusiveListener()
 void Legacy::CInput::Update(bool bFocus)
 {
 	m_Keyboard.Update();
+	gDblClick = false;
+
+
+	float fTime = Env::System()->GetITimer()->GetAsyncCurTime();
+	float fDiff = fTime - gLastMouseClickTime;
+	if (m_Mouse.MouseDown(Legacy::XKEY_MOUSE1))
+	{
+		gLastMouseClickTime = fTime;
+		CryLog("Pressed diff: %f", fDiff);
+		if ((fDiff) < 0.5f)
+		{
+			gDblClick = true;
+		}
+	}
 }
 
 void Legacy::CInput::ShutDown()
@@ -90,7 +107,7 @@ bool Legacy::CInput::MousePressed(int p_numButton)
 
 bool Legacy::CInput::MouseDblClick(int p_numButton)
 {
-	return false;
+	return gDblClick;
 }
 
 bool Legacy::CInput::MouseReleased(int p_numButton)

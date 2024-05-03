@@ -119,7 +119,7 @@ end
 function GetPlayers()
 	local players={}
 	local slots=Server:GetServerSlotMap()
-	for i, slot in slots do
+	for i, slot in pairs(slots) do
 	    local ent = System:GetEntity(slot:GetPlayerId());
 		if ent and ent.type=="Player" then
 		   players[ent.id]=ent;
@@ -167,7 +167,7 @@ function GameRules:UpdateTimeLimit(timelimit)
 	
 	local SlotMap = Server:GetServerSlotMap();
 	
-	for i, Slot in SlotMap do
+	for i, Slot in ipairs(SlotMap) do
 		self:SetPlayerTimeLimit(Slot);
 	end
 end
@@ -177,7 +177,7 @@ end
 function GameRules:ForceScoreBoard(yes)
 	local SlotMap = Server:GetServerSlotMap();
 
-	for i, Slot in SlotMap do
+	for i, Slot in ipairs(SlotMap) do
 		Game:ForceScoreBoard(Slot:GetPlayerId(), yes);
 	end
 end
@@ -187,7 +187,7 @@ end
 function GameRules:NewGameState(state)
 	local slots = Server:GetServerSlotMap();
 	
-	for i, slot in slots do
+	for i, slot in ipairs(slots) do
 		slot:SetGameState(state, _time-self.mapstart);
   end
   
@@ -348,7 +348,7 @@ function GameRules:GetFreeTeamRespawnPoint(team,entityToIgnore)
 	while (respawnPoint==nil) do
 		-- spawn at the first unoccupied tagpoint
 		
-		for key,pt in GameRules.RespawnPoints do
+		for key,pt in pairs(GameRules.RespawnPoints) do
 			if(pt.name==team)then
 				isPointExisting=1;
 --				pt.z = pt.z + dz;
@@ -398,7 +398,7 @@ end
 -- returns the number of intersecting players at a particular point
 function GameRules:IsIntersectingPlayerOrVehicle(x,y,z, ents, entityToIgnore)
 
-	for i, entity in ents do
+	for i, entity in pairs(ents) do
 		if (entity~=entityToIgnore and entity.type=="Player") then
 
 			local pos = entity:GetPos();
@@ -508,7 +508,7 @@ function GameRules:GetPlayerTeamCount( team )
 	local ret=0;
 	local slots = Server:GetServerSlotMap();
 
-	for i, slot in slots do
+	for i, slot in ipairs(slots) do
 		local player_id=slot:GetPlayerId();
 
 		if Game:GetEntityTeam(player_id)==team then
@@ -589,7 +589,7 @@ function GameRules:GetTeamMemberCountRL(team)
 	if (self.respawnList) then
 		local Slots = Server:GetServerSlotMap();
 		
-		for i,ServerSlot in Slots do
+		for i,ServerSlot in ipairs(Slots) do
 		
 			local RespawnInfo = self.respawnList[ServerSlot];
 			local szPlayerTeam;
@@ -689,7 +689,7 @@ end
 -------------------------------------------------------------------------------
 function GameRules:ResetReadyState(state)
 	local slots = Server:GetServerSlotMap();
-	for i, slot in slots do
+	for i, slot in ipairs(slots) do
 		slot:Ready(state);
 	end
 end
@@ -713,7 +713,7 @@ end
 -------------------------------------------------------------------------------
 function GameRules:GetGameState()
 	local curstate=self:GetState();
-	for i,val in self.states_map do
+	for i,val in ipairs(self.states_map) do
 		if(val==curstate)then
 			return i
 		end
@@ -777,7 +777,7 @@ function GameRules:OnClientConnect( server_slot, requested_classid )
 	if self.bShowUnitHightlight then
 		-- send "follow this player" command to the UnitHightlight objects
 	  local slots = Server:GetServerSlotMap();
-		for i, slot in slots do
+		for i, slot in ipairs(slots) do
 	    local ent = System:GetEntity(slot:GetPlayerId());
 	    
 	    if ent and ent.idUnitHighlight then
@@ -798,7 +798,7 @@ function GameRules:OnClientConnect( server_slot, requested_classid )
 	local SlotMap = Server:GetServerSlotMap();
 --	System:Log("Sending Team Color To "..server_slot:GetName().."...");
 	
-	for i, Slot in SlotMap do
+	for i, Slot in ipairs(SlotMap) do
 		local Player = GetSlotPlayer(Slot);
 		
 		if (Player and Player.ApplyTeamColor) then
@@ -853,7 +853,7 @@ function GameRules:OnUpdate()
 		if (tnow-lastConnectCheck) > 5 then  --check every 5 seconds
 			setglobal("gr_lastConnectCheck",tnow);
 			local Slots = Server:GetServerSlotMap();
-			for i,ServerSlot in Slots do
+			for i,ServerSlot in ipairs(Slots) do
 				local playerId = ServerSlot:GetPlayerId();
 				local player = System:GetEntity(playerId);
 				--System:LogAlways("checking : "..tostring(ServerSlot)); --xxx
@@ -992,7 +992,7 @@ function GameRules:COUNTDOWN_OnUpdate()
         	self:NewGameState(CGS_INPROGRESS);
         	
 	        local slots = Server:GetServerSlotMap();
-        	for i, slot in slots do
+        	for i, slot in ipairs(slots) do
 --	        	    local ent = System:GetEntity(slot:GetPlayerId());
 --	        	    if ent~=nil and ent.type=="Player" then
 --	        	        self:ChangeTeam(slot, Game:GetEntityTeam(ent.id), 1);
@@ -1108,7 +1108,7 @@ function GameRules:OnSpectatorSwitchModeRequest(spect)
 		return 
 	end;
 	
-	for id,ent in players do
+	for id,ent in pairs(players) do
 --		System:LogToConsole("pp");
 		if(curhost==0)then
 			spect.cnt:SetHost(id);
@@ -1160,7 +1160,7 @@ function GameRules:ResetMapEntities()
 	local entities=System:GetEntities();
 	
 	if(entities)then
-		for i,ent in entities do
+		for i,ent in pairs(entities) do
 			if(ent)then
 				if (ent.deleteOnGameReset) then
 					Server:RemoveEntity(ent.id);
@@ -1192,7 +1192,7 @@ function GameRules:ResetMapEntities()
 	-- respawn all players
 	
 	local slots = Server:GetServerSlotMap();
-	for i, slot in slots do
+	for i, slot in ipairs(slots) do
 		local ent=System:GetEntity(slot:GetPlayerId());
 
 		if ent and ent.type=="Player" then
@@ -1229,7 +1229,7 @@ end
 function GameRules:ReadyPlayersCount()
 	local count=0;
 	local slots = Server:GetServerSlotMap();
-	for i, slot in slots do
+	for i, slot in ipairs(slots) do
 		if(slot:IsReady())then
 			local ent=System:GetEntity(slot:GetPlayerId());
 			if(ent and ent.type=="Player")then
@@ -1473,7 +1473,7 @@ function GameRules:ResetPlayerScores(score, deaths)
 
 	local ServerSlotMap = Server:GetServerSlotMap();
 	
-	for i, Slot in ServerSlotMap do
+	for i, Slot in ipairs(ServerSlotMap) do
 		local Player = System:GetEntity(Slot:GetPlayerId());
 		
 		if (Player and (Player.type == "Player")) then
@@ -1651,7 +1651,7 @@ function GameRules:UsualScoreCalculation( hit, damage_ret )
 
 	-- send hud text message to all clients
 	local slots = Server:GetServerSlotMap();
-	for i, slot in slots do
+	for i, slot in ipairs(slots) do
 		if ss_shooter then
 --	    	System:Log(">>>> 2 PKP "..target.id.." "..ss_shooter:GetPlayerId().." "..situation);
 			slot:SendCommand("PKP "..target.id.." "..ss_shooter:GetPlayerId().." "..situation.." "..weapon);				-- usual print for others
@@ -2090,7 +2090,7 @@ function GameRules:DoGameRulesLibTimer()
 		if (not self.respawnCycleTimer or self.respawnCycleTimer<=0) then
 			bPerformedRespawn = 1;
 			if self.respawnList then
-				for server_slot,respawn_info in self.respawnList do
+				for server_slot,respawn_info in pairs(self.respawnList) do
 					
 					local prevPlayerEntity=GetSlotPlayer(server_slot);
 					
@@ -2181,7 +2181,7 @@ function GameRules:DoGameRulesLibTimer()
 
 	local slots = Server:GetServerSlotMap();
 	
-	for i, slot in slots do
+	for i, slot in ipairs(slots) do
 		local player = GetSlotPlayer(slot);
 		if (player and player.invulnerabilityTimer~=nil and player.ApplyTeamColor~=nil) then
 			player.invulnerabilityTimer = player.invulnerabilityTimer - 1;
@@ -2201,7 +2201,7 @@ function GameRules:DoGameRulesLibTimer()
 	-- process all entities - only done after a respawn wave :)
 	if ((bPerformedRespawn == 1) or (fRespawnTime == 0)) then
 		local ents=System:GetEntities();
-		for i, entity in ents do
+		for i, entity in pairs(ents) do
 			if (entity.type == "Phoenix") then
 				entity:RaiseFromAshes();
 			end
@@ -2220,7 +2220,7 @@ function GameRules:CountClass(server_slot, class, team)
 	
 	if (self.respawnList) then
 		local Slots = Server:GetServerSlotMap();
-		for i,ServerSlot in Slots do
+		for i,ServerSlot in ipairs(Slots) do
 			if server_slot~=ServerSlot then
 				local Player = GetSlotPlayer(ServerSlot);
 				local playerClass = "";

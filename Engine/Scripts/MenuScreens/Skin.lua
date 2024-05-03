@@ -21,7 +21,6 @@ function DefOnMouseLeave(self)
 end
 
 function DefOnGotFocus(self)
-	System:Log("GetFocus: ");
 	self:SetBorderColor(UI.szFocusColor);
 end
 
@@ -34,14 +33,10 @@ function DefOnMouseEnterSideButton(self)
 end
 
 function DefOnGotFocusButton(self)
-	--System:Log("GetFocus: ");
-	dump(self)
 	self:SetOverState(1);
 end
 
 function DefOnLostFocusButton(self)
-	--System:Log("LostFocus: ");
-	dump(self)
 	self:SetOverState(0);
 end
 
@@ -401,21 +396,21 @@ UI.skins=
 		bordersize = 1,
 		bordercolor = UI.szBorderColor,
 		
-		pathtexture = System:LoadImage("textures/gui/buttons.dds"),
-		downpathtexture = System:LoadImage("textures/gui/buttons_down.dds"),
-		overpathtexture = System:LoadImage("textures/gui/buttons_over.dds"),
+		pathtexture = System:LoadImage("textures/gui/buttons"),
+		downpathtexture = System:LoadImage("textures/gui/buttons_down"),
+		overpathtexture = System:LoadImage("textures/gui/buttons_over"),
 		pathtexrect = "2 2 1 1",	
-		slidertexture = System:LoadImage("textures/gui/buttons.dds"),
-		downslidertexture = System:LoadImage("textures/gui/buttons_down.dds"),
-		overslidertexture = System:LoadImage("textures/gui/buttons_over.dds"),
+		slidertexture = System:LoadImage("textures/gui/buttons"),
+		downslidertexture = System:LoadImage("textures/gui/buttons_down"),
+		overslidertexture = System:LoadImage("textures/gui/buttons_over"),
 		slidertexrect = "58 31 26 24",
-		minustexture = System:LoadImage("textures/gui/buttons.dds"),
-		downminustexture = System:LoadImage("textures/gui/buttons_down.dds"),
-		overminustexture = System:LoadImage("textures/gui/buttons_over.dds"),
+		minustexture = System:LoadImage("textures/gui/buttons"),
+		downminustexture = System:LoadImage("textures/gui/buttons_down"),
+		overminustexture = System:LoadImage("textures/gui/buttons_over"),
 		minustexrect = "3 31 24 24",
-		plustexture = System:LoadImage("textures/gui/buttons.dds"),
-		downplustexture = System:LoadImage("textures/gui/buttons_down.dds"),
-		overplustexture = System:LoadImage("textures/gui/buttons_over.dds"),	
+		plustexture = System:LoadImage("textures/gui/buttons"),
+		downplustexture = System:LoadImage("textures/gui/buttons_down"),
+		overplustexture = System:LoadImage("textures/gui/buttons_over"),	
 		plustexrect = "31 31 24 24",
 		
 		width = 200, height = 20,

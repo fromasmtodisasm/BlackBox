@@ -40,6 +40,8 @@ add_sources(
 		"SystemThreading.cpp"
 		"SystemWin32.cpp"
 		"Timer.cpp"
+		"Utils.cpp"
+		"Utils.h"
 		"WindowsConsole.cpp"
 		"XConsoleVariable.cpp"
 	SOURCE_GROUP "File"

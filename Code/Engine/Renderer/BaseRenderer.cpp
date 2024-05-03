@@ -309,6 +309,8 @@ int CRenderer::EnumDisplayFormats(SDispFormat* formats)
 			formats[i].m_BPP    = SDL_BITSPERPIXEL(f);
 			formats[i].m_Width  = mode.w;
 			formats[i].m_Height = mode.h;
+			if (formats[i].m_BPP == 24)
+				formats[i].m_BPP = 32;
 		}
 	}
 

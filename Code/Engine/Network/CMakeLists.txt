@@ -12,6 +12,10 @@ add_sources(
 		"NetServerSnooper.h"
 		"ServerSnooper.cpp"
 		"ServerSnooper.h"
+		"ScriptObjectNewUbisoftClient.cpp"
+		"ScriptObjectNewUbisoftClient.h"
+		"NewUbisoftClient.cpp"
+		"NewUbisoftClient.h"
 )
 end_sources()
 EngineModule(Network PCH "pch.hpp" SOLUTION_FOLDER "Engine")

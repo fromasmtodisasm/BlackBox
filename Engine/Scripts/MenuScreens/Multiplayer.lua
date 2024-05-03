@@ -69,7 +69,7 @@ UI.PageMultiplayer =
 
 				UI.PageMultiplayer.GUI.Join.OnCommand = UI.PageMultiplayer.CurrentList.GUI.ServerList.OnCommand;
 
-				if (not NewUbisoftClient:Client_IsConnected()) then
+				if (NewUbisoftClient and not NewUbisoftClient:Client_IsConnected()) then
 					NewUbisoftClient:Login();
 				end
 

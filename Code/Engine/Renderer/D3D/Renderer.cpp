@@ -657,6 +657,14 @@ unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex
 	auto& filename = pix->m_Name;
 	if (auto it = m_LoadedTextureNames.find(filename); it != m_LoadedTextureNames.end())
 	{
+		auto p = m_TexPics[it->second];
+		pix->m_Id = it->second;
+		pix->AddRef();
+		pix->Width = p.Width;
+		pix->Height = p.Height;
+		pix->ArraySize = p.ArraySize;
+		pix->BindFlags = p.BindFlags;
+		pix->m_Loaded = true;
 		return it->second;
 	}
 
@@ -689,7 +697,8 @@ unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex
 unsigned int CD3DRenderer::LoadTexture(const char* filename, int* tex_type, unsigned int def_tid, bool compresstodisk, bool bWarn)
 {
 	_smart_ptr<STexPic> TexPic = new STexPic;
-	TexPic->m_Id               = NextTextureIndex();
+	auto id										 = NextTextureIndex();
+	TexPic->m_Id               = id;
 	TexPic->m_Name             = filename;
 	m_RenderThread->ExecuteRenderThreadCommand([=]
 	                                           { LoadTextureInternal(TexPic, string(filename)); });

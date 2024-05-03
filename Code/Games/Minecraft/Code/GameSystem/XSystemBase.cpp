@@ -40,9 +40,9 @@
 #include <BlackBox/System/File/ICryPak.hpp>
 #if 0
 	#include <IMovieSystem.h>
-	#include "ScriptObjectSynched2DTable.h" // CScriptObjectSynched2DTable
-	#include "Synched2DTable.h"             // CSynched2DTable
 #endif
+#include "ScriptObjects/ScriptObjectSynched2DTable.h" // CScriptObjectSynched2DTable
+#include "Synched2DTable.h"             // CSynched2DTable
 
 //////////////////////////////////////////////////////////////////////
 void CXSystemBase::SMissionInfo::SetLevelFolder(const char* szLevelDir)
@@ -1981,6 +1981,7 @@ void CXSystemBase::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
 		pAdvCamSystem->SetScriptObject(pSAdvCamSystem->GetScriptObject());
 		pEntity->SetContainer(pAdvCamSystem);
 	}
+#endif
 	else if (ed.ClassId==SYNCHED2DTABLE_CLASS_ID)
 	{
 		CSynched2DTable *pSynched2DTable=new CSynched2DTable(m_pGame);
@@ -1997,7 +1998,6 @@ void CXSystemBase::OnSpawnContainer(CEntityDesc& ed, IEntity* pEntity)
 		pSynched2DTable->SetScriptObject(pSSynched2DTable->GetScriptObject());
 		pEntity->SetContainer(pSynched2DTable);
 	}
-#endif
 }
 #if 0
 #endif

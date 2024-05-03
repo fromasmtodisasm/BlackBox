@@ -439,7 +439,9 @@ bool CSystem::Init()
 	CryLog("Initializing Console");
 	//====================================================
 	if (!InitGamePlatform())
-		return false;
+	{
+		CryLog("$4[WARNING] Game platform not loaded");
+	}
 	CreateRendererVars(m_startupParams);
 	if (auto ovr = m_pCmdLine->FindArg(eCLAT_Pre, "override"); ovr)
 	{
@@ -478,7 +480,7 @@ bool CSystem::Init()
 	{
 		if (!InitRender())
 			return false;
-		auto font_size = vector2f(14, 14);
+		auto font_size = vector2f(11, 11);
 		m_pFont        = m_env.pRenderer->GetIFont();
 		m_pFont->Init("VeraMono.ttf", (uint)font_size.x, (uint)font_size.y);
 

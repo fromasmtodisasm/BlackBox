@@ -944,7 +944,19 @@ int CScriptObjectGame::GetServerList(IFunctionHandler* pH)
 #if 1337 
 	auto& infos = m_pGame->m_ServersInfos;
 	infos.clear();
-	infos[CIPAddress(4444, "localhost")] = SXServerInfos();
+	auto info = SXServerInfos();
+	info.IP = CIPAddress(4444, "localhost");
+	infos[CIPAddress(4444, "localhost")] = info;
+	{
+		info.strGameType = "DeathMatch";
+		info.strName = "HackManServer";
+		info.strMap = "mp_stairs";
+		info.strMod = "Forgotten";
+		info.IP = CIPAddress(DEFAULT_SERVERPORT, "localhost");
+
+		infos[info.IP] = info;
+
+	}
 #endif
 
 	for (ServerInfosVecItor i = m_pGame->m_ServersInfos.begin(); i != m_pGame->m_ServersInfos.end(); i++)

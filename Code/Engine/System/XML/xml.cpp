@@ -346,3 +346,38 @@ XDOM::IXMLDOMNode* CXMLDOMNodeList::nextNode()
 	++m_itor;
 	return pTemp;
 }
+
+//! Parse xml file.
+XmlNodeRef XmlParser::parse(const char* fileName)
+{
+	m_errorString = "";
+#if 0
+	XmlParserImp xml;
+#endif
+	std::vector<char> buf;
+	ICryPak* pPak = GetISystem()->GetIPak();
+	FILE* file = pPak->FOpen(fileName, "rb");
+	if (file) {
+		pPak->FSeek(file, 0, SEEK_END);
+		int fileSize = pPak->FTell(file);
+		pPak->FSeek(file, 0, SEEK_SET);
+		buf.resize(fileSize);
+		pPak->FRead(&(buf[0]), fileSize, 1, file);
+		pPak->FClose(file);
+		//return xml.parse(&buf[0], buf.size(), m_errorString);
+		return XmlNodeRef();
+	}
+	else {
+		return XmlNodeRef();
+	}
+}
+
+//! Parse xml from memory buffer.
+XmlNodeRef XmlParser::parseBuffer(const char* buffer)
+{
+	m_errorString = "";
+	//XmlParserImp xml;
+	//return xml.parse(buffer, strlen(buffer), m_errorString);
+	return XmlNodeRef();
+};
+

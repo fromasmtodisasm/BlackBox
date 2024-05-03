@@ -6,6 +6,7 @@
 
 #include "System.hpp"
 #include "HTTPDownloader.h"
+#include "Utils.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -71,6 +72,8 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 	SCRIPT_REG_FUNC(IsDevModeEnable);
 
 	SCRIPT_REG_FUNC(GetEntities);
+	SCRIPT_REG_FUNC(GetEntity);
+	SCRIPT_REG_FUNC(BrowseURL);
 
 	Env::ScriptSystem()->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
 	Env::ScriptSystem()->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
@@ -103,10 +106,12 @@ int CScriptObjectSystem::CreateDownload(IFunctionHandler* pH)
 int CScriptObjectSystem::EnumDisplayFormats(IFunctionHandler* pH)
 {
 	SCRIPT_CHECK_PARAMETERS(0);
+#if 0
 	if (Env::Get()->IsDedicated())
 	{
 		return pH->EndFunction();
 	}
+#endif
 	CryLog("Enumerating display settings...");
 	SmartScriptObject pDispArray(m_pSS);
 	SDispFormat*      Formats = NULL;
@@ -584,6 +589,29 @@ int CScriptObjectSystem::GetEntityClass(IFunctionHandler* pH)
 }
 
 #endif
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/*!Get an entity by id
+	@param nID the entity id
+*/
+int CScriptObjectSystem::GetEntity(IFunctionHandler * pH)
+{
+	CHECK_PARAMETERS(1);
+	IEntity* pEntity;
+	IScriptObject* pObject;
+	int nID;
+	pH->GetParam(1, nID);
+	pEntity = m_pEntitySystem->GetEntity(nID);
+	if (pEntity) {
+		pObject = pEntity->GetScriptObject();
+		return pH->EndFunction(pObject);
+	}
+	else
+	{
+		return pH->EndFunctionNull();
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 /*!return a all entities currently present in the level
    @return a table filled with all entities currently present in the level
@@ -1260,4 +1288,16 @@ int CScriptObjectSystem::IsDevModeEnable(IFunctionHandler* pH)
 	bool bDevMode = m_pSystem->IsDevMode();
 
 	return pH->EndFunction(bDevMode);
+}
+
+//-------------------------------------------------------------------------------------------------
+int CScriptObjectSystem::BrowseURL(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS(1);
+
+	char* szURL;
+	pH->GetParam(1, szURL);
+	::BrowseURL(szURL);
+
+	return pH->EndFunctionNull();
 }

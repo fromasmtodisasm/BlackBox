@@ -13,7 +13,7 @@ __StateMachine={
 
 -------------------------------------------------
 function __StateMachine:GetState()
-	for i,val in self.states do
+	for i,val in ipairs(self.states) do
 		if(val==self.current_state)then
 			return i;
 		end

@@ -3,7 +3,7 @@ if (NOT DEFINED BLACKBOX_DIR)
     message(FATAL_ERROR "BLACKBOX_DIR is not set. Please set it before including InitialSetup.cmake")
 endif()
 
-#set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug Profile)
+set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug Profile)
 
 # Turn on the ability to create folders to organize projects (.vcxproj)
 # It creates "CMakePredefinedTargets" folder by default and adds CMake

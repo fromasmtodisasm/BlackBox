@@ -752,6 +752,8 @@ ICVar* CXConsole::CreateVariable(const char* sName, const char* sValue, int nFla
 	const string name(sName);
 	pCVar = new CXConsoleVariableString(this, name, sValue, nFlags, help, true);
 	RegisterVar(name, pCVar /*, pChangeFunc*/);
+
+	Env::ScriptSystem()->SetGlobalValue(sName, sValue);
 	return pCVar;
 }
 

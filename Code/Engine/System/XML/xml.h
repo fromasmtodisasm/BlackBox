@@ -2,6 +2,24 @@
 
 #include <BlackBox/System/ISystem.hpp>
 
+/************************************************************************/
+/* XmlParser class, Parse xml and return root xml node if success.      */
+/************************************************************************/
+class XmlParser
+{
+public:
+	//! Parse xml file.
+	XmlNodeRef parse(const char* fileName);
+
+	//! Parse xml from memory buffer.
+	XmlNodeRef parseBuffer(const char* buffer);
+
+	const char* getErrorString() const { return m_errorString; }
+private:
+	XmlString m_errorString;
+};
+
+
 class CXMLDocument;
 class CIXMLDOMNode;
 class CXMLDOMNodeList;

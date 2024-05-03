@@ -451,7 +451,10 @@ protected:
 		if (value == m_value && (m_flags & VF_ALWAYSONCHANGE) == 0)
 			return;
 
-		if (m_pConsole->OnBeforeVarChange(this, GetString()))
+		char sTemp[128];
+		sprintf(sTemp, "%i", value);
+
+		if (m_pConsole->OnBeforeVarChange(this, sTemp))
 		{
 			if (ICVar* pCVarLogging = Env::Console()->GetCVar("sys_cvar_logging"))
 			{

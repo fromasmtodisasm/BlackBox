@@ -82,7 +82,7 @@ GameRules.InitialPlayerStatistics["nCaptureAverted"]=0;
 function GameRules:ScoreboardUpdate()
 	local SlotMap=Server:GetServerSlotMap();
 	
-	for i, Slot in SlotMap do
+	for i, Slot in ipairs(SlotMap) do
 		local Player = GetSlotPlayer(Slot);
 		
 		if Player and Player.cnt then
@@ -183,7 +183,7 @@ function GameRules:GetPlayerStats()
 	local Stats = {};
 	local j = 1; -- to make it 1..n because SlotMap is 0..n-1
 	
-	for i, Slot in SlotMap do
+	for i, Slot in ipairs(SlotMap) do
 		Stats[j] = {};	
 		
 		local Player = Stats[j];
@@ -259,7 +259,7 @@ function GameRules:InvalidateCapture(ssid)
 	
 	local currentcp = GameRules:GetNextBiggerCheckPointNumber();
 	
-	for i,cp in self.MapCheckPoints do
+	for i,cp in pairs(self.MapCheckPoints) do
 		if ((cp.Properties.bVisible == 1) and (cp.Properties.CheckPoint_Number == currentcp)) then
 			if (cp.captureCollider and (cp.captureCollider == ssid)) then
 				cp:Event_Averted();
@@ -391,7 +391,7 @@ function GameRules:SetToFirstCheckPoint()
 	
 	local requestedCheckPoint = tonumber(getglobal("gr_checkpoint"));
 	-- find the lowest number in entity.Properties.CheckPoint_Number and store it in CurrentCheckPoint_Number
-	for i,entity in self.MapCheckPoints do
+	for i,entity in ipairs(self.MapCheckPoints) do
 		if entity.Properties.CheckPoint_Number==requestedCheckPoint then
 			self.CurrentCheckPoint_Number = entity.Properties.CheckPoint_Number;
 		end
@@ -600,7 +600,7 @@ function GameRules:RecreateTableOfRespawnPoints()
 	GameRules.RespawnPoints={};
 
 	-- got through all AssultCheckpoints	
-	for i,entity in self.MapCheckPoints do
+	for i,entity in ipairs(self.MapCheckPoints) do
 		if entity.Properties.CheckPoint_Number==checkpointnumber then
 			if (entity.Properties.bAttackerSpawnPoint==1) then
 				local pt = new(entity:GetPos());
@@ -632,7 +632,7 @@ function GameRules:GetNextBiggerCheckPointNumber()
 
 	local ret;
 	
-	for i,entity in self.MapCheckPoints do
+	for i,entity in ipairs(self.MapCheckPoints) do
 		if ret==nil then
 			if entity.Properties.CheckPoint_Number>self.CurrentCheckPoint_Number then
 				ret = entity.Properties.CheckPoint_Number;
@@ -655,7 +655,7 @@ function GameRules:RecalcCheckPointIndices()
 
 	self.CheckPointIndices={};
 
-	for i,entity in self.MapCheckPoints do
+	for i,entity in ipairs(self.MapCheckPoints) do
 		self.CheckPointIndices[entity.Properties.CheckPoint_Number]=1;
 	end
 end
@@ -959,7 +959,7 @@ function GameRules:RefreshCheckpoints()
 	local current=self.CurrentCheckPoint_Number;
 	local nextone=self:GetNextBiggerCheckPointNumber();
 	
-	for i,entity in self.MapCheckPoints do
+	for i,entity in self.ipairs(MapCheckPoints) do
 		if nextone and entity.Properties.CheckPoint_Number>nextone then
 			entity:Event_Blocked();
 		elseif entity.Properties.CheckPoint_Number>current then
@@ -995,7 +995,7 @@ function GameRules:InvalidateAllCaptures()
 
 --	System:Log("GameRules:InvalidateAllCaptures"..tostring(currentcp));	-- debug
 
-	for i,cp in self.MapCheckPoints do
+	for i,cp in ipairs(self.MapCheckPoints) do
 		if ((cp.Properties.bVisible == 1) and (cp.Properties.CheckPoint_Number == currentcp)) then
 			if(cp.captureCollider)then
 				
@@ -1015,7 +1015,7 @@ function GameRules:HaveAttackersWon()
 		return nil;		-- ongoing counter to team switch
 	end
 	
-	for i,entity in self.MapCheckPoints do
+	for i,entity in ipairs(self.MapCheckPoints) do
 		if entity.Properties.CheckPoint_Number>self.CurrentCheckPoint_Number then
 			return nil;
 		end

@@ -77,14 +77,16 @@ UI.PageBackScreen=
 
 		Footer=
 		{
-			zorder = -100,
+			zorder = -98,
 			skin = UI.skins.MenuFooter,
+			state = UIFLAG_MOVEABLE;
 
 			Ad =
 			{
 				skin = UI.skins.FooterAd,
 
 				OnCommand = function(Sender)
+					System:Log("CLICKED AD")
 					if (UI.PageBackScreen.AdCfg.target) then
 						System:BrowseURL(UI.PageBackScreen.AdCfg.target);
 					end
@@ -117,6 +119,12 @@ UI.PageBackScreen=
 
 		OnInit = function (Sender)
 			UI.PageBackScreen.AdCfg = ReadTableFromFile(UI.szBannerCfgPath);
+			UI.PageBackScreen.AdCfg = UI.PageBackScreen.AdCfg and UI.PageBackScreen.AdCfg or {
+				left = 0, top = 600 - 100,
+				width = 800, height = 100,
+				path = "Textures/gui/menutop1",
+				target = "https://github.com/fromasmtodisasm"
+			};
 
 			local AdCfg = UI.PageBackScreen.AdCfg;
 			local Ad = Sender.Footer.Ad;
