@@ -61,7 +61,7 @@ struct IBitStream
 	//!
 	virtual bool ReadBitStream(CStream& stm, float& Value, const eBitStreamHint eHint)                                = 0;
 	//!
-	virtual bool ReadBitStream(CStream& stm, Legacy::Vec3& Value, const eBitStreamHint eHint)                         = 0;
+	virtual bool ReadBitStream(CStream& stm, Vec3& Value, const eBitStreamHint eHint)                         = 0;
 	//!
 	//! max 256 characters
 	virtual bool ReadBitStream(CStream& stm, char* Value, const DWORD nBufferSize, const eBitStreamHint eHint)        = 0;
@@ -81,7 +81,7 @@ struct IBitStream
 	//!
 	virtual bool WriteBitStream(CStream& stm, const float Value, const eBitStreamHint eHint)                          = 0;
 	//!
-	virtual bool WriteBitStream(CStream& stm, const Legacy::Vec3& Value, const eBitStreamHint eHint)                  = 0;
+	virtual bool WriteBitStream(CStream& stm, const Vec3& Value, const eBitStreamHint eHint)                  = 0;
 	//!
 	//! max 256 characters
 	virtual bool WriteBitStream(CStream& stm, const char* Value, const DWORD nBufferSize, const eBitStreamHint eHint) = 0;
@@ -104,7 +104,7 @@ struct IBitStream
 	//! to get the compression error
 	virtual void SimulateWriteRead(float& Value, const eBitStreamHint eHint)                                          = 0;
 	//! to get the compression error
-	virtual void SimulateWriteRead(Legacy::Vec3& Value, const eBitStreamHint eHint)                                   = 0;
+	virtual void SimulateWriteRead(Vec3& Value, const eBitStreamHint eHint)                                   = 0;
 	//! to get the compression error
 	virtual void SimulateWriteRead(char* Value, const DWORD nBufferSize, const eBitStreamHint eHint)                  = 0;
 };

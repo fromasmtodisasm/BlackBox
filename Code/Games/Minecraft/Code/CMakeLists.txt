@@ -55,6 +55,12 @@ add_sources(
 		Network/XEntityProcessingCmd.cpp
 		Network/XNetwork.cpp
 		Network/XNetworkStats.cpp
+
+		Network/BitStream_Base.h
+		Network/BitStream_Base.cpp
+
+		Network/BitStream_Compressed.cpp
+		Network/BitStream_Compressed.h
 	SOURCE_GROUP "Player"
 		Player/XPlayer.cpp
 		Player/XPlayerCamera.cpp

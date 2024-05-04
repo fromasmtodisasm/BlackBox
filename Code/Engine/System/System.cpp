@@ -756,6 +756,11 @@ void CSystem::SaveConfiguration()
 {
 }
 
+IDataProbe* CSystem::GetIDataProbe()
+{
+	return nullptr;
+}
+
 float CSystem::GetDeltaTime()
 {
 	return static_cast<float>(m_DeltaTime);

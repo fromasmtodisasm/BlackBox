@@ -54,8 +54,8 @@ enum
 #include <Network/XNetwork.hpp>
 #include "../../Code/Engine/Renderer/MineRenderer/renderer.h"
 
-//#include "BitStream_Base.h"						// CBitStream_Base
-//#include "BitStream_Compressed.h"			// CBitStream_Compressed
+#include "Network/BitStream_Base.h"						// CBitStream_Base
+#include "Network/BitStream_Compressed.h"			// CBitStream_Compressed
 
 struct IStatObj;
 class CScriptObjectInput;
@@ -1011,10 +1011,8 @@ private: // ------------------------------------------------------------
 	int                    m_iFixedStep2TimeGran;
 	int                    m_iLastCmdIdx;
 	bool                   m_bSynchronizing;
-#if 0
 	CBitStream_Base								m_BitStreamBase;	   //!< for little compressed readwrite operation with CStreams (savegame,singleplayer,exported games,demo recording)
 	CBitStream_Compressed						m_BitStreamCompressed; //!< for compressed readwrite operation with CStreams (multiplayer)
-#endif
 
 	//! Name of the last saved checkpoint.
 	string     m_sLastSavedCheckpointFilename;
@@ -1054,10 +1052,7 @@ public:
 	virtual void        HideLocalPlayer(bool hide, bool bEditor);
 	virtual void        ReloadScripts();
 	virtual bool        GoreOn() const;
-	virtual IBitStream* GetIBitStream()
-	{
-		NOT_IMPLEMENTED_V
-	}
+	virtual IBitStream* GetIBitStream();
 
 	//! sets a timer for a generic script object table
 	int                       AddTimer(IScriptObject* pTable, unsigned int nStartTimer, unsigned int nTimer, IScriptObject* pUserData, bool bUpdateDuringPause);

@@ -408,7 +408,6 @@ bool CXGame::GoreOn() const
 	return (g_Gore->GetIVal() == 2);
 }
 
-#if 0
 //////////////////////////////////////////////////////////////////////////
 IBitStream *CXGame::GetIBitStream()
 {
@@ -417,7 +416,6 @@ IBitStream *CXGame::GetIBitStream()
 
 	return &m_BitStreamBase;
 }
-#endif
 //////////////////////////////////////////////////////////////////////////
 bool CXGame::ExecuteScript(const char* sPath, bool bForceReload)
 {

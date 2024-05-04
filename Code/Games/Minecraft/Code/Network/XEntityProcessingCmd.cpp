@@ -104,7 +104,7 @@ bool CXEntityProcessingCmd::Write(CStream& stm, IBitStream* pBitStream, bool bWr
 	{
 		stm.Write(true);
 
-		if (!pBitStream->WriteBitStream(stm, m_vDeltaAngles, eEulerAnglesHQ))
+		if (!pBitStream->WriteBitStream(stm, Legacy::from(m_vDeltaAngles), eEulerAnglesHQ))
 			return false;
 
 		if (!pBitStream->WriteBitStream(stm, m_fLeaning, eSignedUnitValueLQ))
@@ -149,8 +149,10 @@ bool CXEntityProcessingCmd::Read(CStream& stm, IBitStream* pBitStream)
 
 	if (bReadAngles)
 	{
-		if (!pBitStream->ReadBitStream(stm, m_vDeltaAngles, eEulerAnglesHQ))
+		Vec3 tmp;
+		if (!pBitStream->ReadBitStream(stm, tmp, eEulerAnglesHQ))
 			return false;
+		m_vDeltaAngles = Legacy::to(tmp);
 
 		if (!pBitStream->ReadBitStream(stm, m_fLeaning, eSignedUnitValueLQ))
 			return false;

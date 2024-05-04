@@ -227,6 +227,7 @@ public:
 	bool Read(char* psz, const DWORD indwBufferSize);
 	bool Read(std::string& str);
 	bool Read(Legacy::Vec3& v);
+	bool Read(Vec3& v);
 	//!read all remaining data in the stream starting from the read pos
 	bool Read(CStream& stm);
 	//!read packed
@@ -255,6 +256,7 @@ public:
 	bool Write(const std::string& str);
 	bool Write(CStream& stm);
 	bool Write(const Legacy::Vec3& v);
+	bool Write(const Vec3& v);
 	bool _Write(unsigned char c); // not typechecked
 
 	bool WritePkd(unsigned char uc);
@@ -777,6 +779,14 @@ inline bool CStream::Read(Legacy::Vec3& v)
 	Read(v.y);
 	return Read(v.z);
 }
+//////////////////////////////////////////////////////////////////////
+inline bool CStream::Read(Vec3& v)
+{
+	STREAM_VERIFY_TYPE_READ(31);
+	Read(v.x);
+	Read(v.y);
+	return Read(v.z);
+}
 
 //////////////////////////////////////////////////////////////////////
 inline bool CStream::Read(CStream& stm)
@@ -898,6 +908,15 @@ inline bool CStream::Write(const std::string& str)
 
 //////////////////////////////////////////////////////////////////////
 inline bool CStream::Write(const Legacy::Vec3& v)
+{
+	STREAM_VERIFY_TYPE_WRITE(31);
+	Write(v.x);
+	Write(v.y);
+	return Write(v.z);
+}
+
+//////////////////////////////////////////////////////////////////////
+inline bool CStream::Write(const Vec3& v)
 {
 	STREAM_VERIFY_TYPE_WRITE(31);
 	Write(v.x);

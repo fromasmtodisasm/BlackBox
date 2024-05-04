@@ -480,7 +480,7 @@ bool CSystem::Init()
 	{
 		if (!InitRender())
 			return false;
-		auto font_size = vector2f(11, 11);
+		auto font_size = vector2f(14, 14);
 		m_pFont        = m_env.pRenderer->GetIFont();
 		m_pFont->Init("VeraMono.ttf", (uint)font_size.x, (uint)font_size.y);
 

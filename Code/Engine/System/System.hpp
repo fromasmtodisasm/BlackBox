@@ -277,6 +277,8 @@ public:
 	virtual void                    FatalError(const char* sFormat, ...);
 	virtual void                    ExecuteCommandLine() override;
 	virtual bool                    IsCVarWhitelisted(const char* szName, bool silent) const override;
+	virtual IDataProbe*							GetIDataProbe() override;
+
 
 public:
 	void              RunMainLoop();

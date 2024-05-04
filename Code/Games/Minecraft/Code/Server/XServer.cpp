@@ -167,8 +167,10 @@ CXServer::CXServer(CXGame* pGame, WORD nPort, const char* szName, bool listen)
 	m_pGame->GetSystem()->SetForceNonDevMode(!m_pGame->IsDevModeEnable());
 #endif
 
+#if 0
 	INetwork* pNet = pGame->m_pSystem->GetINetwork();
 	pNet->SetUBIGameServerIP(NULL);
+#endif
 
 	// fill m_ServerInfo structure
 	GetServerInfo();

@@ -64,6 +64,7 @@ struct IVisArea;
 struct IWindow;
 struct IWorld;
 struct IGamePlatform;
+struct IDataProbe;
 
 class CFrameProfilerSection;
 
@@ -645,6 +646,8 @@ struct ISystem
 	virtual unsigned int        ReadCompressedFile(char* filename, void* data, unsigned int maxbitlen)           = 0;
 	virtual unsigned int        GetCompressedFileSize(char* filename)                                            = 0;
 
+	// Retrieve IDataProbe interface.
+	virtual IDataProbe* GetIDataProbe() = 0;
 	//////////////////////////////////////////////////////////////////////////
 	// Configuration.
 	//////////////////////////////////////////////////////////////////////////

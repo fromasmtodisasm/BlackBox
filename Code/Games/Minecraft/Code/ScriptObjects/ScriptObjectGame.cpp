@@ -941,7 +941,7 @@ int CScriptObjectGame::GetServerList(IFunctionHandler* pH)
 	int                k = 1;
 
 	// FIXME: HACK!!!
-#if 1337 
+#if 0//1337 
 	auto& infos = m_pGame->m_ServersInfos;
 	infos.clear();
 	auto info = SXServerInfos();
@@ -3904,8 +3904,10 @@ int CScriptObjectGame::EnableQuicksave(IFunctionHandler* pH)
 //////////////////////////////////////////////////////////////////////////
 int CScriptObjectGame::GetServerIP(IFunctionHandler* pH)
 {
+#if 0
 	if (!m_pGame->IsMultiplayer() || !m_pGame->GetModuleState(EGameServer))
-		pH->EndFunction(GetISystem()->GetINetwork()->GetUBIGameServerIP(true));
+		//pH->EndFunction(GetISystem()->GetINetwork()->GetUBIGameServerIP(true));
+		pH->EndFunction(GetISystem()->GetINetwork()->GetServerIP(true));
 
 	if (m_pGame->IsServer() && m_pGame->m_pServer->m_pIServer->GetServerType() == eMPST_UBI)
 	{
@@ -3926,4 +3928,7 @@ int CScriptObjectGame::GetServerIP(IFunctionHandler* pH)
 	}
 
 	return pH->EndFunction(GetISystem()->GetINetwork()->GetUBIGameServerIP(true));
+#endif
+	return pH->EndFunction("");
+	assert(0);
 }

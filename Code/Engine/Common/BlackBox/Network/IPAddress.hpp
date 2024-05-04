@@ -104,8 +104,8 @@ public:
 
 		if (m_Address.ADDR == INADDR_NONE)
 		{
-			struct hostent* pHostEntry;
-			pHostEntry = gethostbyname(sAddress);
+			//struct hostent* pHostEntry;
+			auto pHostEntry = gethostbyname(sAddress);
 
 			if (pHostEntry)
 				m_Address.ADDR = *(unsigned int*)pHostEntry->h_addr_list[0];

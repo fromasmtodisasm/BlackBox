@@ -84,3 +84,14 @@ typedef ULONG_PTR         DWORD_PTR, *PDWORD_PTR;
 #define memicmp              _memicmp
 
 #define TARGET_DEFAULT_ALIGN (0x8U)
+
+// old-style (will be removed soon)
+typedef signed char         s8;
+typedef signed short        s16;
+typedef signed int         s32;
+typedef signed __int64			s64;
+typedef unsigned char				u8;
+typedef unsigned short			u16;
+typedef unsigned int				u32;
+typedef unsigned __int64		u64;
+
