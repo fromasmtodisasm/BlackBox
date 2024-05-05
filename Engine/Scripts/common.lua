@@ -51,7 +51,6 @@ end
 
 function setglobal (varname, newvalue)
   rawset(globals(), varname, newvalue)
-  System:Log("Set " .. varname .. " = " .. tostring(newvalue))
   Game:SetVariable(varname, newvalue)
 end
 
