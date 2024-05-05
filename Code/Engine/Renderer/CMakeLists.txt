@@ -19,6 +19,7 @@ add_sources(
 		"FreeTypeFont.cpp"
 		"RenderThread.cpp"
 		"RenderThread.h"
+		"RendererDLL.cpp"
 		"Shaders/FxParser.cpp"
 	SOURCE_GROUP "Common"
 		"Common/CommonRender.cpp"

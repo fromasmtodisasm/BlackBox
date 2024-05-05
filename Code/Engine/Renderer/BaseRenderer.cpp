@@ -11,8 +11,8 @@
 #include "AuxRenderer.hpp"
 
 #include <SDL2/SDL.h>
+#include <BlackBox/Core/Path.hpp>
 
-#include <BlackBox/Core/Platform/platform_impl.inl>
 
 #include <filesystem>
 #pragma warning(push)
@@ -24,7 +24,7 @@
 CRenderer* gRenDev = NULL;
 
 static int dump_shaders_on_load = false;
-FxParser*  g_FxParser;
+std::unique_ptr<FxParser>  g_FxParser;
 ShaderMan* gShMan;
 //FxParser s_FxParser;
 
@@ -60,6 +60,7 @@ void TestFx(IConsoleCmdArgs* args)
 		for (int i = 0; i < pEffect->GetNumTechniques(); i++)
 		{
 			auto tech = pEffect->GetTechnique(i);
+			CryLog("Technique: %s", tech->GetName());
 			for (int j = 0; j < tech->GetNumPasses(); j++)
 			{
 				auto pass = tech->GetPass(j);
@@ -204,7 +205,7 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 #if 0
 	g_FxParser = &s_FxParser;
 #else
-	g_FxParser      = new FxParser;
+	g_FxParser      = std::make_unique<FxParser>();
 #endif
 #if 0
 	if (!InitResourceManagers())
@@ -658,22 +659,27 @@ namespace fs = std::filesystem;
 struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 {
 	wchar_t c_file[256];
-#define FX_BASE "tmp"
+#define FX_BASE "./Engine"
 	[[nodiscard]] int GetCount() const override
 	{
-#if 0
-	#ifndef LINUX && 0
+	#ifndef LINUX
+
 		int cnt = std::count_if(
-			fs::directory_iterator::directory_iterator(fs::path::path(FX_BASE)),
-			fs::directory_iterator::directory_iterator(),
-			static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
+			fs::recursive_directory_iterator::recursive_directory_iterator(fs::path::path(FX_BASE)),
+			fs::recursive_directory_iterator::recursive_directory_iterator(),
+			[](const fs::path& p) {
+				if (fs::is_regular_file(p))
+				{
+					if (p.extension() == ".fx")
+						return true;
+				}
+				return false;
+			});
+			//static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
 		return cnt;
 	#else
 		return 0;
 	#endif
-#else
-		return 0;
-#endif
 	};
 
 	const char* GetValue(int nIndex) const override
@@ -681,14 +687,18 @@ struct STestFXAutoComplete : public IConsoleArgumentAutoComplete
 #ifndef LINUX
 		int                i = 0;
 		static std::string file;
-		for (fs::directory_iterator next(fs::path(FX_BASE)), end; next != end; ++next, ++i)
+		for (fs::recursive_directory_iterator next(fs::path(FX_BASE)), end; next != end; ++next)
 		{
-			if (i == nIndex)
+			if (fs::is_regular_file(next->path()) && next->path().extension() == ".fx")
 			{
-				//memset((void*)c_file, 0, 256);
-				//memcpy((void*)c_file, , wcslen(next->path().c_str()));
-				file = wstr_to_str(std::wstring(next->path().c_str()));
-				return file.data();
+				if (i == nIndex)
+				{
+					//memset((void*)c_file, 0, 256);
+					//memcpy((void*)c_file, , wcslen(next->path().c_str()));
+					file = wstr_to_str(std::wstring(next->path().c_str()));
+					return file.data();
+				}
+				++i;
 			}
 		}
 #endif
@@ -797,7 +807,7 @@ void CRenderer::ShutDown()
 #ifndef VK_RENDERER
 	SAFE_DELETE(m_BufferManager);
 #endif
-	SAFE_DELETE(g_FxParser);
+	g_FxParser.release();
 
 	SAFE_DELETE(gShMan);
 
@@ -805,3 +815,104 @@ void CRenderer::ShutDown()
 }
 
 #pragma warning(pop)
+
+void ShaderMan::RT_ShaderLoad(const char* name, int flags, uint64 nMaskGen, CShader* p)
+{
+	if (auto it = m_Shaders.find((name)); it != m_Shaders.end())
+	{
+		CryLog("Shader <%s> already cached", name);
+		it->second->AddRef();
+		*p = *it->second;
+		return;
+	}
+	if (!Sh_LoadBinary(name, flags, nMaskGen, p))
+	{
+		if (Compile(name, flags, nMaskGen, p))
+		{
+			p->SaveBinaryShader(name, flags, nMaskGen);
+		}
+		else
+		{
+			p = nullptr;
+		}
+	}
+}
+
+CShader* ShaderMan::NewShader()
+{
+	return new CShader;
+}
+
+IShader* ShaderMan::Sh_Load(const char* name, int flags, uint64 nMaskGen)
+{
+	_smart_ptr<CShader> pShader = NewShader();
+	gRenDev->ExecuteRenderThreadCommand([=]
+		{
+			CryLog("load shader: %s", name);
+			RT_ShaderLoad(name, flags, nMaskGen, pShader); });
+	if (pShader->GetFlags2() & EF2_FAILED)
+	{
+		pShader = nullptr;
+	}
+	return pShader;
+}
+
+bool ShaderMan::Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen, CShader* p) const
+{
+	//return Env::Console()->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
+	return false;
+}
+
+bool ShaderMan::Compile(std::string_view name, int flags, uint64 nMaskGen, CShader* p)
+{
+	PEffect           pEffect = nullptr;
+	std::stringstream path;
+	auto              pos = name.find_last_of('.');
+	std::string_view  real_name = name;
+	std::string_view  technique;
+	int               pass = 0;
+	if (pos != name.npos)
+	{
+		real_name = name.substr(0, pos);
+		technique = name.substr(pos + 1);
+	}
+	path << real_name << ".fx";
+	auto shader_path = PathUtil::Make(PathUtil::Make(PathUtil::GetEnginePath(), string("Engine/shaders/fx")), path.str());
+	if (g_FxParser->Parse(shader_path.c_str(), &pEffect))
+	{
+		auto nTech = 0;
+		if (auto tech = pEffect->GetTechnique(technique.data(), technique.length()); tech != nullptr)
+			nTech = tech->GetId();
+		p->m_NameShader = real_name.data();
+		p->m_NameFile = path.str();
+		if (CShader::LoadFromEffect(p, pEffect, nTech, pass))
+		{
+			p->AddRef();
+			p->ReflectShader();
+			p->CreateInputLayout();
+			p->m_Flags2 |= EF2_LOADED;
+			delete pEffect;
+			m_Shaders[string(name)] = p;
+			return true;
+		}
+		p->m_Flags2 |= EF2_FAILED;
+		return false;
+	}
+	else
+	{
+		p->m_Flags2 |= EF2_FAILED;
+	}
+	return false;
+}
+
+void ShaderMan::ReloadAll()
+{
+	for (auto& s : m_Shaders)
+	{
+		s.second->Reload(0);
+	}
+}
+
+ShaderMan::~ShaderMan()
+{
+}
