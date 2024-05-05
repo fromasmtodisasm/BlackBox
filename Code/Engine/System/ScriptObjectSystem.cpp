@@ -70,6 +70,8 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 	SCRIPT_REG_FUNC(GetFrameTime);
 
 	SCRIPT_REG_FUNC(IsDevModeEnable);
+	SCRIPT_REG_FUNC(SaveConfiguration);
+	
 
 	SCRIPT_REG_FUNC(GetEntities);
 	SCRIPT_REG_FUNC(GetEntity);
@@ -1301,6 +1303,16 @@ int CScriptObjectSystem::IsDevModeEnable(IFunctionHandler* pH)
 	bool bDevMode = m_pSystem->IsDevMode();
 
 	return pH->EndFunction(bDevMode);
+}
+
+//////////////////////////////////////////////////////////////////////////
+int CScriptObjectSystem::SaveConfiguration(IFunctionHandler* pH)
+{
+	CHECK_PARAMETERS( 0 );
+
+	m_pSystem->SaveConfiguration();
+
+	return pH->EndFunction();
 }
 
 //-------------------------------------------------------------------------------------------------
