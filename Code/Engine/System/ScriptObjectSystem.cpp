@@ -74,6 +74,8 @@ void CScriptObjectSystem::InitializeTemplate(IScriptSystem* pSS)
 	SCRIPT_REG_FUNC(GetEntities);
 	SCRIPT_REG_FUNC(GetEntity);
 	SCRIPT_REG_FUNC(BrowseURL);
+	SCRIPT_REG_FUNC(GetConsoleKeyName);
+
 
 	Env::ScriptSystem()->SetGlobalValue("SCANDIR_ALL", SCANDIR_ALL);
 	Env::ScriptSystem()->SetGlobalValue("SCANDIR_FILES", SCANDIR_FILES);
@@ -447,6 +449,17 @@ int CScriptObjectSystem::GetFrameTime(IFunctionHandler* pH)
 	SCRIPT_CHECK_PARAMETERS(0);
 	float fTime = Env::Timer()->GetFrameTime();
 	return pH->EndFunction(fTime);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+int CScriptObjectSystem::GetConsoleKeyName(IFunctionHandler *pH)
+{
+	if (m_pSystem->GetIInput())
+	{
+		return pH->EndFunction(m_pSystem->GetIInput()->GetKeyName(eKI_Tilde));
+	}
+
+	return pH->EndFunctionNull();
 }
 #if 0
 /////////////////////////////////////////////////////////////////////////////////

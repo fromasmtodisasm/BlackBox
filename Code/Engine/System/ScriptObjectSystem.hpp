@@ -38,6 +38,7 @@ public:
 
 	int         GetCurrAsyncTime(IFunctionHandler* pH);
 	int         GetFrameTime(IFunctionHandler* pH);
+	int					GetConsoleKeyName(IFunctionHandler* pH);
 	int         IsDevModeEnable(IFunctionHandler* pH);
 	int					BrowseURL(IFunctionHandler* pH);
 	int					GetEntity(IFunctionHandler* pH);

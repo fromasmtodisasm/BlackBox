@@ -296,7 +296,7 @@ Legacy::IMouse* Legacy::CInput::GetIMouse()
 
 const char* Legacy::CInput::GetKeyName(int nKey, int modifiers, bool bGUI)
 {
-	return m_Keyboard.m_pKeyboard->GetKeyName(EKeyId(nKey));
+	return m_Keyboard.m_pKeyboard->GetKeyName(Input::kconvertKey(Legacy::KeyCodes(nKey)));
 }
 
 bool Legacy::CInput::GetOSKeyName(int nKey, wchar_t* szwKeyName, int iBufSize)
@@ -403,12 +403,340 @@ int Legacy::CKeyboard::GetKeyPressedCode()
 
 //! return the name of the key pressed
 
+#pragma optimize("", off)
 const char* Legacy::CKeyboard::GetKeyPressedName()
 {
 	auto name = m_pKeyboard->GetKeyName(m_LastKey);
-	if (m_LastKey == eKI_Space)
+	switch (m_LastKey)
 	{
+	case eKI_Escape:
+		name = "esc";
+		break;
+	case eKI_1:
+		break;
+	case eKI_2:
+		break;
+	case eKI_3:
+		break;
+	case eKI_4:
+		break;
+	case eKI_5:
+		break;
+	case eKI_6:
+		break;
+	case eKI_7:
+		break;
+	case eKI_8:
+		break;
+	case eKI_9:
+		break;
+	case eKI_0:
+		break;
+	case eKI_Minus:
+		break;
+	case eKI_Equals:
+		break;
+	case eKI_Backspace:
+		break;
+	case eKI_Tab:
+		break;
+	case eKI_Q:
+		break;
+	case eKI_W:
+		break;
+	case eKI_E:
+		break;
+	case eKI_R:
+		break;
+	case eKI_T:
+		break;
+	case eKI_Y:
+		break;
+	case eKI_U:
+		break;
+	case eKI_I:
+		break;
+	case eKI_O:
+		break;
+	case eKI_P:
+		break;
+	case eKI_LBracket:
+		break;
+	case eKI_RBracket:
+		break;
+	case eKI_Enter:
+		break;
+	case eKI_LCtrl:
+		break;
+	case eKI_A:
+		break;
+	case eKI_S:
+		break;
+	case eKI_D:
+		break;
+	case eKI_F:
+		break;
+	case eKI_G:
+		break;
+	case eKI_H:
+		break;
+	case eKI_J:
+		break;
+	case eKI_K:
+		break;
+	case eKI_L:
+		break;
+	case eKI_Semicolon:
+		break;
+	case eKI_Apostrophe:
+		break;
+	case eKI_Tilde:
+		break;
+	case eKI_LShift:
+		break;
+	case eKI_Backslash:
+		break;
+	case eKI_Z:
+		break;
+	case eKI_X:
+		break;
+	case eKI_C:
+		break;
+	case eKI_V:
+		break;
+	case eKI_B:
+		break;
+	case eKI_N:
+		break;
+	case eKI_M:
+		break;
+	case eKI_Comma:
+		break;
+	case eKI_Period:
+		break;
+	case eKI_Slash:
+		break;
+	case eKI_RShift:
+		break;
+	case eKI_NP_Multiply:
+		break;
+	case eKI_LAlt:
+		break;
+	case eKI_Space:
 		name = "spacebar";
+		break;
+	case eKI_CapsLock:
+		break;
+	case eKI_F1:
+		break;
+	case eKI_F2:
+		break;
+	case eKI_F3:
+		break;
+	case eKI_F4:
+		break;
+	case eKI_F5:
+		break;
+	case eKI_F6:
+		break;
+	case eKI_F7:
+		break;
+	case eKI_F8:
+		break;
+	case eKI_F9:
+		break;
+	case eKI_F10:
+		break;
+	case eKI_NumLock:
+		break;
+	case eKI_ScrollLock:
+		break;
+	case eKI_NP_7:
+		break;
+	case eKI_NP_8:
+		break;
+	case eKI_NP_9:
+		break;
+	case eKI_NP_Substract:
+		break;
+	case eKI_NP_4:
+		break;
+	case eKI_NP_5:
+		break;
+	case eKI_NP_6:
+		break;
+	case eKI_NP_Add:
+		break;
+	case eKI_NP_1:
+		break;
+	case eKI_NP_2:
+		break;
+	case eKI_NP_3:
+		break;
+	case eKI_NP_0:
+		break;
+	case eKI_F11:
+		break;
+	case eKI_F12:
+		break;
+	case eKI_F13:
+		break;
+	case eKI_F14:
+		break;
+	case eKI_F15:
+		break;
+	case eKI_Colon:
+		break;
+	case eKI_Underline:
+		break;
+	case eKI_NP_Enter:
+		break;
+	case eKI_RCtrl:
+		break;
+	case eKI_NP_Period:
+		break;
+	case eKI_NP_Divide:
+		break;
+	case eKI_Print:
+		break;
+	case eKI_RAlt:
+		break;
+	case eKI_Pause:
+		break;
+	case eKI_Home:
+		break;
+	case eKI_Up:
+		break;
+	case eKI_PgUp:
+		break;
+	case eKI_Left:
+		break;
+	case eKI_Right:
+		break;
+	case eKI_End:
+		break;
+	case eKI_Down:
+		break;
+	case eKI_PgDn:
+		break;
+	case eKI_Insert:
+		break;
+	case eKI_Delete:
+		break;
+	case eKI_LWin:
+		break;
+	case eKI_RWin:
+		break;
+	case eKI_Apps:
+		break;
+	case eKI_OEM_102:
+		break;
+	case eKI_Mouse1:
+		break;
+	case eKI_Mouse2:
+		break;
+	case eKI_Mouse3:
+		break;
+	case eKI_Mouse4:
+		break;
+	case eKI_Mouse5:
+		break;
+	case eKI_Mouse6:
+		break;
+	case eKI_Mouse7:
+		break;
+	case eKI_Mouse8:
+		break;
+	case eKI_MouseWheelUp:
+		break;
+	case eKI_MouseWheelDown:
+		break;
+	case eKI_MouseX:
+		break;
+	case eKI_MouseY:
+		break;
+	case eKI_MouseZ:
+		break;
+	case eKI_MouseXAbsolute:
+		break;
+	case eKI_MouseYAbsolute:
+		break;
+	case eKI_MouseLast:
+		break;
+	case eKI_XI_DPadUp:
+		break;
+	case eKI_XI_DPadDown:
+		break;
+	case eKI_XI_DPadLeft:
+		break;
+	case eKI_XI_DPadRight:
+		break;
+	case eKI_XI_Start:
+		break;
+	case eKI_XI_Back:
+		break;
+	case eKI_XI_ThumbL:
+		break;
+	case eKI_XI_ThumbR:
+		break;
+	case eKI_XI_ShoulderL:
+		break;
+	case eKI_XI_ShoulderR:
+		break;
+	case eKI_XI_A:
+		break;
+	case eKI_XI_B:
+		break;
+	case eKI_XI_X:
+		break;
+	case eKI_XI_Y:
+		break;
+	case eKI_XI_TriggerL:
+		break;
+	case eKI_XI_TriggerR:
+		break;
+	case eKI_XI_ThumbLX:
+		break;
+	case eKI_XI_ThumbLY:
+		break;
+	case eKI_XI_ThumbLUp:
+		break;
+	case eKI_XI_ThumbLDown:
+		break;
+	case eKI_XI_ThumbLLeft:
+		break;
+	case eKI_XI_ThumbLRight:
+		break;
+	case eKI_XI_ThumbRX:
+		break;
+	case eKI_XI_ThumbRY:
+		break;
+	case eKI_XI_ThumbRUp:
+		break;
+	case eKI_XI_ThumbRDown:
+		break;
+	case eKI_XI_ThumbRLeft:
+		break;
+	case eKI_XI_ThumbRRight:
+		break;
+	case eKI_XI_TriggerLBtn:
+		break;
+	case eKI_XI_TriggerRBtn:
+		break;
+	case eKI_XI_Connect:
+		break;
+	case eKI_XI_Disconnect:
+		break;
+	case eKI_SYS_Commit:
+		break;
+	case eKI_SYS_ConnectDevice:
+		break;
+	case eKI_SYS_DisconnectDevice:
+		break;
+	case eKI_Unknown:
+		break;
+	default:
+		break;
 	}
 
 	return name;
@@ -453,9 +781,12 @@ void Legacy::CKeyboard::Update()
 	for (auto key = KI_KEYBOARD_BASE; key < KI_MOUSE_BASE; key++)
 	{
 		const auto& symbol = m_pKeyboard->LookupSymbol(EKeyId(key));
-		if (symbol && symbol->state == eIS_Pressed)
+		if (symbol)
 		{
-			m_LastKey = EKeyId(key);
+			if (symbol->state == eIS_Pressed || symbol->state == eIS_Down)
+			{
+				m_LastKey = EKeyId(key);
+			}
 		}
 	}
 }
