@@ -85,44 +85,44 @@ cbuffer MaterialCB : register(MATERIAL_SLOT)
 
 
 
-[[fn]]
+
 float3 GetEye()
 {
     return perViewCB.Eye;
 }
 
-[[fn]]
+
 float4x4 GetOrthoProjMat()
 {
     return perViewCB.OrthoProjection;
 }
 
-[[fn]]
+
 float4x4 GetViewMatrix()
 {
     return perViewCB.View;
 }
 
-[[fn]]
+
 float4x4 GetProjMat()
 {
     return perViewCB.Projection;
 }
 
-[[fn]]
+
 float4x4 GetViewProjMat()
 {
     return perViewCB.ViewProjection;
 }
 
-[[fn]]
+
 float3 GetNormal(float3 normal)
 {
 	float4x4 ModelView = mul(GetViewMatrix(), Model);
 	return normalize(mul((float3x3)Model, normal));
 }
 
-[[fn]]
+
 float4 Transform(in float3 Pos)
 {
 #if 0
@@ -136,13 +136,13 @@ float4 Transform(in float3 Pos)
     return mul(MVP, float4(Pos, 1));
 }
 
-[[fn]]
+
 float4 WorldTransofrm(in float3 Pos)
 {
     return mul(Model, float4(Pos, 1));
 }
 
-[[fn]]
+
 // same function declaration style as vertex shaders
 // pixel shaders return the colour value of the pixel (hence the float4)
 float4 GrayScale(float4 color) : SV_Target0

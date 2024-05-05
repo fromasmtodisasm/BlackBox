@@ -23,7 +23,7 @@ setup_bison_target(ShaderParser ${CMAKE_CURRENT_SOURCE_DIR}/Parser.yy ${CMAKE_CU
 setup_flex_bison_dependencies(ShaderScanner ShaderParser)
 
 EngineModule(FxParser PCH "pch.hpp" SOLUTION_FOLDER "Engine")
-target_compile_definitions(FxParser PUBLIC "-DYYDEBUG=1")
+target_compile_definitions(FxParser PUBLIC "-DYYDEBUG=1" "-DYY_EXCEPTIONS=0")
 
 
 target_include_directories(FxParser 

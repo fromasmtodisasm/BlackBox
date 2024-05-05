@@ -32,7 +32,7 @@ struct VsInput
     float2 TC : TEXCOORD0;
 };
 
-[[fn]]
+
 VsOutput VSMain(VsInput IN)
 {
     VsOutput Output;
@@ -43,14 +43,14 @@ VsOutput VSMain(VsInput IN)
     return Output;
 }  
 
-[[fn]]
+
 float4 Font(VsOutput IN) : SV_Target0
 {    
     // {{{{{{{{{{{{{{{{{
     return IN.Color * float4(1.0, 1.0, 1.0, text.Sample(textSampler, IN.TexCoords).r);
 }
 
-[[fn]]
+
 // same function declaration style as vertex shaders
 // pixel shaders return the colour value of the pixel (hence the float4)
 float4 GrayScalePS(float3 color) : SV_Target0
@@ -64,7 +64,7 @@ float4 GrayScalePS(float3 color) : SV_Target0
     return grey;
 }
 
-[[fn]]
+
 float4 TexturedQuad(VsOutput IN) : SV_Target0
 {    
     float4 color = IN.Color * text.Sample(textSampler, IN.TexCoords);

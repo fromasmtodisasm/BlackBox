@@ -1,6 +1,6 @@
 // Normal Distribution Function (NDF)
 
-[[fn]]
+
 float DistributionGGX(float3 N, float3 H, float a)
 {
 	float a2     = a * a;
@@ -16,7 +16,7 @@ float DistributionGGX(float3 N, float3 H, float a)
 
 // Geometric Shadowing
 
-[[fn]]
+
 float GeometrySchlickGGX(float NdotV, float k)
 {
 	float nom   = NdotV;
@@ -25,7 +25,7 @@ float GeometrySchlickGGX(float NdotV, float k)
 	return nom / denom;
 }
 
-[[fn]]
+
 float GeometrySmith(float3 N, float3 V, float3 L, float k)
 {
 	float NdotV = max(dot(N, V), 0.0);
@@ -36,7 +36,7 @@ float GeometrySmith(float3 N, float3 V, float3 L, float k)
 	return ggx1 * ggx2;
 }
 
-[[fn]]
+
 float3 fresnelSchlick(float cosTheta, float3 F0)
 {
 	return F0 + mul((1.0 - F0) , pow(1.0 - cosTheta, 5.0));

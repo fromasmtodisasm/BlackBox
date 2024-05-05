@@ -109,14 +109,7 @@ FatalError {
 }
 
 <INITIAL,cstbuffer>register {
-  CryError("REGISTER");
 	return yy::parser::make_REGISTER(loc);
-}
-<INITIAL>"[[fn]]" {
-  CryLog("[[fn]]");
-  add_shader_fragment("//");
-  yy_push_state(function);
-  print_state();
 }
 <INITIAL>cbuffer {
   yy_push_state(cstbuffer);
@@ -138,11 +131,11 @@ FatalError {
 	return yy::parser::make_STRUCT(loc);
 }
 
-<INITIAL,function,functionbody>in {
+<INITIAL,function>in {
 	return yy::parser::make_INSPECYFIER(loc);
 }
 
-<INITIAL,function,functionbody>out {
+<INITIAL,function>out {
 	return yy::parser::make_OUTSPECYFIER(loc);
 }
 
@@ -187,6 +180,10 @@ FatalError {
     ivec4  return yy::parser::make_INT4_TYPE(loc);
     uniform return yy::parser::make_UNIFORM(loc);
     string return yy::parser::make_STRING_TYPE(loc);
+}
+
+<functionbody>return {
+    return yy::parser::make_RETURN(loc);
 }
 
 VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
@@ -268,14 +265,13 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     /*==================================================================
       rules for inside a GLSL section
     */
-<function>{
-    \{  {
-        bracket_level = 1; // must be one...
-        string_buf_ptr  =  string_buf;
-        *string_buf_ptr = '\0';
-        yy_push_state(functionbody);
-        return CURRENT_SYMBOL;
-    }
+<function>"\{" {
+    CryLog("function body");
+    bracket_level = 1; // must be one...
+    string_buf_ptr  =  string_buf;
+    *string_buf_ptr = '\0';
+    yy_push_state(functionbody);
+    return CURRENT_SYMBOL;
 }
 
 <functionbody>"\}" {
@@ -286,19 +282,24 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
             *string_buf_ptr  =  '\0';
             // shall I just do BEGIN(INITIAL) ?
             yy_pop_state(); // back to shader
-            yy_pop_state();// back to INITIAL
-            return_from_func = true;
-            return yy::parser::make_CODEBODY(string_buf, loc);
+            //yy_pop_state();// back to INITIAL
+            //return_from_func = true;
+            return CURRENT_SYMBOL;
         } else {
             *string_buf_ptr++  =  yytext[0];
         }
     }
+<functionbody>"{" {
+    bracket_level++;
+    *string_buf_ptr++ = '{';
+}
 <functionbody>\n {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
         *string_buf_ptr++  =  *yptr++;
         //TODO:
 		loc.lines (yyleng); loc.step ();
+        return yy::parser::make_ANYLINE(loc); 
     }
 <functionbody>[^\\/\n^\{^\}]+ {  /*copy the GLSL data*/
         //CryLog("Copy function data");
@@ -539,21 +540,33 @@ void Scanner::eof()
 	//include_stack.pop();
 }
 
-  yy::parser::symbol_type Scanner::check_type(
-    const std::string &s,
-    const yy::parser::location_type& loc
-  )
-  {
-	  if (auto it = symboltype_map.find(s); it != symboltype_map.end())
-	  {
-          //CryLog("%s: Its type!!!", s.data());
-		return yy::parser::make_TYPE_NAME(s, loc); 
-	  }
-      else {
-          //CryLog("%s: Its ident!!!", s.data());
-        return yy::parser::make_IDENTIFIER(s, loc);
-      }
-  }
+yy::parser::symbol_type Scanner::check_type(
+const std::string &s,
+const yy::parser::location_type& loc
+)
+{
+    if (auto it = symboltype_map.find(s); it != symboltype_map.end())
+    {
+        //CryLog("%s: Its type!!!", s.data());
+    return yy::parser::make_TYPE_NAME(s, loc); 
+    }
+    else {
+        //CryLog("%s: Its ident!!!", s.data());
+    return yy::parser::make_IDENTIFIER(s, loc);
+    }
+}
+
+void Scanner::begin_function_body()
+{
+    bracket_level = 1; // must be one...
+    CryLog("begin function body");
+    yy_push_state(functionbody);
+}
+
+void Scanner::end_function_body()
+{
+    yy_pop_state();
+}
 
 
 const char* state_to_string(int state)

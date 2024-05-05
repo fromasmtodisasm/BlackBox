@@ -13,7 +13,7 @@ struct VsInput
     float2 TC : TEXCOORD0;
 };
 
-[[fn]]
+
 VsOutput VSMain(VsInput IN)
 {
     VsOutput OUT;
@@ -22,7 +22,7 @@ VsOutput VSMain(VsInput IN)
     return OUT;
 }
  
-[[fn]]
+
 float4 PSMain(VsOutput IN) : SV_Target0
 {
     return float4(IN.color);

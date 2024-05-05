@@ -53,13 +53,19 @@ void TestFx(IConsoleCmdArgs* args)
 		filename = args->GetArg(1);
 
 	PEffect pEffect = nullptr;
-#if 0
+#if 1
 	if (g_FxParser->Parse(filename, &pEffect))
 	{
 		CryLog("Dumping shaders of effect: %s", filename.data());
-		for (int i = 0; i < pEffect->GetNumShaders(); i++)
+		for (int i = 0; i < pEffect->GetNumTechniques(); i++)
 		{
-			CryLog("[%s]", pEffect->GetShader(i).name.c_str());
+			auto tech = pEffect->GetTechnique(i);
+			for (int j = 0; j < tech->GetNumPasses(); j++)
+			{
+				auto pass = tech->GetPass(j);
+				CryLog("[%s]", pass->Name.c_str());
+				
+			}
 		}
 	}
 #endif

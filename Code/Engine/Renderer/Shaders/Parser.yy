@@ -29,6 +29,7 @@
     #define lex_pop_state() scanner.pop_state()
     #define lex_print_state() scanner.print_state()
 
+    #define lex_begin_funciton_body() scanner.begin_function_body()
 
     namespace nvFX {
     /*************************************************************************/ /**
@@ -275,6 +276,9 @@
 
 %token INSPECYFIER
 %token OUTSPECYFIER
+%token ANYLINE
+
+%token RETURN
 
 %%
 %start input;
@@ -298,12 +302,17 @@ arguments:  var_spec var_decl |
             %empty;
         
 function_definition: function_declaration semantic '{' { 
-    //CryLog("Open function scope");
-    } CODEBODY {
-    //CryLog("Close function scope"); 
-    auto body = $CODEBODY;
-    //CryLog("FuncBody: %s", body.data());
-}
+        {lex_begin_funciton_body();}
+        CryLog("Open function scope");
+    }     
+    function_body_content '}' {
+        CryLog("Close function scope");
+    }
+;
+
+function_body_content: 
+    | function_body_content ANYLINE 
+    | %empty;
 
 object_type: TYPE_NAME | base_type;
 

@@ -26,7 +26,7 @@ class Scanner : public yyFlexLexer
 		symboltype_map.insert({"float4x4"});
 
 		symboltype_map.insert({"int"});
-		string_buf.reserve(1024 * 16);
+		//string_buf.reserve(1024 * 16);
 	}
 	virtual ~Scanner() {}
 	virtual yy::parser::symbol_type ScanToken();
@@ -66,11 +66,13 @@ class Scanner : public yyFlexLexer
 	yy::parser::symbol_type check_type(const std::string&				s,
 									   const yy::parser::location_type& loc);
 	void					print_state();
+    void begin_function_body();
+    void end_function_body();
 
 	Driver& driver;
 
 	std::set<std::string> symboltype_map;
-	string				  string_buf;
+	//string				  string_buf;
 	string				  shader;
 
 	bool   canNowAddFragment	  = true;

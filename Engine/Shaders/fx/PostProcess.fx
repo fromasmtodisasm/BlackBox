@@ -16,7 +16,7 @@ struct VsInput
     float2 TC : TEXCOORD0;
 };
 
-[[fn]]
+
 VsOutput VSMain(VsInput IN)
 {
     VsOutput Output;
@@ -25,7 +25,7 @@ VsOutput VSMain(VsInput IN)
     return Output;
 }  
 
-[[fn]]
+
 // same function declaration style as vertex shaders
 // pixel shaders return the colour value of the pixel (hence the float4)
 float4 GrayScalePS(float2 texCoord : TEXCOORD0) : SV_Target0

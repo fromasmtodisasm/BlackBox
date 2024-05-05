@@ -4,12 +4,12 @@
 // Unreal 3, Documentation: "Color Grading"
 // Adapted to be close to Tonemap_ACES, with similar range
 // Gamma 2.2 correction is baked in, don't use with sRGB conversion!
-[[fn]]
+
 float3 unreal(float3 x) {
     return x / (x + 0.155) * 1.019;
 }
 
-[[fn]]
+
 float unreal(float x) {
     return x / (x + 0.155) * 1.019;
 }
@@ -18,14 +18,14 @@ float unreal(float x) {
 
 
 
-[[fn]]
+
 float diffuse(float3 lightPos, float3 fragPos, float3 N)
 {
     float3 lightDir = normalize(lightPos - fragPos);
     return max(dot(normalize(N), lightDir), 0.0);
 }
 
-[[fn]]
+
 float specular(float3 lightPos, float3 fragPos, float3 eyePos, float3 N)
 {
     float3 reflectedLightVector = normalize(reflect(-(lightPos - fragPos), normalize(N)));
@@ -34,13 +34,13 @@ float specular(float3 lightPos, float3 fragPos, float3 eyePos, float3 N)
     return pow(s, 128);
 }
 
-[[fn]]
+
 float3 ambient()
 {
     return float3(0.05, 0.05, 0.05);
 }
 
-[[fn]]
+
 float3 wo_tonemap(float3 x)
 {
     return x;
@@ -74,7 +74,7 @@ struct VsInput
     /*[[vk::location(5)]]*/ float4 color : COLOR;
 };
 
-[[fn]] 
+ 
 VS_OUT VSMain(VsInput IN)
 {
 	VS_OUT OUT;
@@ -93,7 +93,7 @@ struct OutColor
 	float3 normal;
 };
 
-[[fn]]
+
 float4 PSMain(VS_OUT IN)
 	: SV_Target0
 {
