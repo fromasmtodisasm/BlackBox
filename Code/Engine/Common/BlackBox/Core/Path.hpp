@@ -106,7 +106,7 @@ namespace PathUtil
 		if (filepath.empty())
 			return;
 		const char* szFilepath = filepath.c_str();
-#if 0
+#if 1
 	const char* szExtension = szFilepath + filepath.length() - 1;
 #else
 		const char* szExtension = szFilepath + filepath.length();

@@ -606,13 +606,13 @@ string CD3DRenderer::AdjustTexturePath(string filename)
 	return path;
 }
 
-bool CD3DRenderer::FindTexture(string filename, CCryFile& file, string& adjustet_name)
+bool CD3DRenderer::FindTexture(string filename, CCryFile& file, string& resultName)
 {
 	bool result   = false;
-	adjustet_name = AdjustTexturePath(filename);
+	resultName = AdjustTexturePath(filename);
 	bool loaded   = true;
 
-	if (file.Open(adjustet_name.data(), "r"))
+	if (file.Open(resultName.data(), "r"))
 	{
 		result = true;
 	}
@@ -620,9 +620,14 @@ bool CD3DRenderer::FindTexture(string filename, CCryFile& file, string& adjustet
 	{
 		loaded = false;
 		string _file;
-		PathUtil::Split(filename.c_str(), adjustet_name, _file);
-		adjustet_name = adjustet_name + _file + ".jpg";
-		result        = file.Open(adjustet_name.data(), "r");
+		PathUtil::Split(filename.c_str(), resultName, _file);
+		auto ext = PathUtil::GetExt(_file.data());
+		if (ext[0] == 0)
+		{
+			ext = ".jpg";
+		}
+		resultName = resultName + _file + ext;
+		result        = file.Open(resultName.data(), "r");
 	}
 	return result;
 }
@@ -679,7 +684,7 @@ unsigned int CD3DRenderer::LoadTextureInternal(STexPic* pix, string fn, int* tex
 	else
 	{
 		auto srv = CreateTextureFromFile(std::move(file));
-		//auto srv = CreateTextureFromFile(adjustet_name.data());
+		//auto srv = CreateTextureFromFile(resultName.data());
 		if (srv)
 		{
 			//CryLog("$3Loaded texture %s", filename.c_str());
