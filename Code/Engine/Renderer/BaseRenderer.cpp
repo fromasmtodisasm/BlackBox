@@ -102,17 +102,19 @@ void CRenderer::UnregisterCallbackClient(IRendererCallbackClient* pClient)
 
 bool CRenderer::OnBeforeVarChange(ICVar* pVar, const char* sNewValue)
 {
-	if (!strcmp(pVar->GetName(), "r_Width"))
+	auto name = std::string_view(pVar->GetName());
+	auto dispatcher = Env::System()->GetISystemEventDispatcher();
+	if (name == "r_Width")
 	{
-		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, std::strtof(sNewValue, nullptr), GetHeight());
+		dispatcher->OnSystemEvent(ESYSTEM_EVENT_RESIZE, std::strtof(sNewValue, nullptr), GetHeight());
 	}
-	else if (!strcmp(pVar->GetName(), "r_Height"))
+	if (name == "r_Height")
 	{
-		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RESIZE, GetWidth(), std::strtof(sNewValue, nullptr));
+		dispatcher->OnSystemEvent(ESYSTEM_EVENT_RESIZE, GetWidth(), std::strtof(sNewValue, nullptr));
 	}
-	else if (!strcmp(pVar->GetName(), "r_Fullscreen"))
+	if (name == "r_Fullscreen")
 	{
-		Env::System()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, std::strtol(sNewValue, nullptr, 10), 0);
+		dispatcher->OnSystemEvent(ESYSTEM_EVENT_TOGGLE_FULLSCREEN, std::strtol(sNewValue, nullptr, 10), 0);
 	}
 	return true;
 }

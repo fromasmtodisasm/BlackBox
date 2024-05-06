@@ -8,9 +8,9 @@ bool CDevice::Create(_smart_ptr<IDXGIAdapter> pAdapter)
 {
 	HRESULT         hr                = S_OK;
 	UINT            createDeviceFlags = 0;
-	//#ifdef _DEBUG
-	//	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-	//#endif
+	#ifdef _DEBUG
+		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	#endif
 	D3D_DRIVER_TYPE driverTypes[] =
 	    {
 	        D3D_DRIVER_TYPE(D3D_DRIVER_TYPE_HARDWARE),
@@ -48,21 +48,6 @@ bool CDevice::Create(_smart_ptr<IDXGIAdapter> pAdapter)
 		{
 			return true;
 		}
-#if 0
-		//hr = D3D11CreateDeviceAndSwapChain(
-		//	NULL,
-		//	g_driverType,
-		//	NULL,
-		//	createDeviceFlags,
-		//	featureLevels[0],
-		//	numFeatureLevels,
-		//	D3D11_SDK_VERSION,
-		//	&sd,
-		//	pSwapChain.GetAddressOf(),
-		//	m_pd3dDevice.GetAddressOf(),
-		//	&m_FeatureLevel,
-		//	m_pImmediateContext.GetAddressOf());
-#endif
 	}
 	return false;
 }
