@@ -90,7 +90,10 @@ uint32_t CInputDevice::GetInputCharUnicode(const SInputEvent& event)
 
 const char* CInputDevice::GetOSKeyName(const SInputEvent& event)
 {
-	return event.keyName;
+	//return event.keyName;
+	auto code = SDL_GetKeyFromScancode(SDL_Scancode(m_nameToId[event.keyName]));
+
+	return SDL_GetKeyName(code);
 }
 
 /*

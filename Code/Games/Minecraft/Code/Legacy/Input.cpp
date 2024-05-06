@@ -1,5 +1,30 @@
 #include "stdafx.h"
 #include "Input.hpp"
+namespace Unicode
+{
+	static inline wstring Convert(wstring& widt, const char*& narow)
+	{
+		::std::wstring wideWhat;
+		{
+			int convertResult = MultiByteToWideChar(CP_UTF8, 0, narow, (int)strlen(narow), NULL, 0);
+			if (convertResult <= 0)
+			{
+				wideWhat = L"Exception occurred: Failure to convert its message text using MultiByteToWideChar: convertResult=";
+				wideWhat += std::to_wstring(convertResult);
+				wideWhat += L"  GetLastError()=";
+				wideWhat += std::to_wstring(GetLastError());
+			}
+			else
+			{
+				wideWhat.resize(convertResult + 10);
+				convertResult = MultiByteToWideChar(CP_UTF8, 0, narow, (int)strlen(narow), &wideWhat[0], (int)wideWhat.size());
+			}
+		}
+		widt = wideWhat;
+		return widt;
+	}
+} // namespace Unicode
+
 
 float gLastMouseClickTime = 0.0f;
 bool gDblClick = false;
@@ -301,6 +326,31 @@ const char* Legacy::CInput::GetKeyName(int nKey, int modifiers, bool bGUI)
 
 bool Legacy::CInput::GetOSKeyName(int nKey, wchar_t* szwKeyName, int iBufSize)
 {
+	auto symbol = m_Keyboard.m_pKeyboard->LookupSymbol(EKeyId(nKey));
+	if (!symbol)
+	{
+		return false;
+	}
+	// Create SInputEvent from symbol
+	::SInputEvent event = {};
+	event.keyId = symbol->keyId;
+	event.state = symbol->state;
+	//event.modifiers = symbol->modifiers;
+	event.value = symbol->value;
+	event.deviceIndex = symbol->deviceIndex;
+	event.deviceType = symbol->deviceType;
+	event.pSymbol = symbol;
+	event.keyName = m_Keyboard.m_pKeyboard->GetKeyName(symbol->keyId);
+	// Get OS key name
+	
+	auto result =  m_Keyboard.m_pKeyboard->GetOSKeyName(event);
+	if (result)
+	{
+		std::wstring wide;
+		Unicode::Convert(wide, result);
+		wcscpy(szwKeyName, wide.c_str());
+		return true;
+	}
 	return false;
 }
 
@@ -340,8 +390,9 @@ const char* Legacy::CInput::GetXKeyPressedName()
 
 void Legacy::CInput::ClearKeyState()
 {
-	m_Keyboard.ClearKeyState();
-	m_Mouse.ClearKeyState();
+	//m_Keyboard.ClearKeyState();
+	//m_Mouse.ClearKeyState();
+	m_pInput->ClearKeyState();
 }
 
 unsigned char Legacy::CInput::GetKeyState(int nKey)
@@ -926,4 +977,648 @@ float Legacy::CMouse::GetSensitvityScale()
 void Legacy::CMouse::ClearKeyState()
 {
 	m_pMouse->ClearKeyState();
+}
+
+Legacy::KeyCodes convertKey(EKeyId k)
+{
+	using namespace Legacy;
+	switch (k)
+	{
+	case eKI_Escape:
+		return XKEY_ESCAPE;
+	case eKI_1:
+		return XKEY_1;
+	case eKI_2:
+		return XKEY_2;
+	case eKI_3:
+		return XKEY_3;
+	case eKI_4:
+		return XKEY_4;
+	case eKI_5:
+		return XKEY_5;
+	case eKI_6:
+		return XKEY_6;
+	case eKI_7:
+		return XKEY_7;
+	case eKI_8:
+		return XKEY_8;
+	case eKI_9:
+		return XKEY_9;
+	case eKI_0:
+		return XKEY_0;
+	case eKI_Minus:
+		return XKEY_MINUS;
+	case eKI_Equals:
+		return XKEY_EQUALS;
+	case eKI_Backspace:
+		return XKEY_BACKSPACE;
+	case eKI_Tab:
+		return XKEY_TAB;
+	case eKI_Q:
+		return XKEY_Q;
+	case eKI_W:
+		return XKEY_W;
+	case eKI_E:
+		return XKEY_E;
+	case eKI_R:
+		return XKEY_R;
+	case eKI_T:
+		return XKEY_T;
+	case eKI_Y:
+		return XKEY_Y;
+	case eKI_U:
+		return XKEY_U;
+	case eKI_I:
+		return XKEY_I;
+	case eKI_O:
+		return XKEY_O;
+	case eKI_P:
+		return XKEY_P;
+	case eKI_LBracket:
+		return XKEY_LBRACKET;
+	case eKI_RBracket:
+		return XKEY_RBRACKET;
+	case eKI_Enter:
+		return XKEY_RETURN;
+	case eKI_LCtrl:
+		return XKEY_RCONTROL;
+	case eKI_A:
+		return XKEY_A;
+	case eKI_S:
+		return XKEY_S;
+	case eKI_D:
+		return XKEY_D;
+	case eKI_F:
+		return XKEY_F;
+	case eKI_G:
+		return XKEY_G;
+	case eKI_H:
+		return XKEY_H;
+	case eKI_J:
+		return XKEY_J;
+	case eKI_K:
+		return XKEY_K;
+	case eKI_L:
+		return XKEY_L;
+	case eKI_Semicolon:
+		return XKEY_SEMICOLON;
+	case eKI_Apostrophe:
+		return XKEY_APOSTROPHE;
+	case eKI_Tilde:
+		return XKEY_TILDE;
+	case eKI_LShift:
+		return XKEY_LSHIFT;
+	case eKI_Backslash:
+		return XKEY_BACKSLASH;
+	case eKI_Z:
+		return XKEY_Z;
+	case eKI_X:
+		return XKEY_X;
+	case eKI_C:
+		return XKEY_C;
+	case eKI_V:
+		return XKEY_V;
+	case eKI_B:
+		return XKEY_B;
+	case eKI_N:
+		return XKEY_N;
+	case eKI_M:
+		return XKEY_M;
+	case eKI_Comma:
+		return XKEY_COMMA;
+	case eKI_Period:
+		return XKEY_PERIOD;
+	case eKI_Slash:
+		return XKEY_SLASH;
+	case eKI_RShift:
+		return XKEY_RSHIFT;
+	case eKI_NP_Multiply:
+		return XKEY_MULTIPLY;
+	case eKI_LAlt:
+		return XKEY_LALT;
+	case eKI_Space:
+		return XKEY_SPACE;
+	case eKI_CapsLock:
+		return XKEY_CAPSLOCK;
+	case eKI_F1:
+		return XKEY_F1;
+	case eKI_F2:
+		return XKEY_F2;
+	case eKI_F3:
+		return XKEY_F3;
+	case eKI_F4:
+		return XKEY_F4;
+	case eKI_F5:
+		return XKEY_F5;
+	case eKI_F6:
+		return XKEY_F6;
+	case eKI_F7:
+		return XKEY_F7;
+	case eKI_F8:
+		return XKEY_F8;
+	case eKI_F9:
+		return XKEY_F9;
+	case eKI_F10:
+		return XKEY_F10;
+	case eKI_NumLock:
+		return XKEY_NUMLOCK;
+	case eKI_ScrollLock:
+		return XKEY_SCROLLLOCK;
+	case eKI_NP_7:
+		return XKEY_NUMPAD7;
+	case eKI_NP_8:
+		return XKEY_NUMPAD8;
+	case eKI_NP_9:
+		return XKEY_NUMPAD9;
+	case eKI_NP_Substract:
+		return XKEY_SUBTRACT;
+	case eKI_NP_4:
+		return XKEY_NUMPAD4;
+	case eKI_NP_5:
+		return XKEY_NUMPAD5;
+	case eKI_NP_6:
+		return XKEY_NUMPAD6;
+	case eKI_NP_Add:
+		return XKEY_ADD;
+	case eKI_NP_1:
+		return XKEY_NUMPAD1;
+	case eKI_NP_2:
+		return XKEY_NUMPAD2;
+	case eKI_NP_3:
+		return XKEY_NUMPAD3;
+	case eKI_NP_0:
+		return XKEY_NUMPAD0;
+	case eKI_F11:
+		return XKEY_F11;
+	case eKI_F12:
+		return XKEY_F12;
+	case eKI_F13:
+		return XKEY_F13;
+	case eKI_F14:
+		return XKEY_F14;
+	case eKI_F15:
+		return XKEY_F15;
+		//FIXME:
+#if 0
+	case eKI_Colon: return XKEY_COLON;
+	case eKI_Underline: return XKEY_UNDERLINE;
+#endif
+	case eKI_NP_Enter:
+		return XKEY_NUMPADENTER;
+	case eKI_RCtrl:
+		return XKEY_RCONTROL;
+	case eKI_NP_Period:
+		return XKEY_PERIOD;
+	case eKI_NP_Divide:
+		return XKEY_SLASH;
+	case eKI_Print:
+		return XKEY_PRINT;
+	case eKI_RAlt:
+		return XKEY_RALT;
+	case eKI_Pause:
+		return XKEY_PAUSE;
+	case eKI_Home:
+		return XKEY_HOME;
+	case eKI_Up:
+		return XKEY_UP;
+	case eKI_PgUp:
+		return XKEY_PAGE_UP;
+	case eKI_Left:
+		return XKEY_LEFT;
+	case eKI_Right:
+		return XKEY_RIGHT;
+	case eKI_End:
+		return XKEY_END;
+	case eKI_Down:
+		return XKEY_DOWN;
+	case eKI_PgDn:
+		return XKEY_PAGE_DOWN;
+	case eKI_Insert:
+		return XKEY_INSERT;
+	case eKI_Delete:
+		return XKEY_DELETE;
+	case eKI_LWin:
+		return XKEY_WIN_LWINDOW;
+	case eKI_RWin:
+		return XKEY_WIN_RWINDOW;
+	case eKI_Apps:
+		return XKEY_WIN_APPS;
+	case eKI_OEM_102:
+		return XKEY_OEM_102;
+
+		// Mouse.
+	case eKI_Mouse1:
+		return XKEY_MOUSE1;
+	case eKI_Mouse2:
+		return XKEY_MOUSE2;
+	case eKI_Mouse3:
+		return XKEY_MOUSE3;
+	case eKI_Mouse4:
+		return XKEY_MOUSE4;
+	case eKI_Mouse5:
+		return XKEY_MOUSE5;
+	case eKI_Mouse6:
+		return XKEY_MOUSE6;
+	case eKI_Mouse7:
+		return XKEY_MOUSE7;
+	case eKI_Mouse8:
+		return XKEY_MOUSE8;
+	case eKI_MouseWheelUp:
+		return XKEY_MWHEEL_UP;
+	case eKI_MouseWheelDown:
+		return XKEY_MWHEEL_DOWN;
+	case eKI_MouseX:
+		return XKEY_MAXIS_X;
+	case eKI_MouseY:
+		return XKEY_MAXIS_Y;
+		//FIXME:
+#if 0
+	case eKI_MouseZ: return XKEY_MOUSEZ;
+
+	case eKI_MouseXAbsolute: return XKEY_MOUSEXABSOLUTE;
+	case eKI_MouseYAbsolute: return XKEY_MOUSEYABSOLUTE;
+#endif
+
+		//FIXME: support gamepad
+#if 1
+		// XBox controller.
+	case eKI_XI_DPadUp: return XKEY_GP_DPAD_UP;
+	case eKI_XI_DPadDown: return XKEY_GP_DPAD_DOWN;
+	case eKI_XI_DPadLeft: return XKEY_GP_DPAD_LEFT;
+	case eKI_XI_DPadRight: return XKEY_GP_DPAD_RIGHT;
+	case eKI_XI_Start: return XKEY_GP_START;
+	case eKI_XI_Back: return XKEY_GP_BACK;
+	case eKI_XI_ThumbL: return XKEY_GP_LEFT_THUMB;
+	case eKI_XI_ThumbR: return XKEY_GP_RIGHT_THUMB;
+#if 0
+	case eKI_XI_ShoulderL: return XKEY_GP_SHOULDERL;
+	case eKI_XI_ShoulderR: return XKEY_GP_SHOULDERR;
+#endif
+	case eKI_XI_A: return XKEY_GP_A;
+	case eKI_XI_B: return XKEY_GP_B;
+	case eKI_XI_X: return XKEY_GP_X;
+	case eKI_XI_Y: return XKEY_GP_Y;
+	case eKI_XI_TriggerL: return XKEY_GP_LEFT_TRIGGER;
+	case eKI_XI_TriggerR: return XKEY_GP_RIGHT_TRIGGER;
+	case eKI_XI_ThumbLX: return XKEY_GP_STHUMBLX;
+	case eKI_XI_ThumbLY: return XKEY_GP_STHUMBLY;
+	case eKI_XI_ThumbLUp: return XKEY_GP_STHUMBLUP;
+	case eKI_XI_ThumbLDown: return XKEY_GP_STHUMBLDOWN;
+	case eKI_XI_ThumbLLeft: return XKEY_GP_STHUMBLLEFT;
+	case eKI_XI_ThumbLRight: return XKEY_GP_STHUMBLRIGHT;
+	case eKI_XI_ThumbRX: return XKEY_GP_STHUMBRX;
+	case eKI_XI_ThumbRY: return XKEY_GP_STHUMBRY;
+#if 0
+	case eKI_XI_ThumbRUp: return XKEY_GP_THUMBRUP;
+	case eKI_XI_ThumbRDown: return XKEY_GP_THUMBRDOWN;
+	case eKI_XI_ThumbRLeft: return XKEY_GP_THUMBRLEFT;
+	case eKI_XI_ThumbRRight: return XKEY_GP_THUMBRRIGHT;
+	case eKI_XI_TriggerLBtn: return XKEY_GP_TRIGGERLBTN;
+	case eKI_XI_TriggerRBtn: return XKEY_GP_TRIGGERRBTN;
+#endif
+#endif
+
+	case eKI_Unknown:
+		return XKEY_NULL;
+	default:
+		return XKEY_NULL;
+		break;
+	}
+}
+
+inline ProxyListener::~ProxyListener() {}
+
+inline ProxyListener::ProxyListener(LegacyListener* parent)
+	: m_Parent(parent)
+{
+}
+
+inline bool ProxyListener::OnInputEvent(const SInputEvent& event)
+{
+	using namespace Legacy;
+	if (event.keyId == eKI_SYS_Commit)
+		return false;
+	Legacy::SInputEvent legacyEvent;
+	auto& l = legacyEvent;
+
+	l.key = convertKey(event.keyId);
+	l.keyname = event.keyName;
+	l.moidifiers = event.modifiers;
+	l.timestamp = 0;
+	l.type = getType(event.state);
+	l.value = event.value;
+
+	if (l.key == XKEY_GP_A)
+	{
+		l.key = XKEY_RETURN;
+	}
+	if (event.state != eIS_Unknown)
+	{
+		if (l.key == XKEY_MWHEEL_DOWN || l.key == XKEY_MWHEEL_UP)
+		{
+			l.type = Legacy::SInputEvent::KEY_PRESS;
+		}
+	}
+
+	return m_Parent->OnInputEvent(l);
+}
+
+EKeyId Input::kconvertKey(Legacy::KeyCodes key)
+{
+	using namespace Legacy;
+	switch (key)
+	{
+	case XKEY_ESCAPE:
+		return eKI_Escape;
+	case XKEY_1:
+		return eKI_1;
+	case XKEY_2:
+		return eKI_2;
+	case XKEY_3:
+		return eKI_3;
+	case XKEY_4:
+		return eKI_4;
+	case XKEY_5:
+		return eKI_5;
+	case XKEY_6:
+		return eKI_6;
+	case XKEY_7:
+		return eKI_7;
+	case XKEY_8:
+		return eKI_8;
+	case XKEY_9:
+		return eKI_9;
+	case XKEY_0:
+		return eKI_0;
+	case XKEY_MINUS:
+		return eKI_Minus;
+	case XKEY_EQUALS:
+		return eKI_Equals;
+	case XKEY_BACKSPACE:
+		return eKI_Backspace;
+	case XKEY_TAB:
+		return eKI_Tab;
+	case XKEY_Q:
+		return eKI_Q;
+	case XKEY_W:
+		return eKI_W;
+	case XKEY_E:
+		return eKI_E;
+	case XKEY_R:
+		return eKI_R;
+	case XKEY_T:
+		return eKI_T;
+	case XKEY_Y:
+		return eKI_Y;
+	case XKEY_U:
+		return eKI_U;
+	case XKEY_I:
+		return eKI_I;
+	case XKEY_O:
+		return eKI_O;
+	case XKEY_P:
+		return eKI_P;
+	case XKEY_LBRACKET:
+		return eKI_LBracket;
+	case XKEY_RBRACKET:
+		return eKI_RBracket;
+	case XKEY_RETURN:
+		return eKI_Enter;
+	case XKEY_RCONTROL:
+		return eKI_LCtrl;
+	case XKEY_A:
+		return eKI_A;
+	case XKEY_S:
+		return eKI_S;
+	case XKEY_D:
+		return eKI_D;
+	case XKEY_F:
+		return eKI_F;
+	case XKEY_G:
+		return eKI_G;
+	case XKEY_H:
+		return eKI_H;
+	case XKEY_J:
+		return eKI_J;
+	case XKEY_K:
+		return eKI_K;
+	case XKEY_L:
+		return eKI_L;
+	case XKEY_SEMICOLON:
+		return eKI_Semicolon;
+	case XKEY_APOSTROPHE:
+		return eKI_Apostrophe;
+	case XKEY_TILDE:
+		return eKI_Tilde;
+	case XKEY_LSHIFT:
+		return eKI_LShift;
+	case XKEY_BACKSLASH:
+		return eKI_Backslash;
+	case XKEY_Z:
+		return eKI_Z;
+	case XKEY_X:
+		return eKI_X;
+	case XKEY_C:
+		return eKI_C;
+	case XKEY_V:
+		return eKI_V;
+	case XKEY_B:
+		return eKI_B;
+	case XKEY_N:
+		return eKI_N;
+	case XKEY_M:
+		return eKI_M;
+	case XKEY_COMMA:
+		return eKI_Comma;
+	case XKEY_PERIOD:
+		return eKI_Period;
+	case XKEY_SLASH:
+		return eKI_Slash;
+	case XKEY_RSHIFT:
+		return eKI_RShift;
+	case XKEY_MULTIPLY:
+		return eKI_NP_Multiply;
+	case XKEY_LALT:
+		return eKI_LAlt;
+	case XKEY_SPACE:
+		return eKI_Space;
+	case XKEY_CAPSLOCK:
+		return eKI_CapsLock;
+	case XKEY_F1:
+		return eKI_F1;
+	case XKEY_F2:
+		return eKI_F2;
+	case XKEY_F3:
+		return eKI_F3;
+	case XKEY_F4:
+		return eKI_F4;
+	case XKEY_F5:
+		return eKI_F5;
+	case XKEY_F6:
+		return eKI_F6;
+	case XKEY_F7:
+		return eKI_F7;
+	case XKEY_F8:
+		return eKI_F8;
+	case XKEY_F9:
+		return eKI_F9;
+	case XKEY_F10:
+		return eKI_F10;
+	case XKEY_NUMLOCK:
+		return eKI_NumLock;
+	case XKEY_SCROLLLOCK:
+		return eKI_ScrollLock;
+	case XKEY_NUMPAD7:
+		return eKI_NP_7;
+	case XKEY_NUMPAD8:
+		return eKI_NP_8;
+	case XKEY_NUMPAD9:
+		return eKI_NP_9;
+	case XKEY_SUBTRACT:
+		return eKI_NP_Substract;
+	case XKEY_NUMPAD4:
+		return eKI_NP_4;
+	case XKEY_NUMPAD5:
+		return eKI_NP_5;
+	case XKEY_NUMPAD6:
+		return eKI_NP_6;
+	case XKEY_ADD:
+		return eKI_NP_Add;
+	case XKEY_NUMPAD1:
+		return eKI_NP_1;
+	case XKEY_NUMPAD2:
+		return eKI_NP_2;
+	case XKEY_NUMPAD3:
+		return eKI_NP_3;
+	case XKEY_NUMPAD0:
+		return eKI_NP_0;
+	case XKEY_F11:
+		return eKI_F11;
+	case XKEY_F12:
+		return eKI_F12;
+	case XKEY_F13:
+		return eKI_F13;
+	case XKEY_F14:
+		return eKI_F14;
+	case XKEY_F15:
+		return eKI_F15;
+		//FIXME:
+#if 0
+	case XKEY_COLON: return eKI_Colon;
+	case XKEY_UNDERLINE: return eKI_Underline;
+#endif
+	case XKEY_NUMPADENTER:
+		return eKI_NP_Enter;
+		//case XKEY_RCONTROL: return eKI_RCtrl;
+		//case XKEY_PERIOD: return eKI_NP_Period;
+		//case XKEY_SLASH: return eKI_NP_Divide;
+	case XKEY_PRINT:
+		return eKI_Print;
+	case XKEY_RALT:
+		return eKI_RAlt;
+	case XKEY_PAUSE:
+		return eKI_Pause;
+	case XKEY_HOME:
+		return eKI_Home;
+	case XKEY_UP:
+		return eKI_Up;
+	case XKEY_PAGE_UP:
+		return eKI_PgUp;
+	case XKEY_LEFT:
+		return eKI_Left;
+	case XKEY_RIGHT:
+		return eKI_Right;
+	case XKEY_END:
+		return eKI_End;
+	case XKEY_DOWN:
+		return eKI_Down;
+	case XKEY_PAGE_DOWN:
+		return eKI_PgDn;
+	case XKEY_INSERT:
+		return eKI_Insert;
+	case XKEY_DELETE:
+		return eKI_Delete;
+	case XKEY_WIN_LWINDOW:
+		return eKI_LWin;
+	case XKEY_WIN_RWINDOW:
+		return eKI_RWin;
+	case XKEY_WIN_APPS:
+		return eKI_Apps;
+	case XKEY_OEM_102:
+		return eKI_OEM_102;
+
+		// Mouse.
+	case XKEY_MOUSE1:
+		return eKI_Mouse1;
+	case XKEY_MOUSE2:
+		return eKI_Mouse2;
+	case XKEY_MOUSE3:
+		return eKI_Mouse3;
+	case XKEY_MOUSE4:
+		return eKI_Mouse4;
+	case XKEY_MOUSE5:
+		return eKI_Mouse5;
+	case XKEY_MOUSE6:
+		return eKI_Mouse6;
+	case XKEY_MOUSE7:
+		return eKI_Mouse7;
+	case XKEY_MOUSE8:
+		return eKI_Mouse8;
+	case XKEY_MWHEEL_UP:
+		return eKI_MouseWheelUp;
+	case XKEY_MWHEEL_DOWN:
+		return eKI_MouseWheelDown;
+	case XKEY_MAXIS_X:
+		return eKI_MouseX;
+	case XKEY_MAXIS_Y:
+		return eKI_MouseY;
+		//FIXME:
+#if 0
+	case XKEY_MOUSEZ: return eKI_MouseZ;
+
+	case XKEY_MOUSEXABSOLUTE: return eKI_MouseXAbsolute;
+	case XKEY_MOUSEYABSOLUTE: return eKI_MouseYAbsolute;
+#endif
+
+		//FIXME: support gamepad
+#if 0
+		// XBox controller.
+	case XKEY_XI_DPADUP: return eKI_XI_DPadUp;
+	case XKEY_XI_DPADDOWN: return eKI_XI_DPadDown;
+	case XKEY_XI_DPADLEFT: return eKI_XI_DPadLeft;
+	case XKEY_XI_DPADRIGHT: return eKI_XI_DPadRight;
+	case XKEY_XI_START: return eKI_XI_Start;
+	case XKEY_XI_BACK: return eKI_XI_Back;
+	case XKEY_XI_THUMBL: return eKI_XI_ThumbL;
+	case XKEY_XI_THUMBR: return eKI_XI_ThumbR;
+	case XKEY_XI_SHOULDERL: return eKI_XI_ShoulderL;
+	case XKEY_XI_SHOULDERR: return eKI_XI_ShoulderR;
+	case XKEY_XI_A: return eKI_XI_A;
+	case XKEY_XI_B: return eKI_XI_B;
+	case XKEY_XI_X: return eKI_XI_X;
+	case XKEY_XI_Y: return eKI_XI_Y;
+	case XKEY_XI_TRIGGERL: return eKI_XI_TriggerL;
+	case XKEY_XI_TRIGGERR: return eKI_XI_TriggerR;
+	case XKEY_XI_THUMBLX: return eKI_XI_ThumbLX;
+	case XKEY_XI_THUMBLY: return eKI_XI_ThumbLY;
+	case XKEY_XI_THUMBLUP: return eKI_XI_ThumbLUp;
+	case XKEY_XI_THUMBLDOWN: return eKI_XI_ThumbLDown;
+	case XKEY_XI_THUMBLLEFT: return eKI_XI_ThumbLLeft;
+	case XKEY_XI_THUMBLRIGHT: return eKI_XI_ThumbLRight;
+	case XKEY_XI_THUMBRX: return eKI_XI_ThumbRX;
+	case XKEY_XI_THUMBRY: return eKI_XI_ThumbRY;
+	case XKEY_XI_THUMBRUP: return eKI_XI_ThumbRUp;
+	case XKEY_XI_THUMBRDOWN: return eKI_XI_ThumbRDown;
+	case XKEY_XI_THUMBRLEFT: return eKI_XI_ThumbRLeft;
+	case XKEY_XI_THUMBRRIGHT: return eKI_XI_ThumbRRight;
+	case XKEY_XI_TRIGGERLBTN: return eKI_XI_TriggerLBtn;
+	case XKEY_XI_TRIGGERRBTN: return eKI_XI_TriggerRBtn;
+#endif
+
+	case XKEY_NULL:
+		return eKI_Unknown;
+	default:
+		return eKI_Unknown;
+		break;
+	}
 }

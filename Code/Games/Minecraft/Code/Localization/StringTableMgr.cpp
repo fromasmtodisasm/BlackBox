@@ -19,6 +19,8 @@
 #include "IXMLDOM.h"
 #include <StlUtils.h>
 #include <BlackBox/Input/IInput.hpp>
+#undef IS_MOUSE_KEY
+#define IS_MOUSE_KEY(key)			((key)&0x00FF0000)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -68,7 +70,8 @@ bool CStringTableMgr::Load(ISystem* pSystem, CScriptObjectLanguage& oLang, strin
 //////////////////////////////////////////////////////////////////////
 void CStringTableMgr::AddControl(int nKey)
 {
-	IInput* pInput = m_pSystem->GetIInput();
+	//IInput* pInput = m_pSystem->GetIInput();
+	auto* pInput = (static_cast<CXGame*>(GetIXGame(GetISystem()->GetIGame())))->GetLegacyInput();
 
 	if (!pInput)
 	{
@@ -80,28 +83,21 @@ void CStringTableMgr::AddControl(int nKey)
 
 	if (!IS_MOUSE_KEY(nKey))
 	{
-		auto s = pInput->LookupSymbol(EInputDeviceType::eIDT_Keyboard, 0, (EKeyId)nKey);
-		if (!s)
-			return;
-		SInputEvent e;
-		s->AssignTo(e);
-		auto name = pInput->GetOSKeyName(e);
-		if (name)
+		if (pInput->GetOSKeyName(nKey, szwKeyName, 255))
 		{
 			sprintf(szKey, "control%d", nKey);
 
-			int nID          = (int)m_vStrings.size();
+			int nID = (int)m_vStrings.size();
 
 			m_keysMap[szKey] = nID;
-#if 0
-			m_vStrings.push_back(name);
-#endif
+			m_vStrings.push_back(szwKeyName);
 			m_pLanguageStriptObject->AddString(szKey, nID);
 
-			sprintf(szKey, "%S", name);
+			sprintf(szKey, "%S", szwKeyName);
 			m_vEnglishStrings.push_back(szKey);
 		}
 	}
+
 }
 
 //////////////////////////////////////////////////////////////////////
