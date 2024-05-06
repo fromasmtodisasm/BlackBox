@@ -368,11 +368,12 @@ bool CEntity::DrawEntity(const SRendParams& EntDrawParams)
 	auto object = m_EntityObject.object;
 	if (object == nullptr)
 		return false;
-	auto      pos       = GetPos();
-	auto      rotation  = GetAngles();
+	auto      pos = EntDrawParams.vPos;// GetPos();
+	auto      rotation = EntDrawParams.vAngles;// GetAngles();
 	auto      scale     = GetScale();
 	glm::mat4 transform = glm::mat4(1);
 #if 1
+	rotation.x -= 90;
 	transform = glm::translate(transform, pos);
 
 	transform = glm::rotate(transform, glm::radians(rotation.x), {1, 0, 0});

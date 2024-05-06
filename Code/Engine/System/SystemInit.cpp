@@ -526,8 +526,33 @@ bool CSystem::Init()
 
 	if (!InitSoundSystem())
 		return false;
-	if (!Init3DEngine())
-		return false;
+	if (!m_startupParams.bEditor)
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Init Animation system
+		//////////////////////////////////////////////////////////////////////////
+		CryLogAlways("Initializing Animation System");
+		if (!InitAnimationSystem())
+			return false;
+		//////////////////////////////////////////////////////////////////////////
+		// Init 3d engine
+		//////////////////////////////////////////////////////////////////////////
+		CryLogAlways("Initializing 3D Engine");
+		if (!Init3DEngine())
+			return false;
+
+		//////////////////////////////////////////////////////////////////////////
+		// SCRIPT BINDINGS
+		//////////////////////////////////////////////////////////////////////////
+#if 0
+		CryLogAlways("Initializing Script Bindings");
+		if (!InitScriptBindings())
+		{
+			return false;
+		}
+#endif
+	}
+
 	if (!InitPhysics())
 		return false;
 
@@ -1038,6 +1063,16 @@ bool CSystem::InitFileSystem_LoadEngineFolders()
 	LoadPatchPaks();
 #endif
 	return (true);
+}
+bool CSystem::InitAnimationSystem()
+{
+	if (m_pUserCallback)
+		m_pUserCallback->OnInitProgress("Initializing AnimationSystem...");
+	return LoadSubsystem<PFNCREATECRYANIMATION>("Animation", "CreateCharManager", [&](PFNCREATECRYANIMATION p)
+		{
+			m_env.pICryCharManager = p(this, "");
+			return m_env.pICryCharManager != nullptr; 
+		});
 }
 /////////////////////////////////////////////////////////////////////////////////
 void CSystem::InitResourceCacheFolder()

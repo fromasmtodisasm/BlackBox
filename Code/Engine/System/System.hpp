@@ -176,7 +176,7 @@ public:
 		return m_env.pConsole;
 	}
 	IZLibDecompressor*           GetIZLibDecompressor() { return m_pIZLibDecompressor; }
-	virtual ICryCharManager*     GetIAnimationSystem() { NOT_IMPLEMENTED_V; }
+	virtual ICryCharManager*     GetIAnimationSystem() { return m_env.pICryCharManager; }
 	virtual ICryFont*            GetICryFont() { return &m_Font; }
 	virtual ICryPak*             GetIPak() override;
 	virtual IEntitySystem*       GetIEntitySystem() override;
@@ -322,6 +322,7 @@ private:
 	bool   InitSubSystem();
 	bool   InitPhysics();
 	bool	 InitGamePlatform();
+	bool	 InitAnimationSystem();
 	bool   LoadCrynetwork();
 	bool   OpenRenderLibrary(std::string_view render);
 	bool   CloseRenderLibrary(std::string_view render);

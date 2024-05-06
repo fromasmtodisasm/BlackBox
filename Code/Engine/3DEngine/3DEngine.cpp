@@ -74,7 +74,7 @@ void         C3DEngine::Draw()
 		return;
 	Env::Renderer()->SetCamera(m_Camera);
 
-	m_pTerrain->Render(m_Camera);
+	//m_pTerrain->Render(m_Camera);
 
 	static bool costil = true;
 

@@ -16,6 +16,7 @@ macro(setup_subsystems)
 
 		add_subsystem(Utils)
 		add_subsystem(3DEngine)
+		add_subsystem(Animation)
 		add_subsystem(Input)
 		add_subsystem(Renderer)
 		add_subsystem(ScriptSystem)

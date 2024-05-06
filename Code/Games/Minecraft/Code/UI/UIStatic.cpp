@@ -299,11 +299,12 @@ int CUIStatic::Draw(int iPass)
 	// draw the model if there is one
 	if (m_pModel)
 	{
-#if 0
+#if 1
 		IRenderer *pRenderer = m_pUISystem->GetIRenderer();
 
 		// because we clear the z-buffer here we cannot have more than one
 		// hack was done because z-buffer read for flares was not working with transparent menu
+		//pRenderer->BeginFrame();
 		pRenderer->ClearDepthBuffer();
 
 		pRenderer->SetState(GS_NODEPTHTEST);
@@ -333,7 +334,7 @@ int CUIStatic::Draw(int iPass)
 
 		// set model rendering params
 		SRendParams pRenderParams;
-		pRenderParams.vPos = Legacy::Vec3(0.0f, 0.0f, -0.9f);
+		pRenderParams.vPos = Legacy::Vec3(-5.5f, 0.5f, -13.9f);
 		pRenderParams.vAngles = Legacy::Vec3(0.0f, 0.0f, m_fAngle);
 		pRenderParams.nDLightMask = 0;
 		pRenderParams.vAmbientColor = Legacy::Vec3(0.25f, 0.25f, 0.25f);
@@ -355,16 +356,22 @@ int CUIStatic::Draw(int iPass)
 		pRenderParams.nDLightMask |= 1 << pLight.m_Id;
 		// pRenderParams.nDLightMaskFull |= 1 << pLight.m_Id;
 
+#if 0
 		pRenderer->EF_StartEf();
 
 		pRenderer->EF_ClearLightsList();
 		pRenderer->EF_ADDDlight(&pLight);
 		pRenderer->EF_UpdateDLight(&pLight);
+#endif
 		
 		m_pModel->Update();
-		m_pModel->Draw(pRenderParams,Vec3(zero));
+		m_pModel->Draw(pRenderParams,Legacy::Vec3(zero));
 
+		//pRenderer->Update();
+
+#if 0
 		pRenderer->EF_EndEf3D(SHDF_SORT);
+#endif
 
 		// restore old settings
 		pRenderer->SetViewport(iViewportX, iViewportY, iViewportW, iViewportH);
@@ -609,11 +616,7 @@ int CUIStatic::LoadModel(const string& szModelName)
 		ReleaseModel();
 	}
 	//FIXME: rewrite this
-#if 0
 	m_pModel      = m_pUISystem->GetISystem()->GetIAnimationSystem()->MakeCharacter(szModelName.c_str());
-#else
-	m_pModel = nullptr;
-#endif
 	m_szModelName = szModelName;
 
 	return (m_pModel ? 1 : 0);

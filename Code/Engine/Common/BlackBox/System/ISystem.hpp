@@ -365,7 +365,8 @@ struct SSystemGlobalEnvironment
 	IMovieSystem*        pMovieSystem        = nullptr;
 	IAISystem*           pAISystem           = nullptr;
 	ICryFont*            pCryFont            = nullptr;
-	IGamePlatform* pGamePlatform = nullptr;
+	IGamePlatform*			 pGamePlatform			 = nullptr;
+	ICryCharManager*		 pICryCharManager		 = nullptr;
 
 	ILINE void           SetIsDedicated(bool isDedicated)
 	{
