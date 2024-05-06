@@ -213,7 +213,8 @@ private:
 
 	ZipFile::File create_file(ZipFile::CentralDirectory& entry, void* header);
 
-	using KeyType = string_view;
+	//using KeyType = string_view;
+	using KeyType = string;
 	template<typename Type>
 
 	using MapType =

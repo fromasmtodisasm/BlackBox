@@ -9,7 +9,11 @@
 #include <cstdarg>
 #include <string>
 
-	#define BB_NATIVE_PATH_SEPSTR "/"
+#ifdef BB_PLATFORM_WINDOWS
+#define BB_NATIVE_PATH_SEPSTR "\\"
+#else
+#define BB_NATIVE_PATH_SEPSTR "/"
+#endif
 
 using namespace ZipFile;
 
@@ -231,9 +235,16 @@ bool CCryPak::OpenPackCommon(const char* szBindRoot, const char* szFullPath, uns
 	{
 		File file{create_file(entry, ar.header)};
 
-		if (auto it = m_Files.find(file.name); it != m_Files.end()) printf("Eroror, file %s already mapped\n", file.name.data());
+		if (auto it = m_Files.find(file.name.data()); it != m_Files.end()) printf("Eroror, file %s already mapped\n", file.name.data());
 
-		m_Files[file.name] = file;
+		char name[_MAX_PATH];
+		auto len = file.name.length();
+		strncpy(name, file.name.data(), len);
+		name[len] = '\0';
+		
+		auto fullPath = PathUtil::Make(szBindRoot, name);
+		std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
+		m_Files[fullPath] = file;
 	}
 
 	m_Archives.emplace_back(std::move(ar));
@@ -277,9 +288,17 @@ bool CCryPak::OpenPack(const char* szPath, unsigned nFlags)
 	return result;
 }
 
-bool CCryPak::OpenPack(const char* pBindingRoot, const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
+bool CCryPak::OpenPack(const char* pBindingRootIn, const char* szPath, unsigned nFlags /* = FLAGS_PATH_REAL*/)
 {
-	return OpenPack(pName, nFlags);
+	char szFullPathBuf[g_nMaxPath];
+
+	const char* szFullPath = AdjustFileName(szPath, szFullPathBuf, nFlags/* | FLAGS_IGNORE_MOD_DIRS*/);
+
+	char szBindRootBuf[g_nMaxPath];
+	const char* szBindRoot = AdjustFileName(pBindingRootIn, szBindRootBuf, FLAGS_ADD_TRAILING_SLASH/* | FLAGS_IGNORE_MOD_DIRS*/);
+
+	return OpenPackCommon(szBindRoot, szFullPath, nFlags);
+
 }
 
 bool CCryPak::ClosePack(const char* pName, unsigned nFlags /* = FLAGS_PATH_REAL*/)
@@ -834,7 +853,7 @@ FILE* CCryPak::FOpen(const char* pName, const char* szMode, unsigned nInputFlags
 		}
 	}
 
-	if (auto data = GetFileData(pName); data)
+	if (auto data = GetFileData(fullPath.data()); data)
 	{
 		INT_PTR nFile = m_arrOpenFiles.size() + CCryPak::g_nPseudoFileIdxOffset;
 		m_arrOpenFiles.push_back((MyFile*)data);
@@ -1204,7 +1223,9 @@ CFileDataPtr CCryPak::GetFileData(const char* szName, unsigned int& nArchiveFlag
 	//	pResult = new CCachedFileData(this, pZip, nArchiveFlags, pFileEntry, szName);
 	//}
 
-	if (auto it = m_Files.find(szName); it != m_Files.end())
+	string name = szName;
+	std::replace(name.begin(), name.end(), '\\', '/');
+	if (auto it = m_Files.find(name.c_str()); it != m_Files.end())
 	{
 		pResult = (CFileDataPtr*)new MyFile(File::CreateFrom(&it->second));
 	}
@@ -1278,6 +1299,8 @@ const char* CCryPak::AdjustFileName(const char* szSourcePath, char szDestPath[g_
 		     !filehelpers::CheckPrefix(szDestPath, ".." BB_NATIVE_PATH_SEPSTR) &&
 		     !filehelpers::CheckPrefix(szDestPath, "editor" BB_NATIVE_PATH_SEPSTR) &&
 		     !filehelpers::CheckPrefix(szDestPath, "gamedata" BB_NATIVE_PATH_SEPSTR) &&
+		     !filehelpers::CheckPrefix(szDestPath, "levels" BB_NATIVE_PATH_SEPSTR) &&
+		     !filehelpers::CheckPrefix(szDestPath, "languages" BB_NATIVE_PATH_SEPSTR) &&
 		     !filehelpers::CheckPrefix(szDestPath, "engine" BB_NATIVE_PATH_SEPSTR)))
 		{
 			// Add data folder prefix.
