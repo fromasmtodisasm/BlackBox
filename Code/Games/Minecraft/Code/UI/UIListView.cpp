@@ -236,8 +236,8 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 			{
 				// scroll 3 items down
 				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
-				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
-				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
+				//m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
+				//m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_DOWN);
 			}
 		}
 		break;
@@ -248,8 +248,8 @@ LRESULT CUIListView::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam)
 			{
 				// scroll 3 items up
 				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
-				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
-				m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
+				//m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
+				//m_pUISystem->SendMessage(m_pVScroll, UIM_KEYDOWN, 0, Legacy::XKEY_UP);
 			}
 		}
 		break;

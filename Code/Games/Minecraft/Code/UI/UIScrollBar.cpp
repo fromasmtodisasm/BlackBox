@@ -17,6 +17,8 @@
 #include "UIScrollBar.h"
 #include "UISystem.h"
 
+static float g_AnimSpeed = 0.1f;
+
 _DECLARE_SCRIPTABLEEX(CUIScrollBar);
 
 //////////////////////////////////////////////////////////////////////
@@ -42,6 +44,7 @@ string CUIScrollBar::GetClassName()
 //////////////////////////////////////////////////////////////////////
 LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam) //AMD Port
 {
+	UpdateInterpolation();
 	m_fValue = CLAMP(m_fValue, 0.0f, 1.0f);
 
 	switch (iMessage)
@@ -90,25 +93,29 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 	{
 		if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_LEFT))
 		{
-			m_fValue -= m_fStep;
+			//m_fValue -= m_fStep;
+			StartInterpolation(m_fValue - 5 * m_fStep, g_AnimSpeed);
 
 			OnChanged();
 		}
 		else if ((GetType() == UISCROLLBARTYPE_HORIZONTAL) && (lParam == Legacy::XKEY_RIGHT))
 		{
-			m_fValue += m_fStep;
+			//m_fValue += m_fStep;
+			StartInterpolation(m_fValue + 5 * m_fStep, g_AnimSpeed);
 
 			OnChanged();
 		}
 		else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_UP))
 		{
-			m_fValue -= m_fStep;
+			//m_fValue -= m_fStep;
+			StartInterpolation(m_fValue - 5 * m_fStep, g_AnimSpeed);
 
 			OnChanged();
 		}
 		else if ((GetType() == UISCROLLBARTYPE_VERTICAL) && (lParam == Legacy::XKEY_DOWN))
 		{
-			m_fValue += m_fStep;
+			//m_fValue += m_fStep;
+			StartInterpolation(m_fValue + 5 * m_fStep, g_AnimSpeed);
 
 			OnChanged();
 		}
@@ -149,7 +156,9 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 
 			MoveSlider(fDelta);
 
-			m_fValue += fDelta / m_fPathSize;
+			//m_fValue += fDelta / m_fPathSize;
+			//StartInterpolation(m_fValue + fDelta / m_fPathSize, g_AnimSpeed);
+			SetValue(m_fValue + fDelta / m_fPathSize);
 
 			OnChanged();
 		}
@@ -214,7 +223,8 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 				if ((m_fRepeatTimer == 0.0f) || (fTimer > m_fRepeatTimer))
 				{
 					m_iState |= UISCROLLBARSTATE_MINUS_DOWN;
-					m_fValue -= m_fStep;
+					//m_fValue -= m_fStep;
+					StartInterpolation(m_fValue - m_fStep, g_AnimSpeed);
 
 					OnChanged();
 
@@ -241,7 +251,8 @@ LRESULT CUIScrollBar::Update(unsigned int iMessage, WPARAM wParam, LPARAM lParam
 				if ((m_fRepeatTimer == 0.0f) || (fTimer > m_fRepeatTimer))
 				{
 					m_iState |= UISCROLLBARSTATE_PLUS_DOWN;
-					m_fValue += m_fStep;
+					//m_fValue += m_fStep;
+					StartInterpolation(m_fValue + m_fStep, g_AnimSpeed);
 
 					OnChanged();
 
@@ -525,7 +536,8 @@ void CUIScrollBar::InitializeTemplate(IScriptSystem* pScriptSystem)
 //////////////////////////////////////////////////////////////////////
 int CUIScrollBar::SetValue(float fValue)
 {
-	m_fValue = fValue;
+	//m_fValue = fValue;
+	StartInterpolation(fValue, g_AnimSpeed);
 
 	OnChanged();
 
@@ -688,6 +700,30 @@ int CUIScrollBar::UpdateRect()
 	}
 
 	return 1;
+}
+
+//////////////////////////////////////////////////////////////////////
+// Ќачать интерпол€цию
+
+void CUIScrollBar::StartInterpolation(float newValue, float duration) {
+	m_fStartTime = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
+	m_fEndTime = m_fStartTime + duration;
+	m_fStartValue = m_fValue;
+	m_fEndValue = newValue;
+}
+
+//////////////////////////////////////////////////////////////////////
+// ќбновить интерпол€цию
+
+void CUIScrollBar::UpdateInterpolation() {
+	float currentTime = m_pUISystem->GetISystem()->GetITimer()->GetCurrTime();
+	if (currentTime < m_fEndTime) {
+		float t = (currentTime - m_fStartTime) / (m_fEndTime - m_fStartTime);
+		m_fValue = m_fStartValue + t * (m_fEndValue - m_fStartValue);
+	}
+	else {
+		m_fValue = m_fEndValue;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////

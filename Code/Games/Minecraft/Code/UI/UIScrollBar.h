@@ -152,4 +152,18 @@ private:
 	float         m_fStep;
 	float         m_fValue;
 	float         m_fRepeatTimer;
+
+	//////////////////////////////////////////////////////////////////////
+	float m_fStartTime = 0.0f;
+	float m_fEndTime = 0.0f;
+	float m_fStartValue = 0.0f;
+	float m_fEndValue = 0.0f;
+
+	//////////////////////////////////////////////////////////////////////
+// Ќачать интерпол€цию
+	void StartInterpolation(float newValue, float duration);
+
+	//////////////////////////////////////////////////////////////////////
+	// ќбновить интерпол€цию
+	void UpdateInterpolation();
 };

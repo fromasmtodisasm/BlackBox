@@ -34,6 +34,9 @@
 
 #define UI_DEFAULTS           (UI_MOUSE_VISIBLE | UI_BACKGROUND_VISIBLE | UI_ENABLED)
 
+#undef IS_MOUSE_KEY
+#define IS_MOUSE_KEY(key)			((key)&0x00FF0000)
+
 //////////////////////////////////////////////////////////////////////
 CUISystem::CUISystem()
     : m_pGame(0)
@@ -532,10 +535,11 @@ void CUISystem::Update()
 		SendMessage(pMouseOver, UIM_MOUSEOVER, dwPackedOldMouseRelativeXY, dwPackedMouseRelativeXY);
 
 		// UIM_MOUSEDOWN
-		if (bMouseDown)
+		if (bMouseDown || m_bLMouseDown)
 		{
-			if (bLMouseDown)
+			if (bMouseDown || m_bLMouseDown)
 			{
+				m_bLMouseDown   = true;
 				// UIM_LBUTTONDOWN
 				SendMessage(pMouseOver, UIM_LBUTTONDOWN, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE1);
 			}
@@ -551,6 +555,7 @@ void CUISystem::Update()
 		{
 			if (bLMouseUp)
 			{
+				m_bLMouseDown = false;
 				// UIM_RBUTTONUP
 				SendMessage(pMouseOver, UIM_LBUTTONUP, dwPackedMouseRelativeXY, Legacy::XKEY_MOUSE1);
 
@@ -634,7 +639,7 @@ void CUISystem::Update()
 
 	// save the current mouse postion
 	m_vMouseXY      = vMouseXY;
-	m_bLMouseDown   = bLMouseDown;
+	//m_bLMouseDown   = bLMouseDown;
 
 	float fIdleTime = GetIdleTime();
 
@@ -3030,11 +3035,12 @@ bool CUISystem::OnInputEvent(const Legacy::SInputEvent& event)
 	//////////////////////////////////////////////////////////////////////
 	// Keyboard events
 	//////////////////////////////////////////////////////////////////////
-	if (IS_KEYBOARD_KEY(event.key))
+	if (IS_KEYBOARD_KEY(event.key) || IS_GAMEPAD_KEY(event.key))
 	{
-		if ((event.key == Legacy::XKEY_TAB) && (event.type == Legacy::SInputEvent::KEY_PRESS))
+		using namespace Legacy;
+		if (((event.key == XKEY_TAB) || (event.key == XKEY_GP_DPAD_DOWN || event.key == XKEY_GP_DPAD_UP)) && (event.type == Legacy::SInputEvent::KEY_PRESS) )
 		{
-			if (m_pInput->KeyDown(Legacy::XKEY_LSHIFT))
+			if ((m_pInput->KeyDown(Legacy::XKEY_LSHIFT) && event.key == XKEY_TAB) || event.key == XKEY_GP_DPAD_UP)
 			{
 				PrevTabStop();
 			}
