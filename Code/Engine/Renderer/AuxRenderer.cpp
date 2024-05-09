@@ -13,11 +13,7 @@ const UINT NUM_MAT = 4;
 #define V_RETURN(cond) \
 	if (!(cond)) return;
 
-ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateZPrePass;
-ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateMesh;
 ID3D11DepthStencilState*          CRenderAuxGeom::m_pDSStateLines;
-
-ID3D11DepthStencilState*          m_pDSStateMeshCurrent;
 
 _smart_ptr<ID3D11RasterizerState> g_pRasterizerStateSolid{};
 _smart_ptr<ID3D11RasterizerState> g_pRasterizerStateWire{};
@@ -172,6 +168,28 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 	    g_pMaterialCB,
 	};
 
+	auto shader = m_IllumShader;
+	auto ds = shader->m_pDepthStencilState;
+
+	if (CV_r_DrawWirefame)
+	{
+		::GetDeviceContext()->RSSetState(g_pRasterizerStateWire);
+	}
+	else
+	{
+		::GetDeviceContext()->RSSetState(g_pRasterizerStateSolid);
+	}
+
+	if (DrawElement.m_Material.m_bZWrite)
+	{
+		::GetDeviceContext()->OMSetDepthStencilState(ds, 0);
+	}
+	else
+	{
+		//::GetDeviceContext()->OMSetDepthStencilState(GlobalResources::m_pDSStateNoZWrite, 0);
+	}
+
+	::GetDeviceContext()->OMSetBlendState(m_IllumShader->m_pBlendState, 0, 0xffffffff);
 	::GetDeviceContext()->UpdateSubresource(g_pPerDrawCB, 0, nullptr, &cb, sizeof(cb), 0);
 	::GetDeviceContext()->VSSetConstantBuffers(PERDRAW_SLOT, 2, pBuffers);
 	Env::Renderer()->SetTexture(DrawElement.m_DiffuseMap);
@@ -236,13 +254,6 @@ CRenderAuxGeom::CRenderAuxGeom()
 	desc.StencilEnable  = false;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	desc.DepthFunc      = D3D11_COMPARISON_LESS;
-
-	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateZPrePass);
-
-	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	desc.DepthFunc      = D3D11_COMPARISON_EQUAL;
-	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateMesh);
-
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	desc.DepthFunc      = D3D11_COMPARISON_ALWAYS;
 	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateLines);
@@ -340,7 +351,6 @@ void CRenderAuxGeom::DrawAABBs()
 		// m_BoundingBoxShader->Bind();
 
 		::GetDeviceContext()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-		::GetDeviceContext()->OMSetDepthStencilState(CRenderAuxGeom::m_pDSStateZPrePass, 0);
 		::GetDeviceContext()->RSSetState(g_pRasterizerStateWire);
 		::GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
 		if (!m_BBVerts.empty())
@@ -353,21 +363,6 @@ void CRenderAuxGeom::DrawAABBs()
 		}
 
 		::GetDeviceContext()->RSSetState(g_pRasterizerStateForMeshCurrent);
-		if (!CV_r_DisableZP)
-		{
-			D3DPERF_BeginEvent(D3DC_Blue, L"ZPrePass");
-			for (auto const& mesh : m_Meshes)
-			{
-				DrawElementToZBuffer(mesh);
-			}
-			D3DPERF_EndEvent();
-			m_pDSStateMeshCurrent = CRenderAuxGeom::m_pDSStateMesh;
-		}
-		else
-		{
-			m_pDSStateMeshCurrent = CRenderAuxGeom::m_pDSStateZPrePass;
-		}
-		::GetDeviceContext()->OMSetDepthStencilState(m_pDSStateMeshCurrent, 0);
 		{
 			D3DPERF_BeginEvent(D3DC_Blue, L"DrawMeshes");
 			for (auto const& mesh : m_Meshes)

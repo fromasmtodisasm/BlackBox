@@ -152,6 +152,13 @@ technique Render
     {
         VertexShader = VS;
         PixelShader = PS;
+
+        ZEnable = true;
+        ZWriteEnable = true;
+
+        BlendEnable = true;
+        SrcBlend = SRC_ALPHA;
+        DestBlend = INV_SRC_ALPHA;
     }
 }
 

@@ -19,7 +19,6 @@ bool                     FreeTypeFont::first_init = true;
 ID3D11SamplerState*      FreeTypeFont::m_Sampler;
 ID3D11InputLayout*       FreeTypeFont::m_pFontLayout;
 ID3D11RasterizerState*   FreeTypeFont::m_pRasterizerState;
-ID3D11DepthStencilState* FreeTypeFont::m_pDSState;
 ID3D11BlendState*        FreeTypeFont::m_pBlendState;
 
 struct ColorTable
@@ -317,7 +316,6 @@ bool FreeTypeFont::Init(const char* font, unsigned int w, unsigned int h)
 	#endif
 		}
 		CreateRasterState();
-		CreateDSState();
 		CreateBlendState();
 		first_init = false;
 	}
@@ -578,15 +576,16 @@ void FreeTypeFont::Submit()
 	// Update content of VBO memory
 	Env::Renderer()->UpdateBuffer(m_VB, m_CharBuffer.data(), vertex_cnt, false);
 
-	GlobalResources::SpriteShader->Bind();
+	auto& shader = GlobalResources::SpriteShader;
+	shader->Bind();
 	GetDeviceContext()->PSSetSamplers(0, 1, &m_Sampler);
 	GetDeviceContext()->PSSetShaderResources(0, 1, &m_pTextureRV);
 	#if 0
 	GetDeviceContext()->IASetInputLayout(m_pFontLayout);
 	#endif
 	GetDeviceContext()->RSSetState(m_pRasterizerState);
-	GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
-	GetDeviceContext()->OMSetDepthStencilState(m_pDSState, 0);
+	GetDeviceContext()->OMSetBlendState(shader->m_pBlendState, 0, 0xffffffff);
+	GetDeviceContext()->OMSetDepthStencilState(shader->m_pDepthStencilState, 0);
 
 	Env::Renderer()->DrawBuffer(m_VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 
@@ -624,17 +623,6 @@ void FreeTypeFont::CreateRasterState()
 
 	GetDevice()->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerState);
 	GetDeviceContext()->RSSetState(m_pRasterizerState);
-}
-void FreeTypeFont::CreateDSState()
-{
-	D3D11_DEPTH_STENCIL_DESC desc;
-	ZeroStruct(desc);
-	//desc.BackFace
-	desc.DepthEnable    = false;
-	desc.StencilEnable  = false;
-	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-
-	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
 }
 void FreeTypeFont::CreateBlendState()
 {

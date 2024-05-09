@@ -3,23 +3,23 @@
 //#include <BlackBox/Renderer/IRender.hpp>
 //#include <BlackBox/Renderer/BaseShader.hpp>
 
-IShader* CEffect::GetShader(const char* name)
+IShader* FxEffect::GetShader(const char* name)
 {
 	return nullptr;
 }
 
-int CEffect::GetNumTechniques()
+int FxEffect::GetNumTechniques()
 {
 	return m_Techniques.size();
 }
 
-ITechnique* CEffect::GetTechnique(int i)
+ITechnique* FxEffect::GetTechnique(int i)
 {
 	assert(i >= 0 && i < m_Techniques.size());
 	return &m_Techniques[i];
 }
 
-ITechnique* CEffect::GetTechnique(const char* name, size_t size)
+ITechnique* FxEffect::GetTechnique(const char* name, size_t size)
 {
 	for (size_t i = 0; i < m_Techniques.size(); i++)
 	{
@@ -31,17 +31,17 @@ ITechnique* CEffect::GetTechnique(const char* name, size_t size)
 	return nullptr;
 }
 
-const char* CEffect::GetName()
+const char* FxEffect::GetName()
 {
 	return m_name.data();
 }
 
-ShaderLangId CEffect::GetLangId()
+ShaderLangId FxEffect::GetLangId()
 {
 	return m_LangId;
 }
 
-const char* CEffect::GetCode()
+const char* FxEffect::GetCode()
 {
 	return m_Code.data();
 }

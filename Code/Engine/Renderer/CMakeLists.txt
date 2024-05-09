@@ -21,6 +21,7 @@ add_sources(
 		"RenderThread.h"
 		"RendererDLL.cpp"
 		"Shaders/FxParser.cpp"
+		"Shaders/FxParser.h"
 	SOURCE_GROUP "Common"
 		"Common/CommonRender.cpp"
 		"Common/CommonRender.h"

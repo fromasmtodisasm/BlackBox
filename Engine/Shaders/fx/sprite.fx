@@ -13,6 +13,8 @@ float Script : STANDARDSGLOBAL
         "SupportsDeferredShading;"
         // Determines that the shader supports fully deferred shading, so will not go through the forward pass
         "SupportsFullDeferredShading;";
+    
+    string Description = "This shader is used for rendering sprites";
 >;
 
 Texture2D text : register(t0);
@@ -80,6 +82,19 @@ Technique Font
     {
         VertexShader = VSMain();
         PixelShader = Font();
+
+        ZEnable = false;
+        ZWriteEnable = false;
+
+        BlendEnable = true;
+        SrcBlend = SRC_ALPHA;
+        DestBlend = INV_SRC_ALPHA;
+        //BlendOp = ADD;
+        //SrcBlendAlpha = ONE;
+        //DestBlendAlpha = ZERO;
+        //BlendOpAlpha = ADD;
+        
+
     }
 }
 

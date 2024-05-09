@@ -69,6 +69,17 @@ class Scanner : public yyFlexLexer
     void begin_function_body();
     void end_function_body();
 
+
+	/////////////////////////
+		void push_state_opt()
+		{
+
+		}
+		void push_state_opt(int state)
+		{
+			yy_push_state(state);
+		}
+
 	Driver& driver;
 
 	std::set<std::string> symboltype_map;

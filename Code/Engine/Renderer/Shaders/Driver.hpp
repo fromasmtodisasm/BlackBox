@@ -7,6 +7,7 @@
 #define YYFPRINTF(stderr, format, ...) CryError(format, __VA_ARGS__)
 #pragma warning(push, 0)
 #include "Parser.hpp"
+#include "Effect.hpp"
 #pragma warning(pop)
 //#include "Scanner.hpp"
 
@@ -16,7 +17,7 @@
 #	define PARSERDRIVER_API DLL_IMPORT
 #endif
 
-class CEffect;
+class FxEffect;
 struct IEffect;
 
 
@@ -26,7 +27,7 @@ struct IDriver
 	{
 	}
 	//virtual bool parse(const std::string& f) = 0;
-	virtual IEffect* parse(const char* f) = 0;
+	virtual FxEffect* parse(const char* f) = 0;
 	virtual void Release()					 = 0;
 };
 
@@ -35,7 +36,7 @@ class Driver : public IDriver {
     Driver();
    ~Driver();
     //bool parse(const std::string& f) override;
-    IEffect* parse(const char* f) override;
+    FxEffect* parse(const char* f) override;
 
     bool        LoadEffectFromFile(IEffect* pEffect, const char * filename);
     bool        LoadEffect(IEffect* pEffect, const char * str);
@@ -50,14 +51,16 @@ class Driver : public IDriver {
 
     friend class Scanner;
 
-    Scanner* scanner;
-    yy::parser parser;
-	CEffect* currentEffect;
-    std::vector<std::string_view> CommonCode;
+private:
+   FxEffect m_Effect;
  private:
     std::ifstream stream;
+ private:
+    Scanner* scanner;
+    yy::parser parser;
+    std::vector<std::string_view> CommonCode;
 
-   // Унаследовано через IDriver
+   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ IDriver
    virtual void Release() override;
 };
 

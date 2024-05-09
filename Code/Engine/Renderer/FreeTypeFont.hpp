@@ -62,7 +62,6 @@ public:
 	void  RenderGlyph(uint ch, glm::uvec2& cur_pos, const glm::uvec2& t_size, std::vector<float>& image);
 
 	void  CreateRasterState();
-	void  CreateDSState();
 	void  CreateBlendState();
 
 	~FreeTypeFont();
@@ -89,7 +88,6 @@ public:
 	static ID3D11SamplerState*      m_Sampler;
 	static ID3D11InputLayout*       m_pFontLayout;
 	static ID3D11RasterizerState*   m_pRasterizerState;
-	static ID3D11DepthStencilState* m_pDSState;
 	static ID3D11BlendState*        m_pBlendState;
 	static bool                     first_init;
 

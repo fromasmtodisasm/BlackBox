@@ -9,11 +9,12 @@
 
 #define PARSERDRIVER_EXPORTS
 
+#pragma optimize("", off)
 Driver::Driver()
     : trace_parsing(false)
     , trace_scanning(false)
     , scanner(new Scanner(*this))
-    , parser(*scanner, *this)
+    , parser(*scanner, *this, m_Effect)
 {
 }
 
@@ -22,27 +23,22 @@ Driver::~Driver()
 	delete scanner;
 }
 
-IEffect* Driver::parse(const char* f)
+FxEffect* Driver::parse(const char* f)
 {
-	std::unique_ptr<CEffect> pEffect = std::make_unique<CEffect>(CEffect(PathUtil::GetFileName(f)));
-	currentEffect                    = pEffect.get();
-	pEffect->m_Techniques.clear();
+	m_Effect.m_name = PathUtil::GetFileName(f);
+
 	CommonCode.clear();
 	ScanBegin(f);
 	parser.set_debug_level(trace_parsing);
 	int res = parser.parse();
 	if (res == 0)
 	{
-		Env::Log()->Log("$3[FX] File %s passed", file.c_str());
-		pEffect->m_Code = std::move(scanner->shader);
-	}
-	else
-	{
-		pEffect.reset();
+		//Env::Log()->Log("$3[FX] File %s passed", file.c_str());
+		m_Effect.m_Code = std::move(scanner->shader);
 	}
 
 	ScanEnd();
-	return pEffect.release();
+	return new FxEffect(m_Effect);
 }
 
 bool Driver::LoadEffectFromFile(IEffect* pEffect, const char* filename)

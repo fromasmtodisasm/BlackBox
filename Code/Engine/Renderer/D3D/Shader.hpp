@@ -6,6 +6,7 @@
 #include <BlackBox/Renderer/VertexFormats.hpp>
 
 #include "../Shaders/Effect.hpp"
+#include "../FxParser.h"
 #include <d3dcompiler.h>
 #include <dxsdk-d3dx/D3DX11.h>
 
@@ -16,6 +17,7 @@ enum class ShaderBinaryFormat
 };
 
 struct ICVar;
+class FxEffect;
 
 using VertexShader    = ID3D11VertexShader;
 using GeometryShader  = ID3D11GeometryShader;
@@ -91,7 +93,7 @@ public:
 	void                                   CreateInputLayout();
 	void                                   ReflectShader();
 
-	static bool                            LoadFromEffect(CShader* pSH, PEffect pEffect, int technique = 0, int pass = 0);
+	static bool                            LoadFromEffect(CShader* pSH, FxEffect* pEffect, int technique = 0, int pass = 0);
 	static std::pair<ID3DBlob*, ID3DBlob*> Load(const std::string_view text, IShader::Type type, const char* pEntry, bool bFromMemory);
 	static CHWShader*                      LoadFromFile(const std::string_view text, IShader::Type type, const char* pEntry);
 	static std::pair<ID3DBlob*, ID3DBlob*> LoadFromMemory(const std::vector<std::string>& text, IShader::Type type, const char* pEntry);
@@ -107,4 +109,15 @@ public:
 	ID3D11ShaderReflection*                m_pReflection;
 	DynVertexFormat                        format;
 	std::array<CHWShader*, Type::E_NUM>    m_Shaders{0};
+
+	// States
+	ED3DShError                            m_Error = ED3DShError::ED3DShError_NotCompiled;
+
+	// Native Render States for this shader
+	ID3D11DepthStencilState*               m_pDepthStencilState{};
+	ID3D11RasterizerState*                 m_pRasterizerState{};
+	ID3D11BlendState*                      m_pBlendState{};
+	ID3D11SamplerState*                    m_pSamplerState{};
+
+
 };

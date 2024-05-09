@@ -617,6 +617,8 @@ private:
 	ICVar* m_sys_resource_cache_folder;
 #endif
 	ICVar* m_sys_spec;
+	ICVar* m_sys_firstlaunch;
+
 
 
 	int              m_rDisplayInfo;

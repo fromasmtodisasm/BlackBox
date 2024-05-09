@@ -8,6 +8,9 @@
 
 #include <d3dcompiler.h>
 
+#include <d3d9.h>
+
+
 namespace fs = std::filesystem;
 
 CShader::~CShader()
@@ -310,11 +313,14 @@ void CShader::ReflectShader()
 	}
 }
 
-bool CShader::LoadFromEffect(CShader* pSH, PEffect pEffect, int nTechnique, int nPass)
+#pragma optimize("", off)
+bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, int nPass)
 {
 	auto                tech = pEffect->GetTechnique(nTechnique);
 	auto                pass = tech->GetPass(nPass);
 	std::vector<string> code{pEffect->GetCode()};
+
+	const auto& 		passStates = pass->RenderStates;
 
 	IShader::Type       Types[] = {
         IShader::Type::E_VERTEX,
@@ -348,6 +354,142 @@ bool CShader::LoadFromEffect(CShader* pSH, PEffect pEffect, int nTechnique, int 
 			return false;
 		}
 	}
+
+	D3D11_DEPTH_STENCIL_DESC dsDesc = D3D11_DEPTH_STENCIL_DESC {
+		.DepthEnable = true,
+		.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL,
+		.DepthFunc = D3D11_COMPARISON_LESS,
+		.StencilEnable = false,
+		.StencilReadMask = 0xFF,
+		.StencilWriteMask = 0xFF,
+		.FrontFace = D3D11_DEPTH_STENCILOP_DESC {
+			.StencilFailOp = D3D11_STENCIL_OP_KEEP,
+			.StencilDepthFailOp = D3D11_STENCIL_OP_INCR,
+			.StencilPassOp = D3D11_STENCIL_OP_KEEP,
+			.StencilFunc = D3D11_COMPARISON_ALWAYS,
+		},
+		.BackFace = D3D11_DEPTH_STENCILOP_DESC {
+			.StencilFailOp = D3D11_STENCIL_OP_KEEP,
+			.StencilDepthFailOp = D3D11_STENCIL_OP_DECR,
+			.StencilPassOp = D3D11_STENCIL_OP_KEEP,
+			.StencilFunc = D3D11_COMPARISON_ALWAYS,
+		},
+	};
+	D3D11_RASTERIZER_DESC     rsDesc = D3D11_RASTERIZER_DESC {
+		.FillMode = D3D11_FILL_SOLID,
+		.CullMode = D3D11_CULL_BACK,
+		.FrontCounterClockwise = false,
+		.DepthBias = 0,
+		.DepthBiasClamp = 0.0f,
+		.SlopeScaledDepthBias = 0.0f,
+		.DepthClipEnable = true,
+		.ScissorEnable = false,
+		.MultisampleEnable = false,
+		.AntialiasedLineEnable = false,
+	};
+	D3D11_BLEND_DESC          bsDesc = D3D11_BLEND_DESC {
+		.AlphaToCoverageEnable = false,
+		.IndependentBlendEnable = false,
+		.RenderTarget = {
+			{
+				.BlendEnable = false,
+				.SrcBlend = D3D11_BLEND_ONE,
+				.DestBlend = D3D11_BLEND_ZERO,
+				.BlendOp = D3D11_BLEND_OP_ADD,
+				.SrcBlendAlpha = D3D11_BLEND_ONE,
+				.DestBlendAlpha = D3D11_BLEND_ZERO,
+				.BlendOpAlpha = D3D11_BLEND_OP_ADD,
+				.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL,
+			},
+		},
+	};
+	D3D11_SAMPLER_DESC		ssDesc = { 0 };
+
+
+	for (auto& s : passStates)
+	{
+		switch (s.Type)
+		{
+		case fx::ERenderState::ZENABLE:
+		{
+			dsDesc.DepthEnable = s.b;
+			break;
+		}
+		case fx::ERenderState::ZWRITEENABLE:
+		{
+			dsDesc.DepthWriteMask = s.b ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+			break;
+		}
+		case fx::ERenderState::ZFUNC:
+		{
+			dsDesc.DepthFunc = (D3D11_COMPARISON_FUNC)s.i;
+			break;
+		}
+		case fx::ERenderState::ALPHABLENDENABLE:
+		{
+			bsDesc.RenderTarget[0].BlendEnable = s.b;
+			break;
+		}
+		case fx::ERenderState::SRCBLEND:
+		{
+			bsDesc.RenderTarget[0].SrcBlend = (D3D11_BLEND)s.i;
+			break;
+		}
+		case fx::ERenderState::DESTBLEND:
+		{
+			bsDesc.RenderTarget[0].DestBlend = (D3D11_BLEND)s.i;
+			break;
+		}
+		case fx::ERenderState::BLENDOP:
+		{
+			bsDesc.RenderTarget[0].BlendOp = (D3D11_BLEND_OP)s.i;
+			break;
+		}
+
+		case fx::ERenderState::ALPHABLEND_SRC:
+		{
+			bsDesc.RenderTarget[0].SrcBlendAlpha = (D3D11_BLEND)s.i;
+			break;
+		}
+		case fx::ERenderState::ALPHABLEND_DST:
+		{
+			bsDesc.RenderTarget[0].DestBlendAlpha = (D3D11_BLEND)s.i;
+			break;
+		}
+		case fx::ERenderState::ALPHABLEND_EQUATION:
+		{
+			bsDesc.RenderTarget[0].BlendOpAlpha = (D3D11_BLEND_OP)s.i;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	//if (dsDesc.DepthEnable)
+	{
+		if (auto pDevice = GetDevice(); pDevice)
+		{
+			pDevice->CreateDepthStencilState(&dsDesc, &pSH->m_pDepthStencilState);
+			//pDevice->CreateBlendState(&bsDesc, &pSH->m_pBlendState);
+
+			if (bsDesc.IndependentBlendEnable)
+			{
+				for (auto& target: bsDesc.RenderTarget)
+				{
+					if (target.BlendEnable)
+					{
+						pDevice->CreateBlendState(&bsDesc, &pSH->m_pBlendState);
+					}
+				}
+			}
+			else if (bsDesc.RenderTarget[0].BlendEnable)
+			{
+					pDevice->CreateBlendState(&bsDesc, &pSH->m_pBlendState);
+			}
+		}
+	}
+
 	//SaveHlslToDisk(code, type);
 	return true;
 }

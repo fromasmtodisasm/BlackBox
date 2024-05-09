@@ -9,10 +9,13 @@ add_sources("NoUberFile"
 		"Parser.yy"
 		"Scanner.ll"
 	SOURCE_GROUP "Source Files"
-		"Effect.cpp"
 		"Driver.cpp"
+		"Driver.hpp"
+		"Effect.cpp"
+		"Effect.hpp"
 		"Scanner.hpp"
 		"ScannerHelpers.cpp"
+		"FxParser.h"
 )
 end_sources()
 

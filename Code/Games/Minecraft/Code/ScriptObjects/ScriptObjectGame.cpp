@@ -3592,7 +3592,6 @@ int CScriptObjectGame::CheckMap(IFunctionHandler* pH)
 
 	string szXMLPath = szMapPath + "/LevelData.xml";
 
-#if 0
 	XDOM::IXMLDOMDocumentPtr pLevelDataXML = m_pGame->GetSystem()->CreateXMLDocument();
 
 	if(!pLevelDataXML->load(szXMLPath.c_str()))
@@ -3651,7 +3650,6 @@ int CScriptObjectGame::CheckMap(IFunctionHandler* pH)
 			} 
 		}
 	}
-#endif
 
 	m_pGame->ClosePacks(szPak.c_str());
 
@@ -3663,7 +3661,6 @@ int CScriptObjectGame::GetMapDefaultMission(IFunctionHandler* pH)
 {
 	CHECK_PARAMETERS(1);
 
-#if 0
 	char *szMapName = 0;
 
 	if (!pH->GetParam(1, szMapName))
@@ -3741,7 +3738,6 @@ int CScriptObjectGame::GetMapDefaultMission(IFunctionHandler* pH)
 	}
 
 	m_pGame->ClosePacks(szPak.c_str());
-#endif
 
 	return pH->EndFunctionNull();
 }

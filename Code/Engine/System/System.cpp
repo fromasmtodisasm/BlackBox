@@ -622,6 +622,9 @@ void CSystem::CreateSystemVars()
 #else
 	g_cvars.sys_splashscreen = nullptr;
 #endif
+
+	m_sys_firstlaunch = GetIConsole()->CreateVariable("sys_firstlaunch", "0", VF_DUMPTODISK,
+		"Indicates that the game was run for the first time.\n");
 }
 
 static string ConcatPath(const char* szPart1, const char* szPart2)

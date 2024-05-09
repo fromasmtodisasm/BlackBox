@@ -1,5 +1,10 @@
-%{
+%top{
+    /* This code goes at the "top" of the generated file. */
     #include "pch.hpp"
+    #include "FxParser.h"
+}
+
+%{
     #include <cerrno>
     #include <climits>
     #include <cstdlib>
@@ -12,6 +17,30 @@
 	#pragma warning(push, 0)
 	#include "Parser.hpp"
     #define MAX_STR_CONST 10 * 16382 // TODO: Change this and make it dynamic... functions could be big
+
+    #define RSTATE_COMMON1(x,...) {  push_state_opt(__VA_ARGS__); print_state(); return yy::parser::make_##x(fx::ERenderState::##x, loc); }
+    #define RSTATE_COMMON2(x,type,...) { push_state_opt(__VA_ARGS__); print_state(); return yy::parser::make_##x(type, loc); }
+
+    #define RSTATE(x,...) { push_state_opt(__VA_ARGS__);print_state(); return yy::parser::make_##x(fx::ERenderState::##x, loc); }
+    #define BSTATE(x,...) RSTATE_COMMON2(BLEND_VALUE, D3D11_BLEND::D3D11_BLEND_##x);
+    #define BSTATE_OP(x,...) RSTATE_COMMON2(BLEND_OP_VALUE, D3D11_BLEND_OP::D3D11_BLEND_OP_##x);
+    #define ZCMPSTATE(x,...) RSTATE_COMMON2(COMPARISION_FUNC, D3D11_COMPARISON_FUNC::D3D11_COMPARISON_##x);
+    #define RCULLSTATE(x,...) RSTATE_COMMON2(CULLMODE_VALUE, D3D11_CULL_MODE::D3D11_CULL_##x);
+    #define RFILLSTATE(x,...) RSTATE_COMMON2(FILLMODE_VALUE, D3D11_FILL_MODE::D3D11_FILL_##x);
+    #define POP_STATE yy_pop_state(); return CURRENT_SYMBOL;
+
+
+    //void yy_push_state(int);;
+
+    //void push_state_opt(int state)
+    //{
+    //    yy_push_state(state);
+    //}
+
+    //void push_state_opt()
+    //{
+
+    //}
 
     int  bracket_level = 0;
     char  *string_buf_ptr;
@@ -68,14 +97,21 @@
     );
 %}
 
-id    [_a-zA-Z][a-zA-Z_0-9]*
-int   [0-9]+
-blank [ \t\r]
-
-float_number [+-]?([0-9]*[.])?[0-9]+
+boolean         true|false
+id              [_a-zA-Z][a-zA-Z_0-9]*
+int             [0-9]+
+blank           [ \t\r]
+float_number    [+-]?([0-9]*[.])?[0-9]+(f|F)?
 
 %option stack
-%x skiptoendofline ifdef endif getname define defname defval fbo fbo1 clearmode rendermode incl comment comment2 str function functionbody cstbuffer technique pass sampler_state dst_state pr_state color_sample_state rasterization_state resource resource1 input_layout
+%x skiptoendofline ifdef endif getname define defname defval fbo fbo1 clearmode rendermode 
+%x incl comment comment2 str function functionbody cstbuffer technique pass sampler_state 
+%x dst_state pr_state color_sample_state rasterization_state  resource resource1 input_layout
+%x blend_state blend_state_op compare_func
+%x blend_state_top depth_stencil_state_top sampler_state_top
+%x cull_mode fill_mode
+
+COMMON_STATES <cull_mode fill_mode>
 
 %{
   // Code run each time a pattern is matched.
@@ -102,6 +138,10 @@ FatalError {
 	return yy::parser::make_FATALERROR(loc);
 }
 
+static {
+    return yy::parser::make_STATIC(StorageClass::Static, loc);
+}
+
 [Tt]echnique {
     this->canNowAddFragment = false;
     yy_push_state(technique);
@@ -123,7 +163,19 @@ FatalError {
 	return yy::parser::make_TEXTURE2D_TYPE(loc);
 }
 <INITIAL>SamplerState {
+    //yy_push_state(sampler_state_top);
 	return yy::parser::make_SAMPLERSTATE(loc);
+}
+<INITIAL>DepthStencilState {
+    //yy_push_state(depth_stencil_state_top);
+    return yy::parser::make_DEPTHSTENCILSTATE(loc);
+}
+<INITIAL>BlendState {
+    //yy_push_state(blend_state_top);
+    return yy::parser::make_BLENDSTATE(loc);
+}
+<INITIAL>RasterizerState {
+    return yy::parser::make_RASTERSTATE(loc);
 }
 
 
@@ -131,13 +183,103 @@ FatalError {
 	return yy::parser::make_STRUCT(loc);
 }
 
-<INITIAL,function>in {
-	return yy::parser::make_INSPECYFIER(loc);
+<INITIAL,function>{
+"in"    return yy::parser::make_INSPECYFIER(loc);
+"out"   return yy::parser::make_OUTSPECYFIER(loc);
 }
 
-<INITIAL,function>out {
-	return yy::parser::make_OUTSPECYFIER(loc);
+<INITIAL,pass>{
+"DepthEnable"       RSTATE(ZENABLE);
+"DepthWriteMask"    RSTATE(ZWRITEMASK); 
+"ZEnable"           RSTATE(ZENABLE);
+"ZWriteEnable"      RSTATE(ZWRITEENABLE);
+"ZFunc"             RSTATE(ZFUNC, compare_func);
+"StencilEnable"     RSTATE(STENCILENABLE);
+"StencilFunc"       RSTATE(STENCILFUNC);
+"StencilPass"       RSTATE(STENCILPASS);
+"StencilFail"       RSTATE(STENCILFAIL);
+"StencilZFail"      RSTATE(STENCILZFAIL);
+"StencilMask"       RSTATE(STENCILMASK);
+"CullMode"          RSTATE(CULLMODE, cull_mode);
+"FillMode"          RSTATE(FILLMODE, fill_mode);
+"FrontCounterClockwise"     RSTATE(FRONTCOUNTERCLOCKWISE);
+"DepthBias"                 RSTATE(DEPTHBIAS);
+"DepthBiasClamp"            RSTATE(DEPTHBIASCLAMP);
+"SlopeScaledDepthBias"      RSTATE(SLOPESCALEDDEPTHBIAS);
+"DepthClipEnable"           RSTATE(DEPTHCLIPENABLE);
+"ScissorEnable"             RSTATE(SCISSORENABLE);
+"MultisampleEnable"         RSTATE(MULTISAMPLEENABLE);
+"AntialiasedLineEnable"     RSTATE(ANTIALIASEDLINEENABLE);
+
+
+"BlendEnable"       RSTATE(ALPHABLENDENABLE);
+"AlphaFunc"         RSTATE(ALPHAFUNC, blend_state_op);
+    /*"AlphaRef"          RSTATE(ALPHAREF, blend_state);*/
+"BlendOp"           RSTATE(BLENDOP, blend_state_op);
+"SrcBlend"          RSTATE(SRCBLEND, blend_state);
+"DestBlend"         RSTATE(DESTBLEND, blend_state);
+"SrcBlendAlpha"     RSTATE(ALPHABLEND_SRC, blend_state);
+"DestBlendAlpha"    RSTATE(ALPHABLEND_DST, blend_state);
+"BlendOpAlpha"      RSTATE(ALPHABLEND_EQUATION, blend_state_op);
 }
+
+<blend_state>{
+"ZERO"              BSTATE(ZERO);
+"ONE"               BSTATE(ONE);
+"SRC_COLOR"         BSTATE(SRC_COLOR);
+"INV_SRC_COLOR"     BSTATE(INV_SRC_COLOR);
+"SRC_ALPHA"         BSTATE(SRC_ALPHA);
+"INV_SRC_ALPHA"     BSTATE(INV_SRC_ALPHA);
+"DEST_ALPHA"        BSTATE(DEST_ALPHA);
+"INV_DEST_ALPHA"    BSTATE(INV_DEST_ALPHA);
+"DEST_COLOR"        BSTATE(DEST_COLOR);
+"INV_DEST_COLOR"    BSTATE(INV_DEST_COLOR);
+"SRC_ALPHA_SAT"     BSTATE(SRC_ALPHA_SAT);
+"BLEND_FACTOR"      BSTATE(BLEND_FACTOR);
+"INV_BLEND_FACTOR"  BSTATE(INV_BLEND_FACTOR);
+"SRC1_COLOR"        BSTATE(SRC1_COLOR);
+"INV_SRC1_COLOR"    BSTATE(INV_SRC1_COLOR);
+"SRC1_ALPHA"        BSTATE(SRC1_ALPHA);
+"INV_SRC1_ALPHA"    BSTATE(INV_SRC1_ALPHA);
+
+";"                 POP_STATE;
+}
+
+<blend_state_op>{
+"ADD"               BSTATE_OP(ADD);
+"SUBTRACT"          BSTATE_OP(SUBTRACT);
+"REV_SUBTRACT"      BSTATE_OP(REV_SUBTRACT);
+"MIN"               BSTATE_OP(MIN);
+"MAX"               BSTATE_OP(MAX);
+";"                 POP_STATE;
+}
+
+<compare_func>{
+"NEVER"             ZCMPSTATE(NEVER);
+"LESS"              ZCMPSTATE(LESS);
+"EQUAL"             ZCMPSTATE(EQUAL);
+"LESS_EQUAL"        ZCMPSTATE(LESS_EQUAL);
+"GREATER"           ZCMPSTATE(GREATER);
+"NOT_EQUAL"         ZCMPSTATE(NOT_EQUAL);
+"GREATER_EQUAL"     ZCMPSTATE(GREATER_EQUAL);
+"ALWAYS"            ZCMPSTATE(ALWAYS);
+";"                 POP_STATE;
+
+}
+
+<cull_mode>{
+"NONE"              RCULLSTATE(NONE);
+"FRONT"             RCULLSTATE(FRONT);
+"BACK"              RCULLSTATE(BACK);
+";"                 POP_STATE;
+}
+
+<fill_mode>{
+"SOLID"             RFILLSTATE(SOLID);
+"WIREFRAME"         RFILLSTATE(WIREFRAME);
+";"                 POP_STATE;
+}
+
 
 
 <INITIAL,cstbuffer>{
@@ -150,56 +292,51 @@ FatalError {
     }
 }
 <INITIAL,cstbuffer,function,functionbody,input_layout,pass,technique>{
-    void   return yy::parser::make_VOID_TYPE(loc);
-    unsigned return yy::parser::make_UNSIGNED(loc);
-    float  return yy::parser::make_FLOAT_TYPE(loc);
-    float2 return yy::parser::make_FLOAT2_TYPE(loc);
-    float3 return yy::parser::make_FLOAT3_TYPE(loc);
-    float4 return yy::parser::make_FLOAT4_TYPE(loc);
-    vec2   return yy::parser::make_FLOAT2_TYPE(loc);
-    vec3   return yy::parser::make_FLOAT3_TYPE(loc);
-    vec4   return yy::parser::make_FLOAT4_TYPE(loc);
-    mat2   return yy::parser::make_MAT2_TYPE(loc);
-    mat3   return yy::parser::make_MAT3_TYPE(loc);
-    mat4   return yy::parser::make_MAT4_TYPE(loc);
-    float2x2   return yy::parser::make_MAT2_TYPE(loc);
-    float2x4   return yy::parser::make_MAT2x4_TYPE(loc);
-    float3x3   return yy::parser::make_MAT3_TYPE(loc);
-    float3x4   return yy::parser::make_MAT34_TYPE(loc);
-    float4x4   return yy::parser::make_MAT4_TYPE(loc);
-    bool   return yy::parser::make_BOOL_TYPE(loc);
-    bvec2  return yy::parser::make_BOOL2_TYPE(loc);
-    bvec3  return yy::parser::make_BOOL3_TYPE(loc);
-    bvec4  return yy::parser::make_BOOL4_TYPE(loc);
-    int    return yy::parser::make_INT_TYPE(loc);
-    int2   return yy::parser::make_INT2_TYPE(loc);
-    int3   return yy::parser::make_INT3_TYPE(loc);
-    int4   return yy::parser::make_INT4_TYPE(loc);
-    ivec2  return yy::parser::make_INT2_TYPE(loc);
-    ivec3  return yy::parser::make_INT3_TYPE(loc);
-    ivec4  return yy::parser::make_INT4_TYPE(loc);
-    uniform return yy::parser::make_UNIFORM(loc);
-    string return yy::parser::make_STRING_TYPE(loc);
+"void"   return yy::parser::make_VOID_TYPE(loc);
+"unsigned" return yy::parser::make_UNSIGNED_TYPE(loc);
+"float"  return yy::parser::make_FLOAT_TYPE(loc);
+"float2" return yy::parser::make_FLOAT2_TYPE(loc);
+"float3" return yy::parser::make_FLOAT3_TYPE(loc);
+"float4" return yy::parser::make_FLOAT4_TYPE(loc);
+"vec2"   return yy::parser::make_FLOAT2_TYPE(loc);
+"vec3"   return yy::parser::make_FLOAT3_TYPE(loc);
+"vec4"   return yy::parser::make_FLOAT4_TYPE(loc);
+"mat2"   return yy::parser::make_MAT2_TYPE(loc);
+"mat3"   return yy::parser::make_MAT3_TYPE(loc);
+"mat4"   return yy::parser::make_MAT4_TYPE(loc);
+"float2x2"   return yy::parser::make_MAT2_TYPE(loc);
+"float2x4"   return yy::parser::make_MAT2x4_TYPE(loc);
+"float3x3"   return yy::parser::make_MAT3_TYPE(loc);
+"float3x4"   return yy::parser::make_MAT34_TYPE(loc);
+"float4x4"   return yy::parser::make_MAT4_TYPE(loc);
+"bool"   return yy::parser::make_BOOL_TYPE(loc);
+"bvec2"  return yy::parser::make_BOOL2_TYPE(loc);
+"bvec3"  return yy::parser::make_BOOL3_TYPE(loc);
+"bvec4"  return yy::parser::make_BOOL4_TYPE(loc);
+"int"    return yy::parser::make_INT_TYPE(loc);
+"int2"   return yy::parser::make_INT2_TYPE(loc);
+"int3"   return yy::parser::make_INT3_TYPE(loc);
+"int4"   return yy::parser::make_INT4_TYPE(loc);
+"ivec2"  return yy::parser::make_INT2_TYPE(loc);
+"ivec3"  return yy::parser::make_INT3_TYPE(loc);
+"ivec4"  return yy::parser::make_INT4_TYPE(loc);
+"uniform" return yy::parser::make_UNIFORM(loc);
+"string" return yy::parser::make_STRING_TYPE(loc);
 }
-
-<functionbody>return {
-    return yy::parser::make_RETURN(loc);
-}
-
-VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 
     /*==================================================================
       Comment starting points
     */
-<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout,function,functionbody>"/*" {
-    comment_caller  =  INITIAL;
-    yy_push_state(comment);
-}
-
-<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,resource,resource1,fbo,fbo1,input_layout,function,functionbody>"//" {
+<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,resource,resource1,fbo,fbo1,input_layout,function,functionbody>{
+    "/*" {
+        comment_caller  =  INITIAL;
+        yy_push_state(comment);
+    }
+    "//" {
     comment_caller  =  YY_START;
     yy_push_state(comment2);
     ::print_state(YY_START);
+    }
 }
 
 <comment>{
@@ -214,7 +351,7 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     .* 
     \n loc.lines (yyleng); loc.step (); yy_pop_state();//BEGIN(comment_caller);
 }
- /*==================================================================
+    /*==================================================================
       Start of string
     */
 <INITIAL,resource,resource1,pass,technique,cstbuffer,function>{
@@ -274,7 +411,8 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     return CURRENT_SYMBOL;
 }
 
-<functionbody>"\}" {
+<functionbody>{
+    "\}" {
         //CryLog("bracket level: %d", bracket_level);
         bracket_level--;
         if((bracket_level) == 0)
@@ -289,11 +427,16 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
             *string_buf_ptr++  =  yytext[0];
         }
     }
-<functionbody>"{" {
-    bracket_level++;
-    *string_buf_ptr++ = '{';
-}
-<functionbody>\n {  /*copy the GLSL data*/
+
+    "{" {
+        bracket_level++;
+        *string_buf_ptr++ = '{';
+    }
+
+    "return" {
+        return yy::parser::make_RETURN(loc);
+    }
+    \n {  /*copy the GLSL data*/
         char  *yptr  =  yytext;
         while  (  *yptr  )
         *string_buf_ptr++  =  *yptr++;
@@ -301,12 +444,14 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 		loc.lines (yyleng); loc.step ();
         return yy::parser::make_ANYLINE(loc); 
     }
-<functionbody>[^\\/\n^\{^\}]+ {  /*copy the GLSL data*/
+
+    [^\\/\n^\{^\}]+ {  /*copy the GLSL data*/
         //CryLog("Copy function data");
         char  *yptr  =  yytext;
         while  (  *yptr  )
         *string_buf_ptr++  =  *yptr++;
     }
+}
     /*==================================================================
       rules for inside a  section
     */
@@ -349,10 +494,10 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
     }
 }
 
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>\n+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>\n+ {
     loc.lines (yyleng); loc.step ();
 }
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>{blank}+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>{blank}+ {
     loc.step ();
 }
 
@@ -373,17 +518,23 @@ VertexFormat return yy::parser::make_VERTEXFORMAT(loc);
 ","        return yy::parser::make_COMMA(loc);
     */
 
-{int}      return make_INT(yytext, loc);
-{float_number}      return make_FLOAT(yytext, loc);
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout,function>{id}   return check_type(yytext, loc);
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,pass,resource,resource1,fbo,fbo1,input_layout,function>. {   
-    if((yytext[0] >= 33) && (yytext[0] <= 126))
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,pass,resource,resource1,fbo,fbo1,input_layout,function>{
+    "true"          return yy::parser::make_BOOL(true, loc);
+    "false"         return yy::parser::make_BOOL(false, loc);
+    {int}           return make_INT(yytext, loc);
+    {float_number}  return make_FLOAT(yytext, loc);
+    {id}            return check_type(yytext, loc);
+    . {   
+        if((yytext[0] >= 33) && (yytext[0] <= 126))
+            return CURRENT_SYMBOL;
+        else {
+            CryLog("Warning: line %d : odd character found (%u)...\n", 0xffff, (unsigned char)yytext[0]);
+        }
         return CURRENT_SYMBOL;
-    else {
-        CryLog("Warning: line %d : odd character found (%u)...\n", 0xffff, (unsigned char)yytext[0]);
     }
-    return CURRENT_SYMBOL;
+
 }
+
     /*==================================================================
       ==================================================================
       !! SIMPLIFIED PREPROCESSOR !!
@@ -559,7 +710,7 @@ const yy::parser::location_type& loc
 void Scanner::begin_function_body()
 {
     bracket_level = 1; // must be one...
-    CryLog("begin function body");
+    //CryLog("begin function body");
     yy_push_state(functionbody);
 }
 
@@ -603,6 +754,15 @@ const char* state_to_string(int state)
         case resource1: cState = "resource1"; break;
         case input_layout: cState = "input_layout"; break;
         case INITIAL: cState = "INITIAL"; break;
+        case blend_state: cState = "blend_state"; break;
+        case blend_state_op: cState = "blend_state_op"; break;
+        case compare_func: cState = "compare_func"; break;
+        case blend_state_top: cState = "blend_state_top"; break;
+        case depth_stencil_state_top: cState = "depth_stencil_state_top"; break;
+        case sampler_state_top: cState = "sampler_state_top"; break;
+        case cull_mode: cState = "cull_mode"; break;
+        case fill_mode: cState = "fill_mode"; break;
+
         default: cState = "unknown";
     }
 
@@ -611,7 +771,7 @@ const char* state_to_string(int state)
 }
 
 void print_state(int state){
-  //CryLog("$1Current state: %s", state_to_string(state));
+  CryLog("$1Current state: %s", state_to_string(state));
 }
 
 #if 0

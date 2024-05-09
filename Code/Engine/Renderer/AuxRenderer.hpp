@@ -39,6 +39,9 @@ struct Material
 	UCol DiffuseColor{Legacy::Vec3{0, 1, 1}};
 	UCol SpecularColor{Legacy::Vec3{1,1,1}};
 	UCol Gloss;
+
+	bool m_bZWrite = true;
+	bool m_bZTest = true;
 };
 
 struct SDrawElement
@@ -100,7 +103,5 @@ class CRenderAuxGeom : public IRenderAuxGeom
 	CShader* m_ZPShader;
 
   public:
-	static ID3D11DepthStencilState* m_pDSStateZPrePass;
-	static ID3D11DepthStencilState* m_pDSStateMesh;
 	static ID3D11DepthStencilState* m_pDSStateLines;
 };

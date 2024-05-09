@@ -16,10 +16,10 @@ float global_float <string desc="Test global variable";> = 0.5;
 
 float global_float2 <string desc="Test global variable";> = float(0);
 float2 global_float3 <string desc="Test global variable";> = float2(0,0);
+float2 global_float4 <float SomeValue=123456;> = float2(0,0);
 
 ///////////////////////////////////
-//static const float PI= 3.14159265f;
-#define PI 3.14159265f
+static float PI = 3.14159265f;
 ///////////////////////////////////
 
 //struct struct_definition

@@ -19,7 +19,7 @@ FxParser::~FxParser()
 	CryFreeLibrary(m_FxLibrary);
 }
 
-bool FxParser::Parse(const std::string& f, PEffect* pEffect)
+bool FxParser::Parse(const std::string& f, FxEffect** pEffect)
 {
 #define DLL_MODULE_INIT_ISYSTEM "ModuleInitISystem"
 	//auto g_driver = std::unique_ptr<IDriver>(CreateParserDriver());
@@ -50,4 +50,10 @@ bool FxParser::Parse(const std::string& f, PEffect* pEffect)
 		return *pEffect != nullptr;
 	}
 	return false;
+}
+
+void FxEffect::AddTechnique(CTechnique&& tech)
+{
+	tech.Id = m_Techniques.size();
+	m_Techniques.push_back(std::move(tech));
 }

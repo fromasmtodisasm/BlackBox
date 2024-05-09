@@ -52,7 +52,7 @@ void TestFx(IConsoleCmdArgs* args)
 	else
 		filename = args->GetArg(1);
 
-	PEffect pEffect = nullptr;
+	FxEffect* pEffect = nullptr;
 #if 1
 	if (g_FxParser->Parse(filename, &pEffect))
 	{
@@ -867,7 +867,7 @@ bool ShaderMan::Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen, CSha
 
 bool ShaderMan::Compile(std::string_view name, int flags, uint64 nMaskGen, CShader* p)
 {
-	PEffect           pEffect = nullptr;
+	FxEffect*         pEffect = nullptr;
 	std::stringstream path;
 	auto              pos = name.find_last_of('.');
 	std::string_view  real_name = name;
