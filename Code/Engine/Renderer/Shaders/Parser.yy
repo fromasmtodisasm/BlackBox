@@ -156,6 +156,9 @@
 %type <CTechnique>              tech
 
 
+%type <StorageClass> const_storage_class
+
+
 
 
 %token <std::string> TYPE_NAME
@@ -224,6 +227,11 @@
 %token              RASTERSTATE
 %token              SAMPLERSTATE
 
+
+
+%token              TYPEDEF 
+%token              CONST
+
 /*------------------------------------------------------------------
   token for extensions
 */
@@ -276,6 +284,29 @@
 %token <fx::ERenderState> ZWRITEMASK
 %token <fx::ERenderState> COLORWRITEENABLE
 
+    /* Sampler States
+
+    D3D11_FILTER Filter;
+    D3D11_TEXTURE_ADDRESS_MODE AddressU;
+    D3D11_TEXTURE_ADDRESS_MODE AddressV;
+    D3D11_TEXTURE_ADDRESS_MODE AddressW;
+    FLOAT MipLODBias;
+    UINT MaxAnisotropy;
+    D3D11_COMPARISON_FUNC ComparisonFunc;
+    FLOAT BorderColor[4];
+    FLOAT MinLOD;
+    FLOAT MaxLOD;
+    */
+%token <fx::ERenderState> SAMPLER_FILTER
+%token <fx::ERenderState> SAMPLER_ADDRESSU
+%token <fx::ERenderState> SAMPLER_ADDRESSV
+%token <fx::ERenderState> SAMPLER_ADDRESSW
+%token <fx::ERenderState> SAMPLER_MIPLODBIAS
+%token <fx::ERenderState> SAMPLER_MAXANISOTROPY
+%token <fx::ERenderState> SAMPLER_COMPARISONFUNC
+%token <fx::ERenderState> SAMPLER_BORDERCOLOR
+%token <fx::ERenderState> SAMPLER_MINLOD
+%token <fx::ERenderState> SAMPLER_MAXLOD
 /*------------------------------------------------------------------
   token for blend operations
 */
@@ -286,6 +317,8 @@
 
 %token <D3D11_FILL_MODE> FILLMODE_VALUE
 %token <D3D11_CULL_MODE> CULLMODE_VALUE
+
+%token <D3D11_FILTER>    SAMPLER_STATE_VALUE
 
 %type <SRenderStateValue> render_state
 
@@ -321,6 +354,7 @@ numeric_constant
 input: %empty { FxLog("Empty effect"); }
 | input ';'
 | input tech
+| input typedef
 | input var_decl
 {
     if ($2.Name == "Script")
@@ -348,6 +382,28 @@ input: %empty { FxLog("Empty effect"); }
 | input error
 ;
 
+array_declaration: 
+    '[' INT ']'
+    | '[' IDENTIFIER ']'
+    | '[' ']'
+    ;
+
+optional_array_declaration: 
+    array_declaration
+    | %empty
+    ;
+
+const_storage_class: CONST { $$ = StorageClass::Const; }
+    | %empty { $$ = StorageClass::Extern; }
+    ;
+//template_parameter
+typedef: TYPEDEF const_storage_class object_type IDENTIFIER optional_array_declaration ';'
+{
+    FxLog("New TypeDef %s", $IDENTIFIER.data());
+    scanner.register_type($IDENTIFIER.data(), $object_type);
+    //lex_pop_state();
+}
+
 blend_state_declaration: BLENDSTATE IDENTIFIER '{' blendstate_type_list '}'
 {
     FxLog("New BlendState %s", $2.data());
@@ -365,6 +421,27 @@ raster_state_declaration: RASTERSTATE IDENTIFIER '{' raster_state_list '}'
     FxLog("New RasterState %s", $2.data());
     //lex_pop_state();
 }
+
+//sampler_state_declaration: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer '{' sampler_state_list '}'
+sampler_state_declaration: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer '{' sampler_state_list '}'
+{
+    FxLog("New SamplerState %s", $2.data());
+    //lex_pop_state();
+}
+
+sampler_state: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer
+{
+    FxLog("sampler");
+}
+
+
+sampler_state_list: 
+    sampler_state_list sampler_state ';'
+    {
+    }
+    | sampler_state ';'
+    {
+    }
 
 ds_state: 
 ZENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
@@ -440,7 +517,6 @@ raster_state_list:
     {
     }
 ;
-
 
 render_state:
     ds_state ';'
@@ -529,16 +605,25 @@ storage_class:
     | %empty { $$ = StorageClass::Extern; }
 ;
 
+template_parameter_opt: 
+    template_parameter 
+    | %empty
+    ;
+
 object_type: 
     storage_class TYPE_NAME { 
         $$.Name = $2;
         $$.Storage = $1;
     }
-    | storage_class base_type { 
+    | storage_class base_type template_parameter_opt { 
         $$.Name = toString($2);
         $$.Storage = $1;
         $$.Type = $2 ;
     } 
+    | storage_class TYPE_NAME template_parameter_opt { 
+        $$.Name = $2;
+        $$.Storage = $1;
+    }
 ;
 
 
@@ -560,7 +645,7 @@ cbuffer: CSTBUFFER IDENTIFIER register_declaration '{' var_decls '}'
     lex_pop_state();
 };
 
-template_parameter: '<' object_type '>';
+template_parameter: '<' typelist '>';
 
 
 struct: STRUCT struct_header struct_body struct_footer
@@ -568,12 +653,13 @@ struct: STRUCT struct_header struct_body struct_footer
     //FxLog("New Struct");
 }
 
-struct_header: IDENTIFIER{FxLog("StructName: %s", $1.data()); scanner.register_type($1.data());} | %empty {$$="";};
+struct_header: IDENTIFIER{FxLog("StructName: %s", $1.data()); scanner.register_type($1.data(),{});} | %empty {$$="";};
 struct_body: '{' var_decls '}';
 struct_footer: IDENTIFIER {FxLog("Declared and defined struct with name: %s", $1.data());} 
 | %empty {$$="";} ;
 
 var_decls: var_decls  var_decl ';' | var_decl ';' | struct';';
+typelist: object_type ',' typelist | object_type;
 
 shader_resource: cbuffer | texture2d | sampler_state;
 
@@ -581,11 +667,6 @@ resource_initializer: %empty | '=' IDENTIFIER;
 texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration resource_initializer
 {
     FxLog("texture2d");
-}
-
-sampler_state: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer
-{
-    FxLog("sampler");
 }
 
 shader_type 
@@ -657,6 +738,8 @@ base_type:
 |  MAT3_TYPE { $$ = nvFX::IUniform::TMat3; }
 |  MAT34_TYPE { $$ = nvFX::IUniform::TMat3; }
 |  MAT4_TYPE { $$ = nvFX::IUniform::TMat4; }
+|  TEXTURE1D_TYPE { $$ = nvFX::IUniform::TTexture1D; }
+|  TEXTURE2D_TYPE { $$ = nvFX::IUniform::TTexture2D; }
 
 ;
 

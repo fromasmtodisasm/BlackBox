@@ -27,6 +27,7 @@
     #define ZCMPSTATE(x,...) RSTATE_COMMON2(COMPARISION_FUNC, D3D11_COMPARISON_FUNC::D3D11_COMPARISON_##x);
     #define RCULLSTATE(x,...) RSTATE_COMMON2(CULLMODE_VALUE, D3D11_CULL_MODE::D3D11_CULL_##x);
     #define RFILLSTATE(x,...) RSTATE_COMMON2(FILLMODE_VALUE, D3D11_FILL_MODE::D3D11_FILL_##x);
+    #define SSTATE(x,...) RSTATE_COMMON2(SAMPLER_STATE_VALUE, D3D11_FILTER::D3D11_FILTER_##x);
     #define POP_STATE yy_pop_state(); return CURRENT_SYMBOL;
 
 
@@ -110,6 +111,7 @@ float_number    [+-]?([0-9]*[.])?[0-9]+(f|F)?
 %x blend_state blend_state_op compare_func
 %x blend_state_top depth_stencil_state_top sampler_state_top
 %x cull_mode fill_mode
+%x sampler_addressing sampler_filter
 
 %{
   // Code run each time a pattern is matched.
@@ -157,9 +159,6 @@ static {
   yy_push_state(cstbuffer);
 	return yy::parser::make_CONSTANTBUFFER(loc);
 }
-<INITIAL>Texture2D {
-	return yy::parser::make_TEXTURE2D_TYPE(loc);
-}
 <INITIAL>SamplerState {
     //yy_push_state(sampler_state_top);
 	return yy::parser::make_SAMPLERSTATE(loc);
@@ -186,95 +185,164 @@ static {
 "out"   return yy::parser::make_OUTSPECYFIER(loc);
 }
 
+<INITIAL,functionbody>{
+"typedef" return yy::parser::make_TYPEDEF(loc);
+"const" return yy::parser::make_CONST(loc);
+}
+
 <INITIAL,pass>{
-"DepthEnable"       RSTATE(ZENABLE);
-"DepthWriteMask"    RSTATE(ZWRITEMASK); 
-"ZEnable"           RSTATE(ZENABLE);
-"ZWriteEnable"      RSTATE(ZWRITEENABLE);
-"ZFunc"             RSTATE(ZFUNC, compare_func);
-"StencilEnable"     RSTATE(STENCILENABLE);
-"StencilFunc"       RSTATE(STENCILFUNC);
-"StencilPass"       RSTATE(STENCILPASS);
-"StencilFail"       RSTATE(STENCILFAIL);
-"StencilZFail"      RSTATE(STENCILZFAIL);
-"StencilMask"       RSTATE(STENCILMASK);
-"CullMode"          RSTATE(CULLMODE, cull_mode);
-"FillMode"          RSTATE(FILLMODE, fill_mode);
-"FrontCounterClockwise"     RSTATE(FRONTCOUNTERCLOCKWISE);
-"DepthBias"                 RSTATE(DEPTHBIAS);
-"DepthBiasClamp"            RSTATE(DEPTHBIASCLAMP);
-"SlopeScaledDepthBias"      RSTATE(SLOPESCALEDDEPTHBIAS);
-"DepthClipEnable"           RSTATE(DEPTHCLIPENABLE);
-"ScissorEnable"             RSTATE(SCISSORENABLE);
-"MultisampleEnable"         RSTATE(MULTISAMPLEENABLE);
-"AntialiasedLineEnable"     RSTATE(ANTIALIASEDLINEENABLE);
+(?i:DepthEnable)    RSTATE(ZENABLE);
+(?i:DepthWriteMask)    RSTATE(ZWRITEMASK); 
+(?i:ZEnable)           RSTATE(ZENABLE);
+(?i:ZWriteEnable)      RSTATE(ZWRITEENABLE);
+(?i:ZFunc)             RSTATE(ZFUNC, compare_func);
+(?i:StencilEnable)     RSTATE(STENCILENABLE);
+(?i:StencilFunc)       RSTATE(STENCILFUNC);
+(?i:StencilPass)       RSTATE(STENCILPASS);
+(?i:StencilFail)       RSTATE(STENCILFAIL);
+(?i:StencilZFail)      RSTATE(STENCILZFAIL);
+(?i:StencilMask)       RSTATE(STENCILMASK);
+(?i:CullMode)          RSTATE(CULLMODE, cull_mode);
+(?i:FillMode)          RSTATE(FILLMODE, fill_mode);
+(?i:FrontCounterClockwise)     RSTATE(FRONTCOUNTERCLOCKWISE);
+(?i:DepthBias)                 RSTATE(DEPTHBIAS);
+(?i:DepthBiasClamp)            RSTATE(DEPTHBIASCLAMP);
+(?i:SlopeScaledDepthBias)      RSTATE(SLOPESCALEDDEPTHBIAS);
+(?i:DepthClipEnable)           RSTATE(DEPTHCLIPENABLE);
+(?i:ScissorEnable)             RSTATE(SCISSORENABLE);
+(?i:MultisampleEnable)         RSTATE(MULTISAMPLEENABLE);
+(?i:AntialiasedLineEnable)     RSTATE(ANTIALIASEDLINEENABLE);
 
 
-"BlendEnable"       RSTATE(ALPHABLENDENABLE);
-"AlphaFunc"         RSTATE(ALPHAFUNC, blend_state_op);
+(?i:BlendEnable)       RSTATE(ALPHABLENDENABLE);
+(?i:AlphaFunc)         RSTATE(ALPHAFUNC, blend_state_op);
     /*"AlphaRef"          RSTATE(ALPHAREF, blend_state);*/
-"BlendOp"           RSTATE(BLENDOP, blend_state_op);
-"SrcBlend"          RSTATE(SRCBLEND, blend_state);
-"DestBlend"         RSTATE(DESTBLEND, blend_state);
-"SrcBlendAlpha"     RSTATE(ALPHABLEND_SRC, blend_state);
-"DestBlendAlpha"    RSTATE(ALPHABLEND_DST, blend_state);
-"BlendOpAlpha"      RSTATE(ALPHABLEND_EQUATION, blend_state_op);
+(?i:BlendOp)           RSTATE(BLENDOP, blend_state_op);
+(?i:SrcBlend)          RSTATE(SRCBLEND, blend_state);
+(?i:DestBlend)         RSTATE(DESTBLEND, blend_state);
+(?i:SrcBlendAlpha)     RSTATE(ALPHABLEND_SRC, blend_state);
+(?i:DestBlendAlpha)    RSTATE(ALPHABLEND_DST, blend_state);
+(?i:BlendOpAlpha)      RSTATE(ALPHABLEND_EQUATION, blend_state_op);
+
+    /* Sampler States
+
+    D3D11_FILTER Filter;
+    D3D11_TEXTURE_ADDRESS_MODE AddressU;
+    D3D11_TEXTURE_ADDRESS_MODE AddressV;
+    D3D11_TEXTURE_ADDRESS_MODE AddressW;
+    FLOAT MipLODBias;
+    UINT MaxAnisotropy;
+    D3D11_COMPARISON_FUNC ComparisonFunc;
+    FLOAT BorderColor[4];
+    FLOAT MinLOD;
+    FLOAT MaxLOD;
+    */
+(?i:Filter)            RSTATE(SAMPLER_FILTER, sampler_filter);
+(?i:AddressU)          RSTATE(SAMPLER_ADDRESSU, sampler_addressing);
+(?i:AddressV)          RSTATE(SAMPLER_ADDRESSV, sampler_addressing);
+(?i:AddressW)          RSTATE(SAMPLER_ADDRESSW, sampler_addressing);
+(?i:MipLODBias)        RSTATE(SAMPLER_MIPLODBIAS);
+(?i:MaxAnisotropy)     RSTATE(SAMPLER_MAXANISOTROPY);
+(?i:ComparisonFunc)    RSTATE(SAMPLER_COMPARISONFUNC, compare_func);
+(?i:BorderColor)       RSTATE(SAMPLER_BORDERCOLOR);
+(?i:MaxLOD)            RSTATE(SAMPLER_MAXLOD);
+(?i:MinLOD)            RSTATE(SAMPLER_MINLOD);
 }
 
 <blend_state>{
-"ZERO"              BSTATE(ZERO);
-"ONE"               BSTATE(ONE);
-"SRC_COLOR"         BSTATE(SRC_COLOR);
-"INV_SRC_COLOR"     BSTATE(INV_SRC_COLOR);
-"SRC_ALPHA"         BSTATE(SRC_ALPHA);
-"INV_SRC_ALPHA"     BSTATE(INV_SRC_ALPHA);
-"DEST_ALPHA"        BSTATE(DEST_ALPHA);
-"INV_DEST_ALPHA"    BSTATE(INV_DEST_ALPHA);
-"DEST_COLOR"        BSTATE(DEST_COLOR);
-"INV_DEST_COLOR"    BSTATE(INV_DEST_COLOR);
-"SRC_ALPHA_SAT"     BSTATE(SRC_ALPHA_SAT);
-"BLEND_FACTOR"      BSTATE(BLEND_FACTOR);
-"INV_BLEND_FACTOR"  BSTATE(INV_BLEND_FACTOR);
-"SRC1_COLOR"        BSTATE(SRC1_COLOR);
-"INV_SRC1_COLOR"    BSTATE(INV_SRC1_COLOR);
-"SRC1_ALPHA"        BSTATE(SRC1_ALPHA);
-"INV_SRC1_ALPHA"    BSTATE(INV_SRC1_ALPHA);
+(?i:ZERO)              BSTATE(ZERO);
+(?i:ONE)               BSTATE(ONE);
+(?i:SRC_COLOR)         BSTATE(SRC_COLOR);
+(?i:INV_SRC_COLOR)     BSTATE(INV_SRC_COLOR);
+(?i:SRC_ALPHA)         BSTATE(SRC_ALPHA);
+(?i:INV_SRC_ALPHA)     BSTATE(INV_SRC_ALPHA);
+(?i:DEST_ALPHA)        BSTATE(DEST_ALPHA);
+(?i:INV_DEST_ALPHA)    BSTATE(INV_DEST_ALPHA);
+(?i:DEST_COLOR)        BSTATE(DEST_COLOR);
+(?i:INV_DEST_COLOR)    BSTATE(INV_DEST_COLOR);
+(?i:SRC_ALPHA_SAT)     BSTATE(SRC_ALPHA_SAT);
+(?i:BLEND_FACTOR)      BSTATE(BLEND_FACTOR);
+(?i:INV_BLEND_FACTOR)  BSTATE(INV_BLEND_FACTOR);
+(?i:SRC1_COLOR)        BSTATE(SRC1_COLOR);
+(?i:INV_SRC1_COLOR)    BSTATE(INV_SRC1_COLOR);
+(?i:SRC1_ALPHA)        BSTATE(SRC1_ALPHA);
+(?i:INV_SRC1_ALPHA)    BSTATE(INV_SRC1_ALPHA);
 
 ";"                 POP_STATE;
 }
 
 <blend_state_op>{
-"ADD"               BSTATE_OP(ADD);
-"SUBTRACT"          BSTATE_OP(SUBTRACT);
-"REV_SUBTRACT"      BSTATE_OP(REV_SUBTRACT);
-"MIN"               BSTATE_OP(MIN);
-"MAX"               BSTATE_OP(MAX);
+(?i:ADD)               BSTATE_OP(ADD);
+(?i:SUBTRACT)          BSTATE_OP(SUBTRACT);
+(?i:REV_SUBTRACT)      BSTATE_OP(REV_SUBTRACT);
+(?i:MIN)               BSTATE_OP(MIN);
+(?i:MAX)               BSTATE_OP(MAX);
 ";"                 POP_STATE;
 }
 
 <compare_func>{
-"NEVER"             ZCMPSTATE(NEVER);
-"LESS"              ZCMPSTATE(LESS);
-"EQUAL"             ZCMPSTATE(EQUAL);
-"LESS_EQUAL"        ZCMPSTATE(LESS_EQUAL);
-"GREATER"           ZCMPSTATE(GREATER);
-"NOT_EQUAL"         ZCMPSTATE(NOT_EQUAL);
-"GREATER_EQUAL"     ZCMPSTATE(GREATER_EQUAL);
-"ALWAYS"            ZCMPSTATE(ALWAYS);
+(?i:NEVER)             ZCMPSTATE(NEVER);
+(?i:LESS)              ZCMPSTATE(LESS);
+(?i:EQUAL)             ZCMPSTATE(EQUAL);
+(?i:LESS_EQUAL)        ZCMPSTATE(LESS_EQUAL);
+(?i:GREATER)           ZCMPSTATE(GREATER);
+(?i:NOT_EQUAL)         ZCMPSTATE(NOT_EQUAL);
+(?i:GREATER_EQUAL)     ZCMPSTATE(GREATER_EQUAL);
+(?i:ALWAYS)            ZCMPSTATE(ALWAYS);
 ";"                 POP_STATE;
 
 }
 
 <cull_mode>{
-"NONE"              RCULLSTATE(NONE);
-"FRONT"             RCULLSTATE(FRONT);
-"BACK"              RCULLSTATE(BACK);
+(?i:NONE)              RCULLSTATE(NONE);
+(?i:FRONT)             RCULLSTATE(FRONT);
+(?i:BACK)              RCULLSTATE(BACK);
 ";"                 POP_STATE;
 }
 
 <fill_mode>{
-"SOLID"             RFILLSTATE(SOLID);
-"WIREFRAME"         RFILLSTATE(WIREFRAME);
+(?i:SOLID)             RFILLSTATE(SOLID);
+(?i:WIREFRAME)         RFILLSTATE(WIREFRAME);
+";"                 POP_STATE;
+}
+
+<sampler_filter>{
+(?i:MIN_MAG_MIP_POINT) SSTATE(MIN_MAG_MIP_POINT);
+(?i:MIN_MAG_POINT_MIP_LINEAR) SSTATE(MIN_MAG_POINT_MIP_LINEAR);
+(?i:MIN_POINT_MAG_LINEAR_MIP_POINT) SSTATE(MIN_POINT_MAG_LINEAR_MIP_POINT);
+(?i:MIN_POINT_MAG_MIP_LINEAR) SSTATE(MIN_POINT_MAG_MIP_LINEAR);
+(?i:MIN_LINEAR_MAG_MIP_POINT) SSTATE(MIN_LINEAR_MAG_MIP_POINT);
+(?i:MIN_LINEAR_MAG_POINT_MIP_LINEAR) SSTATE(MIN_LINEAR_MAG_POINT_MIP_LINEAR);
+(?i:MIN_MAG_LINEAR_MIP_POINT) SSTATE(MIN_MAG_LINEAR_MIP_POINT);
+(?i:MIN_MAG_MIP_LINEAR) SSTATE(MIN_MAG_MIP_LINEAR);
+(?i:ANISOTROPIC) SSTATE(ANISOTROPIC);
+(?i:COMPARISON_MIN_MAG_MIP_POINT) SSTATE(COMPARISON_MIN_MAG_MIP_POINT);
+(?i:COMPARISON_MIN_MAG_POINT_MIP_LINEAR) SSTATE(COMPARISON_MIN_MAG_POINT_MIP_LINEAR);
+(?i:COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT) SSTATE(COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT);
+(?i:COMPARISON_MIN_POINT_MAG_MIP_LINEAR) SSTATE(COMPARISON_MIN_POINT_MAG_MIP_LINEAR);
+(?i:COMPARISON_MIN_LINEAR_MAG_MIP_POINT) SSTATE(COMPARISON_MIN_LINEAR_MAG_MIP_POINT);
+(?i:COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR) SSTATE(COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR);
+(?i:COMPARISON_MIN_MAG_LINEAR_MIP_POINT) SSTATE(COMPARISON_MIN_MAG_LINEAR_MIP_POINT);
+(?i:COMPARISON_MIN_MAG_MIP_LINEAR) SSTATE(COMPARISON_MIN_MAG_MIP_LINEAR);
+(?i:COMPARISON_ANISOTROPIC) SSTATE(COMPARISON_ANISOTROPIC);
+(?i:MINIMUM_MIN_MAG_MIP_POINT) SSTATE(MINIMUM_MIN_MAG_MIP_POINT);
+(?i:MINIMUM_MIN_MAG_POINT_MIP_LINEAR) SSTATE(MINIMUM_MIN_MAG_POINT_MIP_LINEAR);
+(?i:MINIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT) SSTATE(MINIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT);
+(?i:MINIMUM_MIN_POINT_MAG_MIP_LINEAR) SSTATE(MINIMUM_MIN_POINT_MAG_MIP_LINEAR);
+(?i:MINIMUM_MIN_LINEAR_MAG_MIP_POINT) SSTATE(MINIMUM_MIN_LINEAR_MAG_MIP_POINT);
+(?i:MINIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR) SSTATE(MINIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR);
+(?i:MINIMUM_MIN_MAG_LINEAR_MIP_POINT) SSTATE(MINIMUM_MIN_MAG_LINEAR_MIP_POINT);
+(?i:MINIMUM_MIN_MAG_MIP_LINEAR) SSTATE(MINIMUM_MIN_MAG_MIP_LINEAR);
+(?i:MINIMUM_ANISOTROPIC) SSTATE(MINIMUM_ANISOTROPIC);
+(?i:MAXIMUM_MIN_MAG_MIP_POINT) SSTATE(MAXIMUM_MIN_MAG_MIP_POINT);
+(?i:MAXIMUM_MIN_MAG_POINT_MIP_LINEAR) SSTATE(MAXIMUM_MIN_MAG_POINT_MIP_LINEAR);
+(?i:MAXIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT) SSTATE(MAXIMUM_MIN_POINT_MAG_LINEAR_MIP_POINT);
+(?i:MAXIMUM_MIN_POINT_MAG_MIP_LINEAR) SSTATE(MAXIMUM_MIN_POINT_MAG_MIP_LINEAR);
+(?i:MAXIMUM_MIN_LINEAR_MAG_MIP_POINT) SSTATE(MAXIMUM_MIN_LINEAR_MAG_MIP_POINT);
+(?i:MAXIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR) SSTATE(MAXIMUM_MIN_LINEAR_MAG_POINT_MIP_LINEAR);
+(?i:MAXIMUM_MIN_MAG_LINEAR_MIP_POINT) SSTATE(MAXIMUM_MIN_MAG_LINEAR_MIP_POINT);
+(?i:MAXIMUM_MIN_MAG_MIP_LINEAR) SSTATE(MAXIMUM_MIN_MAG_MIP_LINEAR);
+(?i:MAXIMUM_ANISOTROPIC) SSTATE(MAXIMUM_ANISOTROPIC);
 ";"                 POP_STATE;
 }
 
@@ -298,7 +366,7 @@ static {
 "float4" return yy::parser::make_FLOAT4_TYPE(loc);
 "vec2"   return yy::parser::make_FLOAT2_TYPE(loc);
 "vec3"   return yy::parser::make_FLOAT3_TYPE(loc);
-"vec4"   return yy::parser::make_FLOAT4_TYPE(loc);
+    /*"vec4"   return yy::parser::make_FLOAT4_TYPE(loc);*/
 "mat2"   return yy::parser::make_MAT2_TYPE(loc);
 "mat3"   return yy::parser::make_MAT3_TYPE(loc);
 "mat4"   return yy::parser::make_MAT4_TYPE(loc);
@@ -320,6 +388,7 @@ static {
 "ivec4"  return yy::parser::make_INT4_TYPE(loc);
 "uniform" return yy::parser::make_UNIFORM(loc);
 "string" return yy::parser::make_STRING_TYPE(loc);
+"Texture2D" return yy::parser::make_TEXTURE2D_TYPE(loc);
 }
 
     /*==================================================================
@@ -694,14 +763,17 @@ const std::string &s,
 const yy::parser::location_type& loc
 )
 {
-    if (auto it = symboltype_map.find(s); it != symboltype_map.end())
+    if (auto id = get_type_id(s); id != -1)
     {
-        //CryLog("%s: Its type!!!", s.data());
-    return yy::parser::make_TYPE_NAME(s, loc); 
+        if (nvFX::IUniform::Type(id) == nvFX::IUniform::Type::TTexture2D)
+        {
+            return yy::parser::make_TEXTURE2D_TYPE(loc);
+        }
+        return yy::parser::make_TYPE_NAME(s, loc);
     }
-    else {
-        //CryLog("%s: Its ident!!!", s.data());
-    return yy::parser::make_IDENTIFIER(s, loc);
+    else
+    {
+        return yy::parser::make_IDENTIFIER(s, loc);
     }
 }
 

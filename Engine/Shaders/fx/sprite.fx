@@ -17,7 +17,9 @@ float Script : STANDARDSGLOBAL
     string Description = "This shader is used for rendering sprites";
 >;
 
-Texture2D text : register(t0);
+typedef Texture2D<float4> ColorBuffer;
+
+ColorBuffer text : register(t0);
 SamplerState textSampler : register(s0);
 
 struct VsOutput
@@ -27,12 +29,14 @@ struct VsOutput
     float4 Color : COLOR;
 };
 
+typedef float4 vec4;
 struct VsInput
 {
     float3 Pos : POSITION;
-    float4 Color : COLOR0;
+    vec4 Color : COLOR0;
     float2 TC : TEXCOORD0;
 };
+
 
 
 VsOutput VSMain(VsInput IN)
@@ -83,7 +87,7 @@ Technique Font
         VertexShader = VSMain();
         PixelShader = Font();
 
-        ZEnable = false;
+        DepthEnable = true;
         ZWriteEnable = false;
 
         BlendEnable = true;

@@ -18,15 +18,16 @@ class Scanner : public yyFlexLexer
 	Scanner(Driver& driver)
 		: driver(driver)
 	{
-		symboltype_map.insert({"float"});
-		symboltype_map.insert({"float2"});
-		symboltype_map.insert({"float3"});
-		symboltype_map.insert({"float4"});
+		//symboltype_map.insert({"float"});
+		//symboltype_map.insert({"float2"});
+		//symboltype_map.insert({"float3"});
+		//symboltype_map.insert({"float4"});
 
-		symboltype_map.insert({"float4x4"});
+		//symboltype_map.insert({"float4x4"});
 
-		symboltype_map.insert({"int"});
+		//symboltype_map.insert({"int"});
 		//string_buf.reserve(1024 * 16);
+
 	}
 	virtual ~Scanner() {}
 	virtual yy::parser::symbol_type ScanToken();
@@ -35,10 +36,33 @@ class Scanner : public yyFlexLexer
 	bool							MakeInclude(const char* file_name);
 	void							eof();
 
-	bool register_type(const string& str)
+	bool register_type(const string& name,const SObjectTypeInfo typedefObject)
 	{
-		symboltype_map.insert(str);
+		if (symboltype_map.find(name) == symboltype_map.end())
+		{
+			symboltype_map.insert(name);
+
+			if (typedefObject.Name.empty())
+			{
+				type_map[name] = current_type_id++;
+			}
+			else
+			{
+				type_map[name] = int(typedefObject.Type);
+			}
+
+			return true;
+		}
 		return false;
+	}
+	int get_type_id(const std::string& str)
+	{
+		auto it = type_map.find(str);
+		if (it != type_map.end())
+		{
+			return it->second;
+		}
+		return -1;
 	}
 	void add_shader_fragment(const char* f)
 	{
@@ -83,6 +107,9 @@ class Scanner : public yyFlexLexer
 	Driver& driver;
 
 	std::set<std::string> symboltype_map;
+	std::map<std::string, int> type_map;
+	int base_type_id = 0x100;
+	int current_type_id = 0x100;
 	//string				  string_buf;
 	string				  shader;
 

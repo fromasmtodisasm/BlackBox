@@ -57,6 +57,30 @@ enum class ERenderState
 	SCISSORENABLE,
 	MULTISAMPLEENABLE,
 	ANTIALIASEDLINEENABLE,
+    /* Sampler States
+
+    D3D11_FILTER Filter;
+    D3D11_TEXTURE_ADDRESS_MODE AddressU;
+    D3D11_TEXTURE_ADDRESS_MODE AddressV;
+    D3D11_TEXTURE_ADDRESS_MODE AddressW;
+    FLOAT MipLODBias;
+    UINT MaxAnisotropy;
+    D3D11_COMPARISON_FUNC ComparisonFunc;
+    FLOAT BorderColor[4];
+    FLOAT MinLOD;
+    FLOAT MaxLOD;
+    */
+    SAMPLER_FILTER,
+	SAMPLER_ADDRESSU,
+	SAMPLER_ADDRESSV,
+	SAMPLER_ADDRESSW,
+	SAMPLER_MIPLODBIAS,
+	SAMPLER_MAXANISOTROPY,
+	SAMPLER_COMPARISONFUNC,
+	SAMPLER_BORDERCOLOR,
+	SAMPLER_MINLOD,
+	SAMPLER_MAXLOD,
+
 
 
 };
@@ -137,6 +161,20 @@ inline std::string toString(IUniform::Type type)
 		case nvFX::IUniform::TMat2: return  "mat2";
 		case nvFX::IUniform::TMat3: return  "mat3";
 		case nvFX::IUniform::TMat4: return  "mat4";
+		case nvFX::IUniform::TMat2x4: return  "mat2x4";
+		case nvFX::IUniform::TMat34: return  "mat3x4";
+		case nvFX::IUniform::TUBO: return  "ubo";
+		case nvFX::IUniform::TCB: return  "cb";
+		case nvFX::IUniform::TUniform: return  "uniform";
+		case nvFX::IUniform::TTexture: return  "texture";
+		case nvFX::IUniform::TTexture1D: return  "texture1D";
+		case nvFX::IUniform::TTexture2D: return  "texture2D";
+		case nvFX::IUniform::TTexture2DShadow: return  "texture2DShadow";
+		case nvFX::IUniform::TTexture2DRect: return  "texture2DRect";
+		case nvFX::IUniform::TTexture3D: return  "texture3D";
+		case nvFX::IUniform::TTextureCube: return  "textureCube";
+		case nvFX::IUniform::TTexUnit: return  "texunit";
+
 		default: assert(0); return "unknown_type";
 
 	}
@@ -157,7 +195,8 @@ enum class StorageClass
 	Extern,
 	Auto,
 	Register,
-	Typedef
+	Typedef,
+	Const,
 };
 
 struct SObjectTypeInfo
