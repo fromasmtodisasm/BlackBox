@@ -28,6 +28,7 @@
     #define RCULLSTATE(x,...) RSTATE_COMMON2(CULLMODE_VALUE, D3D11_CULL_MODE::D3D11_CULL_##x);
     #define RFILLSTATE(x,...) RSTATE_COMMON2(FILLMODE_VALUE, D3D11_FILL_MODE::D3D11_FILL_##x);
     #define SSTATE(x,...) RSTATE_COMMON2(SAMPLER_STATE_VALUE, D3D11_FILTER::D3D11_FILTER_##x);
+    #define ADDRSTATE(x,...) RSTATE_COMMON2(SAMPLER_STATE_ADDRESS_VALUE, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_##x);
     #define POP_STATE yy_pop_state(); return CURRENT_SYMBOL;
 
 
@@ -346,6 +347,15 @@ static {
 ";"                 POP_STATE;
 }
 
+<sampler_addressing>{
+(?i:WRAP) ADDRSTATE(WRAP);
+(?i:MIRROR) ADDRSTATE(MIRROR);
+(?i:CLAMP) ADDRSTATE(CLAMP);
+(?i:BORDER) ADDRSTATE(BORDER);
+(?i:MIRROR_ONCE) ADDRSTATE(MIRROR_ONCE);
+";"                 POP_STATE;
+}
+
 
 
 <INITIAL,cstbuffer>{
@@ -394,7 +404,7 @@ static {
     /*==================================================================
       Comment starting points
     */
-<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,resource,resource1,fbo,fbo1,input_layout,function,functionbody>{
+<INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,sampler_addressing,sampler_filter,resource,resource1,fbo,fbo1,input_layout,function,functionbody>{
     "/*" {
         comment_caller  =  INITIAL;
         yy_push_state(comment);
@@ -561,10 +571,10 @@ static {
     }
 }
 
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>\n+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,sampler_addressing,sampler_filter,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>\n+ {
     loc.lines (yyleng); loc.step ();
 }
-<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>{blank}+ {
+<INITIAL,cstbuffer,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,sampler_addressing,sampler_filter,technique,pass,function,functionbody,resource,resource1,fbo,fbo1,input_layout>{blank}+ {
     loc.step ();
 }
 
@@ -585,7 +595,7 @@ static {
 ","        return yy::parser::make_COMMA(loc);
     */
 
-<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,pass,resource,resource1,fbo,fbo1,input_layout,function>{
+<INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,sampler_addressing,sampler_filter,pass,resource,resource1,fbo,fbo1,input_layout,function>{
     "true"          return yy::parser::make_BOOL(true, loc);
     "false"         return yy::parser::make_BOOL(false, loc);
     {int}           return make_INT(yytext, loc);

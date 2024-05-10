@@ -116,6 +116,7 @@
 // value type
 %type  <SimpleValue>    value
 %type  <SimpleValue>    numeric_constant
+%type  <SimpleValue>    float4_constructor
 // basic type constructor
 %type  <SimpleValue>    basic_type_constructor
 %type  <SimpleValue>    type_constructor
@@ -157,6 +158,12 @@
 
 
 %type <StorageClass> const_storage_class
+
+%type <std::vector<SRenderStateValue>> blendstate_type_list
+%type <std::vector<SRenderStateValue>> ds_state_list
+%type <std::vector<SRenderStateValue>> raster_state_list
+%type <std::vector<SRenderStateValue>> sampler_state_list
+
 
 
 
@@ -319,6 +326,7 @@
 %token <D3D11_CULL_MODE> CULLMODE_VALUE
 
 %token <D3D11_FILTER>    SAMPLER_STATE_VALUE
+%token <D3D11_TEXTURE_ADDRESS_MODE> SAMPLER_STATE_ADDRESS_VALUE
 
 %type <SRenderStateValue> render_state
 
@@ -326,6 +334,7 @@
 %type <SRenderStateValue> blendstate
 %type <SRenderStateValue> blendstate_type
 %type <SRenderStateValue> raster_state
+%type <SRenderStateValue> sampler_state
 
 
 %token  <IShader::Type>  VERTEXPROGRAM
@@ -371,6 +380,7 @@ input: %empty { FxLog("Empty effect"); }
 | input blend_state_declaration ';'
 | input depth_state_declaration ';'
 | input raster_state_declaration ';'
+| input sampler_state_declaration ';'
 | input shader_resource
 | input function_definition {
     $2.Dump();
@@ -426,22 +436,35 @@ raster_state_declaration: RASTERSTATE IDENTIFIER '{' raster_state_list '}'
 sampler_state_declaration: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer '{' sampler_state_list '}'
 {
     FxLog("New SamplerState %s", $2.data());
+
+    auto& sampler = effect.CurrentSampler();
+
+    for (const auto& state : $6)
+    {
+        sampler.AddState(state);
+    }
+    effect.m_NumSamplers++;
     //lex_pop_state();
 }
-
-sampler_state: SAMPLERSTATE IDENTIFIER register_declaration resource_initializer
+| SAMPLERSTATE IDENTIFIER register_declaration resource_initializer
 {
-    FxLog("sampler");
+    FxLog("New SamplerState %s", $2.data());
 }
 
+;
 
 sampler_state_list: 
     sampler_state_list sampler_state ';'
     {
+        $1.push_back($2); // Добавляем аннотацию к уже существующему списку в $1
+        $$ = std::move($1);
+
     }
     | sampler_state ';'
     {
+        $$.push_back($1); // Добавляем аннотацию к существующему списку
     }
+    ;
 
 ds_state: 
 ZENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
@@ -507,6 +530,19 @@ raster_state:
     | SCISSORENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
     | MULTISAMPLEENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
     | ANTIALIASEDLINEENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
+    ;
+
+sampler_state: 
+    SAMPLER_FILTER '=' SAMPLER_STATE_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
+    | SAMPLER_ADDRESSU '=' SAMPLER_STATE_ADDRESS_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
+    | SAMPLER_ADDRESSV '=' SAMPLER_STATE_ADDRESS_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
+    | SAMPLER_ADDRESSW '=' SAMPLER_STATE_ADDRESS_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
+    | SAMPLER_MIPLODBIAS '=' numeric_constant { $$ = SRenderStateValue{ .Type = $1, .f = toFloat($3) }; }
+    | SAMPLER_MAXANISOTROPY '=' numeric_constant { $$ = SRenderStateValue{ .Type = $1, .f = toFloat($3) }; }
+    | SAMPLER_COMPARISONFUNC '=' COMPARISION_FUNC { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
+    | SAMPLER_BORDERCOLOR '=' float4_constructor { $$ = SRenderStateValue{ .Type = $1, .f = toFloat($3) }; }
+    | SAMPLER_MINLOD '=' numeric_constant { $$ = SRenderStateValue{ .Type = $1, .f = toFloat($3) }; }
+    | SAMPLER_MAXLOD '=' numeric_constant { $$ = SRenderStateValue{ .Type = $1, .f = toFloat($3) }; }
     ;
 
 raster_state_list: 
@@ -661,7 +697,7 @@ struct_footer: IDENTIFIER {FxLog("Declared and defined struct with name: %s", $1
 var_decls: var_decls  var_decl ';' | var_decl ';' | struct';';
 typelist: object_type ',' typelist | object_type;
 
-shader_resource: cbuffer | texture2d | sampler_state;
+shader_resource: cbuffer | texture2d;
 
 resource_initializer: %empty | '=' IDENTIFIER;
 texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration resource_initializer
@@ -816,7 +852,18 @@ value:
         .type = nvFX::IUniform::TInt,
         .i = 0}; 
     }
+    | float4_constructor { $$ = $1; }
 ;
+
+float4_constructor: 
+    FLOAT4_TYPE '(' value ',' value ',' value ',' value ')'
+    {
+        $$ = SimpleValue {
+            .type = nvFX::IUniform::TVec4,
+            .f4 = {toFloat($3), toFloat($5), toFloat($7), toFloat($9)}
+        };
+    }
+    ;
 
 basic_type_constructor:
                       FLOAT_TYPE '('value')'

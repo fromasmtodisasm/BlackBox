@@ -1,8 +1,6 @@
 #pragma once #include <BlackBox/Renderer/IShader.hpp>
 #include <array>
-#ifdef DX_11
 #include <d3d11.h>
-#endif
 struct IShader;
 namespace fx
 {
@@ -257,6 +255,7 @@ struct SimpleValue
 		int		i;
 		float	f;
 		bool b;
+		float	f4[4];
 	};
 };
 
@@ -402,6 +401,92 @@ class FxEffect : public IEffect
 	std::vector<CTechnique> m_Techniques;
 	ShaderLangId			m_LangId = ShaderLangId::None;
 	std::string				m_Code;
+
+	int m_NumTechniques = 0;
+	int m_NumPasses		= 0;
+
+	template<typename T>
+	struct named : T
+	{
+		std::string name;
+	};
+
+	struct sampler_desc : named<D3D11_SAMPLER_DESC>
+	{
+		void AddState(const SRenderStateValue& value)
+		{
+			switch (value.Type)
+			{
+				case fx::ERenderState::SAMPLER_FILTER:
+					Filter = D3D11_FILTER(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_ADDRESSU:
+					AddressU = D3D11_TEXTURE_ADDRESS_MODE(value.i);	
+					break;
+				case fx::ERenderState::SAMPLER_ADDRESSV:
+					AddressV = D3D11_TEXTURE_ADDRESS_MODE(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_ADDRESSW:
+					AddressW = D3D11_TEXTURE_ADDRESS_MODE(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_MIPLODBIAS:
+					MipLODBias = value.f;
+					break;
+				case fx::ERenderState::SAMPLER_MAXANISOTROPY:
+					MaxAnisotropy = value.i;
+					break;
+				case fx::ERenderState::SAMPLER_COMPARISONFUNC:
+					ComparisonFunc = D3D11_COMPARISON_FUNC(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_BORDERCOLOR:
+					BorderColor[0] = value.f4[0];
+					BorderColor[1] = value.f4[1];
+					BorderColor[2] = value.f4[2];
+					BorderColor[3] = value.f4[3];
+					break;
+				case fx::ERenderState::SAMPLER_MINLOD:
+					MinLOD = value.f;
+					break;
+				case fx::ERenderState::SAMPLER_MAXLOD:
+					MaxLOD = value.f;
+					break;
+			}
+		}
+	};
+
+	using rasterizer_desc = named<CD3D11_RASTERIZER_DESC>;
+	using depth_stencil_desc = named<CD3D11_DEPTH_STENCIL_DESC>;
+	using blend_desc = named<CD3D11_BLEND_DESC>;
+
+	int m_NumSamplers = 0;
+	std::array<sampler_desc, 16> m_SamplerStates;
+	int m_NumRasterizerStates = 0;
+	std::array<rasterizer_desc, 16> m_RasterizerStates;
+	int m_NumDepthStencilStates = 0;
+	std::array<depth_stencil_desc, 16> m_DepthStencilStates;
+	int m_NumBlendStates = 0;
+	std::array<blend_desc, 16> m_BlendStates;
+
+	sampler_desc& CurrentSampler()
+	{
+		return m_SamplerStates[m_NumSamplers];
+	}
+
+	rasterizer_desc& CurrentRasterizer()
+	{
+		return m_RasterizerStates[m_NumRasterizerStates];
+	}
+
+	depth_stencil_desc& CurrentDepthStencil()
+	{
+		return m_DepthStencilStates[m_NumDepthStencilStates];
+	}
+
+	blend_desc& CurrentBlend()
+	{
+		return m_BlendStates[m_NumBlendStates];
+	}
+
 
 	// Inherited via IEffect
 	virtual const char* GetName() override;
