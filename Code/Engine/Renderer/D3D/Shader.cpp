@@ -363,54 +363,10 @@ bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, in
 		}
 	}
 
-	D3D11_DEPTH_STENCIL_DESC dsDesc = D3D11_DEPTH_STENCIL_DESC {
-		.DepthEnable = true,
-		.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL,
-		.DepthFunc = D3D11_COMPARISON_LESS,
-		.StencilEnable = false,
-		.StencilReadMask = 0xFF,
-		.StencilWriteMask = 0xFF,
-		.FrontFace = D3D11_DEPTH_STENCILOP_DESC {
-			.StencilFailOp = D3D11_STENCIL_OP_KEEP,
-			.StencilDepthFailOp = D3D11_STENCIL_OP_INCR,
-			.StencilPassOp = D3D11_STENCIL_OP_KEEP,
-			.StencilFunc = D3D11_COMPARISON_ALWAYS,
-		},
-		.BackFace = D3D11_DEPTH_STENCILOP_DESC {
-			.StencilFailOp = D3D11_STENCIL_OP_KEEP,
-			.StencilDepthFailOp = D3D11_STENCIL_OP_DECR,
-			.StencilPassOp = D3D11_STENCIL_OP_KEEP,
-			.StencilFunc = D3D11_COMPARISON_ALWAYS,
-		},
-	};
-	D3D11_RASTERIZER_DESC     rsDesc = D3D11_RASTERIZER_DESC {
-		.FillMode = D3D11_FILL_SOLID,
-		.CullMode = D3D11_CULL_BACK,
-		.FrontCounterClockwise = false,
-		.DepthBias = 0,
-		.DepthBiasClamp = 0.0f,
-		.SlopeScaledDepthBias = 0.0f,
-		.DepthClipEnable = true,
-		.ScissorEnable = false,
-		.MultisampleEnable = false,
-		.AntialiasedLineEnable = false,
-	};
-	D3D11_BLEND_DESC          bsDesc = D3D11_BLEND_DESC {
-		.AlphaToCoverageEnable = false,
-		.IndependentBlendEnable = false,
-		.RenderTarget = {
-			{
-				.BlendEnable = false,
-				.SrcBlend = D3D11_BLEND_ONE,
-				.DestBlend = D3D11_BLEND_ZERO,
-				.BlendOp = D3D11_BLEND_OP_ADD,
-				.SrcBlendAlpha = D3D11_BLEND_ONE,
-				.DestBlendAlpha = D3D11_BLEND_ZERO,
-				.BlendOpAlpha = D3D11_BLEND_OP_ADD,
-				.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL,
-			},
-		},
-	};
+	D3D11_DEPTH_STENCIL_DESC dsDesc = pass->DepthStencilState;
+	D3D11_RASTERIZER_DESC     rsDesc = pass->RasterizerState;
+	D3D11_BLEND_DESC          bsDesc = pass->BlendState;
+
 	D3D11_SAMPLER_DESC		ssDesc = { 0 };
 
 
@@ -438,12 +394,12 @@ bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, in
 			bsDesc.RenderTarget[0].BlendEnable = s.b;
 			break;
 		}
-		case fx::ERenderState::SRCBLEND:
+		case fx::ERenderState::BLEND_SRC:
 		{
 			bsDesc.RenderTarget[0].SrcBlend = (D3D11_BLEND)s.i;
 			break;
 		}
-		case fx::ERenderState::DESTBLEND:
+		case fx::ERenderState::BLEND_DST:
 		{
 			bsDesc.RenderTarget[0].DestBlend = (D3D11_BLEND)s.i;
 			break;
@@ -467,6 +423,17 @@ bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, in
 		case fx::ERenderState::ALPHABLEND_EQUATION:
 		{
 			bsDesc.RenderTarget[0].BlendOpAlpha = (D3D11_BLEND_OP)s.i;
+			break;
+		}
+		//
+		case fx::ERenderState::CULLMODE:
+		{
+			rsDesc.CullMode = (D3D11_CULL_MODE)s.i;
+			break;
+		}
+		case fx::ERenderState::FILLMODE:
+		{
+			rsDesc.FillMode = (D3D11_FILL_MODE)s.i;
 			break;
 		}
 		default:
@@ -495,6 +462,9 @@ bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, in
 			{
 				pSH->m_pBlendState = pDevice->CreateBlendState(bsDesc);
 			}
+
+			pSH->m_pRasterizerState = pDevice->CreateRasterizerState(rsDesc);
+
 		}
 	}
 

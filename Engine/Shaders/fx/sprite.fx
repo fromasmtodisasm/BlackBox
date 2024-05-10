@@ -18,9 +18,19 @@ float Script : STANDARDSGLOBAL
 >;
 
 typedef Texture2D<float4> ColorBuffer;
-
 ColorBuffer text : register(t0);
-SamplerState textSampler : register(s0);
+SamplerState textSampler : register(s0) {
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+    AddressW = Wrap;
+    MipLODBias = 0.0;
+    MaxAnisotropy = 16;
+    ComparisonFunc = LESS_EQUAL;
+    BorderColor = float4(1.0, 1.0, 1.0, 1.0);
+    MinLOD = 0;
+    MaxLOD = 0;
+};
 
 struct VsOutput
 {
@@ -87,18 +97,16 @@ Technique Font
         VertexShader = VSMain();
         PixelShader = Font();
 
-        DepthEnable = true;
-        ZWriteEnable = false;
+        SetDepthStencilState(DisableDepth);
+        SetBlendState(AlphaBlend);
 
-        BlendEnable = true;
-        SrcBlend = SRC_ALPHA;
-        DestBlend = INV_SRC_ALPHA;
+        //BlendEnable = true;
+        //SrcBlend = SRC_ALPHA;
+        //DestBlend = INV_SRC_ALPHA;
         //BlendOp = ADD;
         //SrcBlendAlpha = ONE;
         //DestBlendAlpha = ZERO;
         //BlendOpAlpha = ADD;
-        
-
     }
 }
 
@@ -106,6 +114,7 @@ Technique TexturedQuad<string description = "This is technique spesialized for t
 {
     Pass p0
     {
+        FillMode = WireFrame;
         VertexShader = VSMain();
         PixelShader = TexturedQuad();
     }

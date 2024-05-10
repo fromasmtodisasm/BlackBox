@@ -219,8 +219,8 @@ static {
 (?i:AlphaFunc)         RSTATE(ALPHAFUNC, blend_state_op);
     /*"AlphaRef"          RSTATE(ALPHAREF, blend_state);*/
 (?i:BlendOp)           RSTATE(BLENDOP, blend_state_op);
-(?i:SrcBlend)          RSTATE(SRCBLEND, blend_state);
-(?i:DestBlend)         RSTATE(DESTBLEND, blend_state);
+(?i:SrcBlend)          RSTATE(BLEND_SRC, blend_state);
+(?i:DestBlend)         RSTATE(BLEND_DST, blend_state);
 (?i:SrcBlendAlpha)     RSTATE(ALPHABLEND_SRC, blend_state);
 (?i:DestBlendAlpha)    RSTATE(ALPHABLEND_DST, blend_state);
 (?i:BlendOpAlpha)      RSTATE(ALPHABLEND_EQUATION, blend_state_op);
@@ -248,6 +248,19 @@ static {
 (?i:BorderColor)       RSTATE(SAMPLER_BORDERCOLOR);
 (?i:MaxLOD)            RSTATE(SAMPLER_MAXLOD);
 (?i:MinLOD)            RSTATE(SAMPLER_MINLOD);
+
+
+"SetDepthStencilState" return yy::parser::make_SETDEPTHSTENCILSTATE(loc);
+"SetBlendState" return yy::parser::make_SETBLENDSTATE(loc);
+"SetRasterizerState" return yy::parser::make_SETRASTERIZERSTATE(loc);
+    /*"SetInputLayout" return yy::parser::make_SETINPUTLAYOUT(loc);*/
+"SetVertexShader" return yy::parser::make_SETVERTEXSHADER(loc);
+"SetPixelShader" return yy::parser::make_SETPIXELSHADER(loc);
+"SetGeometryShader" return yy::parser::make_SETGEOMETRYSHADER(loc);
+
+"CompileShader" return yy::parser::make_COMPILESHADER(loc);
+
+
 }
 
 <blend_state>{

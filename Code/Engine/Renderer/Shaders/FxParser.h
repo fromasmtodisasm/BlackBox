@@ -21,11 +21,13 @@ enum class ERenderState
 {
 	ALPHABLENDENABLE,
 	ALPHABLEND_COLOR,
+	ALPHABLEND_SRC,
 	ALPHABLEND_DST,
 	ALPHABLEND_DST_ALPHA,
 	ALPHABLEND_EQUATION,
 	ALPHABLEND_EQUATION_ALPHA,
-	ALPHABLEND_SRC,
+	BLEND_SRC,
+	BLEND_DST,
 	ALPHABLEND_SRC_ALPHA,
 	ALPHAFUNC,
 	ALPHAREF,
@@ -33,8 +35,6 @@ enum class ERenderState
 	BLENDOP,
 	CULLMODE,
 	FILLMODE,
-	DESTBLEND,
-	SRCBLEND,
 	STENCILENABLE,
 	STENCILFAIL,
 	STENCILFUNC,
@@ -82,6 +82,20 @@ enum class ERenderState
 
 
 };
+
+enum InternalFunctions
+{
+	SetPixelShader,
+	SetVertexShader,
+	SetGeometryShader,
+	SetHullShader,
+	SetDomainShader,
+	SetComputeShader,
+	SetRasterizerState,
+	SetDepthStencilState,
+	SetBlendState,
+	CompileShader,
+};
 } // namespace fx
 
 struct SRenderStateValue
@@ -110,6 +124,7 @@ public:
 	enum Type {
 		TUndefined = 0,
 		TInt, TInt2, TInt3, TInt4,
+		TString,
 		//UInt,
 		TBool, TBool2, TBool3, TBool4,
 		TFloat, TVec2, TVec3, TVec4,
@@ -256,6 +271,7 @@ struct SimpleValue
 		float	f;
 		bool b;
 		float	f4[4];
+		char s[64];
 	};
 };
 
@@ -266,6 +282,181 @@ struct SRenderState
 	SimpleValue value;
 };
 
+namespace fx
+{
+	template<typename T>
+	struct named : T
+	{
+		std::string Name;
+	};
+
+	struct sampler_desc : named<D3D11_SAMPLER_DESC>
+	{
+		void AddState(const SRenderStateValue& value)
+		{
+			switch (value.Type)
+			{
+				case fx::ERenderState::SAMPLER_FILTER:
+					Filter = D3D11_FILTER(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_ADDRESSU:
+					AddressU = D3D11_TEXTURE_ADDRESS_MODE(value.i);	
+					break;
+				case fx::ERenderState::SAMPLER_ADDRESSV:
+					AddressV = D3D11_TEXTURE_ADDRESS_MODE(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_ADDRESSW:
+					AddressW = D3D11_TEXTURE_ADDRESS_MODE(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_MIPLODBIAS:
+					MipLODBias = value.f;
+					break;
+				case fx::ERenderState::SAMPLER_MAXANISOTROPY:
+					MaxAnisotropy = value.i;
+					break;
+				case fx::ERenderState::SAMPLER_COMPARISONFUNC:
+					ComparisonFunc = D3D11_COMPARISON_FUNC(value.i);
+					break;
+				case fx::ERenderState::SAMPLER_BORDERCOLOR:
+					BorderColor[0] = value.f4[0];
+					BorderColor[1] = value.f4[1];
+					BorderColor[2] = value.f4[2];
+					BorderColor[3] = value.f4[3];
+					break;
+				case fx::ERenderState::SAMPLER_MINLOD:
+					MinLOD = value.f;
+					break;
+				case fx::ERenderState::SAMPLER_MAXLOD:
+					MaxLOD = value.f;
+					break;
+			}
+		}
+	};
+
+	//using rasterizer_desc = named<CD3D11_RASTERIZER_DESC>;
+
+	struct rasterizer_desc : named<CD3D11_RASTERIZER_DESC>
+	{
+		void AddState(const SRenderStateValue& value)
+		{
+			switch (value.Type)
+			{
+				case fx::ERenderState::CULLMODE:
+					CullMode = D3D11_CULL_MODE(value.i);
+					break;
+				case fx::ERenderState::FILLMODE:
+					FillMode = D3D11_FILL_MODE(value.i);
+					break;
+				case fx::ERenderState::FRONTCOUNTERCLOCKWISE:
+					FrontCounterClockwise = value.b;
+					break;
+				case fx::ERenderState::DEPTHBIAS:
+					DepthBias = value.i;
+					break;
+				case fx::ERenderState::DEPTHBIASCLAMP:
+					DepthBiasClamp = value.f;
+					break;
+				case fx::ERenderState::SLOPESCALEDDEPTHBIAS:
+					SlopeScaledDepthBias = value.f;
+					break;
+				case fx::ERenderState::DEPTHCLIPENABLE:
+					DepthClipEnable = value.b;
+					break;
+				case fx::ERenderState::SCISSORENABLE:
+					ScissorEnable = value.b;
+					break;
+				case fx::ERenderState::MULTISAMPLEENABLE:
+					MultisampleEnable = value.b;
+					break;
+				case fx::ERenderState::ANTIALIASEDLINEENABLE:
+					AntialiasedLineEnable = value.b;
+					break;
+			}
+		}
+	};
+
+	//using depth_stencil_desc = named<CD3D11_DEPTH_STENCIL_DESC>;
+
+	struct depth_stencil_desc : named<CD3D11_DEPTH_STENCIL_DESC>
+	{
+		void AddState(const SRenderStateValue& value)
+		{
+			switch (value.Type)
+			{
+				case fx::ERenderState::ZENABLE:
+					DepthEnable = value.b;
+					break;
+				case fx::ERenderState::ZWRITEENABLE:
+					DepthWriteMask = D3D11_DEPTH_WRITE_MASK(value.i);
+					break;
+				case fx::ERenderState::ZFUNC:
+					DepthFunc = D3D11_COMPARISON_FUNC(value.i);
+					break;
+				case fx::ERenderState::STENCILENABLE:
+					StencilEnable = value.b;
+					break;
+#if 0
+				case fx::ERenderState::STENCILFAIL:
+					StencilFailOp = D3D11_STENCIL_OP(value.i);
+					break;
+				case fx::ERenderState::STENCILZFAIL:
+					StencilDepthFailOp = D3D11_STENCIL_OP(value.i);
+					break;
+				case fx::ERenderState::STENCILPASS:
+					StencilPassOp = D3D11_STENCIL_OP(value.i);
+					break;
+				case fx::ERenderState::STENCILFUNC:
+					StencilFunc = D3D11_COMPARISON_FUNC(value.i);
+					break;
+				case fx::ERenderState::STENCILMASK:
+					StencilReadMask = value.i;
+					break;
+				case fx::ERenderState::STENCILZFAIL:
+					StencilWriteMask = value.i;
+					break;
+#endif
+			}
+		}
+	};
+
+	//using blend_desc = named<CD3D11_BLEND_DESC>;
+	struct blend_desc : named<CD3D11_BLEND_DESC>
+	{
+		void AddState(const SRenderStateValue& value)
+		{
+			switch (value.Type)
+			{
+				case fx::ERenderState::BLENDENABLE:
+					AlphaToCoverageEnable = value.b;
+					break;
+				case fx::ERenderState::BLENDOP:
+					RenderTarget[0].BlendOp = D3D11_BLEND_OP(value.i);
+					break;
+				case fx::ERenderState::BLEND_SRC:
+					RenderTarget[0].SrcBlend = D3D11_BLEND(value.i);
+					break;
+				case fx::ERenderState::BLEND_DST:
+					RenderTarget[0].DestBlend = D3D11_BLEND(value.i);
+					break;
+				case fx::ERenderState::ALPHABLEND_DST:
+					RenderTarget[0].DestBlend = D3D11_BLEND(value.i);
+					break;
+				case fx::ERenderState::ALPHABLEND_EQUATION:
+					RenderTarget[0].BlendOp = D3D11_BLEND_OP(value.i);
+					break;
+				case fx::ERenderState::ALPHABLEND_SRC_ALPHA:
+					RenderTarget[0].SrcBlendAlpha = D3D11_BLEND(value.i);
+					break;
+				case fx::ERenderState::ALPHABLEND_DST_ALPHA:
+					RenderTarget[0].DestBlendAlpha = D3D11_BLEND(value.i);
+					break;
+				case fx::ERenderState::ALPHABLEND_EQUATION_ALPHA:
+					RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP(value.i);
+					break;
+			}
+		}
+	};
+}
 
 struct SPass
 {
@@ -273,6 +464,14 @@ struct SPass
 	std::vector<std::string>   InputLayout;
 	std::array<std::string, 6> EntryPoints;
 	std::vector<SRenderStateValue>  RenderStates;
+
+	fx::sampler_desc     SamplerStates[16];
+	fx::blend_desc       BlendState;
+	fx::depth_stencil_desc DepthStencilState;
+	fx::rasterizer_desc   RasterizerState;
+
+
+
 };
 
 struct ITechnique : public _i_reference_target_t
@@ -393,6 +592,50 @@ class FxEffect : public IEffect
 		return true;
 	}
 
+	void CallFunction(fx::InternalFunctions state, std::vector<SimpleValue>& values)
+	{
+		auto& pass = GetCurrentPass();
+
+		switch (state)
+		{
+		case fx::InternalFunctions::SetPixelShader:
+			shader_assignment(IShader::Type::E_FRAGMENT, values[0].s);
+			break;
+		case fx::InternalFunctions::SetVertexShader:
+			shader_assignment(IShader::Type::E_VERTEX, values[0].s);
+			break;
+		case fx::InternalFunctions::SetGeometryShader:
+			shader_assignment(IShader::Type::E_GEOMETRY, values[0].s);
+			break;
+		case fx::InternalFunctions::SetBlendState:
+			if (auto it = FindBlendState(values[0].s); it != m_BlendStates.end())
+			{
+				pass.BlendState = *it;
+			}
+			break;
+		case fx::InternalFunctions::SetDepthStencilState:
+			if (auto it = FindDSState(values[0].s); it != m_DepthStencilStates.end())
+			{
+				pass.DepthStencilState = *it;
+			}
+			break;
+		case fx::InternalFunctions::SetRasterizerState:
+			if (auto it = FindRasterizerState(values[0].s); it != m_RasterizerStates.end())
+			{
+				pass.RasterizerState = *it;
+			}
+			break;
+		case fx::InternalFunctions::CompileShader:
+		{
+			CryLog("CompileShader");
+			break;
+		}
+			
+		default:
+			break;
+		}
+	}
+
   public:
 	std::string				m_name;
 	//std::vector<ShaderInfo> m_shaders;
@@ -405,88 +648,70 @@ class FxEffect : public IEffect
 	int m_NumTechniques = 0;
 	int m_NumPasses		= 0;
 
-	template<typename T>
-	struct named : T
-	{
-		std::string name;
-	};
-
-	struct sampler_desc : named<D3D11_SAMPLER_DESC>
-	{
-		void AddState(const SRenderStateValue& value)
-		{
-			switch (value.Type)
-			{
-				case fx::ERenderState::SAMPLER_FILTER:
-					Filter = D3D11_FILTER(value.i);
-					break;
-				case fx::ERenderState::SAMPLER_ADDRESSU:
-					AddressU = D3D11_TEXTURE_ADDRESS_MODE(value.i);	
-					break;
-				case fx::ERenderState::SAMPLER_ADDRESSV:
-					AddressV = D3D11_TEXTURE_ADDRESS_MODE(value.i);
-					break;
-				case fx::ERenderState::SAMPLER_ADDRESSW:
-					AddressW = D3D11_TEXTURE_ADDRESS_MODE(value.i);
-					break;
-				case fx::ERenderState::SAMPLER_MIPLODBIAS:
-					MipLODBias = value.f;
-					break;
-				case fx::ERenderState::SAMPLER_MAXANISOTROPY:
-					MaxAnisotropy = value.i;
-					break;
-				case fx::ERenderState::SAMPLER_COMPARISONFUNC:
-					ComparisonFunc = D3D11_COMPARISON_FUNC(value.i);
-					break;
-				case fx::ERenderState::SAMPLER_BORDERCOLOR:
-					BorderColor[0] = value.f4[0];
-					BorderColor[1] = value.f4[1];
-					BorderColor[2] = value.f4[2];
-					BorderColor[3] = value.f4[3];
-					break;
-				case fx::ERenderState::SAMPLER_MINLOD:
-					MinLOD = value.f;
-					break;
-				case fx::ERenderState::SAMPLER_MAXLOD:
-					MaxLOD = value.f;
-					break;
-			}
-		}
-	};
-
-	using rasterizer_desc = named<CD3D11_RASTERIZER_DESC>;
-	using depth_stencil_desc = named<CD3D11_DEPTH_STENCIL_DESC>;
-	using blend_desc = named<CD3D11_BLEND_DESC>;
-
 	int m_NumSamplers = 0;
-	std::array<sampler_desc, 16> m_SamplerStates;
+	std::array<fx::sampler_desc, 16> m_SamplerStates;
 	int m_NumRasterizerStates = 0;
-	std::array<rasterizer_desc, 16> m_RasterizerStates;
+	std::array<fx::rasterizer_desc, 16> m_RasterizerStates;
 	int m_NumDepthStencilStates = 0;
-	std::array<depth_stencil_desc, 16> m_DepthStencilStates;
+	std::array<fx::depth_stencil_desc, 16> m_DepthStencilStates;
 	int m_NumBlendStates = 0;
-	std::array<blend_desc, 16> m_BlendStates;
+	std::array<fx::blend_desc, 16> m_BlendStates;
 
-	sampler_desc& CurrentSampler()
+	fx::sampler_desc& CurrentSampler()
 	{
 		return m_SamplerStates[m_NumSamplers];
 	}
 
-	rasterizer_desc& CurrentRasterizer()
+	fx::rasterizer_desc& CurrentRasterizer()
 	{
 		return m_RasterizerStates[m_NumRasterizerStates];
 	}
 
-	depth_stencil_desc& CurrentDepthStencil()
+	fx::depth_stencil_desc& CurrentDepthStencil()
 	{
 		return m_DepthStencilStates[m_NumDepthStencilStates];
 	}
 
-	blend_desc& CurrentBlend()
+	fx::blend_desc& CurrentBlend()
 	{
 		return m_BlendStates[m_NumBlendStates];
 	}
 
+	template<typename T>
+	auto FindState(const std::string name, std::array<T, 16>& states)
+	{
+		auto it = std::find_if(states.begin(), states.end(), [name](const T& state) { return state.Name == name; });
+		if (it != states.end())
+		{
+			return it;
+		}
+		return states.end();
+	}
+
+	auto FindDSState(const std::string name)
+	{
+		return FindState(name, m_DepthStencilStates);
+	}
+
+	auto FindBlendState(const std::string name)
+	{
+		return FindState(name, m_BlendStates);
+	}
+
+	auto FindRasterizerState(const std::string name)
+	{
+		return FindState(name, m_RasterizerStates);
+	}
+
+	auto FindSamplerState(const std::string name)
+	{
+		return FindState(name, m_SamplerStates);
+	}
+
+	void SetDepthStencilState(const std::string& name)
+	{
+		auto it = FindState(name, m_DepthStencilStates);
+	}
 
 	// Inherited via IEffect
 	virtual const char* GetName() override;

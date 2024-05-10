@@ -39,26 +39,6 @@ BlendState BlendState1
     BlendOpAlpha = ADD;
 };;
 
-DepthStencilState DisableDepth
-{
-    DepthEnable = false;
-    DepthWriteMask = 1;
-};
-
-RasterizerState NoCull
-{
-    CullMode = NONE;
-    FillMode = SOLID;
-    FrontCounterClockwise = false;
-    DepthBias = 0;
-    DepthBiasClamp = 0;
-    SlopeScaledDepthBias = 0;
-    DepthClipEnable = true;
-    ScissorEnable=false;
-    MultisampleEnable = false;
-    AntialiasedLineEnable=true;
-};
-
 // Default technique for auxiliary geometry rendering
 technique AuxGeometry
 {
@@ -70,8 +50,6 @@ technique AuxGeometry
         ZEnable = false;
         ZWriteEnable = false;
 
-        BlendEnable = true;
-        SrcBlend = SRC_ALPHA;
-        DestBlend = INV_SRC_ALPHA;
+        SetBlendState(AlphaBlend);
     }
 }

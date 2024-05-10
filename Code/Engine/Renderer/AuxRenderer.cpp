@@ -183,7 +183,8 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 	}
 	else
 	{
-		StateManager().SetRasterizerState(g_pRasterizerStateSolid);
+		StateManager().SetRasterizerState(shader->m_pRasterizerState);
+		//g_pRasterizerStateSolid);
 	}
 
 	if (DrawElement.m_Material.m_bZWrite)

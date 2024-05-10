@@ -150,15 +150,15 @@ technique Render
 {
     pass P0
     {
+		FillMode = Solid;
         VertexShader = VS;
         PixelShader = PS;
 
-        ZEnable = true;
-        ZWriteEnable = true;
-
-        BlendEnable = true;
-        SrcBlend = SRC_ALPHA;
-        DestBlend = INV_SRC_ALPHA;
+        //ZEnable = true;
+        //ZWriteEnable = true;
+        //SetDepthStencilState(DisableDepth);
+        SetBlendState(AlphaBlend);
+		SetRasterizerState(NoCull);
     }
 }
 

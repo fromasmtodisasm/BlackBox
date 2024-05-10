@@ -120,6 +120,7 @@
 // basic type constructor
 %type  <SimpleValue>    basic_type_constructor
 %type  <SimpleValue>    type_constructor
+%type  <SimpleValue>    parameter_value
 
 
 %type  <std::string>    shader_assignment
@@ -234,6 +235,28 @@
 %token              RASTERSTATE
 %token              SAMPLERSTATE
 
+//"SetDepthStencilState" return yy::parser::make_SETDEPTHSTENCILSTATE(loc);
+//"SetBlendState" return yy::parser::make_SETBLENDSTATE(loc);
+//"SetRasterizerState" return yy::parser::make_SETRASTERIZERSTATE(loc);
+//"SetInputLayout" return yy::parser::make_SETINPUTLAYOUT(loc);
+//"SetVertexShader" return yy::parser::make_SETVERTEXSHADER(loc);
+//"SetPixelShader" return yy::parser::make_SETPIXELSHADER(loc);
+//"SetGeometryShader" return yy::parser::make_SETGEOMETRYSHADER(loc);
+//"CompileShader" return yy::parser::make_COMPILESHADER(loc);
+
+%token   SETDEPTHSTENCILSTATE
+%token   SETBLENDSTATE 
+%token   SETRASTERIZERSTATE
+%token   SETVERTEXSHADER
+%token   SETPIXELSHADER
+%token   SETGEOMETRYSHADER
+%token   COMPILESHADER
+
+%type <fx::InternalFunctions> internal_functions
+%type <std::vector<SimpleValue>> parameters
+
+
+
 
 
 %token              TYPEDEF 
@@ -255,10 +278,12 @@
 %token <fx::ERenderState> ALPHABLENDENABLE
 %token <fx::ERenderState> ALPHABLEND_COLOR
 %token <fx::ERenderState> ALPHABLEND_DST
+%token <fx::ERenderState> ALPHABLEND_SRC
 %token <fx::ERenderState> ALPHABLEND_DST_ALPHA
 %token <fx::ERenderState> ALPHABLEND_EQUATION
 %token <fx::ERenderState> ALPHABLEND_EQUATION_ALPHA
-%token <fx::ERenderState> ALPHABLEND_SRC
+%token <fx::ERenderState> BLEND_SRC
+%token <fx::ERenderState> BLEND_DST
 %token <fx::ERenderState> ALPHABLEND_SRC_ALPHA
 %token <fx::ERenderState> ALPHAFUNC
 %token <fx::ERenderState> ALPHAREF
@@ -277,8 +302,6 @@
 %token <fx::ERenderState> ANTIALIASEDLINEENABLE;
 
 
-%token <fx::ERenderState> DESTBLEND
-%token <fx::ERenderState> SRCBLEND
 %token <fx::ERenderState> STENCILENABLE
 %token <fx::ERenderState> STENCILFAIL
 %token <fx::ERenderState> STENCILFUNC
@@ -417,18 +440,52 @@ typedef: TYPEDEF const_storage_class object_type IDENTIFIER optional_array_decla
 blend_state_declaration: BLENDSTATE IDENTIFIER '{' blendstate_type_list '}'
 {
     FxLog("New BlendState %s", $2.data());
+
+    auto& blend = effect.CurrentBlend();
+    blend.Name = $2;
+
+    for (const auto& state : $4)
+    {
+        blend.AddState(state);
+    }
+
+    effect.m_NumBlendStates++;
+
     //lex_pop_state();
 }
 
 depth_state_declaration: DEPTHSTENCILSTATE IDENTIFIER '{' ds_state_list '}' 
 {
     FxLog("New DepthState %s", $2.data());
+
+    auto& depth = effect.CurrentDepthStencil();
+    depth.Name = $2;
+
+    for (const auto& state : $4)
+    {
+        depth.AddState(state);
+    }
+
+    effect.m_NumDepthStencilStates++;
+
     //lex_pop_state();
 }
 
 raster_state_declaration: RASTERSTATE IDENTIFIER '{' raster_state_list '}'
 {
     FxLog("New RasterState %s", $2.data());
+
+    auto& raster = effect.CurrentRasterizer();
+    raster.Name = $2;
+
+    for (const auto& state : $4)
+    {
+        raster.AddState(state);
+    }
+
+    effect.m_NumBlendStates++;
+
+
     //lex_pop_state();
 }
 
@@ -438,6 +495,7 @@ sampler_state_declaration: SAMPLERSTATE IDENTIFIER register_declaration resource
     FxLog("New SamplerState %s", $2.data());
 
     auto& sampler = effect.CurrentSampler();
+    sampler.Name = $2;
 
     for (const auto& state : $6)
     {
@@ -476,9 +534,12 @@ ZENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
 ds_state_list: 
 ds_state_list ds_state ';'
 {
+    $1.push_back($2); // Добавляем аннотацию к уже существующему списку в $1
+    $$ = std::move($1);
 }
 | ds_state ';'
 {
+    $$.push_back($1); // Добавляем аннотацию к существующему списку
 }
 
 //| STENCILENABLE { $$ = $1; }
@@ -495,8 +556,8 @@ blendstate: BLEND_VALUE { $$ = $1; }
 
 blendstate_type: 
 ALPHABLENDENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
-| SRCBLEND '=' BLEND_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
-| DESTBLEND '=' BLEND_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
+| BLEND_SRC '=' BLEND_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
+| BLEND_DST '=' BLEND_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
 | BLENDOP '=' BLEND_OP_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
 
 | ALPHABLEND_SRC '=' BLEND_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
@@ -513,9 +574,12 @@ ALPHABLENDENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
 blendstate_type_list: 
     blendstate_type_list blendstate_type ';'
     {
+        $1.push_back($2); // Добавляем аннотацию к уже существующему списку в $1
+        $$ = std::move($1);
     }
     | blendstate_type ';'
     {
+        $$.push_back($1); // Добавляем аннотацию к существующему списку
     }
 ;
 
@@ -548,9 +612,12 @@ sampler_state:
 raster_state_list: 
     raster_state_list raster_state ';'
     {
+        $1.push_back($2); // Добавляем аннотацию к уже существующему списку в $1
+        $$ = std::move($1);
     }
     | raster_state ';'
     {
+        $$.push_back($1); // Добавляем аннотацию к существующему списку
     }
 ;
 
@@ -577,7 +644,7 @@ render_state:
     | ALPHABLENDENABLE  { $$ = $1; }
     | BLENDENABLE  { $$ = $1; }
     | BLENDOP  { $$ = $1; }
-    | ALPHABLEND_SRC    { $$ = $1; }
+    | BLEND_SRC    { $$ = $1; }
     | ALPHABLEND_DST    { $$ = $1; }
     | ALPHABLEND_EQUATION { $$ = $1; }
     | ALPHABLEND_SRC_ALPHA { $$ = $1; }
@@ -718,6 +785,46 @@ shader_assignment_shader: direct_declarator {
     $$ = DirectDeclarator{$1};
 };
 
+internal_functions: 
+    SETDEPTHSTENCILSTATE { $$ =  fx::InternalFunctions::SetDepthStencilState; }
+    | SETBLENDSTATE { $$ =  fx::InternalFunctions::SetBlendState; }
+    | SETRASTERIZERSTATE { $$ =  fx::InternalFunctions::SetRasterizerState; }
+    | SETVERTEXSHADER { $$ =  fx::InternalFunctions::SetVertexShader; }
+    | SETPIXELSHADER { $$ =  fx::InternalFunctions::SetPixelShader; } 
+    | SETGEOMETRYSHADER { $$ =  fx::InternalFunctions::SetGeometryShader; }
+    | COMPILESHADER { $$ =  fx::InternalFunctions::CompileShader; }
+    ;
+
+parameter_value:
+    INT { $$ = SimpleValue{.type = nvFX::IUniform::TInt, .i = $1}; }
+    | FLOAT { $$ = SimpleValue{.type = nvFX::IUniform::TFloat, .f = $1}; }
+    | BOOL { $$ = SimpleValue{.type = nvFX::IUniform::TBool, .b = $1}; }
+    | IDENTIFIER { 
+        $$ = SimpleValue{.type = nvFX::IUniform::TInt}; 
+        strcpy($$.s, $1.c_str());
+    }
+    ;
+
+parameters: 
+    parameters ',' parameter_value
+    {
+        $1.push_back($3); // Добавляем аннотацию к уже существующему списку в $1
+        $$ = std::move($1);
+    }
+    | parameter_value 
+    {
+        $$.push_back($1); // Добавляем аннотацию к существующему списку
+    }
+
+    | %empty
+    ;
+
+call_internal_function: 
+    internal_functions '(' parameters ')' ';'
+    {
+        effect.CallFunction($1, $3);
+    }
+    ;
 
 shader_assignment: shader_type '=' shader_assignment_shader ';' {
     //$$ = std::make_pair($1, $3);
@@ -729,6 +836,10 @@ render_state
     //$$ = std::make_pair($1, $3);
     //effect.render_state_assignment($1, $3);
     effect.render_state_assignment($1);
+}
+| call_internal_function
+{
+
 }
 //| render_state '=' type_constructor ';'
 //{

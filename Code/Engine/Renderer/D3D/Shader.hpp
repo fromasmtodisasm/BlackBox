@@ -114,10 +114,10 @@ public:
 	ED3DShError                            m_Error = ED3DShError::ED3DShError_NotCompiled;
 
 	// Native Render States for this shader
-	ID3D11DepthStencilState*               m_pDepthStencilState{};
-	ID3D11RasterizerState*                 m_pRasterizerState{};
-	ID3D11BlendState*                      m_pBlendState{};
-	ID3D11SamplerState*                    m_pSamplerState{};
+	_smart_ptr<ID3D11DepthStencilState>               m_pDepthStencilState{};
+	_smart_ptr<ID3D11RasterizerState>                 m_pRasterizerState{};
+	_smart_ptr<ID3D11BlendState>                      m_pBlendState{};
+	_smart_ptr<ID3D11SamplerState>                    m_pSamplerState{};
 
 
 };

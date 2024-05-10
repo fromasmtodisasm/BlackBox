@@ -156,3 +156,31 @@ float4 GrayScale(float4 color) : SV_Target0
     return float4(grey.rgb, color.a);
 }
 
+
+DepthStencilState DisableDepth
+{
+    DepthEnable = false;
+    DepthWriteMask = 0;
+};
+
+BlendState AlphaBlend
+{
+    BlendEnable = true;
+    SrcBlend = SRC_ALPHA;
+    DestBlend = INV_SRC_ALPHA;
+};
+
+RasterizerState NoCull
+{
+    CullMode = NONE;
+    FillMode = SOLID;
+    FrontCounterClockwise = false;
+    DepthBias = 0;
+    DepthBiasClamp = 0;
+    SlopeScaledDepthBias = 0;
+    DepthClipEnable = true;
+    ScissorEnable=false;
+    MultisampleEnable = false;
+    AntialiasedLineEnable=true;
+};
+
