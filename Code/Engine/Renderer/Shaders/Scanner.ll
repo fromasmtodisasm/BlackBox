@@ -111,8 +111,6 @@ float_number    [+-]?([0-9]*[.])?[0-9]+(f|F)?
 %x blend_state_top depth_stencil_state_top sampler_state_top
 %x cull_mode fill_mode
 
-COMMON_STATES <cull_mode fill_mode>
-
 %{
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  \

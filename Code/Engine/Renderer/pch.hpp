@@ -48,6 +48,7 @@ const D3DCOLOR D3DC_Blue = D3DCOLOR_RGBA(0, 0, 1, 1);
 #	define ID3DDepthStencilView ID3D11DepthStencilView
 #	define ID3DRasterizerState ID3D11RasterizerState
 #	define ID3DDepthStencilState ID3D11DepthStencilState
+#	define ID3DBlendState ID3D11BlendState
 #	define ID3DShaderResourceView ID3D11ShaderResourceView
 #	define ID3DInputLayout ID3D11InputLayout
 #	define ID3DSamplerState ID3D11SamplerState
@@ -195,8 +196,13 @@ inline void SetDebugName(ID3D11DeviceChild* pNativeResource, const char* name)
 
 #include <wrl.h>
 
+#if 0
 template<class T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
+#else
+template<class T>
+using ComPtr = _smart_ptr<T>;
+#endif
 
 #define H(exp, fmt, ...) \
 [&] { \
@@ -231,4 +237,9 @@ struct CTexture
 #define PERVIEW_SLOT  BSLOT(2)
 #define PERDRAW_SLOT  BSLOT(3)
 #define MATERIAL_SLOT BSLOT(4)
+
+
+using ID3DTexture2DPtr =  ComPtr<ID3DTexture2D>;
+using ID3DRenderTargetViewPtr = ComPtr<ID3DRenderTargetView>;
+using ID3DShaderResourceViewPtr = ComPtr<ID3DShaderResourceView>;
 

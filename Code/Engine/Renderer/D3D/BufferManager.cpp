@@ -151,7 +151,7 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 	InitData.pSysMem          = stream.m_VData;
 	InitData.SysMemPitch      = 0;
 	InitData.SysMemSlicePitch = 0;
-	auto hr                   = GetDevice()->CreateBuffer(&bufferDesc, &InitData, p_VB);
+	auto hr                   = GetD3DDevice()->CreateBuffer(&bufferDesc, &InitData, p_VB);
 	if (FAILED(hr))
 	{
 		CryFatalError("Cannot create vertex buffer");
@@ -161,8 +161,6 @@ CVertexBuffer* CBufferManager::Create(int vertexcount, int vertexformat, const c
 
 	UINT stride = gVertexSize[vertexformat];
 	UINT offset = 0;
-
-	GetDeviceContext()->IASetVertexBuffers(0, 1, p_VB, &stride, &offset);
 
 	buffer->m_bDynamic     = bDynamic;
 	buffer->m_NumVerts     = vertexcount;
@@ -208,7 +206,7 @@ void CBufferManager::Create(SVertexStream* dest, const void* src, int indexcount
 	ibd.MiscFlags      = 0;
 	D3D11_SUBRESOURCE_DATA iinitData;
 	iinitData.pSysMem = src;
-	if (GetDevice()->CreateBuffer(&ibd, &iinitData, p_IB))
+	if (GetD3DDevice()->CreateBuffer(&ibd, &iinitData, p_IB))
 	{
 	}
 
@@ -230,8 +228,22 @@ void CBufferManager::Draw(CVertexBuffer* src, SVertexStream* indicies, int numin
 	UINT stride           = gVertexSize[src->m_vertexformat];
 	UINT offset           = 0;
 
-	GetDeviceContext()->IASetVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const*>(&src->m_VS[0].m_VertBuf.m_pPtr), &stride, &offset);
-	GetDeviceContext()->IASetPrimitiveTopology(ToDxPrimitive(static_cast<RenderPrimitive>(prmode)));
+	auto vb = reinterpret_cast<ID3D11Buffer*>(src->m_VS[0].m_VertBuf.m_pPtr);
+	auto n = 0;
+
+	if (m_Slots[n] != vb)
+	{
+		GetDeviceContext()->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+		m_Slots[n] = vb;
+	}
+
+	auto primitive = static_cast<RenderPrimitive>(prmode);
+	if (m_LastPrimitive != primitive)
+	{
+		auto dxprimitive = ToDxPrimitive(primitive);
+		GetDeviceContext()->IASetPrimitiveTopology(dxprimitive);
+		m_LastPrimitive = primitive;
+	}
 
 	if (indicies != nullptr)
 	{

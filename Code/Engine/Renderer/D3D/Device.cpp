@@ -46,6 +46,7 @@ bool CDevice::Create(_smart_ptr<IDXGIAdapter> pAdapter)
 		                    m_pImmediateContext.GetAddressOf()),
 		                "Failed create D3D device")))
 		{
+			m_StateCache = CStateCache(m_pd3dDevice);
 			return true;
 		}
 	}
@@ -194,4 +195,24 @@ ID3DTexture2D* CDevice::CreateEmptyTexture(vector2di size, color4f color, DXGI_F
 #endif
 
 	return 0;
+}
+
+_smart_ptr<ID3DBlendState> CDevice::CreateBlendState(const D3D11_BLEND_DESC& desc)
+{
+	return m_StateCache.GetBlendState(desc);
+}
+
+_smart_ptr<ID3DRasterizerState> CDevice::CreateRasterizerState(const D3D11_RASTERIZER_DESC& desc)
+{
+	return m_StateCache.GetRasterizerState(desc);
+}
+
+_smart_ptr<ID3DDepthStencilState> CDevice::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& desc)
+{
+	return m_StateCache.GetDepthStencilState(desc);
+}
+
+_smart_ptr<ID3D11SamplerState> CDevice::CreateSamplerState(const D3D11_SAMPLER_DESC& desc)
+{
+	return m_StateCache.GetSamplerState(desc);
 }

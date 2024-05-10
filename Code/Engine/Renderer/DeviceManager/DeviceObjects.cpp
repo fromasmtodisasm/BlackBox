@@ -338,9 +338,9 @@ CDeviceInputLayout* CDeviceObjectFactory::CreateInputLayout(const SInputLayout& 
 	CDeviceInputLayout* Layout;
 	HRESULT             hr = E_FAIL;
 #if 0
-	if (FAILED(hr = /*gcpRendD3D->*/GetDevice()->CreateInputLayout(&pLayout.m_Declaration[0], pLayout.m_Declaration.size(), pVSData, nSize, &Layout)))
+	if (FAILED(hr = /*gcpRendD3D->*/GetD3DDevice()->CreateInputLayout(&pLayout.m_Declaration[0], pLayout.m_Declaration.size(), pVSData, nSize, &Layout)))
 #else
-	if (FAILED(hr = GetDevice()->CreateInputLayout(&pLayout.m_Declaration[0], pLayout.m_Declaration.size(), pVSData, nSize, &Layout)))
+	if (FAILED(hr = GetD3DDevice()->CreateInputLayout(&pLayout.m_Declaration[0], pLayout.m_Declaration.size(), pVSData, nSize, &Layout)))
 #endif
 	{
 		CRY_ASSERT(false);
@@ -367,35 +367,35 @@ void CDeviceObjectFactory::Unmap(D3DBuffer* buffer, uint32 subresource, buffer_s
 ID3D11VertexShader* CDeviceObjectFactory::CreateVertexShader(const void* pData, size_t bytes)
 {
 	ID3D11VertexShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateVertexShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetD3DDevice()->CreateVertexShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11PixelShader* CDeviceObjectFactory::CreatePixelShader(const void* pData, size_t bytes)
 {
 	ID3D11PixelShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreatePixelShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetD3DDevice()->CreatePixelShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11GeometryShader* CDeviceObjectFactory::CreateGeometryShader(const void* pData, size_t bytes)
 {
 	ID3D11GeometryShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateGeometryShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetD3DDevice()->CreateGeometryShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11HullShader* CDeviceObjectFactory::CreateHullShader(const void* pData, size_t bytes)
 {
 	ID3D11HullShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateHullShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetD3DDevice()->CreateHullShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11DomainShader* CDeviceObjectFactory::CreateDomainShader(const void* pData, size_t bytes)
 {
 	ID3D11DomainShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateDomainShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetD3DDevice()->CreateDomainShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }
 
 ID3D11ComputeShader* CDeviceObjectFactory::CreateComputeShader(const void* pData, size_t bytes)
 {
 	ID3D11ComputeShader* pResult;
-	return SUCCEEDED(/*gcpRendD3D->*/ GetDevice()->CreateComputeShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
+	return SUCCEEDED(/*gcpRendD3D->*/ GetD3DDevice()->CreateComputeShader(pData, bytes, nullptr, &pResult)) ? pResult : nullptr;
 }

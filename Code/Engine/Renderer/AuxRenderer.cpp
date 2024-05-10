@@ -34,6 +34,12 @@ std::vector<HLSL_MaterialCB>      g_Materials       = {
     {},
 };
 
+inline CStateManager& StateManager()
+{
+	return gcpRendD3D->StateManager().m_StateManager;
+}
+
+
 void CreateBlendState()
 {
 	D3D11_BLEND_DESC BlendState;
@@ -48,7 +54,7 @@ void CreateBlendState()
 	BlendState.RenderTarget[0].BlendOpAlpha          = D3D11_BLEND_OP_ADD;
 	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	GetDevice()->CreateBlendState(&BlendState, m_pBlendState.GetAddressOf());
+	m_pBlendState = GetDevice()->CreateBlendState(BlendState);
 }
 
 //--------------------------------------------------------------------------------------
@@ -92,11 +98,11 @@ HRESULT CRenderAuxGeom::InitCube()
 	bd.ByteWidth      = Memory::AlignedSizeCB<HLSL_PerDrawCB>::value;
 	bd.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
-	hr                = GetDevice()->CreateBuffer(&bd, NULL, &g_pPerDrawCB);
+	hr                = GetD3DDevice()->CreateBuffer(&bd, NULL, &g_pPerDrawCB);
 	if (FAILED(hr))
 		return hr;
 	bd.ByteWidth = NUM_MAT * Memory::AlignedSizeCB<HLSL_MaterialCB>::value;
-	hr           = GetDevice()->CreateBuffer(&bd, NULL, &g_pMaterialCB);
+	hr           = GetD3DDevice()->CreateBuffer(&bd, NULL, &g_pMaterialCB);
 	if (FAILED(hr))
 		return hr;
 
@@ -121,10 +127,10 @@ HRESULT CRenderAuxGeom::InitCube()
 	rasterizerDesc.MultisampleEnable     = true;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, g_pRasterizerStateSolid.GetAddressOf());
+	g_pRasterizerStateSolid = GetDevice()->CreateRasterizerState(rasterizerDesc);
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, g_pRasterizerStateWire.GetAddressOf());
+	g_pRasterizerStateWire = GetDevice()->CreateRasterizerState(rasterizerDesc);
 	return S_OK;
 }
 
@@ -173,23 +179,20 @@ void CRenderAuxGeom::DrawElement(const SDrawElement& DrawElement)
 
 	if (CV_r_DrawWirefame)
 	{
-		::GetDeviceContext()->RSSetState(g_pRasterizerStateWire);
+		StateManager().SetRasterizerState(g_pRasterizerStateWire);
 	}
 	else
 	{
-		::GetDeviceContext()->RSSetState(g_pRasterizerStateSolid);
+		StateManager().SetRasterizerState(g_pRasterizerStateSolid);
 	}
 
 	if (DrawElement.m_Material.m_bZWrite)
 	{
-		::GetDeviceContext()->OMSetDepthStencilState(ds, 0);
-	}
-	else
-	{
-		//::GetDeviceContext()->OMSetDepthStencilState(GlobalResources::m_pDSStateNoZWrite, 0);
+		StateManager().SetDepthStencilState(ds);
 	}
 
-	::GetDeviceContext()->OMSetBlendState(m_IllumShader->m_pBlendState, 0, 0xffffffff);
+	//::GetDeviceContext()->OMSetBlendState(m_IllumShader->m_pBlendState, 0, 0xffffffff);
+	StateManager().SetBlendState(m_IllumShader->m_pBlendState);
 	::GetDeviceContext()->UpdateSubresource(g_pPerDrawCB, 0, nullptr, &cb, sizeof(cb), 0);
 	::GetDeviceContext()->VSSetConstantBuffers(PERDRAW_SLOT, 2, pBuffers);
 	Env::Renderer()->SetTexture(DrawElement.m_DiffuseMap);
@@ -256,7 +259,7 @@ CRenderAuxGeom::CRenderAuxGeom()
 	desc.DepthFunc      = D3D11_COMPARISON_LESS;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	desc.DepthFunc      = D3D11_COMPARISON_ALWAYS;
-	GetDevice()->CreateDepthStencilState(&desc, &m_pDSStateLines);
+	m_pDSStateLines = GetDevice()->CreateDepthStencilState(desc);
 
 	//m_ZPShader = (CShader*)gRenDev->Sh_Load("z.Main", 0, 0);
 	REGISTER_CVAR2("r_DrawWirefame", &CV_r_DrawWirefame, 0, 0, "[0/1] Draw in wireframe mode");
@@ -350,9 +353,8 @@ void CRenderAuxGeom::DrawAABBs()
 		// V_RETURN(m_BBVerts.size() > 0 && !m_Meshes.size());
 		// m_BoundingBoxShader->Bind();
 
-		::GetDeviceContext()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-		::GetDeviceContext()->RSSetState(g_pRasterizerStateWire);
-		::GetDeviceContext()->OMSetBlendState(m_pBlendState, 0, 0xffffffff);
+		StateManager().SetSamplerState(GlobalResources::LinearSampler, 0);
+		StateManager().SetBlendState(m_pBlendState);
 		if (!m_BBVerts.empty())
 		{
 			Env::Renderer()->ReleaseBuffer(m_BoundingBox);
@@ -362,7 +364,7 @@ void CRenderAuxGeom::DrawAABBs()
 			DrawElement({m_BoundingBox, nullptr, glm::mat4(1), -1});
 		}
 
-		::GetDeviceContext()->RSSetState(g_pRasterizerStateForMeshCurrent);
+		StateManager().SetRasterizerState(g_pRasterizerStateForMeshCurrent);
 		{
 			D3DPERF_BeginEvent(D3DC_Blue, L"DrawMeshes");
 			for (auto const& mesh : m_Meshes)
@@ -379,14 +381,17 @@ void CRenderAuxGeom::DrawAABBs()
 
 void CRenderAuxGeom::DrawLines()
 {
-	m_AuxGeomShader->Bind();
-	Env::Renderer()->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
-	int offset = 0;
-	::GetDeviceContext()->OMSetDepthStencilState(m_pDSStateLines, 0);
-	for (auto& pb : m_auxPushBuffer)
+	if (!m_auxPushBuffer.empty())
 	{
-		Env::Renderer()->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
-		offset += pb.m_numVertices;
+		m_AuxGeomShader->Bind();
+		Env::Renderer()->UpdateBuffer(m_HardwareVB, m_VB.data(), m_VB.size(), false);
+		int offset = 0;
+		StateManager().SetDepthStencilState(m_pDSStateLines);
+		for (auto& pb : m_auxPushBuffer)
+		{
+			Env::Renderer()->DrawBuffer(m_HardwareVB, nullptr, 0, 0, static_cast<int>(pb.m_primitive), offset, offset + pb.m_numVertices);
+			offset += pb.m_numVertices;
+		}
 	}
 	m_VB.resize(0);
 	m_auxPushBuffer.resize(0);
@@ -474,8 +479,8 @@ void CRenderAuxGeom::Flush()
 		g_pRasterizerStateForMeshCurrent = g_pRasterizerStateWire;
 	else
 		g_pRasterizerStateForMeshCurrent = g_pRasterizerStateSolid;
-	D3DPERF_BeginEvent(D3DC_Blue, L"DrawLines");
+	//D3DPERF_BeginEvent(D3DC_Blue, L"DrawLines");
 	DrawLines();
-	D3DPERF_EndEvent();
+	//D3DPERF_EndEvent();
 	DrawAABBs();
 }

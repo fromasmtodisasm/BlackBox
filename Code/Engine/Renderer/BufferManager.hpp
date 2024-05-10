@@ -253,4 +253,9 @@ public:
   std::map<eVertexFormat, SVertexPoolEntry> m_VertexBufferPool;
 
   void MemoryUsage(ICrySizer* pSizer);
+
+private:
+// states
+	ID3D11Buffer* m_Slots[D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT] = {0};
+	RenderPrimitive m_LastPrimitive = RenderPrimitive::LINES;
 };

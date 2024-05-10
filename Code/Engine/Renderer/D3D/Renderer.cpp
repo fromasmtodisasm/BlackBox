@@ -22,10 +22,10 @@ CD3DRenderer*           gcpRendD3D = _gcpRendD3D;
 
 ID3DInputLayout*        GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout;
 
-ID3D11BlendState*       GlobalResources::FontBlendState;
-
 _smart_ptr<CShader>     GlobalResources::TexturedQuadShader;
 _smart_ptr<CShader>     GlobalResources::SpriteShader;
+
+_smart_ptr<ID3D11BlendState> g_pBlendState;
 
 namespace util
 {
@@ -37,9 +37,14 @@ namespace util
 } // namespace util
 
 struct ITechniqueManager;
-ID3D11Device* GetDevice()
+CDevice* GetDevice()
 {
-	return gcpRendD3D->GetDevice();
+	return gcpRendD3D->GetDevice().get();
+}
+
+ID3DDevice* GetD3DDevice()
+{
+	return gcpRendD3D->GetD3DDevice();
 }
 
 ID3DDeviceContext* GetDeviceContext()
@@ -93,7 +98,7 @@ int CD3DRenderer::CreateRenderTarget()
 {
 	ID3D11Texture2D* pBackBuffer;
 	m_pSwapChain->Get()->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-	GetDevice()->CreateRenderTargetView(pBackBuffer, NULL, &m_pMainRenderTargetView);
+	GetD3DDevice()->CreateRenderTargetView(pBackBuffer, NULL, m_pMainRenderTargetView.GetAddressOf());
 	pBackBuffer->Release();
 	return 0;
 }
@@ -118,7 +123,31 @@ IWindow* CD3DRenderer::Init(int x, int y, int width, int height, unsigned int cb
 	m_LigthsList[1] = {Legacy::Vec3{10.0f, 10.0f, 10.0f},   Legacy::Vec3{300, 300, 300}};
 	m_LigthsList[2] = {Legacy::Vec3{-10.0f, -10.0f, 10.0f}, Legacy::Vec3{300, 300, 300}};
 	m_LigthsList[3] = {Legacy::Vec3{-10.0f, -10.0f, 10.0f}, Legacy::Vec3{300, 300, 300}};
-	return CRenderer::Init(x, y, width, height, cbpp, zbpp, sbits, fullscreen, window);
+	if(auto result = CRenderer::Init(x, y, width, height, cbpp, zbpp, sbits, fullscreen, window); result)
+	{
+		g_pBlendState = GetDevice()->CreateBlendState(
+			D3D11_BLEND_DESC
+			{
+				.AlphaToCoverageEnable = false,
+				.IndependentBlendEnable = false,
+				.RenderTarget = {
+					{
+						.BlendEnable = true,
+						.SrcBlend = D3D11_BLEND_SRC_ALPHA,
+						.DestBlend = D3D11_BLEND_INV_SRC_ALPHA,
+						.BlendOp = D3D11_BLEND_OP_ADD,
+						.SrcBlendAlpha = D3D11_BLEND_ONE,
+						.DestBlendAlpha = D3D11_BLEND_ZERO,
+						.BlendOpAlpha = D3D11_BLEND_OP_ADD,
+						.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL
+					}
+				}
+			}
+		);
+
+		return result;
+	}
+	return nullptr;
 }
 
 bool CD3DRenderer::ChangeResolution(int nNewWidth, int nNewHeight, int nNewColDepth, int nNewRefreshHZ, bool bFullScreen)
@@ -138,24 +167,25 @@ void CD3DRenderer::BeginFrame(void)
 		m_TexturesMap[-1] = pT;
 		whiteTextureLoaded = true;
 	}
-	D3DPERF_BeginEvent(D3DC_Blue, L"BeginFrame");
 	auto pDC = m_Device->Get<ID3D11DeviceContext>();
+
+	StateManager().m_StateManager.OnBeginFrame();
 	if (EDITOR)
 		pDC->OMSetRenderTargets(1, m_RenderTargetScene->m_renderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 	else
-		pDC->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
+		StateManager().m_StateManager.SetRenderTargets({m_pMainRenderTargetView.GetAddressOf(), 1}, static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 
 	if (EDITOR)
-		pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView.Get(), &m_ClearColor[0]);
+		pDC->ClearRenderTargetView(m_RenderTargetScene->m_renderTargetView, &m_ClearColor[0]);
 	else
-		pDC->ClearRenderTargetView(m_pMainRenderTargetView.Get(), &m_ClearColor[0]);
+		pDC->ClearRenderTargetView(m_pMainRenderTargetView, &m_ClearColor[0]);
 	pDC->ClearDepthStencilView(static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView), D3D11_CLEAR_DEPTH, 1.f, 0);
 }
 
 void CD3DRenderer::UpdateConstants()
 {
 	//D3DPERF_BeginEvent(D3DC_Blue, L"UpdateConstants");
-	ScopedMap<SPerFrameConstantBuffer>(m_PerFrameConstants, [&](auto pConstData)
+	ScopedMap<SPerFrameConstantBuffer>(&(*m_PerFrameConstants), [&](auto pConstData)
 	                                   {
 		                                   pConstData->SunDirection    = Legacy::Vec4(glm::normalize(Legacy::Vec3(2, 3, 4)), 1.f);
 		                                   pConstData->SunColor        = {r_SunColor, 1};
@@ -163,7 +193,7 @@ void CD3DRenderer::UpdateConstants()
 		                                   pConstData->NumLights       = m_LigthsList.size();
 		                                   pConstData->LightIntensity  = Legacy::Vec4(1, 1, 1, 1); });
 
-	ScopedMap<SPerViewConstantBuffer>(m_PerViewConstants, [&](auto pConstData)
+	ScopedMap<SPerViewConstantBuffer>(&(*m_PerViewConstants), [&](auto pConstData)
 	                                  {
 		                                  auto Projection            = m_Camera.GetProjectionMatrix();
 		                                  auto View                  = m_Camera.GetViewMatrix();
@@ -171,13 +201,13 @@ void CD3DRenderer::UpdateConstants()
 		                                  pConstData->ViewProjection = Projection * View;
 		                                  pConstData->View           = View; 
 		                                  pConstData->Eye            = m_Camera.GetPos(); });
-	ScopedMap<HLSL_Light>(m_Lights, [&](auto pConstData)
+	ScopedMap<HLSL_Light>(&(*m_Lights), [&](auto pConstData)
 	                      { memcpy(pConstData, &m_LigthsList[0], m_LigthsList.size() * sizeof HLSL_Light); });
 
 	ID3DBuffer* pBuffers[] = {
-	    m_PerFrameConstants.Get(),
-	    m_Lights.Get(),
-	    m_PerViewConstants.Get(),
+	    m_PerFrameConstants,
+	    m_Lights,
+	    m_PerViewConstants,
 	};
 	constexpr auto StartSlot = PERFRAME_SLOT;
 	::GetDeviceContext()->VSSetConstantBuffers(StartSlot, 3, pBuffers);
@@ -193,17 +223,17 @@ void CD3DRenderer::Update(void)
 			m_FrameID++;
 			UpdateConstants();
 
-			::GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0);
+			StateManager().SetDepthStencilState(m_pDepthStencilState);
 			{
 				{
-					m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
-					D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
+					StateManager().SetBlendState(g_pBlendState);
 					if (IConsole* pConsole = Env::System()->GetIConsole())
+					{
+						D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
 						pConsole->Draw();
-					D3DPERF_EndEvent();
+						D3DPERF_EndEvent();
+					}
 				}
-				if (!EDITOR)
-					GetDeviceContext()->OMSetRenderTargets(1, m_pMainRenderTargetView.GetAddressOf(), static_cast<ID3D11DepthStencilView*>(m_DepthStencil->m_pView));
 				if (m_FrameID > 20)
 				{
 #if 0
@@ -212,29 +242,16 @@ void CD3DRenderer::Update(void)
 					ImGui::End();
 #endif
 				}
-				D3DPERF_BeginEvent(D3DC_Blue, L"OnRenderer_BeforeEndFrame");
-				for (const auto& rcl : m_RenderCallbackClients)
-				{
-					rcl->OnRenderer_BeforeEndFrame();
-				}
-				int x, y, z, w;
-				GetViewport(&x, &y, &z, &w);
-				auto            c = color4f{1, 1, 1, 1};
-				ID3D11Resource* srv{};
-				//m_pMainRenderTargetView.Get()
-				//Draw2DQuad(float(x), float(y), float(z), float(w), srv, color4f{}, 1.f, 1.f, 1.f, 1.f);
-				//Draw2DQuad((float)x, (float)y, (float)z, (float)w, m_pMainRenderTargetView.Get(), c, 1.f, 1.f, 1.f, 1.f);
-				D3DPERF_EndEvent();
 			}
 			{
-                m_RenderAuxGeom->Flush();
+				m_RenderAuxGeom->Flush();
 				D3DPERF_BeginEvent(D3DC_Blue, L"DrawImages");
 				for (auto img : m_DrawImages)
 				{
 					Draw2DQuad(img.x, img.y, img.w, img.h, img.id, img.color, img.s0, img.t0, img.s1, img.t1);
 				}
 				D3DPERF_EndEvent();
-                Flush();
+				Flush();
 			}
 			//{
 			//	D3DPERF_BeginEvent(D3DC_Blue, L"DrawConsole");
@@ -244,7 +261,6 @@ void CD3DRenderer::Update(void)
 			//}
 		}
 		D3DPERF_EndEvent();
-		D3DPERF_EndEvent(); //begin frame
 		m_DrawImages.clear();
 	}
 
@@ -399,8 +415,8 @@ bool CD3DRenderer::InitOverride()
 	rasterizerDesc.MultisampleEnable     = false;
 	rasterizerDesc.AntialiasedLineEnable = true;
 
-	m_Device->Get<ID3DDevice>()->CreateRasterizerState(&rasterizerDesc, &m_pRasterizerState);
-	m_Device->Get<ID3D11DeviceContext>()->RSSetState(m_pRasterizerState.Get());
+	m_pRasterizerState = GetDevice()->CreateRasterizerState(rasterizerDesc);
+	StateManager().SetRasterizerState(m_pRasterizerState);
 
 	{
 		D3D11_DEPTH_STENCIL_DESC desc;
@@ -411,16 +427,11 @@ bool CD3DRenderer::InitOverride()
 		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		desc.DepthFunc      = D3D11_COMPARISON_LESS;
 
-		GetDevice()->CreateDepthStencilState(&desc, &m_pDepthStencilState);
-		GetDeviceContext()->OMSetDepthStencilState(m_pDepthStencilState.Get(), 0);
+		m_pDepthStencilState = m_Device->CreateDepthStencilState(desc);
 	}
 
 	m_DepthStencil = std::make_shared<CTexture>();
 	ChangeViewport(0, 0, GetWidth(), GetHeight());
-
-#if 0
-	m_Device->Get<ID3D11DeviceContext>()->OMSetRenderTargets(1, &m_pMainRenderTargetView, m_pDepthStencilView);
-#endif
 
 	//Legacy::Vec3 c = Legacy::Vec3(2, 162, 246) / 255.f;
 	Legacy::Vec3 c = Legacy::Vec3(0, 0, 0) / 255.f;
@@ -434,20 +445,20 @@ bool CD3DRenderer::InitOverride()
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbDesc.MiscFlags      = 0;
 
-	hr                    = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerViewConstants);
+	hr                    = DEVICE->CreateBuffer(&cbDesc, NULL, this->m_PerViewConstants.GetAddressOf());
 	if (FAILED(hr))
 	{
 		return hr;
 	}
 	cbDesc.ByteWidth = Memory::AlignedSizeCB<SPerFrameConstantBuffer>::value;
-	hr               = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_PerFrameConstants);
+	hr               = DEVICE->CreateBuffer(&cbDesc, NULL, this->m_PerFrameConstants.GetAddressOf());
 	if (FAILED(hr))
 	{
 		return hr;
 	}
 	static_assert((Memory::AlignedSizeCB<HLSL_Light>::value % sizeof Legacy::Vec4) == 0, "Bad alignment!!!");
 	cbDesc.ByteWidth = 4 * Memory::AlignedSizeCB<HLSL_Light>::value;
-	hr               = DEVICE->CreateBuffer(&cbDesc, NULL, &this->m_Lights);
+	hr               = DEVICE->CreateBuffer(&cbDesc, NULL, this->m_Lights.GetAddressOf());
 	if (FAILED(hr))
 	{
 		return hr;
@@ -540,7 +551,8 @@ void CD3DRenderer::SetTexture(int tnum, ETexType Type)
 	auto t = m_TexturesMap[tnum].second;
 	if (t)
 	{
-		::GetDeviceContext()->PSSetShaderResources(0, 1, &t);
+		StateManager().m_StateManager.SetResources({ &t, 1 }, 0);
+		//::GetDeviceContext()->PSSetShaderResources(0, 1, &t);
 	}
 }
 
@@ -794,7 +806,7 @@ void* CD3DRenderer::EF_Query(int Query, int Param)
 	case EFQ_CubeColor:
 		break;
 	case EFQ_D3DDevice:
-		return GetDevice();
+		return DEVICE;
 		break;
 	case EFQ_glReadPixels:
 		break;
@@ -829,7 +841,7 @@ static ID3DDepthStencilState* CreateDepthStencil()
 	desc.StencilEnable  = false;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 
-	GetDevice()->CreateDepthStencilState(&desc, &m_pDSState);
+	m_pDSState = GetDevice()->CreateDepthStencilState(desc);
 	return m_pDSState;
 }
 
@@ -907,15 +919,17 @@ void CD3DRenderer::Draw2DQuad(float x, float y, float w, float h, ID3D11ShaderRe
 	UpdateBuffer(VB, vertices.data(), vertex_cnt, false);
 
 	GlobalResources::TexturedQuadShader->Bind();
-	m_Device->Get<ID3D11DeviceContext>()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
-	m_Device->Get<ID3D11DeviceContext>()->PSSetShaderResources(0, 1, &view);
+	//m_Device->Get<ID3D11DeviceContext>()->PSSetSamplers(0, 1, &GlobalResources::LinearSampler);
+	StateManager().m_StateManager.SetSamplerState(GlobalResources::LinearSampler, 0);
+	StateManager().m_StateManager.SetResources({ &view, 1 }, 0);
+	//m_Device->Get<ID3D11DeviceContext>()->PSSetShaderResources(0, 1, &view);
 #if 0
 	m_Device->Get<ID3D11DeviceContext>()->IASetInputLayout(GlobalResources::VERTEX_FORMAT_P3F_C4B_T2F_Layout);
 #endif
 	static auto m_pDSState = ::CreateDepthStencil();
-	m_Device->Get<ID3D11DeviceContext>()->RSSetState(m_pRasterizerState.Get());
-	m_Device->Get<ID3D11DeviceContext>()->OMSetBlendState(GlobalResources::FontBlendState, 0, 0xffffffff);
-	m_Device->Get<ID3D11DeviceContext>()->OMSetDepthStencilState(m_pDSState, 0);
+	StateManager().SetDepthStencilState(m_pDSState);
+	StateManager().SetRasterizerState(m_pRasterizerState);
+	StateManager().SetBlendState(g_pBlendState);
 
 	Env::Renderer()->DrawBuffer(VB, 0, 0, 0, static_cast<int>(RenderPrimitive::TRIANGLES), 0, vertex_cnt);
 	ReleaseBuffer(VB);
@@ -968,4 +982,52 @@ std::unique_ptr<CSwapChain> CSwapChain::Create(std::shared_ptr<CDevice> pDevice,
 	}
 
 	return nullptr;
+}
+
+std::pair<bool, _smart_ptr<RenderTarget>> RenderTarget::Create(int textureWidth, int textureHeight)
+{
+	auto                 renderTarget = std::make_pair(false, _smart_ptr<RenderTarget>(new RenderTarget));
+	auto& m_renderTargetTexture = renderTarget.second->m_renderTargetTexture;
+	auto& m_renderTargetView = renderTarget.second->m_renderTargetView;
+	auto& m_shaderResourceView = renderTarget.second->m_shaderResourceView;
+
+	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(textureDesc));
+
+	textureDesc.Width = textureWidth;
+	textureDesc.Height = textureHeight;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	HRESULT result = GetD3DDevice()->CreateTexture2D(&textureDesc, NULL, m_renderTargetTexture.GetAddressOf());
+	if (FAILED(result))
+		return renderTarget;
+
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+	renderTargetViewDesc.Format = textureDesc.Format;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+	result = GetD3DDevice()->CreateRenderTargetView(m_renderTargetTexture, &renderTargetViewDesc, m_renderTargetView.GetAddressOf());
+	if (FAILED(result))
+		return renderTarget;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	shaderResourceViewDesc.Format = textureDesc.Format;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+	result = GetD3DDevice()->CreateShaderResourceView(m_renderTargetTexture, &shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
+	if (FAILED(result))
+		return renderTarget;
+
+	renderTarget.first = true;
+	return renderTarget;
 }

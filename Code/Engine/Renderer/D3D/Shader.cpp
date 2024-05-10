@@ -95,15 +95,23 @@ void CShader::Bind()
 {
 	if ((m_Flags2 & EF2_FAILED) != 0)
 		return;
-	auto d = GetDeviceContext();
+	//auto d = GetDeviceContext();
 
 	if (!WaitUntilLoaded())
 		return;
-	if (auto s = m_Shaders[E_VERTEX]->m_D3DShader; s) { d->VSSetShader((PVertexShader)s, nullptr, 0); }
+	
+	auto& stateManager = gcpRendD3D->StateManager().m_StateManager;
+	if (auto s = m_Shaders[E_VERTEX]->m_D3DShader; s) { 
+		stateManager.SetVertexShader((PVertexShader)s);
+		//d->VSSetShader((PVertexShader)s, nullptr, 0); 
+	}
 	//if (auto s = m_Shaders[E_GEOMETRY]->m_D3DShader; s) { d->VSSetShader((PVertexShader)s); }
-	if (auto s = m_Shaders[E_FRAGMENT]->m_D3DShader; s) { d->PSSetShader((PPixelShader)s, nullptr, 0); }
+	if (auto s = m_Shaders[E_FRAGMENT]->m_D3DShader; s) { 
+		//d->PSSetShader((PPixelShader)s, nullptr, 0); 
+		stateManager.SetPixelShader((PPixelShader)s);
+	}
 
-	d->IASetInputLayout(m_pInputLayout);
+	stateManager.SetInputLayout(m_pInputLayout);
 }
 
 int CShader::GetFlags()
@@ -286,7 +294,7 @@ void CShader::CreateInputLayout()
 
 		t_InputElementDescVec.push_back(t_InputElementDesc);
 	}
-	hr = GetDevice()->CreateInputLayout(
+	hr = GetD3DDevice()->CreateInputLayout(
 	    t_InputElementDescVec.data(),
 	    t_InputElementDescVec.size(),
 	    pVSBuf->GetBufferPointer(),
@@ -470,7 +478,7 @@ bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, in
 	{
 		if (auto pDevice = GetDevice(); pDevice)
 		{
-			pDevice->CreateDepthStencilState(&dsDesc, &pSH->m_pDepthStencilState);
+			pSH->m_pDepthStencilState = pDevice->CreateDepthStencilState(dsDesc);
 			//pDevice->CreateBlendState(&bsDesc, &pSH->m_pBlendState);
 
 			if (bsDesc.IndependentBlendEnable)
@@ -479,13 +487,13 @@ bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, in
 				{
 					if (target.BlendEnable)
 					{
-						pDevice->CreateBlendState(&bsDesc, &pSH->m_pBlendState);
+						pSH->m_pBlendState = pDevice->CreateBlendState(bsDesc);
 					}
 				}
 			}
 			else if (bsDesc.RenderTarget[0].BlendEnable)
 			{
-					pDevice->CreateBlendState(&bsDesc, &pSH->m_pBlendState);
+				pSH->m_pBlendState = pDevice->CreateBlendState(bsDesc);
 			}
 		}
 	}

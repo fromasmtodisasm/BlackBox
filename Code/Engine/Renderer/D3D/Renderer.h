@@ -107,9 +107,6 @@ struct SPerFrameConstants
 	//D3DXVECTOR4 SunDirection;
 };
 
-ID3DDevice*        GetDevice();
-ID3DDeviceContext* GetDeviceContext();
-
 //=========================================================================================
 
 // NOTE: ...
@@ -119,57 +116,11 @@ struct RenderTarget : _reference_target_t
 	{
 	}
 
-	static std::pair<bool, _smart_ptr<RenderTarget>> Create(int textureWidth, int textureHeight)
-	{
-		auto                 renderTarget          = std::make_pair(false, _smart_ptr<RenderTarget>(new RenderTarget));
-		auto&                m_renderTargetTexture = renderTarget.second->m_renderTargetTexture;
-		auto&                m_renderTargetView    = renderTarget.second->m_renderTargetView;
-		auto&                m_shaderResourceView  = renderTarget.second->m_shaderResourceView;
+	static std::pair<bool, _smart_ptr<RenderTarget>> Create(int textureWidth, int textureHeight);
 
-		D3D11_TEXTURE2D_DESC textureDesc;
-		ZeroMemory(&textureDesc, sizeof(textureDesc));
-
-		textureDesc.Width            = textureWidth;
-		textureDesc.Height           = textureHeight;
-		textureDesc.MipLevels        = 1;
-		textureDesc.ArraySize        = 1;
-		textureDesc.Format           = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.Usage            = D3D11_USAGE_DEFAULT;
-		textureDesc.BindFlags        = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		textureDesc.CPUAccessFlags   = 0;
-		textureDesc.MiscFlags        = 0;
-
-		HRESULT result               = GetDevice()->CreateTexture2D(&textureDesc, NULL, &m_renderTargetTexture);
-		if (FAILED(result))
-			return renderTarget;
-
-		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
-		renderTargetViewDesc.Format             = textureDesc.Format;
-		renderTargetViewDesc.ViewDimension      = D3D11_RTV_DIMENSION_TEXTURE2D;
-		renderTargetViewDesc.Texture2D.MipSlice = 0;
-
-		result                                  = GetDevice()->CreateRenderTargetView(m_renderTargetTexture.Get(), &renderTargetViewDesc, &m_renderTargetView);
-		if (FAILED(result))
-			return renderTarget;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-		shaderResourceViewDesc.Format                    = textureDesc.Format;
-		shaderResourceViewDesc.ViewDimension             = D3D11_SRV_DIMENSION_TEXTURE2D;
-		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-		shaderResourceViewDesc.Texture2D.MipLevels       = 1;
-
-		result                                           = GetDevice()->CreateShaderResourceView(m_renderTargetTexture.Get(), &shaderResourceViewDesc, &m_shaderResourceView);
-		if (FAILED(result))
-			return renderTarget;
-
-		renderTarget.first = true;
-		return renderTarget;
-	}
-
-	ComPtr<ID3DTexture2D>          m_renderTargetTexture{};
-	ComPtr<ID3DRenderTargetView>   m_renderTargetView{};
-	ComPtr<ID3DShaderResourceView> m_shaderResourceView{};
+	ID3DTexture2DPtr          m_renderTargetTexture{};
+	ID3DRenderTargetViewPtr   m_renderTargetView{};
+	ID3DShaderResourceViewPtr m_shaderResourceView{};
 };
 
 class CD3DRenderer : public CRenderer
@@ -226,7 +177,8 @@ public:
 	virtual void            SetRenderTarget(int nHandle) override;
 	// Inherited via CRenderer
 	virtual bool            InitOverride() override;
-	ID3DDevice*             GetDevice() { return m_Device->Get<ID3DDevice>(); }
+	auto             				GetDevice() { return m_Device; }
+	auto										GetD3DDevice() { return m_Device->Get<ID3DDevice>(); }
 	ID3DDeviceContext*      GetDeviceContext() { return m_Device->Get<ID3DDeviceContext>(); }
 
 	bool                    OnResizeSwapchain(int newWidth, int newHeight);
@@ -260,6 +212,13 @@ public:
 
 	bool                    CreateRenderTargets();
 
+public:
+
+	auto& StateManager()
+	{
+		return m_Device->m_StateCache;
+	}
+
 private:
 	int          NextTextureIndex();
 	int          AddTextureResource(string name, ID3DShaderResourceView* pSRView, STexPic* pic);
@@ -272,7 +231,7 @@ private:
 	template<class Data, template<class B> typename T, class B>
 	auto ScopedMap(T<B> CB, std::function<void(Data* data)> Updater)
 	{
-		ScopedMap(CB.Get(), Updater);
+		ScopedMap(CB, Updater);
 	}
 
 	template<class Data, class B>
@@ -290,7 +249,7 @@ private:
 		m_DepthStencil->m_pView     = nullptr;
 		m_DepthStencil->m_pResource = nullptr;
 
-		GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
+		StateManager().m_StateManager.SetRenderTargets({}, nullptr);
 	}
 
 	bool CreateDepthStencil(int w, int h)
@@ -309,13 +268,13 @@ private:
 		depthStencilDesc.CPUAccessFlags     = 0;
 		depthStencilDesc.MiscFlags          = 0;
 
-		if (FAILED(H(GetDevice()->CreateTexture2D(
+		if (FAILED(H(GetD3DDevice()->CreateTexture2D(
 		                 &depthStencilDesc, 0, &pDepthStencil->m_pResource),
 		             "Error Create DS Texture")))
 			return false;
 		ID3D11DepthStencilView* dsv{};
 
-		if (FAILED(H(GetDevice()->CreateDepthStencilView(pDepthStencil->m_pResource, 0, &dsv),
+		if (FAILED(H(GetD3DDevice()->CreateDepthStencilView(pDepthStencil->m_pResource, 0, &dsv),
 		             "Error Create DS Texture")))
 		{
 			return false;
@@ -348,6 +307,11 @@ private:
 	_smart_ptr<RenderTarget>                                          m_RenderTargetScene;
 	_smart_ptr<RenderTarget>                                          m_SceneRenderTargetFinal;
 };
+
+CDevice*        GetDevice();
+ID3DDevice*			GetD3DDevice();
+ID3DDeviceContext* GetDeviceContext();
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

@@ -135,6 +135,7 @@ IGAMEPLATFORM_API IGamePlatform* CreateGamePlatformInterface(ISystem* pSystem)
 inline bool CSteamPlatform::Init()
 {
 
+	return false;
 	// инициализируем Steam
 	bool bRet = SteamAPI_Init();
 	if (!bRet)
