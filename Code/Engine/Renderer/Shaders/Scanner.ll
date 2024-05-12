@@ -135,10 +135,6 @@ float_number    [+-]?([0-9]*[.])?[0-9]+(f|F)?
 
 %}
 
-FatalError {
-	return yy::parser::make_FATALERROR(loc);
-}
-
 static {
     return yy::parser::make_STATIC(StorageClass::Static, loc);
 }
