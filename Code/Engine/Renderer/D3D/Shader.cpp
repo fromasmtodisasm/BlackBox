@@ -363,9 +363,9 @@ bool CShader::LoadFromEffect(CShader* pSH, FxEffect* pEffect, int nTechnique, in
 		}
 	}
 
-	D3D11_DEPTH_STENCIL_DESC dsDesc = pass->DepthStencilState;
-	D3D11_RASTERIZER_DESC     rsDesc = pass->RasterizerState;
-	D3D11_BLEND_DESC          bsDesc = pass->BlendState;
+	D3D11_DEPTH_STENCIL_DESC& dsDesc = pass->DepthStencilState;
+	D3D11_RASTERIZER_DESC&     rsDesc = pass->RasterizerState;
+	D3D11_BLEND_DESC&          bsDesc = pass->BlendState;
 
 	D3D11_SAMPLER_DESC		ssDesc = { 0 };
 

@@ -417,6 +417,7 @@ static {
     /*==================================================================
       Comment starting points
     */
+    /* <*> */  
 <INITIAL,str,cstbuffer,technique,pass,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,sampler_addressing,sampler_filter,resource,resource1,fbo,fbo1,input_layout,function,functionbody>{
     "/*" {
         comment_caller  =  INITIAL;
@@ -608,6 +609,7 @@ static {
 ","        return yy::parser::make_COMMA(loc);
     */
 
+    /* <*> */  
 <INITIAL,cstbuffer,technique,sampler_state,dst_state,pr_state,color_sample_state,rasterization_state,blend_state,blend_state_op,cull_mode,fill_mode,blend_state_top,compare_func,sampler_addressing,sampler_filter,pass,resource,resource1,fbo,fbo1,input_layout,function>{
     "true"          return yy::parser::make_BOOL(true, loc);
     "false"         return yy::parser::make_BOOL(false, loc);

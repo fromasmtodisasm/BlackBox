@@ -115,6 +115,7 @@ Technique TexturedQuad<string description = "This is technique spesialized for t
     Pass p0
     {
         FillMode = WireFrame;
+        ZEnable = false;
         VertexShader = VSMain();
         PixelShader = TexturedQuad();
     }

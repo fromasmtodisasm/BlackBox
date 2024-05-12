@@ -19,6 +19,14 @@ namespace fx
 //%token BLEND_COLOR
 enum class ERenderState
 {
+	SETPIXELSHADER,
+	SETVERTEXSHADER,
+	SETGEOMETRYSHADER,
+	SETHULLSHADER,
+	SETDOMAINSHADER,
+	SETCOMPUTESHADER,
+
+
 	ALPHABLENDENABLE,
 	ALPHABLEND_COLOR,
 	ALPHABLEND_SRC,
@@ -79,8 +87,7 @@ enum class ERenderState
 	SAMPLER_MINLOD,
 	SAMPLER_MAXLOD,
 
-
-
+	CALL_INTERNAL_FUNCTION, // Internal function call
 };
 
 enum InternalFunctions
@@ -97,19 +104,6 @@ enum InternalFunctions
 	CompileShader,
 };
 } // namespace fx
-
-struct SRenderStateValue
-{
-	fx::ERenderState Type;
-	union
-	{
-		int		i;
-		float	f;
-		float f4[4];
-		float f3[3];
-		bool b;
-	};
-};
 
 namespace nvFX {
 /*************************************************************************/ /**
@@ -147,6 +141,7 @@ public:
 		TSubroutineUniform,
 		TSubroutineUniformByID,
 #endif
+		TStruct, 
 	};
 	enum PrecisionType /// precision is only used for OpenGL ES
 	{
@@ -195,6 +190,38 @@ inline std::string toString(IUniform::Type type)
 }
 }
 
+
+struct SimpleValue
+{
+	nvFX::IUniform::Type type;
+	union
+	{
+		int		i;
+		float	f;
+		bool b;
+		float f2[2];
+		float f3[3];
+		float	f4[4];
+		char s[64];
+	};
+};
+
+struct SRenderStateValue
+{
+	fx::ERenderState Type;
+	string Name;
+	std::vector<SimpleValue> Values;
+	union
+	{
+		int		i;
+		float	f;
+		float f4[4];
+		float f3[3];
+		bool b;
+	};
+};
+
+
 struct DirectDeclarator
 {
 	string Name;
@@ -212,11 +239,16 @@ enum class StorageClass
 	Const,
 };
 
+struct SVariable;
 struct SObjectTypeInfo
 {
 	StorageClass Storage;
 	std::string Name;
 	nvFX::IUniform::Type Type;
+	int ArraySize;
+	bool IsComplexType;
+	// For complex types only
+	std::vector<SVariable> Members;
 };
 
 struct SAnnotation
@@ -262,19 +294,6 @@ struct IPass
 {
 };
 
-struct SimpleValue
-{
-	nvFX::IUniform::Type type;
-	union
-	{
-		int		i;
-		float	f;
-		bool b;
-		float	f4[4];
-		char s[64];
-	};
-};
-
 // declare render state structs
 struct SRenderState
 {
@@ -287,10 +306,11 @@ namespace fx
 	template<typename T>
 	struct named : T
 	{
+		named() : T{CD3D11_DEFAULT{}} {}
 		std::string Name;
 	};
 
-	struct sampler_desc : named<D3D11_SAMPLER_DESC>
+	struct sampler_desc : named<CD3D11_SAMPLER_DESC>
 	{
 		void AddState(const SRenderStateValue& value)
 		{
@@ -470,7 +490,15 @@ struct SPass
 	fx::depth_stencil_desc DepthStencilState;
 	fx::rasterizer_desc   RasterizerState;
 
+	void shader_assignment(IShader::Type type, const string& name)
+	{
+		EntryPoints[type] = name;
+	}
 
+	void render_state_assignment(const SRenderStateValue& state)
+	{
+		RenderStates.push_back(state);
+	}
 
 };
 
@@ -509,7 +537,7 @@ class CTechnique : public ITechnique
 {
   public:
 		CTechnique() = default;
-	CTechnique(int id, std::string name)
+	CTechnique(int id, const std::string& name)
 		: Name(name)
 		, Id(id)
 	{
@@ -517,6 +545,10 @@ class CTechnique : public ITechnique
 	CTechnique(std::string name)
 		: Name(name)
 		, Id(-1)
+	{
+	}
+	CTechnique(const std::string& name, std::vector<SPass>&& passes)
+		: Passes(passes), Name(name)
 	{
 	}
 	// Inherited via ITechnique
@@ -574,28 +606,23 @@ class FxEffect : public IEffect
 	void shader_assignment(IShader::Type type, const string& name)
 	{
 		auto& pass = GetCurrentPass();
-		pass.EntryPoints[type] = name;
+		pass.shader_assignment(type, name);
 	}
 
 	void render_state_assignment(const SRenderStateValue& state)
 	{
 		auto& pass = GetCurrentPass();
-		pass.RenderStates.push_back(state);
+		pass.render_state_assignment(state);
 	}
 
-
-	bool SetLang(ShaderLangId id)
-	{
-		if (m_LangId != ShaderLangId::None)
-			return false;
-		m_LangId = id;
-		return true;
-	}
-
-	void CallFunction(fx::InternalFunctions state, std::vector<SimpleValue>& values)
+	void CallFunction(const SRenderStateValue& value)
 	{
 		auto& pass = GetCurrentPass();
+		CallFunction(pass, fx::InternalFunctions(value.i), value.Values);
+	}
 
+	void CallFunction(SPass& pass, fx::InternalFunctions state, const std::vector<SimpleValue>& values)
+	{
 		switch (state)
 		{
 		case fx::InternalFunctions::SetPixelShader:
@@ -634,6 +661,18 @@ class FxEffect : public IEffect
 		default:
 			break;
 		}
+	}
+
+
+
+
+
+	bool SetLang(ShaderLangId id)
+	{
+		if (m_LangId != ShaderLangId::None)
+			return false;
+		m_LangId = id;
+		return true;
 	}
 
   public:

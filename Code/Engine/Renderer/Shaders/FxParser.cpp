@@ -56,4 +56,14 @@ void FxEffect::AddTechnique(CTechnique&& tech)
 {
 	tech.Id = m_Techniques.size();
 	m_Techniques.push_back(std::move(tech));
+
+	for (auto& pass : m_Techniques.back().Passes)
+	{
+		for (auto& state : pass.RenderStates)
+		{
+			if (state.Type == fx::ERenderState::CALL_INTERNAL_FUNCTION)
+				CallFunction(state);
+		}
+	}
+
 }

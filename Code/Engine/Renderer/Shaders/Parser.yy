@@ -123,8 +123,8 @@
 %type  <SimpleValue>    parameter_value
 
 
-%type  <std::string>    shader_assignment
-%type  <IShader::Type>  shader_type
+%type  <SRenderStateValue> shader_assignment
+%type  <fx::ERenderState>  shader_type
 %type  <std::string>    struct_footer
 %type  <std::string>    struct_header
 %type  <DirectDeclarator> direct_declarator
@@ -145,8 +145,10 @@
 
 %type <std::string>             var_spec
 %type <SObjectTypeInfo>         object_type
+%type <SObjectTypeInfo>         struct
 %type <SVariable>               var_decl
 %type <std::vector<SVariable>>  var_decls
+%type <std::vector<SVariable>>  struct_body
 %type <std::string>            semantic
 
 
@@ -155,7 +157,11 @@
 %type <SFunction>               function_declaration
 %type <SFunction>               function_definition
 
-%type <CTechnique>              tech
+%type <CTechnique>                      tech
+%type <SRenderStateValue>               passstate
+%type <std::vector<SRenderStateValue>>  passstates
+%type <SPass>                           pass
+%type <std::vector<SPass>>              passes
 
 
 %type <StorageClass> const_storage_class
@@ -254,6 +260,7 @@
 
 %type <fx::InternalFunctions> internal_functions
 %type <std::vector<SimpleValue>> parameters
+%type <SRenderStateValue> call_internal_function
 
 
 
@@ -354,7 +361,6 @@
 %type <SRenderStateValue> render_state
 
 %type <SRenderStateValue> ds_state
-%type <SRenderStateValue> blendstate
 %type <SRenderStateValue> blendstate_type
 %type <SRenderStateValue> raster_state
 %type <SRenderStateValue> sampler_state
@@ -376,44 +382,57 @@
 %token RETURN
 
 %%
-%start input;
+%start translation_unit;
 
 numeric_constant
     : INT { $$ = SimpleValue{.type = nvFX::IUniform::TInt, .i = $1}; }
     | FLOAT { $$ = SimpleValue{.type = nvFX::IUniform::TFloat, .f = $1}; }
     ;
 
-input: %empty { FxLog("Empty effect"); }
-| input ';'
-| input tech
-| input typedef
-| input var_decl
+declaration:
+tech
 {
-    if ($2.Name == "Script")
-    {
-        FxLog("Found Script variable");
-
-        for (const auto& annotation : $2.Annotations)
-        {
-            FxLog("Annotation: %s = %s", annotation.Name.c_str(), annotation.Value.c_str());
-        }
-    }
-    effect.AddVariable($2);
+    FxLog("New Technique %s", $1.Name.data());
+    effect.AddTechnique(std::move($1));
 }
-| input blend_state_declaration ';'
-| input depth_state_declaration ';'
-| input raster_state_declaration ';'
-| input sampler_state_declaration ';'
-| input shader_resource
-| input function_definition {
-    $2.Dump();
-    effect.AddFunction($2);
+| typedef
+| var_decl ';'
+{
+    effect.AddVariable($1);
 }
-| input function_declaration {FxLog("Pop lex state from declaration"); lex_pop_state();}
-| input fatal_error
-| input struct
-| input error
+| blend_state_declaration ';'
+| depth_state_declaration ';'
+| raster_state_declaration ';'
+| sampler_state_declaration ';'
+| shader_resource 
+| function_declaration {
+    FxLog("Pop lex state from declaration"); lex_pop_state();
+}
+| struct ';'
+{
+    CryLog("Struct declaration");
+}
+| error;
 ;
+
+
+external_declaration:
+    function_definition {
+        $1.Dump();
+        effect.AddFunction($1);
+    }
+    | 
+    declaration
+    {
+
+    }
+    | ';'
+;
+
+translation_unit: 
+    external_declaration
+    | translation_unit external_declaration
+    ;
 
 array_declaration: 
     '[' INT ']'
@@ -550,10 +569,6 @@ ds_state_list ds_state ';'
 //| STENCILZFAIL { $$ = $1; }
 ;
 
-blendstate: BLEND_VALUE { $$ = $1; }
-| BLEND_OP_VALUE { $$ = $1; }
-;
-
 blendstate_type: 
 ALPHABLENDENABLE '=' BOOL { $$ = SRenderStateValue{ .Type = $1, .b = $3 }; }
 | BLEND_SRC '=' BLEND_VALUE { $$ = SRenderStateValue{ .Type = $1, .i = $3 }; }
@@ -663,6 +678,7 @@ var_spec:
 
 arguments:
     var_spec var_decl {
+        CryLog("Begin arguments 1");
         $$ = { $2 }; // Создаем вектор с одним аргументом
         $$[0].Spec = $1; // Присваиваем спецификацию
     }
@@ -676,8 +692,8 @@ arguments:
         }
     ;
 
-function_declaration: // Ваше правило для объявления функции
-    object_type IDENTIFIER[name] '(' {} arguments ')'{
+function_declaration: 
+    object_type IDENTIFIER[name] '(' arguments ')'{
         $$.Name = $name;
         $$.ReturnType = $object_type; // Предполагается, что это тип возвращаемого значения
         $$.Arguments = $arguments;
@@ -691,7 +707,6 @@ function_definition:
     }
     function_body_content '}' {
         //FxLog("Close function scope");
-        // Возврат обновленного значения функции
         $$.Name = $1.Name; // Возвращает значение из function_declaration
         $$.ReturnType = $1.ReturnType; // Возвращает значение из function_declaration
         $$.Arguments = $1.Arguments; // Возвращает значение из function_declaration
@@ -714,7 +729,7 @@ template_parameter_opt:
     ;
 
 object_type: 
-    storage_class TYPE_NAME { 
+    storage_class TYPE_NAME template_parameter_opt { 
         $$.Name = $2;
         $$.Storage = $1;
     }
@@ -723,10 +738,6 @@ object_type:
         $$.Storage = $1;
         $$.Type = $2 ;
     } 
-    | storage_class TYPE_NAME template_parameter_opt { 
-        $$.Name = $2;
-        $$.Storage = $1;
-    }
 ;
 
 
@@ -753,36 +764,82 @@ template_parameter: '<' typelist '>';
 
 struct: STRUCT struct_header struct_body struct_footer
 {
-    //FxLog("New Struct");
+    FxLog("Struct");
+    $$.Name = $2;
+    $$.Members = std::move($3);
+    $$.Type = nvFX::IUniform::TStruct;
+    annotations.clear();
+    //lex_pop_state();
 }
+;
 
-struct_header: IDENTIFIER{FxLog("StructName: %s", $1.data()); scanner.register_type($1.data(),{});} | %empty {$$="";};
-struct_body: '{' var_decls '}';
-struct_footer: IDENTIFIER {FxLog("Declared and defined struct with name: %s", $1.data());} 
-| %empty {$$="";} ;
+struct_header: 
+    IDENTIFIER
+    {
+        scanner.register_type($1, SObjectTypeInfo{.Name = $1, .Type = nvFX::IUniform::TStruct});
+        $$ = $1;
+    } 
+    | %empty {$$="";}
+;
 
-var_decls: var_decls  var_decl ';' | var_decl ';' | struct';';
-typelist: object_type ',' typelist | object_type;
+struct_body: '{' var_decls '}' {
+    $$ = std::move($2);
+};
+
+struct_footer: 
+    IDENTIFIER {
+        FxLog("Declared and defined struct with name: %s", $1.data());
+    } 
+    | %empty 
+    {
+        $$="";
+    }
+;
+
+var_decls: 
+    var_decls  var_decl ';'
+    {
+        $1.push_back($2); // Добавляем аннотацию к уже существующему списку в $1
+        $$ = std::move($1);
+    }
+    | var_decl ';'
+    {
+        $$.push_back($1); // Добавляем аннотацию к существующему списку
+    }
+    | struct ';'
+    {
+        FxLog("Struct");
+
+        $$.push_back(
+            SVariable{
+                .Name = "struct",
+                .Type = $1,
+            }
+        );
+    }
+;
+typelist: 
+    object_type ',' typelist | 
+    object_type;
 
 shader_resource: cbuffer | texture2d;
 
 resource_initializer: %empty | '=' IDENTIFIER;
+
 texture2d: TEXTURE2D_TYPE IDENTIFIER register_declaration resource_initializer
 {
     FxLog("texture2d");
 }
+;
 
 shader_type 
-: VERTEXPROGRAM {$$ = $1;}
-| GEOMETRYPROGRAM {$$ = $1;}
-| FRAGMENTPROGRAM {$$ = $1;}
+: VERTEXPROGRAM {$$ = fx::ERenderState::SETVERTEXSHADER;}
+| GEOMETRYPROGRAM {$$ = fx::ERenderState::SETGEOMETRYSHADER;}
+| FRAGMENTPROGRAM {$$ = fx::ERenderState::SETPIXELSHADER;}
 ;
 
 shader_assignment_shader: direct_declarator {
     $$ = $1;
-}
-| IDENTIFIER {
-    $$ = DirectDeclarator{$1};
 };
 
 internal_functions: 
@@ -816,55 +873,71 @@ parameters:
         $$.push_back($1); // Добавляем аннотацию к существующему списку
     }
 
-    | %empty
+    |  %empty {
+        $$ = {};
+    }
     ;
 
 call_internal_function: 
     internal_functions '(' parameters ')' ';'
     {
-        effect.CallFunction($1, $3);
+        $$.Type = fx::ERenderState::CALL_INTERNAL_FUNCTION;
+        $$.i = $1;
+        $$.Values = $3;
     }
     ;
 
-shader_assignment: shader_type '=' shader_assignment_shader ';' {
-    //$$ = std::make_pair($1, $3);
-	effect.shader_assignment($1,$3.Name);
-}
-|
-render_state 
-{
-    //$$ = std::make_pair($1, $3);
-    //effect.render_state_assignment($1, $3);
-    effect.render_state_assignment($1);
-}
-| call_internal_function
-{
-
-}
-//| render_state '=' type_constructor ';'
-//{
-//    //$$ = std::make_pair($1, $3);
-//    //effect.render_state_assignment($1, $3);
-//    effect.render_state_assignment($1, $3);
-//}
-
-;
-shader_assignments:
-shader_assignment
-| shader_assignments shader_assignment
-| %empty
+shader_assignment: 
+    shader_type '=' shader_assignment_shader ';' 
+    {
+        $$.Type = fx::ERenderState::CALL_INTERNAL_FUNCTION;
+        switch ($1)
+        {
+            case fx::ERenderState::SETVERTEXSHADER:
+                $$.i = fx::InternalFunctions::SetVertexShader;
+                break;
+            case fx::ERenderState::SETPIXELSHADER:
+                $$.i = fx::InternalFunctions::SetPixelShader;
+                break;
+            case fx::ERenderState::SETGEOMETRYSHADER:
+                $$.i = fx::InternalFunctions::SetGeometryShader;
+                break;
+        }
+        auto value = SimpleValue{.type = nvFX::IUniform::TInt}; 
+        strcpy(value.s, $3.Name.c_str());
+        $$.Values.push_back(value);
+    }
 ;
 
 /*------------------------------------------------------------------
    pass-states
    TODO: Add the states
 */
-passstates: 
-    shader_assignments
-    {
 
+passstate:
+    render_state {
+        $$ = $1;
     }
+    | shader_assignment
+    {
+        $$ = $1;
+    }
+    | call_internal_function
+    {
+        $$ = $1;
+    }
+;
 
+passstates: 
+    passstate
+    {
+        $$.push_back($1); // Добавляем аннотацию к существующему списку
+    }
+    | passstates passstate
+    {
+        $1.push_back($2);
+        $$ = std::move($1);
+    }
 ;
 
 base_type: 
@@ -885,8 +958,8 @@ base_type:
 |  MAT3_TYPE { $$ = nvFX::IUniform::TMat3; }
 |  MAT34_TYPE { $$ = nvFX::IUniform::TMat3; }
 |  MAT4_TYPE { $$ = nvFX::IUniform::TMat4; }
-|  TEXTURE1D_TYPE { $$ = nvFX::IUniform::TTexture1D; }
-|  TEXTURE2D_TYPE { $$ = nvFX::IUniform::TTexture2D; }
+//|  TEXTURE1D_TYPE { $$ = nvFX::IUniform::TTexture1D; }
+//|  TEXTURE2D_TYPE { $$ = nvFX::IUniform::TTexture2D; }
 
 ;
 
@@ -931,7 +1004,15 @@ direct_declarator
 	| direct_declarator '[' constant_expression ']'
 	| direct_declarator '[' ']'
 	| direct_declarator '(' parameter_type_list ')'
+    {
+        $$ = $1;
+        //lex_pop_state();
+    }
 	| direct_declarator '(' identifier_list ')'
+    {
+        $$ = $1;
+        //lex_pop_state();
+    }
 	| direct_declarator '(' ')'{
         $$ = $1;
     }
@@ -942,7 +1023,9 @@ semantic:
     //FxLog("Semantic: %s", $2.c_str());
     $$ = $2;
 }
-| %empty
+| %empty {
+    $$ = "";
+}
 ;
 
 
@@ -963,7 +1046,6 @@ value:
         .type = nvFX::IUniform::TInt,
         .i = 0}; 
     }
-    | float4_constructor { $$ = $1; }
 ;
 
 float4_constructor: 
@@ -977,25 +1059,37 @@ float4_constructor:
     ;
 
 basic_type_constructor:
-                      FLOAT_TYPE '('value')'
-                      | BOOL_TYPE '('value')'
-                      | INT_TYPE '('value')'
-                      | FLOAT2_TYPE '('value ',' value ')'
-                      | FLOAT3_TYPE '('value ',' value  ',' value ')'
-                      | FLOAT4_TYPE '('value ',' value  ',' value  ',' value ')'
+    FLOAT_TYPE '('value')' { 
+        $$ = $3;
+    }
+    | BOOL_TYPE '('value')' { 
+        $$ = $3;
+    }
+    | INT_TYPE '('value')' { 
+        $$ = $3;
+    }
+    | FLOAT2_TYPE '('value ',' value ')' { 
+        $$ = SimpleValue{
+            .type = nvFX::IUniform::TVec3,
+            .f2 = {toFloat($3), toFloat($5)} 
+        };
+    }
+    | FLOAT3_TYPE '('value ',' value  ',' value ')' {
+        $$ = SimpleValue{
+            .type = nvFX::IUniform::TVec3,
+            .f3 = {toFloat($3), toFloat($5), toFloat($7)} 
+        };
+    }
+    | FLOAT4_TYPE '('value ',' value  ',' value  ',' value ')' {
+        $$ = SimpleValue{
+            .type = nvFX::IUniform::TVec4, 
+            .f4 = {toFloat($3), toFloat($5), toFloat($7), toFloat($9)} 
+        };
+    }
 type_constructor: basic_type_constructor;
 
-
 var_decl: 
-object_type direct_declarator semantic
-{
-    $$ = SVariable{ 
-        .Name = $direct_declarator.Name,
-        .Type = $object_type, 
-        .Semantic = $semantic
-    };
-}
-| object_type direct_declarator semantic annotations '=' type_constructor
+object_type direct_declarator semantic annotations 
 {
     $$ = SVariable{ 
         .Name = $direct_declarator.Name,
@@ -1004,7 +1098,7 @@ object_type direct_declarator semantic
         .Annotations = $annotations,
     };
 }
-| object_type direct_declarator semantic annotations '=' value
+| object_type direct_declarator semantic annotations '=' type_constructor 
 {
     $$ = SVariable{ 
         .Name = $direct_declarator.Name,
@@ -1013,7 +1107,7 @@ object_type direct_declarator semantic
         .Annotations = $annotations,
     };
 }
-| object_type direct_declarator semantic annotations ';'
+| object_type direct_declarator semantic annotations '=' value 
 {
     $$ = SVariable{ 
         .Name = $direct_declarator.Name,
@@ -1024,82 +1118,62 @@ object_type direct_declarator semantic
 }
 ;
 
-
-/*
-semantic: %empty
-| ':' IDENTIFIER { $$ = $2; }
-;
-*/
 /*----------------------
     what a pass can be
 */
 pass:
-PASS { 
-    FxLog("Creating PASS");
-    }
-  //annotations '{' passstates '}'  {
-  annotations '{' passstates '}'  {
-  /*
-    LOGI("Pass with no name...\n");
-    curAnnotations = NULL;
-    curRState = NULL;
-    curCSState = NULL;
-    curDSTState = NULL;
-    curPRState = NULL;
-*/
-    lex_pop_state();
-}
-| PASS IDENTIFIER {
-    SPass pass;
-    pass.Name = $2.c_str();
-    effect.m_Techniques.back().Passes.push_back(pass);
-    //effect.m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
-    //effect.m_shaders.push_back(IEffect::ShaderInfo{$1, $3});
+    PASS annotations '{' passstates '}'  {
+        lex_pop_state();
 
-    FxLog("Creating PASS %s\n", pass.Name.data());
-    //curPass = curTechnique->addPass($2->c_str())->getExInterface();
-    //curAnnotations = curPass->annotations()->getExInterface();
+        $$.Name = "";
+        $$.RenderStates = $passstates;
     }
-  annotations '{' passstates '}' {
-    //LOGD("Pass %s...\n", $2->c_str() );
-    //delete $2;
-    //curAnnotations = NULL;
-    //curRState = NULL;
-    //curCSState = NULL;
-    //curDSTState = NULL;
-    //curPRState = NULL;
-    lex_pop_state();
-}
-//| pass error { error(@1, "Error in Pass declaration\n");}
+    | PASS IDENTIFIER annotations '{' passstates '}' {
+        lex_pop_state();
+        FxLog("Creating PASS %s\n", $2.data());
+
+        $$.Name = $2;
+        $$.RenderStates = $passstates;
+
+    }
+   //| pass error { error(@1, "Error in Pass declaration\n");}
 ;
 /*------------------------------------------------------------------
    passes
 */
 passes:
-pass
-| passes pass
-| passes error { error(@1, "Error in Pass list\n");}
+    pass {
+        $$.push_back(std::move($1));
+    }
+    | passes pass
+    {
+        $1.push_back(std::move($2));
+        $$ = std::move($1);
+    }
+    | passes error { error(@1, "Error in Pass list\n");}
 ;
 /*------------------------------------------------------------------
    technique
 */
 tech:
-TECHNIQUE {
-    FxLog("Creation of Technique for NO name\n");
-    //curTechnique = curContainer->createTechnique()->getExInterface();
-    //curAnnotations = curTechnique->annotations()->getExInterface();
-} '{' passes '}' 
-| TECHNIQUE IDENTIFIER {
-    effect.AddTechnique(CTechnique($2.c_str()));
-    //FxLog("creation of Technique %s...\n", tech.Name.data());
-    //curTechnique = curContainer->createTechnique($2->c_str())->getExInterface();
-    //curAnnotations = curTechnique->annotations()->getExInterface();
-    //delete $2;
-} annotations '{' passes '}' { 
-    lex_pop_state();
-    scanner.canNowAddFragment = true;
-    //curAnnotations = NULL;
-}
+    TECHNIQUE '{' passes '}' 
+    {
+        lex_pop_state();
+
+        scanner.canNowAddFragment = true;
+
+        $$ =  CTechnique{"", std::move($3) };
+    }
+    | TECHNIQUE IDENTIFIER annotations '{' passes '}' { 
+        lex_pop_state();
+
+        scanner.canNowAddFragment = true;
+
+        FxLog("Creating TECHNIQUE %s\n", $2.data());
+
+        $$ =  CTechnique($2, std::move($5));
+    }
+
 ;
 
 /*
@@ -1146,9 +1220,7 @@ annotation_value:
 annotation_header: scalar_type IDENTIFIER 
 {
     $$ = $2;
-};
-
-| REGISTER;
+} | REGISTER { $$ = "register"; }
 
 annotation_base: annotation_header '=' annotation_value {
     $$ = SAnnotation{$1, $3};
@@ -1166,9 +1238,9 @@ annotation:
 ;
 
 annotations
-    : %empty 
+    : %empty { $$ = std::vector<SAnnotation>(); }
     | '<' annotation_list '>' {
-        $$ = $2; // Использование вектора аннотаций из annotation_list
+        $$ = std::move($2); // Использование вектора аннотаций из annotation_list
       }
     ;
 

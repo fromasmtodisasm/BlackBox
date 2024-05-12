@@ -151,6 +151,7 @@ technique Render
     pass P0
     {
 		FillMode = Solid;
+        //FillMode = WireFrame;
         VertexShader = VS;
         PixelShader = PS;
 
@@ -158,7 +159,7 @@ technique Render
         //ZWriteEnable = true;
         //SetDepthStencilState(DisableDepth);
         SetBlendState(AlphaBlend);
-		SetRasterizerState(NoCull);
+		//SetRasterizerState(NoCull);
     }
 }
 
