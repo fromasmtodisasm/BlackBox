@@ -64,14 +64,14 @@ void Driver::ScanBegin(const char* _file)
 		stream.open(file);
 		if (!stream.is_open())
 		{
-			Env::Log()->LogError("[FX] File %s not found", file.c_str());
+			CryLog("[FX] File %s not found", file.c_str());
 		}
 		else
 		{
-			Env::Log()->Log("$3[FX] File %s opened", file.c_str());
+			CryLog("$3[FX] File %s opened", file.c_str());
 		}
 		//std::cout << file << std::endl;
-		Env::Log()->Log(file.c_str());
+		CryLog(file.c_str());
 		scanner->yyrestart(&stream);
 	}
 }
@@ -89,5 +89,9 @@ void Driver::Release()
 extern "C" DLL_EXPORT IDriver* CreateParserDriver()
 {
 	return new Driver();
+}
+IDriver* CreateParserDriverStatic()
+{
+	return CreateParserDriver();
 }
 #pragma warning(pop)

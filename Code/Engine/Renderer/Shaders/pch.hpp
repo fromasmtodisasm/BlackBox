@@ -13,3 +13,5 @@
 #include <array>
 #include <sstream>
 #include <vector>
+
+#define CryLog(...)

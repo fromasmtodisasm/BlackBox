@@ -17,8 +17,7 @@ float Script : STANDARDSGLOBAL
     string Description = "This shader is used for rendering sprites";
 >;
 
-typedef Texture2D<float4> ColorBuffer;
-ColorBuffer text : register(t0);
+Texture2D<float4> text : register(t0);
 SamplerState textSampler : register(s0) {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = Wrap;

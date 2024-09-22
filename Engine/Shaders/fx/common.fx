@@ -184,3 +184,6 @@ RasterizerState NoCull
     AntialiasedLineEnable=true;
 };
 
+
+// Diffuse Map
+//Texture2D DiffuseMap : register(t0);

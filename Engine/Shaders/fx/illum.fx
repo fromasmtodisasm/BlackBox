@@ -41,13 +41,18 @@ float Script : STANDARDSGLOBAL
 	//static float ao;
 //}
 
+//#define TEST_SUBMESH
 
 //--------------------------------------------------------------------------------------
 struct VS_INPUT
 {
     float3 Pos : POSITION;
     float3 Normal : NORMAL;
+    #if TEST_SUBMESH
+    float4 Color : COLOR0;
+    #else
     float2 TC : TEXCOORD0;
+	#endif
 };
 
 struct VS_OUTPUT
@@ -55,11 +60,27 @@ struct VS_OUTPUT
     float4 Pos : SV_POSITION;
 	float3 WorldPos : WORLDPOS;
     float3 Normal : NORMAL;
+    #if TEST_SUBMESH
+    float4 Color : COLOR0;
+    #else
     float2 TC : TEXCOORD0;
+	#endif
+
+
 };
 
-Texture2D g_FontAtlas : register(t0);
+Texture2D Diffuse : register(t0);
 SamplerState g_LinearSampler : register(s0);
+
+float4 GetColor(VS_OUTPUT IN)
+{
+    #if TEST_SUBMESH
+	return IN.Color;
+    #else
+    return Diffuse.Sample(g_LinearSampler, IN.TC);
+	#endif
+
+}
 
 
 VS_OUTPUT VS(
@@ -71,7 +92,11 @@ VS_OUTPUT VS(
     output.WorldPos = WorldTransofrm(IN.Pos).xyz;
     //output.Normal = IN.Normal;
 	output.Normal    = GetNormal(IN.Normal); // calculate view-space normal
+    #if TEST_SUBMESH
+    output.Color = IN.Color;
+    #else
     output.TC = IN.TC;
+	#endif
 
     return output;
 }
@@ -83,7 +108,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
 	//typedef float3 vec3;
 	//tmp
 	float  ao        = 1.f;
-	float3 albedo    = float3(0.5, 0, 0);
+    float3 albedo = GetColor(input).rgb;
 	float  metalic   = 0.99;
 	float  roughness = 0.01;
 	/////////////////
@@ -123,7 +148,8 @@ float4 PS(VS_OUTPUT input) : SV_Target
 
 		float  NdotL       = max(dot(N, L), 0.0);
 		// add to outgoing radiance Lo
-		Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+		//Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+		Lo += (albedo + specular) * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	}
 
 	float3 ambient = float3(0.03, 0.03, 0.03) * albedo * ao;
@@ -150,8 +176,9 @@ technique Render
 {
     pass P0
     {
-		FillMode = Solid;
-        //FillMode = WireFrame;
+		//FillMode = Solid;
+        CullMode = None;
+       	//FillMode = WireFrame;
         VertexShader = VS;
         PixelShader = PS;
 

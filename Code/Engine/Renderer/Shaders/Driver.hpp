@@ -69,3 +69,8 @@ extern "C"
 {
 	PARSERDRIVER_API IDriver* CreateParserDriver();
 }
+
+extern "C"
+{
+  IDriver* CreateParserDriverStatic();
+}
