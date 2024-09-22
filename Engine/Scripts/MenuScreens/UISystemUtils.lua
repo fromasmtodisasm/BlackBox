@@ -49,13 +49,11 @@ end
 
 function UI:PrecacheMPModels()
 	local ModelView = UI.PageOptionsGame.GUI.modelview;
-	--[[
 	local bResult = ModelView:LoadModel(getglobal("mp_model"));
 	
 	if (bResult and tonumber(bResult) ~= 0) then
 		ModelView:SetAnimation("swalkfwd");
 	end
-	]]
 end
 
 function UI:CheckCutSceneDrive()
@@ -149,7 +147,7 @@ function UI:CheckOptions()
 	else
 		GotoPage( "$MainScreen$", 0 );
 		-- launch video menu when game was started for the first time
-		--UI.YesNoBox( Localize( "Options" ), Localize( "AskAdjOptions" ), UI.GotoGameOptions );
+		UI.YesNoBox( Localize( "Options" ), Localize( "AskAdjOptions" ), UI.GotoGameOptions );
 	end
 end
 

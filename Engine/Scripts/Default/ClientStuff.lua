@@ -44,15 +44,13 @@ function ClientStuff:OnInit()
 	MoTrackLayer:OnInit();
 	SmokeBlur:OnInit();
 	-- @FIXME:
-	if false then
-		HeatVision:OnInit();	
-		self.vlayers:AddLayer("HeatVision",HeatVision);
-		self.vlayers:AddLayer("NightVision",NightVision);
-		self.vlayers:AddLayer("MoTrack",MoTrackLayer);
-		self.vlayers:AddLayer("Binoculars",Binoculars);
-		self.vlayers:AddLayer("WeaponScope",WeaponScope);
-		self.vlayers:AddLayer("SmokeBlur",SmokeBlur);
-	end
+	HeatVision:OnInit();	
+	self.vlayers:AddLayer("HeatVision",HeatVision);
+	self.vlayers:AddLayer("NightVision",NightVision);
+	self.vlayers:AddLayer("MoTrack",MoTrackLayer);
+	self.vlayers:AddLayer("Binoculars",Binoculars);
+	self.vlayers:AddLayer("WeaponScope",WeaponScope);
+	self.vlayers:AddLayer("SmokeBlur",SmokeBlur);
 end
 
 --------------------------------------------

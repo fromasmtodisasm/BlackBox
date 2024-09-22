@@ -580,7 +580,7 @@ UI.PageOptionsVideo.GUI.widget_renderer.user.Initialize = function( self )
 
 	-- let widget reflect state of globals
 	local curRenderer = strlower( getglobal( "r_Driver" ) );
-	if( curRenderer == "direct3d9" ) then
+	if( curRenderer == "DX11" ) then
 		UI.PageOptionsVideo.GUI.widget_renderer:SelectIndex( 1 );
 	elseif( curRenderer == "opengl" ) then
 		UI.PageOptionsVideo.GUI.widget_renderer:SelectIndex( 2 );
@@ -590,7 +590,7 @@ UI.PageOptionsVideo.GUI.widget_renderer.user.Initialize = function( self )
 	UI.PageOptionsVideo.GUI.widget_renderer.user.initialSelectionIndex =
 		UI.PageOptionsVideo.GUI.widget_renderer:GetSelectionIndex();
 
-	UI:DisableWidget( UI.PageOptionsVideo.GUI.widget_renderer );
+	--UI:DisableWidget( UI.PageOptionsVideo.GUI.widget_renderer );
 end
 
 UI.PageOptionsVideo.GUI.widget_renderer.user.DefInitialize = function( self )
@@ -603,7 +603,7 @@ UI.PageOptionsVideo.GUI.widget_renderer.user.UpdateAssignedGlobals = function( s
 	-- has selection changed
 	if( curSelectionIndex ~= UI.PageOptionsVideo.GUI.widget_renderer.user.initialSelectionIndex ) then
 		if( curSelectionIndex == 1 ) then
-			setglobal( "r_Driver", "Direct3D9" );
+			setglobal( "r_Driver", "DX11" );
 		elseif( curSelectionIndex == 2 ) then
 			setglobal( "r_Driver", "OpenGL" );
 		end
