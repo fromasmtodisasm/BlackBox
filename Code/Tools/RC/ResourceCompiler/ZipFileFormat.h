@@ -450,20 +450,19 @@ namespace ZipFile
 		}
 
 	public:
-		int FRead(void* dst, size_t size, size_t nCount, FILE* file)
-		{
-			size_t left = m_File->size - m_nCurSeek;
+	int FRead(void* dst, size_t size, size_t nCount, FILE* file)
+	{
+			size_t left = std::min(size_t(m_File->size - m_nCurSeek), size * nCount);
 			if (left > 0)
 			{
-				left        = std::min(size_t(left), size * nCount);
-				auto offset = m_File->base + m_File->offset + m_nCurSeek;
-				memcpy(dst, offset, left);
+					auto offset = m_File->base + m_File->offset + m_nCurSeek;
+					memcpy(dst, offset, left);
 
-				m_nCurSeek += std::int32_t(size * nCount);
-				return size * nCount;
+					m_nCurSeek += static_cast<std::int32_t>(left);
+					return static_cast<int>(left);
 			}
 			return 0;
-		}
+	}
 
 		bool     Eof() { return m_nCurSeek < Size(); }
 		long     FTell() { return m_nCurSeek; }
