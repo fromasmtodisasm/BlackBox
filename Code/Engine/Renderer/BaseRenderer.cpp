@@ -398,6 +398,7 @@ void RenderCVars::InitCVars()
 	// changing default settings to reduce the insane amount of texture memory
 	iConsole->Register("r_TexBumpResolution", &CV_r_texbumpresolution, 0, VF_DUMPTODISK);
 
+	iConsole->Register("r_ShadersReload", &CV_r_ShadersReload, 0, VF_NULL, "Reloads all shaders");
 
 
 
@@ -788,6 +789,7 @@ void CRenderer::Flush()
 
 void CRenderer::Sh_Reload()
 {
+	gShMan->ReloadAll();
 }
 
 void CRenderer::ShutDown()
@@ -818,20 +820,37 @@ void CRenderer::ShutDown()
 
 #pragma warning(pop)
 
+#include <filesystem>
+
+
+ShaderMan::ShaderMan()
+{
+}
+
 void ShaderMan::RT_ShaderLoad(const char* name, int flags, uint64 nMaskGen, CShader* p)
 {
-	if (auto it = m_Shaders.find((name)); it != m_Shaders.end())
+	string shaderName = name;
+	if (auto it = m_Shaders.find((name)); it != m_Shaders.end() && flags != 5)
 	{
 		CryLog("Shader <%s> already cached", name);
 		it->second->AddRef();
 		*p = *it->second;
 		return;
 	}
-	if (!Sh_LoadBinary(name, flags, nMaskGen, p))
+	if (flags == 5)
 	{
-		if (Compile(name, flags, nMaskGen, p))
+		if (auto it = m_Shaders.find((name)); it != m_Shaders.end())
 		{
-			p->SaveBinaryShader(name, flags, nMaskGen);
+			//it->second->Release();
+			//m_Shaders.erase(it);
+		}
+	}
+	
+	if (!Sh_LoadBinary(shaderName.c_str(), flags, nMaskGen, p))
+	{
+		if (Compile(shaderName, flags, nMaskGen, p))
+		{
+			p->SaveBinaryShader(shaderName, flags, nMaskGen);
 		}
 		else
 		{
@@ -861,7 +880,7 @@ IShader* ShaderMan::Sh_Load(const char* name, int flags, uint64 nMaskGen)
 
 bool ShaderMan::Sh_LoadBinary(const char* name, int flags, uint64 nMaskGen, CShader* p) const
 {
-	//return Env::Console()->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
+	return Env::Console()->GetCVar("r_SkipShaderCache")->GetIVal() ? nullptr : CShader::LoadBinaryShader(name, flags, nMaskGen);
 	return false;
 }
 
@@ -894,7 +913,14 @@ bool ShaderMan::Compile(std::string_view name, int flags, uint64 nMaskGen, CShad
 			p->CreateInputLayout();
 			p->m_Flags2 |= EF2_LOADED;
 			delete pEffect;
+			if (flags == 5)
+			{
+				*m_Shaders[string(name)] = *p;
+			}
+			else
+			{
 			m_Shaders[string(name)] = p;
+			}
 			return true;
 		}
 		p->m_Flags2 |= EF2_FAILED;
@@ -907,11 +933,14 @@ bool ShaderMan::Compile(std::string_view name, int flags, uint64 nMaskGen, CShad
 	return false;
 }
 
+// Reload flag
+// 5 - reload all
 void ShaderMan::ReloadAll()
 {
-	for (auto& s : m_Shaders)
+	for (auto& [name, shader] : m_Shaders)
 	{
-		s.second->Reload(0);
+		//s.second->Reload(0);
+		this->Sh_Load(name.c_str(), 5, 0);
 	}
 }
 

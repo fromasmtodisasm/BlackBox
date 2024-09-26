@@ -181,6 +181,7 @@ public:
 	int CV_r_texskyresolution = 0;
 	int CV_r_texbumpresolution = 0;
 
+	int CV_r_ShadersReload = 0;
 
 
 	Legacy::Vec3 r_SunColor = Legacy::Vec3(1, 1, 1);

@@ -114,6 +114,10 @@ float CD3DRenderer::GetDepthValue(int x, int y)
 
 void CD3DRenderer::Sh_Reload()
 {
+	//CryLog("load shader: %s", name);
+	//return gShMan->Sh_Load(name, flags, nMaskGen);
+
+	return CRenderer::Sh_Reload();
 }
 
 IWindow* CD3DRenderer::Init(int x, int y, int width, int height, unsigned int cbpp, int zbpp, int sbits, bool fullscreen, IWindow* window)
@@ -217,6 +221,11 @@ void CD3DRenderer::UpdateConstants()
 
 void CD3DRenderer::Update(void)
 {
+	if (CV_r_ShadersReload)
+	{
+		Sh_Reload();
+		CV_r_ShadersReload = 0;
+	}
 	{
 		D3DPERF_BeginEvent(D3DC_Blue, L"BeginScene");
 		{
