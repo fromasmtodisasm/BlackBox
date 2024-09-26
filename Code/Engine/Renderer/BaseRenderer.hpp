@@ -381,6 +381,12 @@ public:
 		m_RenderThread->ExecuteRenderThreadCommand(std::forward<RenderThreadCallback>(callback));
 	}
 
+	IFont* GetDefaultFont() const
+	{
+		assert(m_Fonts.size() > 0);
+		return m_Fonts[0];
+	}
+
 protected:
 	struct alignas(16) SPerFrameConstantBuffer
 	{

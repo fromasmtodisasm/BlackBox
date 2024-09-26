@@ -283,6 +283,10 @@ IWindow* CRenderer::Init(int x, int y, int width, int height, unsigned int cbpp,
 	//    {color{}, pos{}},
 	//};
 
+	// Create default font
+	auto font = GetIFont();
+	font->Init("VeraMono.ttf", 16, 16);
+
 	return result;
 }
 
@@ -470,10 +474,11 @@ void CRenderer::CreateQuad()
 
 void CRenderer::Draw2dText(float posX, float posY, const char* szText, const SDrawTextInfo& info)
 {
-	if (info.font)
+	auto font = info.font ? info.font : GetDefaultFont();
+	if (font)
 	{
-		info.font->RenderText(szText, posX, posY, 1.f, (float*)info.color);
-		info.font->Submit();
+		font->RenderText(szText, posX, posY, 1.f, (float*)info.color);
+		//font->Submit();
 	}
 }
 
