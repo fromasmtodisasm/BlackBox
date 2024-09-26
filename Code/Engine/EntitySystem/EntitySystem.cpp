@@ -220,8 +220,10 @@ int CEntitySystem::GetNumEntities() const
 IEntityIt* CEntitySystem::GetEntityIterator()
 {
 	LOG_FUNCTION();
-	m_EntityIt.MoveFirst();
-	return &m_EntityIt;
+	//m_EntityIt.MoveFirst();
+	//return &m_EntityIt;
+	return (IEntityIt*) new CEntityIterator(m_Entities);
+
 }
 
 IEntityIt* CEntitySystem::GetEntityInFrustrumIterator(bool e)
