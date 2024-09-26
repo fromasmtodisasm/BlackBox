@@ -35,6 +35,21 @@ void CSystem::OnRenderer_BeforeEndFrame()
 	RenderStats();
 }
 
+void CSystem::RenderStatistics()
+{
+	static char s[256];
+	sprintf(s, "Memory Stats");
+	SDrawTextInfo dti;
+	dti.color[0] = 1;
+	dti.color[1] = 1;
+	dti.color[2] = 1;
+	dti.color[3] = 1;
+	dti.xscale= 1;
+	dti.yscale = 1;
+	dti.font = nullptr;
+	m_env->pRenderer->Draw2dText(10, 10, s, dti);
+}
+
 void CSystem::RenderStats()
 {
 	if (m_env.pRenderer)
@@ -88,6 +103,10 @@ void CSystem::RenderEnd()
 	}
 	if (m_env.pRenderer)
 	{
+		RenderStats();
+		RenderStatistics();
+
+
 		m_env.pRenderer->Update();
 	}
 }

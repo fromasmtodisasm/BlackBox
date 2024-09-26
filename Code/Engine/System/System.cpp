@@ -1114,10 +1114,6 @@ void CSystem::OnVarUnregister(ICVar* pVar)
 {
 }
 
-void CSystem::RenderStatistics()
-{
-}
-
 const char* CSystem::GetUserName()
 {
 #if BB_PLATFORM_WINDOWS
