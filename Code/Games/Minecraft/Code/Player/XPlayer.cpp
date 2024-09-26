@@ -761,7 +761,10 @@ void CPlayer::Update()
 
 	if (!physEnt || !physEnt->GetStatus(&status))
 	{
+		// FIXME:
+#if 0
 		GameWarning( "Bad Phyics Entity for Player %s",m_pEntity->GetName() );
+#endif
 		return;
 	}
 
