@@ -57,6 +57,8 @@ enum
 #include "Network/BitStream_Base.h"						// CBitStream_Base
 #include "Network/BitStream_Compressed.h"			// CBitStream_Compressed
 
+#include <BlackBox/System/ConsoleRegistration.h>
+
 struct IStatObj;
 class CScriptObjectInput;
 class CScriptObjectStream;
@@ -91,6 +93,54 @@ struct TextRenderInfo
 		return dti;
 	}
 };
+
+template <typename T>
+class AutoCVar
+{
+public:
+	AutoCVar(const char* name, T defaultValue, int flags, const char* description)
+		: m_value(defaultValue)
+		, m_name(name)
+	{
+		REGISTER_CVAR2(name, &m_value, defaultValue, flags, description);
+		/*if constexpr (std::is_same_v<T, int>)
+		{
+			Env::Console()->Register(m_name, &m_value, defaultValue, flags, description);
+		}
+		else if constexpr (std::is_same_v<T, float>)
+		{
+			Env::Console()->Register(m_name, &m_value, defaultValue, flags, description);
+		}
+		else if constexpr (std::is_same_v<T, const char*>)
+		{
+			Env::Console()->Register(m_name, &m_value, defaultValue, flags, description);
+		}*/
+	}
+
+	~AutoCVar()
+	{
+		Env::Console()->UnregisterVariable(m_name, true);
+	}
+
+	AutoCVar& operator=(const T& value)
+	{
+		m_value = value;
+		return *this;
+	}
+
+	operator T() const { return m_value; }
+
+private:
+	T m_value;        
+	const char* m_name;
+};
+
+// Deduction guide for C++17
+AutoCVar(const char*, int, int, const char*)->AutoCVar<int>;
+AutoCVar(const char*, float, int, const char*)->AutoCVar<float>;
+AutoCVar(const char*, const char*, int, const char*)->AutoCVar<const char*>;
+
+
 
 class CScriptObjectGame;
 class CScriptObjectInput;
@@ -754,7 +804,10 @@ public:
 	ICVar*                g_language;
 	ICVar*                g_playerprofile;
 	ICVar*                g_serverprofile;
-	ICVar*                g_Render;
+	AutoCVar<int>         g_Render{"g_Render", 1, 0,
+	                                               "\n"
+																									"Usage:\n"
+																									""};
 	ICVar*                g_GC_Frequence;
 	ICVar*                g_GameType;
 	ICVar*                g_LeftHanded;

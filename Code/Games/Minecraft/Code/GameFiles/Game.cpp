@@ -885,7 +885,7 @@ bool CXGame::Update()
 	}
 	#endif
 
-	bool bRenderFrame = ((!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || true) || m_bMenuOverlay || m_bUIOverlay) && g_Render->GetIVal() != 0;
+	bool bRenderFrame = ((!Vec3(Legacy::from(m_pSystem->GetViewCamera().GetPos())).IsZero() || true) || m_bMenuOverlay || m_bUIOverlay) && g_Render != 0;
 	//////////////////////////////////////////////////////////////////////////
 	// Start Profiling frame
 	m_pSystem->GetIProfileSystem()->StartFrame();

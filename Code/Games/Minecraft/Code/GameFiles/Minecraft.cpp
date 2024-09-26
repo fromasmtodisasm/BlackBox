@@ -207,6 +207,8 @@ void Minecraft::init()
 //	}
 	minecraft = this;
 
+	CryLog("FPS: %d", m_FPS);
+
 	world.init();
 	ui.init();
 	player.init();
@@ -222,6 +224,9 @@ void Minecraft::update()
 	//debug.update();
 	//ui.draw();
 	player.update();
+
+	static AutoCVar<int>   my_FPS{"game/minecraft/fps", 0, 0, "Show FPS"};
+	//CryLog("%s: %d", "game/minecraft/fps", (int)my_FPS);
 
 	jack_rotation += 16 * time;
 }

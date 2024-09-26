@@ -113,6 +113,8 @@ struct Minecraft
 	MineDebug  debug;
 
 	IEntity*   Jack;
+
+	AutoCVar<int>   m_FPS{"m_FPS", 0, 0, "Show FPS"};
 };
 
 extern Minecraft* minecraft;

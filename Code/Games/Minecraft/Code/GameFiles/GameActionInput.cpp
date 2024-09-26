@@ -512,10 +512,10 @@ void CXGame::InitConsoleVars()
 	                         "Usage: sv_rcon_password mypassword\n");
 	// -----------------------
 
-	g_Render            = pConsole->CreateVariable("g_Render", "1", 0,
+	/*g_Render            = pConsole->CreateVariable("g_Render", "1", 0,
 	                                               "\n"
                                                               "Usage:\n"
-                                                              "");
+                                                              "");*/
 
 	cl_ViewFace         = pConsole->CreateVariable("cl_ViewFace", "0", CVAR_FLOAT,
 	                                               "\n"

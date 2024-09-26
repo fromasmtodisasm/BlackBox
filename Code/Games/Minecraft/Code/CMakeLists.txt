@@ -45,6 +45,7 @@ add_sources(
 		GameFiles/GameObject.h
 		GameFiles/GameTagPoints.cpp
 		GameFiles/Minecraft.cpp
+		GameFiles/Minecraft.h
 		GameFiles/SteamHelper.cpp
 		GameFiles/XArea.cpp
 		GameFiles/XArea.h
