@@ -23,16 +23,53 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Cache vcpkg
+      id: cache-vcpkg
+      uses: actions/cache@v2
+      with:
+        path: |
+          vcpkg_installed
+          vcpkg/downloads
+        key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}-${{ hashFiles('PrepareVcpkg.cmake') }}
+        restore-keys: |
+          ${{ runner.os }}-vcpkg-
+
+    - name: Set up vcpkg
+      if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        ./vcpkg/bootstrap-vcpkg.bat
+
+    - name: Cache Flex and Bison
+      uses: actions/cache@v2
+      with:
+        path: C:\cygwin64\bin
+        key: ${{ runner.os }}-flex-bison-${{ hashFiles('**/flex-bison-version.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-flex-bison-
+
+    - name: Install Cygwin with Flex and Bison
+      run: |
+        choco install cygwin --params "/InstallDir:C:\cygwin64"
+        C:\cygwin64\setup-x86_64.exe -q -P flex -P bison
+
+    - name: Add Cygwin to PATH
+      run: echo "C:\cygwin64\bin" >> $env:GITHUB_PATH
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       #run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
       run: cmake --preset vs2022-msvc
       
-    - name: Build
+    - name: Build (Debug)
       # Build your program with the given configuration
       #run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-      run: cmake --build --preset vs2022-msvc --config Debug
+      run: cmake --build --preset vs2022 --config Debug
+    - name: Build (Release)
+      # Build your program with the given configuration
+      #run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build --preset vs2022 --config Release
 
     #- name: Test
     #  working-directory: ${{github.workspace}}/build
