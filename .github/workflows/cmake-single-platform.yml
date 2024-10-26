@@ -51,6 +51,7 @@ jobs:
     - name: Install Cygwin with Flex and Bison
       run: |
         choco install cygwin --params "/InstallDir:C:\cygwin64"
+        refreshenv
         C:\cygwin64\setup-x86_64.exe -q -P flex -P bison
 
     - name: Add Cygwin to PATH
