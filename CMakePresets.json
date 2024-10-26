@@ -122,44 +122,12 @@
   ],
   "buildPresets": [
     {
-      "name": "windows-ninja-debug",
-      "configurePreset": "windows-ninja",
-      "configuration": "Debug"
+      "name": "windows-ninja",
+      "configurePreset": "windows-ninja"
     },
     {
-      "name": "windows-ninja-release",
-      "configurePreset": "windows-ninja",
-      "configuration": "Release"
-    },
-    {
-      "name": "vs2022-msvc-debug",
-      "configurePreset": "vs2022-msvc",
-      "configuration": "Debug"
-    },
-    {
-      "name": "vs2022-msvc-release",
-      "configurePreset": "vs2022-msvc",
-      "configuration": "Release"
-    },
-    {
-      "name": "vs2022-clang-debug",
-      "configurePreset": "vs2022-clang",
-      "configuration": "Debug"
-    },
-    {
-      "name": "vs2022-clang-release",
-      "configurePreset": "vs2022-clang",
-      "configuration": "Release"
-    },
-    {
-      "name": "vs2019-msvc-debug",
-      "configurePreset": "vs2019-msvc",
-      "configuration": "Debug"
-    },
-    {
-      "name": "vs2019-msvc-release",
-      "configurePreset": "vs2019-msvc",
-      "configuration": "Release"
+      "name": "vs2022",
+      "configurePreset": "vs2022-msvc"
     }
   ]
 }
