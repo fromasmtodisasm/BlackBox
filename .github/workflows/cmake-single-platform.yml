@@ -48,10 +48,22 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-flex-bison-
 
-    - name: Install Cygwin with Flex and Bison
+    - name: Install Cygwin
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
         choco install cygwin --params "/InstallDir:C:\cygwin64"
-        C:\cygwin64\setup-x86_64.exe -q -P flex -P bison
+        refreshenv
+
+    - name: Install cyg-get
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        choco install cyg-get -y
+        refreshenv
+
+    - name: Install Flex and Bison using cyg-get
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        cyg-get install flex bison
 
     - name: Add Cygwin to PATH
       run: echo "C:\cygwin64\bin" >> $env:GITHUB_PATH
