@@ -52,7 +52,7 @@ jobs:
       run: |
         choco install cygwin --params "/InstallDir:C:\cygwin64"
         refreshenv
-        C:\cygwin64\setup-x86_64.exe -q -P flex -P bison
+        c:\cygwin64\cygwin.bat -q -P flex -P bison
 
     - name: Add Cygwin to PATH
       run: echo "C:\cygwin64\bin" >> $env:GITHUB_PATH
