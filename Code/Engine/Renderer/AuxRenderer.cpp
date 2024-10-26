@@ -356,6 +356,7 @@ void CRenderAuxGeom::DrawAABBs()
 
 		StateManager().SetSamplerState(GlobalResources::LinearSampler, 0);
 		StateManager().SetBlendState(m_pBlendState);
+		StateManager().SetDepthStencilState(m_pDSStateLines);
 		if (!m_BBVerts.empty())
 		{
 			Env::Renderer()->ReleaseBuffer(m_BoundingBox);

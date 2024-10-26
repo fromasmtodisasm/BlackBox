@@ -2,6 +2,11 @@
 
 struct IStatObj;
 
+struct SSector
+{
+	int x, y;
+};
+
 class CTerrain
 {
 public:
@@ -17,4 +22,8 @@ public:
 
 private:
 	std::vector<_smart_ptr<IStatObj>> m_Areas;
+
+	int m_SectorSize = 100;
+	
+	std::vector<SSector> m_Sectors;
 };

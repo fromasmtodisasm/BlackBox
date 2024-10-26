@@ -487,8 +487,8 @@ bool CSystem::Init()
 		m_pBlackBoxFont = m_env.pRenderer->GetIFont();
 		m_pBlackBoxFont->Init("VeraMono.ttf", 24, 24);
 
-		m_Font.ms_nullFont.m_pFont = m_pFont;
-		m_Font.ms_nullFont.m_Size  = font_size;
+		/*m_Font.ms_nullFont.m_pFont = m_pFont;
+		m_Font.ms_nullFont.m_Size  = font_size;*/
 
 		auto splash                = Env::Renderer()->LoadTexture("textures/console/loadscreen_default.dds", 0, 0);
 		auto t = Env::Renderer()->EF_GetTextureByID(splash);

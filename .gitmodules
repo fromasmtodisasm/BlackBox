@@ -4,3 +4,6 @@
 [submodule "Tools/Cmake"]
 	path = Tools/Cmake
 	url = git@github.com:fromasmtodisasm/BlackBoxCmakeTools.git
+[submodule "vcpkg"]
+	path = vcpkg
+	url = https://github.com/microsoft/vcpkg

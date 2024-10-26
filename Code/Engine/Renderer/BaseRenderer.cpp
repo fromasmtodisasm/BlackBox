@@ -828,10 +828,6 @@ void CRenderer::ShutDown()
 #include <filesystem>
 
 
-ShaderMan::ShaderMan()
-{
-}
-
 void ShaderMan::RT_ShaderLoad(const char* name, int flags, uint64 nMaskGen, CShader* p)
 {
 	string shaderName = name;

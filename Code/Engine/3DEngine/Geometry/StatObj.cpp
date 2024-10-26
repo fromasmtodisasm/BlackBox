@@ -13,6 +13,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include <assimp/Exporter.hpp>
 
 #include <Assimp/CGFImporter.h>
 
@@ -520,6 +521,14 @@ bool CIndexedMesh::LoadCGF(const char* szFileName, const char* szGeomName)
 	}
 
 	m_Name = szFileName;
+
+	Assimp::Exporter exporter;
+
+	auto name = PathUtil::GetFileName(szFileName) + ".obj";
+	/// FIXME:
+	/// exporter.Export(scene, "obj", name.c_str());
+	///
+
 	if (scene->HasMeshes())
 	{
 		for (size_t i = 0; i < scene->mNumMeshes; i++)

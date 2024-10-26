@@ -20,7 +20,8 @@ Input:BindCommandToKey("#ToggleAIInfo()","f11",1);
 Input:BindCommandToKey("#ToggleNewDesignerMode(10,15,0)","f4",1);
 
 -- to be removed
-Input:BindCommandToKey("#GotoNextSpawnpoint()","f2",1);
+--Input:BindCommandToKey("#GotoNextSpawnpoint()","f2",1);
+Input:BindCommandToKey("#ShadersReload()","f2",1);
 Input:BindCommandToKey("#MoreAmmo()","o",1);
 Input:BindCommandToKey("#AllWeapons()","p",1);
 Input:BindAction("SAVEPOS", "f9", "default");
@@ -256,4 +257,9 @@ function AllWeapons()
 
 	Hud:AddMessage("[CHEAT]: Give all weapons");
 	System:LogToConsole("\001CHEAT: Give All weapons");
+end
+
+function ShadersReload()
+	setglobal("r_ShadersReload", 1);
+	--r_ShadersReload = 1;
 end

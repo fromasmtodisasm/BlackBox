@@ -21,7 +21,6 @@ cmake-build*
 build
 
 
-/vcpkg
 vcpkg_installed/*
 
 # Temporary Directories

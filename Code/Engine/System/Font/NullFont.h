@@ -70,7 +70,7 @@ public:
 	}
 	virtual void SetSize(const vector2f& size) override
 	{
-		//m_Size = size;
+		m_Size = size;
 	}
 	virtual vector2f& GetSize() override
 	{
@@ -105,13 +105,16 @@ public:
 	}
 	virtual vector2f GetTextSize(const char* szMsg, const bool bASCIIMultiLine = true) override
 	{
+		m_pFont = GetIFont();
 		return {m_pFont->TextWidth(szMsg), m_Size.y};
 	}
+	IFont* GetIFont();
 	virtual void DrawStringW(float x, float y, const wchar_t* swStr, const bool bASCIIMultiLine = true) override
 	{
 		std::wstring ws(swStr);
 		std::string  str(ws.begin(), ws.end());
 
+		m_pFont = GetIFont();
 		m_pFont->RenderText(str.data(), x, y, 1.f, m_Color.v);
 	}
 	virtual void DrawWrappedStringW(float x, float y, float w, const wchar_t* swStr, const bool bASCIIMultiLine = true) override
@@ -121,6 +124,7 @@ public:
 	{
 		std::wstring ws(swStr);
 		std::string  str(ws.begin(), ws.end());
+		m_pFont = GetIFont();
 		return GetTextSize(str.data());
 	}
 	virtual vector2f GetWrappedTextSizeW(const wchar_t* swStr, float w, const bool bASCIIMultiLine = true) override
@@ -140,21 +144,26 @@ public:
 	}
 	vector2f m_Size  = vector2f(12, 12);
 	color4f  m_Color = color4f(1.f, 1.f, 1.f, 1.f);
-	IFont*   m_pFont;
+	//IFont*   m_pFont;
+
+	std::unordered_map<int, IFont*> m_Fonts;
+	IFont* m_pFont = nullptr;
 };
 
 class CCryNullFont : public ICryFont
 {
 public:
 	virtual void        Release() {}
-	virtual IFFont*     NewFont(const char* pFontName) { return &ms_nullFont; }
-	virtual IFFont*     GetFont(const char* pFontName) { return &ms_nullFont; }
+	virtual IFFont*     NewFont(const char* pFontName);
+	virtual IFFont*     GetFont(const char* pFontName);
 	virtual void        SetRendererProperties(IRenderer* pRenderer) {}
 	virtual void        GetMemoryUsage(ICrySizer* pSizer) {}
 	virtual string      GetLoadedFontNames() const { return ""; }
 
 	//private:
 	static CNullCryFont ms_nullFont;
+
+	std::unordered_map<string, IFFont*> m_Fonts;
 };
 
 	#pragma warning(pop)
