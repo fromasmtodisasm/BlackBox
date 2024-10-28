@@ -48,11 +48,11 @@ jobs:
     - name: Configure CMake
       run: cmake --preset vs2022-msvc
       
-    # - name: Build (Debug)
-    #   run: cmake --build --preset vs2022 --config Debug
+    - name: Build (Debug)
+      run: cmake --build --preset vs2022 --config Debug
 
-    # - name: Build (Release)
-    #   run: cmake --build --preset vs2022 --config Release
+    - name: Build (Release)
+      run: cmake --build --preset vs2022 --config Release
 
     #- name: Test
     #  working-directory: ${{github.workspace}}/build
