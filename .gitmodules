@@ -7,3 +7,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest.git
